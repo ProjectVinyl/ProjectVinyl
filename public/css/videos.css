@@ -1,0 +1,530 @@
+ul.videos, ul.queue, .controls ul {
+  list-style: none;
+  padding: 0;
+}
+ul.videos > li + li {
+  border-top: solid 1px rgba(0,0,0,0.2);
+}
+
+.video {
+  display: block;
+  width: 100%;
+  padding-bottom: 45%;
+  background: #000 center/contain no-repeat;
+  position: relative;
+}
+
+.video .player, .video .player h1 a {
+  color: #fff;
+  text-decoration: none;
+}
+.video .player video {
+  pointer-events: none;
+}
+.video .player h1, .video .player::after {
+  transition: opacity 0.25s linear;
+}
+.video .player:not(.playing)::after {
+  cursor: pointer;
+  content: "\f04b";
+  display: block;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  border-radius: 100%;
+  background: red;
+  width: 100px;
+  height: 100px;
+  margin: -50px 0 0 -50px;
+  text-align: center;
+  line-height: 100px;
+  font-size: 4em;
+  font-family: 'FontAwesome';
+  text-indent: 3px;
+  opacity: 0.6;
+}
+
+.video .player h1 {
+  white-space: nowrap;
+  opacity: 0.7;
+  border: none;
+  pointer-events: none;
+}
+
+.video .player:hover h1, .video .player:hover::after {
+  opacity: 0.99;
+}
+
+.video .player span.pause {
+  display: inline-block;
+  padding: 5px;
+  width: 100%;
+  overflow-x: hidden;
+}
+
+.video .player.playing span.pause {
+  opacity: 0;
+}
+.video .player span.playing {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+.video .player.playing span.playing, .video.audio-only .player span.pause {
+  opacity: 1;
+}
+
+.video .player span.playing video {
+  background: #000;
+}
+
+.video span.playing video {
+  width: 100%;
+  height: 100%;
+}
+
+.video .player .suspend {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100px;
+  height: 100px;
+  margin: -50px 0 0 -50px;
+  line-height: 100px;
+  font-size: 4em;
+  opacity: 0.3;
+  text-align: center;
+}
+
+.video .controls {
+  display: none;
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 10px 10px 0 10px;
+  opacity: 0;
+  transition: opacity 0.5s linear;
+}
+.video:hover .controls, .video.audio-only .controls {
+  opacity: 1;
+}
+.video .controls:hover {
+  opacity: 1 !important;
+}
+
+.video .player.playing + .controls, .video.audio-only .player + .controls {
+  display: block;
+}
+
+.video .controls li {
+  display: inline-block;
+}
+
+.video .controls .track {
+  position: relative;
+  width: calc(100% - 80px);
+  margin-left: 10px;
+  height: 10px;
+  cursor: pointer;
+}
+.video.audio-only .controls .track {
+  background: rgba(8, 8, 8, 0.125);
+  border-radius: 4px;
+}
+
+.video .controls .track .bob {
+  position: absolute;
+  top: 0;
+  left: 0;
+  background: red;
+  border-radius: 100%;
+  width: 20px;
+  height: 20px;
+  margin: -5px 0 0 -10px;
+  transition: left 0.25s linear;
+}
+.video .controls .track .fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 100%;
+  bottom: 0;
+  background: grey;
+  border-radius: 4px;
+  opacity: 0.5;
+  transition: right 0.25s linear;
+}
+
+.video .controls .icon {
+  position: relative;
+  width: 20px;
+  height: 100%;
+  cursor: pointer;
+  float: right;
+}
+.video .controls .icon + .icon {
+  margin-right: 5px;
+}
+
+.video .controls .icon .indicator {
+  color: #fff;
+  font-size: 1.5em;
+}
+
+.video .controls .volume:hover .slider, .video.voluming .controls .volume .slider {
+  opacity: 1;
+  transition: height 0.25s linear, opacity 0.5s linear;
+  height: 100px;
+}
+
+.video .controls .volume .slider {
+  opacity: 0;
+  position: absolute;
+  bottom: 20px;
+  right: 50%;
+  height: 0;
+  width: 10px;
+  margin-bottom: 10px;
+  margin-right: -5px;
+  background: rgba(0,0,0,0.2);
+  transition: height 0.25s linear 0.5s, opacity 0.5s linear 0.5s;
+  border-radius: 4px;
+}
+
+.video .controls .volume .bob {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  background: red;
+  border-radius: 100%;
+  width: 20px;
+  height: 20px;
+  margin: 0 0 -10px -5px;
+  transition: bottom 0.25s linear;
+}
+.video .controls .volume .fill {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  top: 100%;
+  background: grey;
+  border-radius: 4px;
+  opacity: 0.5;
+  transition: top 0.25s linear;
+}
+
+
+.videos.queue > li {
+  display: block;
+  position: relative;
+  padding: 0;
+}
+.thumb, .queue .thumb {
+  display: inline-block;
+  text-decoration: none;
+  width: 100%;
+  height: 100%;
+  background: #000 center/contain no-repeat;
+  margin-bottom: 20px;
+  color: #fff;
+  vertical-align: top;
+}
+
+.thumb {
+  max-width: 250px;
+  min-width: 170px;
+  max-height: 200px;
+  min-height: 120px;
+  padding: 0;
+}
+.thumb div.title {
+  display: none;
+}
+.queue .thumb {
+  max-width: 50%;
+  padding: 0 0 15% 0;
+}
+@media(max-width: 900px) {
+  .queue .thumb {
+    min-width: 0 !important;
+  }
+  .queue .thumb {
+    max-width: 100% !important;
+    padding: 0 0 45% 0 !important;
+  }
+}
+
+ul.horizontal > li {
+  float: left;
+  border-top: none !important;
+  border-bottom: solid 1px rgba(0,0,0,0.2);
+  width: 20%;
+  padding: 10px;
+  max-width: 250px;
+  min-width: 190px;
+  max-height: 200px;
+  min-height: 140px;
+}
+ul.horizontal .thumb {
+  margin: 0;
+}
+ul.horizontal > li .thumb .title {
+  display: block;
+}
+
+.videos > li .description {
+  display: inline-block;
+  padding-left: 10px;
+}
+.videos > li .description .title {
+  font-weight: bold;
+  padding-bottom: 4px;
+}
+
+.thumb > div {
+  background: rgba(0,0,0,0.3);
+  padding: 10px;
+}
+.thumb.stack {
+  background: none !important;
+  position: relative;
+  transition: margin 0.25s ease;
+}
+.thumb.stack .stack-item {
+  display: block;
+  position: absolute;
+  background: #000 center/contain no-repeat;
+  width: 90%;
+  height: 90%;
+  transform: rotate(5deg);
+  -ms-transform: rotate(5deg);
+  -webkit-transform: rotate(5deg);
+  -o-transform: rotate(5deg);
+  -moz-transform: rotate(5deg);
+  box-shadow: 0 0 10px -1px rgba(100,100,100,0.6);
+}
+.thumb.stack .stack-item .stack-item {
+  transform: rotate(-15deg);
+  -ms-transform: rotate(-15deg);
+  -webkit-transform: rotate(-15deg);
+  -moz-transform: rotate(-15deg);
+  width: 100%;
+  height: 100%;
+  opacity: 0.9;
+}
+.thumb.stack .stack-item {
+  top: 0;
+  left: 0;
+}
+.horizontal .thumb.stack:hover {
+  margin-bottom: 5px;
+  margin-top: -5px;
+}
+.thumb.stack:hover .stack-item {
+  box-shadow: 0 0 10px 0px rgba(100,100,100,0.6);
+}
+
+.album-list > li .title {
+  font-weight: bold;
+  text-shadow: 0 0.05em 0.03em rgba(0,0,0,0.3);
+}
+
+.video .contextmenu {
+  position: absolute;
+  background: rgba(28,28,28,0.9);
+  text-shadow: 0 0 2px rgba(0,0,0,.5);
+  color: #eee;
+  white-space: nowrap;
+  list-style: none;
+  border-radius: 2px;
+  margin: 0;
+  padding: 5px 0;
+  min-width: 220px;
+  opacity: 0;
+  display: none;
+  z-index: 300;
+  overflow-x: hidden;
+  transition: opacity .1s cubic-bezier(0.0,0.0,0.2,1);
+}
+.video .contextmenu li {
+  display: table-row;
+  cursor: pointer;
+  margin: 0;
+}
+.video .contextmenu div {
+  padding: 5px;
+  display: table-cell;
+  white-space: nowrap;
+}
+.video .contextmenu .value {
+  text-align: right;
+}
+.video .contextmenu .label {
+  width: 75%;
+}
+.video .contextmenu li:hover {
+  background: rgba(255,255,255,0.2);
+}
+
+i.fa.fa-restore {
+  display: inline-block;
+  background: transparent url("../fonts/restore-icon.svg") no-repeat scroll center center / 100% auto;
+  width: 18px;
+  height: 18px;
+  margin-bottom: -2px;
+}
+i.fa.fa-volume-mid {
+  display: inline-block;
+  background: transparent url("../fonts/vol-mid-icon.svg") no-repeat scroll center center / 100% auto;
+  width: 16px;
+  height: 18px;
+  margin-bottom: -2px;
+}
+
+.video:-webkit-full-screen {
+  width: 100%;
+  height: 100%;
+}
+
+.form.report {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  opacity: 0;
+  background: #fff;
+  transition: max-height 0.25s linear, min-height 0.25s linear, opacity 0.5s linear 0.25s, background 0.5s linear;
+  border-radius: 3px;
+  margin-top: 5px;
+  white-space: nowrap;
+}
+.form.report.reporting {
+  opacity: 1;
+  background: #f8f8f8;
+}
+.form.report:not(.reporting) {
+  min-height: 0 !important;
+  max-height: 0 !important;
+}
+
+.form.report div.section {
+  transform: translate(0%, 0px);
+  transition: transform 0.5s ease;
+  padding: 5px;
+  display: inline-block;
+  vertical-align: top;
+  height: 0;
+  white-space: pre-line;
+}
+.form.report.animating div.section, .form.report div.section.active {
+  height: initial;
+}
+
+.form.report .section .foot button {
+  position: absolute;
+  bottom: 0;
+}
+.form.report .section .foot button.left {
+  left: 0;
+}
+.form.report .section .foot button.left {
+  right: 0;
+}
+.form.report textarea {
+  resize: vertical;
+  min-height: 100px;
+  width: 100%;
+}
+
+.form.report input[data-required] + i:before {
+  content: '*';
+  font-weight: bold;
+}
+
+.listing.compact {
+  padding-left: 0;
+  padding-right: 0;
+}
+.listing.compact .items {
+  display: table;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  table-layout: auto;
+  border-bottom: solid 1px rgba(0,0,0,0.1);
+}
+.listing.compact .items.reorderable .handle {
+  width: 13px;
+  border-right: solid 1px rgba(0,0,0,0.1);
+  color: #ddd;
+  text-shadow: 0 0 3px #eee;
+  cursor: move;
+  font-size: 20px;
+  line-height: 0;
+  vertical-align: middle;
+  font-weight: normal;
+  text-rendering: geometricPrecision;
+}
+.listing.compact .items span.bump {
+  display: table-row;
+  height: 2px;
+}
+
+.listing.compact a {
+  display: table-row;
+  padding: 5px 30px;
+  transition: background 0.25s ease;
+  text-decoration: none;
+}
+.listing.compact a.floater {
+  position: absolute;
+  padding: 0;
+  pointer-events: none;
+  left: 0px;
+  right: 0;
+  background: #fff;
+}
+.listing.compact a.grabbed {
+  opacity: 0;
+  pointer-events: none;
+}
+.listing.compact a:hover {
+  background: rgba(250,250,250,1);
+}
+.listing.compact .items div {
+  display: table-cell;
+  color: #000;
+  padding: 5px;
+  line-height: 20px;
+  border-top: solid 1px rgba(0,0,0,0.1);
+}
+.listing.compact span, .listing.compact a {
+  text-decoration: none;
+  padding: 0 10px;
+  color: #000;
+}
+.listing.compact .items div + div span {
+  border-left: solid 1px rgba(0,0,0,0.2);
+  margin-left: -1px;
+  font-weight: initial;
+  color: #888;
+}
+.listing.compact .items .title:before {
+  content: '\f04b';
+  font-family:'FontAwesome';
+  padding-right: 10px;
+}
+.listing.compact .items .title {
+  padding: 0 0 0 30px;
+}
+.listing.compact .items .duration {
+  text-align: center;
+}
+.listing.compact .items .remove {
+  text-align: center;
+  width: 50px;
+}

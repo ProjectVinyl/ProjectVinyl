@@ -1,0 +1,65 @@
+		<div class="page column-left">
+			<div class="pagination">
+				<a class="button left" href="#/first">First</a>
+				<span class="pages">
+					<a class="button" href="#/page/1">1</a>
+				</span>
+				<a class="button right" href="#/last">Last</a>
+			</div>
+			<section class="search-result">
+				<ul class="videos"></ul>
+			</section>
+			<div class="pagination">
+				<a class="button left" href="#/first">First</a>
+				<span class="pages">
+					<a class="button" href="#/page/1">1</a>
+				</span>
+				<a class="button right" href="#/last">Last</a>
+			</div>
+		</div>
+		<div class="page resize-holder column-right right">
+			<section>
+				<h1 class="resize-target">
+					<a>Search</a>
+				</h1>
+				<span>
+					<input type="text" name="query" placeholder="search" style="width:100%"></input>
+				</span>
+				<form action="search" method="get">
+					<span class="search-options">
+						<label>
+							<span>Type</span>
+							<div>
+								<select name="type" style="width:100%">
+									<option value="1">Album</option>
+									<option value="2">Artist</option>
+									<option value="3">Genre</option>
+								</select>
+							</div>
+						</label>
+						<label>
+							<span>Order</span>
+							<div>
+								<select name="order" style="width:100%">
+									<option value="1">Ascending</option>
+									<option value="0">Descending</option>
+								</select>
+							</div>
+						</label>
+						<label>
+							<span>Order By</span>
+							<div>
+								<select name="orderby" style="width:100%">
+									<option value="1">Date</option>
+									<option value="2">Rating</option>
+									<option value="3">Length</option>
+								</select>
+							</div>
+						</label>
+					</span>
+					<span>
+						<button type="submit"><i class="fa fa-search"></i> Search</button>
+					</span>
+				</form>
+			</section>
+		</div>

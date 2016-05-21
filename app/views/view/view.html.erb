@@ -1,0 +1,90 @@
+<% if @video %>
+		<section class="page column-left">
+			<div id="video" style="background-image: url('<%= @video.cover %>');" data-title="<%= @video.title %>" data-artist="<%= @artist.name %>" data-<% if @video.audio_only %>audio<% else %>video<% end %>="<%= @video.id %>" class="video"></div>
+			<div class="post description resize-holder">
+				<h1 class="title post-title resize-target short">
+					<span class="content "><%= @video.title %></span>
+				</h1>
+				<span class="post-content">
+					<span class="content"><%= @video.description %></span>
+				</span>
+				<div class="actions">
+					<a download target="_blank" href="/download/"<%= @video.id %><%= @video.title %>.mp4" class="action download button"><i class="fa fa-download"></i> Download</a>
+					<button class="action star"><i class="fa fa-star"></i></button>
+					<button class="action like"><i class="fa fa-thumbs-up"></i></button>
+					<button class="action dislike"><i class="fa fa-thumbs-down"></i></button>
+					<button class="action report right"><i class="fa fa-flag"></i> Report</button>
+				</div>
+				<div class="form report" data-offset="0">
+					<script>
+(function() {
+  function openReport(holder) {
+    holder.css('min-height', holder.find('.section.active').height());
+    holder.css('max-height', holder.find('.section.active').height() + 10);
+    holder[holder.hasClass('reporting') ? 'removeClass' : 'addClass']('reporting');
+    scrollTo.toggle(holder[0]);
+  }
+  $('.action.report').on('click', function() {
+    var holder = $(this).parents('.page').find('.form.report');
+    if (!$(this).hasClass('loaded')) {
+      $(this).addClass('loaded');
+      ajax('reporter/<%= @video.id %>', function(xml, type, ev) {
+        holder.html(ev.responseText);
+        openReport(holder);
+      }, 1);
+    } else {
+        openReport(holder);
+    }
+  });
+})();
+					</script>
+				</div>
+			</div>
+		</section>
+		<div class="page resize-holder column-right right">
+			<section class="artist-bio">
+				<h1 class="resize-target">
+					<a class="name" href="/artist/<%= @artist.id %>-<%= @artist.name %>"><%= @artist.name %></a>
+				</h1>
+				<img alt="Avatar" class="avatar" src="<%= @artist.avatar %>" />
+				<span class="bio"><%= @artist.description %></span>
+			</section>
+			<section>
+				<h1 class="resize-target">
+					<a>Discovery Queue</a>
+				</h1>
+				<ul class="queue">
+					<!-- TODO: Queues -->
+				</ul>
+			</section>
+		</div>
+		<section class="page column-left">
+			<h1 class="title">Comments</h1>
+			<div class="comments" style="min-height:500px">
+				<div id="disqus_thread">An error has occurred. Either something's wrong of I haven't implemented this yet. </div>
+				<script>
+/**
+ *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+ *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables
+ */
+
+var disqus_config = function () {
+  this.page.url = document.location.href.split('-')[0];  // Replace PAGE_URL with your page's canonical URL variable
+  this.page.identifier = "projectvinyl-<%= @video.id %>"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+};
+
+(function() {  // REQUIRED CONFIGURATION VARIABLE: EDIT THE SHORTNAME BELOW
+  var d = document, s = d.createElement('script');
+
+  s.src = 'https://sollace.disqus.com/embed.js'; '//EXAMPLE.disqus.com/embed.js';  // IMPORTANT: Replace EXAMPLE with your forum shortname!
+
+  s.setAttribute('data-timestamp', +new Date());
+  (d.head || d.body).appendChild(s);
+})();
+				</script>
+				<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+			</div>
+		</section>
+<% else %>
+<section class="page">Nothing to see here!</section>
+<% end %>

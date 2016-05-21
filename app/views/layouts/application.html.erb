@@ -1,0 +1,49 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title id="document_title">Project Vinyl - Premium Pony Tunes</title>
+	<link type="text/css" href="/css/font-awesome.min.css" rel="stylesheet" />
+	<link type="text/css" href="/css/base.css" rel="stylesheet" />
+	<link type="text/css" href="/css/videos.css" rel="stylesheet" />
+	<script src="https://code.jquery.com/jquery-1.8.3.min.js" id="jquery" ></script>
+	<%= csrf_meta_tags %>
+</head>
+<body>
+	<header class="header">
+		<div id="banner">
+			<a href="/" class="title">Project Vinyl</a>
+			<form action="search" method="get">
+				<div id="search">
+					<div class="select">
+						<select name="type">
+							<option value="1">Album</option>
+							<option value="2">Artist</option>
+							<option value="3">Genre</option>
+						</select>
+					</div>
+					<input type="text" name="query" placeholder="search"></input>
+					<button type="submit"><i class="fa fa-search" ></i></button>
+				</div>
+			</form>
+		</div>
+		<ul>
+			<li class="albums">Albums</li>
+               		<li class="artists">Artists</li>
+			<li class="genres">Genres</li>
+		</ul>
+	</header>
+	<main class="wrapper">
+<%= yield %>
+	</main>
+	<footer>
+		<a title="Home" href="/">projectvinyl.com</a>
+		<div>
+			<a href="/staff">Staff</a>
+			<a href="/privacy">Terms</a>
+		</div>
+		<span>© 2016 Project Vinyl Foundation</span>
+	</footer>
+	<script src="/js/videos.js" ></script>
+	<script src="/js/script.js" ></script>
+</body>
+</html>

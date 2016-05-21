@@ -1,0 +1,45 @@
+* {
+    box-sizing: border-box;
+}
+
+#video {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+body {
+    margin: 0px;
+    padding: 0px;
+    color: #000;
+    font-family: Verdana,sans-serif;
+    line-height: 1.5em;
+    font-size: 13px;
+}
+html, body {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: none;
+}
+
+a {
+    color: #337287;
+    font-weight: bold;
+    outline: none;
+}
+
+h1 {
+    font-size: 2em;
+    font-size-adjust: 0.75;
+    border-bottom: 1px solid rgba(0,0,150, 0.3);
+    text-shadow: 0 0.05em 0.03em rgba(0,0,0,0.3);
+    padding-bottom: 15px;
+}
+
+img.iconic {
+    background: none;
+    border: none;
+    box-shadow: none;
+}

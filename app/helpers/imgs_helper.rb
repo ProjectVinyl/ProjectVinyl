@@ -1,0 +1,2 @@
+module ImgsHelper
+end
