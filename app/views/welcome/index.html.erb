@@ -2,59 +2,27 @@
 			<div class="group today">
 				<h3>Today</h3>
 				<ul class="videos horizontal latest">
+				<% @today.each do |video| %>
 					<li>
-						<a class="thumb" style="background-image:url('/sample/BrushieBrush.png');" href="/view/2-Brushie Brush">
+						<a class="thumb" style="background-image:url('/cover/<%= video.id %>');" href="/view/<%= video.id %>-<%= video.title %>">
 							<div class="title">Brushie Brushie</div>
 						</a>
-						<span class="date underline"><a href="/artist/1-Dr Sample">Dr. Sample</a> - <span>3 hours ago</span></span>
+						<span class="date underline"><a href="/artist/<%= video.artist.id %>-<%= video.artist.name %>"><%= video.artist.name %></a> - <span><%= raw since video.created_at %></span></span>
 					</li>
-					<li>
-						<a class="thumb" style="background-image:url('/sample/The Real Pink Pony.png');" href="/view/1-The Real Pink Pony">
-							<div class="title">The Real Pink Pony</div>
-						</a>
-						<span class="date underline"><a href="/artist/1-Dr Sample">Dr. Sample</a> - <span>3 hours ago</span></span>
-					</li>
-					<li>
-						<a class="thumb" style="background-image:url('/sample/BrushieBrush.png');" href="/view/2-Brushie Brush">
-							<div class="title">Brushie Brushie</div>
-						</a>
-						<span class="date underline"><a href="/artist/1-Dr Sample">Dr. Sample</a> - <span>3 hours ago</span></span>
-					</li>
-					<li>
-						<a class="thumb" style="background-image:url('/sample/The Real Pink Pony.png');" href="/view/2-The Real Pink Pony">
-							<div class="title">The Real Pink Pony</div>
-						</a>
-						<span class="date underline"><a href="/artist/1-Dr Sample">Dr. Sample</a> - <span>3 hours ago</span></span>
-					</li>
+				<% end %>
 				</ul>
 			</div>
 			<div class="group yesterday">
 				<h3>Yesterday</h3>
 				<ul class="videos horizontal latest">
+				<% @yesterday.each do |video| %>
 					<li>
-						<a class="thumb" style="background-image:url('sample/BrushieBrush.png');" href="view/1/Brushie Brush">
+						<a class="thumb" style="background-image:url('/cover/<%= video.id %>');" href="/view/<%= video.id %>-<%= video.title %>">
 							<div class="title">Brushie Brushie</div>
 						</a>
-						<span class="date underline"><a href="artist/1/Dr Sample">Dr. Sample</a> - <span>1 day ago</span></span>
+						<span class="date underline"><a href="/artist/<%= video.artist.id %>-<%= video.artist.name %>"><%= video.artist.name %></a> - <span><%= raw since video.created_at %></span></span>
 					</li>
-					<li>
-						<a class="thumb" style="background-image:url('sample/The Real Pink Pony.png');" href="view/2/The Real Pink Pony">
-							<div class="title">The Real Pink Pony</div>
-						</a>
-						<span class="date underline"><a href="artist/1/Dr Sample">Dr. Sample</a> - <span>1 day ago</span></span>
-					</li>
-					<li>
-						<a class="thumb" style="background-image:url('sample/BrushieBrush.png');" href="view/1/Brushie Brush">
-							<div class="title">Brushie Brushie</div>
-						</a>
-						<span class="date underline"><a href="artist/1/Dr Sample">Dr. Sample</a> - <span>1 day ago</span></span>
-					</li>
-					<li>
-						<a class="thumb" style="background-image:url('sample/The Real Pink Pony.png');" href="view/2/The Real Pink Pony">
-							<div class="title">The Real Pink Pony</div>
-						</a>
-						<span class="date underline"><a href="artist/1/Dr Sample">Dr. Sample</a> - <span>1 day ago</span></span>
-					</li>
+				<% end %>
 				</ul>
 			</div>
 		</section>

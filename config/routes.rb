@@ -1,16 +1,19 @@
 Rails.application.routes.draw do
   
-  
   get 'search' => 'search#index'
   get 'staff' => 'staff#index'
 
 
   
   get 'view/:id' => 'view#view'
+  get 'artist/:id' => 'artist#view'
+  get 'album/:id' => 'album#view'
+
   
-  get 'avatar/:id' => 'imgs#avatar'
-  get 'cover/:id' => 'imgs#cover'
-  get 'stream/:id' => 'imgs#stream'
+  get 'download/:id' => 'imgs#download'
+  
+  post 'ajax/like/:id(/:incr)' => 'view#upvote'
+  post 'ajax/dislike/:id(/:incr)' => 'view#downvote'
   
   root 'welcome#index'
 

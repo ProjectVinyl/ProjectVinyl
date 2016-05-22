@@ -1,0 +1,50 @@
+<% if @artist %>
+		<section style="width:100%" class="page artist-bio">
+			<div class="post">
+				<div class="space-fix">
+					<span class="date registered right underline">Registered <span title="<%= @artist.created_at %>"><%= since @artist.created_at %></span></span>
+					<img alt="Avatar" class="avatar" src="/avatar/<%= @artist.id %>" />
+					<h1 class="title">
+						<a class="name"><%= @artist.name %></a>
+					</h1>
+					<span class="content bio"><%= raw emotify @artist.description %></span>
+				</div>
+				<div class="details">
+					<span class="tag-list underline"></span>
+				</div>
+			</div>
+		</section>
+		<section style="width:100%" class="page recent-uploads resize-holder">
+			<h1 class="title resize-target">Recent Uploads<span> (<span class="count"><%= @videos.length %></span>)</span></h1>
+			<ul id="videos" class="videos horizontal">
+			<% @videos.each do |video| %>
+				<li>
+					<a class="thumb" style="background-image:url('/cover/<%= video.id %>');" href="/view/<%= video.id %>-<%= video.title %>">
+						<div><%= video.title %></div>
+					</a>
+					<span class="date underline" title="<%= video.created_at %>"><%= raw since video.created_at %></span>
+				</li>
+			<% end %>
+			</ul>
+		</section>
+		<section style="width:100%" class="page recent-uploads resize-holder">
+			<h1 class="title resize-target">Recent Albums<span> (<span class="count"><%= @albums.length %></span>)</span></h1>
+			<ul id="albums" class="videos album-list horizontal">
+			<% @albums.each do |album| %>
+				<li>
+					<% @items = album.album_items.order(:index) %>
+					<a class="thumb stack" href="/album/<%= album.id %>-<%= album.title %>">
+						<span style="background-image:url('/cover/<%= @items.second.id %>');" class="stack-item item-1">
+							<span style="background-image:url('/cover/<%= @items.first.id %>');" class="stack-item item-2"></span>
+						</span>
+					</a>
+					<div class="title"><%= album.title %></div>
+					<span title="<%= album.created_at %>" class="date underline"><%= raw since album.created_at %></span>
+				</li>
+			<% end %>
+			</ul>
+		</section>
+		<span class="push"></span>
+<% else %>
+<section class="page">Nothing to see here!</section>
+<% end %>

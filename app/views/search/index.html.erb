@@ -1,4 +1,5 @@
 		<div class="page column-left">
+			<h1>Searching for <%= @type_label %>s containing '<%= @query %>'</h1>
 			<div class="pagination">
 				<a class="button left" href="#/first">First</a>
 				<span class="pages">
@@ -7,7 +8,27 @@
 				<a class="button right" href="#/last">Last</a>
 			</div>
 			<section class="search-result">
-				<ul class="videos"></ul>
+				<ul class="videos">
+				<% @results.each do |item| %>
+					<li>
+					<% if @type == 0 %>
+						<a class="thumb" style="background-image:url('/cover/<%= item.id %>');" href="/view/<%= item.id %>-<%= item.title %>">
+							<div><%= item.title %></div>
+						</a>
+					<% else %>
+					<% if @type == 1 %>
+						<% @items = item.album_items.order(:index) %>
+						<a class="thumb stack" href="/album/<%= item.id %>-<%= item.title %>">
+							<span style="background-image:url('/cover/<%= @items.second.id %>');" class="stack-item item-1">
+								<span style="background-image:url('/cover/<%= @items.first.id %>');" class="stack-item item-2"></span>
+							</span>
+						</a>
+						<div class="title"><%= item.title %></div>
+					<% end %>
+					<% end %>
+					</li>
+				<% end %>
+				</ul>
 			</section>
 			<div class="pagination">
 				<a class="button left" href="#/first">First</a>
@@ -22,18 +43,19 @@
 				<h1 class="resize-target">
 					<a>Search</a>
 				</h1>
-				<span>
-					<input type="text" name="query" placeholder="search" style="width:100%"></input>
-				</span>
 				<form action="search" method="get">
+					<span>
+						<input type="text" name="query" placeholder="search" style="width:100%" value="<%= @query %>"></input>
+					</span>
 					<span class="search-options">
 						<label>
 							<span>Type</span>
 							<div>
-								<select name="type" style="width:100%">
-									<option value="1">Album</option>
-									<option value="2">Artist</option>
-									<option value="3">Genre</option>
+								<select name="type" style="width:100%" value="<%= @type_label %>">
+									<option value="0"<% if @type == 0 %> selected<% end %>>Song</option>
+									<option value="1"<% if @type == 1 %> selected<% end %>>Album</option>
+									<option value="2"<% if @type == 2 %> selected<% end %>>Artist</option>
+									<option value="3"<% if @type == 3 %> selected<% end %>>Genre</option>
 								</select>
 							</div>
 						</label>
@@ -41,18 +63,18 @@
 							<span>Order</span>
 							<div>
 								<select name="order" style="width:100%">
-									<option value="1">Ascending</option>
-									<option value="0">Descending</option>
+									<option value="1"<% if @ascending %> selected<% end %>>Ascending</option>
+									<option value="0"<% if !@ascending %> selected<% end %>>Descending</option>
 								</select>
 							</div>
 						</label>
 						<label>
 							<span>Order By</span>
 							<div>
-								<select name="orderby" style="width:100%">
-									<option value="1">Date</option>
-									<option value="2">Rating</option>
-									<option value="3">Length</option>
+								<select name="orderby" style="width:100%" value="<%= @orderby %>">
+									<option value="1"<% if @orderby == '1' %> selected<% end %>>Date</option>
+									<option value="2"<% if @orderby == '2' %> selected<% end %>>Rating</option>
+									<option value="3"<% if @orderby == '3' %> selected<% end %>>Length</option>
 								</select>
 							</div>
 						</label>

@@ -96,7 +96,6 @@ function Player() {}
         this.source = el.attr('data-audio');
         this.audioOnly = true;
       }
-      el.css('background-image', 'url(\'' + this.source + '.png\')');
       resize.apply(el);
       
       el.find('.title').text(this.title = el.attr('data-title'));
@@ -245,9 +244,9 @@ function Player() {}
       if (!this.video) {
         var video;
         if (this.audioOnly) {
-          video = $('<audio src="' + this.source + '.mp3" type="audio/mpeg"></audio>');
+          video = $('<audio src="/stream/' + this.source + '.mp3" type="audio/mpeg"></audio>');
         } else {
-          video = $('<video src="' + this.source + '.webm" type="video/webm; codecs=\'vp8,vorbis\'"></video>');
+          video = $('<video src="/stream/' + this.source + '.webm" type="video/webm; codecs=\'vp8,vorbis\'"></video>');
         }
         this.video = video[0];
         this.player.find('.playing').append(this.video);

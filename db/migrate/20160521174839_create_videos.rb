@@ -1,15 +1,15 @@
 class CreateVideos < ActiveRecord::Migration
   def change
     create_table :videos do |t|
+      t.integer :artist_id
       t.string :title
       t.text :description
       t.boolean :audio_only
-      t.integer :artist_id
-      t.binary :cover,         :null => false
       t.string :mime
-      t.binary :file,          :null => false
+      t.string :file
 
-      t.timestamps,            :null => true
+      t.timestamps            null: true
     end
+    add_index :videos, :artist_id
   end
 end

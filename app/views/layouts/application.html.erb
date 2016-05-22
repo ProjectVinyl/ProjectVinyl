@@ -7,15 +7,19 @@
 	<link type="text/css" href="/css/videos.css" rel="stylesheet" />
 	<script src="https://code.jquery.com/jquery-1.8.3.min.js" id="jquery" ></script>
 	<%= csrf_meta_tags %>
+	<script>
+var emoticons = <%= raw emoticons %>;
+	</script>
 </head>
 <body>
 	<header class="header">
 		<div id="banner">
 			<a href="/" class="title">Project Vinyl</a>
-			<form action="search" method="get">
+			<form action="/search" method="get">
 				<div id="search">
 					<div class="select">
 						<select name="type">
+							<option value="0">Song</option>
 							<option value="1">Album</option>
 							<option value="2">Artist</option>
 							<option value="3">Genre</option>

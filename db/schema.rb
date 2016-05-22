@@ -11,25 +11,50 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160521174839) do
+ActiveRecord::Schema.define(version: 20160522173218) do
+
+  create_table "album_items", force: :cascade do |t|
+    t.integer "album_id", limit: 4
+    t.integer "video_id", limit: 4
+    t.integer "index",    limit: 4
+  end
+
+  add_index "album_items", ["album_id"], name: "index_album_items_on_album_id", using: :btree
+  add_index "album_items", ["video_id"], name: "index_album_items_on_video_id", using: :btree
+
+  create_table "albums", force: :cascade do |t|
+    t.integer  "artist_id",   limit: 4
+    t.string   "title",       limit: 255
+    t.text     "description", limit: 65535
+    t.datetime "created_at",                null: false
+    t.datetime "updated_at",                null: false
+  end
+
+  add_index "albums", ["artist_id"], name: "index_albums_on_artist_id", using: :btree
 
   create_table "artists", force: :cascade do |t|
     t.string   "name",        limit: 255
     t.text     "description", limit: 65535
     t.text     "bio",         limit: 65535
-    t.string   "avatar",      limit: 255
+    t.string   "mime",        limit: 255
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
   create_table "videos", force: :cascade do |t|
+    t.integer  "artist_id",   limit: 4
     t.string   "title",       limit: 255
     t.text     "description", limit: 65535
     t.boolean  "audio_only"
-    t.integer  "artist_id",   limit: 4
-    t.string   "cover",       limit: 255
+    t.string   "mime",        limit: 255
+    t.string   "file",        limit: 255
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "upvotes",     limit: 4
+    t.integer  "downvotes",   limit: 4
   end
+
+  add_index "videos", ["artist_id"], name: "index_videos_on_artist_id", using: :btree
+  add_index "videos", ["created_at"], name: "index_videos_on_created_at", using: :btree
 
 end

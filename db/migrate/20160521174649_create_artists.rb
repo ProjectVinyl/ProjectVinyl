@@ -4,10 +4,9 @@ class CreateArtists < ActiveRecord::Migration
       t.string :name
       t.text :description
       t.text :bio
-      t.binary :avatar,      :null => false
       t.string :mime
 
-      t.timestamps           :null => true
+      t.timestamps           null: true
     end
   end
 end

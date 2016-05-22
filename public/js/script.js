@@ -62,21 +62,30 @@ var thumbnail = (function() {
   }
 })();
 var ajax = (function() {
-  var domain = document.location.href.split('?')[0].split('/');
-  domain = domain.splice(0, domain.length-1).join('/');
-  return function(resource, callback, direct) {
+  var token = $('meta[name=csrf-token]').attr('content');
+  function request(method, resource, callback, data, direct) {
     $.ajax({
-      method: 'GET',
+      type: method,
       datatype: 'json',
-      url: domain + '/ajax/' + resource,
+      url: '/ajax/' + resource,
       success: direct ? callback : function(xml, type, ev) {
         callback(JSON.parse(ev.responseText));
       },
       error: function(d) {
         console.log(d.responseText);
-      }
+      },
+      data: data
     });
-  };
+  }
+  function result(resource, callback, direct) {
+    request('GET', resource, callback, {}, direct);
+  }
+  result.post = function(resource, callback, direct) {
+    request('POST', resource, callback, {
+      authenticity_token: token
+    }, direct);
+  }
+  return result;
 })();
 var scrollTo = (function() {
   function goto(pos) {
@@ -148,17 +157,13 @@ var resizeFont = (function() {
   return resizeFont;
 })();
 var BBC = (function() {
-  var emoticons = [];
-  ajax('emoticons', function(data) {
-    emoticons = data.emoticons;
-  });
   var active = null;
   var emptyMessage = 'A description has not been written yet.';
   function rich(text) {
     text = text.replace(/\n/g, '<br>').replace(/\[([buis])\]/g, '<$1>').replace(/\[\/([buis])\]/g, '</$1>');
     var i = emoticons.length;
     while (i--) {
-      text = text.replace(new RegExp(':' + emoticons[i] + ':', 'g'), '<img class="emoticon" src="emoticons/' + emoticons[i] + '.png">');
+      text = text.replace(new RegExp(':' + emoticons[i] + ':', 'g'), '<img class="emoticon" src="/emoticons/' + emoticons[i] + '.png">');
     }
     return text;
   }
@@ -166,7 +171,7 @@ var BBC = (function() {
     text = text.replace(/<br>/g, '\n').replace(/<([buis])>/g, '[$1]').replace(/<\/([buis])>/g, '[/$1]');
     var i = emoticons.length;
     while (i--) {
-      text = text.replace(new RegExp('<img class="emoticon" src="emoticons/' + emoticons[i] + '.png">', 'g'), ':' + emoticons[i] + ':');
+      text = text.replace(new RegExp('<img class="emoticon" src="/emoticons/' + emoticons[i] + '.png">', 'g'), ':' + emoticons[i] + ':');
     }
     return text;
   }
@@ -247,7 +252,9 @@ var BBC = (function() {
         count.text(likes);
       }
     }
-    
+    ajax.post('/' + me.attr('data-action') + '/' + me.attr('data-id') + '/' + offset, function(xml) {
+      count.text(xml.count);
+    });
     return me;
   }
   function like() {

@@ -1,18 +1,40 @@
 <% if @video %>
 		<section class="page column-left">
-			<div id="video" style="background-image: url('<%= @video.cover %>');" data-title="<%= @video.title %>" data-artist="<%= @artist.name %>" data-<% if @video.audio_only %>audio<% else %>video<% end %>="<%= @video.id %>" class="video"></div>
+			<div id="video" style="background-image: url('/cover/<%= @video.id %>');" data-title="<%= @video.title %>" data-artist="<%= @artist.name %>" data-<% if @video.audio_only %>audio<% else %>video<% end %>="<%= @video.id %>" class="video"></div>
 			<div class="post description resize-holder">
+			<% if @modificationsAllowed %>
+				<h1 class="title editable post-title resize-target short" data-action="title" data-id="<%= @video.id %>">
+					<span class="content "><%= @video.title %></span>
+					<span class="edit"><i class="fa fa-pencil"></i></span>
+					<span style="display:none">11</span>
+				</h1>
+				<span class="editable post-content" data-action="description" data-id="<%= @video.id %>">
+					<span class="content"><%= raw emotify @video.description %></span>
+					<span class="edit"><i class="fa fa-pencil" ></i></span>
+				</span>
+			<% else %>
 				<h1 class="title post-title resize-target short">
 					<span class="content "><%= @video.title %></span>
 				</h1>
 				<span class="post-content">
-					<span class="content"><%= @video.description %></span>
+					<span class="content"><%= raw emotify @video.description %></span>
 				</span>
+			<% end %>
 				<div class="actions">
-					<a download target="_blank" href="/download/"<%= @video.id %><%= @video.title %>.mp4" class="action download button"><i class="fa fa-download"></i> Download</a>
+					<a download target="_blank" href="/download/<%= @video.id %>-<%= @video.title %>" class="action download button"><i class="fa fa-download"></i> Download</a>
 					<button class="action star"><i class="fa fa-star"></i></button>
-					<button class="action like"><i class="fa fa-thumbs-up"></i></button>
-					<button class="action dislike"><i class="fa fa-thumbs-down"></i></button>
+					<button class="action like" data-count="<%= @video.upvotes %>" data-action="like" data-id="<%= @video.id %>">
+						<i class="fa fa-thumbs-up"></i>
+						<% if @video.upvotes && @video.upvotes > 0 %>
+						<span> (<span class="count"><%= @video.upvotes %></span>)</span>
+						<% end %>
+					</button>
+					<button class="action dislike" data-count="<%= @video.downvotes %>" data-action="dislike" data-id="<%= @video.id %>">
+						<i class="fa fa-thumbs-down"></i>
+						<% if @video.downvotes && @video.downvotes > 0 %>
+						<span> (<span class="count"><%= @video.downvotes %></span>)</span>
+						<% end %>
+					</button>
 					<button class="action report right"><i class="fa fa-flag"></i> Report</button>
 				</div>
 				<div class="form report" data-offset="0">
@@ -46,15 +68,21 @@
 				<h1 class="resize-target">
 					<a class="name" href="/artist/<%= @artist.id %>-<%= @artist.name %>"><%= @artist.name %></a>
 				</h1>
-				<img alt="Avatar" class="avatar" src="<%= @artist.avatar %>" />
-				<span class="bio"><%= @artist.description %></span>
+				<img alt="Avatar" class="avatar" src="/avatar/<%= @artist.id %>" />
+				<span class="bio"><%= raw emotify @artist.bio %></span>
 			</section>
 			<section>
 				<h1 class="resize-target">
 					<a>Discovery Queue</a>
 				</h1>
 				<ul class="queue">
-					<!-- TODO: Queues -->
+				<% @queue.each do |video| %>
+					<li>
+						<a class="thumb" style="background-image:url('/cover/<%= video.id %>');" href="/view/<%= video.id %>-<%= video.title %>">
+							<div><%= video.title %></div>
+						</a>
+					</li>
+				<% end %>
 				</ul>
 			</section>
 		</div>

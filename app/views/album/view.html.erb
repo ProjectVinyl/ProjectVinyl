@@ -1,0 +1,49 @@
+<% if @album %>
+		<section style="width:100%" class="page resize-holder">
+			<div class="post">
+				<a class="thumb stack left">
+						<span style="background-image:url('/cover/<%= @items.second.video.id %>');" class="stack-item item-1">
+							<span style="background-image:url('/cover/<%= @items.first.video.id %>');" class="stack-item item-2"></span>
+						</span>
+					</a>
+				<% if @modificationsAllowed %>
+					<h1 class="editable short title" data-action="album/title" data-id="<%= @album.id %>">
+						<span class="content"><%= @album.title %></span>
+						<span class="edit"><i class="fa fa-pencil"></i></span>
+					</h1>
+					<div class="editable content description" data-action="album/description" data-id="<%= @album.id %>">
+						<span class="content"><%= raw emotify @album.description %></span>
+						<span class="edit"><i class="fa fa-pencil" ></i></span>
+					</div>
+				<% else %>
+					<h1 class="title"><%= @album.title %></h1>
+					<div class="content description"><%= raw emotify @album.description %></div>
+				<% end %>
+					<span class="tag-list underline">
+						By <a href="/artist/<%= @album.artist.id %>-<%= @album.artist.name %>"><%= @album.artist.name %></a>
+					</span>
+			</div>
+		</section>
+		<section style="width:100%"  class="page listing compact">
+			<div class="items<% if @modificationsAllowed %> reorderable<% end %>" data-id="<%= @album.id %>">
+				<span class="bump"></span>
+			<% @items.each do |item| %>
+				<a href="/view/<%= item.video.id %>-<%= item.video.title %>">
+				<% if @modificationsAllowed %>
+					<div class="handle"><i class="fa fa-ellipsis-v"></i></div>
+				<% end %>
+					<div class="title"><%= item.video.title %></div>
+					<div class="duration">-:--</div>
+					<div class="author">
+						<span><%= item.video.artist.name %></span>
+					</div>
+				<% if @modificationsAllowed %>
+					<div class="remove" title="Remove" data-id="<%= item.id %>"><span><i class="fa fa-times"></i></span></div>
+				<% end %>
+				</a>
+			<% end %>
+			</div>
+		</section>
+<% else %>
+<section class="page">Nothing to see here!</section>
+<% end %>
