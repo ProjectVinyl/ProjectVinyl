@@ -1,17 +1,20 @@
 Rails.application.routes.draw do
   
+  get 'embed/view'
   get 'search' => 'search#index'
   get 'staff' => 'staff#index'
 
 
   
   get 'view/:id' => 'view#view'
+  get 'embed/:id' => 'embed#view'
   get 'artist/:id' => 'artist#view'
   get 'album/:id' => 'album#view'
 
   
   get 'download/:id' => 'imgs#download'
   
+  get 'ajax/search' => 'search#page'
   post 'ajax/like/:id(/:incr)' => 'view#upvote'
   post 'ajax/dislike/:id(/:incr)' => 'view#downvote'
   

@@ -1,0 +1,52 @@
+<div class="paginator" data-type="<%= type %>" data-page="<%= paginated.page %>" data-args="<%= content_for :data %>">
+	<%= render '/layouts/pagination' %>
+	<%= yield %>
+	<%= render '/layouts/pagination' %>
+	<script>
+var goto = goto || (function() {
+  function requestPage(context, page, arguments) {
+    if (page == context.attr('data-page')) return;
+    context.attr('data-page', page);
+    page = parseInt(page);
+    arguments = arguments || {};
+    arguments.page = page;
+    var container = context.find('ul');
+    container.addClass('waiting');
+    context.find('.pagination .pages .button.selected').removeClass('selected');
+    ajax.get(context.attr('data-type') + '?' + context.attr('data-args'), function(json) {
+      container.html(json.content);
+      container.removeClass('waiting');
+      context.attr('data-page', json.page);
+      console.log(json.page);
+      context.find('.pagination').each(function() {
+        repaintPages($(this), json.page, json.pages);
+      })
+    }, {});
+  }
+  function repaintPages(context, page, pages) {
+    var index = page > 4 ? page - 4 : 0;
+    context.find('.pages .button').each(function() {
+      if (index > page + 4 && index < pages) {
+        index++;
+        return $(this).remove();
+      }
+      $(this).attr('data-page-to', index).attr('href', '#/page/' + (index + 1)).text(index + 1);
+      if (index == page) {
+        $(this).addClass('selected');
+      }
+      index++;
+    });
+    context = context.find('.pages');
+    while (index <= page + 4 && index < pages) {
+      context.append('<a class="button" data-page-to="' + index + '" href="#/page/' + index++ + '">' + index + '</a> ');
+    }
+  }
+  $(document).on('click', '.pagination .pages .button, .pagination .button.left, .pagination .button.right', function() {
+    goto($(this));
+  });
+  return function(button, arguments) {
+    requestPage(button.closest('.paginator'), button.attr('data-page-to'), arguments);
+  }
+})();
+	</script>
+</div>

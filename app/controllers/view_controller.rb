@@ -25,15 +25,12 @@ class ViewController < ApplicationController
     if count.nil?
       count = 0
     end
-    if incr == 0
-      return count
+    if incr < 0 && count > 0
+      return count - 1
     end
-    if incr < 0
-      if count > 0
-        return count - 1
-      end
-      return count
+    if incr > 0
+      return count + 1
     end
-    return count + 1
+    return count
   end
 end

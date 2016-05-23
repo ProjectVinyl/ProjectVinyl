@@ -259,6 +259,9 @@ ul.videos > li + li {
   }
 }
 
+ul.horizontal {
+  overflow: hidden;
+}
 ul.horizontal > li {
   float: left;
   border-top: none !important;
@@ -275,6 +278,10 @@ ul.horizontal .thumb {
 }
 ul.horizontal > li .thumb .title {
   display: block;
+}
+
+.load-more {
+  text-align: center;
 }
 
 .videos > li .description {

@@ -1,49 +1,30 @@
 		<div class="page column-left">
 			<h1>Searching for <%= @type_label %>s containing '<%= @query %>'</h1>
-			<div class="pagination">
-				<a class="button left" href="#/first">First</a>
-				<span class="pages">
-					<a class="button" href="#/page/1">1</a>
-				</span>
-				<a class="button right" href="#/last">Last</a>
-			</div>
-			<section class="search-result">
-				<ul class="videos">
-				<% @results.each do |item| %>
-					<li>
+			<% content_for :data do %>query=<%= @query %>&type=<%= @type %>&order=<%= @ascending ? 1 : 0 %>&orderby=<%= @orderby %><% end %>
+			<%= render layout: '/layouts/paginated', locals: {type: 'search',paginated: @results} do %>
+				<section class="search-result">
 					<% if @type == 0 %>
-						<a class="thumb" style="background-image:url('/cover/<%= item.id %>');" href="/view/<%= item.id %>-<%= item.title %>">
-							<div><%= item.title %></div>
-						</a>
-					<% else %>
-					<% if @type == 1 %>
-						<% @items = item.album_items.order(:index) %>
-						<a class="thumb stack" href="/album/<%= item.id %>-<%= item.title %>">
-							<span style="background-image:url('/cover/<%= @items.second.id %>');" class="stack-item item-1">
-								<span style="background-image:url('/cover/<%= @items.first.id %>');" class="stack-item item-2"></span>
-							</span>
-						</a>
-						<div class="title"><%= item.title %></div>
+					<ul id="videos" class="videos horizontal">
+						<%= render partial: 'layouts/video_thumb_h', collection: @results.records %>
+					</ul>
+					<% elsif @type == 1 %>
+					<ul id="albums" class="videos album-list horizontal">
+						<%= render partial: 'layouts/album_thumb_h', collection: @results.records %>
+					</ul>
+					<% elsif @type == 2 %>
+					<ul id="artists" class="videos artist-list horizontal">
+						<%= render partial: 'layouts/artist_thumb_h', collection: @results.records %>
+					</ul>
 					<% end %>
-					<% end %>
-					</li>
-				<% end %>
-				</ul>
-			</section>
-			<div class="pagination">
-				<a class="button left" href="#/first">First</a>
-				<span class="pages">
-					<a class="button" href="#/page/1">1</a>
-				</span>
-				<a class="button right" href="#/last">Last</a>
-			</div>
+				</section>
+			<% end %>
 		</div>
 		<div class="page resize-holder column-right right">
 			<section>
 				<h1 class="resize-target">
 					<a>Search</a>
 				</h1>
-				<form action="search" method="get">
+				<form action="search" method="get" id="big-search">
 					<span>
 						<input type="text" name="query" placeholder="search" style="width:100%" value="<%= @query %>"></input>
 					</span>

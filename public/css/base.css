@@ -413,7 +413,7 @@ button, .button {
     cursor: pointer;
 }
 
-button:hover, .button:hover {
+button:hover, .button:hover, button.selected, .button.selected {
    background: #fff;
 }
 
@@ -647,8 +647,24 @@ img.emoticon {
     font-size: 25%;
 }
 
-.pagination {
+.paginator .pagination {
     text-align: center;
+}
+.paginator .waiting {
+  position: relative;
+  opacity: 0.2;
+  transition: opacity 0.5s ease;
+}
+.paginator .waiting::after {
+  content: '\f110';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin-top: -12px;
+  margin-left: -12px;
+  -webkit-animation: fa-spin 1s infinite steps(8);
+  animation: fa-spin 1s infinite steps(8);
+  font: normal normal normal 24px/1 FontAwesome;
 }
 
 .underline > span, .underline a {

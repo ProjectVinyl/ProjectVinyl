@@ -17,32 +17,20 @@
 		<section style="width:100%" class="page recent-uploads resize-holder">
 			<h1 class="title resize-target">Recent Uploads<span> (<span class="count"><%= @videos.length %></span>)</span></h1>
 			<ul id="videos" class="videos horizontal">
-			<% @videos.each do |video| %>
-				<li>
-					<a class="thumb" style="background-image:url('/cover/<%= video.id %>');" href="/view/<%= video.id %>-<%= video.title %>">
-						<div><%= video.title %></div>
-					</a>
-					<span class="date underline" title="<%= video.created_at %>"><%= raw since video.created_at %></span>
-				</li>
-			<% end %>
+				<%= render partial: '/layouts/video_thumb_h', collection: @videos %>
 			</ul>
+			<div class="load-more">
+				<button data-page="0" data-type="videos" data-id="<%= @artist.id %>">Load More</button>
+			</div>
 		</section>
 		<section style="width:100%" class="page recent-uploads resize-holder">
 			<h1 class="title resize-target">Recent Albums<span> (<span class="count"><%= @albums.length %></span>)</span></h1>
 			<ul id="albums" class="videos album-list horizontal">
-			<% @albums.each do |album| %>
-				<li>
-					<% @items = album.album_items.order(:index) %>
-					<a class="thumb stack" href="/album/<%= album.id %>-<%= album.title %>">
-						<span style="background-image:url('/cover/<%= @items.second.id %>');" class="stack-item item-1">
-							<span style="background-image:url('/cover/<%= @items.first.id %>');" class="stack-item item-2"></span>
-						</span>
-					</a>
-					<div class="title"><%= album.title %></div>
-					<span title="<%= album.created_at %>" class="date underline"><%= raw since album.created_at %></span>
-				</li>
-			<% end %>
+				<%= render partial: '/layouts/album_thumb_h', collection: @albums %>
 			</ul>
+			<div class="load-more">
+				<button data-page="0" data-type="albums" data-id="<%= @artist.id %>">Load More</button>
+			</div>
 		</section>
 		<span class="push"></span>
 <% else %>

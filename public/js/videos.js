@@ -175,9 +175,13 @@ function Player() {}
     },
     showContext: function(ev) {
       if (ev.which != 1) {
+        var y = ev.pageY - this.dom.offset().top;
+        var x = ev.pageX - this.dom.offset().left;
+        if (x + this.contextmenu.width() > $(window).width()) x = $(window).width() - this.contextmenu.width();
+        if (y + this.contextmenu.height() + 10 >= $(window).height()) y = $(window).height() - this.contextmenu.height() - 10;
         this.contextmenu.css({
-          top: ev.pageY - this.dom.offset().top,
-          left: ev.pageX - this.dom.offset().left,
+          top: y - this.dom.offset().top,
+          left: x - this.dom.offset().left,
           display: 'table'
         });
         this.contextmenu.css('opacity', '1');
@@ -188,7 +192,7 @@ function Player() {}
       this.player.find('.pause h1').css('pointer-events', 'initial');
       var link = this.player.find('.pause h1 a');
       link.attr({
-        target: '_blank', href: 'view.html?' + id + '-' + this.title
+        target: '_blank', href: '/view/' + id + '-' + this.title
       });
       link.on('click', function (ev) {
         ev.stopPropagation();
@@ -280,7 +284,7 @@ function Player() {}
     },
     pause: function() {
       this.player.removeClass('playing');
-      this.video.pause();
+      if (this.video) this.video.pause();
       this.suspend.css('display', 'none');
     },
     toggleVideo: function() {

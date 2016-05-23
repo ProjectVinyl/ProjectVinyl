@@ -85,6 +85,9 @@ var ajax = (function() {
       authenticity_token: token
     }, direct);
   }
+  result.get = function(resource, callback, data, direct) {
+    request('GET', resource, callback, data, direct);
+  }
   return result;
 })();
 var scrollTo = (function() {

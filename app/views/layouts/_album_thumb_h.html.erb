@@ -1,0 +1,10 @@
+<li>
+	<% @items = album_thumb_h.album_items.order(:index) %>
+	<a class="thumb stack" href="/album/<%= album_thumb_h.id %>-<%= album_thumb_h.title %>">
+		<span style="background-image:url('/cover/<%= @items.second.id %>');" class="stack-item item-1">
+			<span style="background-image:url('/cover/<%= @items.first.id %>');" class="stack-item item-2"></span>
+		</span>
+	</a>
+	<div class="title"><%= album_thumb_h.title %></div>
+	<span title="<%= album_thumb_h.created_at %>" class="date underline"><%= raw since album_thumb_h.created_at %></span>
+</li>

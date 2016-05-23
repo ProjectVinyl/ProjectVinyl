@@ -1,0 +1,19 @@
+<html lang="en">
+	<head>
+		<meta http-equiv="Content-type" content="text/html; charset=utf-8">
+		<title id="document_title">Project Vinyl - Premium Pony Tunes</title>
+		<link rel="icon" sizes="160x160" href="/images/favicon.png">
+		<script src="https://code.jquery.com/jquery-1.8.3.min.js" id="jquery" ></script>
+		<link type="text/css" href="/css/embed.css" rel="stylesheet" />
+		<link type="text/css" href="/css/videos.css" rel="stylesheet" />
+		<link type="text/css" href="/css/font-awesome.min.css" rel="stylesheet" />
+	</head>
+	<body>
+		<div id="video" style="background-image: url('/cover/<%= @video.id %>');" data-title="<%= @video.title %>" data-artist="<%= @artist.name %>" data-<% if @video.audio_only %>audio<% else %>video<% end %>="<%= @video.id %>" class="video"></div>
+		<script src="/js/videos.js" ></script>
+		<script src="/js/script.js" ></script>
+		<script>
+$('#video .player')[0].getPlayerObj().setEmbed('<%= @video.id %>');
+		</script>
+	</body>
+</html>

@@ -1,37 +1,43 @@
 ﻿		<section class="page column-left">
+			<% if @today.count > 0 %>
 			<div class="group today">
 				<h3>Today</h3>
 				<ul class="videos horizontal latest">
-				<% @today.each do |video| %>
-					<li>
-						<a class="thumb" style="background-image:url('/cover/<%= video.id %>');" href="/view/<%= video.id %>-<%= video.title %>">
-							<div class="title">Brushie Brushie</div>
-						</a>
-						<span class="date underline"><a href="/artist/<%= video.artist.id %>-<%= video.artist.name %>"><%= video.artist.name %></a> - <span><%= raw since video.created_at %></span></span>
-					</li>
-				<% end %>
+					<%= render partial: '/layouts/video_thumb_h', collection: @today %>
 				</ul>
 			</div>
+			<% end %>
+			<% if @yesterday.count > 0 %>
 			<div class="group yesterday">
 				<h3>Yesterday</h3>
 				<ul class="videos horizontal latest">
-				<% @yesterday.each do |video| %>
-					<li>
-						<a class="thumb" style="background-image:url('/cover/<%= video.id %>');" href="/view/<%= video.id %>-<%= video.title %>">
-							<div class="title">Brushie Brushie</div>
-						</a>
-						<span class="date underline"><a href="/artist/<%= video.artist.id %>-<%= video.artist.name %>"><%= video.artist.name %></a> - <span><%= raw since video.created_at %></span></span>
-					</li>
-				<% end %>
+					<%= render partial: '/layouts/video_thumb_h', collection: @yesterday %>
 				</ul>
 			</div>
+			<% end %>
+			<% if @week.count > 0 %>
+			<div class="group week">
+				<h3>Earlier this Week</h3>
+				<ul class="videos horizontal latest">
+					<%= render partial: '/layouts/video_thumb_h', collection: @week %>
+				</ul>
+			</div>
+			<% end %>
+			<% if @month.count > 0 %>
+			<div class="group month">
+				<h3>Earlier this Month</h3>
+				<ul class="videos horizontal latest">
+					<%= render partial: '/layouts/video_thumb_h', collection: @month %>
+				</ul>
+			</div>
+			<% end %>
 		</section>
 		<div style="margin-left:-10px;" class="wrapper resize-holder column-right right">
 			<section style="width:100%" class="page">
-				<span>
+				<div style="min-height:600px">
 					<a style="text-decoration:none;" class="twitter-timeline"  href="https://twitter.com/Project_Vinyl" data-widget-id="733733333084086272">Tweets by @Project_Vinyl</a>
 					<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
-				</span>
+				</div>
 			</section>
 			<section style="width:100%" class="page donate">
 				<h1>

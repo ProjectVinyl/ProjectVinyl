@@ -76,36 +76,22 @@
 					<a>Discovery Queue</a>
 				</h1>
 				<ul class="queue">
-				<% @queue.each do |video| %>
-					<li>
-						<a class="thumb" style="background-image:url('/cover/<%= video.id %>');" href="/view/<%= video.id %>-<%= video.title %>">
-							<div><%= video.title %></div>
-						</a>
-					</li>
-				<% end %>
+				<%= render partial: '/layouts/video_thumb_v', collection: @queue %>
 				</ul>
 			</section>
 		</div>
 		<section class="page column-left">
 			<h1 class="title">Comments</h1>
-			<div class="comments" style="min-height:500px">
-				<div id="disqus_thread">An error has occurred. Either something's wrong of I haven't implemented this yet. </div>
+			<div id="disqus_thread" class="comments" style="min-height:500px">
 				<script>
-/**
- *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
- *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables
- */
-
 var disqus_config = function () {
-  this.page.url = document.location.href.split('-')[0];  // Replace PAGE_URL with your page's canonical URL variable
-  this.page.identifier = "projectvinyl-<%= @video.id %>"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+  this.page.url = "<%= url_for(action: 'view', controller: 'view', only_path: false) %>";
+  this.page.identifier = "<%= @video.id %>";
+  this.page.title = "<%= @video.title %> by <%= @artist.name %> - ProjectVinyl";
 };
-
-(function() {  // REQUIRED CONFIGURATION VARIABLE: EDIT THE SHORTNAME BELOW
+(function() {
   var d = document, s = d.createElement('script');
-
-  s.src = 'https://sollace.disqus.com/embed.js'; '//EXAMPLE.disqus.com/embed.js';  // IMPORTANT: Replace EXAMPLE with your forum shortname!
-
+  s.src = 'https://projectvinyl.disqus.com/embed.js';
   s.setAttribute('data-timestamp', +new Date());
   (d.head || d.body).appendChild(s);
 })();
