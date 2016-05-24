@@ -1,0 +1,27 @@
+<% if @genre %>
+<section style="width:100%" class="page artist-bio">
+	<div class="post">
+		<div class="space-fix">
+			<span class="genre-icon" style="float:left">
+				<i class="fa fa-music fa-inverse"></i>
+			</span>
+			<h1 class="title">
+				<a class="name"><%= @genre.name %></a>
+			</h1>
+			<span class="content bio"><%= @genre.description %></span>
+		</div>
+	</div>
+</section>
+<section class="page" style="width: 100%">
+	<h1>Recent Songs</h1>
+	<% if @videos.count > 0 %>
+	<ul id="videos" class="horizontal video-list">
+		<%= render partial: 'layouts/video_thumb_h', collection: @videos %>
+	</ul>
+	<% else %>
+	No activity for this section
+	<% end %>
+</section>
+<% else %>
+<section class="page">Nothing to see here!</section>
+<% end %>

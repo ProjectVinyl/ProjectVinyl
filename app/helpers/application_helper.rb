@@ -39,4 +39,30 @@ module ApplicationHelper
     end
     return 'a few seconds ago'
   end
+  
+  def duration(length)
+    if length == 0
+      return '--:--'
+    end
+    length = length.to_f
+    seconds = (length % 100).to_i.to_s
+    minutes = (length % 10000).to_i.to_s
+    if seconds.length < 2
+      seconds = '0' + seconds
+    end
+    if minutes.length < 2
+      minutes = '0' + minutes
+    end
+    if seconds.length < 2
+      seconds = '0' + seconds
+    end
+    hours = (length / 10000).to_i
+    if hours <= 0
+      return minutes + ':' + seconds
+    end
+    if hours < 10
+      hours = '0' + hours.to_s
+    end
+    return hours + ':' + minutes + ':' + seconds
+  end
 end

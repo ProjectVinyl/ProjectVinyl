@@ -1,7 +1,8 @@
 $(window).ready(function () {
 	function scroller() {
 		var top = window.scrollY;
-		if (top <= 200) banner.css('background-position', 'top calc(50% + ' + (top*0.5) + 'px) center');
+    var width = window.innerWidth;
+		if (top <= 200) banner.css('background-position', 'top calc(50% + ' + (top*0.5) + 'px) ' + (width > 1300 ? 'left' : 'center') + ', top calc(50% + ' + (top*0.5) + 'px) right');
 	}
 	var banner = $('#banner');
 	if (banner.length) {

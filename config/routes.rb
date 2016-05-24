@@ -14,7 +14,18 @@ Rails.application.routes.draw do
   
   get 'download/:id' => 'imgs#download'
   
+  get 'videos' => 'view#videos'
+  get 'albums' => 'view#albums'
+  get 'artists' => 'view#artists'
+  get 'genres' => 'view#genres'
+  get 'genre/:name' => 'view#genre'
+  
   get 'ajax/search' => 'search#page'
+  get 'ajax/videos' => 'view#videos_json'
+  get 'ajax/albums' => 'view#albums_json'
+  get 'ajax/artists' => 'view#artists_json'
+  get 'ajax/genres' => 'view#genres_json'
+  
   post 'ajax/like/:id(/:incr)' => 'view#upvote'
   post 'ajax/dislike/:id(/:incr)' => 'view#downvote'
   

@@ -1,5 +1,13 @@
-<li>
-	<a class="thumb" style="background-image:url('/avatar/<%= artist_thumb_h.id %>');" href="/artist/<%= artist_thumb_h.id %>-<%= artist_thumb_h.name %>">
-		<div><%= artist_thumb_h.name %></div>
-	</a>
+<li class="bio">
+	<span class="avatar">
+		<span style="background-image: url('/avatar/<%= artist_thumb_h.id %>');"></span>
+	</span>
+	<div class="description">
+		<a href="/artist/<%= artist_thumb_h.id %>-<%= artist_thumb_h.name %>">
+			<h2><%= artist_thumb_h.name %></h2>
+		</a>
+		<span class="tag-list">
+			Artist
+		</span>
+	</div>
 </li>

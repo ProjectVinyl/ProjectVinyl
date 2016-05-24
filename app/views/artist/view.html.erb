@@ -1,38 +1,39 @@
 <% if @artist %>
-		<section style="width:100%" class="page artist-bio">
-			<div class="post">
-				<div class="space-fix">
-					<span class="date registered right underline">Registered <span title="<%= @artist.created_at %>"><%= since @artist.created_at %></span></span>
-					<img alt="Avatar" class="avatar" src="/avatar/<%= @artist.id %>" />
-					<h1 class="title">
-						<a class="name"><%= @artist.name %></a>
-					</h1>
-					<span class="content bio"><%= raw emotify @artist.description %></span>
-				</div>
-				<div class="details">
-					<span class="tag-list underline"></span>
-				</div>
-			</div>
-		</section>
-		<section style="width:100%" class="page recent-uploads resize-holder">
-			<h1 class="title resize-target">Recent Uploads<span> (<span class="count"><%= @videos.length %></span>)</span></h1>
-			<ul id="videos" class="videos horizontal">
-				<%= render partial: '/layouts/video_thumb_h', collection: @videos %>
-			</ul>
-			<div class="load-more">
-				<button data-page="0" data-type="videos" data-id="<%= @artist.id %>">Load More</button>
-			</div>
-		</section>
-		<section style="width:100%" class="page recent-uploads resize-holder">
-			<h1 class="title resize-target">Recent Albums<span> (<span class="count"><%= @albums.length %></span>)</span></h1>
-			<ul id="albums" class="videos album-list horizontal">
-				<%= render partial: '/layouts/album_thumb_h', collection: @albums %>
-			</ul>
-			<div class="load-more">
-				<button data-page="0" data-type="albums" data-id="<%= @artist.id %>">Load More</button>
-			</div>
-		</section>
-		<span class="push"></span>
+<section style="width:100%" class="page artist-bio">
+	<div class="post">
+		<div class="space-fix">
+			<span class="date registered right underline">Registered <span title="<%= @artist.created_at %>"><%= since @artist.created_at %></span></span>
+			<span class="avatar large">
+				<span style="background-image:url('/avatar/<%= @artist.id %>');"></span>
+			</span>
+			<h1 class="title">
+				<a class="name"><%= @artist.name %></a>
+			</h1>
+			<span class="content bio"><%= raw emotify @artist.description %></span>
+		</div>
+		<div class="details">
+			<%= render partial: '/layouts/taglist', locals: { collection: @artist.genres } %>
+		</div>
+	</div>
+</section>
+<section style="width:100%" class="page recent-uploads resize-holder">
+	<h1 class="title resize-target">Recent Uploads<span> (<span class="count"><%= @videos.length %></span>)</span></h1>
+	<ul id="videos" class="horizontal video-list">
+		<%= render partial: '/layouts/video_thumb_h', collection: @videos %>
+	</ul>
+	<div class="load-more">
+		<button data-page="0" data-type="videos" data-id="<%= @artist.id %>">Load More</button>
+	</div>
+</section>
+<section style="width:100%" class="page recent-uploads resize-holder">
+	<h1 class="title resize-target">Recent Albums<span> (<span class="count"><%= @albums.length %></span>)</span></h1>
+	<ul id="albums" class="album-list horizontal">
+		<%= render partial: '/layouts/album_thumb_h', collection: @albums %>
+	</ul>
+	<div class="load-more">
+		<button data-page="0" data-type="albums" data-id="<%= @artist.id %>">Load More</button>
+	</div>
+</section>
 <% else %>
 <section class="page">Nothing to see here!</section>
 <% end %>

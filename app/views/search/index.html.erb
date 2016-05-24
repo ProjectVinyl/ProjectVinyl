@@ -4,16 +4,20 @@
 			<%= render layout: '/layouts/paginated', locals: {type: 'search',paginated: @results} do %>
 				<section class="search-result">
 					<% if @type == 0 %>
-					<ul id="videos" class="videos horizontal">
+					<ul id="videos" class="horizontal video-list">
 						<%= render partial: 'layouts/video_thumb_h', collection: @results.records %>
 					</ul>
 					<% elsif @type == 1 %>
-					<ul id="albums" class="videos album-list horizontal">
+					<ul id="albums" class="horizontal album-list">
 						<%= render partial: 'layouts/album_thumb_h', collection: @results.records %>
 					</ul>
 					<% elsif @type == 2 %>
-					<ul id="artists" class="videos artist-list horizontal">
+					<ul id="artists" class="horizontal artist-list">
 						<%= render partial: 'layouts/artist_thumb_h', collection: @results.records %>
+					</ul>
+					<% elsif @type == 3 %>
+					<ul id="genres" class="horizontal genre-list">
+						<%= render partial: 'layouts/genre_thumb_h', collection: @results.records %>
 					</ul>
 					<% end %>
 				</section>

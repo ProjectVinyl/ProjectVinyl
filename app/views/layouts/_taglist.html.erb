@@ -1,0 +1,6 @@
+<span class="tag-list underline">
+	<% collection.each_with_index do |item, index| %>
+		<% if index > 0 %>,<% end %>
+		<a href="/genre/<%= item.name %>"><span><%= item.name %></span></a>
+	<% end %>
+</span>

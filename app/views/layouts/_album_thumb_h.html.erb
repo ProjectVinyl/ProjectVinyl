@@ -1,4 +1,4 @@
-<li>
+<li class="generic">
 	<% @items = album_thumb_h.album_items.order(:index) %>
 	<a class="thumb stack" href="/album/<%= album_thumb_h.id %>-<%= album_thumb_h.title %>">
 		<span style="background-image:url('/cover/<%= @items.second.id %>');" class="stack-item item-1">

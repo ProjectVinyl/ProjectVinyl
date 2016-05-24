@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160522173218) do
+ActiveRecord::Schema.define(version: 20160524174816) do
 
   create_table "album_items", force: :cascade do |t|
     t.integer "album_id", limit: 4
@@ -32,6 +32,14 @@ ActiveRecord::Schema.define(version: 20160522173218) do
 
   add_index "albums", ["artist_id"], name: "index_albums_on_artist_id", using: :btree
 
+  create_table "artist_genres", force: :cascade do |t|
+    t.integer "artist_id", limit: 4
+    t.integer "genre_id",  limit: 4
+  end
+
+  add_index "artist_genres", ["artist_id"], name: "index_artist_genres_on_artist_id", using: :btree
+  add_index "artist_genres", ["genre_id"], name: "index_artist_genres_on_genre_id", using: :btree
+
   create_table "artists", force: :cascade do |t|
     t.string   "name",        limit: 255
     t.text     "description", limit: 65535
@@ -40,6 +48,19 @@ ActiveRecord::Schema.define(version: 20160522173218) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  create_table "genres", force: :cascade do |t|
+    t.string "name",        limit: 255
+    t.text   "description", limit: 65535
+  end
+
+  create_table "video_genres", force: :cascade do |t|
+    t.integer "video_id", limit: 4
+    t.integer "genre_id", limit: 4
+  end
+
+  add_index "video_genres", ["genre_id"], name: "index_video_genres_on_genre_id", using: :btree
+  add_index "video_genres", ["video_id"], name: "index_video_genres_on_video_id", using: :btree
 
   create_table "videos", force: :cascade do |t|
     t.integer  "artist_id",   limit: 4
@@ -52,6 +73,7 @@ ActiveRecord::Schema.define(version: 20160522173218) do
     t.datetime "updated_at"
     t.integer  "upvotes",     limit: 4
     t.integer  "downvotes",   limit: 4
+    t.integer  "length",      limit: 4
   end
 
   add_index "videos", ["artist_id"], name: "index_videos_on_artist_id", using: :btree

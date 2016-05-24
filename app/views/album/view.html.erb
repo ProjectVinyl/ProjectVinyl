@@ -33,7 +33,9 @@
 					<div class="handle"><i class="fa fa-ellipsis-v"></i></div>
 				<% end %>
 					<div class="title"><%= item.video.title %></div>
-					<div class="duration">-:--</div>
+					<div class="duration">
+						<% if item.video.length.nil? %>-:--<% else %><%= duration item.video.length %><% end %>
+					</div>
 					<div class="author">
 						<span><%= item.video.artist.name %></span>
 					</div>

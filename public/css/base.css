@@ -56,11 +56,47 @@ table {
 }
 .post .avatar {
     float: left;
-    max-width: 30%;
+    max-width: 100%;
     max-height: 240px;
     margin-right: 10px;
     margin-bottom: 5px;
 }
+@media(min-width: 450px) {
+  .artist-bio .post .title {
+      margin-left: 240px;
+  }
+}
+.avatar, .genre-icon {
+  display: inline-block;
+  overflow: hidden;
+  width: 150px;
+  height: 150px;
+  border-radius: 100%;
+}
+.genre-icon {
+  background: #a66ebe;
+}
+.genre-icon i::before {
+  font-size: 85px;
+  line-height: 140px;
+  margin-left: -15px;
+}
+.avatar {
+  background: url(../images/avatar/none.jpg) no-repeat center rgb(178,230,251);
+}
+.avatar span {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 100%;
+  background: no-repeat center/cover;
+  box-shadow: 0 0 10px -5px #000 inset, 0 0 1px 0 #000;
+}
+.avatar.large {
+  width: 240px;
+  height: 240px;
+}
+
 .post > * {
     vertical-align: top;
 }
@@ -165,7 +201,7 @@ header ul {
 header ul > li {
     opacity: 0.6;
 }
-header ul > li:hover {
+header ul > li:hover, header ul > li.selected {
   opacity: 1;
   transition: opacity 0.25s ease;
 }
@@ -173,23 +209,29 @@ header ul li, header ul li a {
     font-size: 20px;
     display: inline-block;
     line-height: 40px;
-    padding-left: 5px;
-    padding-right: 5px;
-    color: #008;
     text-shadow: 0 0.05em 0.03em rgba(0,0,0,0.3);
     text-decoration: none;
     transition: color 0.05125s linear, background-color 0.05125s linear;
     vertical-align: middle;
-    margin: 0 10px;
     cursor: pointer;
 }
-header .albums:hover {
+header ul li {
+    padding-left: 5px;
+    padding-right: 5px;
+    margin: 0 10px;
+    color: #008;
+}
+header.header ul li a {
+  margin-top: -5px;
+  color: inherit;
+}
+header .albums:hover, header .albums.selected {
   background: #e6b91f;
 }
-header .artists:hover {
+header .artists:hover, header .artists.selected {
   background: #e97135;
 }
-header genres:hover {
+header .genres:hover, header .genres.selected {
   background: #a66ebe;
 }
 header ul li img {
@@ -201,19 +243,19 @@ header ul li img {
     box-shadow: 0 0 10px -1px #fff inset;
     opacity: 0.3;
 }
-header ul li:hover img {
+header ul li:hover img, header ul li.selected img {
     transition: opacity 0.5s linear;
     opacity: 1;
 }
 
-header ul li:hover {
-    background: #00a;
+header ul li:hover, header ul li.selected {
     color: #fff;
 }
 #banner {
     height: 200px;
-    background: url(https://raw.githubusercontent.com/Sollace/FimFiction-Advanced/master/banners/jj_trixie.jpg) center #fff;
-    background-size: cover;
+    background: url(../images/banner.png) no-repeat center left,
+                url(../images/banner_b.png) center right #fff; 
+    /*background-size: cover;*/
 }
 #banner .title {
     font-weight: bold;
@@ -643,6 +685,10 @@ img.emoticon {
     float: left;
 }
 
+.center {
+    text-align: center;
+}
+
 .small {
     font-size: 25%;
 }
@@ -697,39 +743,34 @@ img.emoticon {
   padding: 0;
   margin: -10px;
 }
-.staff li {
+
+li.bio, li.genre {
   float: left;
   margin: 10px;
   width: 200px;
   text-align: center;
   min-height: 300px;
+  overflow: hidden;
 }
-.staff li > * {
+li.bio > *, li.genre {
   vertical-align: middle;
   
 }
-.staff li .avatar {
-  display: inline-block;
-  background: url(../images/avatar/none.jpg) no-repeat center rgb(178,230,251);
-  overflow: hidden;
-  width: 150px;
-  height: 150px;
-  border-radius: 100%;
-}
-.staff li .avatar span {
-  display: block;
-  width: 100%;
-  height: 100%;
-  border-radius: 100%;
-  background: no-repeat center/contain;
-  box-shadow: 0 0 10px -5px #000 inset, 0 0 1px 0 #000;
-}
-.staff li {
+li.bio, li.genre {
   background: #fff;
   border: solid 1px #ccc;
   box-shadow: 1px 1px 1px 0 #ccc;
   padding: 10px;
 }
+
+li.genre {
+  min-height: 150px;
+}
+
+.bio.short {
+  vertical-align: top;
+}
+
 .staff li > div {
   padding: 10px;
 }

@@ -1,0 +1,24 @@
+<section class="page" style="width: 100%">
+	<h1>All <%= type_label %>s</h1>
+	<%= render layout: '/layouts/paginated', locals: {type: type, paginated: items} do %>
+		<section class="search-result">
+			<% if type_id == 0 %>
+			<ul id="videos" class="horizontal video-list">
+				<%= render partial: 'layouts/video_thumb_h', collection: items.records %>
+			</ul>
+			<% elsif type_id == 1 %>
+			<ul id="albums" class="horizontal album-list">
+				<%= render partial: 'layouts/album_thumb_h', collection: items.records %>
+			</ul>
+			<% elsif type_id == 2 %>
+			<ul id="artists" class="horizontal artist-list">
+				<%= render partial: 'layouts/artist_thumb_h', collection: items.records %>
+			</ul>
+			<% elsif type_id == 3 %>
+			<ul id="genres" class="horizontal genre-list">
+				<%= render partial: 'layouts/genre_thumb_h', collection: items.records %>
+			</ul>
+			<% end %>
+		</section>
+	<% end %>
+</section>

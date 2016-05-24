@@ -31,13 +31,14 @@ var emoticons = <%= raw emoticons %>;
 			</form>
 		</div>
 		<ul>
-			<li class="albums">Albums</li>
-               		<li class="artists">Artists</li>
-			<li class="genres">Genres</li>
+			<li class="albums<% if params[:action] == 'albums' %> selected<% end %>"><a href="/albums">Albums</a></li>
+               		<li class="artists<% if params[:action] == 'artists' %> selected<% end %>"><a href="/artists">Artists</a></li>
+			<li class="genres<% if params[:action] == 'genres' %> selected<% end %>"><a href="/genres">Genres</a></li>
 		</ul>
 	</header>
 	<main class="wrapper">
-<%= yield %>
+		<%= yield %>
+		<span class="push"></span>
 	</main>
 	<footer>
 		<a title="Home" href="/">projectvinyl.com</a>

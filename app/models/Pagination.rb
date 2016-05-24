@@ -1,10 +1,13 @@
 class Pagination
-    def self.paginate(records, pageNumber, pageSize, reverse)
+  def self.paginate(records, pageNumber, pageSize, reverse)
+    if records.count == 0
+      return Pagination.new(records, 0, 0, false)
+    end
     if pageNumber.nil?
       pageNumber = 0
     end
     if records.count <= pageSize
-      return Pagination.new(records, 1, 0, reverse)
+      return Pagination.new(records, 0, 0, reverse)
     end
     if records.count <= pageNumber * pageSize || pageNumber < 0
       pageNumber = (records.count / pageSize)

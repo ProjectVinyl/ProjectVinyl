@@ -63,13 +63,15 @@
 				</div>
 			</div>
 		</section>
-		<div class="page resize-holder column-right right">
+		<div class="page resize-holder column-right right center">
 			<section class="artist-bio">
 				<h1 class="resize-target">
 					<a class="name" href="/artist/<%= @artist.id %>-<%= @artist.name %>"><%= @artist.name %></a>
 				</h1>
-				<img alt="Avatar" class="avatar" src="/avatar/<%= @artist.id %>" />
-				<span class="bio"><%= raw emotify @artist.bio %></span>
+				<span class="avatar">
+					<span style="background-image:url('/avatar/<%= @artist.id %>');"></span>
+				</span>
+				<div class="bio short"><%= raw emotify @artist.bio %></div>
 			</section>
 			<section>
 				<h1 class="resize-target">
