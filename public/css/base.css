@@ -79,17 +79,20 @@ table {
 .genre-icon i::before {
   font-size: 85px;
   line-height: 140px;
-  margin-left: -15px;
+  margin-left: -10px;
+  text-align: center;
 }
 .avatar {
   background: url(../images/avatar/none.jpg) no-repeat center rgb(178,230,251);
 }
-.avatar span {
+.avatar span, .genre-icon i::before,.genre-icon i {
   display: block;
   width: 100%;
   height: 100%;
   border-radius: 100%;
   background: no-repeat center/cover;
+}
+.avatar span {
   box-shadow: 0 0 10px -5px #000 inset, 0 0 1px 0 #000;
 }
 .avatar.large {
@@ -105,10 +108,15 @@ table {
     overflow-y: hidden;
 }
 .post .actions, .post .details {
-    margin-top: 30px;
+    margin-top: 10px;
     padding-top: 20px;
     border-top: 1px solid rgba(0,0,150, 0.3);
 }
+.post .post-tags {
+    margin-top: 30px;
+    padding-top: 10px;
+}
+
 .tag-list, .date, .source, .tag-list a {
     font-size: 0.8em;
 }
@@ -399,12 +407,6 @@ button, .button, #search > * {
     line-height: 20px;
 }
 
-button, .button {
-    user-select: none;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-}
-
 .search-options label {
     display: block;
     border: 1px solid #ccc;
@@ -453,6 +455,9 @@ button, .button {
 
 button, .button {
     cursor: pointer;
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
 }
 
 button:hover, .button:hover, button.selected, .button.selected {
@@ -462,6 +467,12 @@ button:hover, .button:hover, button.selected, .button.selected {
 button:active, .button:active, #search > button:active {
    background: #f8f8f8;
    box-shadow: 0 0 5px 0 rgba(0,0,0,0.3) inset;
+}
+
+button.disable, .button.disable, button.working, .button.working {
+    opacity: 0.6;
+    pointer-events: none;
+    box-shadow: 0 0 2px 0 rgba(0,0,0,0.1) inset;
 }
 
 input, select {
@@ -765,6 +776,17 @@ li.bio, li.genre {
 
 li.genre {
   min-height: 150px;
+}
+
+li.bio a, li.genre a{
+  text-decoration: none;
+}
+li.bio h2, li.genre h2 {
+  text-decoration: none;
+  text-overflow: ellipsis;
+  -o-text-overflow: ellipsis;
+  overflow: hidden;
+  line-height: 25px;
 }
 
 .bio.short {

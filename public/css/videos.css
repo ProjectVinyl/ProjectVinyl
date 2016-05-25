@@ -409,6 +409,9 @@ i.fa.fa-volume-mid {
   margin-top: 5px;
   white-space: nowrap;
 }
+.form.report form {
+  display: inline-block;
+}
 .form.report.reporting {
   opacity: 1;
   background: #f8f8f8;

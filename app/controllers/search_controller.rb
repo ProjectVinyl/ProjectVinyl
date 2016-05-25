@@ -20,7 +20,7 @@ class SearchController < ApplicationController
       @results = Video.where('title LIKE ?', "%#{@query}%")
       @type_label = 'Song'
     end
-    @results = Pagination.paginate(@results, @page, 45, !@ascending)
+    @results = Pagination.paginate(@results, @page, 20, !@ascending)
   end
   
   def page

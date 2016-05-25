@@ -7,4 +7,5 @@ class ImgsController < ApplicationController
         :type => @video.mime
     )
   end
+  
 end

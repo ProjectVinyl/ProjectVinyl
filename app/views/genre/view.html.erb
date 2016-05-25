@@ -6,7 +6,7 @@
 				<i class="fa fa-music fa-inverse"></i>
 			</span>
 			<h1 class="title">
-				<a class="name"><%= @genre.name %></a>
+				<a class="name" href="/genre/<%= url_safe @genre.name %>"><%= @genre.name %></a>
 			</h1>
 			<span class="content bio"><%= @genre.description %></span>
 		</div>
@@ -14,7 +14,7 @@
 </section>
 <section class="page" style="width: 100%">
 	<h1>Recent Songs</h1>
-	<% if @videos.count > 0 %>
+	<% if @videos.length > 0 %>
 	<ul id="videos" class="horizontal video-list">
 		<%= render partial: 'layouts/video_thumb_h', collection: @videos %>
 	</ul>
@@ -23,5 +23,7 @@
 	<% end %>
 </section>
 <% else %>
-<section class="page">Nothing to see here!</section>
+<%= render layout: '/layouts/error', locals: { title: 'Nothing to see here!' } do %>
+This genre does not exist.
+<% end %>
 <% end %>

@@ -5,29 +5,32 @@ Rails.application.routes.draw do
   get 'staff' => 'staff#index'
 
 
+  get 'login' => 'login#index'
   
   get 'view/:id' => 'view#view'
   get 'embed/:id' => 'embed#view'
   get 'artist/:id' => 'artist#view'
   get 'album/:id' => 'album#view'
+  get 'genre/:name' => 'genre#view'
 
-  
+
   get 'download/:id' => 'imgs#download'
   
   get 'videos' => 'view#videos'
   get 'albums' => 'view#albums'
   get 'artists' => 'view#artists'
   get 'genres' => 'view#genres'
-  get 'genre/:name' => 'view#genre'
   
   get 'ajax/search' => 'search#page'
   get 'ajax/videos' => 'view#videos_json'
   get 'ajax/albums' => 'view#albums_json'
   get 'ajax/artists' => 'view#artists_json'
   get 'ajax/genres' => 'view#genres_json'
+  get 'ajax/reporter/:id' => 'view#reporter'
   
   post 'ajax/like/:id(/:incr)' => 'view#upvote'
   post 'ajax/dislike/:id(/:incr)' => 'view#downvote'
+  post 'ajax/report/:id' => 'view#report'
   
   root 'welcome#index'
 

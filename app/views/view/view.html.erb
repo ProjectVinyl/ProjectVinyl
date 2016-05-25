@@ -12,6 +12,9 @@
 					<span class="content"><%= raw emotify @video.description %></span>
 					<span class="edit"><i class="fa fa-pencil" ></i></span>
 				</span>
+				<div class="post-tags">
+					<%= render partial: '/layouts/taglist', locals: { collection: @video.genres } %>
+				</div>
 			<% else %>
 				<h1 class="title post-title resize-target short">
 					<span class="content "><%= @video.title %></span>
@@ -19,8 +22,12 @@
 				<span class="post-content">
 					<span class="content"><%= raw emotify @video.description %></span>
 				</span>
+				<div class="post-tags">
+					<%= render partial: '/layouts/taglist', locals: { collection: @video.genres } %>
+				</div>
 			<% end %>
 				<div class="actions">
+				<% if Auth.is_signed_in(session) %>
 					<a download target="_blank" href="/download/<%= @video.id %>-<%= @video.title %>" class="action download button"><i class="fa fa-download"></i> Download</a>
 					<button class="action star"><i class="fa fa-star"></i></button>
 					<button class="action like" data-count="<%= @video.upvotes %>" data-action="like" data-id="<%= @video.id %>">
@@ -35,6 +42,22 @@
 						<span> (<span class="count"><%= @video.downvotes %></span>)</span>
 						<% end %>
 					</button>
+				<% else %>
+					<a target="_blank" href="/login" class="action download button"><i class="fa fa-download"></i> Download</a>
+					<a target="_blank" href="/login" class="button action star"><i class="fa fa-star"></i></a>
+					<a target="_blank" href="/login" class="button action like" data-count="<%= @video.upvotes %>" data-action="like" data-id="<%= @video.id %>">
+						<i class="fa fa-thumbs-up"></i>
+						<% if @video.upvotes && @video.upvotes > 0 %>
+						<span> (<span class="count"><%= @video.upvotes %></span>)</span>
+						<% end %>
+					</a>
+					<a target="_blank" href="/login" class="button action dislike" data-count="<%= @video.downvotes %>" data-action="dislike" data-id="<%= @video.id %>">
+						<i class="fa fa-thumbs-down"></i>
+						<% if @video.downvotes && @video.downvotes > 0 %>
+						<span> (<span class="count"><%= @video.downvotes %></span>)</span>
+						<% end %>
+					</a>
+				<% end %>
 					<button class="action report right"><i class="fa fa-flag"></i> Report</button>
 				</div>
 				<div class="form report" data-offset="0">
@@ -50,10 +73,10 @@
     var holder = $(this).parents('.page').find('.form.report');
     if (!$(this).hasClass('loaded')) {
       $(this).addClass('loaded');
-      ajax('reporter/<%= @video.id %>', function(xml, type, ev) {
-        holder.html(ev.responseText);
+      ajax('reporter/<%= @video.id %>', function(json) {
+        holder.html(json.content);
         openReport(holder);
-      }, 1);
+      });
     } else {
         openReport(holder);
     }
@@ -65,12 +88,12 @@
 		</section>
 		<div class="page resize-holder column-right right center">
 			<section class="artist-bio">
-				<h1 class="resize-target">
-					<a class="name" href="/artist/<%= @artist.id %>-<%= @artist.name %>"><%= @artist.name %></a>
-				</h1>
 				<span class="avatar">
 					<span style="background-image:url('/avatar/<%= @artist.id %>');"></span>
 				</span>
+				<h1 class="resize-target">
+					<a class="name" href="/artist/<%= @artist.id %>-<%= @artist.name %>"><%= @artist.name %></a>
+				</h1>
 				<div class="bio short"><%= raw emotify @artist.bio %></div>
 			</section>
 			<section>
@@ -102,5 +125,7 @@ var disqus_config = function () {
 			</div>
 		</section>
 <% else %>
-<section class="page">Nothing to see here!</section>
+<%= render layout: '/layouts/error', locals: { title: 'Nothing to see here!' } do %>
+This is not the video you are looking for.
+<% end %>
 <% end %>

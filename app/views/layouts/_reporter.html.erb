@@ -1,0 +1,217 @@
+﻿<form action="/report/<%= video %>" method="post">
+	<div class="section active" data-stage="start">
+		Please select the type of report you would like to submit.
+		<table>
+			<tr>
+				<td><label><input type="radio" name="first" data-to="stolen" value="stolen"></input><i class="fa"></i> This is my intellectual Property</label></td>
+			</tr>
+			<tr>
+				<td><label><input type="radio" name="first" data-to="copy" value="copy"></input><i class="fa"></i> This video uses copyrighted material</label></td>
+			</tr>
+			<tr>
+				<td><label><input type="radio" name="first" data-to="content" value="content"></input><i class="fa"></i> This video features content of an inapropriate/disturbing nature</label></td>
+			</tr>
+			<tr>
+				<td><label><input type="radio" name="first" data-to="other" value="other"></input><i class="fa"></i> Other</label></td>
+			</tr>
+		</table>
+	</div>
+	<div class="section" data-stage="stolen">
+		If this video belongs to you, and was uploaded without your permision, fill in the following form.
+		Note that this reason does <b>not</b> apply to remixes and adaptations. If you feel that this video is using your content unfairly use the <b>Copyright</b> reason.
+		<table>
+			<tr>
+				<td colspan="2">
+					<span>Please provide a link to where you believe this video may have come from. Must be older than the current report target.</span>
+					<input style="width:100%" type="text" name="source"></input>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<button class="goto left" data-to="start" type="button">< Back</button>
+				</td>
+				<td>
+					<button class="goto right" data-to="final" type="button">Next ></button>
+				</td>
+			</tr>
+		</table>
+	</div>
+	<div class="section" data-stage="content">
+		Please select the option(s) that best describe the content in this video.
+		<table>
+			<tr>
+				<td colspan="2"><label><input type="checkbox" name="content-type" value="unrelated"></input><i class="fa"></i> Unrelated content</label></td>
+			</tr>
+			<tr>
+				<td colspan="2"><label><input type="checkbox" name="content-type" value="offensive"></input><i class="fa"></i> Offensive/Deflamatory content</label></td>
+			</tr>
+			<tr>
+				<td colspan="2"><label><input type="checkbox" name="content-type" value="disturbing"></input><i class="fa"></i> This video contains disturbing imagery</label></td>
+			</tr>
+			<tr>
+				<td colspan="2"><label><input type="checkbox" name="content-type" value="po_n"></input><i class="fa"></i> Pornography</label></td>
+			</tr>
+			<tr>
+				<td>
+					<button class="goto left" data-to="start" type="button">< Back</button>
+				</td>
+				<td>
+					<button class="goto right" data-to="final" type="button">Next ></button>
+				</td>
+			</tr>
+		</table>
+	</div>
+	<div class="section" data-stage="copy">
+		If you believe that this video is using copyrighted material that does not fall in line with this site's <a href="fairuse">Fair Use Guidelines</a> submit a report with the below form.
+		<table>
+			<tr>
+				<td colspan="2">
+					Name of copyright holder, entity, or organisation:
+					<input style="width:100%" type="text" name="copyright_holder"></input>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="2">
+					Describe <b>exactly</b> where the offending content occurs in the video, and the conditions under which it is used.
+					<textarea type="text" name="copyright_usage"></textarea>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="2"><label><input type="checkbox" name="content-type" data-required="true" value="copyright_accept"></input><i class="fa"></i> I am or represent the copyright holder for the identified content in this video</label></td>
+			</tr>
+			<tr>
+				<td>
+					<button class="goto left" data-to="start" type="button">< Back</button>
+				</td>
+				<td>
+					<button class="goto right" data-to="final" type="button">Next ></button>
+				</td>
+			</tr>
+		</table>
+	</div>
+	<div class="section" data-stage="other">
+		Please provide as much detail as possible so as to help the moderation team resolve your issue as quickly as possible.
+		<table>
+			<tr>
+				<td colspan="2">
+					<input style="width:100%" type="text" name="subject" placeholder="Subject"></input>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="2">
+					<textarea type="text" name="other"></textarea>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<button class="goto left" data-to="start" type="button">< Back</button>
+				</td>
+				<td>
+					<button class="goto right" data-to="final" type="button">Next ></button>
+				</td>
+			</tr>
+		</table>
+	</div>
+	<div class="section" data-stage="final">
+		Please enter your contact details, in case we need to get into contact with you.
+		<table>
+			<tr>
+				<td>
+					<input style="width:100%" type="text" name="name" placeholder="Name"></input>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<input style="width:100%" type="text" name="contact" placeholder="Email"></input>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<button class="goto right send" data-to="end" type="button">Send</button>
+				</td>
+			</tr>
+		</table>
+	</div>
+	<div class="section" data-stage="end">
+		<table>
+			<tr>
+				<td>
+					Thank you! Your report will be addressed shortly.
+				</td>
+			</tr>
+		</table>
+	</div>
+	<script>
+(function() {
+  function goNext() {
+    var me = $(this);
+    var required = me.parents('.section').find('input[data-required]');
+    if (required.length) {
+      for (var i = 0; i < required.length; i++) {
+         var r = required.eq(i);
+         if (r.val() != r.attr('data-required') && (r.attr('type') !== 'checkbox' || !!r.attr('checked') != !!r.attr('data-required'))) {
+            alert('One or more required fields need to be filled in.');
+            r.focus();
+            return;
+         }
+      }
+    }
+    var form = me.parents('.form');
+    var to = form.find('.section[data-stage=' + me.attr('data-to') + ']');
+    if (to.length) {
+      var offset = parseInt(form.attr('data-offset')) + 1;
+      form.attr('data-offset', offset);
+      var from = form.find('.active');
+      var fromH = from.height();
+      var formH = form.height();
+      from.removeClass('active');
+      from.after(to);
+      to.addClass('active');
+      setTimeout(function() {
+        form.css('min-height', formH - (fromH - to.height()));
+        form.css('max-height', formH - (fromH - to.height()));
+        form.addClass('animating');
+        form.find('.section').css('transform', 'translate(' + (-100 * offset) + '%,0)');
+        setTimeout(function() {
+          form.removeClass('animating');
+          form.css('max-height', '');
+        }, 500);
+      },1);
+      if (me.hasClass('send')) {
+        setTimeout(function() {
+          form.removeClass('reporting');
+        }, 1000);
+        form.submit();
+      }
+    }
+  }
+  function goPrev() {
+    var me = $(this);
+    var form = me.parents('.form');
+    var to = form.find('.section[data-stage=' + me.attr('data-to') + ']');
+    if (to.length) {
+      var offset = parseInt(form.attr('data-offset')) - 1;
+      form.attr('data-offset', offset);
+      var from = form.find('.active');
+      var fromH = from.height();
+      var formH = form.height();
+      from.removeClass('active');
+      to.addClass('active');
+      setTimeout(function() {
+        form.css('min-height', formH - (fromH - to.height()));
+        form.css('max-height', formH - (fromH - to.height()));
+        form.addClass('animating');
+        form.find('.section').css('transform', 'translate(' + (-100 * offset) + '%,0)');
+        setTimeout(function() {
+          form.removeClass('animating');
+          form.css('max-height', '');
+        }, 500);
+      },1);
+    }
+  }
+  $('.form.report input[data-to]').on('click', goNext);
+  $('.form.report button.goto.right').on('click', goNext);
+  $('.form.report button.goto.left').on('click', goPrev);
+})();
+	</script>
+</form>

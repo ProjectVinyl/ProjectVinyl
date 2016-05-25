@@ -461,3 +461,26 @@ $(document).on('focus', 'label input, label select', function() {
 }).on('blur', 'label input, label select', function() {
   $(this).closest('label').removeClass('focus');
 });
+
+
+function lazyLoad(button) {
+  var target = $('#' + button.attr('data-target'));
+  var page = parseInt(button.attr('data-page')) + 1;
+  button.addClass('working');
+  ajax.get(button.attr('data-type'), function(json) {
+    button.removeClass('working');
+    if (json.page == page) {
+      target.append(json.content);
+      button.attr('data-page', page);
+    } else {
+      button.remove();
+    }
+  }, {
+    page: page,
+    artist: button.attr('data-id')
+  });
+}
+
+$(document).on('click', '.load-more button', function() {
+  lazyLoad($(this));
+})

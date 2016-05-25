@@ -1,14 +1,10 @@
 class ViewController < ApplicationController
   def view
-    @video = Video.find(params[:id].split(/-/)[0])
-    @artist = @video.artist
-    @queue = @artist.videos.where.not(id: @video.id).limit(5).order("RAND()")
-    @modificationsAllowed = session[:current_user_id] == @artist.id
-  end
-  
-  def genre
-    @genre = Genre.where('name = ?', params[:name]).first
-    @videos = @genre.videos.order(:created_at).reverse_order.limit(16)
+    if @video = Video.where(id: params[:id].split(/-/)[0]).first
+      @artist = @video.artist
+      @queue = @artist.videos.where.not(id: @video.id).limit(5).order("RAND()")
+      @modificationsAllowed = session[:current_user_id] == @artist.id
+    end
   end
   
   def videos
@@ -37,7 +33,12 @@ class ViewController < ApplicationController
   
   def videos_json
     @page = params[:page].to_i
-    @results = Pagination.paginate(Video.order(:created_at), @page, 50, true)
+    @artist = params[:artist]
+    if @artist.nil?
+      @results = Pagination.paginate(Video.order(:created_at), @page, 50, true)
+    else
+      @results = Pagination.paginate(Artist.find(@artist.to_i).videos.order(:created_at), @page, 8, true)
+    end
     render json: {
       content: render_to_string(partial: '/layouts/video_thumb_h.html.erb', collection: @results.records),
       pages: @results.pages,
@@ -47,7 +48,12 @@ class ViewController < ApplicationController
   
   def albums_json
     @page = params[:page].to_i
-    @results = Pagination.paginate(Album.order(:created_at), @page, 50, true)
+    @artist = params[:artist]
+    if @artist.nil?
+      @results = Pagination.paginate(Album.order(:created_at), @page, 50, true)
+    else
+      @results = Pagination.paginate(Artist.find(@artist.to_i).albums.order(:created_at), @page, 8, true)
+    end
     render json: {
       content: render_to_string(partial: '/layouts/album_thumb_h.html.erb', collection: @results.records),
       pages: @results.pages,
@@ -75,18 +81,32 @@ class ViewController < ApplicationController
     }
   end
   
+  def reporter
+    render json: {
+      content: render_to_string(partial: '/layouts/reporter', locals: { 'video': params[:id] })
+    }
+  end
+  
   def upvote
-    @video = Video.find(params[:id])
-    @video.upvotes = computeCount(params[:incr].to_i, @video.upvotes)
-    @video.save
-    render :json => { :count => @video.upvotes }
+    if Auth.is_signed_in(session)
+      @video = Video.find(params[:id])
+      @video.upvotes = computeCount(params[:incr].to_i, @video.upvotes)
+      @video.save
+      render json: { :count => @video.upvotes }
+    else
+      render status: 401, nothing: true
+    end
   end
   
   def downvote
-    @video = Video.find(params[:id])
-    @video.downvotes = computeCount(params[:incr].to_i, @video.downvotes)
-    @video.save
-    render :json => { :count => @video.downvotes }
+    if Auth.is_signed_in(session)
+      @video = Video.find(params[:id])
+      @video.downvotes = computeCount(params[:incr].to_i, @video.downvotes)
+      @video.save
+      render json: { :count => @video.downvotes }
+    else
+      render status: 401, nothing: true
+    end
   end
 
   private

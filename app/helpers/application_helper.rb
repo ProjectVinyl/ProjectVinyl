@@ -65,4 +65,12 @@ module ApplicationHelper
     end
     return hours + ':' + minutes + ':' + seconds
   end
+  
+  def url_safe(txt)
+    return txt.gsub(/\//,'+')
+  end
+  
+  def self.url_unsafe(txt)
+    return txt.gsub(/%2B|\+/, '/')
+  end
 end

@@ -1,7 +1,8 @@
 class ArtistController < ApplicationController
   def view
-    @artist = Artist.find(params[:id].split(/-/)[0])
-    @videos = @artist.videos
-    @albums = @artist.albums
+    if @artist = Artist.where(id: params[:id].split(/-/)[0]).first
+      @videos = Pagination.paginate(@artist.videos, 0, 8, true)
+      @albums = Pagination.paginate(@artist.albums, 0, 8, true)
+    end
   end
 end

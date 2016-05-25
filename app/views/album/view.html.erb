@@ -20,7 +20,7 @@
 					<div class="content description"><%= raw emotify @album.description %></div>
 				<% end %>
 					<span class="tag-list underline">
-						By <a href="/artist/<%= @album.artist.id %>-<%= @album.artist.name %>"><%= @album.artist.name %></a>
+						By <a href="/artist/<%= @album.artist.id %>-<%= url_safe @album.artist.name %>"><%= @album.artist.name %></a>
 					</span>
 			</div>
 		</section>
@@ -28,7 +28,7 @@
 			<div class="items<% if @modificationsAllowed %> reorderable<% end %>" data-id="<%= @album.id %>">
 				<span class="bump"></span>
 			<% @items.each do |item| %>
-				<a href="/view/<%= item.video.id %>-<%= item.video.title %>">
+				<a href="/view/<%= item.video.id %>-<%= url_safe item.video.title %>">
 				<% if @modificationsAllowed %>
 					<div class="handle"><i class="fa fa-ellipsis-v"></i></div>
 				<% end %>
@@ -47,5 +47,7 @@
 			</div>
 		</section>
 <% else %>
-<section class="page">Nothing to see here!</section>
+<%= render layout: '/layouts/error', locals: { title: 'Nothing to see here!' } do %>
+This album appears to have been  moved or deleted.
+<% end %>
 <% end %>
