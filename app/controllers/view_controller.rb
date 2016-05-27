@@ -89,37 +89,23 @@ class ViewController < ApplicationController
   
   def upvote
     if Auth.is_signed_in(session)
-      @video = Video.find(params[:id])
-      @video.upvotes = computeCount(params[:incr].to_i, @video.upvotes)
-      @video.save
-      render json: { :count => @video.upvotes }
-    else
-      render status: 401, nothing: true
+      if @video = Video.where(id: params[:id]).first
+        render json: { :count => @video.upvote() }
+        return
+      end
     end
+    render status: 401, nothing: true
   end
   
   def downvote
     if Auth.is_signed_in(session)
-      @video = Video.find(params[:id])
-      @video.downvotes = computeCount(params[:incr].to_i, @video.downvotes)
-      @video.save
-      render json: { :count => @video.downvotes }
-    else
-      render status: 401, nothing: true
+      if @video = Video.where(id: params[:id]).first
+        render json: { :count => @video.downvote() }
+        return
+      end
     end
+    render status: 401, nothing: true
   end
 
   private
-  def computeCount(incr, count)
-    if count.nil?
-      count = 0
-    end
-    if incr < 0 && count > 0
-      return count - 1
-    end
-    if incr > 0
-      return count + 1
-    end
-    return count
-  end
 end

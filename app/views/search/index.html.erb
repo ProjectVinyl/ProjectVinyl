@@ -36,7 +36,7 @@
 						<label>
 							<span>Type</span>
 							<div>
-								<select name="type" style="width:100%" value="<%= @type_label %>">
+								<select name="type" style="width:100%">
 									<option value="0"<% if @type == 0 %> selected<% end %>>Song</option>
 									<option value="1"<% if @type == 1 %> selected<% end %>>Album</option>
 									<option value="2"<% if @type == 2 %> selected<% end %>>Artist</option>
@@ -56,10 +56,10 @@
 						<label>
 							<span>Order By</span>
 							<div>
-								<select name="orderby" style="width:100%" value="<%= @orderby %>">
-									<option value="1"<% if @orderby == '1' %> selected<% end %>>Date</option>
-									<option value="2"<% if @orderby == '2' %> selected<% end %>>Rating</option>
-									<option value="3"<% if @orderby == '3' %> selected<% end %>>Length</option>
+								<select name="orderby" style="width:100%">
+									<option value="1"<% if @orderby == 1 %> selected<% end %>>Date</option>
+									<option value="2"<% if @orderby == 2 %> selected<% end %>>Rating</option>
+									<option value="3"<% if @orderby == 3 %> selected<% end %>>Length</option>
 								</select>
 							</div>
 						</label>

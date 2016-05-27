@@ -45,25 +45,30 @@ module ApplicationHelper
       return '--:--'
     end
     length = length.to_f
-    seconds = (length % 100).to_i.to_s
-    minutes = (length % 10000).to_i.to_s
-    if seconds.length < 2
-      seconds = '0' + seconds
+    hours = 0
+    if length > 3600
+      hours = (length/3600).floor.to_i
+      length = length % 3600
     end
-    if minutes.length < 2
-      minutes = '0' + minutes
+    minutes = 0
+    if length > 60
+      minutes = (length/60).floor.to_i
+      length = length % 60
     end
-    if seconds.length < 2
-      seconds = '0' + seconds
+    seconds = length.to_i
+    if seconds < 10
+      seconds = '0' + seconds.to_s
     end
-    hours = (length / 10000).to_i
-    if hours <= 0
-      return minutes + ':' + seconds
+    if minutes < 10
+      minutes = '0' + minutes.to_s
+    end
+    if hours == 0
+      return minutes.to_s + ':' + seconds.to_s
     end
     if hours < 10
       hours = '0' + hours.to_s
     end
-    return hours + ':' + minutes + ':' + seconds
+    return hours.to_s + ':' + minutes.to_s + ':' + seconds.to_s
   end
   
   def url_safe(txt)

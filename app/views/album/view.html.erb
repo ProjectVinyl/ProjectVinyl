@@ -34,7 +34,7 @@
 				<% end %>
 					<div class="title"><%= item.video.title %></div>
 					<div class="duration">
-						<% if item.video.length.nil? %>-:--<% else %><%= duration item.video.length %><% end %>
+						<%= duration item.video.getDuration %>
 					</div>
 					<div class="author">
 						<span><%= item.video.artist.name %></span>

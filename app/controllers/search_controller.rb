@@ -20,7 +20,7 @@ class SearchController < ApplicationController
       @results = Video.where('title LIKE ?', "%#{@query}%")
       @type_label = 'Song'
     end
-    @results = Pagination.paginate(@results, @page, 20, !@ascending)
+    @results = Pagination.paginate(orderBy(@results, @type, @orderby), @page, 20, !@ascending)
   end
   
   def page
@@ -32,30 +32,28 @@ class SearchController < ApplicationController
     @results = []
     if params[:query]
       if @type == 1
-        @results = Pagination.paginate(Album.where('title LIKE ?', "%#{@query}%"), @page, 20, !@ascending)
-        #render partial: 'layouts/artist_thumb_h', collection: @results.records
+        @results = Pagination.paginate(orderBy(Album.where('title LIKE ?', "%#{@query}%"), @type, @orderby), @page, 20, !@ascending)
         render json: {
           content: render_to_string(partial: '/layouts/artist_thumb_h.html.erb', collection: @results.records),
           pages: @results.pages,
           page: @results.page
         }
       elsif @type == 2
-        @results = Pagination.paginate(Artist.where('name LIKE ?', "%#{@query}%"), @page, 20, !@ascending)
-        #render partial: 'layouts/album_thumb_h', collection: @results.records
+        @results = Pagination.paginate(orderBy(Artist.where('name LIKE ?', "%#{@query}%"), @type, @orderby), @page, 20, !@ascending)
         render json: {
           content: render_to_string(partial: '/layouts/album_thumb_h.html.erb', collection: @results.records),
           pages: @results.pages,
           page: @results.page
         }
       elsif @type == 3
-        @results = Pagination.paginate(Genre.where('name LIKE ?', "%#{@query}%"), @page, 20, !@ascending)
+        @results = Pagination.paginate(orderBy(Genre.where('name LIKE ?', "%#{@query}%"), @type, @orderby), @page, 20, !@ascending)
         render json: {
           content: render_to_string(partial: '/layouts/genre_thumb_h.html.erb', collection: @results.records),
           pages: @results.pages,
           page: @results.page
         }
       else
-        @results = Pagination.paginate(Video.where('title LIKE ?', "%#{@query}%"), @page, 20, !@ascending)
+        @results = Pagination.paginate(orderBy(Video.where('title LIKE ?', "%#{@query}%"), @type, @orderby), @page, 20, !@ascending)
         render json: {
           content: render_to_string(partial: '/layouts/video_thumb_h.html.erb', collection: @results.records),
           pages: @results.pages,
@@ -63,5 +61,20 @@ class SearchController < ApplicationController
         }
       end
     end
+  end
+  
+  def orderBy(records, type, ordering)
+    if type == 0
+      if ordering == 1
+        return records.order(:created_at, :updated_at)
+      end
+      if ordering == 2
+        return records.order(:score, :created_at, :updated_at)
+      end
+      if ordering == 3
+        return records.order(:length, :created_at, :updated_at)
+      end
+    end
+    return records.order(:created_at)
   end
 end

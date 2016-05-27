@@ -1,5 +1,4 @@
 Rails.application.routes.draw do
-  
   get 'embed/view'
   get 'search' => 'search#index'
   get 'staff' => 'staff#index'

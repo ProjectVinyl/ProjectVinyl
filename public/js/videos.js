@@ -175,8 +175,8 @@ function Player() {}
     },
     showContext: function(ev) {
       if (ev.which != 1) {
-        var y = ev.pageY - this.dom.offset().top;
-        var x = ev.pageX - this.dom.offset().left;
+        var y = ev.pageY;
+        var x = ev.pageX;
         if (x + this.contextmenu.width() > $(window).width()) x = $(window).width() - this.contextmenu.width();
         if (y + this.contextmenu.height() + 10 >= $(window).height()) y = $(window).height() - this.contextmenu.height() - 10;
         this.contextmenu.css({

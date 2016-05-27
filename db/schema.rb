@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160525164259) do
+ActiveRecord::Schema.define(version: 20160527133142) do
 
   create_table "album_items", force: :cascade do |t|
     t.integer "album_id", limit: 4
@@ -75,6 +75,7 @@ ActiveRecord::Schema.define(version: 20160525164259) do
     t.integer  "upvotes",     limit: 4
     t.integer  "downvotes",   limit: 4
     t.integer  "length",      limit: 4
+    t.integer  "score",       limit: 4,     default: 0
   end
 
   add_index "videos", ["artist_id"], name: "index_videos_on_artist_id", using: :btree

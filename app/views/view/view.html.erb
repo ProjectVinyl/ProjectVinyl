@@ -107,7 +107,7 @@
 		</div>
 		<section class="page column-left">
 			<h1 class="title">Comments</h1>
-			<div id="disqus_thread" class="comments" style="min-height:500px">
+			<div id="disqus_thread" class="comments" style="min-height:340px">
 				<script>
 var disqus_config = function () {
   this.page.url = "<%= url_for(action: 'view', controller: 'view', only_path: false) %>";
@@ -116,7 +116,7 @@ var disqus_config = function () {
 };
 (function() {
   var d = document, s = d.createElement('script');
-  s.src = 'https://projectvinyl.disqus.com/embed.js';
+  s.src = 'https://projectvinyldev.disqus.com/embed.js';
   s.setAttribute('data-timestamp', +new Date());
   (d.head || d.body).appendChild(s);
 })();
