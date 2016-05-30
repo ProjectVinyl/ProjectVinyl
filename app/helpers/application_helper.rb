@@ -78,4 +78,8 @@ module ApplicationHelper
   def self.url_unsafe(txt)
     return txt.gsub(/%2B|\+/, '/')
   end
+  
+  def title(page_title)
+    content_for(:title) { page_title }
+  end
 end

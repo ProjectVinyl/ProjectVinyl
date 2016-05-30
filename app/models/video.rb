@@ -12,16 +12,83 @@ class Video < ActiveRecord::Base
     return self.score
   end
   
-  def upvote(incr)
-    self.upvotes = computeCount(incr.to_i, self.upvotes)
+  def upvote(user, incr)
+    incr = incr.to_i
+    vote = user.votes.where(:video_id => self.id).first
+    if vote.nil?
+      vote = user.votes.new(video_id: self.id, negative: false)
+      vote.save
+    else
+      if incr < 0
+        vote.destroy
+      elsif incr > 0
+        if vote.negative
+          self.downvotes = self.downvotes - 1
+        end
+        vote.negative = false
+        vote.save
+      end
+    end
+    self.upvotes = computeCount(incr, self.upvotes)
     computeScore()
     return self.upvotes
   end
   
-  def downvote(incr)
-    self.upvotes = computeCount(incr.to_i, self.downvotes)
+  def downvote(user, incr)
+    incr = incr.to_i
+    vote = user.votes.where(:video_id => self.id).first
+    if vote.nil?
+      vote = user.votes.new(video_id: self.id, negative: true)
+      vote.save
+    else
+      if incr < 0
+        vote.destroy
+      elsif incr > 0
+        if !vote.negative
+          self.upvotes = self.upvotes - 1
+        end
+        vote.negative = true
+        vote.save
+      end
+    end
+    self.downvotes = computeCount(incr, self.downvotes)
     computeScore()
     return self.downvotes
+  end
+  
+  def star(user)
+    vote = user.stars.where(:video_id => self.id).first
+    if !vote
+      vote = user.stars.new(video_id: self.id)
+      vote.save
+      return true
+    else
+      vote.destroy
+      return false
+    end
+  end
+  
+  def isUpvotedBy(user)
+    if user
+      vote = user.votes.where(:video_id => self.id).first
+      return !vote.nil? && !vote.negative
+    end
+    return false
+  end
+  
+  def isDownvotedBy(user)
+    if user
+      vote = user.votes.where(:video_id => self.id).first
+      return !vote.nil? && vote.negative
+    end
+    return false
+  end
+  
+  def isStarredBy(user)
+    if user
+      return !user.stars.where(:video_id => self.id).first.nil?
+    end
+    return false
   end
   
   def getDuration

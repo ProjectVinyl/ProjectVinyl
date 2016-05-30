@@ -8,4 +8,9 @@ class Ffmpeg
      end
      return output.to_i.floor
    end
+   
+   def self.produceWebM(file)
+     webm = file.split('.')[0] + '.webm'
+     `ffmpeg -i  "#{file}" -c:v libvpx -crf 10 -b:v 1M -c:a libvorbis "#{webm}"`
+   end
 end

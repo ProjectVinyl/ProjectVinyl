@@ -1,15 +1,13 @@
 ﻿<!DOCTYPE html>
 <html lang="en">
 <head>
-	<title id="document_title">Project Vinyl - Premium Pony Tunes</title>
+	<title id="document_title"><%= content_for?(:title) ? content_for(:title) + " - Project Vinyl" : "Project Vinyl - Premium Pony Tunes" %></title>
 	<link type="text/css" href="/css/font-awesome.min.css" rel="stylesheet" />
 	<link type="text/css" href="/css/base.css" rel="stylesheet" />
 	<link type="text/css" href="/css/videos.css" rel="stylesheet" />
 	<script src="https://code.jquery.com/jquery-1.8.3.min.js" id="jquery" ></script>
 	<%= csrf_meta_tags %>
-	<script>
-var emoticons = <%= raw emoticons %>;
-	</script>
+	<script>var emoticons = <%= raw emoticons %>;</script>
 </head>
 <body>
 	<header class="header">
@@ -29,6 +27,24 @@ var emoticons = <%= raw emoticons %>;
 					<button type="submit"><i class="fa fa-search" ></i></button>
 				</div>
 			</form>
+			<div id="login">
+				<% if user_signed_in? %>
+				<a href="/users/sign_out" rel="nofollow" title="sign out"><img src="/images/avatar/none.jpg" /></a>
+				<script>
+				$(document).ready(function() {
+					$('#login a').on('click', function(e) {
+						e.preventDefault();
+						ajax.delete($(this).attr('href'), function() {
+							document.location.href = '/';
+						}, 1);
+						e.stopPropagation();
+					});
+				});
+				</script>
+				<% else %>
+				<a href="/users/sign_in"><i class="fa fa-sign-in"></i> Sign-in</a>
+				<% end %>
+			</div>
 		</div>
 		<ul>
 			<li class="albums<% if params[:action] == 'albums' %> selected<% end %>"><a href="/albums">Albums</a></li>
@@ -37,6 +53,8 @@ var emoticons = <%= raw emoticons %>;
 		</ul>
 	</header>
 	<main class="wrapper">
+		<% if notice %><p class="notice tile downloads"><%= notice %></p><% end %>
+		<% if alert %><p class="alert tile downloads"><%= alert %></p><% end %>
 		<%= yield %>
 		<span class="push"></span>
 	</main>

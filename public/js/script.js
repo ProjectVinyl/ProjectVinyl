@@ -68,7 +68,7 @@ var ajax = (function() {
     $.ajax({
       type: method,
       datatype: 'json',
-      url: '/ajax/' + resource,
+      url: resource,
       success: direct ? callback : function(xml, type, ev) {
         callback(JSON.parse(ev.responseText));
       },
@@ -79,15 +79,20 @@ var ajax = (function() {
     });
   }
   function result(resource, callback, direct) {
-    request('GET', resource, callback, {}, direct);
+    request('GET', '/ajax/' + resource, callback, {}, direct);
   }
   result.post = function(resource, callback, direct) {
-    request('POST', resource, callback, {
+    request('POST', '/ajax/' + resource, callback, {
+      authenticity_token: token
+    }, direct);
+  }
+  result.delete = function(resource, callback, direct) {
+    request('DELETE', resource, callback, {
       authenticity_token: token
     }, direct);
   }
   result.get = function(resource, callback, data, direct) {
-    request('GET', resource, callback, data, direct);
+    request('GET', '/ajax/' + resource, callback, data, direct);
   }
   return result;
 })();
@@ -274,7 +279,15 @@ var BBC = (function() {
     }
   }
   function fave() {
-    $(this).toggleClass('starred');
+    var me = $(this);
+    me.toggleClass('starred');
+    ajax.post('/' + me.attr('data-action') + '/' + me.attr('data-id'), function(xml) {
+      if (xml.added) {
+        me.addClass('starred');
+      } else {
+        me.removeClass('starred');
+      }
+    });
   }
   $(document).on('click', 'button.action.like, button.action.dislike', like);
   $(document).on('click', 'button.action.star', fave);

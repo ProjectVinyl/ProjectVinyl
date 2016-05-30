@@ -3,7 +3,7 @@ class ViewController < ApplicationController
     if @video = Video.where(id: params[:id].split(/-/)[0]).first
       @artist = @video.artist
       @queue = @artist.videos.where.not(id: @video.id).limit(5).order("RAND()")
-      @modificationsAllowed = session[:current_user_id] == @artist.id
+      @modificationsAllowed = user_signed_in? && !current_user.artist_id.nil? && current_user.artist_id == @artist.id
     end
   end
   
@@ -80,32 +80,4 @@ class ViewController < ApplicationController
       page: @results.page
     }
   end
-  
-  def reporter
-    render json: {
-      content: render_to_string(partial: '/layouts/reporter', locals: { 'video': params[:id] })
-    }
-  end
-  
-  def upvote
-    if Auth.is_signed_in(session)
-      if @video = Video.where(id: params[:id]).first
-        render json: { :count => @video.upvote() }
-        return
-      end
-    end
-    render status: 401, nothing: true
-  end
-  
-  def downvote
-    if Auth.is_signed_in(session)
-      if @video = Video.where(id: params[:id]).first
-        render json: { :count => @video.downvote() }
-        return
-      end
-    end
-    render status: 401, nothing: true
-  end
-
-  private
 end

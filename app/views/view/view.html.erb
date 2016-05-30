@@ -1,4 +1,5 @@
 <% if @video %>
+		<% title @video.title %>
 		<section class="page column-left">
 			<div id="video" style="background-image: url('/cover/<%= @video.id %>');" data-title="<%= @video.title %>" data-artist="<%= @artist.name %>" data-<% if @video.audio_only %>audio<% else %>video<% end %>="<%= @video.id %>" class="video"></div>
 			<div class="post description resize-holder">
@@ -27,16 +28,16 @@
 				</div>
 			<% end %>
 				<div class="actions">
-				<% if Auth.is_signed_in(session) %>
+				<% if user_signed_in? %>
 					<a download target="_blank" href="/download/<%= @video.id %>-<%= @video.title %>" class="action download button"><i class="fa fa-download"></i> Download</a>
-					<button class="action star"><i class="fa fa-star"></i></button>
-					<button class="action like" data-count="<%= @video.upvotes %>" data-action="like" data-id="<%= @video.id %>">
+					<button class="action star<% if @video.isStarredBy(current_user) %> starred<% end %>" data-action="star" data-id="<%= @video.id %>"><i class="fa fa-star"></i></button>
+					<button class="action like<% if @video.isUpvotedBy(current_user) %> liked<% end %>" data-count="<%= @video.upvotes %>" data-action="like" data-id="<%= @video.id %>">
 						<i class="fa fa-thumbs-up"></i>
 						<% if @video.upvotes && @video.upvotes > 0 %>
 						<span> (<span class="count"><%= @video.upvotes %></span>)</span>
 						<% end %>
 					</button>
-					<button class="action dislike" data-count="<%= @video.downvotes %>" data-action="dislike" data-id="<%= @video.id %>">
+					<button class="action dislike<% if @video.isDownvotedBy(current_user) %> liked<% end %>" data-count="<%= @video.downvotes %>" data-action="dislike" data-id="<%= @video.id %>">
 						<i class="fa fa-thumbs-down"></i>
 						<% if @video.downvotes && @video.downvotes > 0 %>
 						<span> (<span class="count"><%= @video.downvotes %></span>)</span>
@@ -45,13 +46,13 @@
 				<% else %>
 					<a target="_blank" href="/login" class="action download button"><i class="fa fa-download"></i> Download</a>
 					<a target="_blank" href="/login" class="button action star"><i class="fa fa-star"></i></a>
-					<a target="_blank" href="/login" class="button action like" data-count="<%= @video.upvotes %>" data-action="like" data-id="<%= @video.id %>">
+					<a target="_blank" href="/login" class="button action like">
 						<i class="fa fa-thumbs-up"></i>
 						<% if @video.upvotes && @video.upvotes > 0 %>
 						<span> (<span class="count"><%= @video.upvotes %></span>)</span>
 						<% end %>
 					</a>
-					<a target="_blank" href="/login" class="button action dislike" data-count="<%= @video.downvotes %>" data-action="dislike" data-id="<%= @video.id %>">
+					<a target="_blank" href="/login" class="button action dislike">
 						<i class="fa fa-thumbs-down"></i>
 						<% if @video.downvotes && @video.downvotes > 0 %>
 						<span> (<span class="count"><%= @video.downvotes %></span>)</span>

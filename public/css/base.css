@@ -530,11 +530,25 @@ input[type=text], textarea {
 
 #search {
    position: absolute;
-   right: 50px;
+   right: 25px;
    bottom: 40px;
    background: rgba(255,255,255,0.3);
    padding: 10px;
    border-radius: 10px 10px 0 0;
+}
+
+#login {
+   position: absolute;
+   right: 25px;
+   top: 0;
+   background: rgba(255,255,255,0.3);
+   padding: 10px;
+   border-radius: 0 0 10px 10px;
+}
+
+#login img {
+   max-height: 30px;
+   border-radius: 100%;
 }
 
 #search > * {

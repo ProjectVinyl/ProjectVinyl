@@ -1,10 +1,11 @@
 Rails.application.routes.draw do
+  devise_for :users
+  
   get 'embed/view'
   get 'search' => 'search#index'
   get 'staff' => 'staff#index'
 
 
-  get 'login' => 'login#index'
   
   get 'view/:id' => 'view#view'
   get 'embed/:id' => 'embed#view'
@@ -25,11 +26,14 @@ Rails.application.routes.draw do
   get 'ajax/albums' => 'view#albums_json'
   get 'ajax/artists' => 'view#artists_json'
   get 'ajax/genres' => 'view#genres_json'
-  get 'ajax/reporter/:id' => 'view#reporter'
+  get 'ajax/reporter/:id' => 'ajax#reporter'
   
-  post 'ajax/like/:id(/:incr)' => 'view#upvote'
-  post 'ajax/dislike/:id(/:incr)' => 'view#downvote'
-  post 'ajax/report/:id' => 'view#report'
+  post 'ajax/like/:id(/:incr)' => 'ajax#upvote'
+  post 'ajax/dislike/:id(/:incr)' => 'ajax#downvote'
+  post 'ajax/star/:id' => 'ajax#star'
+  post 'ajax/report/:id' => 'ajax#report'
+  
+  post 'ajax/create/video' => 'ajax#createvideo'
   
   root 'welcome#index'
 

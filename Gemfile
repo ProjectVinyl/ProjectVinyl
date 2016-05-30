@@ -31,8 +31,11 @@ gem 'sdoc', '~> 0.4.0', group: :doc
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
 
-# Gem to intergrate with FFMpeg 
-# gem 'streamio-ffmpeg'
+# Encryption utilities
+# gem 'bcrypt', :require => 'bcrypt' 
+
+# User sign-in/sign-out
+gem 'devise'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
