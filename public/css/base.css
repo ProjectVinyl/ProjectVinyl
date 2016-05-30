@@ -20,7 +20,7 @@ html, body {
     font-size: 13px;
 }
 h1 {
-    font-size: 2em;
+    font-size: 1.25em;
     font-size-adjust: 0.75;
     line-height: 1.06;
     border-bottom: 1px solid rgba(0,0,150, 0.3);
@@ -140,20 +140,24 @@ a.source {
     color: #fff;
 }
 
-.post .actions .dislike.liked {
-    border: 1px solid #a73535;
-    border-bottom-color: #9d3232;
-    border-top-color: #b03838;
-    text-shadow: -1px -1px #a73535;
-    background: rgb(236, 72, 72)/*#c23e3e;*/
+.post .actions .dislike.liked,
+button.red, .button.red, input[type=submit].red {
+  color: #fff;
+  border: 1px solid #a73535;
+  border-bottom-color: #9d3232;
+  border-top-color: #b03838;
+  text-shadow: -1px -1px #a73535;
+  background: rgb(236, 72, 72);
 }
 
-.post .actions .like.liked {
-    border: 1px solid #699739;
-    border-bottom-color: #638f36;
-    border-top-color: #6fa03c;
-    text-shadow: -1px -1px #699739;
-    background: #7bb042;
+.post .actions .like.liked,
+button.green, .button.green, input[type=submit].green {
+  color: #fff;
+  border: 1px solid #699739;
+  border-bottom-color: #638f36;
+  border-top-color: #6fa03c;
+  text-shadow: -1px -1px #699739;
+  background: #7bb042;
 }
 
 .post .actions .star.starred {
@@ -388,7 +392,7 @@ div.page .positioner {
     padding: 3px;
 }
 
-button, .button, #search > * {
+button, .button, #search > *, input[type=submit] {
     display: inline-block;
     border: solid 1px #aaa;
     padding: 5px 15px;
@@ -416,11 +420,11 @@ button, .button, #search > * {
     border-radius: 2px;
 }
 
-.search-options label, input[type=text]:focus {
+.search-options label, input[type=text]:focus, input[type=email]:focus, input[type=password]:focus {
     transition: background 0.125s ease;
 }
 
-.search-options label.focus, input[type=text]:focus {
+.search-options label.focus, input[type=text]:focus, input[type=email]:focus, input[type=password]:focus {
     background: rgba(200,200,200,0.1);
 }
 
@@ -453,18 +457,18 @@ button, .button, #search > * {
     min-height: 500px;
 }
 
-button, .button {
+button, .button, input[type=submit] {
     cursor: pointer;
     user-select: none;
     -webkit-user-select: none;
     -moz-user-select: none;
 }
 
-button:hover, .button:hover, button.selected, .button.selected {
+button:hover, .button:hover, button.selected, .button.selected, input[type=submit]:selected {
    background: #fff;
 }
 
-button:active, .button:active, #search > button:active {
+button:active, .button:active, #search > button:active, input[type=submit]:active {
    background: #f8f8f8;
    box-shadow: 0 0 5px 0 rgba(0,0,0,0.3) inset;
 }
@@ -519,7 +523,7 @@ label input[type=radio]:checked + i::before {
     content: '\f192';
 }
 
-input[type=text], textarea {
+input[type=text], input[type=email], input[type=password], textarea {
     padding: 8px;
     color: #444;
     border: solid 1px #ccc;
@@ -545,10 +549,37 @@ input[type=text], textarea {
    padding: 10px;
    border-radius: 0 0 10px 10px;
 }
-
+#login:hover {
+  background: #fff;
+  border-radius: 0;
+}
 #login img {
    max-height: 30px;
    border-radius: 100%;
+}
+#login .pop-out {
+  margin-top: -1px;
+  position: absolute;
+  right: 0;
+  top: 100%;
+  width: 150px;
+  display: none;
+
+  height: initial;
+}
+#login:hover .pop-out {
+  display: block;
+}
+
+#login .pop-out li {
+  opacity: 1;
+  background: #fff;
+}
+#login .pop-out li a {
+  font-size: 13px;
+}
+#login .pop-out li:hover {
+  color: #008;
 }
 
 #search > * {
@@ -556,11 +587,13 @@ input[type=text], textarea {
     height: 28px;
     margin: 0;
     background: rgba(248,248,248,0.6);
+    border: none;
+    box-shadow: none;
 }
 
 #search > * + * {
     border-left: none;
-    border-radius: 0 20px 20px 0;
+    border-radius: 0 10px 10px 0;
 }
 
 #search input {
@@ -572,7 +605,7 @@ input[type=text], textarea {
 }
 
 #search .select {
-    border-radius: 20px 0 0 20px;
+    border-radius: 10px 0 0 10px;
 }
 
 .editable.editing {
@@ -809,6 +842,62 @@ li.bio h2, li.genre h2 {
 
 .staff li > div {
   padding: 10px;
+}
+
+section.modal {
+  padding: 0px;
+  border-radius: 5px;
+}
+section.modal form, .tiny-foot {
+  padding: 20px;
+}
+section.modal .label {
+  font-weight: bold;
+  line-height: 35px;
+}
+section.modal input:not([type=checkbox]) {
+  width: 100%;
+}
+section.modal .actions {
+  padding-top: 10px;
+}
+.tiny-foot {
+  background: #efefef;
+}
+.tiny-foot a {
+  text-decoration: none;
+  font-size: 0.85em;
+}
+
+.page.properties {
+  padding: 0;
+}
+.page.properties h1 {
+  margin: 20px;
+}
+.properties table {
+  table-layout: auto;
+  width: 100%;
+}
+.properties tr td {
+  padding: 10px;
+  border-top: solid 1px #eee;
+}
+.properties .label {
+  background: rgba(180,180,180,0.1);
+  width: 25%;
+  border-right: solid 1px #eee;
+}
+.properties .field {
+  width: 75%;
+}
+.properties .field input[type=text],
+.properties .field input[type=email],
+.properties .field input[type=password] {
+  width: 100%;
+}
+.properties .section {
+  font-weight: bold;
 }
 
 /*Screen size rules*/

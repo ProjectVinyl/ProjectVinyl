@@ -1,0 +1,42 @@
+<% if current_user %>
+<% title "Starred Videos" %>
+<section style="width:100%" class="page resize-holder">
+	<div class="post">
+		<a class="thumb stack left">
+				<span <% if @items.second %>style="background-image:url('/cover/<%= @items.second.video.id %>');"<% end %> class="stack-item item-1">
+					<span <% if @items.first %>style="background-image:url('/cover/<%= @items.first.video.id %>');"<% end %> class="stack-item item-2"></span>
+				</span>
+			</a>
+			<h1 class="title">Starred Videos</h1>
+			<span class="tag-list underline">
+				By 
+				<% if @artist %>
+				<a href="/artist/<%= @artist.id %>-<%= url_safe @artist.name %>"><%= @album.artist.name %></a>
+				<% else %>
+				<a href="">#<%= current_user.id %></a>
+				<% end %>
+			</span>
+	</div>
+</section>
+<section style="width:100%"  class="page listing compact">
+	<div class="items">
+		<span class="bump"></span>
+	<% @items.each do |item| %>
+		<a href="/view/<%= item.video.id %>-<%= url_safe item.video.title %>">
+			<div class="title"><%= item.video.title %></div>
+			<div class="duration">
+				<%= duration item.video.getDuration %>
+			</div>
+			<div class="author">
+				<span><%= item.video.artist.name %></span>
+			</div>
+			<div class="remove" title="Remove" data-id="<%= item.id %>"><span><i class="fa fa-times"></i></span></div>
+		</a>
+	<% end %>
+	</div>
+</section>
+<% else %>
+<%= render layout: '/layouts/error', locals: { title: 'Nothing to see here!' } do %>
+You have to be logged in to see that.
+<% end %>
+<% end %>

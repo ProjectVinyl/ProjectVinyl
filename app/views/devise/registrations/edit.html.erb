@@ -1,0 +1,74 @@
+<% lim "900px" %>
+<section style="width:100%;" class="page properties">
+	<h1>Account Settings</h1>
+	<%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { method: :put }) do |f| %>
+	<%= devise_error_messages! %>
+	<table>
+		<tr class="section">
+			<td colspan="2">
+				Basic Information
+			</td>
+		</tr>
+		<tr>
+			<td class="label">
+				<%= f.label :email %>
+			</td>
+			<td class="field">
+				<%= f.email_field :email, autofocus: true %>
+				<% if devise_mapping.confirmable? && resource.pending_reconfirmation? %>
+				<div>Currently waiting confirmation for: <%= resource.unconfirmed_email %></div>
+				<% end %>
+			</td>
+		</tr>
+		<tr>
+			<td class="label">
+			<%= f.label :password %>
+			</td>
+			<td class="field">
+			<%= f.password_field :password, autocomplete: "off" %>
+			</td>
+		</tr>
+		<tr>		
+			<td class="label">
+			<%= f.label :password_confirmation %>
+			</td>
+			<td class="field">
+			<%= f.password_field :password_confirmation, autocomplete: "off" %>
+			</td>
+		</tr>
+		<tr class="section">
+			<td colspan="2">
+				Save
+			</td>
+		</tr>
+		<tr>
+			<td class="label">
+			<%= f.label :current_password %>
+			</td>
+			<td class="field">
+			<%= f.password_field :current_password, autocomplete: "off" %>
+			</td>
+		</tr>
+		<tr class="actions">
+			<td class="label">
+			</td>
+			<td class="field">
+				<%= f.submit "Save Changes", class: "green" %>
+			</td>
+		</tr>
+	</table>
+<% end %>
+</section>
+<section style="width:100%;" class="page properties">
+	<h1>Delete Account</h1>
+	<table>
+		<tr>
+			<td class="label">
+				Careful! This can not be undone.
+			</td>
+			<td class="field">
+				<%= button_to "Cancel my account", registration_path(resource_name), class: "red", method: :delete %>
+			</td>
+		</tr>
+	</table>
+</section>

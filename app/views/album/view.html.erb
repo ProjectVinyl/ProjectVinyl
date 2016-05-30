@@ -3,9 +3,9 @@
 		<section style="width:100%" class="page resize-holder">
 			<div class="post">
 				<a class="thumb stack left">
-						<span style="background-image:url('/cover/<%= @items.second.video.id %>');" class="stack-item item-1">
-							<span style="background-image:url('/cover/<%= @items.first.video.id %>');" class="stack-item item-2"></span>
-						</span>
+					<span <% if @items.second %>style="background-image:url('/cover/<%= @items.second.video.id %>');"<% end %> class="stack-item item-1">
+						<span <% if @items.first %>style="background-image:url('/cover/<%= @items.first.video.id %>');"<% end %> class="stack-item item-2"></span>
+					</span>
 					</a>
 				<% if @modificationsAllowed %>
 					<h1 class="editable short title" data-action="album/title" data-id="<%= @album.id %>">

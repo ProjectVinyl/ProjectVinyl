@@ -29,10 +29,18 @@
 			</form>
 			<div id="login">
 				<% if user_signed_in? %>
-				<a href="/users/sign_out" rel="nofollow" title="sign out"><img src="/images/avatar/none.jpg" /></a>
+				<ul class="pop-out">
+					<li>
+						<a href="/stars"><i class="fa fa-star" ></i> Stars</a>
+					</li>
+					<li>
+						<a id="sign-out" href="/users/sign_out" rel="nofollow" title="sign out"><i class="fa fa-sign-out"></i> Sign Out</a>
+					</li>
+				</ul>
+				<a href="/users/edit" rel="nofollow" title="settings"><img src="/images/avatar/none.jpg" /></a>
 				<script>
 				$(document).ready(function() {
-					$('#login a').on('click', function(e) {
+					$('#sign-out').on('click', function(e) {
 						e.preventDefault();
 						ajax.delete($(this).attr('href'), function() {
 							document.location.href = '/';
@@ -52,7 +60,7 @@
 			<li class="genres<% if params[:action] == 'genres' %> selected<% end %>"><a href="/genres">Genres</a></li>
 		</ul>
 	</header>
-	<main class="wrapper">
+	<main class="wrapper" style="<%= content_for?(:width) ? ' max-width:' + content_for(:width) + ';' : '' %>">
 		<% if notice %><p class="notice tile downloads"><%= notice %></p><% end %>
 		<% if alert %><p class="alert tile downloads"><%= alert %></p><% end %>
 		<%= yield %>

@@ -1,6 +1,8 @@
 Rails.application.routes.draw do
   devise_for :users
   
+  get 'stars' => 'album#starred'
+  
   get 'embed/view'
   get 'search' => 'search#index'
   get 'staff' => 'staff#index'
