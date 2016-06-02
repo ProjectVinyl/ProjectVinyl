@@ -6,12 +6,15 @@ ul.horizontal > li + li {
   border-top: solid 1px rgba(0,0,0,0.2);
 }
 
-.video {
+.video, #upload .cover-block {
   display: block;
   width: 100%;
   padding-bottom: 45%;
-  background: #000 center/contain no-repeat;
   position: relative;
+}
+
+.video {
+    background: #000 center/contain no-repeat;
 }
 
 .video .player, .video .player h1 a {

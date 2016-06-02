@@ -67,7 +67,38 @@
 				Careful! This can not be undone.
 			</td>
 			<td class="field">
-				<%= button_to "Cancel my account", registration_path(resource_name), class: "red", method: :delete %>
+				<button id="close_account" class="red">Cancel my account</button>
+				<script>
+$('#close_account').on('click', function() {
+  if (!$('#cancel_msg').length) new Popup('Here be dragons', 'warning', function() {
+    this.content.attr('id', 'cancel_msg');
+    this.content.append($('#cancel_form').html());
+    var me = this;
+    this.content.find('button.cancel').on('click', function() {
+      me.close();
+    });
+    this.setFixed();
+    this.show();
+  });
+});
+				</script>
+				<div id="cancel_form" style="display:none;">
+					<div class="message_content">
+						
+						<p>
+							Your account will be permanently deleted. This includes any starred videos.
+							Though you can always create a new account later.
+						</p>
+						The following will <b>not</b> be affected:
+						<ul>
+							<li>Connected Artist profile(s) and video galleries.
+						</ul>
+					</div>
+					<div class="foot">
+						<button class="right cancel" type="button">No thanks</button>
+						<%= button_to "Yes, Cancel my account", registration_path(resource_name), class: "red", method: :delete %>
+					</div>
+				</div>
 			</td>
 		</tr>
 	</table>

@@ -3,31 +3,35 @@ Rails.application.routes.draw do
   
   get 'stars' => 'album#starred'
   
-  get 'embed/view'
   get 'search' => 'search#index'
+  get 'ajax/search' => 'search#page'
+  
   get 'staff' => 'staff#index'
 
 
   
-  get 'view/:id' => 'view#view'
+  get 'view/:id' => 'video#view'
   get 'embed/:id' => 'embed#view'
+  get 'download/:id' => 'video#download'
+  get 'upload' => 'video#upload'
+  post 'ajax/upload' => 'video#create'
+  get 'videos' => 'video#list'
+  get 'ajax/videos' => 'video#page'
+  
   get 'artist/:id' => 'artist#view'
+  get 'artists' => 'artist#list'
+  get 'ajax/artists' => 'artist#page'
+  
   get 'album/:id' => 'album#view'
+  get 'albums' => 'album#list'
+  get 'ajax/albums' => 'album#page'
+  
   get 'genre/:name' => 'genre#view'
 
 
-  get 'download/:id' => 'imgs#download'
+  get 'genres' => 'genre#list'
+  get 'ajax/genres' => 'genre#page'
   
-  get 'videos' => 'view#videos'
-  get 'albums' => 'view#albums'
-  get 'artists' => 'view#artists'
-  get 'genres' => 'view#genres'
-  
-  get 'ajax/search' => 'search#page'
-  get 'ajax/videos' => 'view#videos_json'
-  get 'ajax/albums' => 'view#albums_json'
-  get 'ajax/artists' => 'view#artists_json'
-  get 'ajax/genres' => 'view#genres_json'
   get 'ajax/reporter/:id' => 'ajax#reporter'
   
   post 'ajax/like/:id(/:incr)' => 'ajax#upvote'
@@ -35,7 +39,7 @@ Rails.application.routes.draw do
   post 'ajax/star/:id' => 'ajax#star'
   post 'ajax/report/:id' => 'ajax#report'
   
-  post 'ajax/create/video' => 'ajax#createvideo'
+  post 'ajax/create/video' => 'video#create'
   
   root 'welcome#index'
 
@@ -47,7 +51,7 @@ Rails.application.routes.draw do
 
   # Example resource route (maps HTTP verbs to controller actions automatically):
   #   resources :products
-
+  
   # Example resource route with options:
   #   resources :products do
   #     member do

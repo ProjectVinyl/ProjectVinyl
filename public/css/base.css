@@ -394,7 +394,6 @@ div.page .positioner {
 
 button, .button, #search > *, input[type=submit] {
     display: inline-block;
-    border: solid 1px #aaa;
     padding: 5px 15px;
     text-decoration: none;
     border-radius: 2px;
@@ -409,6 +408,22 @@ button, .button, #search > *, input[type=submit] {
     transition: background 0.5s ease, border 0.5s ease, color 0.5s ease, text-shadow 0.5s ease;
     font-weight: initial;
     line-height: 20px;
+}
+
+.foobar {
+    display: inline-block;
+    border: solid 1px #aaa;
+    padding: 5px 15px;
+    text-decoration: none;
+    border-radius: 2px;
+    border: 1px solid #e6e6e6;
+    color: #303030;
+    background: #e6e6e6;
+    color: #303030;
+    font-weight: initial;
+    line-height: 20px;
+    opacity: 0.3;
+    pointer-events: none;
 }
 
 .search-options label {
@@ -457,7 +472,7 @@ button, .button, #search > *, input[type=submit] {
     min-height: 500px;
 }
 
-button, .button, input[type=submit] {
+button, .button, .foobar, input[type=submit] {
     cursor: pointer;
     user-select: none;
     -webkit-user-select: none;
@@ -641,11 +656,14 @@ input[type=text], input[type=email], input[type=password], textarea {
     padding: 3px 5px 3px 5px;
 }
 .editable.editing .edit {
-  position: absolute;
-  right: -20px;
-  top: 0;
+    position: absolute;
+    right: -20px;
+    top: 0;
 }
 
+.comments {
+   min-height:340px
+}
 
 img.iconic, img.emoticon {
     background: none;
@@ -694,10 +712,13 @@ img.emoticon {
   text-align: left;
 }
 .popup-container .popup {
+  transition: box-shadow 0.35s linear;
   border: solid 1px #aaa;
   border-radius: 2px;
-  box-shadow: 0 0 10px 0 rgba(0,0,0,0.3);
   overflow: hidden;
+}
+.popup-container.focus .popup {
+  box-shadow: 0 0 10px 0 rgba(0,0,0,0.3);
 }
 .popup-container .popup .content {
   background: #fff;
@@ -706,22 +727,25 @@ img.emoticon {
   overflow-y: auto;
   overflow-x: hidden;
 }
+.popup-container .popup .content .message_content {
+  padding: 10px 20px;
+}
+.popup-container .popup .content .foot {
+  display: block;
+  overflow: hidden;
+  background: rgba(180,180,180,0.1);
+  padding: 10px;
+}
 .popup-container .popup > h1 {
   width: 100%;
   cursor: move;
-  background: #eef;
-  box-shadow: 0 0 3px #fff inset;
+  background: rgba(255,255,255,0.8);
   position: relative;
-  z-index: 2;
-  color: #888;
   margin: 0;
-  text-shadow: -1px -1px rgba(255,255,255,0.3);
-  padding: 7px;
+  padding: 10px;
   font-size: 15px;
-  font-weight: bold;
 }
 .popup-container .popup h1 > .fa {
-    color: #888;
     margin-right: 5px;
 }
 .popup-container .popup .close {
@@ -734,6 +758,16 @@ img.emoticon {
   content: "\f00d";
   color: inherit;
   font-size: 18px;
+}
+
+.fades > div:first-child {
+  transition: opacity 0.25s linear;
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background: rgba(0,0,0,.2);
 }
 
 .right {
@@ -898,6 +932,56 @@ section.modal .actions {
 }
 .properties .section {
   font-weight: bold;
+}
+
+#upload {
+  cursor: pointer;
+  color: rgba(102,102,184,0.6);
+  background: #fff;
+  transition: text-shadow 0.5s ease, background 0.5s ease;
+}
+#upload:hover {
+  background: #fef;
+  text-shadow: 0 0 50px #bbb;
+}
+.image-selector {
+  overflow: hidden;
+  position: relative;
+}
+.image-selector img {
+  top: 0;
+  left: 0;
+  position: absolute;
+  min-width: 100%;
+  min-height: 100%;
+  background: none;
+  padding: 0;
+  border: 0;
+  box-shadow: none;
+}
+.file-select input {
+  display: none;
+}
+.hidden {
+  display: none !important;
+}
+.file-select {
+  text-align: center;
+  line-height: 1em;
+}
+.drop-icon {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  margin-top: -3em;
+}
+.drop-icon i {
+  font-size: 60px;
+}
+.drop-icon div {
+  font-weight: bold;
+  margin-top: 10px;
 }
 
 /*Screen size rules*/

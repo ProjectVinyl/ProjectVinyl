@@ -1,0 +1,80 @@
+		<section class="page column-left">
+			<%= form_for(@video, as: "video", url: "ajax/upload") do |f| %>
+			<div id="upload">
+				<div class="hidden cover-block file-select image-selector">
+					<img></img>
+					<%= f.file_field :cover %>
+					<span class="drop-icon">
+						<i class="fa fa-picture-o"></i>
+						<div>Select Cover Art</div>
+					</span>
+				</div>
+				<div class="shown cover-block file-select video-drop">
+					<%= f.file_field :file %>
+					<span class="drop-icon">
+						<i class="fa fa-upload"></i>
+						<div>Select Audio/Video file to upload</div>
+					</span>
+				</div>
+				<script>
+$('#video_file').on('change', function() {
+  $('.hidden').removeClass('hidden');
+  $('.shown').addClass('hidden').removClass('shown');
+});
+				</script>
+			</div>
+			<div class="hidden post description resize-holder">
+				<h1 class="title editable post-title resize-target short">
+					<span class="content ">Title</span>
+					<%= f.text_field :title, autofocus: true, class: "input" %>
+					<span class="edit"><i class="fa fa-pencil"></i></span>
+					<span style="display:none">11</span>
+				</h1>
+				<span class="editable post-content">
+					<span class="content">Description</span>
+					<%= f.text_area :description, autofocus: true, class: "input" %>
+					<span class="edit"><i class="fa fa-pencil" ></i></span>
+				</span>
+				<div class="post-tags">
+					<%= render partial: '/layouts/taglist', locals: { collection: [] } %>
+				</div>
+				<div class="actions">
+					<button id="change_video" class="action" type="button" onclick="$('#video_file').trigger('click');">Change Main File</button>
+					<%= f.submit "Upload", class: "action right green" %>
+				</div>
+				<div class="actions">
+					<a download target="_blank" class="action download foobar"><i class="fa fa-download"></i> Download</a>
+					<a class="foobar action star"><i class="fa fa-star"></i></a>
+					<a class="foobar action like">
+						<i class="fa fa-thumbs-up"></i>
+					</a>
+					<a class="foobar action dislike">
+						<i class="fa fa-thumbs-down"></i>
+					</a>
+					<a class="foobar action report right"><i class="fa fa-flag"></i> Report</a>
+				</div>
+				<div class="form report" data-offset="0"></div>
+			</div>
+			<% end %>
+		</section>
+		<div class="page resize-holder column-right right center">
+			<section class="artist-bio">
+				<span class="avatar">
+					<span style="background-image:url('/avatar/<%= @artist.id %>');"></span>
+				</span>
+				<h1 class="resize-target">
+					<a class="name" href="/artist/<%= @artist.id %>-<%= @artist.name %>"><%= @artist.name %></a>
+				</h1>
+				<div class="bio short"><%= raw emotify @artist.bio %></div>
+			</section>
+			<section>
+				<h1 class="resize-target">
+					<a>Discovery Queue</a>
+				</h1>
+				<ul class="queue">
+				</ul>
+			</section>
+		</div>
+		<section class="page column-left">
+			<div class="comments"></div>
+		</section>

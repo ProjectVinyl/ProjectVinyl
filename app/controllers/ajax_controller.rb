@@ -35,16 +35,6 @@ class AjaxController < ApplicationController
     render status: 401, nothing: true
   end
   
-  def createvideo
-    if user_signed_in?
-      artist = Auth.current_author(session)
-      video = artist.videos.create(title: nonnil(params[:title], 'Untitled'), description: nonnil(params[:descr], ''), upvotes: 0, downvotes: 0)
-      render json: { video_id: video.id }
-      return
-    end
-    render status: 401, nothing: true
-  end
-  
   def nonnil(param, defau)
     if param.nil? || param == ''
       return defau
