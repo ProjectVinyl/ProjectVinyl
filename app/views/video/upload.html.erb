@@ -1,25 +1,25 @@
 		<section class="page column-left">
 			<%= form_for(@video, as: "video", url: "ajax/upload") do |f| %>
 			<div id="upload">
-				<div class="hidden cover-block file-select image-selector">
+				<div class="hidden cover-block file-select image-selector" data-type="image">
 					<img></img>
-					<%= f.file_field :cover %>
 					<span class="drop-icon">
 						<i class="fa fa-picture-o"></i>
 						<div>Select Cover Art</div>
 					</span>
+					<%= f.file_field :cover %>
 				</div>
-				<div class="shown cover-block file-select video-drop">
-					<%= f.file_field :file %>
+				<div id="video-upload" class="shown cover-block file-select video-drop" data-type="a/v">
 					<span class="drop-icon">
 						<i class="fa fa-upload"></i>
-						<div>Select Audio/Video file to upload</div>
+						<div>Select an Audio/Video file to upload</div>
 					</span>
+					<%= f.file_field :file %>
 				</div>
 				<script>
-$('#video_file').on('change', function() {
+$('#video-upload').on('accept', function() {
   $('.hidden').removeClass('hidden');
-  $('.shown').addClass('hidden').removClass('shown');
+  $('.shown').addClass('hidden').removeClass('shown');
 });
 				</script>
 			</div>

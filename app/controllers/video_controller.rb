@@ -11,7 +11,6 @@ class VideoController < ApplicationController
     if user_signed_in?
       if @artist = Artist.where(id: current_user.artist_id).first
         @video = Video.new
-        @artist = Artist.all.first
         return
       end
     end

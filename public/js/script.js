@@ -17,38 +17,48 @@ $(window).ready(function () {
 			$(window).on('scroll', scroller);
 		}
 	}
+  function validateTypes(type, file) {
+    if (type == 'image') {
+      return !!file.type.match(/image\//);
+    } else if (type == 'a/v') {
+      return !!file.type.match(/(audio|video)\//);
+    }
+    return false;
+  }
   $('.file-select').each(function() {
     var me = $(this);
+    var type = me.attr('data-type');
+    var allowMulti = me.attr('allow-multi') || false;
     var input = me.find('input').first();
     input.on('click', function(e) {
       e.stopPropagation();
     });
-    me.on('click', function() {
-      input.trigger('click');
+    me.on('dragover dragenter', function() {
+      me.addClass('drag');
     });
-    me.on('dragover dragenter', function(ev) {
-      ev.preventDefault();
-      ev.stopPropagation();
-      return false;
-    });
-    me.on('drop', function(ev) {
-      ev.preventDefault();
-      ev.stopPropagation();
-      var files = ev.originalEvent.dataTransfer.files;
-      if (files.length > 1) {
-        error('Only one file is permitted.');
-        return;
-      }
-      input[0].files = files;
-      input.trigger('change');
-    });
+    me.on('dragleave drop', function() {
+      me.removeClass('drag');
+    })
     if (me.hasClass('image-selector') && window.FileReader) {
       input.on('change', function() {
+        if (!validateTypes(type, input[0].files[0])) {
+          error('An encorrect file type was selected. Please try again.');
+          return;
+        }
         var img = me.find('img')[0];
         if (img.src) {
           URL.revokeObjectURL(img.src);
         }
         img.src = URL.createObjectURL(input[0].files[0]);
+        me.trigger('accept');
+      });
+    } else {
+      input.on('change', function() {
+        if (!validateTypes(type, input[0].files[0])) {
+          error('An encorrect file type was selected. Please try again.');
+        } else {
+          me.trigger('accept');
+        }
       });
     }
   });
