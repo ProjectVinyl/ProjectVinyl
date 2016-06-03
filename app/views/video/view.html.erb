@@ -2,14 +2,17 @@
 		<% title @video.title %>
 		<section class="page column-left">
 			<div id="video" style="background-image: url('/cover/<%= @video.id %>');" data-title="<%= @video.title %>" data-artist="<%= @artist.name %>" data-<% if @video.audio_only %>audio<% else %>video<% end %>="<%= @video.id %>" class="video"></div>
+			<% if @video.mime == '' || @video.mime.nil? %>
+			<div class="notice pending">This video is still being processed by our background ponies. If it does not play correctly, please come back later.</div>
+			<% end %>
 			<div class="post description resize-holder">
 			<% if @modificationsAllowed %>
-				<h1 class="title editable post-title resize-target short" data-action="title" data-id="<%= @video.id %>">
+				<h1 class="title editable post-title resize-target short" data-target="video" data-member="title" data-id="<%= @video.id %>">
 					<span class="content "><%= @video.title %></span>
 					<span class="edit"><i class="fa fa-pencil"></i></span>
 					<span style="display:none">11</span>
 				</h1>
-				<span class="editable post-content" data-action="description" data-id="<%= @video.id %>">
+				<span class="editable post-content" data-target="video" data-member="description" data-id="<%= @video.id %>">
 					<span class="content"><%= raw emotify @video.description %></span>
 					<span class="edit"><i class="fa fa-pencil" ></i></span>
 				</span>

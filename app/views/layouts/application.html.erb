@@ -61,8 +61,8 @@
 		</ul>
 	</header>
 	<main class="wrapper" style="<%= content_for?(:width) ? ' max-width:' + content_for(:width) + ';' : '' %>">
-		<% if notice %><p class="notice tile downloads"><%= notice %></p><% end %>
-		<% if alert %><p class="alert tile downloads"><%= alert %></p><% end %>
+		<% if notice %><p class="notice tile"><%= notice %></p><% end %>
+		<% if alert %><p class="notice tile"><%= alert %></p><% end %>
 		<%= yield %>
 		<span class="push"></span>
 	</main>

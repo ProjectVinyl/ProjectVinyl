@@ -63,50 +63,6 @@ $(window).ready(function () {
     }
   });
 });
-var thumbnail = (function() {
-  function thumb(holder, data) {
-    return $('<li>\
-							<a class="thumb" style="background-image:url(\'' + data.cover + '\');" href="view?' + data.id + '/' + data.title + '">\
-								<div>' + data.title + '</div>\
-							</a>\
-						</li>').prependTo(holder);
-  }
-  function user(holder, data) {
-    return thumb(holder, data).append(initDate($('<span class="date underline"><span>3 days ago</span></span>'), data.updated));
-  }
-  function album(holder, data) {
-    return $('<li>\
-                      <a class="thumb stack" href="album?' + data.id + '/' + data.title + '">\
-							          <span style="background-image:url(\'' + data.thumb['0'] + '\');" class="stack-item item-1">\
-								          <span style="background-image:url(\'' + data.thumb['1'] + '\');" class="stack-item item-2"></span>\
-							          </span>\
-						          </a>\
-						          <div class="title">' + data.title + '</div>\
-                    </li>').prependTo(holder).append(initDate($('<span class="date underline"><span>3 days ago</span></span>'), data.updated));
-  }
-  function playlist(holder, data) {
-    return $('<a href="view?' + data.id + '/' + data.title + '">\
-                      ' + (holder.hasClass('reorderable') ? '<div class="handle"><i class="fa fa-ellipsis-v" /></div>' : '') + '\
-                      <div class="title">' + data.title + '</div>\
-                      <div class="duration">' + data.duration + '</div>\
-                      <div class="author"><span>' + data.author + '</span></div>\
-                      ' + (holder.hasClass('reorderable') ? '<div class="remove" title="Remove"><span><i class="fa fa-times" /></span></div>' : '') + '\
-                    </a>').prependTo(holder);
-  }
-  function call(holder, data, func) {
-    return holder ? func(holder, data) : {
-      'all': function(holder, items) {
-        for (var i = items.length; i--; ) func(holder, items[i]);
-      }
-    };
-  }
-  return {
-    thumb: function(holder, data) {return call(holder, data, thumb);},
-    user: function(holder, data) {return call(holder, data, user);},
-    album: function(holder, data) {return call(holder, data, album);},
-    playlist: function(holder, data) {return call(holder, data, playlist);}
-  }
-})();
 var ajax = (function() {
   var token = $('meta[name=csrf-token]').attr('content');
   function request(method, resource, callback, data, direct) {
@@ -126,10 +82,13 @@ var ajax = (function() {
   function result(resource, callback, direct) {
     request('GET', '/ajax/' + resource, callback, {}, direct);
   }
-  result.post = function(resource, callback, direct) {
-    request('POST', '/ajax/' + resource, callback, {
-      authenticity_token: token
-    }, direct);
+  function auth(data) {
+    if (!data) data = {};
+    data.authenticity_token = token;
+    return data;
+  }
+  result.post = function(resource, callback, direct, data) {
+    request('POST', '/ajax/' + resource, callback, auth(data), direct);
   }
   result.delete = function(resource, callback, direct) {
     request('DELETE', resource, callback, {
@@ -249,6 +208,9 @@ var BBC = (function() {
         }
       }
       textarea.val(poor(content.html()));
+      textarea.on('change', function() {
+        holder.addClass('dirty');
+      });
       holder.addClass('editing');
     } else {
       if (!text || !text.length || text == emptyMessage.toLowerCase()) {
@@ -260,6 +222,17 @@ var BBC = (function() {
     }
     return !editing;
   }
+  function save(action, id, field, holder) {
+    if (holder.hasClass('dirty')) {
+      holder.addClass('saving');
+      ajax.post(action, function() {
+        holder.removeClass('saving');
+        holder.removeClass('dirty');
+      }, true, {
+        id: id, field: field, value: poor(holder.find('.input').val())
+      });
+    }
+  }
   function deactivate(button) {
     active = null;
     button.trigger('click');
@@ -267,12 +240,18 @@ var BBC = (function() {
   $('.editable').each(function() {
     var editing = false;
     var me = $(this);
+    var id = me.attr('data-id');
+    var member = me.attr('data-member');
+    var action = 'update/' + me.attr('data-target');
     var content = me.children('.content');
     var button = me.children('.edit');
     button.on('click', function() {
       if (active && active != button) deactivate(active);
       editing = toggleEdit(editing, me, content);
       active = editing ? button : null;
+      if (!editing) {
+        save(action, id, member, me);
+      }
     });
     me.on('click', function(ev) {
       ev.preventDefault();

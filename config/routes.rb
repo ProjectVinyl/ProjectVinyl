@@ -22,6 +22,10 @@ Rails.application.routes.draw do
   get 'artists' => 'artist#list'
   get 'ajax/artists' => 'artist#page'
   
+  get 'cover/:id' => 'imgs#cover'
+  get 'avatar/:id' => 'imgs#avatar'
+  get 'stream/:id' => 'imgs#stream'
+  
   get 'album/:id' => 'album#view'
   get 'albums' => 'album#list'
   get 'ajax/albums' => 'album#page'
@@ -40,6 +44,7 @@ Rails.application.routes.draw do
   post 'ajax/report/:id' => 'ajax#report'
   
   post 'ajax/create/video' => 'video#create'
+  post 'ajax/update/video' => 'video#update'
   
   root 'welcome#index'
 

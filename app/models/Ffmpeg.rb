@@ -13,4 +13,8 @@ class Ffmpeg
      webm = file.split('.')[0] + '.webm'
      `ffmpeg -i  "#{file}" -c:v libvpx -crf 10 -b:v 1M -c:a libvorbis "#{webm}"`
    end
+   
+   def self.extractThumbnail(source, destination)
+     output = `ffmpeg -i "#{source}" -ss 00:00:1 -vframes 1 "#{destination}"`
+   end
 end

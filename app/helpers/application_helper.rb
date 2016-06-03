@@ -1,5 +1,54 @@
 module ApplicationHelper
-  Emoticons = [ 'pinkiesmile' ]
+  Emoticons =   [
+    "ajbemused",
+    "ajsleepy",
+    "ajsmug",
+    "applejackconfused",
+    "applejackunsure",
+    "applecry",
+    "eeyup",
+    "fluttercry",
+    "flutterrage",
+    "fluttershbad",
+    "fluttershyouch",
+    "fluttershysad",
+    "yay",
+    "heart",
+    "pinkiecrazy",
+    "pinkiegasp",
+    "pinkiehappy",
+    "pinkiesad2",
+    "pinkiesmile",
+    "pinkiesick",
+    "twistnerd",
+    "rainbowderp",
+    "rainbowdetermined2",
+    "rainbowhuh",
+    "rainbowkiss",
+    "rainbowlaugh",
+    "rainbowwild",
+    "scootangel",
+    "raritycry",
+    "raritydespair",
+    "raritystarry",
+    "raritywink",
+    "duck",
+    "unsuresweetie",
+    "coolphoto",
+    "twilightangry2",
+    "twilightoops",
+    "twilightblush",
+    "twilightsheepish",
+    "twilightsmile",
+    "facehoof",
+    "moustache",
+    "trixieshiftleft",
+    "trixieshiftright",
+    "derpyderp1",
+    "derpyderp2",
+    "derpytongue2",
+    "trollestia"
+  ]
   def emotify(text)
     text = text.gsub(/\n/,'<br>').gsub(/([buis])\]/, '[\1]').gsub(/\[\/([buis])\]/, '</\1>')
     Emoticons.each { |x|
@@ -7,13 +56,17 @@ module ApplicationHelper
     }
     return text
   end
-
-  def demotify(text)
+  
+  def self.demotify(text)
     text = text.gsub(/\<br\>/,'\n').gsub(/\<([buis])\>/, '[\1]').gsub(/\<\/([buis])\>/, '[/\1]')
     Emoticons.each { |x|
       text = text.gsub(/<img class="emoticon" src="\/emoticons\/#{x}">:/,':' + x + ':">')
     }
     return text
+  end
+  
+  def demotify(text)
+    return ApplicationHelper.demotify(text)
   end
   
   def emoticons

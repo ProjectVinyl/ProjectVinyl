@@ -20,16 +20,37 @@ class VideoController < ApplicationController
   def create
     if user_signed_in?
       if artist = Artist.where(id: current_user.artist_id).first
-        video = params[:video]
-        video = artist.videos.create(title: video[:title], description: video[:description], upvotes: 0, downvotes: 0)
-        song(video, params[:video][:file])
-        cover(video, params[:video][:cover])
-        video.save
-        redirect_to action: "view", id: video.id
-        return
+        file = params[:video][:file]
+        cover = params[:video][:cover]
+        if file && (file.content_type.include?('video/') || file.content_type.include?('audio/'))
+          if (cover && cover.content_type.include?('image/')) || file.content_type.include?('video/')
+            video = params[:video]
+            video = artist.videos.create(title: ApplicationHelper.demotify(video[:title]), description: ApplicationHelper.demotify(video[:description]), upvotes: 0, downvotes: 0)
+            store(video, file, cover)
+            video.save
+            redirect_to action: "view", id: video.id
+            return
+          end
+        end
       end
     end
     render 'layouts/error', locals: { title: 'Access Denied', description: "You can't do that right now." }
+  end
+  
+  def update
+    if video = Video.where(id: params[:id]).first
+      value = ApplicationHelper.demotify(params[:value])
+      if params[:field] == 'description'
+        video.description = value
+        video.save
+      elsif params[:field] == 'title'
+        video.title = value
+        video.save
+      end
+      render status: 200, nothing: true
+      return
+    end
+    render status: 401, nothing: true
   end
   
   def download
@@ -61,18 +82,26 @@ class VideoController < ApplicationController
     }
   end
   
-  def song(video, uploaded_io)
-    path = Rails.root.join('public', 'stream', video.id + (video.audio_only ? '.mp3' : '.mp4'))
-    File.open(path) do |file|
-      file.write(uploaded_io.read)
-      video.mime = uploaded_io.content_type
-      Ffmpeg.produceWebM(path.to_s)
+  def store(video, cover, file)
+    video_path = Rails.root.join('public', 'stream', video.id.to_s + (video.audio_only ? '.mp3' : '.mp4'))
+    File.open(path, 'wb') do |file|
+      file.write(file.read)
+      file.flush()
     end
-  end
-  
-  def cover(video, uploaded_io)
-    File.open(Rails.root.join('public', 'cover', video.id)) do |file|
-      file.write(uploaded_io.read)
+    cover_path = Rails.root.join('public', 'cover', video.id.to_s)
+    if cover && cover.content_type.include?('image/')
+      File.open(cover_path, 'wb') do |file|
+        file.write(cover.read)
+        file.flush()
+      end
+    else
+      Ffmpeg.extractThumbnail(video_path, cover_path)
+    end
+    #Don't block, encode to webm in the background and update video state when complete
+    if fork.nil?
+      Ffmpeg.produceWebM(video_path.to_s)
+      video.mime = file.content_type
+      video.save
     end
   end
 end
