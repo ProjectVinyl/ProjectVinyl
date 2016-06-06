@@ -34,11 +34,4 @@ class AjaxController < ApplicationController
     end
     render status: 401, nothing: true
   end
-  
-  def nonnil(param, defau)
-    if param.nil? || param == ''
-      return defau
-    end
-    return param
-  end
 end

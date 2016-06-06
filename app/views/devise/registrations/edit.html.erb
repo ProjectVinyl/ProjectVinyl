@@ -2,11 +2,12 @@
 <section style="width:100%;" class="page properties">
 	<h1>Profile Information</h1>
 <% if current_user.artist_id %>
+	<%= render partial: "/artist/edit", locals: { artist: current_artist, url: "/ajax/artist/edit" } %>
 <% else %>
 	<div class="notice center">
 		<p>Your account is not assigned to an artist.</p>
 		<div class="super action">
-			<button class="green">Create one now</button>
+			<a href="/artist/create" class="button green">Create one now</a>
 		</div>
 		<p>
 			or <a href="/">contact support</a> if you need to have an existing one attached.

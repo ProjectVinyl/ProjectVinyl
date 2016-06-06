@@ -2,7 +2,7 @@
 			<%= form_for(@video, as: "video", url: "ajax/upload") do |f| %>
 			<div id="upload">
 				<div class="hidden cover-block file-select image-selector" data-type="image">
-					<img></img>
+					<span class="preview"></span>
 					<span class="drop-icon">
 						<i class="fa fa-picture-o"></i>
 						<div>Select Cover Art</div>
@@ -26,7 +26,7 @@ $('#video-upload').on('accept', function() {
 			<div class="hidden post description resize-holder">
 				<h1 class="title editable post-title resize-target short">
 					<span class="content ">Title</span>
-					<%= f.text_field :title, autofocus: true, class: "input" %>
+					<%= f.text_field :title, class: "input" %>
 					<span class="edit"><i class="fa fa-pencil"></i></span>
 					<span style="display:none">11</span>
 				</h1>
@@ -36,7 +36,9 @@ $('#video-upload').on('accept', function() {
 					<span class="edit"><i class="fa fa-pencil" ></i></span>
 				</span>
 				<div class="post-tags">
-					<%= render partial: '/layouts/taglist', locals: { collection: [] } %>
+					<%= render layout: 'layouts/tageditor' do %>
+						<%= f.text_area :genres_string %>
+					<% end %>
 				</div>
 				<div class="actions">
 					<button id="change_video" class="action" type="button" onclick="$('#video_file').trigger('click');">Change Main File</button>

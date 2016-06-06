@@ -4,6 +4,10 @@ class Video < ActiveRecord::Base
   has_many :albums, :through => :album_items
   has_many :video_genres
   has_many :genres, :through => :video_genres
+    
+  def genres_string
+    return Genre.tag_string(self.genres)
+  end
   
   def getComputedScore
     if self.score.nil?
@@ -59,11 +63,11 @@ class Video < ActiveRecord::Base
   def star(user)
     vote = user.stars.where(:video_id => self.id).first
     if !vote
-      vote = user.stars.new(video_id: self.id)
+      vote = user.stars.new(video_id: self.id, index: user.stars.length)
       vote.save
       return true
     else
-      vote.destroy
+      vote.removeSelf()
       return false
     end
   end
@@ -101,8 +105,10 @@ class Video < ActiveRecord::Base
   private
   def computeLength
     file = Rails.root.join('public', 'stream', self.id.to_s + (self.audio_only ? '.mp3' : '.webm')).to_s
+    if !self.audio_only && !File.exists?(file)
+      file = Rails.root.join('public', 'stream', self.id.to_s + '.mp4').to_s
+    end
     self.length = ::Ffmpeg.getVideoLength(file)
-puts self.length
     save()
     return self.length
   end

@@ -3,7 +3,7 @@
 		<section class="page column-left">
 			<div id="video" style="background-image: url('/cover/<%= @video.id %>');" data-title="<%= @video.title %>" data-artist="<%= @artist.name %>" data-<% if @video.audio_only %>audio<% else %>video<% end %>="<%= @video.id %>" class="video"></div>
 			<% if @video.mime == '' || @video.mime.nil? %>
-			<div class="notice pending">This video is still being processed by our background ponies. If it does not play correctly, please come back later.</div>
+			<div class="notice pending">This video is still being processed by our background ponies. If it does not play correctly try again later.</div>
 			<% end %>
 			<div class="post description resize-holder">
 			<% if @modificationsAllowed %>
@@ -17,7 +17,9 @@
 					<span class="edit"><i class="fa fa-pencil" ></i></span>
 				</span>
 				<div class="post-tags">
-					<%= render partial: '/layouts/taglist', locals: { collection: @video.genres } %>
+					<%= render layout: 'layouts/tageditor' do %>
+						<textarea data-target="video" data-id="<%= @video.id %>" name="tags"><%= raw @video.genres_string %></textarea>
+					<% end %>
 				</div>
 			<% else %>
 				<h1 class="title post-title resize-target short">
@@ -47,15 +49,15 @@
 						<% end %>
 					</button>
 				<% else %>
-					<a target="_blank" href="/login" class="action download button"><i class="fa fa-download"></i> Download</a>
-					<a target="_blank" href="/login" class="button action star"><i class="fa fa-star"></i></a>
-					<a target="_blank" href="/login" class="button action like">
+					<a target="_blank" href="/users/sign_in" class="action download button"><i class="fa fa-download"></i> Download</a>
+					<a target="_blank" href="/users/sign_in" class="button action star"><i class="fa fa-star"></i></a>
+					<a target="_blank" href="/users/sign_in" class="button action like">
 						<i class="fa fa-thumbs-up"></i>
 						<% if @video.upvotes && @video.upvotes > 0 %>
 						<span> (<span class="count"><%= @video.upvotes %></span>)</span>
 						<% end %>
 					</a>
-					<a target="_blank" href="/login" class="button action dislike">
+					<a target="_blank" href="/users/sign_in" class="button action dislike">
 						<i class="fa fa-thumbs-down"></i>
 						<% if @video.downvotes && @video.downvotes > 0 %>
 						<span> (<span class="count"><%= @video.downvotes %></span>)</span>

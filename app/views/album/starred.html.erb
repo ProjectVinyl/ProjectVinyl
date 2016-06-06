@@ -10,8 +10,8 @@
 			<h1 class="title">Starred Videos</h1>
 			<span class="tag-list underline">
 				By 
-				<% if @artist %>
-				<a href="/artist/<%= @artist.id %>-<%= url_safe @artist.name %>"><%= @album.artist.name %></a>
+				<% if current_artist %>
+				<a href="/artist/<%= current_artist.id %>-<%= url_safe current_artist.name %>"><%= current_artist.name %></a>
 				<% else %>
 				<a href="">#<%= current_user.id %></a>
 				<% end %>
@@ -19,10 +19,11 @@
 	</div>
 </section>
 <section style="width:100%"  class="page listing compact">
-	<div class="items">
-		<span class="bump"></span>
+	<div class="items reorderable" data-target="star">
+		<span class="bump" data-index="0"></span>
 	<% @items.each do |item| %>
-		<a href="/view/<%= item.video.id %>-<%= url_safe item.video.title %>">
+		<a href="/view/<%= item.video.id %>-<%= url_safe item.video.title %>" data-id="<%= item.id %>" data-index="<%= item.index %>">
+			<div class="handle"><i class="fa fa-ellipsis-v"></i></div>
 			<div class="title"><%= item.video.title %></div>
 			<div class="duration">
 				<%= duration item.video.getDuration %>

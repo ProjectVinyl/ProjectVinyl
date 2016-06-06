@@ -1,0 +1,13 @@
+<div class="tag-editor">
+	<span style="display:none" class="values">
+		<%= raw Genre.tag_string(Genre.all) %>
+	</span>
+	<span class="value">
+		<%= yield %>
+	</span>
+	<ul class="tags">
+	</ul>
+	<input class="tag input" type="text" placeholder="Tag list..." ></input>
+	<ul class="search-results pop-out">
+	</ul>
+</div>

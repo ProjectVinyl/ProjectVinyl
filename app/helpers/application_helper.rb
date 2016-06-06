@@ -73,6 +73,14 @@ module ApplicationHelper
     return Emoticons
   end
   
+  @current_artist = nil
+  def current_artist
+    if user_signed_in?
+      return @current_artist || @current_artist = Artist.where(id: current_user.artist_id).first
+    end
+    return nil
+  end
+  
   def since(date)
     date = date.to_f.to_i
     if date >= 60000

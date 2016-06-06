@@ -26,6 +26,9 @@ class VideoController < ApplicationController
           if (cover && cover.content_type.include?('image/')) || file.content_type.include?('video/')
             video = params[:video]
             video = artist.videos.create(title: ApplicationHelper.demotify(video[:title]), description: ApplicationHelper.demotify(video[:description]), upvotes: 0, downvotes: 0)
+            if params[:genres_string]
+              Genre.loadGenres(params[:genres_string], video.video_genres)
+            end
             store(video, file, cover)
             video.save
             redirect_to action: "view", id: video.id
@@ -38,17 +41,22 @@ class VideoController < ApplicationController
   end
   
   def update
-    if video = Video.where(id: params[:id]).first
-      value = ApplicationHelper.demotify(params[:value])
-      if params[:field] == 'description'
-        video.description = value
-        video.save
-      elsif params[:field] == 'title'
-        video.title = value
-        video.save
+    if user_signed_in? && video = Video.where(id: params[:id]).first
+      if video.artist.id == current_user.artist_id
+        value = ApplicationHelper.demotify(params[:value])
+        if params[:field] == 'description'
+          video.description = value
+          video.save
+        elsif params[:field] == 'title'
+          video.title = value
+          video.save
+        elsif params[:field] == 'tags'
+          Genre.loadGenres(params[:value], video.video_genres)
+          video.save
+        end
+        render status: 200, nothing: true
+        return
       end
-      render status: 200, nothing: true
-      return
     end
     render status: 401, nothing: true
   end

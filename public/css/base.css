@@ -83,9 +83,9 @@ table {
   text-align: center;
 }
 .avatar {
-  background: url(../images/avatar/none.jpg) no-repeat center rgb(178,230,251);
+  background: no-repeat center rgb(178,230,251);
 }
-.avatar span, .genre-icon i::before,.genre-icon i {
+.avatar span, .genre-icon i::before, .genre-icon i {
   display: block;
   width: 100%;
   height: 100%;
@@ -98,6 +98,10 @@ table {
 .avatar.large {
   width: 240px;
   height: 240px;
+}
+.avatar.small {
+  width: 30px;
+  height: 30px;
 }
 
 .post > * {
@@ -392,7 +396,7 @@ div.page .positioner {
   padding: 3px;
 }
 
-button, .button, #search > *, input[type=submit] {
+button, .button, #search > *, input[type=submit], .tag-editor .tag {
   display: inline-block;
   padding: 5px 15px;
   text-decoration: none;
@@ -545,6 +549,7 @@ input[type=text], input[type=email], input[type=password], textarea {
   font-size: 1.1em;
   vertical-align: middle;
   border-radius: 2px;
+  min-height: 35px;
 }
 
 #search {
@@ -572,6 +577,14 @@ input[type=text], input[type=email], input[type=password], textarea {
    max-height: 30px;
    border-radius: 100%;
 }
+#login .username {
+   text-decoration: none;
+   line-height: 33px;
+   float: left;
+   margin-right: 20px;
+   font-size: 1.25em;
+}
+
 #login .pop-out {
   margin-top: -1px;
   position: absolute;
@@ -579,7 +592,7 @@ input[type=text], input[type=email], input[type=password], textarea {
   top: 100%;
   width: 150px;
   display: none;
-
+  text-align: left;
   height: initial;
 }
 #login:hover .pop-out {
@@ -600,6 +613,7 @@ input[type=text], input[type=email], input[type=password], textarea {
 #search > * {
   float: left;
   height: 28px;
+  min-height: 28px;
   margin: 0;
   background: rgba(248,248,248,0.6);
   border: none;
@@ -926,10 +940,14 @@ section.modal .actions {
 .properties .field {
   width: 75%;
 }
+.properties .field textarea,
 .properties .field input[type=text],
 .properties .field input[type=email],
 .properties .field input[type=password] {
   width: 100%;
+}
+.properties .field textarea {
+  resize: vertical;
 }
 .properties .section {
   font-weight: bold;
@@ -947,16 +965,14 @@ section.modal .actions {
   overflow: hidden;
   position: relative;
 }
-.image-selector img {
+.image-selector .preview {
+  display: block;
+  position: absolute;
   top: 0;
   left: 0;
-  position: absolute;
-  min-width: 100%;
-  min-height: 100%;
-  background: none;
-  padding: 0;
-  border: 0;
-  box-shadow: none;
+  width: 100%;
+  height: 100%;
+  background: no-repeat center/cover;
 }
 .file-select input {
   position: absolute;
@@ -967,11 +983,13 @@ section.modal .actions {
   height: 100%;
   padding: 0px;
   margin: 0px;
-  background: rgb(255, 255, 255) none repeat scroll 0% 0%;
   opacity: 0;
 }
 .hidden {
   display: none !important;
+}
+.pop-out.shown {
+  display: block !important;
 }
 .file-select {
   text-align: center;
@@ -985,6 +1003,13 @@ section.modal .actions {
   margin-top: -3em;
   transition: color 0.25s ease;
   color: rgba(102,102,184,0.6);
+}
+.avatar.image-selector .drop-icon {
+  margin-top: -2em;
+  display: none;
+}
+.avatar.image-selector:hover .drop-icon {
+  display: block;
 }
 .drag .drop-icon {
   color: #fff;
@@ -1015,6 +1040,66 @@ section.modal .actions {
 .drag .drop-icon::before {
   opacity: 1;
   transform: scale(1.5,1.5);
+}
+
+.tag-editor {
+  position: relative;
+}
+.tag-editor .value {
+  display: none;
+}
+.tag-editor .tag.input {
+  display: inline-block;
+  width: 100%;
+}
+.tag-editor .tags {
+  margin: 0;
+  padding: 0;
+}
+.tag-editor .tag {
+  margin: 2px;
+}
+.tag-editor .tag .remove {
+  vertical-align: middle;
+  display: inline-block;
+  height: 15px;
+  width: 15px;
+  background: #faa;
+  margin-right: 15px;
+  margin-left: -6px;
+  border-radius: 100%;
+  text-align: center;
+  line-height: 14.5px;
+  color: #fff;
+  text-shadow: none;
+  cursor: pointer;
+  font-size: 8px;
+}
+.tag-editor .pop-out {
+  display: none;
+  position: absolute;
+  background: #fff;
+  z-index: 999;
+  list-style: none;
+  padding: 0;
+  margin: 0 0 0 2px;
+  box-shadow: 0px 1px rgba(255,255,255,0.3) inset;
+  border: 1px solid #d6d6d6;
+  border-bottom-color: #cacaca;
+  border-top-color: #e2e2e2;
+  width: 100%;
+  box-shadow: 2px 2px 3px rgba(0,0,0,0.3);
+  max-height: 300px;
+  overflow-y: auto;
+}
+.tag-editor .pop-out li {
+  padding: 10px;
+}
+.tag-editor .pop-out li:nth-child(2n) {
+  background: #f8f8ff;
+}
+.tag-editor .pop-out li:hover {
+  background: #eee;
 }
 
 /*Screen size rules*/

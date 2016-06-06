@@ -18,6 +18,9 @@ Rails.application.routes.draw do
   get 'videos' => 'video#list'
   get 'ajax/videos' => 'video#page'
   
+  get 'artist/create' => 'artist#new'
+  post 'ajax/artist/create' => 'artist#create'
+  patch 'ajax/artist/edit' => 'artist#update'
   get 'artist/:id' => 'artist#view'
   get 'artists' => 'artist#list'
   get 'ajax/artists' => 'artist#page'
@@ -46,6 +49,12 @@ Rails.application.routes.draw do
   post 'ajax/create/video' => 'video#create'
   post 'ajax/update/video' => 'video#update'
   
+  post 'ajax/update/albumitem' => 'album#arrange'
+  post 'ajax/delete/albumitem' => 'album#removeItem'
+  post 'ajax/create/albumitem' => 'album#addItem'
+  post 'ajax/update/star' => 'album#arrangeStar'
+  post 'ajax/delete/star' => 'album#removeStar'
+
   root 'welcome#index'
 
   # Example of regular route:

@@ -8,11 +8,11 @@
 					</span>
 					</a>
 				<% if @modificationsAllowed %>
-					<h1 class="editable short title" data-action="album/title" data-id="<%= @album.id %>">
+					<h1 class="editable short title" data-target="album" data-member="title" data-id="<%= @album.id %>">
 						<span class="content"><%= @album.title %></span>
 						<span class="edit"><i class="fa fa-pencil"></i></span>
 					</h1>
-					<div class="editable content description" data-action="album/description" data-id="<%= @album.id %>">
+					<div class="editable content description" data-target="album" data-member="description" data-id="<%= @album.id %>">
 						<span class="content"><%= raw emotify @album.description %></span>
 						<span class="edit"><i class="fa fa-pencil" ></i></span>
 					</div>
@@ -26,10 +26,10 @@
 			</div>
 		</section>
 		<section style="width:100%"  class="page listing compact">
-			<div class="items<% if @modificationsAllowed %> reorderable<% end %>" data-id="<%= @album.id %>">
-				<span class="bump"></span>
+			<div class="items<% if @modificationsAllowed %> reorderable<% end %>" data-target="albumitem">
+				<span class="bump" data-index="0"></span>
 			<% @items.each do |item| %>
-				<a href="/view/<%= item.video.id %>-<%= url_safe item.video.title %>">
+				<a href="/view/<%= item.video.id %>-<%= url_safe item.video.title %>" data-id="<%= item.id %>" data-index="<%= item.index %>">
 				<% if @modificationsAllowed %>
 					<div class="handle"><i class="fa fa-ellipsis-v"></i></div>
 				<% end %>

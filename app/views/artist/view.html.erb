@@ -1,6 +1,6 @@
 <% if @artist %>
 <% title @artist.name %>
-<% if true || @artist.banner_set %>
+<% if @artist.banner_set %>
 <style>
 #banner {
   background-image: url('/banners/<%= @artist.id %>');
@@ -27,6 +27,7 @@
 </section>
 <section style="width:100%" class="page recent-uploads resize-holder">
 	<h1 class="title resize-target">Recent Uploads<span> (<span class="count"><%= @artist.videos.length %></span>)</span></h1>
+	<% if @modificationsAllowed %><a class="button" href="/upload"><i class="fa fa-plus"></i> New</a><% end %>
 	<ul id="videos" class="horizontal video-list">
 		<%= render partial: '/layouts/video_thumb_h', collection: @videos.records %>
 	</ul>
@@ -38,6 +39,7 @@
 </section>
 <section style="width:100%" class="page recent-uploads resize-holder">
 	<h1 class="title resize-target">Recent Albums<span> (<span class="count"><%= @artist.albums.length %></span>)</span></h1>
+	<% if @modificationsAllowed %><a class="button" href="/album/create"><i class="fa fa-plus"></i> New</a><% end %>
 	<ul id="albums" class="album-list horizontal">
 		<%= render partial: '/layouts/album_thumb_h', collection: @albums.records %>
 	</ul>
@@ -49,6 +51,6 @@
 </section>
 <% else %>
 <%= render layout: '/layouts/error', locals: { title: 'Nothing to see here!' } do %>
-If there was an artist here they're probably gone now. .... sorry.
+If there was an artist here they're probably gone now. ... sorry.
 <% end %>
 <% end %>

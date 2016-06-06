@@ -29,7 +29,17 @@
 			</form>
 			<div id="login">
 				<% if user_signed_in? %>
+				<% if current_artist %>
+				<a href="/artist/<%= current_artist.id %>-<%= url_safe current_artist.name %>" class="username">
+					<%= current_artist.name %>
+				</a>
+				<% end %>
 				<ul class="pop-out">
+					<% if current_artist %>
+					<li>
+						<a href="/upload" rel="nofollow" title="upload"><i class="fa fa-upload"></i> Upload</a>
+					</li>
+					<% end %>
 					<li>
 						<a href="/stars"><i class="fa fa-star" ></i> Stars</a>
 					</li>
@@ -37,7 +47,11 @@
 						<a id="sign-out" href="/users/sign_out" rel="nofollow" title="sign out"><i class="fa fa-sign-out"></i> Sign Out</a>
 					</li>
 				</ul>
-				<a href="/users/edit" rel="nofollow" title="settings"><img src="/images/avatar/none.jpg" /></a>
+				<a href="/users/edit" rel="nofollow" title="settings">
+					<span class="avatar small">
+						<span style="background-image:url('<% if current_artist %>/avatar/<%= current_artist.id %><% else %>/images/avatar/none.jpg<% end %>');"></span>
+					</span>
+				</a>
 				<script>
 				$(document).ready(function() {
 					$('#sign-out').on('click', function(e) {
