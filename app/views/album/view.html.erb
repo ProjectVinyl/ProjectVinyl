@@ -23,6 +23,39 @@
 					<span class="tag-list underline">
 						By <a href="/artist/<%= @album.artist.id %>-<%= url_safe @album.artist.name %>"><%= @album.artist.name %></a>
 					</span>
+				<% if @modificationsAllowed %>
+					<div class="actions">
+						<button id="delete_album" class="action right"><i class=\"fa fa-trash\"></i> Remove Album</button>
+						<script>
+$('#delete_album').on('click', function() {
+  if (!$('#cancel_msg').length) new Popup('Delete Album', 'warning', function() {
+    this.content.attr('id', 'cancel_msg');
+    this.content.append($('#cancel_form').html());
+    var me = this;
+    this.content.find('button.cancel').on('click', function() {
+      me.close();
+    });
+    this.content.find('button.ok').on('click', function() {
+      ajax.post('delete/album/<%= @album.id %>', function() {
+        me.close();
+        document.location.href = '/artist/<%= current_artist.id %>-<%= url_safe current_artist.name %>';
+      }, 1);
+    });
+    this.setFixed();
+    this.show();
+  });
+});
+						</script>
+					</div>
+					<div id="cancel_form" style="display:none;">
+							<div class="message_content">Are you sure?</div>
+							<div class="foot">
+								<button class="right cancel" type="button">No thanks</button>
+								<button class="left ok" type="button">Let's do this</button>
+							</div>
+						</div>
+					</div>
+				<% end %>
 			</div>
 		</section>
 		<section style="width:100%"  class="page listing compact">

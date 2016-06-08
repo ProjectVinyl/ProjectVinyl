@@ -35,7 +35,30 @@
 				<div class="actions">
 				<% if user_signed_in? %>
 					<a download target="_blank" href="/download/<%= @video.id %>-<%= @video.title %>" class="action download button"><i class="fa fa-download"></i> Download</a>
+				<% if @modificationsAllowed %>
+					<div class="split-button popper">
+						<button class="action star split-icon<% if @video.isStarredBy(current_user) %> starred<% end %>" data-action="star" data-id="<%= @video.id %>">
+							<i class="fa fa-star"></i>
+						</button>
+						<a class="button action addto split-action pop-out-toggle">Add To</a>
+						<ul class="pop-out">
+							<% current_artist.albums.each do |album| %>
+								<li class="action toggle" data-action="togglealbum" data-target="video" data-id="<%= @video.id %>" data-item="<%= album.id %>">
+									<span class="icon">
+									<% if album.album_items.where(video_id: @video.id).first %>
+										<i class="fa fa-check"></i>
+									<% end %>
+									</span>
+									<span class="label">
+										<%= album.title %>
+									</span>
+								</li>
+							<% end %>
+						</ul>
+					</div>
+				<% else %>
 					<button class="action star<% if @video.isStarredBy(current_user) %> starred<% end %>" data-action="star" data-id="<%= @video.id %>"><i class="fa fa-star"></i></button>
+				<% end %>
 					<button class="action like<% if @video.isUpvotedBy(current_user) %> liked<% end %>" data-count="<%= @video.upvotes %>" data-action="like" data-id="<%= @video.id %>">
 						<i class="fa fa-thumbs-up"></i>
 						<% if @video.upvotes && @video.upvotes > 0 %>

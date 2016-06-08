@@ -34,4 +34,18 @@ class AjaxController < ApplicationController
     end
     render status: 401, nothing: true
   end
+  
+  def toggleAlbum
+    if user_signed_in? && current_user.artist_id
+      if video = Video.where(id: params[:id]).first
+        if video.artist_id == current_user.artist_id && album = Album.where(id: params[:item]).first
+          if video.artist_id == album.artist_id
+            render json: { :added => album.toggle(video) }
+            return
+          end
+        end
+      end
+    end
+    render status: 401, nothing: true
+  end
 end

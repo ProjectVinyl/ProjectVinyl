@@ -163,13 +163,20 @@ $(window).ready(function () {
       e.stopPropagation();
     });
   });
-  $('.pop-out').on('mousedown', function(e) {
+  $('.pop-out-toggle').on('click', function(e) {
+    var popout = $(this).closest('.popper').find('.pop-out');
+    if (popout.length && !popout.hasClass('shown')) {
+      popout.addClass('shown');
+      e.stopPropagation();
+    }
+  });
+  $('.pop-out').on('mousedown click', function(e) {
     e.stopPropagation();
   });
 });
 $(document).on('mousedown', function() {
   $('.pop-out.shown').removeClass('shown');
-})
+});
 var ajax = (function() {
   var token = $('meta[name=csrf-token]').attr('content');
   function request(method, resource, callback, data, direct) {
@@ -422,6 +429,24 @@ var BBC = (function() {
   }
   $(document).on('click', 'button.action.like, button.action.dislike', like);
   $(document).on('click', 'button.action.star', fave);
+})();
+(function() {
+  function toggle(sender, action, id, item_id) {
+    ajax.post(action, function(json) {
+      sender.find('.icon').html(json.added ? '<i class="fa fa-check"></i>' : '');
+    }, false, {
+      id: id, item: item_id
+    });
+  }
+  $('.action.toggle').each(function() {
+    var me = $(this);
+    var target = me.attr('data-target') + '/' + me.attr('data-action');
+    var id = me.attr('data-id');
+    var item = me.attr('data-item');
+    me.on('click', function(e) {
+      toggle(me, target, id, item);
+    });
+  })
 })();
 (function() {
   var grabber;

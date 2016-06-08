@@ -2,15 +2,55 @@ class AlbumController < ApplicationController
   def view
     if @album = Album.where(id: params[:id].split(/-/)[0]).first
       @items = @album.album_items.order(:index)
-      @modificationsAllowed = session[:current_user_id] == @album.artist.id
+      @modificationsAllowed = user_signed_in? && current_user.artist_id == @album.artist.id
     end
+  end
+  
+  def new
+    if user_signed_in?
+      if current_user.artist_id
+        @album = Album.create(title: "Untitled Album", description: "", artist_id: current_user.artist_id)
+        redirect_to action: 'view', id: @album.id
+        return
+      end
+    end
+    redirect_to action: "index", controller: "welcome"
+  end
+  
+  def update
+    if user_signed_in? && album = Album.where(id: params[:id]).first
+      if album.artist.id == current_user.artist_id
+        value = ApplicationHelper.demotify(params[:value])
+        if params[:field] == 'description'
+          album.description = value
+          album.save
+        elsif params[:field] == 'title'
+          album.title = value
+          album.save
+        end
+        render status: 200, nothing: true
+        return
+      end
+    end
+    render status: 401, nothing: true
+  end
+  
+  def delete
+    if user_signed_in? && album = Album.where(id: params[:id]).first
+      if album.artist.id == current_user.artist_id
+        album.destroy
+        render status: 200, nothing: true
+        return
+      end
+    end
+    render status: 401, nothing: true
   end
   
   def arrange
     if user_signed_in?
       if item = AlbumItem.where(id: params[:id]).first
         if item.album.artist_id == current_user.artist_id
-          item.move(params[:index])
+          item.move(params[:index].to_i)
           render status: 200, nothing: true
           return
         end

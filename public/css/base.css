@@ -414,6 +414,25 @@ button, .button, #search > *, input[type=submit], .tag-editor .tag {
   line-height: 20px;
 }
 
+.split-button {
+  display: inline-block;
+  vertical-align: top;
+}
+
+.split-button > .action {
+  display: block;
+  float: left;
+  line-height: inherit;
+}
+.split-button .split-icon {
+  border-radius: 2px 0 0 2px;
+  border-right: none !important;
+}
+.split-action {
+  border-radius: 0 2px 2px 0;
+  padding-left: 6px;
+}
+
 .foobar {
   display: inline-block;
   border: solid 1px #aaa;
@@ -569,9 +588,9 @@ input[type=text], input[type=email], input[type=password], textarea {
    padding: 10px;
    border-radius: 0 0 10px 10px;
 }
-#login:hover {
+#login.drop-down-holder:hover {
   background: #fff;
-  border-radius: 0;
+  border-radius: 0 0 0 10px;
 }
 #login img {
    max-height: 30px;
@@ -585,7 +604,7 @@ input[type=text], input[type=email], input[type=password], textarea {
    font-size: 1.25em;
 }
 
-#login .pop-out {
+.drop-down {
   margin-top: -1px;
   position: absolute;
   right: 0;
@@ -595,18 +614,18 @@ input[type=text], input[type=email], input[type=password], textarea {
   text-align: left;
   height: initial;
 }
-#login:hover .pop-out {
+.drop-down-holder:hover .drop-down {
   display: block;
 }
 
-#login .pop-out li {
+.drop-down li {
   opacity: 1;
   background: #fff;
 }
-#login .pop-out li a {
+.drop-down li a {
   font-size: 13px;
 }
-#login .pop-out li:hover {
+.drop-down li:hover {
   color: #008;
 }
 
@@ -1075,14 +1094,18 @@ section.modal .actions {
   cursor: pointer;
   font-size: 8px;
 }
-.tag-editor .pop-out {
+
+.popper {
+  position: relative;
+}
+.tag-editor .pop-out, .popper .pop-out {
+  white-space: nowrap;
   display: none;
   position: absolute;
   background: #fff;
   z-index: 999;
   list-style: none;
   padding: 0;
-  margin: 0 0 0 2px;
   box-shadow: 0px 1px rgba(255,255,255,0.3) inset;
   border: 1px solid #d6d6d6;
   border-bottom-color: #cacaca;
@@ -1091,14 +1114,34 @@ section.modal .actions {
   box-shadow: 2px 2px 3px rgba(0,0,0,0.3);
   max-height: 300px;
   overflow-y: auto;
+  overflow-x: hidden;
+  min-width: 300px;
 }
-.tag-editor .pop-out li {
+.tag-editor .pop-out {
+  margin: 0 0 0 2px;
+}
+.popper .pop-out {
+  text-align: left;
+  left: 0;
+  top: 100%;
+  margin: 0;
+}
+.popper .pop-out li .icon {
+  display: inline-block;
+  width: 30px;
+}
+.pop-out, .pop-out li, .pop-out li .label {
+  overflow-x: hidden;
+  text-overflow: ellipsis;
+  -o-text-overflow: ellipsis;
+}
+.tag-editor .pop-out li, .popper .pop-out li {
   padding: 10px;
 }
-.tag-editor .pop-out li:nth-child(2n) {
+.tag-editor .pop-out li:nth-child(2n), .popper .pop-out li:nth-child(2n) {
   background: #f8f8ff;
 }
-.tag-editor .pop-out li:hover {
+.tag-editor .pop-out li:hover, .popper .pop-out li:hover {
   background: #eee;
 }
 

@@ -27,14 +27,14 @@
 					<button type="submit"><i class="fa fa-search" ></i></button>
 				</div>
 			</form>
-			<div id="login">
+			<div id="login" <% if user_signed_in? %>class="drop-down-holder"<% end %>>
 				<% if user_signed_in? %>
 				<% if current_artist %>
 				<a href="/artist/<%= current_artist.id %>-<%= url_safe current_artist.name %>" class="username">
 					<%= current_artist.name %>
 				</a>
 				<% end %>
-				<ul class="pop-out">
+				<ul class="drop-down">
 					<% if current_artist %>
 					<li>
 						<a href="/upload" rel="nofollow" title="upload"><i class="fa fa-upload"></i> Upload</a>

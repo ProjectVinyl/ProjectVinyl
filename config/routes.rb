@@ -29,9 +29,12 @@ Rails.application.routes.draw do
   get 'avatar/:id' => 'imgs#avatar'
   get 'stream/:id' => 'imgs#stream'
   
+  get 'album/create' => 'album#new'
   get 'album/:id' => 'album#view'
   get 'albums' => 'album#list'
   get 'ajax/albums' => 'album#page'
+  post 'ajax/update/album' => 'album#update'
+  post 'ajax/delete/album/:id' => 'album#delete'
   
   get 'genre/:name' => 'genre#view'
 
@@ -43,15 +46,17 @@ Rails.application.routes.draw do
   
   post 'ajax/like/:id(/:incr)' => 'ajax#upvote'
   post 'ajax/dislike/:id(/:incr)' => 'ajax#downvote'
+  post 'ajax/video/togglealbum' => 'ajax#toggleAlbum'
   post 'ajax/star/:id' => 'ajax#star'
   post 'ajax/report/:id' => 'ajax#report'
   
   post 'ajax/create/video' => 'video#create'
   post 'ajax/update/video' => 'video#update'
   
+  post 'ajax/create/albumitem' => 'album#addItem'
   post 'ajax/update/albumitem' => 'album#arrange'
   post 'ajax/delete/albumitem' => 'album#removeItem'
-  post 'ajax/create/albumitem' => 'album#addItem'
+  
   post 'ajax/update/star' => 'album#arrangeStar'
   post 'ajax/delete/star' => 'album#removeStar'
 

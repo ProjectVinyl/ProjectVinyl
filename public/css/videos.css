@@ -339,6 +339,9 @@ ul.horizontal > li .thumb .title {
   box-shadow: 0 0 10px 0px rgba(100,100,100,0.6);
 }
 
+.album-list.horizontal {
+  padding-top: 20px;
+}
 .album-list > li .title {
   font-weight: bold;
   text-shadow: 0 0.05em 0.03em rgba(0,0,0,0.3);
