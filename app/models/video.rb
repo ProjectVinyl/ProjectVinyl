@@ -20,8 +20,7 @@ class Video < ActiveRecord::Base
     incr = incr.to_i
     vote = user.votes.where(:video_id => self.id).first
     if vote.nil?
-      vote = user.votes.new(video_id: self.id, negative: false)
-      vote.save
+      vote = user.votes.create(video_id: self.id, negative: false)
     else
       if incr < 0
         vote.destroy
@@ -42,8 +41,7 @@ class Video < ActiveRecord::Base
     incr = incr.to_i
     vote = user.votes.where(:video_id => self.id).first
     if vote.nil?
-      vote = user.votes.new(video_id: self.id, negative: true)
-      vote.save
+      vote = user.votes.create(video_id: self.id, negative: true)
     else
       if incr < 0
         vote.destroy
@@ -63,8 +61,7 @@ class Video < ActiveRecord::Base
   def star(user)
     vote = user.stars.where(:video_id => self.id).first
     if !vote
-      vote = user.stars.new(video_id: self.id, index: user.stars.length)
-      vote.save
+      user.stars.create(video_id: self.id, index: user.stars.length)
       return true
     else
       vote.removeSelf()
