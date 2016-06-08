@@ -82,23 +82,7 @@ module ApplicationHelper
   end
   
   def since(date)
-    date = date.to_f.to_i
-    if date >= 60000
-      date = (date/60000).floor
-      if date >= 60
-        date = (date/60).floor
-        if date >= 24
-          date = (date/24).floor
-          if date >= 365
-            date = (date/365).floor
-            return date.to_s + ' years ago'
-          end
-          return date.to_s + ' hours ago'
-        end
-        return date.to_s + ' minutes ago'
-      end
-    end
-    return 'a few seconds ago'
+    (time_ago_in_words date) + " ago"
   end
   
   def duration(length)
