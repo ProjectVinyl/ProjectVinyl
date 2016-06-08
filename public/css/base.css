@@ -19,6 +19,7 @@ html, body {
   line-height: 1.5em;
   font-size: 13px;
 }
+
 h1 {
   font-size: 1.25em;
   font-size-adjust: 0.75;
@@ -151,7 +152,7 @@ button.red, .button.red, input[type=submit].red {
   border-bottom-color: #9d3232;
   border-top-color: #b03838;
   text-shadow: -1px -1px #a73535;
-  background: rgb(236, 72, 72);
+  background: rgb(236, 72, 72) !important;
 }
 
 .post .actions .like.liked,
@@ -161,7 +162,7 @@ button.green, .button.green, input[type=submit].green {
   border-bottom-color: #638f36;
   border-top-color: #6fa03c;
   text-shadow: -1px -1px #699739;
-  background: #7bb042;
+  background: #7bb042 !important;
 }
 
 .post .actions .star.starred {
@@ -449,6 +450,17 @@ button, .button, #search > *, input[type=submit], .tag-editor .tag {
   pointer-events: none;
 }
 
+input[type=text], input[type=email], input[type=password], textarea {
+  padding: 8px;
+  color: #444;
+  border: solid 1px #ccc;
+  font-size: 1.1em;
+  vertical-align: middle;
+  border-radius: 2px;
+  min-height: 35px;
+  font-family: Verdana,sans-serif;
+}
+
 .search-options label {
   display: block;
   border: 1px solid #ccc;
@@ -458,11 +470,11 @@ button, .button, #search > *, input[type=submit], .tag-editor .tag {
   border-radius: 2px;
 }
 
-.search-options label, input[type=text]:focus, input[type=email]:focus, input[type=password]:focus {
+.search-options label, input[type=text]:focus, input[type=email]:focus, input[type=password]:focus, textarea:focus {
   transition: background 0.125s ease;
 }
 
-.search-options label.focus, input[type=text]:focus, input[type=email]:focus, input[type=password]:focus {
+.search-options label.focus, input[type=text]:focus, input[type=email]:focus, input[type=password]:focus, textarea:focus {
   background: rgba(200,200,200,0.1);
 }
 
@@ -559,16 +571,6 @@ label input[type=radio] + i::before {
 }
 label input[type=radio]:checked + i::before {
   content: '\f192';
-}
-
-input[type=text], input[type=email], input[type=password], textarea {
-  padding: 8px;
-  color: #444;
-  border: solid 1px #ccc;
-  font-size: 1.1em;
-  vertical-align: middle;
-  border-radius: 2px;
-  min-height: 35px;
 }
 
 #search {
@@ -744,6 +746,14 @@ img.emoticon {
   position: absolute;
   min-width: 25%;
   text-align: left;
+}
+.popup-container .loader {
+  width: 100%;
+  text-align: center;
+  font-size: 50px;
+  line-height: 200px;
+  height: 200px;
+  color: #ddd;
 }
 .popup-container .popup {
   transition: box-shadow 0.35s linear;

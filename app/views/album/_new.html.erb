@@ -1,0 +1,26 @@
+<%= form_for(@album, as: "album", url: "/ajax/create/album") do |f| %>
+<div class="properties">
+	<table>
+		<tr>
+			<td class="label">
+				<%= f.label :title %>
+			</td>
+			<td class="field">
+				<%= f.text_field :title, autofocus: true %>
+			</td>
+		</tr>
+		<tr>
+			<td class="label">
+				<%= f.label :description %>
+			</td>
+			<td class="field">
+				<%= f.text_area :description %>
+			</td>
+		</tr>
+	</table>
+</div>
+<div class="foot">
+	<%= f.submit "OK", class: "green" %>
+	<button class="right cancel" type="button">Cancel</button>
+</div>
+<% end %>

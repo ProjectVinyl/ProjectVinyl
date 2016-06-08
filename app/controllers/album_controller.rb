@@ -7,10 +7,21 @@ class AlbumController < ApplicationController
   end
   
   def new
+    @album = Album.new
+    render partial: 'new'
+  end
+  
+  def create
     if user_signed_in?
       if current_user.artist_id
-        @album = Album.create(title: "Untitled Album", description: "", artist_id: current_user.artist_id)
-        redirect_to action: 'view', id: @album.id
+        album = params[:album]
+        album = Album.create(title: ApplicationHelper.demotify(album[:title]), description: ApplicationHelper.demotify(album[:description]), artist_id: current_user.artist_id)
+        if params[:initial]
+          if initial = Video.where(id: params[:initial]).first
+            album.addItem(initial)
+          end
+        end
+        redirect_to action: 'view', id: album.id
         return
       end
     end

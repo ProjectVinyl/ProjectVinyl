@@ -29,10 +29,12 @@ Rails.application.routes.draw do
   get 'avatar/:id' => 'imgs#avatar'
   get 'stream/:id' => 'imgs#stream'
   
-  get 'album/create' => 'album#new'
+  get 'ajax/album/create' => 'album#new'
   get 'album/:id' => 'album#view'
   get 'albums' => 'album#list'
   get 'ajax/albums' => 'album#page'
+  
+  post 'ajax/create/album' => 'album#create'
   post 'ajax/update/album' => 'album#update'
   post 'ajax/delete/album/:id' => 'album#delete'
   
