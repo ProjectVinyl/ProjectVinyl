@@ -15,3 +15,7 @@
 /log/*
 !/log/.keep
 /tmp
+
+
+.rake_tasks~
+.rbenv-vars
