@@ -285,6 +285,13 @@ header ul li:hover, header ul li.selected {
   opacity: 0.3;
   text-decoration: none;
 }
+#banner > a.title:after {
+  content: 'BETA';
+  display: block;
+  font-size: 0.4em;
+  text-align: right;
+  margin-top: 0.7em;
+}
 
 main {
   display: inline-block;
