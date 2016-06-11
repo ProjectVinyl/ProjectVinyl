@@ -16,6 +16,9 @@ class Genre < ActiveRecord::Base
   end
   
   def self.getGenresFor(tag_string)
+    if tag_string == ''
+      return []
+    end
     tag_string = tag_string.downcase.split(/ |,|;/)
     built = ''
     tag_string.each do |item|
