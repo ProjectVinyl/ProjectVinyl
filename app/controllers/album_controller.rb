@@ -1,9 +1,13 @@
 class AlbumController < ApplicationController
   def view
     if @album = Album.where(id: params[:id].split(/-/)[0]).first
-      @artist = @album.artist
+      if @album.owner_type != 'Artist'
+        render 'layouts/error', locals: { title: 'Access Denied', description: "You can't do that right now." }
+        return
+      end
+      @artist = @album.owner
       @items = @album.album_items.order(:index)
-      @modificationsAllowed = user_signed_in? && (current_user.artist_id == @album.artist.id || current_user.is_admin)
+      @modificationsAllowed = user_signed_in? && (current_user.is_admin || (@artist && current_user.artist_id == @artist.id))  
     end
   end
   
@@ -123,7 +127,7 @@ class AlbumController < ApplicationController
   
   def list
     @page = params[:page].to_i
-    @results = Pagination.paginate(Album.order(:created_at), @page, 50, true)
+    @results = Pagination.paginate(Album.where(owner_type: 'Artist').order(:created_at), @page, 50, true)
     render template: '/view/listing', locals: {type_id: 1, type: 'albums', type_label: 'Album', items: @results}
   end
   
@@ -131,7 +135,7 @@ class AlbumController < ApplicationController
     @page = params[:page].to_i
     @artist = params[:artist]
     if @artist.nil?
-      @results = Pagination.paginate(Album.order(:created_at), @page, 50, true)
+      @results = Pagination.paginate(Album.where(owner_type: 'Artist').order(:created_at), @page, 50, true)
     else
       @results = Pagination.paginate(Artist.find(@artist.to_i).albums.order(:created_at), @page, 8, true)
     end

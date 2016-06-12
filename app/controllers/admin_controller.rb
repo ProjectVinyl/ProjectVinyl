@@ -93,4 +93,20 @@ class AdminController < ApplicationController
     end
     render 'layouts/error', locals: { title: 'Access Denied', description: "You can't do that right now." }
   end
+  
+  def toggleVisibility
+    if user_signed_in? && current_user.is_admin
+      video = Video.find(params[:id])
+      if video.hidden
+        video.hidden = false
+        video.save
+      else
+        video.hidden = true
+        video.save
+      end
+      render json: { :hidden => video.hidden }
+      return
+    end
+    render status: 401, nothing: true
+  end
 end

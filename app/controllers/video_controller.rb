@@ -1,6 +1,10 @@
 class VideoController < ApplicationController
   def view
     if @video = Video.where(id: params[:id].split(/-/)[0]).first
+      if @video.hidden
+        render 'layouts/error', locals: { title: 'Content Removed', description: "The video you are trying to access is currently not available." }
+        return
+      end
       @artist = @video.artist
       @queue = @artist.videos.where.not(id: @video.id).limit(5).order("RAND()")
       @modificationsAllowed = user_signed_in? && current_user.artist_id == @artist.id
@@ -81,7 +85,7 @@ class VideoController < ApplicationController
   
   def list
     @page = params[:page].to_i
-    @results = Pagination.paginate(Video.order(:created_at), @page, 50, true)
+    @results = Pagination.paginate(Video.where(hidden: false).order(:created_at), @page, 50, true)
     render template: '/view/listing', locals: {type_id: 0, type: 'videos', type_label: 'Song', items: @results}
   end
   
@@ -89,7 +93,7 @@ class VideoController < ApplicationController
     @page = params[:page].to_i
     @artist = params[:artist]
     if @artist.nil?
-      @results = Pagination.paginate(Video.order(:created_at), @page, 50, true)
+      @results = Pagination.paginate(Video.where(hidden: false).order(:created_at), @page, 50, true)
     else
       @results = Pagination.paginate(Artist.find(@artist.to_i).videos.order(:created_at), @page, 8, true)
     end
