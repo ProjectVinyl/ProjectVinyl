@@ -6,7 +6,8 @@
 	<section class="page column-right right properties">
 		<div class="actions">
 			<table>
-			<%= form_for(@album, as: "album", url: "/admin/transfer?type=album", html: { method: :put }) do |f| %>
+			<%= form_for(@album, as: "item", url: "/admin/transfer?type=album", html: { method: :put }) do |f| %>
+				<%= f.text_field :id, hidden: true %>
 				<tr>
 					<td class="label">
 						<%= f.label "Current Owner" %>

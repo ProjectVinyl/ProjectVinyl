@@ -1,5 +1,5 @@
 <li class="generic">
-	<a class="thumb" style="background-image:url('/cover/<%= video_thumb_v.id %>');" href="/view/<%= video_thumb_v.id %>-<%= url_safe video_thumb_v.title %>">
-		<div><%= video_thumb_v.title %></div>
+	<a class="thumb" style="background-image:url('/cover/<%= video_thumb_v.hidden ? 0 : video_thumb_v.id %>');" href="/view/<%= video_thumb_v.id %>-<%= url_safe video_thumb_v.title %>">
+		<div><%= video_thumb_v.getTitle %></div>
 	</a>
 </li>

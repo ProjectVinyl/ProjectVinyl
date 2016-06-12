@@ -2,7 +2,7 @@
 		<% title "Admin" %>
 		<%= render partial: 'video/video' %>
 		<div class="wrapper column-right right">
-			<section class="page artist-bio center">
+			<section class="page artist-bio center resize-holder" style="width:100%">
 				<span class="avatar">
 					<span style="background-image:url('/avatar/<%= @artist.id %>');"></span>
 				</span>
@@ -12,8 +12,9 @@
 				<div class="bio short"><%= raw emotify @artist.bio %></div>
 			</section>
 			<section class="page properties" style="width:100%">
+				<%= form_for(@video, as: "item", url: "/admin/transfer?type=video", html: { method: :put }) do |f| %>
+					<%= f.text_field :id, hidden: true %>
 				<table>
-				<%= form_for(@video, as: "video", url: "/admin/transfer?type=video", html: { method: :put }) do |f| %>
 					<tr>
 						<td class="label">
 							<%= f.label "Current Owner" %>
@@ -39,17 +40,22 @@
 							<%= f.submit "Transfer Ownership", class: "green" %>
 						</td>
 					</tr>
+				</table>
 				<% end %>
 				<%= form_for(@video, as: "video", url: "/admin/visibility", html: { method: :put }) do |f| %>
+					<%= f.text_field :id, hidden: true %>
+				<table>
 					<tr class="actions">
 						<td class="label">
 							<%= f.label "Visibility" %>
 						</td>
 						<td class="field">
-							<%= f.submit "Hide", class: "green" %>
+							<%= f.submit @video.hidden ? "Show" : "Hide", class: "green" %>
 						</td>
 					</tr>
 				<% end %>
+				</table>
+				<table>
 					<tr class="actions">
 						<td class="label">
 							Delete Item

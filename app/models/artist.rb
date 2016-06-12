@@ -14,4 +14,14 @@ class Artist < ActiveRecord::Base
   def genres_string
     return Genre.tag_string(self.genres)
   end
+  
+  def taglist
+    if !(user = User.where(artist_id: self.id).first)
+      return "Unclaimed Artist"
+    end
+    if user.is_admin
+      return "Admin"
+    end
+    return "Artist"
+  end
 end

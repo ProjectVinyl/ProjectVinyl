@@ -1,12 +1,12 @@
 class VideoController < ApplicationController
   def view
     if @video = Video.where(id: params[:id].split(/-/)[0]).first
-      if @video.hidden
+      if @video.hidden && (!user_signed_in? || @video.artist_id != current_user.artist_id)
         render 'layouts/error', locals: { title: 'Content Removed', description: "The video you are trying to access is currently not available." }
         return
       end
       @artist = @video.artist
-      @queue = @artist.videos.where.not(id: @video.id).limit(5).order("RAND()")
+      @queue = @artist.videos.where(hidden: false).where.not(id: @video.id).limit(5).order("RAND()")
       @modificationsAllowed = user_signed_in? && current_user.artist_id == @artist.id
     end
   end

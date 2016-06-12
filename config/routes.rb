@@ -13,6 +13,8 @@ Rails.application.routes.draw do
   get 'admin/album/:id' => 'admin#album'
   get 'admin/video/:id' => 'admin#video'
   get 'admin/artist/:id' => 'admin#artist'
+  put 'admin/visibility' => 'admin#visibility'
+  put 'admin/transfer' => 'admin#transferItem'
   
   get 'view/:id' => 'video#view'
   get 'embed/:id' => 'embed#view'

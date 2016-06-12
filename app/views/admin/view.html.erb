@@ -1,14 +1,52 @@
 <% title "Admin" %>
-<% lim "900px" %>
-<section class="page properties" style="width:100%">
+<% lim "1100px" %>
+<section class="page properties resize-holder" style="width:100%">
+	<h1 class="title resize-target">Admin Control Panel</h1>
 	<table>
 		<tr class="actions">
 			<td class="label">
-				Artist Profile
+				Artist Profiles
 			</td>
 			<td class="field super action">
-				<a href="/artist/create" class="button green">Create</a>
+				<a href="/artist/create">Create a new Artist</a>
 			</td>
 		</tr>
 	</table>
+</section>
+<section style="width:100%" class="page resize-holder">
+	<h1 class="title resize-target">Recent Activity</h1>
+	<table>
+		<thead>
+			<td>Id</td>
+			<td>Contact</td>
+			<td>Artist</td>
+			<td>Created</td>
+			<td>Last Active</td>
+			<td>Votes</td>
+			<td>Sign ins</td>
+		</thead>
+		<tbody>
+		<% @users.each do |user| %>
+			<tr>
+				<td><%= user.id %></td>
+				<td><%= user.email %></td>
+				<% if user.artist_id %>
+				<td><a href="/artist/<%= user.artist_id %>"><%= Artist.where(id: user.artist_id).first.name %></a></td>
+				<% else %>
+				<td>none</td>
+				<% end %>
+				<td><%= since user.created_at %></td>
+				<td><%= since user.updated_at %></td>
+				<td><%= user.votes.count %></td>
+				<td><%= user.sign_in_count %></td>
+			</tr>
+		<% end %>
+		</tbody>
+	</table>
+</section>
+<section style="width:100%" class="page recent-uploads resize-holder">
+	<h1 class="title resize-target">Hidden Videos</h1>
+	<ul id="videos" class="horizontal video-list">
+		<%= render partial: '/layouts/video_thumb_h', collection: @hiddenvideos.records %>
+	</ul>
 </section>

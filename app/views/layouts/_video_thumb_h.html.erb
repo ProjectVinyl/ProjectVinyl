@@ -1,6 +1,6 @@
 <li class="generic">
-	<a class="thumb" style="background-image:url('/cover/<%= video_thumb_h.id %>');" href="/view/<%= video_thumb_h.id %>-<%= url_safe video_thumb_h.title %>">
-		<div><%= video_thumb_h.title %></div>
+	<a class="thumb" style="background-image:url('/cover/<%= video_thumb_h.hidden ? 0 : video_thumb_h.id %>');" href="/view/<%= video_thumb_h.id %>-<%= url_safe video_thumb_h.title %>">
+		<div><%= video_thumb_h.getTitle %></div>
 	</a>
 	<span class="date underline" title="<%= video_thumb_h.created_at %>"><%= raw since video_thumb_h.created_at %></span>
 </li>

@@ -4,6 +4,8 @@ class AdminController < ApplicationController
       render 'layouts/error', locals: { title: 'Access Denied', description: "You can't do that right now." }
       return
     end
+    @hiddenvideos = Pagination.paginate(Video.where(hidden: true), 0, 5*8, true)
+    @users = User.where(last_sign_in_at: Time.zone.now.beginning_of_month..Time.zone.now.end_of_day).limit(100).order(:last_sign_in_at).reverse_order
   end
   
   def video
@@ -14,7 +16,6 @@ class AdminController < ApplicationController
     @modificationsAllowed = true
     @video = Video.find(params[:id])
     @artist = @video.artist
-    @queue = @artist.videos.where.not(id: @video.id).limit(5).order("RAND()")
   end
   
   def album
@@ -37,15 +38,15 @@ class AdminController < ApplicationController
   
   def transferItem
     if user_signed_in? && current_user.is_admin
-      if artist = Artist.where(id: params[:artist]).first
+      if artist = Artist.where(id: params[:item][:artist_id]).first
         if params[:type] == 'video'
-          item = Video.where(id: params[:id]).first
+          item = Video.where(id: params[:item][:id]).first
         elsif params[:type] == 'album'
-          item = Album.where(id: params[:id]).first
+          item = Album.where(id: params[:item][:id]).first
         end
         if item
           item.transferTo(artist)
-          render status: 200
+          redirect_to action: params[:type], id: params[:item][:id]
           return
         end
       end
@@ -94,9 +95,9 @@ class AdminController < ApplicationController
     render 'layouts/error', locals: { title: 'Access Denied', description: "You can't do that right now." }
   end
   
-  def toggleVisibility
+  def visibility
     if user_signed_in? && current_user.is_admin
-      video = Video.find(params[:id])
+      video = Video.find(params[:video][:id])
       if video.hidden
         video.hidden = false
         video.save
@@ -104,7 +105,7 @@ class AdminController < ApplicationController
         video.hidden = true
         video.save
       end
-      render json: { :hidden => video.hidden }
+      redirect_to action: 'video', id: params[:video][:id]
       return
     end
     render status: 401, nothing: true

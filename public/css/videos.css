@@ -544,3 +544,10 @@ i.fa.fa-volume-mid {
   text-align: center;
   width: 50px;
 }
+.listing.compact .items .hidden-item div {
+  font-weight: initial;
+  color: #aaa;
+}
+.listing.compact .items .hidden-item .title:before {
+  opacity: 0;
+}

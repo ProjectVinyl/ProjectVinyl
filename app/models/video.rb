@@ -98,7 +98,14 @@ class Video < ActiveRecord::Base
     return false
   end
   
+  def getTitle
+    return self.hidden ? "Hidden Video" : self.title
+  end
+  
   def getDuration
+    if self.hidden
+      return 0
+    end
     if self.length.nil? || self.length == 0
       return computeLength()
     end

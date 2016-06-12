@@ -3,6 +3,9 @@
 	<% if @video.mime == '' || @video.mime.nil? %>
 	<div class="notice pending">This video is still being processed by our background ponies. If it does not play correctly try again later.</div>
 	<% end %>
+	<% if @video.hidden %>
+	<div class="notice alert">This video has been hidden. It will not be shown on other parts of the site until being passed by moderation.</div>
+	<% end %>
 	<div class="post description resize-holder">
 	<% if @modificationsAllowed %>
 		<h1 class="title editable post-title resize-target short" data-target="video" data-member="title" data-id="<%= @video.id %>">
