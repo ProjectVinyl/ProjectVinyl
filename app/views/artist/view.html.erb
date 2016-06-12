@@ -20,6 +20,11 @@
 			</h1>
 			<span class="content bio"><%= raw emotify @artist.description %></span>
 		</div>
+		<% if current_user.is_admin %>
+		<div class="actions admin">
+			<a href="/admin/artist/<%= @artist.id %>" class="button action">Admin Actions</a>
+		</div>
+		<% end %>
 		<div class="details">
 			<%= render partial: '/layouts/taglist', locals: { collection: @artist.genres } %>
 		</div>

@@ -31,25 +31,9 @@ class Genre < ActiveRecord::Base
   end
   
   def self.loadGenres(tag_string, target)
-    load = Genre.getGenresFor(tag_string)
-    if load.size != target.size
-      if target.size > load.size
-        target.each_with_index do |item, index|
-          if index >= load.size
-            item.destroy
-          end
-        end
-      end
-    end
-    loaded = target.offset(0)
-    load.each_with_index do |genre, index|
-      item = loaded[index]
-      if item
-        item.genre = genre
-        item.save
-      else
-        target.create(genre_id: genre.id)
-      end
+    target.destroy
+    Genre.getGenresFor(tag_string).each_with_index do |genre, index|
+      target.create(genre_id: genre.id)
     end
   end
 end

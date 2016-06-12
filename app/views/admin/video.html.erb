@@ -1,0 +1,68 @@
+<% if @video %>
+		<% title "Admin" %>
+		<%= render partial: 'video/video' %>
+		<div class="wrapper column-right right">
+			<section class="page artist-bio center">
+				<span class="avatar">
+					<span style="background-image:url('/avatar/<%= @artist.id %>');"></span>
+				</span>
+				<h1 class="resize-target">
+					<a class="name" href="/artist/<%= @artist.id %>-<%= @artist.name %>"><%= @artist.name %></a>
+				</h1>
+				<div class="bio short"><%= raw emotify @artist.bio %></div>
+			</section>
+			<section class="page properties" style="width:100%">
+				<table>
+				<%= form_for(@video, as: "video", url: "/admin/transfer?type=video", html: { method: :put }) do |f| %>
+					<tr>
+						<td class="label">
+							<%= f.label "Current Owner" %>
+						</td>
+						<td class="field">
+							<a href="/artist/<%= @video.artist.id %>">
+								<%= @video.artist.name %> (<%= @video.artist.id %>)
+							</a>
+						</td>
+					</tr>
+					<tr>
+						<td class="label">
+							<%= f.label "New Owner" %>
+						</td>
+						<td class="field">
+							<%= f.text_field :artist_id %>
+						</td>
+					</tr>
+					<tr class="actions">
+						<td class="label">
+						</td>
+						<td class="field">
+							<%= f.submit "Transfer Ownership", class: "green" %>
+						</td>
+					</tr>
+				<% end %>
+				<%= form_for(@video, as: "video", url: "/admin/visibility", html: { method: :put }) do |f| %>
+					<tr class="actions">
+						<td class="label">
+							<%= f.label "Visibility" %>
+						</td>
+						<td class="field">
+							<%= f.submit "Hide", class: "green" %>
+						</td>
+					</tr>
+				<% end %>
+					<tr class="actions">
+						<td class="label">
+							Delete Item
+						</td>
+						<td class="field">
+							<button id="delete_video" type="button" class="action red"><i class=\"fa fa-trash\"></i> Delete Video</button>
+						</td>
+					</tr>
+				</table>
+			</section>
+		</div>
+<% else %>
+<%= render layout: '/layouts/error', locals: { title: 'Nothing to see here!' } do %>
+This is not the video you are looking for.
+<% end %>
+<% end %>

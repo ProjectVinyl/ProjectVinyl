@@ -1,0 +1,5 @@
+<% lim "900px" %>
+<section style="width:100%;" class="page properties">
+	<h1>Edit Artist</h1>
+	<%= render partial: 'artist/edit', locals: { artist: @artist, url: "/ajax/artist/edit?artist_id=" + @artist.id.to_s } %>
+</section>

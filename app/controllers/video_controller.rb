@@ -3,13 +3,18 @@ class VideoController < ApplicationController
     if @video = Video.where(id: params[:id].split(/-/)[0]).first
       @artist = @video.artist
       @queue = @artist.videos.where.not(id: @video.id).limit(5).order("RAND()")
-      @modificationsAllowed = user_signed_in? && !current_user.artist_id.nil? && current_user.artist_id == @artist.id
+      @modificationsAllowed = user_signed_in? && current_user.artist_id == @artist.id
     end
   end
   
   def upload
     if user_signed_in?
-      if @artist = Artist.where(id: current_user.artist_id).first
+      if current_user.is_admin && params[:artist]
+        @artist = Artist.where(id: params[:artist]).first
+      else
+        @artist = Artist.where(id: current_user.artist_id).first
+      end
+      if @artist
         @video = Video.new
         return
       end
@@ -19,7 +24,12 @@ class VideoController < ApplicationController
   
   def create
     if user_signed_in?
-      if artist = Artist.where(id: current_user.artist_id).first
+      if current_user.is_admin && params[:artist]
+        artist = Artist.where(id: params[:artist]).first
+      else
+        artist = Artist.where(id: current_user.artist_id).first
+      end
+      if artist
         file = params[:video][:file]
         cover = params[:video][:cover]
         if file && (file.content_type.include?('video/') || file.content_type.include?('audio/'))
@@ -42,7 +52,7 @@ class VideoController < ApplicationController
   
   def update
     if user_signed_in? && video = Video.where(id: params[:id]).first
-      if video.artist.id == current_user.artist_id
+      if video.artist.id == current_user.artist_id || current_user.is_admin
         value = ApplicationHelper.demotify(params[:value])
         if params[:field] == 'description'
           video.description = value

@@ -3,12 +3,12 @@ class ArtistController < ApplicationController
     if @artist = Artist.where(id: params[:id].split(/-/)[0]).first
       @videos = Pagination.paginate(@artist.videos, 0, 8, true)
       @albums = Pagination.paginate(@artist.albums, 0, 8, true)
-      @modificationsAllowed = user_signed_in? && current_user.artist_id == @artist.id
+      @modificationsAllowed = user_signed_in? && current_user.artist_id == @artist.id || current_user.is_admin
     end
   end
   
   def new
-    if !user_signed_in? || current_user.artist_id
+    if (!user_signed_in? || current_user.artist_id) && !current_user.is_admin
       redirect_to action: "edit", controller: "devise/registrations"
       return
     end
@@ -16,7 +16,7 @@ class ArtistController < ApplicationController
   end
   
   def create
-    if user_signed_in? && !current_user.artist_id
+    if user_signed_in? && (!current_user.artist_id || current_user.is_admin)
       artist = params[:artist]
       file = artist[:avatar]
       artist = Artist.create(
@@ -31,8 +31,10 @@ class ArtistController < ApplicationController
         avatar(artist, file)
       end
       artist.save
-      current_user.artist_id = artist.id
-      current_user.save
+      if !current_user.artist_id
+        current_user.artist_id = artist.id
+        current_user.save
+      end
       redirect_to action: "view", id: artist.id
       return
     end
@@ -41,19 +43,30 @@ class ArtistController < ApplicationController
   
   def update
     input = params[:artist]
-    if user_signed_in? && (artist = Artist.where(id: current_user.artist_id).first)
-      artist.name = ApplicationHelper.demotify(input[:name])
-      artist.description = ApplicationHelper.demotify(input[:description])
-      artist.bio = ApplicationHelper.demotify(input[:bio])
-      if input[:genres_string]
-        Genre.loadGenres(input[:genres_string], artist.artist_genres)
+    if user_signed_in?
+      if current_user.is_admin && params[:artist_id]
+        artist = Artist.where(id: params[:artist_id]).first
+      elsif
+        artist = Artist.where(id: current_user.artist_id).first
       end
-      if file = input[:avatar] && file.content_type.include?('image/')
-        avatar(artist, file)
+      if artist
+        artist.name = ApplicationHelper.demotify(input[:name])
+        artist.description = ApplicationHelper.demotify(input[:description])
+        artist.bio = ApplicationHelper.demotify(input[:bio])
+        if input[:genres_string]
+          Genre.loadGenres(input[:genres_string], artist.artist_genres)
+        end
+        if file = input[:avatar] && file.content_type.include?('image/')
+          avatar(artist, file)
+        end
+        artist.save
+        if current_user.is_admin && params[:artist_id]
+          redirect_to action: "view", id: artist.id
+        else
+          redirect_to action: "edit", controller: "devise/registrations"
+        end
+        return
       end
-      artist.save
-      redirect_to action: "edit", controller: "devise/registrations"
-      return
     end
     render 'layouts/error', locals: { title: 'Access Denied', description: "You can't do that right now." }
   end

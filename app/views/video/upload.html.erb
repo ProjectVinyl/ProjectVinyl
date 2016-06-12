@@ -40,6 +40,12 @@ $('#video-upload').on('accept', function() {
 						<%= f.text_area :genres_string %>
 					<% end %>
 				</div>
+				<% if current_user.is_admin %>
+				<div class="actions">
+					<%= f.label "Artist" %>
+					<%= f.text_field :artist_id %>
+				</div>
+				<% end %>
 				<div class="actions">
 					<button id="change_video" class="action" type="button" onclick="$('#video_file').trigger('click');">Change Main File</button>
 					<%= f.submit "Upload", class: "action right green" %>

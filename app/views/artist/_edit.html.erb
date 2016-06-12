@@ -1,5 +1,5 @@
-<%= form_for(artist, as: "artist", url: url) do |f| %>
-	<table>
+<table>
+	<%= form_for(artist, as: "artist", url: url) do |f| %>
 		<tr class="section">
 			<td colspan="2">
 				Appearance
@@ -65,5 +65,14 @@
 				<%= f.submit "Save Changes", class: "green" %>
 			</td>
 		</tr>
-	</table>
-<% end %>
+	<% end %>
+	<% if current_user.is_admin %>
+		<tr class="actions">
+		<td class="label">
+			</td>
+			<td class="field">
+				<button id="delete_artist" type="button" class="action red"><i class=\"fa fa-trash\"></i> Delete Artist</button>
+			</td>
+		</tr>
+	<% end %>
+</table>

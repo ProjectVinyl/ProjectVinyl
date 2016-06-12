@@ -1,0 +1,65 @@
+<section style="width:100%" class="page resize-holder">
+	<div class="post">
+		<a class="thumb stack left">
+			<span <% if @items.second %>style="background-image:url('/cover/<%= @items.second.video.id %>');"<% end %> class="stack-item item-1">
+				<span <% if @items.first %>style="background-image:url('/cover/<%= @items.first.video.id %>');"<% end %> class="stack-item item-2"></span>
+			</span>
+			</a>
+		<% if @modificationsAllowed %>
+			<h1 class="editable short title" data-target="album" data-member="title" data-id="<%= @album.id %>">
+				<span class="content"><%= @album.title %></span>
+				<span class="edit"><i class="fa fa-pencil"></i></span>
+			</h1>
+			<div class="editable content description" data-target="album" data-member="description" data-id="<%= @album.id %>">
+				<span class="content"><%= raw emotify @album.description %></span>
+				<span class="edit"><i class="fa fa-pencil" ></i></span>
+			</div>
+		<% else %>
+			<h1 class="title"><%= @album.title %></h1>
+			<div class="content description"><%= raw emotify @album.description %></div>
+		<% end %>
+			<span class="tag-list underline">
+				<% if @artist %>
+				By <a href="/artist/<%= @artist.id %>-<%= url_safe @artist.name %>"><%= @artist.name %></a>
+				<% else %>
+				<a href="">#<%= current_user.id %></a>
+				<% end %>
+			</span>
+		<% if @modificationsAllowed && @album.owner_type != 'User' %>
+			<div class="actions">
+				<button id="delete_album" class="action right"><i class=\"fa fa-trash\"></i> Remove Album</button>
+				<script>
+$('#delete_album').on('click', function() {
+  if (!$('#cancel_msg').length) new Popup('Delete Album', 'warning', function() {
+    this.content.attr('id', 'cancel_msg');
+    this.content.append($('#cancel_form').html());
+    var me = this;
+    this.content.find('button.cancel').on('click', function() {
+      me.close();
+    });
+    this.content.find('button.ok').on('click', function() {
+      ajax.post('delete/album/<%= @album.id %>', function() {
+        me.close();
+        document.location.href = '/artist/<%= current_artist.id %>-<%= url_safe current_artist.name %>';
+      }, 1);
+    });
+    this.setFixed();
+    this.show();
+  });
+});
+				</script>
+				<% if current_user.is_admin %>
+				<a href="/admin/album/<%= @album.id %>" class="button action right" style="margin-right: 10px;">Admin Actions</a>
+				<% end %>
+			</div>
+			<div id="cancel_form" style="display:none;">
+					<div class="message_content">Are you sure?</div>
+					<div class="foot">
+						<button class="right cancel" type="button">No thanks</button>
+						<button class="left ok" type="button">Let's do this</button>
+					</div>
+				</div>
+			</div>
+		<% end %>
+	</div>
+</section>

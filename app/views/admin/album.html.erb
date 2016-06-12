@@ -1,0 +1,79 @@
+<% if @album %>
+	<% title @album.title %>
+	<div class="wrapper column-left left">
+		<%= render partial: 'album/album' %>
+	</div>
+	<section class="page column-right right properties">
+		<div class="actions">
+			<table>
+			<%= form_for(@album, as: "album", url: "/admin/transfer?type=album", html: { method: :put }) do |f| %>
+				<tr>
+					<td class="label">
+						<%= f.label "Current Owner" %>
+					</td>
+					<td class="field">
+						<a href="/artist/<%= @album.artist.id %>">
+							<%= @album.artist.name %> (<%= @album.artist.id %>)
+						</a>
+					</td>
+				</tr>
+				<tr>
+					<td class="label">
+						<%= f.label "Owner" %>
+					</td>
+					<td class="field">
+						<%= f.text_field :artist_id %>
+					</td>
+				</tr>
+				<tr class="actions">
+					<td class="label">
+					</td>
+					<td class="field">
+						<%= f.submit "Transfer Ownership", class: "green" %>
+					</td>
+				</tr>
+			<% end %>
+				<tr class="actions">
+					<td class="label">
+						Delete Item
+					</td>
+					<td class="field">
+						<button id="delete_album" type="button" class="action red"><i class=\"fa fa-trash\"></i> Delete Album</button>
+					</td>
+				</tr>
+			</table>
+			<script>
+$('#delete_album').on('click', function() {
+  if (!$('#cancel_msg').length) new Popup('Delete Album', 'warning', function() {
+    this.content.attr('id', 'cancel_msg');
+    this.content.append($('#cancel_form').html());
+    var me = this;
+    this.content.find('button.cancel').on('click', function() {
+      me.close();
+    });
+    this.content.find('button.ok').on('click', function() {
+      ajax.post('delete/album/<%= @album.id %>', function() {
+        me.close();
+        document.location.href = '/artist/<%= current_artist.id %>-<%= url_safe current_artist.name %>';
+      }, 1);
+    });
+    this.setFixed();
+    this.show();
+  });
+});
+			</script>
+			<div id="cancel_form" style="display:none;">
+				<div class="message_content">Are you sure?</div>
+				<div class="foot">
+					<button class="right cancel" type="button">No thanks</button>
+					<button class="left ok" type="button">Let's do this</button>
+				</div>
+			</div>
+		</div>
+	</section>
+	<%= render partial: 'album/items' %>
+<% else %>
+<%= render layout: '/layouts/error', locals: { title: 'Nothing to see here!' } do %>
+This album appears to have been  moved or deleted.
+<% end %>
+<% end %>

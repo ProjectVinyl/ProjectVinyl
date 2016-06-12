@@ -1,0 +1,120 @@
+<section class="page column-left">
+	<div id="video" style="background-image: url('/cover/<%= @video.id %>');" data-title="<%= @video.title %>" data-artist="<%= @artist.name %>" data-<% if @video.audio_only %>audio<% else %>video<% end %>="<%= @video.id %>" class="video"></div>
+	<% if @video.mime == '' || @video.mime.nil? %>
+	<div class="notice pending">This video is still being processed by our background ponies. If it does not play correctly try again later.</div>
+	<% end %>
+	<div class="post description resize-holder">
+	<% if @modificationsAllowed %>
+		<h1 class="title editable post-title resize-target short" data-target="video" data-member="title" data-id="<%= @video.id %>">
+			<span class="content "><%= @video.title %></span>
+			<span class="edit"><i class="fa fa-pencil"></i></span>
+			<span style="display:none">11</span>
+		</h1>
+		<span class="editable post-content" data-target="video" data-member="description" data-id="<%= @video.id %>">
+			<span class="content"><%= raw emotify @video.description %></span>
+			<span class="edit"><i class="fa fa-pencil" ></i></span>
+		</span>
+		<div class="post-tags">
+			<%= render layout: 'layouts/tageditor' do %>
+				<textarea data-target="video" data-id="<%= @video.id %>" name="tags"><%= raw @video.genres_string %></textarea>
+			<% end %>
+		</div>
+	<% else %>
+		<h1 class="title post-title resize-target short">
+			<span class="content "><%= @video.title %></span>
+		</h1>
+		<span class="post-content">
+			<span class="content"><%= raw emotify @video.description %></span>
+		</span>
+		<div class="post-tags">
+			<%= render partial: '/layouts/taglist', locals: { collection: @video.genres } %>
+		</div>
+	<% end %>
+		<% if user_signed_in? && current_user.is_admin %>
+		<div class="actions admin">
+			<a href="/admin/video/<%= @video.id %>" class="button action">Admin Actions</a>
+		</div>
+		<% end %>
+		<div class="actions">
+		<% if user_signed_in? %>
+			<a download target="_blank" href="/download/<%= @video.id %>-<%= @video.title %>" class="action download button"><i class="fa fa-download"></i> Download</a>
+		<% if @modificationsAllowed %>
+			<div class="split-button popper">
+				<button class="action star split-icon<% if @video.isStarredBy(current_user) %> starred<% end %>" data-action="star" data-id="<%= @video.id %>">
+					<i class="fa fa-star"></i>
+				</button>
+				<a class="button action addto split-action pop-out-toggle">Add To</a>
+				<ul class="pop-out">
+					<% current_artist.albums.each do |album| %>
+						<li class="action toggle" data-action="togglealbum" data-target="video" data-id="<%= @video.id %>" data-item="<%= album.id %>">
+						<span class="icon">
+							<% if album.album_items.where(video_id: @video.id).first %>
+								<i class="fa fa-check"></i>
+							<% end %>
+							</span>
+							<span class="label">
+								<%= album.title %>
+							</span>
+						</li>
+					<% end %>
+				</ul>
+			</div>
+		<% else %>
+			<button class="action star<% if @video.isStarredBy(current_user) %> starred<% end %>" data-action="star" data-id="<%= @video.id %>"><i class="fa fa-star"></i></button>
+		<% end %>
+			<button class="action like<% if @video.isUpvotedBy(current_user) %> liked<% end %>" data-count="<%= @video.upvotes %>" data-action="like" data-id="<%= @video.id %>">
+				<i class="fa fa-thumbs-up"></i>
+				<% if @video.upvotes && @video.upvotes > 0 %>
+				<span> (<span class="count"><%= @video.upvotes %></span>)</span>
+				<% end %>
+			</button>
+			<button class="action dislike<% if @video.isDownvotedBy(current_user) %> liked<% end %>" data-count="<%= @video.downvotes %>" data-action="dislike" data-id="<%= @video.id %>">
+				<i class="fa fa-thumbs-down"></i>
+				<% if @video.downvotes && @video.downvotes > 0 %>
+				<span> (<span class="count"><%= @video.downvotes %></span>)</span>
+				<% end %>
+			</button>
+		<% else %>
+			<a target="_blank" href="/users/sign_in" class="action download button"><i class="fa fa-download"></i> Download</a>
+			<a target="_blank" href="/users/sign_in" class="button action star"><i class="fa fa-star"></i></a>
+			<a target="_blank" href="/users/sign_in" class="button action like">
+				<i class="fa fa-thumbs-up"></i>
+				<% if @video.upvotes && @video.upvotes > 0 %>
+				<span> (<span class="count"><%= @video.upvotes %></span>)</span>
+				<% end %>
+			</a>
+			<a target="_blank" href="/users/sign_in" class="button action dislike">
+				<i class="fa fa-thumbs-down"></i>
+				<% if @video.downvotes && @video.downvotes > 0 %>
+				<span> (<span class="count"><%= @video.downvotes %></span>)</span>
+				<% end %>
+			</a>
+		<% end %>
+			<button class="action report right"><i class="fa fa-flag"></i> Report</button>
+		</div>
+		<div class="form report" data-offset="0">
+			<script>
+(function() {
+  function openReport(holder) {
+    holder.css('min-height', holder.find('.section.active').height());
+    holder.css('max-height', holder.find('.section.active').height() + 10);
+    holder[holder.hasClass('reporting') ? 'removeClass' : 'addClass']('reporting');
+    scrollTo.toggle(holder[0]);
+  }
+  $('.action.report').on('click', function() {
+    var holder = $(this).parents('.page').find('.form.report');
+    if (!$(this).hasClass('loaded')) {
+      $(this).addClass('loaded');
+      ajax('reporter/<%= @video.id %>', function(json) {
+        holder.html(json.content);
+        openReport(holder);
+      });
+    } else {
+        openReport(holder);
+    }
+  });
+})();
+			</script>
+		</div>
+	</div>
+</section>

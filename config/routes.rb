@@ -9,6 +9,10 @@ Rails.application.routes.draw do
   get 'staff' => 'staff#index'
 
 
+  get 'admin' => 'admin#view'
+  get 'admin/album/:id' => 'admin#album'
+  get 'admin/video/:id' => 'admin#video'
+  get 'admin/artist/:id' => 'admin#artist'
   
   get 'view/:id' => 'video#view'
   get 'embed/:id' => 'embed#view'
@@ -61,7 +65,8 @@ Rails.application.routes.draw do
   
   post 'ajax/update/star' => 'album#arrangeStar'
   post 'ajax/delete/star' => 'album#removeStar'
-
+  
+  get '/' => 'welcome#index'
   root 'welcome#index'
 
   # Example of regular route:

@@ -5,5 +5,13 @@ class User < ActiveRecord::Base
          :recoverable, :rememberable, :trackable, :validatable
   
   has_many :votes
-  has_many :stars
+  has_one :album, as: :owner
+  has_many :album_items, :through => :album
+  
+  def stars
+    if self.album.nil?
+      self.create_album(title: 'Starred Videos', 'description': 'My Favourites')
+    end
+    return self.album
+  end
 end

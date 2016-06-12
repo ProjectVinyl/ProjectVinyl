@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160605144738) do
+ActiveRecord::Schema.define(version: 20160612081411) do
 
   create_table "album_items", force: :cascade do |t|
     t.integer "album_id", limit: 4
@@ -23,16 +23,17 @@ ActiveRecord::Schema.define(version: 20160605144738) do
   add_index "album_items", ["video_id"], name: "index_album_items_on_video_id", using: :btree
 
   create_table "albums", force: :cascade do |t|
-    t.integer  "artist_id",   limit: 4
     t.string   "title",       limit: 255
     t.text     "description", limit: 65535
     t.datetime "created_at",                null: false
     t.datetime "updated_at",                null: false
+    t.integer  "owner_id",    limit: 4
+    t.string   "owner_type",  limit: 255
   end
 
-  add_index "albums", ["artist_id"], name: "index_albums_on_artist_id", using: :btree
+  add_index "albums", ["owner_id"], name: "index_albums_on_owner_id", using: :btree
 
-  create_table "artist_genres", force: :cascade do |t|
+  create_table "artist_genres", id: false, force: :cascade do |t|
     t.integer "artist_id", limit: 4
     t.integer "genre_id",  limit: 4
   end
@@ -55,34 +56,27 @@ ActiveRecord::Schema.define(version: 20160605144738) do
     t.text   "description", limit: 65535
   end
 
-  create_table "stars", force: :cascade do |t|
-    t.integer  "user_id",    limit: 4
-    t.integer  "video_id",   limit: 4
-    t.datetime "created_at",                       null: false
-    t.datetime "updated_at",                       null: false
-    t.integer  "index",      limit: 4, default: 0
-  end
-
   create_table "users", force: :cascade do |t|
-    t.string   "email",                  limit: 255, default: "", null: false
-    t.string   "encrypted_password",     limit: 255, default: "", null: false
+    t.string   "email",                  limit: 255, default: "",    null: false
+    t.string   "encrypted_password",     limit: 255, default: "",    null: false
     t.string   "reset_password_token",   limit: 255
     t.datetime "reset_password_sent_at"
     t.datetime "remember_created_at"
-    t.integer  "sign_in_count",          limit: 4,   default: 0,  null: false
+    t.integer  "sign_in_count",          limit: 4,   default: 0,     null: false
     t.datetime "current_sign_in_at"
     t.datetime "last_sign_in_at"
     t.string   "current_sign_in_ip",     limit: 255
     t.string   "last_sign_in_ip",        limit: 255
     t.integer  "artist_id",              limit: 4
-    t.datetime "created_at",                                      null: false
-    t.datetime "updated_at",                                      null: false
+    t.datetime "created_at",                                         null: false
+    t.datetime "updated_at",                                         null: false
+    t.boolean  "is_admin",                           default: false
   end
 
   add_index "users", ["email"], name: "index_users_on_email", unique: true, using: :btree
   add_index "users", ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true, using: :btree
 
-  create_table "video_genres", force: :cascade do |t|
+  create_table "video_genres", id: false, force: :cascade do |t|
     t.integer "video_id", limit: 4
     t.integer "genre_id", limit: 4
   end

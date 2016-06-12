@@ -4,7 +4,20 @@ class Video < ActiveRecord::Base
   has_many :albums, :through => :album_items
   has_many :video_genres
   has_many :genres, :through => :video_genres
-    
+  
+  def transferTo(artist)
+    self.artist = artist
+    self.save
+  end
+  
+  def removeSelf
+    delFile(Rails.root.join('public', 'stream', self.id.to_s + (self.audio_only ? '.mp3' : '.mp4')))
+    delFile(Rails.root.join('public', 'cover', self.id.to_s))
+    delFile(Rails.root.join('public', 'stream', self.id.to_s + '.webm'))
+    self.album_items.destroy
+    self.destroy
+  end
+  
   def genres_string
     return Genre.tag_string(self.genres)
   end
@@ -59,14 +72,7 @@ class Video < ActiveRecord::Base
   end
   
   def star(user)
-    vote = user.stars.where(:video_id => self.id).first
-    if !vote
-      user.stars.create(video_id: self.id, index: user.stars.length)
-      return true
-    else
-      vote.removeSelf()
-      return false
-    end
+    return user.stars.toggle(self)
   end
   
   def isUpvotedBy(user)
@@ -87,7 +93,7 @@ class Video < ActiveRecord::Base
   
   def isStarredBy(user)
     if user
-      return !user.stars.where(:video_id => self.id).first.nil?
+      return !user.album_items.where(:video_id => self.id).first.nil?
     end
     return false
   end
@@ -100,6 +106,12 @@ class Video < ActiveRecord::Base
   end
   
   private
+  def delFile(path)
+    if File.exists?(path)
+      File.delete(path)
+    end
+  end
+  
   def computeLength
     file = Rails.root.join('public', 'stream', self.id.to_s + (self.audio_only ? '.mp3' : '.webm')).to_s
     if !self.audio_only && !File.exists?(file)
