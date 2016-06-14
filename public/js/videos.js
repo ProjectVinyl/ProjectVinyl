@@ -384,7 +384,7 @@ function Player() {}
   
   $('.video').each(function() {
     var el = $(this);
-    if (!el.attr('data-pending')) (new Player()).constructor(el);
+    if (!el.attr('data-pending') && !el.hasClass('unplayable')) (new Player()).constructor(el);
   });
   $(window).on('resize', function() {
     $('.video').each(resize);

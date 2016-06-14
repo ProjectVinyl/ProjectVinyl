@@ -21,23 +21,7 @@
 			</section>
 		</div>
 		<section class="page column-left">
-			<h1 class="title">Comments</h1>
-			<div id="disqus_thread" class="comments">
-				<script>
-var disqus_config = function () {
-  this.page.url = "<%= url_for(action: 'view', controller: 'video', only_path: false) %>";
-  this.page.identifier = "<%= @video.id %>";
-  this.page.title = "<%= @video.title %> by <%= @artist.name %> - ProjectVinyl";
-};
-(function() {
-  var d = document, s = d.createElement('script');
-  s.src = 'https://projectvinyldev.disqus.com/embed.js';
-  s.setAttribute('data-timestamp', +new Date());
-  (d.head || d.body).appendChild(s);
-})();
-				</script>
-				<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
-			</div>
+			<%= render partial: '/layouts/comments', locals: {identifier: @video.id, title: @video.title + " by " + @artist.name } %>
 		</section>
 <% else %>
 <%= render layout: '/layouts/error', locals: { title: 'Nothing to see here!' } do %>

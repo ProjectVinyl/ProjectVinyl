@@ -27,7 +27,7 @@ ul.horizontal > li + li {
 .video .player h1, .video .player::after {
   transition: opacity 0.25s linear;
 }
-.video .player:not(.playing)::after {
+.video:not(.unplayable) .player:not(.playing)::after {
   cursor: pointer;
   content: "\f04b";
   display: block;

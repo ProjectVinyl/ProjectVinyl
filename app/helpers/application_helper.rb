@@ -50,7 +50,9 @@ module ApplicationHelper
     "trollestia"
   ]
   def emotify(text)
-    text = text.gsub(/\n/,'<br>').gsub(/([buis])\]/, '[\1]').gsub(/\[\/([buis])\]/, '</\1>')
+    text = text.gsub(/\n/,'<br>').gsub(/\[([buis]|sup|sub)\]/, '[\1]').gsub(/\[\/([buis]|sup|sub)\]/, '</\1>')
+    text = text.gsub(/\[url=([^\]]+)\]/,'<a href="\1">').gsub(/\[\/url\]/,'</a>')
+    text = text.gsub(/\[img\]([^\]]+)\[\/img\]/, '<img src="\1" style="max-width:100%" />')
     Emoticons.each { |x|
       text = text.gsub(/:#{x}:/,'<img class="emoticon" src="/emoticons/' + x + '.png">')
     }
@@ -58,11 +60,13 @@ module ApplicationHelper
   end
   
   def self.demotify(text)
-    text = text.gsub(/\<br\>/,'\n').gsub(/\<([buis])\>/, '[\1]').gsub(/\<\/([buis])\>/, '[/\1]')
+    text = text.gsub(/<br>/,'\n').gsub(/<([buis]|sup|sub)>/, '[\1]').gsub(/<\/([buis]|sup|sub)>/, '[/\1]')
+    text = text.gsub(/<a href="([^"]+)"\>/, '[url=\1]').gsub(/<\/a>/,'[/url]')
+    text = text.gsub(/<\/img>/,'').gsub(/<img src="([^"]+)" style="max-width:100%">/, '[img]\1[/img]')
     Emoticons.each { |x|
       text = text.gsub(/<img class="emoticon" src="\/emoticons\/#{x}">:/,':' + x + ':">')
     }
-    return text
+    return text.gsub(/</, '&lt;').gsub(/>/, '&gt;')
   end
   
   def demotify(text)

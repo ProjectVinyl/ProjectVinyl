@@ -9,11 +9,25 @@
 		<link type="text/css" href="/css/font-awesome.min.css" rel="stylesheet" />
 	</head>
 	<body>
+		<% if @video.hidden %>
+		<div id="video" style="background-image: url('/images/default-cover.jpg');" class="video unplayable">
+			<div class="player">
+				<span class="pause resize-holder">
+					<h1 class="resize-target">
+						<a><span class="title">Hidden Video</span></a>
+					</h1>
+				</span>
+			</div>
+		</div>
+		<% else %>
 		<div id="video" style="background-image: url('/cover/<%= @video.id %>');" data-title="<%= @video.title %>" data-artist="<%= @artist.name %>" data-<% if @video.audio_only %>audio<% else %>video<% end %>="<%= @video.id %>" class="video"></div>
+		<% end %>
 		<script src="/js/videos.js" ></script>
 		<script src="/js/script.js" ></script>
+		<% if !@video.hidden %>
 		<script>
 $('#video .player')[0].getPlayerObj().setEmbed('<%= @video.id %>');
 		</script>
+		<% end %>
 	</body>
 </html>

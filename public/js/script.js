@@ -128,7 +128,10 @@ var BBC = (function() {
   var active = null;
   var emptyMessage = 'A description has not been written yet.';
   function rich(text) {
-    text = text.replace(/\n/g, '<br>').replace(/\[([buis])\]/g, '<$1>').replace(/\[\/([buis])\]/g, '</$1>');
+    text = text.replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    text = text.replace(/\n/g, '<br>').replace(/\[([buis]|sup|sub)\]/g, '<$1>').replace(/\[\/([buis]|sup|sub)\]/g, '</$1>');
+    text = text.replace(/\[url=([^\]]+)]/g, '<a href="$1">').replace(/\[\/url]/g, '</a>');
+    text = text.replace(/\[img\]([^\[]+)\[\/img\]/g, '<img src="$1" style="max-width:100%"></img>');
     var i = emoticons.length;
     while (i--) {
       text = text.replace(new RegExp(':' + emoticons[i] + ':', 'g'), '<img class="emoticon" src="/emoticons/' + emoticons[i] + '.png">');
@@ -137,6 +140,8 @@ var BBC = (function() {
   }
   function poor(text) {
     text = text.replace(/<br>/g, '\n').replace(/<([buis])>/g, '[$1]').replace(/<\/([buis])>/g, '[/$1]');
+    text = text.replace(/<a href="([^"]+)">/g, '[url=$1]').replace(/<\/a>/g, '[/url]');
+    text = text.replace(/<\/img>/g, '').replace(/<img src="([^"]+)" style="max-width:100%">/g, '[img]$1[/img]');
     var i = emoticons.length;
     while (i--) {
       text = text.replace(new RegExp('<img class="emoticon" src="/emoticons/' + emoticons[i] + '.png">', 'g'), ':' + emoticons[i] + ':');

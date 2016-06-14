@@ -1,0 +1,17 @@
+<h1 class="title">Comments</h1>
+<div id="disqus_thread" class="comments">
+	<script>
+var disqus_config = function () {
+  this.page.url = "<%= request.original_url  %>";
+  this.page.identifier = "<%= identifier %>";
+  this.page.title = "<%= title %> - ProjectVinyl";
+};
+(function() {
+  var d = document, s = d.createElement('script');
+  s.src = 'https://projectvinyl.disqus.com/embed.js';
+  s.setAttribute('data-timestamp', +new Date());
+  (d.head || d.body).appendChild(s);
+})();
+	</script>
+	<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+</div>
