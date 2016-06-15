@@ -250,7 +250,11 @@ function Player() {}
         if (this.audioOnly) {
           video = $('<audio src="/stream/' + this.source + '.mp3" type="audio/mpeg"></audio>');
         } else {
-          video = $('<video src="/stream/' + this.source + '.webm" type="video/webm; codecs=\'vp8,vorbis\'"></video>');
+          video = $('\
+<video>\
+ <source src="/stream/' + this.source + '.webm" type="video/webm"></source>\
+ <source src="/stream/' + this.source + '.mp4" type="video/mp4"></source>\
+</video>');
         }
         this.video = video[0];
         this.player.find('.playing').append(this.video);
