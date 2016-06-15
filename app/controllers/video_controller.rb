@@ -90,9 +90,15 @@ class VideoController < ApplicationController
   
   def download
     @video = Video.find(params[:id].split(/-/)[0])
-    send_file("#{Rails.root}/public/stream/#{@video.id}.#{(@video.audio_only ? 'mp3' : 'mp4')}",
+    file = "#{Rails.root}/public/stream/#{@video.id}.#{(@video.audio_only ? 'mp3' : 'mp4')}"
+    mime = @video.mime
+    if !mime
+      mime = @video.audio_only ? 'audio/mpeg' : 'video/mp4'
+    end
+    response.headers['Content-Length'] = File.size(file.to_s + "." + ext).to_s
+    send_file(file,
         :filename => "#{@video.id}_#{@video.title}_by_#{@video.artist.name}.#{(@video.audio_only ? 'mp3' : 'mp4')}",
-        :type => @video.mime
+        :type => mime
     )
   end
   
