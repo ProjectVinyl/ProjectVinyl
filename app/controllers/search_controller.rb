@@ -63,6 +63,21 @@ class SearchController < ApplicationController
     end
   end
   
+  def autofillArtist
+    @query = params[:query]
+    if !@query || @query == ''
+      render json: {
+        content: [],
+        match: 0
+      }
+    else
+      render json: {
+        content: Artist.where('name LIKE ?', "%#{@query}%").uniq.limit(8).pluck(:name),
+        match: 1
+      }
+    end
+  end
+  
   def orderBy(records, type, ordering)
     if type == 0
       if ordering == 1

@@ -389,6 +389,32 @@ $(document).on('mousedown', function() {
   $('.pop-out.shown').removeClass('shown');
 });
 (function() {
+  function lookup(popout, action, input) {
+    ajax.post(action + '/lookup', function(json) {
+      popout.empty();
+      for (var i = 0; i < json.content.length; i++) {
+        var item = $('<li></li>');
+        item.text(json.content[i]);
+        item.on('click', function() {
+          input.val($(this).text());
+          popout.removeClass('shown');
+        });
+        popout.append(item);
+      }
+      popout[json.content.length ? 'addClass' : 'removeClass']('shown');
+    }, 0, { query: input.val() });
+  }
+  $('.auto-lookup').each(function() {
+    var popout = $(this).find('.pop-out');
+    var input = $(this).find('input');
+    var action = $(this).attr('data-action');
+    input.on('keyup', function() {
+      lookup(popout, action, input);
+    })
+  });
+})();
+
+(function() {
   function count(me, offset) {
     var likes = me.attr('data-count');
     if (!likes) {

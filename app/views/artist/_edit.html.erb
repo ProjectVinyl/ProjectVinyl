@@ -28,8 +28,9 @@
 			<td class="label">
 				<%= f.label :name %>
 			</td>
-			<td class="field">
-				<%= f.text_field :name, autofocus: true %>
+			<td class="field popper auto-lookup" data-action="artist">
+				<%= f.text_field :name, autofocus: true, autocomplete: "off" %>
+				<ul class="pop-out"></ul>
 			</td>
 		</tr>
 		<tr>		

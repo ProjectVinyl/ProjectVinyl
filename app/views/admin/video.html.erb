@@ -29,8 +29,9 @@
 						<td class="label">
 							<%= f.label "New Owner" %>
 						</td>
-						<td class="field">
-							<%= f.text_field :artist_id %>
+						<td class="field popper auto-lookup" data-action="artist">
+							<%= f.text_field :artist_id, autocomplete: "off" %>
+							<ul class="pop-out"></ul>
 						</td>
 					</tr>
 					<tr class="actions">

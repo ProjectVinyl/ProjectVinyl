@@ -30,6 +30,7 @@ Rails.application.routes.draw do
   get 'artist/:id' => 'artist#view'
   get 'artists' => 'artist#list'
   get 'ajax/artists' => 'artist#page'
+  post 'ajax/artist/lookup' => 'search#autofillArtist'
   
   get 'cover/:id' => 'imgs#cover'
   get 'avatar/:id' => 'imgs#avatar'
