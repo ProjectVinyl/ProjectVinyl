@@ -16,6 +16,17 @@ class ImgsController < ApplicationController
     end
   end
   
+  def download
+    if (video = Video.where(id: params[:id].split('-')[0]).first) && !video.hidden
+       ext = video.audio_only ? 'mp3' : 'mp4'
+       file = Rails.root.join('public', 'stream', params[:id].split('-').first)
+       response.headers['Content-Length'] = File.size(file.to_s + "." + ext).to_s
+       send_file file.to_s + "." + ext, :disposition => 'download', :type => type + "/" + ext, :filename => video.title + '.' + ext, :x_sendfile => true
+    else
+       render status: 404, nothing: true
+    end
+  end
+  
   private
   def serveFile(file, defau, ext, type)
     file = Rails.root.join('storage', file)
