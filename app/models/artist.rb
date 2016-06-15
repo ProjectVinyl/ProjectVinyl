@@ -4,6 +4,13 @@ class Artist < ActiveRecord::Base
   has_many :artist_genres
   has_many :genres, :through => :artist_genres
   
+  def self.by_name_or_id(id)
+    if artist = Artist.where(id: id).first
+      return artist
+    end
+    return Artist.where(name: id).first
+  end
+  
   def removeSelf
     self.videos.each do |video|
       video.removeSelf

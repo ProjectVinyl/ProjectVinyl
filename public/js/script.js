@@ -202,15 +202,15 @@ var BBC = (function() {
     var me = $(this);
     var id = me.attr('data-id');
     var member = me.attr('data-member');
-    var action = 'update/' + me.attr('data-target');
+    var target = me.attr('data-target');
     var content = me.children('.content');
     var button = me.children('.edit');
     button.on('click', function() {
       if (active && active != button) deactivate(active);
       editing = toggleEdit(editing, me, content);
       active = editing ? button : null;
-      if (!editing) {
-        save(action, id, member, me);
+      if (!editing && target) {
+        save('update/' + target, id, member, me);
       }
     });
     me.on('click', function(ev) {
@@ -394,9 +394,10 @@ $(document).on('mousedown', function() {
       popout.empty();
       for (var i = 0; i < json.content.length; i++) {
         var item = $('<li></li>');
-        item.text(json.content[i]);
+        item.text(json.content[i][1] + ' (#' + json.content[i][0] + ')');
+        item.attr('data-name', json.content[i][1]);
         item.on('click', function() {
-          input.val($(this).text());
+          input.val($(this).attr('data-name'));
           popout.removeClass('shown');
         });
         popout.append(item);

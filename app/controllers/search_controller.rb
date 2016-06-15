@@ -72,7 +72,7 @@ class SearchController < ApplicationController
       }
     else
       render json: {
-        content: Artist.where('name LIKE ?', "%#{@query}%").uniq.limit(8).pluck(:name),
+        content: Artist.where('name LIKE ?', "%#{@query}%").uniq.limit(8).pluck(:id, :name),
         match: 1
       }
     end

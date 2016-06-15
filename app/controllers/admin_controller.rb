@@ -38,10 +38,7 @@ class AdminController < ApplicationController
   
   def transferItem
     if user_signed_in? && current_user.is_admin
-      artist = Artist.where(id: params[:item][:artist_id]).first
-      if !artist
-        artist = Artist.where(name: params[:item][:artist_id]).first
-      end
+      artist = Artist.by_name_or_id(params[:item][:artist_id])
       if artist
         if params[:type] == 'video'
           item = Video.where(id: params[:item][:id]).first

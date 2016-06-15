@@ -28,18 +28,25 @@ class VideoController < ApplicationController
   
   def create
     if user_signed_in?
-      if current_user.is_admin && params[:artist]
-        artist = Artist.where(id: params[:artist]).first
-      else
-        artist = Artist.where(id: current_user.artist_id).first
+      if current_user.is_admin && params[:video][:artist_id]
+        artist = Artist.by_name_or_id(params[:video][:artist_id])
+        puts artist
       end
+      if !artist
+        artist = Artist.where(id: current_user.artist_id).first
+        puts artist
+      end
+      puts "Artist: " + artist.id.to_s
       if artist
         file = params[:video][:file]
         cover = params[:video][:cover]
+        puts "File: " + (file ? file.content_type : "nil")
+        puts "Cover: " + (cover ? cover.content_type : "nil")
         if file && (file.content_type.include?('video/') || file.content_type.include?('audio/'))
-          if (cover && cover.content_type.include?('image/')) || file.content_type.include?('video/')
+          if file.content_type.include?('video/') || (cover && cover.content_type.include?('image/'))
             video = params[:video]
-            video = artist.videos.create(title: ApplicationHelper.demotify(video[:title]), description: ApplicationHelper.demotify(video[:description]), upvotes: 0, downvotes: 0)
+            video = artist.videos.create(title: nonil(ApplicationHelper.demotify(video[:title]), 'Untitled'), description: ApplicationHelper.demotify(video[:description]), upvotes: 0, downvotes: 0, hidden: false)
+            video.audio_only = file.content_type.include?('audio/')
             if params[:genres_string]
               Genre.loadGenres(params[:genres_string], video.video_genres)
             end
@@ -47,8 +54,14 @@ class VideoController < ApplicationController
             video.save
             redirect_to action: "view", id: video.id
             return
+          else
+            render 'layouts/error', locals: { title: 'Error', description: "Cover art is required for audio files." }
+            return
           end
         end
+      else
+        render 'layouts/error', locals: { title: 'Error', description: "An artist could not be found." }
+        return
       end
     end
     render 'layouts/error', locals: { title: 'Access Denied', description: "You can't do that right now." }
@@ -62,7 +75,7 @@ class VideoController < ApplicationController
           video.description = value
           video.save
         elsif params[:field] == 'title'
-          video.title = value
+          video.title = nonil(value)
           video.save
         elsif params[:field] == 'tags'
           Genre.loadGenres(params[:value], video.video_genres)
@@ -104,10 +117,22 @@ class VideoController < ApplicationController
     }
   end
   
-  def store(video, cover, file)
+  private
+  def nonil(s, defaul)
+    if !s
+      return defaul
+    end
+    s = s.strip
+    if s == ''
+      return defaul
+    end
+    return s
+  end
+  
+  def store(video, media, cover)
     video_path = Rails.root.join('public', 'stream', video.id.to_s + (video.audio_only ? '.mp3' : '.mp4'))
-    File.open(path, 'wb') do |file|
-      file.write(file.read)
+    File.open(video_path, 'wb') do |file|
+      file.write(media.read)
       file.flush()
     end
     cover_path = Rails.root.join('public', 'cover', video.id.to_s)
@@ -119,11 +144,22 @@ class VideoController < ApplicationController
     else
       Ffmpeg.extractThumbnail(video_path, cover_path)
     end
-    #Don't block, encode to webm in the background and update video state when complete
-    if fork.nil?
-      Ffmpeg.produceWebM(video_path.to_s)
-      video.mime = file.content_type
+    if !video.audio_only
+      id = video.id
+      Thread.new do
+        begin
+          Ffmpeg.produceWebM(video_path.to_s)
+          video.mime = media.content_type
+          video.save
+          ActiveRecord::Base.connection.close
+        rescue Exception => e
+          puts e
+        end
+      end
+    else
+      video.mime = media.content_type
       video.save
+      ActiveRecord::Base.connection.close
     end
   end
 end
