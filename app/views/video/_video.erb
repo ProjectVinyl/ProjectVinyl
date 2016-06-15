@@ -40,7 +40,7 @@
 		<% end %>
 		<div class="actions">
 		<% if user_signed_in? %>
-			<a download target="_blank" href="/download/<%= @video.id %>-<%= @video.title %>" class="action download button"><i class="fa fa-download"></i> Download</a>
+			<a download target="_blank" href="/download/<%= @video.id %>-<%= url_safe @video.title %>" class="action download button"><i class="fa fa-download"></i> Download</a>
 		<% if @modificationsAllowed %>
 			<div class="split-button popper">
 				<button class="action star split-icon<% if @video.isStarredBy(current_user) %> starred<% end %>" data-action="star" data-id="<%= @video.id %>">

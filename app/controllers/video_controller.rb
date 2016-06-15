@@ -75,7 +75,7 @@ class VideoController < ApplicationController
           video.description = value
           video.save
         elsif params[:field] == 'title'
-          video.title = nonil(value)
+          video.title = nonil(value, 'Untitled')
           video.save
         elsif params[:field] == 'tags'
           Genre.loadGenres(params[:value], video.video_genres)
@@ -90,7 +90,7 @@ class VideoController < ApplicationController
   
   def download
     @video = Video.find(params[:id].split(/-/)[0])
-    file = Rails.root.join("public", "stream", @video.id + "." + (@video.audio_only ? 'mp3' : 'mp4')).to_s
+    file = Rails.root.join("public", "stream", @video.id.to_s + "." + (@video.audio_only ? 'mp3' : 'mp4')).to_s
     mime = @video.mime
     if !mime
       mime = @video.audio_only ? 'audio/mpeg' : 'video/mp4'

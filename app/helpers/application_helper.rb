@@ -120,8 +120,12 @@ module ApplicationHelper
     return hours.to_s + ':' + minutes.to_s + ':' + seconds.to_s
   end
   
-  def url_safe(txt)
+  def self.url_safe(txt)
     return txt.gsub(/(\/|[^a-zA-Z0-9])+/,'+')
+  end
+  
+  def url_safe(txt)
+    return ApplicationHelper.url_safe(txt)
   end
   
   def self.url_unsafe(txt)
