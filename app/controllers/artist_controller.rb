@@ -1,7 +1,7 @@
 class ArtistController < ApplicationController
   def view
     if @artist = Artist.where(id: params[:id].split(/-/)[0]).first
-      @videos = current_user.artist_id == @artist.id ? @artist.videos : @artist.videos.where(hidden: false)
+      @videos = user_signed_in? && current_user.artist_id == @artist.id ? @artist.videos : @artist.videos.where(hidden: false)
       @videos = Pagination.paginate(@videos, 0, 8, true)
       @albums = Pagination.paginate(@artist.albums, 0, 8, true)
       @modificationsAllowed = user_signed_in? && current_user.artist_id == @artist.id || current_user.is_admin
