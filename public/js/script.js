@@ -55,6 +55,55 @@ var ajax = (function() {
   }
   return result;
 })();
+(function() {
+  function uploadForm(form, e) {
+    if (e) e.preventDefault();
+    var message = form.find('.progressor .message');
+    var fill = form.find('.progressor .fill');
+    $.ajax({
+      type: form.attr('method'),
+      url: form.attr('action') + '/async',
+      enctype: 'multipart/form-data',
+      data: new FormData(form[0]),
+      xhr: function() {
+        var xhr = $.ajaxSettings.xhr();
+        if (xhr.upload) {
+          xhr.upload.addEventListener('progress', function(e) {
+            if (e.lengthComputable) {
+              message.addClass('bobber');
+              var percentage = (e.loaded / e.total) * 100;
+              fill.css('width', percentage + '%');
+              message.text(Math.floor(percentage) + '%');
+              message.css({
+                'left': percentage + '%',
+                'margin-left': 33 - message.width()
+              });
+            }
+          }, false);
+        }
+        return xhr;
+      },
+      beforeSend: function() {
+        form.addClass('uploading');
+      },
+      success: function (data) {
+        if (data.ref) {
+          document.location.href = data.ref;
+        }
+      },
+      error: function(e, err, msg) {
+        fill.addClass('error');
+        message.text(err + ":" + msg);
+      },
+      cache: false,
+      contentType: false,
+      processData: false
+    });
+  }
+  $('form.async').on('submit', function(e) {
+    uploadForm($(this), e);
+  });
+})();
 var scrollTo = (function() {
   function goto(pos) {
     $('html, body').animate({
@@ -131,6 +180,7 @@ var BBC = (function() {
     text = text.replace(/</g,'&lt;').replace(/>/g,'&gt;');
     text = text.replace(/\n/g, '<br>').replace(/\[([buis]|sup|sub)\]/g, '<$1>').replace(/\[\/([buis]|sup|sub)\]/g, '</$1>');
     text = text.replace(/\[url=([^\]]+)]/g, '<a href="$1">').replace(/\[\/url]/g, '</a>');
+    text = text.replace(/([^">]|[\s]|<[\/]?br>|^)(http[s]?:\/\/[^\s]+)([^"<]|[\s]|<br>|$)/g, '$1<a data-link="1" href="$2">$2</a>$3');
     text = text.replace(/\[img\]([^\[]+)\[\/img\]/g, '<img src="$1" style="max-width:100%"></img>');
     var i = emoticons.length;
     while (i--) {
@@ -140,6 +190,7 @@ var BBC = (function() {
   }
   function poor(text) {
     text = text.replace(/<br>/g, '\n').replace(/<([buis])>/g, '[$1]').replace(/<\/([buis])>/g, '[/$1]');
+    text = text.replace(/<a data-link="1" href="([^"]+)">[^<]*<\/a>/g, '$1');
     text = text.replace(/<a href="([^"]+)">/g, '[url=$1]').replace(/<\/a>/g, '[/url]');
     text = text.replace(/<\/img>/g, '').replace(/<img src="([^"]+)" style="max-width:100%">/g, '[img]$1[/img]');
     var i = emoticons.length;

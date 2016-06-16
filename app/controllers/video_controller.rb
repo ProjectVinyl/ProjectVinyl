@@ -52,19 +52,35 @@ class VideoController < ApplicationController
             end
             store(video, file, cover)
             video.save
-            redirect_to action: "view", id: video.id
+            if params[:async]
+              render json: { result: "success", ref: "/view/" + video.id.to_s }
+            else
+              redirect_to action: "view", id: video.id
+            end
             return
           else
-            render 'layouts/error', locals: { title: 'Error', description: "Cover art is required for audio files." }
+            if params[:async]
+              render plain: "Cover art is required for audio files.", status: 401
+            else
+              render 'layouts/error', locals: { title: 'Error', description: "Cover art is required for audio files." }
+            end
             return
           end
         end
       else
-        render 'layouts/error', locals: { title: 'Error', description: "An artist could not be found." }
+        if params[:async]
+          render plain: "An artist could not be found.", status: 401
+        else
+          render 'layouts/error', locals: { title: 'Error', description: "An artist could not be found." }
+        end
         return
       end
     end
-    render 'layouts/error', locals: { title: 'Access Denied', description: "You can't do that right now." }
+    if params[:async]
+      render plain: "Access Denied", status: 401
+    else
+      render 'layouts/error', locals: { title: 'Access Denied', description: "You can't do that right now." }
+    end
   end
   
   def update

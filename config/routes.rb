@@ -20,6 +20,7 @@ Rails.application.routes.draw do
   get 'embed/:id' => 'embed#view'
   get 'download/:id' => 'video#download'
   get 'upload' => 'video#upload'
+  post 'ajax/upload/:async' => 'video#create'
   post 'ajax/upload' => 'video#create'
   get 'videos' => 'video#list'
   get 'ajax/videos' => 'video#page'
@@ -34,7 +35,6 @@ Rails.application.routes.draw do
   
   get 'cover/:id' => 'imgs#cover'
   get 'avatar/:id' => 'imgs#avatar'
-  get 'stream/:id' => 'imgs#stream'
   
   get 'ajax/album/create' => 'album#new'
   get 'album/:id' => 'album#view'

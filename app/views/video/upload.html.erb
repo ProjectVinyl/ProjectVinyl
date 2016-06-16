@@ -1,5 +1,15 @@
 		<section class="page column-left">
-			<%= form_for(@video, as: "video", url: "ajax/upload") do |f| %>
+			<%= form_for(@video, as: "video", url: "ajax/upload", html: {class: "new_video async"}) do |f| %>
+			<div class="progressor">
+				<div class="cover-block">
+					<div class="message">
+						Uploading...
+					</div>
+					<div class="progress">
+						<div class="fill"></div>
+					</div>
+				</div>
+			</div>
 			<div id="upload">
 				<div class="hidden cover-block file-select image-selector" data-type="image">
 					<span class="preview"></span>
@@ -17,7 +27,7 @@
 					<%= f.file_field :file %>
 				</div>
 				<script>
-$('#video-upload').on('accept', function() {
+$('#video-upload').one('accept', function() {
   $('.hidden').removeClass('hidden');
   $('.shown').addClass('hidden').removeClass('shown');
 });
