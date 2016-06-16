@@ -7,7 +7,10 @@ class VideoController < ApplicationController
       end
       @artist = @video.artist
       @queue = @artist.videos.where(hidden: false).where.not(id: @video.id).limit(5).order("RAND()")
-      @modificationsAllowed = user_signed_in? && current_user.artist_id == @artist.id
+      if !@modificationsAllowed = user_signed_in? && current_user.artist_id == @artist.id
+        @video.views = @video.views + 1
+        @video.save
+      end
     end
   end
   
@@ -45,13 +48,17 @@ class VideoController < ApplicationController
         if file && (file.content_type.include?('video/') || file.content_type.include?('audio/'))
           if file.content_type.include?('video/') || (cover && cover.content_type.include?('image/'))
             video = params[:video]
-            video = artist.videos.create(title: nonil(ApplicationHelper.demotify(video[:title]), 'Untitled'), description: ApplicationHelper.demotify(video[:description]), upvotes: 0, downvotes: 0, hidden: false)
-            video.audio_only = file.content_type.include?('audio/')
+            video = artist.videos.create(
+                    title: nonil(ApplicationHelper.demotify(video[:title]), 'Untitled'),
+                    description: ApplicationHelper.demotify(video[:description]),
+                    mime: file.content_type,
+                    file: Mimes.ext(file.content_type),
+                    audio_only: file.content_type.include?('audio/'))
             if params[:genres_string]
               Genre.loadGenres(params[:genres_string], video.video_genres)
             end
-            store(video, file, cover)
             video.save
+            store(video, file, cover)
             if params[:async]
               render json: { result: "success", ref: "/view/" + video.id.to_s }
             else
@@ -106,14 +113,14 @@ class VideoController < ApplicationController
   
   def download
     @video = Video.find(params[:id].split(/-/)[0])
-    file = Rails.root.join("public", "stream", @video.id.to_s + "." + (@video.audio_only ? 'mp3' : 'mp4')).to_s
+    file = Rails.root.join("public", "stream", @video.id.to_s + @video.file).to_s
     mime = @video.mime
     if !mime
       mime = @video.audio_only ? 'audio/mpeg' : 'video/mp4'
     end
     response.headers['Content-Length'] = File.size(file).to_s
     send_file(file,
-        :filename => "#{@video.id}_#{@video.title}_by_#{@video.artist.name}.#{(@video.audio_only ? 'mp3' : 'mp4')}",
+        :filename => "#{@video.id}_#{@video.title}_by_#{@video.artist.name}#{@video.file}",
         :type => mime
     )
   end
@@ -152,7 +159,7 @@ class VideoController < ApplicationController
   end
   
   def store(video, media, cover)
-    video_path = Rails.root.join('public', 'stream', video.id.to_s + (video.audio_only ? '.mp3' : '.mp4'))
+    video_path = Rails.root.join('public', 'stream', video.id.to_s + video.file)
     File.open(video_path, 'wb') do |file|
       file.write(media.read)
       file.flush()
@@ -179,7 +186,7 @@ class VideoController < ApplicationController
         end
       end
     else
-      video.mime = media.content_type
+      video.processed = true
       video.save
       ActiveRecord::Base.connection.close
     end

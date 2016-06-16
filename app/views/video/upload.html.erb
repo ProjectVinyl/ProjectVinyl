@@ -11,7 +11,7 @@
 				</div>
 			</div>
 			<div id="upload">
-				<div class="hidden cover-block file-select image-selector" data-type="image">
+				<div id="cover-upload" class="hidden cover-block file-select image-selector" data-type="image">
 					<span class="preview"></span>
 					<span class="drop-icon">
 						<i class="fa fa-picture-o"></i>
@@ -27,14 +27,26 @@
 					<%= f.file_field :file %>
 				</div>
 				<script>
-$('#video-upload').one('accept', function() {
-  $('.hidden').removeClass('hidden');
-  $('.shown').addClass('hidden').removeClass('shown');
+$('#video-upload').on('accept', function(e, file) {
+  if ($(this).hasClass('shown')) {
+    $('.hidden').removeClass('hidden');
+    $('.shown').addClass('hidden').removeClass('shown');
+    $('#video_title .content').text(file.title);
+    $('#video_title input').val(file.title);
+  }
+  if (file.mime.match(/audio\//)) {
+    $('.notify').addClass('shown');
+  } else {
+    $('.notify').removeClass('shown');
+  }
+});
+$('#cover-upload').on('accept', function() {
+  $('.notify').removeClass('shown');
 });
 				</script>
 			</div>
 			<div class="hidden post description resize-holder">
-				<h1 class="title editable post-title resize-target short">
+				<h1 id="video_title" class="title editable post-title resize-target short">
 					<span class="content ">Title</span>
 					<%= f.text_field :title, class: "input" %>
 					<span class="edit"><i class="fa fa-pencil"></i></span>
@@ -59,7 +71,12 @@ $('#video-upload').one('accept', function() {
 				<% end %>
 				<div class="actions">
 					<button id="change_video" class="action" type="button" onclick="$('#video_file').trigger('click');">Change Main File</button>
-					<%= f.submit "Upload", class: "action right green" %>
+					<span class="notify bob-holder">
+						<div class="bobber bob-left">
+							Cover art is required to upload audio files
+						</div>
+						<%= f.submit "Upload", class: "action right green" %>
+					</span>
 				</div>
 				<div class="actions">
 					<a download target="_blank" class="action download foobar"><i class="fa fa-download"></i> Download</a>

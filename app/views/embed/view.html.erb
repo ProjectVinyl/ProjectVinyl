@@ -20,7 +20,7 @@
 			</div>
 		</div>
 		<% else %>
-		<div id="video" style="background-image: url('/cover/<%= @video.id %>');" data-title="<%= @video.title %>" data-artist="<%= @artist.name %>" data-<% if @video.audio_only %>audio<% else %>video<% end %>="<%= @video.id %>" class="video"></div>
+		<div id="video" style="background-image: url('/cover/<%= @video.id %>');" data-title="<%= @video.title %>" data-artist="<%= @artist.name %>" data-<% if @video.audio_only %>audio<% else %>video<% end %>="<%= @video.id %>" data-ext="<%= @video.file + "|" + @video.mime %>" class="video"></div>
 		<% end %>
 		<script src="/js/videos.js" ></script>
 		<script src="/js/script.js" ></script>

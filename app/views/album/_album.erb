@@ -27,7 +27,7 @@
 				<% else %>
 				<a href="">#<%= current_user.id %></a>
 				<% end %>
-				| <%= @items.count %> videos
+				| <%= number_with_delimiter @items.count %> videos
 				| last updated <%= since @album.updated_at %>
 			</span>
 		<% if @modificationsAllowed && @album.owner_type != 'User' %>

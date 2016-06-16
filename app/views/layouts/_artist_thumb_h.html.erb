@@ -7,9 +7,9 @@
 			<h2><%= artist_thumb_h.name %></h2>
 		</a>
 		<div class="tag-list">
-			<%= artist_thumb_h.videos.length %> video<%= artist_thumb_h.videos.length == 1 ? "" : "s" %>
+			<%= number_with_delimiter artist_thumb_h.videos.length %> video<%= artist_thumb_h.videos.length == 1 ? "" : "s" %>
 			| 
-			<%= artist_thumb_h.albums.length %> album<%= artist_thumb_h.albums.length == 1 ? "" : "s" %>
+			<%= number_with_delimiter artist_thumb_h.albums.length %> album<%= artist_thumb_h.albums.length == 1 ? "" : "s" %>
 		</div>
 		<br>
 		<%= render partial: '/layouts/taglist', locals: { collection: artist_thumb_h.genres.limit(3) } %>

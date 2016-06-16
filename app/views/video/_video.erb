@@ -1,6 +1,6 @@
 <section class="page column-left">
-	<div id="video" style="background-image: url('/cover/<%= @video.id %>');" data-title="<%= @video.title %>" data-artist="<%= @artist.name %>" data-<% if @video.audio_only %>audio<% else %>video<% end %>="<%= @video.id %>" class="video"></div>
-	<% if @video.mime == '' || @video.mime.nil? %>
+	<div id="video" style="background-image: url('/cover/<%= @video.id %>');" data-title="<%= @video.title %>" data-artist="<%= @artist.name %>" data-<% if @video.audio_only %>audio<% else %>video<% end %>="<%= @video.id %>" data-mime="<%= @video.file + "|" + @video.mime %>" class="video"></div>
+	<% if !@video.processed %>
 	<div class="notice pending">This video is still being processed by our background ponies. If it does not play correctly try again later.</div>
 	<% end %>
 	<% if @video.hidden %>
@@ -8,11 +8,15 @@
 	<% end %>
 	<div class="post description resize-holder">
 	<% if @modificationsAllowed %>
-		<h1 class="title editable post-title resize-target short" data-target="video" data-member="title" data-id="<%= @video.id %>">
+		<h2 class="title editable post-title resize-target short" data-target="video" data-member="title" data-id="<%= @video.id %>">
 			<span class="content "><%= @video.title %></span>
 			<span class="edit"><i class="fa fa-pencil"></i></span>
 			<span style="display:none">11</span>
-		</h1>
+		</h2>
+		<div class="tag-list subheading">
+			<span class="uploaded">Published on <%= @video.created_at.to_time.strftime('%e %B %Y') %> by <%= @artist.name %></span>
+			<span class="views right"><%= number_with_delimiter @video.views %> views</span>
+		</div>
 		<span class="editable post-content" data-target="video" data-member="description" data-id="<%= @video.id %>">
 			<span class="content"><%= raw emotify @video.description %></span>
 			<span class="edit"><i class="fa fa-pencil" ></i></span>
@@ -23,9 +27,13 @@
 			<% end %>
 		</div>
 	<% else %>
-		<h1 class="title post-title resize-target short">
+		<h2 class="title post-title resize-target short">
 			<span class="content "><%= @video.title %></span>
-		</h1>
+		</h2>
+		<div class="tag-list subheading">
+			<span class="uploaded">Published on <%= @video.created_at.to_time.strftime('%e %B %Y') %> by <%= @artist.name %></span>
+			<span class="views right"><%= number_with_delimiter @video.views %> views</span>
+		</div>
 		<span class="post-content">
 			<span class="content"><%= raw emotify @video.description %></span>
 		</span>

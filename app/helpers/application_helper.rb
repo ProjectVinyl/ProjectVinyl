@@ -50,7 +50,8 @@ module ApplicationHelper
     "trollestia"
   ]
   def emotify(text)
-    text = text.gsub(/\n/,'<br>').gsub(/\[([buis]|sup|sub)\]/, '[\1]').gsub(/\[\/([buis]|sup|sub)\]/, '</\1>')
+    text = text.gsub(/\[icon\]([^\[]+)\[\/icon\]/, '<i class="fa fa-fw fa-\1"></i>')
+    text = text.gsub(/\n/,'<br>').gsub(/\[([\/]?([buis]|sup|sub|hr))\]/, '<\1>')
     text = text.gsub(/\[url=([^\]]+)\]/,'<a href="\1">').gsub(/\[\/url\]/,'</a>')
     text = text.gsub(/([^">]|[\s\n]|<[\/]?br>|^)(http[s]?:\/\/[^\s]+)([^"<]|[\s]|<br>|$)/, '\1<a data-link="1" href="\2">\2</a>\3')
     text = text.gsub(/\[img\]([^\]]+)\[\/img\]/, '<img src="\1" style="max-width:100%" />')
@@ -61,7 +62,8 @@ module ApplicationHelper
   end
   
   def self.demotify(text)
-    text = text.gsub(/<br>/,'\n').gsub(/<([buis]|sup|sub)>/, '[\1]').gsub(/<\/([buis]|sup|sub)>/, '[/\1]')
+    text = text.gsub(/<i class="fa fa-fw fa-([^"]+)"><\/i>/, '[icon]\1[/icon]')
+    text = text.gsub(/<br>/,'\n').gsub(/<([\/]?([buis]|sup|sub))>/, '[\1]')
     text = text.gsub(/<a data-link="1" href="([^"]+)">[^<]*<\/a>/, '\1')
     text = text.gsub(/<a href="([^"]+)"\>/, '[url=\1]').gsub(/<\/a>/,'[/url]')
     text = text.gsub(/<\/img>/,'').gsub(/<img src="([^"]+)" style="max-width:100%">/, '[img]\1[/img]')

@@ -90,6 +90,7 @@ function Player() {}
         return me;
       };
       this.video = null;
+      this.mime = el.attr('data-mime').split('|');
       this.controls = el.find('.controls');
       this.source = el.attr('data-video');
       if (!this.source) {
@@ -248,12 +249,12 @@ function Player() {}
       if (!this.video) {
         var video;
         if (this.audioOnly) {
-          video = $('<audio src="/stream/' + this.source + '.mp3" type="audio/mpeg"></audio>');
+          video = $('<audio src="/stream/' + this.source + this.mime[0] + '" type="' + this.mime[1] + '"></audio>');
         } else {
           video = $('\
 <video>\
  <source src="/stream/' + this.source + '.webm" type="video/webm"></source>\
- <source src="/stream/' + this.source + '.mp4" type="video/mp4"></source>\
+ <source src="/stream/' + this.source + this.mime[0] + '" type="' + this.mime[1] + '"></source>\
 </video>');
         }
         this.video = video[0];

@@ -9,11 +9,11 @@ class ImgsController < ApplicationController
   end
   
   def stream
-    if (video = Video.where(id: params[:id]).first) && !video.hidden
-       serveRaw(Rails.root.join('public', 'stream', params[:id]), video.audio_only ? 'mp3' : 'mp4', video.audio_only ? 'audio' : 'video')
-    else
+   # if (video = Video.where(id: params[:id]).first) && !video.hidden
+   #    serveRaw(Rails.root.join('public', 'stream', params[:id]), video.file, video.audio_only ? 'audio' : 'video')
+   # else
        render status: 404, nothing: true
-    end
+   # end
   end
   
   private

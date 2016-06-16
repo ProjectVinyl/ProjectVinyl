@@ -178,7 +178,8 @@ var BBC = (function() {
   var emptyMessage = 'A description has not been written yet.';
   function rich(text) {
     text = text.replace(/</g,'&lt;').replace(/>/g,'&gt;');
-    text = text.replace(/\n/g, '<br>').replace(/\[([buis]|sup|sub)\]/g, '<$1>').replace(/\[\/([buis]|sup|sub)\]/g, '</$1>');
+    text = text.replace(/\[icon\]([^\[]+)\[\/icon\]/g, '<i class="fa fa-fw fa-$1"></i>');
+    text = text.replace(/\n/g, '<br>').replace(/\[([\/]?([buis]|sup|sub|hr))\]/g, '<$1>');
     text = text.replace(/\[url=([^\]]+)]/g, '<a href="$1">').replace(/\[\/url]/g, '</a>');
     text = text.replace(/([^">]|[\s]|<[\/]?br>|^)(http[s]?:\/\/[^\s]+)([^"<]|[\s]|<br>|$)/g, '$1<a data-link="1" href="$2">$2</a>$3');
     text = text.replace(/\[img\]([^\[]+)\[\/img\]/g, '<img src="$1" style="max-width:100%"></img>');
@@ -189,7 +190,8 @@ var BBC = (function() {
     return text;
   }
   function poor(text) {
-    text = text.replace(/<br>/g, '\n').replace(/<([buis])>/g, '[$1]').replace(/<\/([buis])>/g, '[/$1]');
+    text = text.replace(/<i class="fa fa-fw fa-([^"]+)"><\/i>/g, '[icon]$1[/icon]');
+    text = text.replace(/<br>/g, '\n').replace(/<([\/]?([buis]|sup|sub|hr))>/g, '[$1]');
     text = text.replace(/<a data-link="1" href="([^"]+)">[^<]*<\/a>/g, '$1');
     text = text.replace(/<a href="([^"]+)">/g, '[url=$1]').replace(/<\/a>/g, '[/url]');
     text = text.replace(/<\/img>/g, '').replace(/<img src="([^"]+)" style="max-width:100%">/g, '[img]$1[/img]');
@@ -319,7 +321,9 @@ var BBC = (function() {
         if (!validateTypes(type, input[0].files[0])) {
           error('An encorrect file type was selected. Please try again.');
         } else {
-          me.trigger('accept');
+          var title = input[0].files[0].name.split('.');
+          title = title.splice(0, title.length - 1).join('.');
+          me.trigger('accept', {title: title, mime: input[0].files[0].type});
         }
       });
     }

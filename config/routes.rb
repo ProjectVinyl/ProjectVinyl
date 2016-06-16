@@ -35,6 +35,7 @@ Rails.application.routes.draw do
   
   get 'cover/:id' => 'imgs#cover'
   get 'avatar/:id' => 'imgs#avatar'
+  get 'stream/:id' => 'imgs#stream'
   
   get 'ajax/album/create' => 'album#new'
   get 'album/:id' => 'album#view'
