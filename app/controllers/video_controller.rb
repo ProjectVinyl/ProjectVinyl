@@ -53,7 +53,8 @@ class VideoController < ApplicationController
                     description: ApplicationHelper.demotify(video[:description]),
                     mime: file.content_type,
                     file: Mimes.ext(file.content_type),
-                    audio_only: file.content_type.include?('audio/'))
+                    audio_only: file.content_type.include?('audio/'),
+                    upvotes: 0, downvotes: 0)
             if params[:genres_string]
               Genre.loadGenres(params[:genres_string], video.video_genres)
             end
