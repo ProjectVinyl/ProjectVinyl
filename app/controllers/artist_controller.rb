@@ -4,7 +4,7 @@ class ArtistController < ApplicationController
       @videos = user_signed_in? && current_user.artist_id == @artist.id ? @artist.videos : @artist.videos.where(hidden: false)
       @videos = Pagination.paginate(@videos, 0, 8, true)
       @albums = Pagination.paginate(@artist.albums, 0, 8, true)
-      @modificationsAllowed = user_signed_in? && current_user.artist_id == @artist.id || current_user.is_admin
+      @modificationsAllowed = user_signed_in? && (current_user.artist_id == @artist.id || current_user.is_admin)
     end
   end
   
