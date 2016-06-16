@@ -9,6 +9,17 @@ class Ffmpeg
      return output.to_i.floor
    end
    
+   def self.getFrameRate(file)
+     output = `ffprobe -v error -select_streams v:0 -show_entries stream=avg_frame_rate -of default=noprint_wrappers=1:nokey=1 "#{file}"`
+     return output.to_s.split('/')[0].to_i
+   end
+   
+   def self.getFrameCount(file)
+     rate = Ffmpeg.getFrameRate(file)
+     duration = Ffmpeg.getVideoLength(file)
+     return rate * duration
+   end
+   
    def self.produceWebM(file)
      webm = file.split('.')[0] + '.webm'
      temp = Rails.root.join('encoding', File.basename(webm).to_s).to_s
@@ -17,8 +28,14 @@ class Ffmpeg
    end
    
    def self.extractThumbnail(source, destination)
+     duration = Ffmpeg.getVideoLength(source).to_f / 2
+     hours = duration/3600
+     realHours = hours.floor
+     minutes = (hours - realHours)*60
+     realMinutes = minutes.floor
+     realSeconds = ((minutes - realMinutes)*60).round
      temp = destination.to_s + ".png"
-     output = `ffmpeg -i "#{source}" -ss 00:00:1 -vframes 1 "#{temp}"`
+     output = `ffmpeg -y -i "#{source}" -ss #{realHours}:#{realMinutes}:#{realSeconds} -vframes 1 "#{temp}"`
      File.rename(temp, destination)
    end
 end
