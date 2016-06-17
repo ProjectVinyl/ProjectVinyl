@@ -280,6 +280,10 @@ ul.horizontal > li + li {
   opacity: 1;
 }
 
+.thumb + .title {
+  height: 3.1em;
+}
+
 .thumb .detail, .thumb .title, .thumb + .title {
   max-height: 3.1em;
   overflow: hidden;
