@@ -279,12 +279,8 @@ ul.horizontal > li + li {
 .thumb:hover .duration {
   opacity: 1;
 }
- 
-.thumb + .title, .thumb .title {
-  height: 3.1em;
-}
 
-.thumb .detail, .thumb + .title {
+.thumb .detail, .thumb .title, .thumb + .title {
   max-height: 3.1em;
   overflow: hidden;
   text-overflow: ellipsis;
