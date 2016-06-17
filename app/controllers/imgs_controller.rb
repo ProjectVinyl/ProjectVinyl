@@ -1,7 +1,7 @@
 class ImgsController < ApplicationController
 #Fallback for assets that don't exist
   def cover
-    serveRaw(Rails.root.join('public', 'images', 'default-cover'), 'jpg', 'image')
+    serveRaw(Rails.root.join('public', 'images', 'default-cover'), 'png', 'image')
   end
   
   def avatar
