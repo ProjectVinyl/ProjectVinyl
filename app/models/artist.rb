@@ -11,6 +11,11 @@ class Artist < ActiveRecord::Base
     return Artist.where(name: id).first
   end
   
+  def preload_genres
+    self.artist_genres.delete_all
+    return self.artist_genres
+  end
+  
   def removeSelf
     self.videos.each do |video|
       video.removeSelf

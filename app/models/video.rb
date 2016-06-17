@@ -18,6 +18,11 @@ class Video < ActiveRecord::Base
     self.destroy
   end
   
+  def preload_genres
+    self.video_genres.delete_all
+    return self.video_genres
+  end
+  
   def genres_string
     return Genre.tag_string(self.genres)
   end

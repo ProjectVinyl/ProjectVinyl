@@ -26,7 +26,7 @@ class ArtistController < ApplicationController
                  bio: ApplicationHelper.demotify(artist[:bio])
                )
       if params[:artist][:genres_string]
-        Genre.loadGenres(params[:artist][:genres_string], artist.artist_genres)
+        Genre.loadGenres(params[:artist][:genres_string], artist)
       end
       if file && file.content_type.include?('image/')
         avatar(artist, file)
@@ -55,7 +55,7 @@ class ArtistController < ApplicationController
         artist.description = ApplicationHelper.demotify(input[:description])
         artist.bio = ApplicationHelper.demotify(input[:bio])
         if input[:genres_string]
-          Genre.loadGenres(input[:genres_string], artist.artist_genres)
+          Genre.loadGenres(input[:genres_string], artist)
         end
         if file = input[:avatar] && file.content_type.include?('image/')
           avatar(artist, file)

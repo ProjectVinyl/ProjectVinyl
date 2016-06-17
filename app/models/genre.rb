@@ -30,8 +30,8 @@ class Genre < ActiveRecord::Base
     return Genre.where(built, *tag_string)
   end
   
-  def self.loadGenres(tag_string, target)
-    target.destroy
+  def self.loadGenres(tag_string, sender)
+    target = sender.preload_genres
     Genre.getGenresFor(tag_string).each_with_index do |genre, index|
       target.create(genre_id: genre.id)
     end

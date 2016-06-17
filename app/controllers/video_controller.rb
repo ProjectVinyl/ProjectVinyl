@@ -56,7 +56,7 @@ class VideoController < ApplicationController
                     audio_only: file.content_type.include?('audio/'),
                     upvotes: 0, downvotes: 0)
             if params[:genres_string]
-              Genre.loadGenres(params[:genres_string], video.video_genres)
+              Genre.loadGenres(params[:genres_string], video)
             end
             video.save
             store(video, file, cover)
@@ -102,7 +102,7 @@ class VideoController < ApplicationController
           video.title = nonil(value, 'Untitled')
           video.save
         elsif params[:field] == 'tags'
-          Genre.loadGenres(params[:value], video.video_genres)
+          Genre.loadGenres(params[:value], video)
           video.save
         end
         render status: 200, nothing: true
