@@ -175,7 +175,7 @@ class VideoController < ApplicationController
       Thread.new do
         begin
           Ffmpeg.produceWebM(video_path.to_s)
-          video.mime = media.content_type
+          video.processed = true
           video.save
           ActiveRecord::Base.connection.close
         rescue Exception => e
@@ -185,7 +185,6 @@ class VideoController < ApplicationController
     else
       video.processed = true
       video.save
-      ActiveRecord::Base.connection.close
     end
   end
 end
