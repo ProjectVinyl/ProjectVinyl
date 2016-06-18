@@ -10,7 +10,22 @@
 			</h1>
 			<span class="content bio"><%= @genre.description %></span>
 		</div>
+		<div class="details">
+			<span class="tag-list">
+				Used by <%= @totalVideos %> videos and <%= @totalArtists %> artists
+			</span>
+		</div>
 	</div>
+</section>
+<section class="page" style="width: 100%">
+	<h1>Recent Artists</h1>
+	<% if @artists.length > 0 %>
+	<ul id="artists" class="horizontal artist-list">
+		<%= render partial: 'layouts/artist_thumb_h', collection: @artists %>
+	</ul>
+	<% else %>
+	No activity for this section
+	<% end %>
 </section>
 <section class="page" style="width: 100%">
 	<h1>Recent Songs</h1>
