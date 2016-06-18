@@ -40,37 +40,10 @@
 						Delete Item
 					</td>
 					<td class="field">
-						<button id="delete_album" type="button" class="action red"><i class=\"fa fa-trash\"></i> Delete Album</button>
+						<button class="confirm-button action red" data-action="delete" data-url="/delete/album/<%= @album.id %>" data-title="Delete Album" data-icon="warning"><i class=\"fa fa-trash\"></i> Delete Album</button>
 					</td>
 				</tr>
 			</table>
-			<script>
-$('#delete_album').on('click', function() {
-  if (!$('#cancel_msg').length) new Popup('Delete Album', 'warning', function() {
-    this.content.attr('id', 'cancel_msg');
-    this.content.append($('#cancel_form').html());
-    var me = this;
-    this.content.find('button.cancel').on('click', function() {
-      me.close();
-    });
-    this.content.find('button.ok').on('click', function() {
-      ajax.post('delete/album/<%= @album.id %>', function() {
-        me.close();
-        document.location.href = '/artist/<%= current_artist.id %>-<%= url_safe current_artist.name %>';
-      }, 1);
-    });
-    this.setFixed();
-    this.show();
-  });
-});
-			</script>
-			<div id="cancel_form" style="display:none;">
-				<div class="message_content">Are you sure?</div>
-				<div class="foot">
-					<button class="right cancel" type="button">No thanks</button>
-					<button class="left ok" type="button">Let's do this</button>
-				</div>
-			</div>
 		</div>
 	</section>
 	<%= render partial: 'album/items' %>

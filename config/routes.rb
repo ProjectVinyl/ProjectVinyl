@@ -26,12 +26,13 @@ Rails.application.routes.draw do
   get 'ajax/videos' => 'video#page'
   
   get 'artist/create' => 'artist#new'
-  post 'ajax/artist/create' => 'artist#create'
-  patch 'ajax/artist/edit' => 'artist#update'
   get 'artist/:id' => 'artist#view'
   get 'artists' => 'artist#list'
   get 'ajax/artists' => 'artist#page'
   post 'ajax/artist/lookup' => 'search#autofillArtist'
+  post 'ajax/create/artist' => 'artist#create'
+  patch 'ajax/update/artist' => 'artist#update'
+  post 'ajax/delete/artist/:id' => 'admin#deleteArtist'
   
   get 'cover/:id' => 'imgs#cover'
   get 'avatar/:id' => 'imgs#avatar'
@@ -62,6 +63,7 @@ Rails.application.routes.draw do
   
   post 'ajax/create/video' => 'video#create'
   post 'ajax/update/video' => 'video#update'
+  post 'ajax/delete/video/:id' => 'admin#deleteVideo'
   
   post 'ajax/create/albumitem' => 'album#addItem'
   post 'ajax/update/albumitem' => 'album#arrange'

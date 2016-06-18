@@ -62,7 +62,7 @@
 							Delete Item
 						</td>
 						<td class="field">
-							<button id="delete_video" type="button" class="action red"><i class=\"fa fa-trash\"></i> Delete Video</button>
+							<button class="confirm-button action red" data-action="delete" data-url="delete/video/<%= @video.id %>" data-title="Delete Video" data-icon="warning" type="button"><i class=\"fa fa-trash\"></i> Delete Video</button>
 						</td>
 					</tr>
 				</table>

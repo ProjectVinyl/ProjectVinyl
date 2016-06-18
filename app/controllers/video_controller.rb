@@ -28,7 +28,7 @@ class VideoController < ApplicationController
     end
     render 'layouts/error', locals: { title: 'Access Denied', description: "You can't do that right now." }
   end
-  
+    
   def create
     if user_signed_in?
       if current_user.is_admin && params[:video][:artist_id]
@@ -43,16 +43,24 @@ class VideoController < ApplicationController
       if artist
         file = params[:video][:file]
         cover = params[:video][:cover]
-        puts "File: " + (file ? file.content_type : "nil")
-        puts "Cover: " + (cover ? cover.content_type : "nil")
+        if checkError(params[:async], file && file.size == 0, "Error", "File is empty")
+          return
+        end
+        if checkError(params[:async], cover && cover.content_type.include?('image/') && cover.size == 0, "Error", "Cover file is empty")
+          return
+        end
         if file && (file.content_type.include?('video/') || file.content_type.include?('audio/'))
           if file.content_type.include?('video/') || (cover && cover.content_type.include?('image/'))
             video = params[:video]
+            ext = File.extname(file.original_name)
+            if ext == ''
+             ext = Mimes.ext(file.content_type)
+            end
             video = artist.videos.create(
                     title: nonil(ApplicationHelper.demotify(video[:title]), 'Untitled'),
                     description: ApplicationHelper.demotify(video[:description]),
                     mime: file.content_type,
-                    file: Mimes.ext(file.content_type),
+                    file: ext,
                     audio_only: file.content_type.include?('audio/'),
                     upvotes: 0, downvotes: 0)
             if params[:genres_string]
@@ -67,28 +75,16 @@ class VideoController < ApplicationController
             end
             return
           else
-            if params[:async]
-              render plain: "Cover art is required for audio files.", status: 401
-            else
-              render 'layouts/error', locals: { title: 'Error', description: "Cover art is required for audio files." }
-            end
+            error(params[:async], "Error", "Cover art is required for audio files.")
             return
           end
         end
       else
-        if params[:async]
-          render plain: "An artist could not be found.", status: 401
-        else
-          render 'layouts/error', locals: { title: 'Error', description: "An artist could not be found." }
-        end
+        error(params[:async], "Error", "An artist could not be found.")
         return
       end
     end
-    if params[:async]
-      render plain: "Access Denied", status: 401
-    else
-      render 'layouts/error', locals: { title: 'Access Denied', description: "You can't do that right now." }
-    end
+    error(params[:async], "Access Denied", "You can't do that right now.")
   end
   
   def update
@@ -186,5 +182,21 @@ class VideoController < ApplicationController
       video.processed = true
       video.save
     end
+  end
+  
+  private
+  def error(async, title, message)
+    if async
+      render plain: title + ":" + message, status: 401
+    else
+      render 'layouts/error', locals: { title: title, description: message }
+    end
+  end
+  
+  def checkError(async, condition, title, message)
+    if condition
+      error(async, title, message)
+    end
+    return condition
   end
 end

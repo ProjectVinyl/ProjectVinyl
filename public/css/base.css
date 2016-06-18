@@ -81,6 +81,12 @@ table {
   height: 150px;
   border-radius: 100%;
 }
+.space-fix .genre-icon {
+  margin-right: 10px;
+}
+.space-fix .genre-icon + .title {
+  margin-left: 10px;
+}
 .genre-icon {
   background: #a66ebe;
 }
@@ -249,12 +255,27 @@ header.header ul li a {
   margin-top: -5px;
   color: inherit;
 }
+header ul li:hover {
+  background: #eee;
+}
+header ul.drop-down li {
+  display: block;
+  margin: 0;
+  width: 100%;
+  padding: 0 10px;
+}
+header ul.drop-down {
+  padding: 0;
+}
+header .albums:hover:after,
 header .albums:hover, header .albums.selected {
   background: #e6b91f;
 }
+header .artists:hover:after,
 header .artists:hover, header .artists.selected {
   background: #e97135;
 }
+header .genres:hover:after,
 header .genres:hover, header .genres.selected {
   background: #a66ebe;
 }
@@ -319,6 +340,7 @@ footer {
   color: #fff;
   background: #fff;
 }
+header ul li:after,
 footer::before, header ul::after {
   content: '';
   position: absolute;
@@ -326,7 +348,18 @@ footer::before, header ul::after {
   left: 0;
   width: 100%;
   height: 3px;
-  background: linear-gradient(90deg, #6aaadd 0, #e6b91f 33%, #e97135 66%, #a66ebe 100%); /*#00a;*/
+  pointer-event: none;
+}
+header ul li:after {
+  transition: opacity 0.5s linear;
+  z-index: 200;
+  opacity: 0;
+}
+header ul li:hover:after {
+  opacity: 1;
+}
+footer::before, header ul::after {
+  background: linear-gradient(90deg, #6aaadd 0, #e6b91f 33%, #e97135 66%, #a66ebe 100%);
 }
 footer::before {
   top: 0;
@@ -625,7 +658,7 @@ label input[type=radio]:checked + i::before {
   position: absolute;
   right: 0;
   top: 100%;
-  width: 150px;
+  min-width: 130px;
   display: none;
   text-align: left;
   height: initial;
@@ -1034,7 +1067,7 @@ form.uploading .progressor + div {
   line-height: 0px;
 }
 
-.progressor .message, .bobber {
+.progressor div.message, .bobber {
   position: absolute;
   background: #fff;
   box-shadow: 0 0 3px 0px #aaa;
@@ -1270,9 +1303,16 @@ form.uploading .progressor + div {
   top: 100%;
   margin: 0;
 }
+.popper .pop-out li {
+  cursor: pointer;
+}
 .popper .pop-out li .icon {
   display: inline-block;
   width: 30px;
+}
+.popper .pop-out li a {
+  text-decoration: none;
+  color: inherit;
 }
 .pop-out, .pop-out li, .pop-out li .label {
   overflow-x: hidden;

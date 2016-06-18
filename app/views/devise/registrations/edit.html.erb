@@ -2,7 +2,7 @@
 <section style="width:100%;" class="page properties">
 	<h1>Profile Information</h1>
 <% if current_user.artist_id %>
-	<%= render partial: "/artist/edit", locals: { artist: current_artist, url: "/ajax/artist/edit" } %>
+	<%= render partial: "/artist/edit", locals: { artist: current_artist, url: "/ajax/update/artist" } %>
 <% else %>
 	<div class="notice center">
 		<p>Your account is not assigned to an artist.</p>

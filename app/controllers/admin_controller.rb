@@ -59,26 +59,28 @@ class AdminController < ApplicationController
     if user_signed_in? && current_user.is_admin
       if video = Video.where(id: params[:id]).first
         video.removeSelf
-        render 'view', locals: {notice: '1 Item(s) deleted successfully'}
+        flash[:notice] = "1 Item(s) deleted successfully"
       else
-        render 'view', locals: {error: 'Item could not be found'}
+        flash[:error] = "Item could not be found"
       end
-      return
+    else
+      flash[:error] = "Access Denied: You can't do that right now."
     end
-    render 'layouts/error', locals: { title: 'Access Denied', description: "You can't do that right now." }
+    render json: { ref: url_for(action: "view") }
   end
   
   def deleteAlbum
     if user_signed_in? && current_user.is_admin
       if album = Album.where(id: params[:id]).first
         album.destroy
-        render 'view', locals: {notice: '1 Item(s) deleted successfully'}
+        flash[:notice] = "1 Item(s) deleted successfully."
       else
-        render 'view', locals: {error: 'Item could not be found'}
+        flash[:error] = "Item could not be found."
       end
-      return
+    else
+      flash[:error] = "Access Denied: You can't do that right now."
     end
-    render 'layouts/error', locals: { title: 'Access Denied', description: "You can't do that right now." }
+    render json: { ref: url_for(action: "view") }
   end
   
   def deleteArtist
@@ -87,13 +89,14 @@ class AdminController < ApplicationController
         albums = artist.albums.count
         videos = artist.videos.count
         artist.removeSelf
-        render 'view', locals: {notice: (albums + videos + 1).to_s + ' Item(s) deleted successfully'}
+        flash[:notice] = (albums + videos + 1).to_s + " Item(s) deleted successfully."
       else
-        render 'view', locals: {error: 'Item could not be found'}
+        flash[:error] = "Item could not be found."
       end
-      return
+    else
+      flash[:error] = "Access Denied: You can't do that right now."
     end
-    render 'layouts/error', locals: { title: 'Access Denied', description: "You can't do that right now." }
+    render json: { ref: url_for(action: "view") }
   end
   
   def visibility

@@ -42,24 +42,11 @@ var ajax = (function() {
     data.authenticity_token = token;
     return data;
   }
-  result.post = function(resource, callback, direct, data) {
-    request('POST', '/ajax/' + resource, callback, auth(data), direct);
-  }
-  result.delete = function(resource, callback, direct) {
-    request('DELETE', resource, callback, {
-      authenticity_token: token
-    }, direct);
-  }
-  result.get = function(resource, callback, data, direct) {
-    request('GET', '/ajax/' + resource, callback, data, direct);
-  }
-  return result;
-})();
-(function() {
-  function uploadForm(form, e) {
+  result.form = function(form, e, callbacks) {
     if (e) e.preventDefault();
     var message = form.find('.progressor .message');
     var fill = form.find('.progressor .fill');
+    callbacks = callbacks || {};
     $.ajax({
       type: form.attr('method'),
       url: form.attr('action') + '/async',
@@ -70,12 +57,18 @@ var ajax = (function() {
         if (xhr.upload) {
           xhr.upload.addEventListener('progress', function(e) {
             if (e.lengthComputable) {
-              message.addClass('bobber');
+              if (!message.hasClass('plain')) message.addClass('bobber');
               var percentage = (e.loaded / e.total) * 100;
-              fill.css('width', percentage + '%');
-              message.text(Math.floor(percentage) + '%');
+              if (callbacks.progress) {
+                callbacks.progress.apply(form, [e, message, fill, percentage]);
+              } else {
+                fill.css('width', percentage + '%');
+                message.text(Math.floor(percentage) + '%');
+                message.css({
+                  'left': percentage + '%'
+                });
+              }
               message.css({
-                'left': percentage + '%',
                 'margin-left': 33 - message.width()
               });
             }
@@ -86,23 +79,33 @@ var ajax = (function() {
       beforeSend: function() {
         form.addClass('uploading');
       },
-      success: function (data) {
+      success: callbacks.success || function (data) {
         if (data.ref) {
           document.location.href = data.ref;
         }
       },
       error: function(e, err, msg) {
-        fill.addClass('error');
-        message.text(err + ":" + msg);
+        form.addClass('error');
+        if (callbacks.error) return callbacks.error(message, err, msg);
+        message.text(err + ": " + msg);
       },
       cache: false,
       contentType: false,
       processData: false
     });
-  }
-  $('form.async').on('submit', function(e) {
-    uploadForm($(this), e);
-  });
+  };
+  result.post = function(resource, callback, direct, data) {
+    request('POST', '/ajax/' + resource, callback, auth(data), direct);
+  };
+  result.delete = function(resource, callback, direct) {
+    request('DELETE', resource, callback, {
+      authenticity_token: token
+    }, direct);
+  };
+  result.get = function(resource, callback, data, direct) {
+    request('GET', '/ajax/' + resource, callback, data, direct);
+  };
+  return result;
 })();
 var scrollTo = (function() {
   function goto(pos) {
@@ -430,6 +433,23 @@ var BBC = (function() {
     });
   });
 })();
+var shares = {
+  'facebook': 'http://www.facebook.com/sharer/sharer.php?href={url}',
+  'twitter': 'https://twitter.com/intent/tweet?url={url}&via=ProjectVinyl&related=ProjectVInyl,Brony,Music',
+  'googleplus': 'https://plus.google.com/u/0/share?url={url}&hl=en-GB&caption={title}',
+  'tumblr': 'https://www.tumblr.com/widgets/share/tool/preview?shareSource=legacy&canonicalUrl=&posttype=video&content={url}$url={url}&caption={title}'
+}
+$('.share-buttons button').on('click', function() {
+  var ref = shares[$(this).attr('data-type')];
+  if (ref) {
+    ref = ref.replace(/{url}/g, encodeURIComponent(/*document.location.href*/ 'https://www.youtube.com/watch?v=rZ55DZ_BVug'));
+    ref = ref.replace(/{title}/g, encodeURIComponent($(this).parent().attr('data-caption')));
+    window.open(ref, 'sharer', 'width=500px,height=450px,status=0,toolbar=0,menubar=0,addressbar=0,location=0');
+  }
+});
+$('form.async').on('submit', function(e) {
+  ajax.form($(this), e);
+});
 $('.pop-out-toggle').on('click', function(e) {
   var popout = $(this).closest('.popper').find('.pop-out');
   if (popout.length && !popout.hasClass('shown')) {
@@ -469,7 +489,6 @@ $(document).on('mousedown', function() {
     })
   });
 })();
-
 (function() {
   function count(me, offset) {
     var likes = me.attr('data-count');
@@ -542,15 +561,44 @@ $(document).on('mousedown', function() {
 (function() {
   $('.confirm-button').each(function() {
     var me = $(this);
+    var action = me.attr('data-action');
+    var url = me.attr('data-url');
     var popup;
-    me.on('click', function() {
-      if (!popup) {
-        popup = Popup.fetch(me.attr('data-url'), me.attr('data-title'), me.attr('data-icon'));
-        popup.setPersistent();
-      } else {
-        popup.show();
-      }
-    });
+    if (action == 'delete') {
+      me.on('click', function() {
+        if (!popup) {
+          popup = new Popup(me.attr('data-title'), me.attr('data-icon'), function() {
+            this.content.append('<div class="message_content">Are you sure?</div><div class="foot"></div>');
+            var ok = $('<button>Ok</button>');
+            var cancel = $('<button class="right cancel" type="button">Cancel</button>');
+            ok.on('click', function() {
+              ajax.post(url, function(json) {
+                if (json.ref) {
+                  document.location.replace(json.ref);
+                }
+              });
+              popup.close();
+            });
+            cancel.on('click', function() {
+              popup.close();
+            });
+            this.content.find('.foot').append(ok);
+            this.content.find('.foot').append(cancel);
+            this.setPersistent();
+            this.show();
+          });
+        }
+      });
+    } else {
+      me.on('click', function() {
+        if (!popup) {
+          popup = Popup.fetch(url, me.attr('data-title'), me.attr('data-icon'));
+          popup.setPersistent();
+        } else {
+          popup.show();
+        }
+      });
+    }
   });
 })();
 (function() {
@@ -755,40 +803,7 @@ var Popup = (function() {
   };
   return Popup;
 })();
-function descriptive(milli) {
-  if (milli >= 60000) {
-    milli = Math.floor(milli / 60000);
-    if (milli >= 60) {
-      milli = Math.floor(milli / 60);
-      if (milli >= 24) {
-        milli = Math.floor(milli / 24);
-        if (milli >= 365) {
-          milli = Math.floor(milli / 365);
-          return 'over ' + milli + ' years ago';
-        }
-        return milli + ' days ago';
-      }
-      return milli + ' hours ago';
-    }
-    return milli + ' minutes ago';
-  }
-  return 'a few seconds ago';
-}
-function initDate(el, date) {
-  if ($.type(date) === 'string') date = parseInt(date);
-  el.attr('title', (new Date(date)).toString());
-  el.text(descriptive(Date.now() - date));
-  return el;
-}
-function smartJoin(arr, pattern, separator) {
-  var result = '', len = arr.length;
-  separator = separator || ',';
-  while (len--) {
-    if (result.length) result = separator + result;
-    if (arr[len]) result = (arr[len] + '').replace(/(.*)/, pattern) + result;
-  }
-  return result;
-}
+
 $(document).on('focus', 'label input, label select', function() {
   $(this).closest('label').addClass('focus');
 }).on('blur', 'label input, label select', function() {

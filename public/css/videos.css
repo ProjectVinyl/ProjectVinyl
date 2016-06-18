@@ -461,7 +461,7 @@ i.fa.fa-volume-mid {
   height: 100%;
 }
 
-.form.report {
+.slideout {
   position: relative;
   display: block;
   overflow: hidden;
@@ -472,18 +472,18 @@ i.fa.fa-volume-mid {
   margin-top: 5px;
   white-space: nowrap;
 }
-.form.report form {
-  display: inline-block;
-}
-.form.report.reporting {
+.slideout.shown {
   opacity: 1;
   background: #f8f8f8;
 }
-.form.report:not(.reporting) {
+.slideout:not(.shown) {
   min-height: 0 !important;
   max-height: 0 !important;
 }
 
+.form.report form {
+  display: inline-block;
+}
 .form.report div.section {
   transform: translate(0%, 0px);
   transition: transform 0.5s ease;

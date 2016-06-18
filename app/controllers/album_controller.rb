@@ -20,7 +20,7 @@ class AlbumController < ApplicationController
     if user_signed_in?
       if current_user.artist_id
         album = params[:album]
-        album = Artist.find(current_user.artist_id).create_album(title: ApplicationHelper.demotify(album[:title]), description: ApplicationHelper.demotify(album[:description]))
+        album = Artist.find(current_user.artist_id).albums.create(title: ApplicationHelper.demotify(album[:title]), description: ApplicationHelper.demotify(album[:description]))
         if params[:initial]
           if initial = Video.where(id: params[:initial]).first
             album.addItem(initial)
@@ -53,9 +53,11 @@ class AlbumController < ApplicationController
   
   def delete
     if user_signed_in? && album = Album.where(id: params[:id]).first
-      if album.owner_type == 'artist' && (current_user.is_admin || album.owner.id == current_user.artist_id)
+      if album.owner_type == 'Artist' && (current_user.is_admin || album.owner.id == current_user.artist_id)
         album.destroy
-        render status: 200, nothing: true
+        render json: {
+          ref: url_for(action: "view", controller: "artist", id: album.owner.id)
+        }
         return
       end
     end

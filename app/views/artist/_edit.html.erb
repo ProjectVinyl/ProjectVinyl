@@ -72,7 +72,7 @@
 		<td class="label">
 			</td>
 			<td class="field">
-				<button id="delete_artist" type="button" class="action red"><i class=\"fa fa-trash\"></i> Delete Artist</button>
+				<button class="confirm-button action red" data-action="delete" data-url="delete/artist/<%= artist.id %>" data-title="Delete Artist" data-icon="warning" type="button"><i class=\"fa fa-trash\"></i> Delete Artist</button>
 			</td>
 		</tr>
 	<% end %>

@@ -41,14 +41,42 @@
 			<%= render partial: '/layouts/taglist', locals: { collection: @video.genres } %>
 		</div>
 	<% end %>
-		<% if user_signed_in? && current_user.is_admin %>
-		<div class="actions admin">
-			<a href="/admin/video/<%= @video.id %>" class="button action">Admin Actions</a>
-		</div>
-		<% end %>
 		<div class="actions">
+			<div class="split-button popper">
+				<button class="action options pop-out-toggle"><i class="fa fa-gear"></i> Options</button>
+				<ul class="pop-out">
+				<% if user_signed_in? && current_user.is_admin %>
+					<li class="action">
+						<a href="/admin/video/<%= @video.id %>">
+							<span class="icon"><i class="fa fa-gavel"></i></span>
+							<span class="label">Admin</span>
+						</a>
+					</li>
+				<% end %>
+				<% if @modificationsAllowed %>
+					<li class="action">
+						<a href="/video/edit/<%= @video.id %>">
+							<span class="icon"><i class="fa fa-pencil"></i></span>
+							<span class="label">Change Cover Image</span>
+						</a>
+					</li>
+				<% end %>
+					<li class="action">
+				<% if user_signed_in? %>
+						<a download target="_blank" href="/download/<%= @video.id %>-<%= url_safe @video.title %>">
+				<% else %>
+						<a target="_blank" href="/users/sign_in">
+				<% end %>
+							<span class="icon">
+								<i class="fa fa-download"></i>
+							</span>
+							<span class="label">Download</span>
+						</a>
+					</li>
+				</ul>
+			</div>
+			<button class="action share"><i class="fa fa-share"></i> Share</button>
 		<% if user_signed_in? %>
-			<a download target="_blank" href="/download/<%= @video.id %>-<%= url_safe @video.title %>" class="action download button"><i class="fa fa-download"></i> Download</a>
 		<% if @modificationsAllowed %>
 			<div class="split-button popper">
 				<button class="action star split-icon<% if @video.isStarredBy(current_user) %> starred<% end %>" data-action="star" data-id="<%= @video.id %>">
@@ -86,7 +114,6 @@
 				<% end %>
 			</button>
 		<% else %>
-			<a target="_blank" href="/users/sign_in" class="action download button"><i class="fa fa-download"></i> Download</a>
 			<a target="_blank" href="/users/sign_in" class="button action star"><i class="fa fa-star"></i></a>
 			<a target="_blank" href="/users/sign_in" class="button action like">
 				<i class="fa fa-thumbs-up"></i>
@@ -103,14 +130,21 @@
 		<% end %>
 			<button class="action report right"><i class="fa fa-flag"></i> Report</button>
 		</div>
-		<div class="form report" data-offset="0">
+		<div class="form report slideout" data-offset="0">
 			<script>
 (function() {
-  function openReport(holder) {
+  function slideOut(holder) {
     holder.css('min-height', holder.find('.section.active').height());
     holder.css('max-height', holder.find('.section.active').height() + 10);
-    holder[holder.hasClass('reporting') ? 'removeClass' : 'addClass']('reporting');
-    scrollTo.toggle(holder[0]);
+    if (holder.hasClass('shown')) {
+      holder.removeClass('shown');
+    } else {
+      $('.slideout.shown').removeClass('shown');
+      holder.addClass('shown');
+      setTimeout(function() {
+        scrollTo(holder[0]);
+      }, 1);
+    }
   }
   $('.action.report').on('click', function() {
     var holder = $(this).parents('.page').find('.form.report');
@@ -118,14 +152,36 @@
       $(this).addClass('loaded');
       ajax('reporter/<%= @video.id %>', function(json) {
         holder.html(json.content);
-        openReport(holder);
+        slideOut(holder);
       });
     } else {
-        openReport(holder);
+        slideOut(holder);
     }
+  });
+  $('.action.share').on('click', function() {
+    slideOut($('.slideout.share'));
   });
 })();
 			</script>
+		</div>
+		<div class="slideout share properties">
+			<table class="section active">
+				<tr>
+					<td class="label">Social</td>
+					<td class="field share-buttons" data-caption="<%= @video.title %> - ProjectVinyl">
+						<button class="action" data-action="share" data-type="facebook"><i class="fa fa-lg fa-fw fa-facebook"></i></button>
+						<button class="action" data-action="share" data-type="twitter"><i class="fa fa-lg fa-fw fa-twitter"></i></button>
+						<button class="action" data-action="share" data-type="googleplus"><i class="fa fa-lg fa-fw fa-google-plus"></i></button>
+						<button class="action" data-action="share" data-type="tumblr"><i class="fa fa-lg fa-fw fa-tumblr"></i></button>
+					</td>
+				</tr>
+				<tr>
+					<td class="label">Embed</td>
+					<td class="field">
+						<input name="share_field" type="text" value="<%= '<iframe width="560" height="315" src="https://www.projectvinyl.net/embed/' + @video.id.to_s + '" frameborder="0" allowfullscreen></iframe>' %>"></input>
+					</td>
+				</tr>
+			</table>
 		</div>
 	</div>
 </section>

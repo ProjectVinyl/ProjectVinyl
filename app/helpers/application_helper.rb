@@ -125,7 +125,7 @@ module ApplicationHelper
   end
   
   def self.url_safe(txt)
-    return txt.gsub(/(\/|[^a-zA-Z0-9])+/,'+')
+    return txt.gsub(/(\/|[^a-zA-Z0-9\-])+/,'+')
   end
   
   def url_safe(txt)
