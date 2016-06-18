@@ -11,7 +11,7 @@ class Video < ActiveRecord::Base
   end
   
   def removeSelf
-    delFile(Rails.root.join('public', 'stream', self.id.to_s + (self.audio_only ? '.mp3' : '.mp4')))
+    delFile(Rails.root.join('public', 'stream', self.id.to_s + self.file))
     delFile(Rails.root.join('public', 'cover', self.id.to_s))
     delFile(Rails.root.join('public', 'stream', self.id.to_s + '.webm'))
     self.album_items.destroy
