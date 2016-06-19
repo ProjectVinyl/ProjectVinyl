@@ -25,9 +25,12 @@ ul.horizontal > li + li {
   pointer-events: none;
 }
 .video .player h1, .video .player::after {
-  transition: opacity 0.25s linear;
+  transition: opacity 0.25s linear, transform 0.25s ease, -ms-transform 0.25s ease, -o-transform 0.25s ease, -webkit-transform 0.25s ease, -moz-transform 0.25s ease;
 }
-.video:not(.unplayable) .player:not(.playing)::after {
+.video .player.playing::after {
+  transition: opacity 0.125s linear, transform 0.25s ease, -ms-transform 0.25s ease, -o-transform 0.25s ease, -webkit-transform 0.25s ease, -moz-transform 0.25s ease;
+}
+.video:not(.unplayable) .player::after {
   cursor: pointer;
   content: "\f04b";
   display: block;
@@ -45,6 +48,15 @@ ul.horizontal > li + li {
   font-family: 'FontAwesome';
   text-indent: 3px;
   opacity: 0.6;
+}
+.video:not(.unplayable) .player.playing::after {
+  cursor: default;
+  transform: scale(0.5,0.5);
+  -ms-transform: scale(0.5,0.5);
+  -webkit-transform: scale(0.5,0.5);
+  -o-transform: scale(0.5,0.5);
+  -moz-transform: scale(0.5,0.5);
+  opacity: 0;
 }
 
 .video .player h1 {
