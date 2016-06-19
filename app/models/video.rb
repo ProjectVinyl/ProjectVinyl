@@ -140,7 +140,7 @@ class Video < ActiveRecord::Base
   end
   
   def computeCount(incr, count)
-    if count.nil?
+    if count.nil? || count == nil
       count = 0
     end
     if incr < 0 && count > 0
