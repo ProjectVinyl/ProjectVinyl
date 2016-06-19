@@ -62,7 +62,7 @@ class VideoController < ApplicationController
         if file && (file.content_type.include?('video/') || file.content_type.include?('audio/'))
           if file.content_type.include?('video/') || (cover && cover.content_type.include?('image/'))
             video = params[:video]
-            ext = File.extname(file.original_name)
+            ext = File.extname(file.original_filename)
             if ext == ''
              ext = Mimes.ext(file.content_type)
             end
