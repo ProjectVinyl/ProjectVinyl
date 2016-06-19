@@ -3,7 +3,8 @@ class EmbedController < ActionController::Base
   # For APIs, you may want to use :null_session instead.
   protect_from_forgery with: :exception
   def view
-    @video = Video.where(id: params[:id].split(/-/)[0]).first
-    @artist = @video.artist
+    if @video = Video.where(id: params[:id].split(/-/)[0]).first
+      @artist = @video.artist
+    end
   end
 end
