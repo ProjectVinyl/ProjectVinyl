@@ -50,3 +50,9 @@
 		<%= render partial: '/layouts/video_thumb_h', collection: @hiddenvideos.records %>
 	</ul>
 </section>
+<section style="width:100%" class="page recent-uploads resize-holder">
+	<h1 class="title resize-target">Unprocessed Videos</h1>
+	<ul id="videos" class="horizontal video-list">
+		<%= render partial: '/layouts/video_thumb_h', collection: @unprocessed.records %>
+	</ul>
+</section>
