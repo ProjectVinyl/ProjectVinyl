@@ -6,7 +6,7 @@ class VideoController < ApplicationController
         return
       end
       @artist = @video.artist
-      @queue = @artist.videos.where(hidden: false).where.not(id: @video.id).limit(5).order("RAND()")
+      @queue = @artist.videos.where(hidden: false).where.not(id: @video.id).order("RAND()").limit(7)
       if !@modificationsAllowed = user_signed_in? && current_user.artist_id == @artist.id
         @video.views = @video.views + 1
         @video.save
