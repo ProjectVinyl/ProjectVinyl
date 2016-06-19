@@ -1029,6 +1029,30 @@ section.modal .actions {
   font-weight: bold;
 }
 
+.slide-group {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  white-space: nowrap;
+}
+.slide-group .group {
+  transform: translate(0%, 0);
+  -ms-transform: translate(0%, 0);
+  -webkit-transform: translate(0%, 0);
+  -moz-transform: translate(0%, 0);
+  transition: transform 0.5s ease;
+  display: inline-block;
+  vertical-align: top;
+  width: 100%;
+  height: 0;
+}
+.slide-group .slide-switch {
+  cursor: pointer;
+}
+.slide-group.animating .group, .slide-group .group.active {
+  height: initial;
+}
+
 form .progressor, form.uploading > *,
 form.uploading .drop-icon, form.uploading input {
   display: none;

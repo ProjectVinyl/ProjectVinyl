@@ -484,27 +484,19 @@ i.fa.fa-volume-mid {
 .form.report form {
   display: inline-block;
 }
-.form.report div.section {
-  transform: translate(0%, 0px);
-  transition: transform 0.5s ease;
+.form.report .group {
   padding: 5px;
-  display: inline-block;
-  vertical-align: top;
-  height: 0;
   white-space: pre-line;
 }
-.form.report.animating div.section, .form.report div.section.active {
-  height: initial;
-}
 
-.form.report .section .foot button {
+.form.report .group .foot button {
   position: absolute;
   bottom: 0;
 }
-.form.report .section .foot button.left {
+.form.report .group .foot button.left {
   left: 0;
 }
-.form.report .section .foot button.left {
+.form.report .group .foot button.left {
   right: 0;
 }
 .form.report textarea {

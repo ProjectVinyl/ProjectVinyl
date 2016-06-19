@@ -1,5 +1,5 @@
 ﻿<form class="async" action="/report/<%= video %>" method="post">
-	<div class="section active" data-stage="start">
+	<div class="group active" data-stage="start">
 		Please select the type of report you would like to submit.
 		<table>
 			<tr>
@@ -16,7 +16,7 @@
 			</tr>
 		</table>
 	</div>
-	<div class="section" data-stage="stolen">
+	<div class="group" data-stage="stolen">
 		If this video belongs to you, and was uploaded without your permision, fill in the following form.
 		Note that this reason does <b>not</b> apply to remixes and adaptations. If you feel that this video is using your content unfairly use the <b>Copyright</b> reason.
 		<table>
@@ -36,7 +36,7 @@
 			</tr>
 		</table>
 	</div>
-	<div class="section" data-stage="content">
+	<div class="group" data-stage="content">
 		Please select the option(s) that best describe the content in this video.
 		<table>
 			<tr>
@@ -61,7 +61,7 @@
 			</tr>
 		</table>
 	</div>
-	<div class="section" data-stage="copy">
+	<div class="group" data-stage="copy">
 		If you believe that this video is using copyrighted material that does not fall in line with this site's <a href="fairuse">Fair Use Guidelines</a> submit a report with the below form.
 		<table>
 			<tr>
@@ -89,7 +89,7 @@
 			</tr>
 		</table>
 	</div>
-	<div class="section" data-stage="other">
+	<div class="group" data-stage="other">
 		Please provide as much detail as possible so as to help the moderation team resolve your issue as quickly as possible.
 		<table>
 			<tr>
@@ -112,7 +112,7 @@
 			</tr>
 		</table>
 	</div>
-	<div class="section" data-stage="final">
+	<div class="group" data-stage="final">
 		Please enter your contact details, in case we need to get into contact with you.
 		<table>
 			<tr>
@@ -132,7 +132,7 @@
 			</tr>
 		</table>
 	</div>
-	<div class="section" data-stage="end">
+	<div class="group" data-stage="end">
 		<table>
 			<tr>
 				<td>
@@ -147,7 +147,7 @@
 (function() {
   $('.form.report input[data-to], .form.report button.goto.right').on('click', function() {
     var me = $(this);
-    var required = me.parents('.section').find('input[data-required]');
+    var required = me.parents('.group').find('input[data-required]');
     if (required.length) {
       for (var i = 0; i < required.length; i++) {
          var r = required.eq(i);
@@ -158,8 +158,8 @@
          }
       }
     }
-    var form = me.parents('.form');
-    var to = form.find('.section[data-stage=' + me.attr('data-to') + ']');
+    var form = me.parents('.slide-group');
+    var to = form.find('.group[data-stage=' + me.attr('data-to') + ']');
     if (to.length) {
       var offset = parseInt(form.attr('data-offset')) + 1;
       form.attr('data-offset', offset);
@@ -173,7 +173,7 @@
         form.css('min-height', formH - (fromH - to.height()));
         form.css('max-height', formH - (fromH - to.height()));
         form.addClass('animating');
-        form.find('.section').css('transform', 'translate(' + (-100 * offset) + '%,0)');
+        form.find('.group').css('transform', 'translate(' + (-100 * offset) + '%,0)');
         setTimeout(function() {
           form.removeClass('animating');
           form.css('max-height', '');
@@ -183,8 +183,8 @@
   });
   $('.form.report button.goto.left').on('click', function() {
     var me = $(this);
-    var form = me.parents('.form');
-    var to = form.find('.section[data-stage=' + me.attr('data-to') + ']');
+    var form = me.parents('.slide-group');
+    var to = form.find('.group[data-stage=' + me.attr('data-to') + ']');
     if (to.length) {
       var offset = parseInt(form.attr('data-offset')) - 1;
       form.attr('data-offset', offset);
@@ -197,7 +197,7 @@
         form.css('min-height', formH - (fromH - to.height()));
         form.css('max-height', formH - (fromH - to.height()));
         form.addClass('animating');
-        form.find('.section').css('transform', 'translate(' + (-100 * offset) + '%,0)');
+        form.find('.group').css('transform', 'translate(' + (-100 * offset) + '%,0)');
         setTimeout(function() {
           form.removeClass('animating');
           form.css('max-height', '');
@@ -217,8 +217,9 @@
         form.removeClass('reporting');
       },
       error: function(message, error, msg) {
+        message.css('margin-left', '');
         message.html('<i style="color: red; font-size: 50px;" class="fa fa-times"></i></br>' + error + ': ' + msg);
-        message.append('<br>Please contact <a href="support@projectvinyl.net">support@projectvinyl.net</a> for assistance.');
+        message.append('<br>Please contact <a href="mailto://support@projectvinyl.net">support@projectvinyl.net</a> for assistance.');
       }
     });
   });
