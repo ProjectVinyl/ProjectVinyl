@@ -173,7 +173,7 @@ var resizeFont = (function() {
     });
   }
   $(window).on('resize', fixFonts);
-  $(document).on('contentload', fixFonts);
+  fixFonts();
   return resizeFont;
 })();
 var BBC = (function() {
