@@ -9,9 +9,15 @@ Rails.application.routes.draw do
   get 'staff' => 'staff#index'
 
 
+  get 'copyright' => 'staff#copyright'
+  get 'fairuse' => 'staff#copyright'
+  get 'policy' => 'staff#policy'
+  get 'terms' => 'staff#policy'
+  
   get 'admin' => 'admin#view'
   get 'admin/album/:id' => 'admin#album'
   get 'admin/video/:id' => 'admin#video'
+  put 'admin/video/reprocess' => 'admin#reprocessVideo'
   get 'admin/artist/:id' => 'admin#artist'
   put 'admin/visibility' => 'admin#visibility'
   put 'admin/transfer' => 'admin#transferItem'
