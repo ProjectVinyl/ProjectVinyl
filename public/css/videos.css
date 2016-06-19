@@ -91,6 +91,10 @@ ul.horizontal > li + li {
   opacity: 1;
 }
 
+.video .player.stopped span.playing {
+  display: none;
+}
+
 .video .player span.playing video {
   background: #000;
 }

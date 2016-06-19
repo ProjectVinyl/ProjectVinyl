@@ -269,8 +269,12 @@ function Player() {}
         this.video = video[0];
         this.player.find('.playing').append(this.video);
         var me = this;
-        video.on('abort pause error ended', function() {
+        video.on('pause', function() {
           me.pause();
+        });
+        video.on('abort error ended', function() {
+          me.pause();
+          me.player.addClass('stopped');
         });
         video.on('suspend waiting', function() {
           me.suspend.css('display', 'block');
@@ -284,6 +288,7 @@ function Player() {}
         this.volume(me.video.volume, video.muted);
       }
       this.player.addClass('playing');
+      this.player.removeClass('stopped');
       this.video.loop = !!this.__loop;
       sendMessage(this);
       this.video.play();
