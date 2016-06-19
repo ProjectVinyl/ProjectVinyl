@@ -1,3 +1,8 @@
+<% if @metadata %>
+<% content_for :metadata do %>
+<%= render partial: "view/meta", locals: @metadata %>
+<% end %>
+<% end %>
 <section class="page column-left">
 	<div id="video" style="background-image: url('/cover/<%= @video.id %>');" data-title="<%= @video.title %>" data-artist="<%= @artist.name %>" data-<% if @video.audio_only %>audio<% else %>video<% end %>="<%= @video.id %>" data-mime="<%= @video.file + "|" + @video.mime %>" class="video"></div>
 	<% if !@video.processed %>
@@ -84,17 +89,25 @@
 				</button>
 				<a class="button action addto split-action pop-out-toggle">Add To</a>
 				<ul class="pop-out">
-					<% current_artist.albums.each do |album| %>
-						<li class="action toggle" data-action="togglealbum" data-target="video" data-id="<%= @video.id %>" data-item="<%= album.id %>">
+					<li class="action confirm-button" data-url="album/create?initial=<%= @video.id %>" data-title="New Album" data-icon="">
 						<span class="icon">
-							<% if album.album_items.where(video_id: @video.id).first %>
-								<i class="fa fa-check"></i>
-							<% end %>
-							</span>
-							<span class="label">
-								<%= album.title %>
-							</span>
-						</li>
+							<i class="fa fa-pencil"></i>
+						</span>
+						<span class="label">
+							New Album
+						</span>
+					</li>
+					<% @video.artist.albums.each do |album| %>
+					<li class="action toggle" data-action="togglealbum" data-target="video" data-id="<%= @video.id %>" data-item="<%= album.id %>">
+						<span class="icon">
+						<% if album.album_items.where(video_id: @video.id).first %>
+							<i class="fa fa-check"></i>
+						<% end %>
+						</span>
+						<span class="label">
+							<%= album.title %>
+						</span>
+					</li>
 					<% end %>
 				</ul>
 			</div>

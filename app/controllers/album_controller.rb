@@ -13,6 +13,9 @@ class AlbumController < ApplicationController
   
   def new
     @album = Album.new
+    if params[:initial]
+      @initial = params[:initial]
+    end
     render partial: 'new'
   end
   
@@ -20,10 +23,13 @@ class AlbumController < ApplicationController
     if user_signed_in?
       if current_user.artist_id
         album = params[:album]
+        initial = album[:initial]
         album = Artist.find(current_user.artist_id).albums.create(title: ApplicationHelper.demotify(album[:title]), description: ApplicationHelper.demotify(album[:description]))
-        if params[:initial]
-          if initial = Video.where(id: params[:initial]).first
+        if initial
+          if initial = Video.where(id: initial).first
             album.addItem(initial)
+            redirect_to action: 'view', controller: "video", id: initial.id
+            return
           end
         end
         redirect_to action: 'view', id: album.id

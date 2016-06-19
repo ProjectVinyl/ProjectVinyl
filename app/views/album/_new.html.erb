@@ -1,5 +1,8 @@
 <%= form_for(@album, as: "album", url: "/ajax/create/album") do |f| %>
 <div class="properties">
+	<% if @initial %>
+	<input name="album[initial]" type="text" hidden="true" value="<%= @initial %>"></input>
+	<% end %>
 	<table>
 		<tr>
 			<td class="label">

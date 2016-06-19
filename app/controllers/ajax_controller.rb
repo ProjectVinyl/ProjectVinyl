@@ -39,7 +39,7 @@ class AjaxController < ApplicationController
     if user_signed_in? && current_user.artist_id
       if video = Video.where(id: params[:id]).first
         if video.artist_id == current_user.artist_id && album = Album.where(id: params[:item]).first
-          if video.artist_id == album.artist_id
+          if video.artist_id == album.owner_id && album.ownedBy(current_user)
             render json: { :added => album.toggle(video) }
             return
           end
