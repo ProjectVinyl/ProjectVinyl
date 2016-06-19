@@ -442,7 +442,7 @@ var shares = {
 $('.share-buttons button').on('click', function() {
   var ref = shares[$(this).attr('data-type')];
   if (ref) {
-    ref = ref.replace(/{url}/g, encodeURIComponent(/*document.location.href*/ 'https://www.youtube.com/watch?v=rZ55DZ_BVug'));
+    ref = ref.replace(/{url}/g, encodeURIComponent(document.location.href));
     ref = ref.replace(/{title}/g, encodeURIComponent($(this).parent().attr('data-caption')));
     window.open(ref, 'sharer', 'width=500px,height=450px,status=0,toolbar=0,menubar=0,addressbar=0,location=0');
   }
