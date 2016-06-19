@@ -3,7 +3,7 @@ class GenreController < ApplicationController
     if @genre = Genre.where('safe_name = ?', ApplicationHelper.url_safe(params[:name])).first
       @totalVideos = @genre.videos.length
       @totalArtists = @genre.artists.length
-      @videos = @genre.videos.order(:created_at).reverse_order.limit(16)
+      @videos = @genre.videos.where(hidden: false).order(:created_at).reverse_order.limit(16)
       @artists = @genre.artists.order(:updated_at).reverse_order.limit(16)
     end
   end
