@@ -1,10 +1,8 @@
-﻿<div class="group <%= type %>">
+﻿<% if collection.count > 0 %>
+<div class="group <%= type %>">
 	<h3><%= label %></h3>
-	<% if collection.count > 0 %>
 	<ul class="horizontal latest">
 		<%= render partial: '/layouts/video_thumb_h', collection: collection %>
 	</ul>
-	<% else %>
-	No activity for this section
-	<% end %>
 </div>
+<% end %>
