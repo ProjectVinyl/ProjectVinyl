@@ -1,10 +1,11 @@
-﻿<section class="page column-left">
+﻿<section class="page column-left" style="width:76%">
+	<%= render partial: 'section', locals: { collection: @popular, type: 'popular', label: 'Popular' } %>
 	<%= render partial: 'section', locals: { collection: @today, type: 'today', label: 'Today' } %>
 	<%= render partial: 'section', locals: { collection: @yesterday, type: 'yesterday', label: 'Yesterday' } %>
 	<%= render partial: 'section', locals: { collection: @week, type: 'week', label: 'Earlier this Week' } %>
 	<%= render partial: 'section', locals: { collection: @month, type: 'month', label: 'Earlier this Month' } %>
 </section>
-<div style="margin-left:-10px;" class="wrapper resize-holder column-right right">
+<div style="margin-left:-10px;width:23%" class="wrapper resize-holder column-right right">
 	<section style="width:100%" class="page">
 		<div style="min-height:600px">
 			<a style="text-decoration:none;" class="twitter-timeline"  href="https://twitter.com/Project_Vinyl" data-widget-id="733733333084086272">Tweets by @Project_Vinyl</a>
@@ -21,3 +22,29 @@
 		<a class="source" href="https://derpibooru.org/549114">source</a>
 	</section>
 </div>
+<style type="text/css">
+iframe.twitter-timeline {
+  min-width: 100% !important;
+}
+</style>
+<script>
+$(window).on('resize', function() {
+  resizeGrid($('.column-left'), $('.column-right'));
+});
+resizeGrid($('.column-left'), $('.column-right'));
+function resizeGrid(grid, beside) {
+  grid.css('width', '');
+  if (beside.width() > 0) {
+    var width = grid.parent().innerWidth() - 195;
+    var calculatedWidth = width + 1;
+    var n = 10;
+    do {
+      calculatedWidth = 60 + (182 * n) + 45 * (--n) + 60;
+    } while (calculatedWidth > width)
+      grid.css('width', calculatedWidth + 'px');
+    if (beside) {
+      beside.css('width', (beside.parent().innerWidth() - calculatedWidth - 5) + 'px');
+    }
+  }
+}
+</script>
