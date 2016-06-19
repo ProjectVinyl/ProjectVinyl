@@ -5,6 +5,16 @@ class VideoController < ApplicationController
         render 'layouts/error', locals: { title: 'Content Removed', description: "The video you are trying to access is currently not available." }
         return
       end
+      @metadata = {
+        type: "video",
+        mime: @video.mime,
+        title: @video.title,
+        description: @video.description,
+        url: url_for(action: "view", controller: "video", id: @video.id, only_path: false) + "-" + ApplicationHelper.url_safe(@video.title),
+        embed_url: url_for(action: "view", controller: "embed", only_path: false, id: @video.id),
+        cover: url_for(action: "cover", controller: "imgs", only_path: false, id: @video.id),
+        tags: @video.genres
+      }
       @artist = @video.artist
       @queue = @artist.videos.where(hidden: false).where.not(id: @video.id).order("RAND()").limit(7)
       if !@modificationsAllowed = user_signed_in? && current_user.artist_id == @artist.id
@@ -166,22 +176,7 @@ class VideoController < ApplicationController
     else
       Ffmpeg.extractThumbnail(video_path, cover_path)
     end
-    if !video.audio_only
-      id = video.id
-      Thread.new do
-        begin
-          Ffmpeg.produceWebM(video_path.to_s)
-          video.processed = true
-          video.save
-          ActiveRecord::Base.connection.close
-        rescue Exception => e
-          puts e
-        end
-      end
-    else
-      video.processed = true
-      video.save
-    end
+    video.generateWebM
   end
   
   private

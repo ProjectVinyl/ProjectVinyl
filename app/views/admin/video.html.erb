@@ -56,6 +56,19 @@
 					</tr>
 				<% end %>
 				</table>
+				<%= form_for(@video, as: "video", url: "/admin/video/reprocess", html: { method: :put }) do |f| %>
+					<%= f.text_field :id, hidden: true %>
+				<table>
+					<tr class="actions">
+						<td class="label">
+							<%= f.label "Processed (" + @video.processed.to_s + ")" %>
+						</td>
+						<td class="field">
+							<%= f.submit "Restart" %>
+						</td>
+					</tr>
+				</table>
+				<% end %>
 				<table>
 					<tr class="actions">
 						<td class="label">

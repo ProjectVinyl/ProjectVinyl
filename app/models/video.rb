@@ -18,6 +18,29 @@ class Video < ActiveRecord::Base
     self.destroy
   end
   
+  def generateWebM
+    if !self.audio_only
+      self.processed = false
+      self.save
+      video_path = Rails.root.join('public', 'stream', self.id.to_s + self.file)
+      video = self
+      Thread.new do
+        begin
+          if Ffmpeg.produceWebM(video_path.to_s) > -1
+            video.processed = true
+            video.save
+          end
+          ActiveRecord::Base.connection.close
+        rescue Exception => e
+          puts e
+        end
+      end
+    else
+      self.processed = true
+      self.save
+    end
+  end
+  
   def preload_genres
     self.video_genres.delete_all
     return self.video_genres

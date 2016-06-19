@@ -5,6 +5,7 @@ class AdminController < ApplicationController
       return
     end
     @hiddenvideos = Pagination.paginate(Video.where(hidden: true), 0, 5*8, true)
+    @unprocessed = Pagination.paginate(Video.where(processed: false), 0, 5*8, true)
     @users = User.where(last_sign_in_at: Time.zone.now.beginning_of_month..Time.zone.now.end_of_day).limit(100).order(:last_sign_in_at).reverse_order
   end
   
@@ -97,6 +98,16 @@ class AdminController < ApplicationController
       flash[:error] = "Access Denied: You can't do that right now."
     end
     render json: { ref: url_for(action: "view") }
+  end
+  
+  def reprocessVideo
+    if user_signed_in? && current_user.is_admin
+      if video = Video.where(id: params[:video][:id]).first
+        video.generateWebM
+        flash[:notice] = "Processing started."
+      end
+    end
+    redirect_to action: "video", id: params[:video][:id]
   end
   
   def visibility

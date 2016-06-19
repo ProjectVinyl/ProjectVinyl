@@ -8,6 +8,7 @@
 	<script src="https://code.jquery.com/jquery-1.8.3.min.js" id="jquery" ></script>
 	<%= csrf_meta_tags %>
 	<script>var emoticons = <%= raw emoticons %>;</script>
+	<%= content_for(:metadata) %>
 </head>
 <body>
 	<header class="header">
@@ -101,7 +102,8 @@
 		<a title="Home" href="/">projectvinyl.com</a>
 		<div>
 			<a href="/staff">Staff</a>
-			<a href="/privacy">Terms</a>
+			<a href="/policy">Policy</a>
+			<a href="/copyright">Copyright</a>
 		</div>
 		<span>© 2016 Project Vinyl Foundation</span>
 	</footer>

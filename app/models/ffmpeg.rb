@@ -23,8 +23,15 @@ class Ffmpeg
    def self.produceWebM(file)
      webm = file.split('.')[0] + '.webm'
      temp = Rails.root.join('encoding', File.basename(webm).to_s).to_s
+     if File.exists?(webm)
+       return 1
+     end
+     if File.exists?(temp) || !File.exists?(file)
+       return -1
+     end
      `ffmpeg -i  "#{file}" -c:v libvpx -crf 10 -b:v 1M -c:a libvorbis "#{temp}"`
      File.rename(temp, webm)
+     return 0
    end
    
    def self.extractThumbnail(source, destination)
