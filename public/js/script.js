@@ -184,7 +184,7 @@ var BBC = (function() {
     text = text.replace(/\[icon\]([^\[]+)\[\/icon\]/g, '<i class="fa fa-fw fa-$1"></i>');
     text = text.replace(/\n/g, '<br>').replace(/\[([\/]?([buis]|sup|sub|hr))\]/g, '<$1>');
     text = text.replace(/\[url=([^\]]+)]/g, '<a href="$1">').replace(/\[\/url]/g, '</a>');
-    text = text.replace(/([^">]|[\s]|<[\/]?br>|^)(http[s]?:\/\/[^\s]+)([^"<]|[\s]|<br>|$)/g, '$1<a data-link="1" href="$2">$2</a>$3');
+    text = text.replace(/([^">]|[\s]|<[\/]?br>|^)(http[s]?:\/\/[^\s\n<]+)([^"<]|[\s\n]|<br>|$)/g, '$1<a data-link="1" href="$2">$2</a>$3');
     text = text.replace(/\[img\]([^\[]+)\[\/img\]/g, '<img src="$1" style="max-width:100%"></img>');
     var i = emoticons.length;
     while (i--) {
@@ -204,29 +204,35 @@ var BBC = (function() {
     }
     return text;
   }
-  function toggleEdit(editing, holder, content) {
+  function initEditable(holder, content, short) {
+    var textarea = holder.find('.input');
+    if (!textarea.length) {
+      if (short) {
+        textarea = $('<input class="input" />');
+        textarea.css('height', content.innerHeight());
+        content.after(textarea);
+      } else {
+        textarea = $('<textarea class="input" />');
+        textarea.css('height', content.innerHeight() + 20);
+        content.after(textarea);
+      }
+    }
+    if (!short) {
+      textarea.on('keydown keyup', function(ev) {
+        textarea.css('height', 0);
+        textarea.css('height', textarea[0].scrollHeight + 20);
+      });
+    }
+    textarea.on('change', function() {
+      holder.addClass('dirty');
+    });
+    return textarea;
+  }
+  function toggleEdit(editing, holder, content, textarea, short) {
     var text = content.text().toLowerCase().trim();
     var textarea = holder.find('.input');
     if (!editing) {
-      if (!textarea.length) {
-        if (holder.hasClass('short')) {
-          textarea = $('<input class="input" />');
-          textarea.css('height', content.innerHeight());
-          content.after(textarea);
-        } else {
-          textarea = $('<textarea class="input" />');
-          textarea.css('height', content.innerHeight() + 20);
-          textarea.on('keydown keyup', function(ev) {
-            textarea.css('height', 0);
-            textarea.css('height', textarea[0].scrollHeight + 20);
-          });
-          content.after(textarea);
-        }
-      }
       textarea.val(poor(content.html()));
-      textarea.on('change', function() {
-        holder.addClass('dirty');
-      });
       holder.addClass('editing');
     } else {
       if (!text || !text.length || text == emptyMessage.toLowerCase()) {
@@ -259,11 +265,14 @@ var BBC = (function() {
     var id = me.attr('data-id');
     var member = me.attr('data-member');
     var target = me.attr('data-target');
+    var short = me.hasClass('short');
+    
     var content = me.children('.content');
     var button = me.children('.edit');
+    var textarea = initEditable(me, content, short);
     button.on('click', function() {
       if (active && active != button) deactivate(active);
-      editing = toggleEdit(editing, me, content);
+      editing = toggleEdit(editing, me, content, textarea, short);
       active = editing ? button : null;
       if (!editing && target) {
         save('update/' + target, id, member, me);
