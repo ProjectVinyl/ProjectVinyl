@@ -19,7 +19,7 @@ class ArtistController < ApplicationController
   def create
     if user_signed_in? && (!current_user.artist_id || current_user.is_admin)
       input = params[:artist]
-      file = artist[:avatar]
+      file = input[:avatar]
       artist = Artist.create(
                  name: ApplicationHelper.demotify(input[:name]),
                  description: ApplicationHelper.demotify(input[:description]),
