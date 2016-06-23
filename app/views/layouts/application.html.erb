@@ -34,16 +34,12 @@
 				<a href="/artist/<%= current_artist.id %>-<%= url_safe current_artist.name %>" class="username">
 					<%= current_artist.name %>
 				</a>
+				<% else %>
+				<a href="/users/edit" class="username">
+					Background Pony
+				</a>
 				<% end %>
-				<ul class="drop-down">
-					<% if current_artist %>
-					<li>
-						<a href="/upload" rel="nofollow" title="upload">
-							<span class="icon"><i class="fa fa-fw fa-upload"></i></span>
-							<span class="label">Upload</span>
-						</a>
-					</li>
-					<% end %>
+				<ul class="drop-down" style="z-index:2">
 					<% if current_user.is_admin %>
 					<li>
 						<a href="/admin" rel="nofollow">
@@ -52,10 +48,30 @@
 						</a>
 					</li>
 					<% end %>
+					<% if current_artist %>
+					<li>
+						<a href="/artist/<%= current_artist.id %>-<%= url_safe current_artist.name %>" rel="nofollow" title="settings">
+							<span class="icon"><i class="fa fa-fw fa-user"></i></span>
+							<span class="label">Profile</span>
+						</a>
+					</li>
+					<li>
+						<a href="/upload" rel="nofollow" title="upload">
+							<span class="icon"><i class="fa fa-fw fa-upload"></i></span>
+							<span class="label">Upload</span>
+						</a>
+					</li>
+					<% end %>
 					<li>
 						<a href="/stars">
 							<span class="icon"><i class="fa fa-fw fa-star" ></i></span>
 							<span class="label">Stars</span>
+						</a>
+					</li>
+					<li>
+						<a href="/users/edit" rel="nofollow" title="settings">
+							<span class="icon"><i class="fa fa-fw fa-cog"></i></span>
+							<span class="label">Settings</span>
 						</a>
 					</li>
 					<li>
