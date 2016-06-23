@@ -36,13 +36,19 @@ class Ffmpeg
    
    def self.extractThumbnail(source, destination)
      duration = Ffmpeg.getVideoLength(source).to_f / 2
-     hours = duration/3600
-     realHours = hours.floor
-     minutes = (hours - realHours)*60
-     realMinutes = minutes.floor
-     realSeconds = ((minutes - realMinutes)*60).round
+     hours = 0
+     if duration >= 3600
+       hours = (duration/3600).floor.to_i
+       duration = duration % 3600
+     end
+     minutes = 0
+     if duration >= 60
+       minutes = (duration/60).floor.to_i
+       duration = duration % 60
+     end
+     seconds = length.to_i
      temp = destination.to_s + ".png"
-     output = `ffmpeg -y -i "#{source}" -ss #{realHours}:#{realMinutes}:#{realSeconds} -vframes 1 "#{temp}"`
+     output = `ffmpeg -y -i "#{source}" -ss #{hours}:#{minutes}:#{seconds} -vframes 1 "#{temp}"`
      File.rename(temp, destination)
    end
 end
