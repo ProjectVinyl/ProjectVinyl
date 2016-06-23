@@ -48,6 +48,10 @@ table, tr, td {
   padding: 0;
   margin: 0;
 }
+table.auto table.auto tr, table.auto td {
+  table-layout: auto;
+}
+
 table {
   width: 100%;
 }
@@ -206,9 +210,6 @@ hr {
   padding: 0px;
   margin: 10px 0;
   border-bottom: solid 1px #ccc;
-}
-.tile > p {
-  background: rgba(255,255,255,0.5);
 }
 p.foot {
   border-top: solid 1px #ccc;
@@ -436,7 +437,7 @@ div.page .positioner {
    margin-right: 0;
 }
 
-.page img, .tile {
+.page img, .notice {
   max-width: 100%;
   background:  #fff;
   border: solid 1px #ccc;
@@ -618,6 +619,13 @@ label input[type=radio] + i::before {
 }
 label input[type=radio]:checked + i::before {
   content: '\f192';
+}
+
+label.button input[type=checkbox] {
+  display: none;
+}
+label input[type=checkbox]:not(:checked) + i {
+  display: none;
 }
 
 #search {

@@ -1,9 +1,10 @@
-<li class="generic">
-		<a class="thumb" style="background-image:url('/cover/<%= video_thumb_h.hidden ? 0 : video_thumb_h.id %>');" href="/view/<%= video_thumb_h.id %>-<%= url_safe video_thumb_h.title %>">
+<li class="generic thumb">
+	<a class="thumb" href="/view/<%= video_thumb_h.id %>-<%= url_safe video_thumb_h.title %>">
+		<div class="tile" style="background-image:url('/cover/<%= video_thumb_h.hidden ? 0 : video_thumb_h.id %>');">
 			<span class="tag-list duration">
 				<%= duration video_thumb_h.getDuration %>
 			</span>
-		</a>
+		</div>
 		<div class="title">
 			<%= video_thumb_h.getTitle %>
 		</div>
@@ -13,4 +14,5 @@
 		<span class="tag-list right">
 			<%= number_with_delimiter video_thumb_h.views %> views
 		</span>
+	</a>
 </li>

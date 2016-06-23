@@ -245,18 +245,21 @@ ul.horizontal > li + li {
 }
 
 .thumb {
+  text-decoration: none;
+}
+.tile {
   max-width: 250px;
   min-width: 170px;
   position: relative;
 }
-.thumb {
+.tile {
   position: relative;
   width: 100%;
   max-height: 200px;
   min-height: 120px;
   padding: 0;
 }
-.thumb, .queue .thumb {
+.tile, .queue .thumb .tile {
   text-align: left;
   display: inline-block;
   text-decoration: none;
@@ -264,15 +267,15 @@ ul.horizontal > li + li {
   color: #fff;
   vertical-align: top;
 }
-.queue .thumb {
+.queue .thumb .tile {
   max-width: 55%;
   padding: 0 0 15% 0;
 }
 
-.thumb .detail {
+.thumb .tile .detail {
   display: none;
 }
-.thumb .duration {
+.thumb .tile .duration {
   opacity: 0;
   position: absolute;
   padding: 1px 6px;
@@ -282,7 +285,7 @@ ul.horizontal > li + li {
   background: rgba(0,0,0,0.3);
   border-radius: 5px 0 0 0;
 }
-.thumb:not(.stack):hover:before {
+.thumb .tile:hover:before {
   position: absolute;
   content: "";
   top: 0;
@@ -292,22 +295,32 @@ ul.horizontal > li + li {
   transition: outline 0.3s ease;
   outline: solid 3px rgba(0,0,255,0.1);
 }
-.thumb:hover .duration {
+.thumb .tile:hover .duration {
   opacity: 1;
 }
 
-.thumb + .title {
+.thumb .title {
   height: 3.1em;
 }
 
-.thumb .detail, .thumb .title, .thumb + .title {
+.thumb .tile.link {
+  background: none;
+  border: solid 1px #aaa;
+  text-align: center;
+  line-height: 100%;
+  color: #aaa;
+  vertical-align: middle;
+  padding-top: 25%;
+}
+
+.thumb .tile .detail, .thumb .tile .title, .thumb .tile + .title {
   max-height: 3.1em;
   overflow: hidden;
   text-overflow: ellipsis;
   -o-text-overflow: ellipsis;
 }
 
-.queue .thumb .details {
+.queue .thumb .tile .details {
   vertical-align: top;
   margin-bottom: 0 !important;
   color: #000;
@@ -318,7 +331,7 @@ ul.horizontal > li + li {
 }
 
 @media(min-width: 900px) {
-  .queue .thumb {
+  .queue .thumb .tile {
     width: 50%;
     max-width: 50%;
     min-width: 50%;
@@ -327,7 +340,7 @@ ul.horizontal > li + li {
     margin-right: 50%;
     margin-bottom: 20px;
   }
-  .queue .thumb .details {
+  .queue .thumb .tile .details {
     width: 100%;
     left: 100%;
     bottom: auto;
@@ -339,13 +352,13 @@ ul.horizontal > li + li {
   }
 }
 @media(max-width: 900px) {
-  .queue .thumb {
+  .queue .thumb .tile {
     margin-bottom: 3.1em;
   }
-  .queue .thumb {
+  .queue .thumb .tile {
     min-width: 0 !important;
   }
-  .queue .thumb {
+  .queue .thumb .tile {
     max-width: 100% !important;
     padding: 0 0 45% 0 !important;
   }
@@ -365,7 +378,7 @@ ul.horizontal > li.generic {
   min-height: 140px;
   width: 100%;
 }
-ul.horizontal .thumb a {
+ul.horizontal .thumb .tile {
   margin: 0;
 }
 
@@ -373,12 +386,12 @@ ul.horizontal .thumb a {
   text-align: center;
 }
 
-.thumb.stack {
+.stack {
   background: none !important;
   position: relative;
   transition: margin 0.25s ease;
 }
-.thumb.stack .stack-item {
+.stack .stack-item {
   display: block;
   position: absolute;
   background: #000 center/contain no-repeat;
@@ -391,7 +404,7 @@ ul.horizontal .thumb a {
   -moz-transform: rotate(5deg);
   box-shadow: 0 0 10px -1px rgba(100,100,100,0.6);
 }
-.thumb.stack .stack-item .stack-item {
+.stack .stack-item .stack-item {
   transform: rotate(-15deg);
   -ms-transform: rotate(-15deg);
   -webkit-transform: rotate(-15deg);
@@ -400,15 +413,15 @@ ul.horizontal .thumb a {
   height: 100%;
   opacity: 0.9;
 }
-.thumb.stack .stack-item {
+.stack .stack-item {
   top: 0;
   left: 0;
 }
-.horizontal .thumb.stack:hover {
+.horizontal .stack:hover {
   margin-bottom: 5px;
   margin-top: -5px;
 }
-.thumb.stack:hover .stack-item {
+.stack:hover .stack-item {
   box-shadow: 0 0 10px 0px rgba(100,100,100,0.6);
 }
 
