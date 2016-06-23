@@ -59,6 +59,7 @@ function Player() {}
   var fadeControl = null;
   function controlsFade() {
     Player.fullscreenPlayer.controls.css('opacity', 0);
+    Player.fullscreenPlayer.player.find('.playing').css('cursor', 'none');
     fadeControl = null;
   }
   function attachMessageListener(me) {
@@ -415,6 +416,7 @@ function Player() {}
     fadeTimer = 2;
     if (Player.fullscreenPlayer) {
       Player.fullscreenPlayer.controls.css('opacity', 1);
+      Player.fullscreenPlayer.player.find('.playing').css('cursor', '');
       if (fadeControl == null) fadeControl = setTimeout(controlsFade, 1000);
     }
   });
