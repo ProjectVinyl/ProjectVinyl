@@ -40,13 +40,14 @@ class Video < ActiveRecord::Base
       video = self
       Thread.new do
         begin
-          if Ffmpeg.produceWebM(self.video_path) > -1
+          if Ffmpeg.produceWebM(video.video_path) > -1
             video.processed = true
             video.save
           end
           ActiveRecord::Base.connection.close
         rescue Exception => e
           puts e
+          puts e.backtrace
         end
       end
     else

@@ -77,7 +77,7 @@ class VideoController < ApplicationController
               Genre.loadGenres(params[:video][:genres_string], video)
             end
             video.save
-            video.setFile(media)
+            video.setFile(file)
             video.setThumbnail(cover)
             video.generateWebM
             if params[:async]

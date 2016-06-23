@@ -21,7 +21,7 @@ class Ffmpeg
    end
    
    def self.produceWebM(file)
-     webm = file.split('.')[0] + '.webm'
+     webm = file.to_s.split('.')[0] + '.webm'
      temp = Rails.root.join('encoding', File.basename(webm).to_s).to_s
      if File.exists?(webm)
        return 1

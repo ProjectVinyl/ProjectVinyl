@@ -99,12 +99,12 @@ module ApplicationHelper
     end
     length = length.to_f
     hours = 0
-    if length > 3600
+    if length >= 3600
       hours = (length/3600).floor.to_i
       length = length % 3600
     end
     minutes = 0
-    if length > 60
+    if length >= 60
       minutes = (length/60).floor.to_i
       length = length % 60
     end
