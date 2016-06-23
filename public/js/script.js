@@ -58,7 +58,7 @@ var ajax = (function() {
           xhr.upload.addEventListener('progress', function(e) {
             if (e.lengthComputable) {
               if (!message.hasClass('plain')) message.addClass('bobber');
-              var percentage = (e.loaded / e.total) * 100;
+              var percentage = Math.min((e.loaded / e.total) * 100, 100);
               if (callbacks.progress) {
                 callbacks.progress.apply(form, [e, message, fill, percentage]);
               } else {
@@ -69,7 +69,7 @@ var ajax = (function() {
                 });
               }
               message.css({
-                'margin-left': 33 - message.width()
+                'margin-left': -message.outerWidth()/2
               });
             }
           }, false);
