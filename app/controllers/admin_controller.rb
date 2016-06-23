@@ -110,6 +110,16 @@ class AdminController < ApplicationController
     redirect_to action: "video", id: params[:video][:id]
   end
   
+  def extractThumbnail
+    if user_signed_in? && current_user.is_admin
+      if video = Video.where(id: params[:video][:id]).first
+        video.setThumbnail(false)
+        flash[:notice] = "Thumbnail Reset."
+      end
+    end
+    redirect_to action: "video", id: params[:video][:id]
+  end
+  
   def visibility
     if user_signed_in? && current_user.is_admin
       video = Video.find(params[:video][:id])

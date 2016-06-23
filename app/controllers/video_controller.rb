@@ -73,11 +73,13 @@ class VideoController < ApplicationController
                     file: ext,
                     audio_only: file.content_type.include?('audio/'),
                     upvotes: 0, downvotes: 0)
-            if params[:genres_string]
-              Genre.loadGenres(params[:genres_string], video)
+            if params[:video][:genres_string]
+              Genre.loadGenres(params[:video][:genres_string], video)
             end
             video.save
-            store(video, file, cover)
+            video.setFile(media)
+            video.setThumbnail(cover)
+            video.generateWebM
             if params[:async]
               render json: { result: "success", ref: "/view/" + video.id.to_s }
             else
@@ -116,6 +118,38 @@ class VideoController < ApplicationController
       end
     end
     render status: 401, nothing: true
+  end
+  
+  def edit
+    if user_signed_in?
+      video = Video.where(id: params[:id]).first
+      if video.artist.id == current_user.artist_id || current_user.is_admin
+        @video = video
+	@artist = video.artist
+      end
+    end
+  end
+  
+  def updateCover
+    if user_signed_in? && video = Video.where(id: params[:video][:id]).first
+      if video.artist.id == current_user.artist_id || current_user.is_admin
+        if params[:erase]
+          video.setThumbnail(false)
+        elsif cover = params[:video][:cover]
+          if cover.content_type.include?('image/')
+            video.setThumbnail(cover)
+          end
+        end
+        if params[:async]
+          flash[:notice] = "Cover Art change successfully. You may need to reload the page."
+          render json: { result: "success", ref: "/view/" + video.id.to_s }
+        else
+          redirect_to action: "view", id: video.id
+        end
+        return
+      end
+    end
+    error(params[:async], "Access Denied", "You can't do that right now.")
   end
   
   def download
@@ -160,25 +194,7 @@ class VideoController < ApplicationController
     end
     return s
   end
-  
-  def store(video, media, cover)
-    video_path = Rails.root.join('public', 'stream', video.id.to_s + video.file)
-    File.open(video_path, 'wb') do |file|
-      file.write(media.read)
-      file.flush()
-    end
-    cover_path = Rails.root.join('public', 'cover', video.id.to_s)
-    if cover && cover.content_type.include?('image/')
-      File.open(cover_path, 'wb') do |file|
-        file.write(cover.read)
-        file.flush()
-      end
-    else
-      Ffmpeg.extractThumbnail(video_path, cover_path)
-    end
-    video.generateWebM
-  end
-  
+    
   private
   def error(async, title, message)
     if async

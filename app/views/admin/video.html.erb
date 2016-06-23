@@ -69,6 +69,20 @@
 					</tr>
 				</table>
 				<% end %>
+				<%= form_for(@video, as: "video", url: "/admin/video/resetthumb", html: { method: :put }) do |f| %>
+					<%= f.text_field :id, hidden: true %>
+				<table>
+					<tr class="actions">
+						<td class="label">
+							<%= f.label "Reset Thumbnail" %>
+						</td>
+						<td class="field">
+							<%= f.submit "Restart" %>
+							<div>Thumbnail will be regenerated from source</div>
+						</td>
+					</tr>
+				</table>
+				<% end %>
 				<table>
 					<tr class="actions">
 						<td class="label">

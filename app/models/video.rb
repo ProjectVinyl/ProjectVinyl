@@ -18,15 +18,29 @@ class Video < ActiveRecord::Base
     self.destroy
   end
   
+  def video_path
+    return Rails.root.join('public', 'stream', self.id.to_s + self.file)
+  end
+  
+  def cover_path
+    return Rails.root.join('public', 'cover', self.id.to_s)
+  end
+  
+  def setFile(media)
+    File.open(self.video_path, 'wb') do |file|
+      file.write(media.read)
+      file.flush()
+    end
+  end
+  
   def generateWebM
     if !self.audio_only
       self.processed = false
       self.save
-      video_path = Rails.root.join('public', 'stream', self.id.to_s + self.file)
       video = self
       Thread.new do
         begin
-          if Ffmpeg.produceWebM(video_path.to_s) > -1
+          if Ffmpeg.produceWebM(self.video_path) > -1
             video.processed = true
             video.save
           end
@@ -38,6 +52,17 @@ class Video < ActiveRecord::Base
     else
       self.processed = true
       self.save
+    end
+  end
+  
+  def setThumbnail(cover)
+    if cover && cover.content_type.include?('image/')
+      File.open(self.cover_path, 'wb') do |file|
+        file.write(cover.read)
+        file.flush()
+      end
+    elsif !self.audio_only
+      Ffmpeg.extractThumbnail(self.video_path, self.cover_path)
     end
   end
   
