@@ -1,6 +1,12 @@
 class ImgsController < ApplicationController
 #Fallback for assets that don't exist
   def cover
+    old = Rails.root.join('public', 'cover', params[:id])
+    if File.exists?(old)
+      File.rename(old, old.to_s + '.png')
+      serveRaw(old, 'png', 'image')
+      return
+    end
     serveRaw(Rails.root.join('public', 'images', 'default-cover'), 'png', 'image')
   end
   
