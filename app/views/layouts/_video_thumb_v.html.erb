@@ -1,6 +1,6 @@
 <li class="generic">
 	<a class="thumb" href="/view/<%= video_thumb_v.id %>-<%= url_safe video_thumb_v.title %>">
-		<div class="tile" style="background-image:url('/cover/<%= video_thumb_v.hidden ? 0 : video_thumb_v.id %>');">
+		<div class="tile" style="background-image:url('/cover/<%= video_thumb_v.hidden ? 0 : video_thumb_v.id %>.png');">
 			<div class="details">
 				<div class="title"><%= video_thumb_v.getTitle %></div>
 				<div class="published detail"><%= since video_thumb_v.created_at %></div>

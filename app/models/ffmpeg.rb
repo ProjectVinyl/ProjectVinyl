@@ -47,8 +47,7 @@ class Ffmpeg
        duration = duration % 60
      end
      seconds = duration.to_i
-     temp = destination.to_s + ".png"
-     output = `ffmpeg -y -i "#{source}" -ss #{hours}:#{minutes}:#{seconds} -vframes 1 "#{temp}"`
-     File.rename(temp, destination)
+     destination = destination.to_s + ".png"
+     output = `ffmpeg -y -i "#{source}" -ss #{hours}:#{minutes}:#{seconds} -vframes 1 "#{destination}"`
    end
 end
