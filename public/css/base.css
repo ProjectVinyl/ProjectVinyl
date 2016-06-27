@@ -562,7 +562,7 @@ button, .button, .foobar, input[type=submit] {
   -moz-user-select: none;
 }
 
-button:hover, .button:hover, button.selected, .button.selected, input[type=submit]:selected {
+button:hover, .button:hover, button.selected, .button.selected, input[type=submit].selected {
    background: #fff;
 }
 
@@ -1372,7 +1372,7 @@ form.uploading .progressor + div {
   .wrapper .wrapper.right {
     float: none;
   }
-  .wrapper .wrapper.right > .page
+  .wrapper .wrapper.right > .page {
     margin: 10px !important;
   }
 }
