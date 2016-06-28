@@ -49,6 +49,11 @@ module ApplicationHelper
     "derpytongue2",
     "trollestia"
   ]
+  
+  def self.read_only
+    return true
+  end
+  
   def emotify(text)
     text = text.gsub(/\[icon\]([^\[]+)\[\/icon\]/, '<i class="fa fa-fw fa-\1"></i>')
     text = text.gsub(/\n/,'<br>').gsub(/\[([\/]?([buis]|sup|sub|hr))\]/, '<\1>')

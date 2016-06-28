@@ -30,6 +30,10 @@ class VideoController < ApplicationController
   end
   
   def upload
+    if ApplicationHelper.read_only
+      render 'layouts/error', locals: { title: 'Access Denied', description: "That feature is currently disabled. Please wait whilst we fix our servers." }
+      return
+    end
     if user_signed_in?
       if current_user.is_admin && params[:artist]
         @artist = Artist.where(id: params[:artist]).first
