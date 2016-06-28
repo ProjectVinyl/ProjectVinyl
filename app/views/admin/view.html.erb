@@ -51,7 +51,7 @@
 	</ul>
 </section>
 <section style="width:100%" class="page recent-uploads resize-holder">
-	<h1 class="title resize-target">Unprocessed Videos</h1>
+	<h1 class="title resize-target">Unprocessed Videos (<%= @unprocessed_count %>)</h1>
 	<ul id="videos" class="horizontal video-list">
 		<%= render partial: '/admin/video_thumb_h', collection: @unprocessed %>
 	</ul>
