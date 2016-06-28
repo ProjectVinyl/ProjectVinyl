@@ -9,15 +9,34 @@ class Ffmpeg
      return output.to_i.floor
    end
    
+   def self.try_unlock?(file)
+     webm = file.to_s.split('.')[0] + '.webm'
+     temp = Rails.root.join('encoding', File.basename(webm).to_s).to_s
+     if File.exists?(temp)
+       if File.mtime(temp) < Time.now.ago(60)
+         File.rename(temp, webm)
+         return true
+       end
+     end
+     return false
+   end
+   
    def self.produceWebM(file)
      webm = file.to_s.split('.')[0] + '.webm'
      temp = Rails.root.join('encoding', File.basename(webm).to_s).to_s
      if File.exists?(webm)
        yield
-       return
+       return "Completed"
      end
-     if File.exists?(temp) || !File.exists?(file)
-       return
+     if !File.exists?(file)
+       return "File Not Found"
+     end
+     if File.exists?(temp)
+       if File.mtime(temp) < Time.now.ago(60)
+         File.rename(temp, webm)
+         yield
+         return "Complete (Unlocked Index)"
+       end
      end
      Thread.start {
        begin
@@ -42,6 +61,7 @@ class Ffmpeg
          puts e.backtrace
        end
      }
+     return "Started"
    end
    
    def self.to_h_m_s(duration)
@@ -61,10 +81,10 @@ class Ffmpeg
    
    def self.extractThumbnail(source, destination, time)
      time = Ffmpeg.to_h_m_s(time)
-     `ffmpeg -y -i "#{source}" -ss ' + time + ' -vframes 1 "#{destination}.png" -ss #{time} -vframes 1 -vf scale=-1:130 "#{destination}-small.png"`
+     `ffmpeg -y -i "#{source}" -ss #{time} -vframes 1 "#{destination}.png" -ss #{time} -vframes 1 -vf scale=-1:130 "#{destination}-small.png"`
    end
    
    def self.extractTinyThumbFromExisting(png)
-     IO.popen('ffmpeg -i "' + png + '.png" -vf scale=-1:130 "' + png + '-small.png"')
+     IO.popen('ffmpeg -i "' + png.to_s + '.png" -vf scale=-1:130 "' + png.to_s + '-small.png"')
    end
 end

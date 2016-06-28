@@ -11,8 +11,9 @@ class Video < ActiveRecord::Base
   end
   
   def removeSelf
-    delFile(Rails.root.join('public', 'stream', self.id.to_s + self.file))
-    delFile(Rails.root.join('public', 'cover', self.id.to_s))
+    delFile(self.video_path)
+    delFile(self.cover_path.to_s + ".png")
+    delFile(self.cover_path.to_s + "-small.png")
     delFile(Rails.root.join('public', 'stream', self.id.to_s + '.webm'))
     self.album_items.destroy
     self.destroy
@@ -38,22 +39,35 @@ class Video < ActiveRecord::Base
       self.processed = false
       self.save
       video = self
-      Ffmpeg.produceWebM(self.video_path) do ||
+      return Ffmpeg.produceWebM(self.video_path) do ||
         self.processed = true
         self.save
       end
     else
       self.processed = true
       self.save
+      return "Completed"
     end
+  end
+  
+  def checkIndex
+    if Ffmpeg.try_unlock?(self.video_path)
+      self.processed = true
+      self.save
+      return true
+    end
+    return false
   end
   
   def setThumbnail(cover)
     if cover && cover.content_type.include?('image/')
-      File.open(self.cover_path, 'wb') do |file|
+      delFile(self.cover_path.to_s + ".png")
+      delFile(self.cover_path.to_s + "-small.png")
+      File.open(self.cover_path.to_s + '.png', 'wb') do |file|
         file.write(cover.read)
         file.flush()
       end
+      Ffmpeg.extractTinyThumbFromExisting(self.cover_path)
     elsif !self.audio_only
       Ffmpeg.extractThumbnail(self.video_path, self.cover_path, self.getDuration().to_f / 2)
     end
