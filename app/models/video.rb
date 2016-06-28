@@ -38,17 +38,9 @@ class Video < ActiveRecord::Base
       self.processed = false
       self.save
       video = self
-      Thread.new do
-        begin
-          if Ffmpeg.produceWebM(video.video_path) > -1
-            video.processed = true
-            video.save
-          end
-          ActiveRecord::Base.connection.close
-        rescue Exception => e
-          puts e
-          puts e.backtrace
-        end
+      Ffmpeg.produceWebM(self.video_path) do ||
+        self.processed = true
+        self.save
       end
     else
       self.processed = true
@@ -63,7 +55,7 @@ class Video < ActiveRecord::Base
         file.flush()
       end
     elsif !self.audio_only
-      Ffmpeg.extractThumbnail(self.video_path, self.cover_path)
+      Ffmpeg.extractThumbnail(self.video_path, self.cover_path, self.getDuration().to_f / 2)
     end
   end
   
@@ -178,7 +170,7 @@ class Video < ActiveRecord::Base
     if !self.audio_only && !File.exists?(file)
       file = Rails.root.join('public', 'stream', self.id.to_s + '.mp4').to_s
     end
-    self.length = ::Ffmpeg.getVideoLength(file)
+    self.length = Ffmpeg.getVideoLength(file)
     save()
     return self.length
   end

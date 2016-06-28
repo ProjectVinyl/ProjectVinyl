@@ -41,6 +41,7 @@ Rails.application.routes.draw do
   patch 'ajax/update/artist' => 'artist#update'
   post 'ajax/delete/artist/:id' => 'admin#deleteArtist'
   
+  get 'cover/:id-small' => 'imgs#thumb'
   get 'cover/:id' => 'imgs#cover'
   get 'avatar/:id' => 'imgs#avatar'
   get 'stream/:id' => 'imgs#stream'

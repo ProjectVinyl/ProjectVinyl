@@ -1,8 +1,8 @@
 <li class="generic">
 	<% @items = album_thumb_h.album_items.order(:index) %>
 	<a class="tile stack" href="/album/<%= album_thumb_h.id %>-<%= url_safe album_thumb_h.title %>">
-		<span <% if @items.second %>style="background-image:url('/cover/<%= @items.second.video.id %>.png');"<% end %> class="stack-item item-1">
-			<span <% if @items.first %>style="background-image:url('/cover/<%= @items.first.video.id %>.png');"<% end %> class="stack-item item-2"></span>
+		<span <% if @items.second %>style="background-image:url('/cover/<%= @items.second.video.id %>-small.png');"<% end %> class="stack-item item-1">
+			<span <% if @items.first %>style="background-image:url('/cover/<%= @items.first.video.id %>-small.png');"<% end %> class="stack-item item-2"></span>
 		</span>
 	</a>
 	<div class="title"><%= album_thumb_h.title %></div>

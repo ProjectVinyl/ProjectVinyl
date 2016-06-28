@@ -9,33 +9,42 @@ class Ffmpeg
      return output.to_i.floor
    end
    
-   def self.getFrameRate(file)
-     output = `ffprobe -v error -select_streams v:0 -show_entries stream=avg_frame_rate -of default=noprint_wrappers=1:nokey=1 "#{file}"`
-     return output.to_s.split('/')[0].to_i
-   end
-   
-   def self.getFrameCount(file)
-     rate = Ffmpeg.getFrameRate(file)
-     duration = Ffmpeg.getVideoLength(file)
-     return rate * duration
-   end
-   
    def self.produceWebM(file)
      webm = file.to_s.split('.')[0] + '.webm'
      temp = Rails.root.join('encoding', File.basename(webm).to_s).to_s
      if File.exists?(webm)
-       return 1
+       yield
+       return
      end
      if File.exists?(temp) || !File.exists?(file)
-       return -1
+       return
      end
-     `ffmpeg -i  "#{file}" -c:v libvpx -crf 10 -b:v 1M -c:a libvorbis "#{temp}"`
-     File.rename(temp, webm)
-     return 0
+     Thread.start {
+       begin
+       IO.popen(['ffmpeg','-i',file.to_s,'-c:v','libvpx','-crf','10','-b:v','1M','-c:a','libvorbis',temp.to_s]) {|io|
+         begin
+           while line = io.gets
+             line.chomp!
+           end
+           io.close
+           File.rename(temp, webm)
+           yield
+           puts 'Conversion complete (' + file.to_s + ')'
+         rescue Exception => e
+           puts e
+           puts e.backtrace
+         ensure
+           ActiveRecord::Base.connection.close
+         end
+       }
+       rescue Exception => e
+         puts e
+         puts e.backtrace
+       end
+     }
    end
    
-   def self.extractThumbnail(source, destination)
-     duration = Ffmpeg.getVideoLength(source).to_f / 2
+   def self.to_h_m_s(duration)
      hours = 0
      if duration >= 3600
        hours = (duration/3600).floor.to_i
@@ -47,7 +56,15 @@ class Ffmpeg
        duration = duration % 60
      end
      seconds = duration.to_i
-     destination = destination.to_s + ".png"
-     output = `ffmpeg -y -i "#{source}" -ss #{hours}:#{minutes}:#{seconds} -vframes 1 "#{destination}"`
+     return "#{hours}:#{minutes}:#{seconds}"
+   end
+   
+   def self.extractThumbnail(source, destination, time)
+     time = Ffmpeg.to_h_m_s(time)
+     `ffmpeg -y -i "#{source}" -ss ' + time + ' -vframes 1 "#{destination}.png" -ss #{time} -vframes 1 -vf scale=-1:130 "#{destination}-small.png"`
+   end
+   
+   def self.extractTinyThumbFromExisting(png)
+     IO.popen('ffmpeg -i "' + png + '.png" -vf scale=-1:130 "' + png + '-small.png"')
    end
 end

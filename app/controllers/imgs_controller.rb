@@ -1,13 +1,17 @@
 class ImgsController < ApplicationController
 #Fallback for assets that don't exist
   def cover
-    old = Rails.root.join('public', 'cover', params[:id])
-    if File.exists?(old)
-      File.rename(old, old.to_s + '.png')
-      serveRaw(old, 'png', 'image')
+    serveRaw(Rails.root.join('public', 'images', 'default-cover'), 'png', 'image')
+  end
+  
+  def thumb
+    png = Rails.root.join('public', 'cover', params[:id]).to_s
+    if File.exists?(png + '.png')
+      Ffmpeg.extractTinyThumbFromExisting(png)
+      serveRaw(png, 'png', 'image')
       return
     end
-    serveRaw(Rails.root.join('public', 'images', 'default-cover'), 'png', 'image')
+    serveRaw(Rails.root.join('public', 'images', 'default-cover-small'), 'png', 'image')
   end
   
   def avatar
