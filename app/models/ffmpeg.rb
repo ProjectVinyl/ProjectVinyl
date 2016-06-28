@@ -9,6 +9,17 @@ class Ffmpeg
      return output.to_i.floor
    end
    
+   def self.locked?(file)
+     webm = file.to_s.split('.')[0] + '.webm'
+     temp = Rails.root.join('encoding', File.basename(webm).to_s).to_s
+     if File.exists?(temp)
+       if File.mtime(temp) > Time.now.ago(1800)
+         return true
+       end
+     end
+     return false
+   end
+   
    def self.try_unlock?(file)
      webm = file.to_s.split('.')[0] + '.webm'
      temp = Rails.root.join('encoding', File.basename(webm).to_s).to_s

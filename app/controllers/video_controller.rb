@@ -2,7 +2,7 @@ class VideoController < ApplicationController
   def view
     if @video = Video.where(id: params[:id].split(/-/)[0]).first
       if !@video.processed && user_signed_in? && current_user.is_admin
-        if !@video.checkIndex
+        if !@video.processing
           alert = "This video is still being processed. All is good."
         end
       end

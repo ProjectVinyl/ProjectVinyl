@@ -59,6 +59,10 @@ class Video < ActiveRecord::Base
     return false
   end
   
+  def processing
+    return Ffmpeg.locked?(self.video_path)
+  end
+  
   def setThumbnail(cover)
     if cover && cover.content_type.include?('image/')
       delFile(self.cover_path.to_s + ".png")
