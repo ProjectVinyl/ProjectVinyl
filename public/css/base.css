@@ -48,7 +48,7 @@ table, tr, td {
   padding: 0;
   margin: 0;
 }
-table.auto table.auto tr, table.auto td {
+table.auto, table.auto tr, table.auto td {
   table-layout: auto;
 }
 
