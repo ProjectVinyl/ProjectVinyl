@@ -49,6 +49,10 @@ class VideoController < ApplicationController
   end
     
   def create
+    if ApplicationHelper.read_only
+      error(params[:async], "Access Denied", "That feature is currently disabled.")
+      return
+    end
     if user_signed_in?
       if current_user.is_admin && params[:video][:artist_id]
         artist = Artist.by_name_or_id(params[:video][:artist_id])
