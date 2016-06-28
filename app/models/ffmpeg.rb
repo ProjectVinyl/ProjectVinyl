@@ -13,7 +13,7 @@ class Ffmpeg
      webm = file.to_s.split('.')[0] + '.webm'
      temp = Rails.root.join('encoding', File.basename(webm).to_s).to_s
      if File.exists?(temp)
-       if File.mtime(temp) < Time.now.ago(60)
+       if File.mtime(temp) < Time.now.ago(1800)
          File.rename(temp, webm)
          return true
        end
@@ -32,7 +32,7 @@ class Ffmpeg
        return "File Not Found"
      end
      if File.exists?(temp)
-       if File.mtime(temp) < Time.now.ago(60)
+       if File.mtime(temp) < Time.now.ago(1800)
          File.rename(temp, webm)
          yield
          return "Complete (Unlocked Index)"
