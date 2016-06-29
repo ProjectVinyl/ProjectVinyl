@@ -279,7 +279,6 @@ var BBC = (function() {
       }
     });
     me.on('click', function(ev) {
-      ev.preventDefault();
       ev.stopPropagation();
     });
   });
