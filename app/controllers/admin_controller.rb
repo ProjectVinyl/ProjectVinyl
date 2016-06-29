@@ -8,9 +8,10 @@ class AdminController < ApplicationController
     Video.where(processed: false).each do |video|
       video.checkIndex
     end
-    @unprocessed_count = Video.where(processed: false).count
-    @unprocessed = Video.where(processed: false).limit(5*8).reverse_order
+    @unprocessed_count = Video.where.not(processed: true).count
+    @unprocessed = Video.where.not(processed: true).limit(5*8).reverse_order
     @users = User.where(last_sign_in_at: Time.zone.now.beginning_of_month..Time.zone.now.end_of_day).limit(100).order(:last_sign_in_at).reverse_order
+    @processorStatus = VideoProcessor.status
   end
   
   def video

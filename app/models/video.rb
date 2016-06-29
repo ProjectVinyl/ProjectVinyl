@@ -36,9 +36,21 @@ class Video < ActiveRecord::Base
   
   def generateWebM
     if !self.audio_only
+      self.processed = nil
+      self.save
+      VideoProcessor.enqueue(self)
+      return "Processing Scheduled"
+    else
+      self.processed = true
+      self.save
+      return "Completed"
+    end
+  end
+  
+  def generateWebM_sync
+    if !self.audio_only
       self.processed = false
       self.save
-      video = self
       return Ffmpeg.produceWebM(self.video_path) do ||
         self.processed = true
         self.save

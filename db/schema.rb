@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160617173301) do
+ActiveRecord::Schema.define(version: 20160629071736) do
 
   create_table "album_items", force: :cascade do |t|
     t.integer "album_id", limit: 4
@@ -25,10 +25,11 @@ ActiveRecord::Schema.define(version: 20160617173301) do
   create_table "albums", force: :cascade do |t|
     t.string   "title",       limit: 255
     t.text     "description", limit: 65535
-    t.datetime "created_at",                null: false
-    t.datetime "updated_at",                null: false
+    t.datetime "created_at",                            null: false
+    t.datetime "updated_at",                            null: false
     t.integer  "owner_id",    limit: 4
     t.string   "owner_type",  limit: 255
+    t.integer  "featured",    limit: 4,     default: 0
   end
 
   add_index "albums", ["owner_id"], name: "index_albums_on_owner_id", using: :btree
@@ -100,7 +101,7 @@ ActiveRecord::Schema.define(version: 20160617173301) do
     t.integer  "score",       limit: 4,     default: 0
     t.boolean  "hidden",                    default: false
     t.integer  "views",       limit: 4,     default: 0
-    t.boolean  "processed",                 default: false
+    t.boolean  "processed"
   end
 
   add_index "videos", ["artist_id"], name: "index_videos_on_artist_id", using: :btree

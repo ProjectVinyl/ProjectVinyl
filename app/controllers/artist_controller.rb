@@ -5,6 +5,7 @@ class ArtistController < ApplicationController
       @videos = Pagination.paginate(@videos, 0, 8, true)
       @albums = Pagination.paginate(@artist.albums, 0, 8, true)
       @modificationsAllowed = user_signed_in? && (current_user.artist_id == @artist.id || current_user.is_admin)
+      @featured = @artist.albums.where('featured > 0').order(:featured).reverse_order
     end
   end
   

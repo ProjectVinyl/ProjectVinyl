@@ -1,0 +1,23 @@
+<section style="width:100%" class="page resize-holder" data-id="<%= featured_section.id %>" data-index="<%= 1 %>">
+	<h1 class="title resize-target"><%= featured_section.title %></h1>
+	<% if @modificationsAllowed %>
+	<div class="handle"></div>
+	<div class="remove" title="Remove" data-id="<%= featured_section.id %>"><span><i class="fa fa-times"></i></span></div>
+	<% end %>
+	<ul id="videos" class="horizontal video-list">
+		<%= render partial: '/layouts/video_thumb_h', collection: featured_section.videos.limit(4) %>
+		<li class="generic thumb">
+			<a class="thumb" href="/album/<%= featured_section.id %>-<%= url_safe featured_section.title %>">
+				<span class="tile link">
+					View All
+					<br>
+					<%= number_with_delimiter featured_section.videos.length %> videos
+				</span>
+				<div class="title"></div>
+				<span class="date" title="<%= featured_section.created_at %>">
+					<%= since featured_section.created_at %>
+				</span>
+			</a>
+		</li>
+	</ul>
+</section>
