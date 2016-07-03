@@ -314,7 +314,12 @@ function Player() {}
         video.on('pause', function() {
           me.pause();
         });
-        video.on('abort error ended', function() {
+        video.on('abort error', function() {
+          alert('blocked');
+          me.pause();
+          me.player.addClass('stopped');
+        });
+        video.on('ended', function() {
           if (me.__autoplay) {
             var next = $('#playlist_next');
             if (next.length) {
