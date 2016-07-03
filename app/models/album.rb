@@ -22,6 +22,10 @@ class Album < ActiveRecord::Base
   def addItem(video)
     index = self.album_items.length
     self.album_items.create(video_id: video.id, index: index)
+    self.album_items.order(:index).each_with_index do |i,index|
+      i.index = index
+      i.save
+    end
   end
   
   def toggle(video)

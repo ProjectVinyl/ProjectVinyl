@@ -1,6 +1,7 @@
 class VideoController < ApplicationController
   def view
     if @video = Video.where(id: params[:id].split(/-/)[0]).first
+      @time = params[:t].to_i || 0
       if !@video.processed && user_signed_in? && current_user.is_admin
         if @video.processing
           alert = "This video is still being processed. All is good."
@@ -26,7 +27,42 @@ class VideoController < ApplicationController
         @video.views = @video.views + 1
         @video.save
       end
+      if params[:list]
+        if @album = Album.where(id: params[:list]).first
+          @items = @album.album_items.order(:index)
+          @index = params[:index].to_i || (@items.first ? @items.first.index : 0)
+          if @index > 0
+            @prev_video = @items.where(index: @index - 1).first
+          end
+          @next_video = @items.where(index: @index + 1).first
+          @album_editable = user_signed_in? && @album.ownedBy(current_user)
+        end
+      end
     end
+  end
+  
+  def go_next
+    if @video = Video.where(id: params[:id].split(/-/)[0]).first
+      if params[:list]
+        if @album = Album.where(id: params[:list]).first
+          @items = @album.album_items.order(:index)
+          @index = params[:index].to_i || (@items.first ? @items.first.index : 0)
+          @next_video = @items.where(index: @index + 1).first
+          render json: {
+            id: @album.album_items.where(index: @index).first.id,
+            next: @prev_video ? ("/view/" + @prev_video.video.id.to_s + "-" + ApplicationHelper.url_safe(@prev_video.video.title) + "?list=" + @album.id.to_s + "&index=" + @prev_video.index.to_s) : nil,
+            prev: @next_video ? ("/view/" + @next_video.video.id.to_s + "-" + ApplicationHelper.url_safe(@next_video.video.title) + "?list=" + @album.id.to_s + "&index=" + @next_video.index.to_s) : nil,
+            title: @video.title,
+            artist: @video.artist.name,
+            audioOnly: @video.audio_only,
+            source: @video.id,
+            mime: [ @video.file, @video.mime ]
+          }
+          return
+        end
+      end
+    end
+    render status: 404, nothing: true
   end
   
   def upload

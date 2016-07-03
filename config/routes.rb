@@ -23,6 +23,7 @@ Rails.application.routes.draw do
   put 'admin/transfer' => 'admin#transferItem'
   
   get 'view/:id' => 'video#view'
+  get 'ajax/view/:id' => 'video#go_next'
   get 'embed/:id' => 'embed#view'
   get 'download/:id' => 'video#download'
   get 'upload' => 'video#upload'
