@@ -2,13 +2,13 @@ class VideoProcessor
   @@flag = true
   @@master = nil
   
-  ProcessingQueue = Queue.new
-  Processors = []
+  @@ProcessingQueue = Queue.new
+  @@Processors = []
   
   def self.status
-    result = "<div>Videos in queue: " + ProcessingQueue.length.to_s + "</div>"
-    result = result + "<div>Workers: " + Processors.length.to_s + "</div>"
-    Processors.each_with_index do |index,thread|
+    result = "<div>Videos in queue: " + @@ProcessingQueue.length.to_s + "</div>"
+    result = result + "<div>Workers: " + @@Processors.length.to_s + "</div>"
+    @@Processors.each_with_index do |thread,index|
       result = result + '<div>Thread #' + index.to_s + " " + thread.status.to_s + '</div>'
     end
     return result
@@ -20,14 +20,14 @@ class VideoProcessor
     elsif @@master.status == 'sleeping'
       @@master.wakeup
     end
-    ProcessingQueue.push(video)
+    @@ProcessingQueue.push(video)
     puts "[Processing Manager] Enqueued video"
   end
   
   def self.processor
     return Thread.start {
       while true
-        ProcessingQueue.pop().generateWebM_sync
+        @@ProcessingQueue.pop().generateWebM_sync
       end
     }
   end
@@ -37,14 +37,14 @@ class VideoProcessor
     @@master = Thread.start {
       puts "[Processing Manager] Master Started"
       while true
-        while Processors.length < 8
-          puts "[Processing Manager] Spinning thread #(" + Processors.length.to_s + ")"
-          Processors << VideoProcessor.processor
+        while @@Processors.length < 8
+          puts "[Processing Manager] Spinning thread #(" + @@Processors.length.to_s + ")"
+          @@Processors << VideoProcessor.processor
         end
-        Processors.each_with_index do |index,thread|
+        @@Processors.each_with_index do |index,thread|
           if !thread.status
             puts "[Processing Manager] Thread died #(" + index.to_s + ")"
-            Processors[index] = VideoProcessor.processor
+            @@Processors[index] = VideoProcessor.processor
           end
         end
         break if @@flag == false
