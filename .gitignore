@@ -16,7 +16,6 @@
 !/log/.keep
 /tmp
 /shared
-/encoding/*
 
 .rake_tasks~
 .rbenv-vars
