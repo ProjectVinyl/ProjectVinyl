@@ -315,7 +315,6 @@ function Player() {}
           me.pause();
         });
         video.on('abort error', function() {
-          alert('blocked');
           me.pause();
           me.player.addClass('stopped');
         });
