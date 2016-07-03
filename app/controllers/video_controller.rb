@@ -243,8 +243,7 @@ class VideoController < ApplicationController
     end
     return s
   end
-    
-  private
+  
   def error(async, title, message)
     if async
       render plain: title + ":" + message, status: 401

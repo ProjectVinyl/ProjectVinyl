@@ -21,6 +21,7 @@ Rails.application.routes.draw do
   get 'admin/artist/:id' => 'admin#artist'
   put 'admin/visibility' => 'admin#visibility'
   put 'admin/transfer' => 'admin#transferItem'
+  post 'ajax/admin/process/all' => 'admin#batch_preprocessVideos'
   
   get 'view/:id' => 'video#view'
   get 'ajax/view/:id' => 'video#go_next'

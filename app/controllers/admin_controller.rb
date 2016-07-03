@@ -5,9 +5,6 @@ class AdminController < ApplicationController
       return
     end
     @hiddenvideos = Video.where(hidden: true).limit(5*8).reverse_order
-    Video.where(processed: false).each do |video|
-      video.checkIndex
-    end
     @unprocessed_count = Video.where.not(processed: true).count
     @unprocessed = Video.where.not(processed: true).limit(5*8).reverse_order
     @users = User.where(last_sign_in_at: Time.zone.now.beginning_of_month..Time.zone.now.end_of_day).limit(100).order(:last_sign_in_at).reverse_order
@@ -112,6 +109,17 @@ class AdminController < ApplicationController
       end
     end
     redirect_to action: "video", id: params[:video][:id]
+  end
+  
+  def batch_preprocessVideos
+    if user_signed_in? && current_user.is_admin
+      videos = Video.where(processed: false)
+      videos.each do |video|
+        video.generateWebM()
+      end
+      flash[:notice] = videos.length.to_s + " videos queued."
+    end
+    render json: { ref: url_for(action: "view") }
   end
   
   def extractThumbnail
