@@ -30,8 +30,8 @@
 				| <%= number_with_delimiter @items.count %> videos
 				| last updated <%= since @album.updated_at %>
 			</span>
-		<% if @modificationsAllowed && @album.owner_type != 'User' %>
 			<div class="actions">
+			<% if @modificationsAllowed && @album.owner_type != 'User' %>
 				<button id="delete_album" class="action right"><i class=\"fa fa-trash\"></i> Remove Album</button>
 				<script>
 $('#delete_album').on('click', function() {
@@ -56,14 +56,15 @@ $('#delete_album').on('click', function() {
 				<% if current_user.is_admin %>
 				<a href="/admin/album/<%= @album.id %>" class="button action right" style="margin-right: 10px;">Admin Actions</a>
 				<% end %>
-			</div>
-			<div id="cancel_form" style="display:none;">
-				<div class="message_content">Are you sure?</div>
-				<div class="foot">
-					<button class="right cancel" type="button">No thanks</button>
-					<button class="left ok" type="button">Let's do this</button>
+				<div id="cancel_form" style="display:none;">
+					<div class="message_content">Are you sure?</div>
+					<div class="foot">
+						<button class="right cancel" type="button">No thanks</button>
+						<button class="left ok" type="button">Let's do this</button>
+					</div>
 				</div>
+			<% end %>
+			<a class="button action right" style="margin-right: 10px;" <% if @items.first %>href="/view/<%= @items.first.video.id %>-<%= url_safe @items.first.video.title %>?list=<%= @album.id %>&index=<%= @items.first.index %>"<% end %>><i class=\"fa fa-play\"></i> Play All</a>
 			</div>
-		<% end %>
 	</div>
 </section>

@@ -301,18 +301,25 @@ header ul li:hover, header ul li.selected {
   height: 200px;
   background: url(../images/banner.png) no-repeat center left,
         url(../images/banner_b.png) center right #fff; 
-  /*background-size: cover;*/
 }
 #banner .title {
+  height: 150px;
+  max-width: 100%;
+  overflow: hidden;
+  font-style: italic;
   font-weight: bold;
   color: #fff;
-  font-size: 3em;
   float: left;
+  font-size: 3em;
   padding: 20px;
-  text-shadow: 0px 1px 3px #000;
   vertical-align: bottom;
-  opacity: 0.3;
+  opacity: 0.65;
   text-decoration: none;
+}
+#banner .title img {
+  float: left;
+  max-width: 100%;
+  height: 90px;
 }
 #banner > a.title:after {
   content: 'BETA';
@@ -1343,8 +1350,14 @@ form.uploading .progressor + div {
   width: 30px;
 }
 .popper .pop-out li a {
+  display: block;
   text-decoration: none;
   color: inherit;
+  width: 100%;
+  height: 100%;
+  font-weight: inherit;
+  margin: -10px;
+  padding: 10px;
 }
 .pop-out, .pop-out li, .pop-out li .label {
   overflow-x: hidden;
@@ -1375,6 +1388,18 @@ form.uploading .progressor + div {
   .wrapper .wrapper.right > .page {
     margin: 10px !important;
   }
+  .column-mobile-fragmented {
+    display: block !important;
+    float: none;
+    margin-right: 0 !important;
+    margin-left: -5px !important;
+  }
+  .column-mobile-fragmented > section {
+    display: none
+  }
+  .column-mobile-fragmented > section.column-mobile-shown {
+    display: block;
+  }
 }
 @media(max-width: 500px) {
   #search {
@@ -1397,11 +1422,6 @@ form.uploading .progressor + div {
 @media(max-width: 375px) {
   header ul li, header ul li a {
     font-size: 13px;
-  }
-}
-@media(max-width: 350px) {
-  #banner a.title {
-    line-height: 1.1;
   }
 }
 @media(max-width: 345px) {

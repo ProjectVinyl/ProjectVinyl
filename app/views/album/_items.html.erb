@@ -1,14 +1,16 @@
-<section style="width:100%"  class="page listing compact">
+<section style="width:100%" class="page listing compact">
 	<div class="items<% if @modificationsAllowed %> reorderable<% end %>" data-target="albumitem">
-		<span class="bump" data-index="0"></span>
+		<span class="bump" data-index="-1"></span>
 	<% @items.each do |item| %>
 		<a <% if !item.video.hidden %>href="/view/<%= item.video.id %>-<%= url_safe item.video.title %>"<% else %>class="hidden-item"<% end %> data-id="<%= item.id %>" data-index="<%= item.index %>">
 		<% if @modificationsAllowed %>
 			<div class="handle"><i class="fa fa-ellipsis-v"></i></div>
 		<% end %>
-			<div class="title"><%= item.video.getTitle %></div>
+			<div class="title">
+				<div><%= item.video.getTitle %></div>
+			</div>
 			<div class="duration">
-				<%= duration item.video.getDuration %>
+				<div><%= duration item.video.getDuration %></div>
 			</div>
 			<div class="author">
 				<span><%= item.video.artist.name %></span>

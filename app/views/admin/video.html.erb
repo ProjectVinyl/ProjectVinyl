@@ -61,7 +61,7 @@
 				<table>
 					<tr class="actions">
 						<td class="label">
-							<%= f.label "Processed (" + @video.processed.to_s + ")" %>
+							<%= f.label "Processed (" + (@video.processed ? "Yes" : @video.processed.nil? ? "No" : "In Progress") + ")" %>
 						</td>
 						<td class="field">
 							<%= f.submit "Restart" %>

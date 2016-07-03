@@ -7,7 +7,7 @@ class AlbumController < ApplicationController
       end
       @artist = @album.owner
       @items = @album.album_items.order(:index)
-      @modificationsAllowed = user_signed_in? && (current_user.is_admin || (@artist && current_user.artist_id == @artist.id))  
+      @modificationsAllowed = user_signed_in? && @album.ownedBy(current_user)
     end
   end
   

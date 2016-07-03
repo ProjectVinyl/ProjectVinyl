@@ -3,10 +3,9 @@ class AlbumItem < ActiveRecord::Base
   belongs_to :video
 
   def removeSelf()
-    oldIndex = self.index
     self.destroy
-    self.album.album_items.where('`album_items`.`index` >= ?', oldIndex).each do |i|
-      i.index = i.index - 1
+    self.album.album_items.order(:index).each_with_index do |i,index|
+      i.index = index
       i.save
     end
   end
@@ -32,5 +31,9 @@ class AlbumItem < ActiveRecord::Base
     end
     self.index = newIndex
     self.save
+    self.album.album_items.order(:index).each_with_index do |i,index|
+      i.index = index
+      i.save
+    end
   end
 end

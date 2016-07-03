@@ -108,38 +108,18 @@ var ajax = (function() {
   return result;
 })();
 var scrollTo = (function() {
-  function goto(pos) {
-    $('html, body').animate({
-      scrollTop: pos.top,
-      scrollLeft: pos.left
-    });
-  }
-  function scrollIntoView() {
-    var win = $(window);
-    var me = $(this);
+  function scrollIntoView(me, container) {
+    if (!me.length) return;
     var offset = me.offset();
-    lastPos = {
-      top: win[0].scrollTop, left: win[0].scrollLeft, flag: 1
-    }
-    if (offset.top + me.height() > win.height()) {
-      offset.top -= me.height()/2 + win.height()/2;
-      offset.left -= me.width()/2 + win.width()/2;
-      goto(offset)
-    }
+    var scrollpos = container.offset();
+    container.animate({
+      scrollTop: offset.top - scrollpos.top + container.scrollTop(),
+      scrollLeft: offset.left - scrollpos.left + container.scrollLeft()
+    });
   };
-  var lastPos = {top: 0, left: 0, flag: 0};
-  var result = function(el) {
-    return scrollIntoView.apply(el);
+  return function(el, container) {
+    return scrollIntoView($(el), $(container || 'html, body'));
   };
-  result.toggle = function(el) {
-    if (lastPos.flag) {
-      goto(lastPos);
-      lastPos = {top: 0, left: 0, flag: 0};
-    } else {
-      scrollIntoView.apply(el);
-    }
-  };
-  return result;
 })();
 var resizeFont = (function() {
   function sizeFont(el, targetWidth) {
@@ -279,7 +259,6 @@ var BBC = (function() {
       }
     });
     me.on('click', function(ev) {
-      ev.preventDefault();
       ev.stopPropagation();
     });
   });

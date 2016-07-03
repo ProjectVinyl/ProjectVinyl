@@ -49,29 +49,27 @@ class Ffmpeg
          return "Complete (Unlocked Index)"
        end
      end
-     Thread.start {
+     begin
+     IO.popen(['ffmpeg','-hide_banner','-nostats','-loglevel','panic','-i',file.to_s,'-c:v','libvpx','-crf','10','-b:v','1M','-c:a','libvorbis',temp.to_s]) {|io|
        begin
-       IO.popen(['ffmpeg','-i',file.to_s,'-c:v','libvpx','-crf','10','-b:v','1M','-c:a','libvorbis',temp.to_s]) {|io|
-         begin
-           while line = io.gets
-             line.chomp!
-           end
-           io.close
-           File.rename(temp, webm)
-           yield
-           puts 'Conversion complete (' + file.to_s + ')'
-         rescue Exception => e
-           puts e
-           puts e.backtrace
-         ensure
-           ActiveRecord::Base.connection.close
+         while line = io.gets
+           line.chomp!
          end
-       }
+         io.close
+         File.rename(temp, webm)
+         yield
+         puts 'Conversion complete (' + file.to_s + ')'
        rescue Exception => e
          puts e
          puts e.backtrace
+       ensure
+         ActiveRecord::Base.connection.close
        end
      }
+     rescue Exception => e
+       puts e
+       puts e.backtrace
+     end
      return "Started"
    end
    
@@ -92,10 +90,10 @@ class Ffmpeg
    
    def self.extractThumbnail(source, destination, time)
      time = Ffmpeg.to_h_m_s(time)
-     `ffmpeg -y -i "#{source}" -ss #{time} -vframes 1 "#{destination}.png" -ss #{time} -vframes 1 -vf scale=-1:130 "#{destination}-small.png"`
+     `ffmpeg -hide_banner -nostats -loglevel panic -y -i "#{source}" -ss #{time} -vframes 1 "#{destination}.png" -ss #{time} -vframes 1 -vf scale=-1:130 "#{destination}-small.png"`
    end
    
    def self.extractTinyThumbFromExisting(png)
-     IO.popen('ffmpeg -i "' + png.to_s + '.png" -vf scale=-1:130 "' + png.to_s + '-small.png"')
+     IO.popen('ffmpeg -hide_banner -nostats -loglevel panic -i "' + png.to_s + '.png" -vf scale=-1:130 "' + png.to_s + '-small.png"')
    end
 end

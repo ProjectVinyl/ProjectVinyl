@@ -44,6 +44,12 @@
 		</tbody>
 	</table>
 </section>
+<section style="width:100%" class="page resize-holder">
+	<h1 class="title resize-target">Processor Status</h1>
+	<%= raw @processorStatus %>
+	<hr>
+	<button class="confirm-button action red" data-action="delete" data-url="admin/process/all" data-title="Process <%= @unprocessed_count %> Videos" data-icon="warning" type="button">Enqueue All Outstanding Videos</button>
+</section>
 <section style="width:100%" class="page recent-uploads resize-holder">
 	<h1 class="title resize-target">Hidden Videos</h1>
 	<ul id="videos" class="horizontal video-list">

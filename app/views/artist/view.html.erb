@@ -20,19 +20,45 @@
 			</h1>
 			<span class="content bio"><%= raw emotify @artist.description %></span>
 		</div>
+		<% if @modificationsAllowed %>
 		<div class="actions">
-			<% if @modificationsAllowed %>
-			<button class="confirm-button" data-url="artist/update/banner" data-title="Select Banner Image" data-icon="">Change Banner Image</button>
-			<% end %>
-			<% if user_signed_in? && current_user.is_admin %>
-			<a href="/admin/artist/<%= @artist.id %>" class="button action">Admin Actions</a>
-			<% end %>
+			<div class="split-button popper">
+				<button class="action options pop-out-toggle"><i class="fa fa-gear"></i> Options</button>
+				<ul class="pop-out">
+				<% if user_signed_in? && current_user.is_admin %>
+					<li class="action">
+						<a href="/admin/artist/<%= @artist.id %>">
+							<span class="icon"><i class="fa fa-gavel"></i></span>
+							<span class="label">Admin</span>
+						</a>
+					</li>
+				<% end %>
+					<li class="action confirm-button" data-url="artist/update/banner" data-title="Select Banner Image" data-icon="">
+						<span class="icon"><i class="fa fa-pencil"></i></span>
+						<span class="label">Change Cover Image</span>
+					</li>
+					<li class="action" id="toggle_edit">
+						<span class="icon"><i class="fa fa-pencil"></i></span>
+						<span class="label">Edit Profile</span>
+						<script>
+$('#toggle_edit').on('click', function() {
+  $('body').toggleClass('editing');
+});
+						</script>
+					</li>
+				</ul>
+			</div>
 		</div>
+		<% end %>
 		<div class="details">
 			<%= render partial: '/layouts/taglist', locals: { collection: @artist.genres } %>
 		</div>
 	</div>
 </section>
+<div class="reorderable" data-target="featured">
+	<span class="bump" data-index="0"></span>
+	<%= render partial: 'featured_section', collection: @featured %>
+</div>
 <section style="width:100%" class="page recent-uploads resize-holder">
 	<h1 class="title resize-target">Recent Uploads<span> (<span class="count"><%= number_with_delimiter @artist.videos.length %></span>)</span></h1>
 	<% if @modificationsAllowed %><a class="button" href="/upload"><i class="fa fa-plus"></i> New</a><% end %>

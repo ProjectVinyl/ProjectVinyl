@@ -1,7 +1,7 @@
 <% if @video %>
 		<% title @video.title %>
 		<%= render partial: 'video' %>
-		<div class="page resize-holder column-right right center">
+		<div class="page resize-holder column-right column-mobile-fragmented right center">
 			<section class="artist-bio">
 				<span class="avatar">
 					<span style="background-image:url('/avatar/<%= @artist.id %>');"></span>
@@ -11,6 +11,35 @@
 				</h1>
 				<div class="bio short"><%= raw emotify @artist.bio %></div>
 			</section>
+			<% if @album %>
+			<section class="listing compact playlist column-mobile-shown">
+				<div class="controls">
+				<% if @prev_video %>
+					<a id="playlist_prev" class="slide-left" title="Previous" href="/view/<%= @prev_video.video.id %>-<%= url_safe @prev_video.video.title %>?list=<%= @album.id %>&index=<%= @prev_video.index %>">
+						<i class="fa fa-fw fa-step-backward"></i>
+					</span>
+				<% end %>
+				<a class="title<% if @next_video %> buff-right<% end %>" href="/album/<%= @album.id %>-<%= url_safe @album.title %>"><%= @album.title %></a>
+				<% if @next_video %>
+					<a id="playlist_next" class="slide-right" title="Next" href="/view/<%= @next_video.video.id %>-<%= url_safe @next_video.video.title %>?list=<%= @album.id %>&index=<%= @next_video.index %>">
+						<i class="fa fa-fw fa-step-forward"></i>
+					</span>
+				<% end %>
+				</div>
+				<div class="scroll-container">
+					<div class="items<% if @album_editable %> reorderable<% end %>" data-target="albumitem">
+						<%= render partial: '/album/album_item', collection: @items %>
+					</div>
+				</div>
+				<script>
+$(document).ready(function() {
+  var selected = $('.playlist a.selected');
+  if (selected.length) scrollTo(selected, '.playlist .scroll-container');
+});
+$('html,body').scrollTop(200);
+				</script>
+			</section>
+			<% end %>
 			<section>
 				<h1 class="resize-target">
 					<a>Discovery Queue</a>
