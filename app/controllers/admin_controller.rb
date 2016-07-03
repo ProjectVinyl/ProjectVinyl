@@ -5,8 +5,8 @@ class AdminController < ApplicationController
       return
     end
     @hiddenvideos = Video.where(hidden: true).limit(5*8).reverse_order
-    @unprocessed_count = Video.where.not(processed: true).count
-    @unprocessed = Video.where.not(processed: true).limit(5*8).reverse_order
+    @unprocessed_count = Video.where("processed IS NULL or processed = ?", false).count
+    @unprocessed = Video.where("processed IS NULL or processed = ?", false).limit(5*8)
     @users = User.where(last_sign_in_at: Time.zone.now.beginning_of_month..Time.zone.now.end_of_day).limit(100).order(:last_sign_in_at).reverse_order
     @processorStatus = VideoProcessor.status
   end
@@ -113,7 +113,7 @@ class AdminController < ApplicationController
   
   def batch_preprocessVideos
     if user_signed_in? && current_user.is_admin
-      videos = Video.where(processed: false)
+      videos = Video.where(processed: nil)
       videos.each do |video|
         video.generateWebM()
       end
