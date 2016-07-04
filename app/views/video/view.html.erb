@@ -2,13 +2,13 @@
 		<% title @video.title %>
 		<%= render partial: 'video' %>
 		<div class="page resize-holder column-right column-mobile-fragmented right center">
-			<section class="artist-bio">
-				<span class="avatar">
-					<span style="background-image:url('/avatar/<%= @artist.id %>');"></span>
-				</span>
-				<h1 class="resize-target">
-					<a class="name" href="/artist/<%= @artist.id %>-<%= @artist.name %>"><%= @artist.name %></a>
-				</h1>
+			<section class="artist-bio bio">
+				<a href="/artist/<%= @artist.id %>-<%= @artist.name %>">
+					<span class="avatar">
+						<span style="background-image:url('/avatar/<%= @artist.id %>');"></span>
+					</span>
+					<h1 class="name resize-target"><%= @artist.name %></h1>
+				</a>
 				<div class="bio short"><%= raw emotify @artist.bio %></div>
 			</section>
 			<% if @album %>

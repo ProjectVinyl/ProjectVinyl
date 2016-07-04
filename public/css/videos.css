@@ -381,6 +381,9 @@ ul.horizontal .thumb .tile {
   text-align: center;
 }
 
+a.album {
+  text-decoration: none;
+}
 .stack {
   background: none !important;
   position: relative;

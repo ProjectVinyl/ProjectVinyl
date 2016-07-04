@@ -965,7 +965,7 @@ li.genre {
   min-height: 150px;
 }
 
-li.bio a, li.genre a{
+.bio a, .genre a {
   text-decoration: none;
 }
 li.bio h2, li.genre h2 {
