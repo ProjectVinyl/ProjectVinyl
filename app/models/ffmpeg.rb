@@ -33,7 +33,7 @@ class Ffmpeg
    end
    
    def self.produceWebM(file)
-     webm = file.to_s.split('.')[0] + '.webm'
+     webm = file.to_s.split('.')[0] + ".webm"
      temp = Rails.root.join('encoding', File.basename(webm).to_s).to_s
      if File.exists?(webm)
        yield
@@ -50,13 +50,13 @@ class Ffmpeg
        end
      end
      begin
-     IO.popen(['ffmpeg','-hide_banner','-nostats','-loglevel','panic','-i',file.to_s,'-c:v','libvpx','-crf','10','-b:v','1M','-c:a','libvorbis',temp.to_s]) {|io|
+     IO.popen([Rails.root.join('encode').to_s, file.to_s, temp, webm]) {|io|
        begin
          while line = io.gets
            line.chomp!
+           puts line
          end
          io.close
-         File.rename(temp, webm)
          yield
          puts 'Conversion complete (' + file.to_s + ')'
        rescue Exception => e
