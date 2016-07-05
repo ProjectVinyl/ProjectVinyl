@@ -51,7 +51,7 @@ module ApplicationHelper
   ]
   
   def self.read_only
-    return false
+    return true
   end
   
   def emotify(text)
