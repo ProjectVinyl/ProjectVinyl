@@ -117,6 +117,9 @@ class AdminController < ApplicationController
       videos.each do |video|
         video.generateWebM()
       end
+      if videos.length > 0
+        VideoProcessor.startManager
+      end
       flash[:notice] = videos.length.to_s + " videos queued."
     end
     render json: { ref: url_for(action: "view") }
