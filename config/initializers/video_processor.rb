@@ -61,7 +61,7 @@ class VideoProcessor
     @@master = Thread.start {
       begin
         while @@flag
-          while @@Processors.length < 10
+          while @@Processors.length < 2
             @@Workings << nil
             @@Processors << VideoProcessor.processor(@@Processors.length)
           end
