@@ -66,11 +66,11 @@ class VideoController < ApplicationController
   end
   
   def upload
-    if ApplicationHelper.read_only
-      render 'layouts/error', locals: { title: 'Access Denied', description: "That feature is currently disabled. Please wait whilst we fix our servers." }
-      return
-    end
     if user_signed_in?
+      if ApplicationHelper.read_only && !current_user.is_admin
+        render 'layouts/error', locals: { title: 'Access Denied', description: "That feature is currently disabled. Please wait whilst we fix our servers." }
+        return
+      end
       if current_user.is_admin && params[:artist]
         @artist = Artist.where(id: params[:artist]).first
       else
@@ -85,11 +85,11 @@ class VideoController < ApplicationController
   end
     
   def create
-    if ApplicationHelper.read_only
-      error(params[:async], "Access Denied", "That feature is currently disabled.")
-      return
-    end
     if user_signed_in?
+      if ApplicationHelper.read_only && !current_user.is_admin
+        error(params[:async], "Access Denied", "That feature is currently disabled.")
+        return
+      end
       if current_user.is_admin && params[:video][:artist_id]
         artist = Artist.by_name_or_id(params[:video][:artist_id])
         puts artist
