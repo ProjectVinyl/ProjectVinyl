@@ -7,11 +7,12 @@ class VideoProcessor
   @@Workings = []
   
   def self.status
-    result = "<div>Videos in queue: " + V_QUEUE.length.to_s + "</div>"
+    result = "<div>Control flag: " + @@flag.to_s + "</div>"
+    result = result + "<div>Videos in queue: " + V_QUEUE.length.to_s + "</div>"
     result = result + "<div>Master id: " + (@@master.nil? ? "None" : @@master.status.to_s) + "</div>"
     result = result + "<div>Workers: " + @@Processors.length.to_s + "</div>"
     @@Processors.each_with_index do |thread,index|
-      result = result + '<div>Thread #' + index.to_s + " " + thread.status.to_s + " current video: " + @@Workings[index].to_s + '</div>'
+      result = result + '<div>Thread #' + index.to_s + ", status: " + thread.status.to_s + ", message: " + @@Workings[index].to_s + '</div>'
     end
     return result
   end
@@ -30,9 +31,9 @@ class VideoProcessor
         puts "[Processing Manager] Spinning thread #(" + id.to_s + ")"
         while @@flag
           video = V_QUEUE.pop()
-          @@Workings[id] = video.id.to_s + " (working)"
-          @@Workings[id] = video.generateWebM_sync
-          @@Workings[id] = "-"
+          @@Workings[id] = "Current video id:" + video.id.to_s + " (working)"
+          video.generateWebM_sync
+          @@Workings[id] = "Waiting"
         end
       rescue Exception => e
         puts "[Processing Manager] Thread died #(" + index.to_s + ")"
@@ -40,7 +41,7 @@ class VideoProcessor
         puts e.backtrace
       ensure
         ActiveRecord::Base.connection.close
-        @@Workings[id] = nil
+        @@Workings[id] = "Shut down"
         if @@flag
           @@Processors[id] = VideoProcessor.processor(id)
         end
