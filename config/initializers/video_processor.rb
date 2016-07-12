@@ -60,12 +60,12 @@ class VideoProcessor
     puts "[Processing Manager] Starting Master..."
     @@master = Thread.start {
       begin
+        puts "[Processing Manager] Master Started"
         while @@flag
           while @@Processors.length < 2
             @@Workings << nil
             @@Processors << VideoProcessor.processor(@@Processors.length)
           end
-          puts "[Processing Manager] Master Started"
         end
       rescue Exception => e
         puts e
