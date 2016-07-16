@@ -355,9 +355,11 @@ function Player() {}
         });
         var suspendTimer = null;
         video.on('suspend waiting', function() {
-          suspendTimer = setTimeout(function() {
-            me.suspend.css('display', 'block');
-          }, 3000);
+          if (!suspendTimer) {
+            suspendTimer = setTimeout(function() {
+              me.suspend.css('display', 'block');
+            }, 3000);
+          }
         });
         video.on('volumechange', function() {
           me.volume(me.video.volume, me.video.muted || me.video.volume == 0);
