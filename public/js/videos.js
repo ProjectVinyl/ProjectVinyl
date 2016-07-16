@@ -33,7 +33,7 @@ function Player() {}
                 <span class="suspend" style="display:none"><i class="fa fa-pulse fa-spinner"></i></span>\
 								<span class="pause resize-holder">\
 									<span class="playback"></span>\
-									<h1 class="resize-target"><a><span class="title">undefined</span> - <span class="artist">undefined</span></a></h1>\
+									<h1 class="resize-target" style="display:none;"><a><span class="title">undefined</span> - <span class="artist">undefined</span></a></h1>\
 								</span>\
 							</div>\
 							<div class="controls">\
@@ -212,7 +212,9 @@ function Player() {}
       }
     },
     setEmbed: function(id) {
-      this.player.find('.pause h1').css('pointer-events', 'initial');
+      this.player.find('.pause h1').css({
+        'pointer-events': 'initial', 'display': ''
+      });
       var link = this.player.find('.pause h1 a');
       link.attr({
         target: '_blank', href: '/view/' + id + '-' + this.title
@@ -351,19 +353,27 @@ function Player() {}
             me.player.addClass('stopped');
           }
         });
+        var suspendTimer = null;
         video.on('suspend waiting', function() {
-          me.suspend.css('display', 'block');
+          suspendTimer = setTimeout(function() {
+            me.suspend.css('display', 'block');
+          }, 3000);
         });
         video.on('volumechange', function() {
           me.volume(me.video.volume, me.video.muted || me.video.volume == 0);
         });
         video.on('timeupdate', function() {
+          if (suspendTimer) {
+            clearTimeout(suspendTimer);
+            suspendTimer = null;
+          }
           me.track(me.video.currentTime, parseInt(me.video.duration));
         });
         this.volume(me.video.volume, video.muted);
       }
       this.player.addClass('playing');
       this.player.removeClass('stopped');
+      this.player.removeClass('paused');
       this.video.loop = !!this.__loop;
       sendMessage(this);
       this.video.play();
@@ -378,6 +388,7 @@ function Player() {}
     },
     pause: function() {
       this.player.removeClass('playing');
+      this.player.addClass('paused');
       if (this.video) this.video.pause();
       this.suspend.css('display', 'none');
     },

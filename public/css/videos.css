@@ -134,8 +134,13 @@ ul.horizontal > li + li {
   opacity: 1 !important;
 }
 
-.video .player.playing + .controls, .video.audio-only .player + .controls {
+.video .player.playing + .controls,
+.video .player.paused + .controls {
   display: block;
+}
+
+.video .player.paused + .controls {
+  opacity: 1;
 }
 
 .video .controls li {
