@@ -42,9 +42,6 @@ class VideoProcessor
       ensure
         ActiveRecord::Base.connection.close
         @@Workings[id] = "Shut down"
-        if @@flag
-          @@Processors[id] = VideoProcessor.processor(id)
-        end
       end
     }
   end
@@ -55,7 +52,7 @@ class VideoProcessor
   
   def self.startManager
     puts "[Processing Manager] Attempting Master thread start"
-    if @@master
+    if @@master && @@master.status
       return
     end
     puts "[Processing Manager] Starting Master..."
@@ -66,6 +63,11 @@ class VideoProcessor
           while @@Processors.length < 2
             @@Workings << nil
             @@Processors << VideoProcessor.processor(@@Processors.length)
+          end
+          @@Processors.each_with_index do |thread,index|
+            if thread.status == false
+              @@Processors[index] = VideoProcessor.processor(index)
+            end
           end
         end
       rescue Exception => e
