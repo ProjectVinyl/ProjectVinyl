@@ -3,11 +3,11 @@ INPUT=$1
 TEMP=$2
 OUTPUT=$3
 
-if [ -f $TEMP ]; then
+if [ -f "$TEMP" ]; then
     echo false
 else
     exec ffmpeg -n -hide_banner -nostats -loglevel panic -i $INPUT -c:v libvpx -crf 10 -b:v 1M -c:a libvorbis $TEMP
-    if [ -f $TEMP ]; then
+    if [ -f "$TEMP" ]; then
         cp $TEMP $OUTPUT
         rm $TEMP
     fi
