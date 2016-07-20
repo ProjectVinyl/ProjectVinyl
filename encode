@@ -3,6 +3,4 @@ INPUT=$1
 TEMP=$2
 OUTPUT=$3
 
-exec ffmpeg -n -hide_banner -nostats -loglevel panic -i $INPUT -c:v libvpx -crf 10 -b:v 1M -c:a libvorbis $TEMP
-cp $TEMP $OUTPUT
-rm $TEMP
+exec ffmpeg -n -hide_banner -nostats -loglevel panic -i $INPUT -c:v libvpx -crf 10 -b:v 1M -c:a libvorbis $OUTPUT
