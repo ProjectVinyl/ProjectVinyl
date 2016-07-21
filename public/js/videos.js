@@ -228,7 +228,7 @@ function Player() {}
       var value = $('<div class="value" ></div>');
       item.append(value);
       function val(s) {
-        value.html(typeof initial === 'boolean' ? (initial ? '<i class="fa fa-check" />' : '') : initial);
+        value.html(typeof s === 'boolean' ? (s ? '<i class="fa fa-check" />' : '') : s);
       }
       val(initial);
       item.on('click', function() {
