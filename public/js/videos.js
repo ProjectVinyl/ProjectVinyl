@@ -11,13 +11,12 @@ function Player() {}
   (function(p) {
     Player.requestFullscreen = p.requestFullscreen || p.mozRequestFullScreen || p.msRequestFullscreen || p.webkitRequestFullscreen || function() {};
     Player.exitFullscreen = document.exitFullscreen || document.mozCancelFullScreen || document.msExitFullscreen || document.webkitExitFullscreen || function() {};
+    Player.isFullscreen = function() {
+      return document.fullScreen || document.mozFullScreen || document.webkitIsFullScreen;
+    }
   })(Element.prototype);
-  Player.isFullscreen = !1;
   Player.onFullscreen = function(func) {
     $(document).on('webkitfullscreenchange mozfullscreenchange fullscreenchange', func);
-  }
-  Player.isFullscreen = function() {
-    return document.fullScreen || document.mozFullScreen || document.webkitIsFullScreen;
   };
   Player.speeds = [
     {name: 'Double', value: 2},
@@ -58,8 +57,10 @@ function Player() {}
   };
   var fadeControl = null;
   function controlsFade() {
-    Player.fullscreenPlayer.controls.css('opacity', 0);
-    Player.fullscreenPlayer.player.find('.playing').css('cursor', 'none');
+    if (Player.fullscreenPlayer) {
+      Player.fullscreenPlayer.controls.css('opacity', 0);
+      Player.fullscreenPlayer.player.find('.playing').css('cursor', 'none');
+    }
     fadeControl = null;
   }
   function attachMessageListener(me) {
@@ -75,7 +76,7 @@ function Player() {}
   }
   Player.onFullscreen(function() {
     if (Player.fullscreenPlayer) {
-      Player.fullscreenPlayer.onfullscreen(Player.isFullscreen());
+      Player.fullscreenPlayer.fullscreen(Player.isFullscreen());
     }
   });
   Player.prototype = {
@@ -242,16 +243,19 @@ function Player() {}
       return speed.name;
     },
     fullscreen: function(on) {
+      console.log('Player.fullscreen(' + on + ')');
       this.onfullscreen(on);
       if (!Player.requestFullscreen) return false;
+      console.log('got request fullscreen');
+      if (fadeControl != null) clearTimeout(fadeControl);
       if (Player.fullscreenPlayer && Player.fullscreenPlayer != this) {
         Player.fullscreenPlayer.fullscreen(false);
       }
-      if (fadeControl != null) clearTimeout(fadeControl);
       if (on) {
         Player.requestFullscreen.apply(this.dom[0]);
+        Player.fullscreenPlayer = this;
         fadeControl = setTimeout(controlsFade, 1000);
-      } else if (Player.fullscreenPlayer == this) {
+      } else if (Player.fullscreenPlayer) {
         if (this.redirect) {
           if (this.video) {
             this.redirect += (this.redirect.indexOf('?') >= 0 ? "&" : "?") + "t=" + this.video.currentTime;
@@ -259,14 +263,18 @@ function Player() {}
           document.location.replace(this.redirect);
           return;
         }
+        Player.fullscreenPlayer = null;
         Player.exitFullscreen.apply(document);
         this.controls.css('opacity', '');
       }
       Player.fullscreenPlayer = on ? this : null;
+      console.log('set fullscreen to ' + Player.fullscreenPlayer);
+      console.log('completed');
       return on;
     },
     onfullscreen: function(on) {
       this.controls.fullscreen.html(on ? '<i class="fa fa-restore"></i>' : '<i class="fa fa-arrows-alt"></i>');
+      if (!on) this.player.find('.playing').css('cursor', '');
     },
     autoplay: function(on) {
       this.__autoplay = on;

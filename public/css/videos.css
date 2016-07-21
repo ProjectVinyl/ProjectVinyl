@@ -140,6 +140,10 @@ ul.horizontal > li + li {
 }
 
 .video .player.paused + .controls {
+  opacity: 1 !important;
+}
+
+.video .player.paused + .controls {
   opacity: 1;
 }
 
