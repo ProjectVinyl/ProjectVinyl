@@ -186,6 +186,7 @@ var BBC = (function() {
   }
   function initEditable(holder, content, short) {
     var textarea = holder.find('.input');
+    var lastHeight = 0;
     if (!textarea.length) {
       if (short) {
         textarea = $('<input class="input" />');
@@ -199,14 +200,56 @@ var BBC = (function() {
     }
     if (!short) {
       textarea.on('keydown keyup', function(ev) {
+        var height = textarea.height();
         textarea.css('height', 0);
+        textarea.css('margin-bottom', height);
         textarea.css('height', textarea[0].scrollHeight + 20);
+        textarea.css('margin-bottom', '');
       });
     }
     textarea.on('change', function() {
       holder.addClass('dirty');
     });
+    textarea.on('keydown', function(ev) {
+      if (ev.ctrlKey) {
+        handleSpecialKeys(ev.keyCode, function(tag) {
+          insertTags(textarea[0], '[' + tag + ']', '[/' + tag + ']');
+          ev.preventDefault();
+        });
+      }
+    });
     return textarea;
+  }
+  function handleSpecialKeys(key, callback) {
+    if (key == 66) {
+      callback('b');
+    } else if (key == 85) {
+      callback('u');
+    } else if (key == 73) {
+      callback('i');
+    } else if (key == 83) {
+      callback('s');
+    } else if (key == 13) {
+      deactivate(active);
+    }
+  }
+  function insertTags(textarea, open, close) {
+    var start = textarea.selectionStart;
+    if (start || start == 0) {
+      var end = textarea.selectionEnd;
+      var before = textarea.value.substring(0, start);
+      var after = textarea.value.substring(end, textarea.value.length);
+      var selected = end - start > 0 ? textarea.value.substring(start, end) : '';
+      if (selected.indexOf(open) != -1 || selected.indexOf(close) != -1) {
+        selected = selected.replace(open, '').replace(close, '');
+      } else {
+        selected = open + selected + close;
+      }
+      textarea.value = before + selected + after;
+      textarea.selectionStart = start;
+      textarea.selectionEnd = start + selected.length;
+      textarea.focus();
+    }
   }
   function toggleEdit(editing, holder, content, textarea, short) {
     var text = content.text().toLowerCase().trim();
