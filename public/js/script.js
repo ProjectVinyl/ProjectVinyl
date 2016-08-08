@@ -364,11 +364,9 @@ var BBC = (function() {
   });
 })();
 (function() {
-  var KEY_ENTER = 13, KEY_SPACE = 32;
+  var KEY_ENTER = 13, KEY_COMMA = 188, KEY_BACKSPACE = 8;
   $('.tag-editor').each(function() {
     var me = $(this);
-    var possibleTags = me.find('.values').text().trim().split(',');
-    var possibleTagsL = me.find('.values').text().trim().toLowerCase().split(',');
     me.find('.values').remove();
     var value = me.find('.value textarea');
     var list = me.find('ul.tags');
@@ -387,11 +385,14 @@ var BBC = (function() {
     }
     value.val(tags.join(','));
     function appendTag(name) {
-      name = name.trim().toLowerCase().replace(/[^a-z0-9\/&\-:]/g, '');
-      if (!name.length || tags.indexOf(name) > -1 || possibleTagsL.indexOf(name) == -1) return;
-      tags.push(name);
-      value.val(tags.join(','));
-      createTagItem(name);
+      name = name.trim().toLowerCase().replace(/[^ a-z0-9\/&\-:]/g, '');
+      if (name.length) {
+        if (tags.indexOf(name) == -1) {
+          tags.push(name);
+          value.val(tags.join(','));
+          createTagItem(name);
+        }
+      }
     }
     function createTagItem(name) {
       var item = $('<li class="tag"><i title="Remove Tag" class="fa fa-times remove"></i>' + name + '</li>');
@@ -409,7 +410,7 @@ var BBC = (function() {
     function save() {
       if (target && id) {
         ajax.post('update/' + target, function() {
-
+          
         }, true, {
           id: id,
           field: 'tags',
@@ -418,17 +419,15 @@ var BBC = (function() {
       }
     }
     function doSearch(name) {
-      searchResults.empty();
       name = name.toLowerCase();
-      var chosen = [];
-      var found = 0;
-      for (var i = possibleTags.length; i--; ) {
-        if (possibleTags[i].toLowerCase().indexOf(name) > -1 && tags.indexOf(possibleTags[i].toLowerCase()) == -1) {
-          var item = $('<li>' + possibleTags[i] + '</li>');
+      if (name.length > 0) ajax.get('find/tags', function(json) {
+        searchResults.empty();
+        for (var i = json.results.length; i--; ) {
+          var item = $('<li style="color:' + json.results[i].colour + ';"><span>' + json.results[i].name + '</span> (' + json.results[i].members + ')' + '</li>');
           item.on('click', function() {
             searchResults.removeClass('shown');
-            var text = input.val().trim().split(/ |,|;/);
-            text[text.length - 1] = $(this).text();
+            var text = input.val().trim().split(/,|;/);
+            text[text.length - 1] = $(this).find('span').text();
             for (var i = 0; i < text.length; i++) {
               appendTag(text[i]);
             }
@@ -436,15 +435,17 @@ var BBC = (function() {
             save();
           });
           searchResults.append(item);
-          if (++found > 10) break;
         }
-      }
-      searchResults[found ? 'addClass' : 'removeClass']('shown');
+        searchResults[json.results.length ? 'addClass' : 'removeClass']('shown');
+      }, {
+        'q': name
+      });
     }
     var input = me.find('.input');
+    var last_value = '';
     input.on('keydown', function(e) {
-      if (e.which == KEY_ENTER || e.which == KEY_SPACE) {
-        var text = input.val().trim().split(/ |,|;/);
+      if (e.which == KEY_ENTER || e.which == KEY_COMMA) {
+        var text = input.val().trim().split(/,|;/);
         for (var i = 0; i < text.length; i++) {
           appendTag(text[i]);
         }
@@ -455,13 +456,32 @@ var BBC = (function() {
       }
     })
     input.on('keyup focus', function(e) {
-      if (e.which != KEY_ENTER && e.which != KEY_SPACE) {
-        doSearch(input.val().trim().split(/ |,|;/).reverse()[0]);
+      if (e.which != KEY_ENTER && e.which != KEY_COMMA) {
+        var value = input.val();
+        if (!value.length) {
+          if (e.which == KEY_BACKSPACE) {
+            list.children('.tag').last().find('.remove').click();
+          }
+        }
       }
     });
     input.on('mousedown', function(e) {
       e.stopPropagation();
     });
+    var autocomplete = null;
+    input.on('focus', function(e) {
+      if (!autocomplete) autocomplete = setInterval(function() {
+        var value = input.val();
+        if (value != last_value) {
+          last_value = value;
+          doSearch(value.trim().split(/,|;/).reverse()[0]);
+        }
+      }, 1000);
+    });
+    input.on('blur', function() {
+      clearIntervel(autocomplete);
+      autocomplete = null;
+    })
   });
 })();
 var shares = {
@@ -571,6 +591,13 @@ $(document).on('mousedown', function() {
   $(document).on('click', 'button.action.like, button.action.dislike', like);
   $(document).on('click', 'button.action.star', fave);
 })();
+$(document).on('click', '.state-toggle', function(ev) {
+  ev.preventDefault();
+  var me = $(this);
+  var state = me.attr('data-state');
+  me.parent().toggleClass(state);
+  me.text(me.attr('data-' + me.parent().hasClass(state)));
+});
 (function() {
   function toggle(sender, action, id, item_id) {
     ajax.post(action, function(json) {
@@ -587,7 +614,7 @@ $(document).on('mousedown', function() {
     me.on('click', function(e) {
       toggle(me, target, id, item);
     });
-  })
+  });
 })();
 (function() {
   $('.confirm-button').each(function() {

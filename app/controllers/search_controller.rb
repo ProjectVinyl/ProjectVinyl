@@ -14,11 +14,12 @@ class SearchController < ApplicationController
       @results = Artist.where('name LIKE ?', "%#{@query}%")
       @type_label = 'Artist'
     elsif @type == 3
-      @results = Genre.where('name LIKE ?', "%#{@query}%")
-      @type_label = 'Genre'
+      @results = Tag.includes(:videos, :tag_type).where('name LIKE ?', "%#{@query}%")
+      @type_label = 'Tag'
     else
-      @results = Video.where('title LIKE ?', "%#{@query}%")
+      @results = TagSelector.new(@query).videoQuery(@page, 20).order(@type, @orderby, @ascending).exec()
       @type_label = 'Song'
+      return
     end
     @results = Pagination.paginate(orderBy(@results, @type, @orderby), @page, 20, !@ascending)
   end
@@ -32,7 +33,7 @@ class SearchController < ApplicationController
     @results = []
     if params[:query]
       if @type == 1
-        @results = Pagination.paginate(orderBy(Album.where('title LIKE ?', "%#{@query}%"), @type, @orderby), @page, 20, !@ascending)
+        @results = Pagination.paginate(orderBy(filter_by_tags(@query, false), @type, @orderby), @page, 20, !@ascending)
         render json: {
           content: render_to_string(partial: '/layouts/artist_thumb_h.html.erb', collection: @results.records),
           pages: @results.pages,
@@ -46,14 +47,14 @@ class SearchController < ApplicationController
           page: @results.page
         }
       elsif @type == 3
-        @results = Pagination.paginate(orderBy(Genre.where('name LIKE ?', "%#{@query}%"), @type, @orderby), @page, 20, !@ascending)
+        @results = Pagination.paginate(orderBy(Tag.includes(:videos, :tag_type).where('name LIKE ?', "%#{@query}%"), @type, @orderby), @page, 20, !@ascending)
         render json: {
           content: render_to_string(partial: '/layouts/genre_thumb_h.html.erb', collection: @results.records),
           pages: @results.pages,
           page: @results.page
         }
       else
-        @results = Pagination.paginate(orderBy(Video.where('title LIKE ?', "%#{@query}%"), @type, @orderby), @page, 20, !@ascending)
+        @results = TagSelector.new(@query).videoQuery(@page, 20).order(@type, @orderby, @ascending).exec()
         render json: {
           content: render_to_string(partial: '/layouts/video_thumb_h.html.erb', collection: @results.records),
           pages: @results.pages,
@@ -82,13 +83,13 @@ class SearchController < ApplicationController
     if type == 0
       if ordering == 1
         return records.order(:created_at, :updated_at)
-      end
-      if ordering == 2
+      elsif ordering == 2
         return records.order(:score, :created_at, :updated_at)
-      end
-      if ordering == 3
+      elsif ordering == 3
         return records.order(:length, :created_at, :updated_at)
       end
+    elsif type == 3
+      return records.order(:name)
     end
     return records.order(:created_at)
   end

@@ -19,18 +19,13 @@
 			<span style="display:none">11</span>
 		</h2>
 		<div class="tag-list subheading">
-			<span class="uploaded">Published on <%= @video.created_at.to_time.strftime('%e %B %Y') %> by <%= @artist.name %></span>
+			<span class="uploaded">Uploaded on <%= @video.created_at.to_time.strftime('%e %B %Y') %> by <%= @artist.name %></span>
 			<span class="views right"><%= number_with_delimiter @video.views %> views</span>
 		</div>
 		<span class="editable post-content" data-target="video" data-member="description" data-id="<%= @video.id %>">
 			<span class="content"><%= raw emotify @video.description %></span>
 			<span class="edit"><i class="fa fa-pencil" ></i></span>
 		</span>
-		<div class="post-tags">
-			<%= render layout: 'layouts/tageditor' do %>
-				<textarea data-target="video" data-id="<%= @video.id %>" name="tags"><%= raw @video.genres_string %></textarea>
-			<% end %>
-		</div>
 	<% else %>
 		<h2 class="title post-title resize-target short">
 			<span class="content "><%= @video.title %></span>
@@ -42,10 +37,20 @@
 		<span class="post-content">
 			<span class="content"><%= raw emotify @video.description %></span>
 		</span>
-		<div class="post-tags">
-			<%= render partial: '/layouts/taglist', locals: { collection: @video.genres } %>
-		</div>
 	<% end %>
+		<div class="post-tags">
+			<span class="normal">
+				<%= render partial: '/layouts/taglist', locals: { collection: @video.tags } %>
+			</span>
+			<% if user_signed_in? %>
+			<span class="editing">
+				<%= render layout: 'layouts/tageditor' do %>
+				<textarea data-target="video" data-id="<%= @video.id %>" name="tags"><%= raw @video.tag_string %></textarea>
+				<% end %>
+			</span>
+			<a href="#" class="state-toggle tiny-link" data-state="editing" data-true="(close)" data-false="(edit)">(edit)</a>
+			<% end %>
+		</div>
 		<div class="actions">
 			<div class="split-button popper">
 				<button class="action options pop-out-toggle"><i class="fa fa-gear"></i> Options</button>

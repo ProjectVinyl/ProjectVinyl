@@ -28,6 +28,10 @@ class Pagination
     @records
   end
   
+  def records=(inputter)
+    @records = inputter
+  end
+  
   def page
     @page
   end

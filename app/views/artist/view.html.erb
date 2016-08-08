@@ -51,7 +51,7 @@ $('#toggle_edit').on('click', function() {
 		</div>
 		<% end %>
 		<div class="details">
-			<%= render partial: '/layouts/taglist', locals: { collection: @artist.genres } %>
+			<%= render partial: '/layouts/taglist', locals: { collection: @artist.tags } %>
 		</div>
 	</div>
 </section>

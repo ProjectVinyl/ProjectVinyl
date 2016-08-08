@@ -42,6 +42,8 @@ Rails.application.routes.draw do
   post 'ajax/create/artist' => 'artist#create'
   patch 'ajax/update/artist' => 'artist#update'
   post 'ajax/delete/artist/:id' => 'admin#deleteArtist'
+  patch 'ajax/avatar/upload/:async' => 'artist#setavatar'
+  patch 'ajax/avatar/upload' => 'artist#setavatar'
   
   get 'cover/:id-small' => 'imgs#thumb'
   get 'cover/:id' => 'imgs#cover'
@@ -57,10 +59,11 @@ Rails.application.routes.draw do
   post 'ajax/update/album' => 'album#update'
   post 'ajax/delete/album/:id' => 'album#delete'
   
-  get 'genre/:name' => 'genre#view'
+  get 'tags/:name' => 'genre#view'
 
 
-  get 'genres' => 'genre#list'
+  get 'tags' => 'genre#list'
+  get 'ajax/find/tags' => 'genre#find'
   get 'ajax/genres' => 'genre#page'
   
   get 'ajax/reporter/:id' => 'ajax#reporter'

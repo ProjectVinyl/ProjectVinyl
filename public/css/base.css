@@ -139,8 +139,29 @@ table {
   padding-top: 10px;
 }
 
+.post-tags.editing .normal, .post-tags .editing {
+  display: none;
+}
+.post-tags.editing .editing {
+  display: block;
+}
+.tiny-link {
+  font-style: italic;
+  color: #aaa;
+  font-weight: normal;
+  font-size: 0.8em;
+  text-decoration: none;
+}
+
 .tag-list, .date, .source, .tag-list a {
   font-size: 0.8em;
+}
+.tag-list > .overflow {
+  display: none;
+  border-bottom: none;
+}
+.tag-list.show-all > .overflow {
+  display: inline;
 }
 .tag-list, .date, .source, .tag-list a, .underline a {
   font-style: italic;
@@ -452,7 +473,7 @@ div.page .positioner {
   padding: 3px;
 }
 
-button, .button, #search > *, input[type=submit], .tag-editor .tag {
+button, .button, #search > *, input[type=submit], .tag-editor .tag, .tag-editor {
   display: inline-block;
   padding: 5px 15px;
   text-decoration: none;
@@ -1068,7 +1089,7 @@ section.modal .actions {
   height: initial;
 }
 
-form .progressor, form.uploading > *,
+form .progressor, form.uploading > :not(.uploaded-preview),
 form.uploading .drop-icon, form.uploading input {
   display: none;
 }
@@ -1077,6 +1098,9 @@ form.uploading .progressor {
   width: 100%;
   padding-top: 25%;
   position: relative;
+}
+form.uploading .uploaded-preview + .progressor {
+  padding-top: 0;
 }
 form.uploading .progressor + div {
   display: block;
@@ -1278,16 +1302,26 @@ form.uploading .progressor + div {
 }
 
 .tag-editor {
+  display: block;
   position: relative;
+  padding: 0;
+  box-shadow: inset 0 0 5px 0px #faf;
 }
 .tag-editor .value {
   display: none;
 }
 .tag-editor .tag.input {
   display: inline-block;
-  width: 100%;
+  min-width: 50%;
+  max-width: 80%;
+  width: initial;
+  display: inline;
+  border: none;
+  background: none;
 }
+
 .tag-editor .tags {
+  display: inline;
   margin: 0;
   padding: 0;
 }

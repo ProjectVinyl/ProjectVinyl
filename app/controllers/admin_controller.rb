@@ -28,7 +28,7 @@ class AdminController < ApplicationController
     end
     @modificationsAllowed = true
     @album = Album.find(params[:id])
-    @items = @album.album_items
+    @items = @album.album_items.include(:artist)
   end
   
   def artist

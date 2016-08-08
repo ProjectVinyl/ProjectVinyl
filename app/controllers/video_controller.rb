@@ -19,7 +19,7 @@ class VideoController < ApplicationController
         url: url_for(action: "view", controller: "video", id: @video.id, only_path: false) + "-" + ApplicationHelper.url_safe(@video.title),
         embed_url: url_for(action: "view", controller: "embed", only_path: false, id: @video.id),
         cover: url_for(action: "cover", controller: "imgs", only_path: false, id: @video.id),
-        tags: @video.genres
+        tags: @video.tags
       }
       @artist = @video.artist
       @queue = @artist.videos.where(hidden: false).where.not(id: @video.id).order("RAND()").limit(7)
@@ -29,7 +29,7 @@ class VideoController < ApplicationController
       end
       if params[:list]
         if @album = Album.where(id: params[:list]).first
-          @items = @album.album_items.order(:index)
+          @items = @album.album_items.includes(:artist).order(:index)
           @index = params[:index].to_i || (@items.first ? @items.first.index : 0)
           if @index > 0
             @prev_video = @items.where(index: @index - 1).first
@@ -123,7 +123,7 @@ class VideoController < ApplicationController
                     audio_only: file.content_type.include?('audio/'),
                     upvotes: 0, downvotes: 0)
             if params[:video][:genres_string]
-              Genre.loadGenres(params[:video][:genres_string], video)
+              Tag.loadTags(params[:video][:genres_string], video)
             end
             video.save
             video.setFile(file)
@@ -159,7 +159,7 @@ class VideoController < ApplicationController
           video.title = nonil(value, 'Untitled')
           video.save
         elsif params[:field] == 'tags'
-          Genre.loadGenres(params[:value], video)
+          Tag.loadTags(params[:value], video)
           video.save
         end
         render status: 200, nothing: true

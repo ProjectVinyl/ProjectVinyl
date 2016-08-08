@@ -1,24 +1,50 @@
 <table>
-	<%= form_for(artist, as: "artist", url: url) do |f| %>
-		<tr class="section">
-			<td colspan="2">
-				Appearance
-			</td>
-		</tr>
-		<tr>
-			<td class="label">
-				<%= f.label :avatar %>
-			</td>
-			<td class="field center">
-				<div class="avatar file-select image-selector" data-type="image">
-					<span class="preview" style="background-image: url('/avatar/<%= artist.id || 0 %>');"></span>
-					<span class="drop-icon" style="box-shadow: none;">
-						<i class="fa fa-camera"></i>
-					</span>
-					<%= f.file_field :avatar %>
+	<tr class="section">
+		<td colspan="2">
+			Appearance
+		</td>
+	</tr>
+	<tr>
+		<td class="label">
+			Avatar
+		</td>
+		<td class="field center">
+		<%= form_for(artist, as: "artist", url: "/ajax/avatar/upload", "html": { "class": "async" }) do |f| %>
+			<div id="avatar-upload" class="avatar file-select image-selector uploaded-preview" data-type="image">
+				<span class="preview" style="background-image: url('/avatar/<%= artist.id || 0 %>');"></span>
+				<span class="drop-icon" style="box-shadow: none;">
+					<i class="fa fa-camera"></i>
+				</span>
+				<%= f.file_field :avatar %>
+			</div>
+			<div class="progressor">
+				<div class="cover-block">
+					<div class="message">
+						Uploading...
+					</div>
+					<div class="progress">
+						<div class="fill"></div>
+					</div>
 				</div>
-			</td>
-		</tr>
+			</div>
+			<script>
+$('#avatar-upload').on('accept', function(e, file) {
+  var form = $(this).closest('form');
+  ajax.form(form, e, {
+    'success': function() {
+       form.removeClass('uploading');
+       var av = $('#login .avatar.small span');
+       av.css('background-image', 'url(/avatar/<%= current_user.id %>?' + new Date().getTime() + ')');
+    }
+  });
+});
+			</script>
+		</td>
+	</tr>
+</table>
+<% end %>
+<%= form_for(artist, as: "artist", url: url) do |f| %>
+	<table>
 		<tr class="section">
 			<td colspan="2">
 				Basic Information
@@ -55,7 +81,7 @@
 			</td>
 			<td class="field">
 			<%= render layout: 'layouts/tageditor' do %>
-				<%= f.text_area :genres_string %>
+				<%= f.text_area :tag_string %>
 			<% end %>
 			</td>
 		</tr>
@@ -75,5 +101,5 @@
 				<button class="confirm-button action red" data-action="delete" data-url="delete/artist/<%= artist.id %>" data-title="Delete Artist" data-icon="warning" type="button"><i class=\"fa fa-trash\"></i> Delete Artist</button>
 			</td>
 		</tr>
-	<% end %>
-</table>
+	</table>
+<% end %>

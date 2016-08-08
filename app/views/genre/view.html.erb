@@ -1,4 +1,4 @@
-<% if @genre %>
+<% if @tag %>
 <section style="width:100%" class="page artist-bio">
 	<div class="post">
 		<div class="space-fix">
@@ -6,9 +6,9 @@
 				<i class="fa fa-music fa-inverse"></i>
 			</span>
 			<h1 class="title">
-				<a class="name" href="/genre/<%= url_safe @genre.name %>"><%= @genre.name %></a>
+				<a class="name" href="/tag/<%= url_safe @tag.name %>"><%= @tag.name %></a>
 			</h1>
-			<span class="content bio"><%= @genre.description %></span>
+			<span class="content bio"><%= @tag.description %></span>
 		</div>
 		<div class="details">
 			<span class="tag-list">
@@ -39,6 +39,6 @@
 </section>
 <% else %>
 <%= render layout: '/layouts/error', locals: { title: 'Nothing to see here!' } do %>
-This genre does not exist.
+This tag does not exist.
 <% end %>
 <% end %>

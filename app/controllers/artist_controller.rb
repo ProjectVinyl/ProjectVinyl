@@ -26,7 +26,8 @@ class ArtistController < ApplicationController
                  description: ApplicationHelper.demotify(input[:description]),
                  bio: ApplicationHelper.demotify(input[:bio])
                )
-      artist.setGenres(input[:genres_string])
+      artist.tag = Artist.tag_for(artist)
+      artist.setTags(input[:tag_string])
       artist.setAvatar(input[:avatar])
       artist.save
       if !current_user.artist_id
@@ -49,10 +50,10 @@ class ArtistController < ApplicationController
       end
       if artist
         artist.name = ApplicationHelper.demotify(input[:name])
+        artist.tag.set_name(artist.name)
         artist.description = ApplicationHelper.demotify(input[:description])
         artist.bio = ApplicationHelper.demotify(input[:bio])
-        artist.setGenres(input[:genres_string])
-        artist.setAvatar(input[:avatar])
+        artist.setTags(input[:tag_string])
         artist.save
         if current_user.is_admin && params[:artist_id]
           redirect_to action: "view", id: artist.id
@@ -80,6 +81,28 @@ class ArtistController < ApplicationController
       end
     end
     render status: 401, nothing: true
+  end
+  
+  def setavatar
+    input = params[:artist]
+    if user_signed_in?
+      if current_user.is_admin && params[:artist_id]
+        artist = Artist.where(id: params[:artist_id]).first
+      elsif
+        artist = Artist.where(id: current_user.artist_id).first
+      end
+      if artist
+        artist.setAvatar(input[:avatar])
+        artist.save
+        if params[:async]
+          render json: { result: "success" }
+        else
+          redirect_to action: "edit", controller: "devise/registrations"
+        end
+        return
+      end
+    end
+    render 'layouts/error', locals: { title: 'Access Denied', description: "You can't do that right now." }
   end
   
   def list

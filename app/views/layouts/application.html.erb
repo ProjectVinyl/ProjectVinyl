@@ -21,7 +21,7 @@
 							<option value="0">Song</option>
 							<option value="1">Album</option>
 							<option value="2">Artist</option>
-							<option value="3">Genre</option>
+							<option value="3">Tag</option>
 						</select>
 					</div>
 					<input type="text" name="query" placeholder="search"></input>
@@ -105,7 +105,7 @@
 		<ul>
 			<li class="albums<% if params[:action] == 'albums' %> selected<% end %>"><a href="/albums">Albums</a></li>
                		<li class="artists<% if params[:action] == 'artists' %> selected<% end %>"><a href="/artists">Artists</a></li>
-			<li class="genres<% if params[:action] == 'genres' %> selected<% end %>"><a href="/genres">Genres</a></li>
+			<li class="genres<% if params[:action] == 'tags' %> selected<% end %>"><a href="/tags">Tags</a></li>
 		</ul>
 	</header>
 	<main class="wrapper" style="<%= content_for?(:width) ? ' max-width:' + content_for(:width) + ';' : '' %>">

@@ -2,7 +2,8 @@ class Artist < ActiveRecord::Base
   has_many :videos
   has_many :albums, as: :owner
   has_many :artist_genres
-  has_many :genres, :through => :artist_genres
+  has_many :tags, :through => :artist_genres
+  belongs_to :tag
   
   def self.by_name_or_id(id)
     if artist = Artist.where(id: id).first
@@ -11,9 +12,19 @@ class Artist < ActiveRecord::Base
     return Artist.where(name: id).first
   end
   
-  def preload_genres
-    self.artist_genres.delete_all
+  def preload_tags
+    ArtistGenre.where(artist_id: self.id).delete_all
     return self.artist_genres
+  end
+  
+  def self.tag_for(artist)
+    if artist.tag
+      return artist.tag
+    end
+    if !(tag = Tag.where(short_name: artist.name, tag_type_id: 1).first)
+      tag = Tag.create(tag_type_id: 1).set_name(artist.name)
+    end
+    return tag
   end
   
   def removeSelf
@@ -23,8 +34,8 @@ class Artist < ActiveRecord::Base
     self.destroy
   end
   
-  def genres_string
-    return Genre.tag_string(self.genres)
+  def tag_string
+    return Tag.tag_string(self.tags)
   end
   
   def taglist
@@ -37,9 +48,9 @@ class Artist < ActiveRecord::Base
     return "Artist"
   end
   
-  def setGenres(genres)
-    if genres
-      Genre.loadGenres(genres, self)
+  def setTags(tags)
+    if tags
+      Tag.loadTags(tags, self)
     end
   end
   

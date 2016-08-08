@@ -2,13 +2,13 @@
 		<% title "Admin" %>
 		<%= render partial: 'video/video' %>
 		<div class="wrapper column-right right">
-			<section class="page artist-bio center resize-holder" style="width:100%">
-				<span class="avatar">
-					<span style="background-image:url('/avatar/<%= @artist.id %>');"></span>
-				</span>
-				<h1 class="resize-target">
-					<a class="name" href="/artist/<%= @artist.id %>-<%= @artist.name %>"><%= @artist.name %></a>
-				</h1>
+			<section class="page artist-bio bio center resize-holder" style="width:100%">
+				<a href="/artist/<%= @artist.id %>-<%= @artist.name %>">
+					<span class="avatar">
+						<span style="background-image:url('/avatar/<%= @artist.id %>');"></span>
+					</span>
+					<h1 class="name resize-target"><%= @artist.name %></h1>
+				</a>
 				<div class="bio short"><%= raw emotify @artist.bio %></div>
 			</section>
 			<section class="page properties" style="width:100%">

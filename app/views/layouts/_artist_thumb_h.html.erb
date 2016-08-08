@@ -11,5 +11,5 @@
 		<%= number_with_delimiter artist_thumb_h.albums.length %> album<%= artist_thumb_h.albums.length == 1 ? "" : "s" %>
 	</div>
 	<br>
-	<%= render partial: '/layouts/taglist', locals: { collection: artist_thumb_h.genres.limit(3) } %>
+	<%= render partial: '/layouts/taglist', locals: { collection: artist_thumb_h.tags.limit(3) } %>
 </li>

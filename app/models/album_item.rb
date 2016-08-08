@@ -1,7 +1,7 @@
 class AlbumItem < ActiveRecord::Base
   belongs_to :album
   belongs_to :video
-
+  has_one :artist, :through => :video
   def removeSelf()
     self.destroy
     self.album.album_items.order(:index).each_with_index do |i,index|

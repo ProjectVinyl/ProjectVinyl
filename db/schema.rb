@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160701073507) do
+ActiveRecord::Schema.define(version: 20160808072135) do
 
   create_table "album_items", force: :cascade do |t|
     t.integer "album_id", limit: 4
@@ -34,13 +34,12 @@ ActiveRecord::Schema.define(version: 20160701073507) do
 
   add_index "albums", ["owner_id"], name: "index_albums_on_owner_id", using: :btree
 
-  create_table "artist_genres", id: false, force: :cascade do |t|
+  create_table "artist_genres", force: :cascade do |t|
     t.integer "artist_id", limit: 4
-    t.integer "genre_id",  limit: 4
+    t.integer "tag_id",    limit: 4
   end
 
   add_index "artist_genres", ["artist_id"], name: "index_artist_genres_on_artist_id", using: :btree
-  add_index "artist_genres", ["genre_id"], name: "index_artist_genres_on_genre_id", using: :btree
 
   create_table "artists", force: :cascade do |t|
     t.string   "name",        limit: 255
@@ -50,12 +49,28 @@ ActiveRecord::Schema.define(version: 20160701073507) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.boolean  "banner_set"
+    t.integer  "tag_id",      limit: 4
   end
+
+  add_index "artists", ["name"], name: "index_artists_on_name", unique: true, using: :btree
+  add_index "artists", ["tag_id"], name: "index_artists_on_tag_id", using: :btree
 
   create_table "genres", force: :cascade do |t|
     t.string "name",        limit: 255
     t.text   "description", limit: 65535
     t.string "safe_name",   limit: 255
+  end
+
+  create_table "tag_types", force: :cascade do |t|
+    t.string "prefix", limit: 255
+    t.string "colour", limit: 255
+  end
+
+  create_table "tags", force: :cascade do |t|
+    t.string  "name",        limit: 255,   default: ""
+    t.text    "description", limit: 65535
+    t.integer "tag_type_id", limit: 4
+    t.string  "short_name",  limit: 255,   default: ""
   end
 
   create_table "users", force: :cascade do |t|
@@ -78,12 +93,11 @@ ActiveRecord::Schema.define(version: 20160701073507) do
   add_index "users", ["email"], name: "index_users_on_email", unique: true, using: :btree
   add_index "users", ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true, using: :btree
 
-  create_table "video_genres", id: false, force: :cascade do |t|
+  create_table "video_genres", force: :cascade do |t|
     t.integer "video_id", limit: 4
-    t.integer "genre_id", limit: 4
+    t.integer "tag_id",   limit: 4
   end
 
-  add_index "video_genres", ["genre_id"], name: "index_video_genres_on_genre_id", using: :btree
   add_index "video_genres", ["video_id"], name: "index_video_genres_on_video_id", using: :btree
 
   create_table "videos", force: :cascade do |t|

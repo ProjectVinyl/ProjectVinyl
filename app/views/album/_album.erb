@@ -31,40 +31,28 @@
 				| last updated <%= since @album.updated_at %>
 			</span>
 			<div class="actions">
-			<% if @modificationsAllowed && @album.owner_type != 'User' %>
-				<button id="delete_album" class="action right"><i class=\"fa fa-trash\"></i> Remove Album</button>
-				<script>
-$('#delete_album').on('click', function() {
-  if (!$('#cancel_msg').length) new Popup('Delete Album', 'warning', function() {
-    this.content.attr('id', 'cancel_msg');
-    this.content.append($('#cancel_form').html());
-    var me = this;
-    this.content.find('button.cancel').on('click', function() {
-      me.close();
-    });
-    this.content.find('button.ok').on('click', function() {
-      ajax.post('delete/album/<%= @album.id %>', function() {
-        me.close();
-        document.location.href = '/artist/<%= current_artist.id %>-<%= url_safe current_artist.name %>';
-      }, 1);
-    });
-    this.setFixed();
-    this.show();
-  });
-});
-				</script>
-				<% if current_user.is_admin %>
-				<a href="/admin/album/<%= @album.id %>" class="button action right" style="margin-right: 10px;">Admin Actions</a>
-				<% end %>
-				<div id="cancel_form" style="display:none;">
-					<div class="message_content">Are you sure?</div>
-					<div class="foot">
-						<button class="right cancel" type="button">No thanks</button>
-						<button class="left ok" type="button">Let's do this</button>
-					</div>
+				<div class="split-button popper">
+					<button class="action options pop-out-toggle"><i class="fa fa-gear"></i> Options</button>
+					<ul class="pop-out">
+					<% if user_signed_in? && current_user.is_admin %>
+						<li class="action">
+							<a href="/admin/album/<%= @album.id %>">
+								<span class="icon"><i class="fa fa-gavel"></i></span>
+								<span class="label">Admin</span>
+							</a>
+						</li>
+					<% end %>
+					<% if @modificationsAllowed && @album.owner_type != 'User' %>
+						<li class="action">
+							<a id="delete_album" data-title="Delete Album" data-icon="warning" data-action="delete" data-url="delete/album/<%= @album.id %>" class="confirm-button">
+								<span class="icon"><i class="fa fa-trash"></i></span>
+								<span class="label">Remove Album</span>
+							</a>
+						</li>
+					<% end %>
+					</ul>
 				</div>
-			<% end %>
-			<a class="button action right" style="margin-right: 10px;" <% if @items.first %>href="/view/<%= @items.first.video.id %>-<%= url_safe @items.first.video.title %>?list=<%= @album.id %>&index=<%= @items.first.index %>"<% end %>><i class=\"fa fa-play\"></i> Play All</a>
+				<a class="button action" style="margin-right: 10px;" <% if @items.first %>href="/view/<%= @items.first.video.id %>-<%= url_safe @items.first.video.title %>?list=<%= @album.id %>&index=<%= @items.first.index %>"<% end %>><i class="fa fa-play"></i> Play All</a>
 			</div>
 	</div>
 </section>

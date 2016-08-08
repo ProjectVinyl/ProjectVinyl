@@ -3,7 +3,7 @@ class Video < ActiveRecord::Base
   has_many :album_items
   has_many :albums, :through => :album_items
   has_many :video_genres
-  has_many :genres, :through => :video_genres
+  has_many :tags, :through => :video_genres
   
   def transferTo(artist)
     self.artist = artist
@@ -89,13 +89,13 @@ class Video < ActiveRecord::Base
     end
   end
   
-  def preload_genres
-    self.video_genres.delete_all
+  def preload_tags
+    VideoGenre.where(video_id: self.id).delete_all
     return self.video_genres
   end
   
-  def genres_string
-    return Genre.tag_string(self.genres)
+  def tag_string
+    return Tag.tag_string(self.tags)
   end
   
   def getComputedScore
