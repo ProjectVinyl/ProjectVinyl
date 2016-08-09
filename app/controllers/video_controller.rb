@@ -22,6 +22,8 @@ class VideoController < ApplicationController
         tags: @video.tags
       }
       @artist = @video.artist
+      @comments = Comment.pull_thread(@video.id)
+      @results = @comments = Pagination.paginate(@comments, 0, 10, false)
       @queue = @artist.videos.where(hidden: false).where.not(id: @video.id).order("RAND()").limit(7)
       if !@modificationsAllowed = user_signed_in? && current_user.artist_id == @artist.id
         @video.views = @video.views + 1
@@ -118,12 +120,13 @@ class VideoController < ApplicationController
             video = artist.videos.create(
                     title: nonil(ApplicationHelper.demotify(video[:title]), 'Untitled'),
                     description: ApplicationHelper.demotify(video[:description]),
+                    source: video[:source],
                     mime: file.content_type,
                     file: ext,
                     audio_only: file.content_type.include?('audio/'),
                     upvotes: 0, downvotes: 0)
-            if params[:video][:genres_string]
-              Tag.loadTags(params[:video][:genres_string], video)
+            if params[:video][:tag_string]
+              Tag.loadTags(params[:video][:tag_string], video)
             end
             video.save
             video.setFile(file)
@@ -150,6 +153,17 @@ class VideoController < ApplicationController
   
   def update
     if user_signed_in? && video = Video.where(id: params[:id]).first
+      if params[:field] == 'tags'
+        Tag.loadTags(params[:value], video)
+        video.save
+        render status: 200, nothing: true
+        return
+      elsif params[:field] == 'source'
+        video.source = params[:value]
+        video.save
+        render status: 200, nothing: true
+        return
+      end
       if video.artist.id == current_user.artist_id || current_user.is_admin
         value = ApplicationHelper.demotify(params[:value])
         if params[:field] == 'description'
@@ -157,9 +171,6 @@ class VideoController < ApplicationController
           video.save
         elsif params[:field] == 'title'
           video.title = nonil(value, 'Untitled')
-          video.save
-        elsif params[:field] == 'tags'
-          Tag.loadTags(params[:value], video)
           video.save
         end
         render status: 200, nothing: true

@@ -31,7 +31,7 @@
 			<span class="content "><%= @video.title %></span>
 		</h2>
 		<div class="tag-list subheading">
-			<span class="uploaded">Published on <%= @video.created_at.to_time.strftime('%e %B %Y') %> by <%= @artist.name %></span>
+			<span class="uploaded">Uploaded on <%= @video.created_at.to_time.strftime('%e %B %Y') %> by <%= @artist.name %></span>
 			<span class="views right"><%= number_with_delimiter @video.views %> views</span>
 		</div>
 		<span class="post-content">
@@ -39,6 +39,16 @@
 		</span>
 	<% end %>
 		<div class="post-tags">
+			<% if user_signed_in? %>
+			<div class="editable post-content short tiny-link" data-target="video" data-member="source" data-id="<%= @video.id %>">
+				Source: <a href="<%= @video.source %>" class="content"><%= @video.source %></a>
+				<span class="edit">(edit)</i></span>
+			</div>
+			<% else %>
+			<div class="post-content tiny-link">
+				Source: <a href="<%= @video.source %>"><%= @video.source %></a>
+			</div>
+			<% end %>
 			<span class="normal">
 				<%= render partial: '/layouts/taglist', locals: { collection: @video.tags } %>
 			</span>

@@ -30,15 +30,15 @@
 			</form>
 			<div id="login" <% if user_signed_in? %>class="drop-down-holder"<% end %>>
 				<% if user_signed_in? %>
-				<% if current_artist %>
-				<a href="/artist/<%= current_artist.id %>-<%= url_safe current_artist.name %>" class="username">
-					<%= current_artist.name %>
+				<a href="<%= current_user.link %>" class="username">
+					<%= current_user.username %>
 				</a>
-				<% else %>
-				<a href="/users/edit" class="username">
-					Background Pony
+				<a class="notices-bell" href="/notifications">
+					<i class="fa fa-bell"></i>
+					<% if current_user.notification_count > 0 %>
+						<span class="count"><%= current_user.notification_count %></span>
+					<% end %>
 				</a>
-				<% end %>
 				<ul class="drop-down" style="z-index:2">
 					<% if current_user.is_admin %>
 					<li>
@@ -83,7 +83,7 @@
 				</ul>
 				<a href="/users/edit" rel="nofollow" title="settings">
 					<span class="avatar small">
-						<span style="background-image:url('<% if current_artist %>/avatar/<%= current_artist.id %><% else %>/images/avatar/none.jpg<% end %>');"></span>
+						<span style="background-image:url('<%= current_user.avatar %>');"></span>
 					</span>
 				</a>
 				<script>

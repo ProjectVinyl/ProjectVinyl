@@ -108,17 +108,18 @@ var ajax = (function() {
   return result;
 })();
 var scrollTo = (function() {
-  function scrollIntoView(me, container) {
+  function scrollIntoView(me, container, viewport) {
     if (!me.length) return;
     var offset = me.offset();
     var scrollpos = container.offset();
     container.animate({
-      scrollTop: offset.top - scrollpos.top + container.scrollTop(),
-      scrollLeft: offset.left - scrollpos.left + container.scrollLeft()
+      scrollTop: offset.top - scrollpos.top - viewport.height()/2 + me.height()/2,
+      scrollLeft: offset.left - scrollpos.left - viewport.width()/2 + me.width()/2
     });
+    return me;
   };
-  return function(el, container) {
-    return scrollIntoView($(el), $(container || 'html, body'));
+  return function(el, container, viewport) {
+    return scrollIntoView($(el), $(container || 'html, body'), $(viewport || window));
   };
 })();
 var resizeFont = (function() {
@@ -162,7 +163,7 @@ var BBC = (function() {
   function rich(text) {
     text = text.replace(/</g,'&lt;').replace(/>/g,'&gt;');
     text = text.replace(/\[icon\]([^\[]+)\[\/icon\]/g, '<i class="fa fa-fw fa-$1"></i>');
-    text = text.replace(/\n/g, '<br>').replace(/\[([\/]?([buis]|sup|sub|hr))\]/g, '<$1>');
+    text = text.replace(/\n/g, '<br>').replace(/\[([\/]?([buis]|sup|sub|hr))\]/g, '<$1>').replace(/\[([\/]?)q\]/g, '<$1blockquote>');
     text = text.replace(/\[url=([^\]]+)]/g, '<a href="$1">').replace(/\[\/url]/g, '</a>');
     text = text.replace(/([^">]|[\s]|<[\/]?br>|^)(http[s]?:\/\/[^\s\n<]+)([^"<]|[\s\n]|<br>|$)/g, '$1<a data-link="1" href="$2">$2</a>$3');
     text = text.replace(/\[img\]([^\[]+)\[\/img\]/g, '<img src="$1" style="max-width:100%"></img>');
@@ -174,7 +175,7 @@ var BBC = (function() {
   }
   function poor(text) {
     text = text.replace(/<i class="fa fa-fw fa-([^"]+)"><\/i>/g, '[icon]$1[/icon]');
-    text = text.replace(/<br>/g, '\n').replace(/<([\/]?([buis]|sup|sub|hr))>/g, '[$1]');
+    text = text.replace(/<br>/g, '\n').replace(/<([\/]?([buis]|sup|sub|hr))>/g, '[$1]').replace(/<([\/]?)blockquote>/g, '[$1q]');
     text = text.replace(/<a data-link="1" href="([^"]+)">[^<]*<\/a>/g, '$1');
     text = text.replace(/<a href="([^"]+)">/g, '[url=$1]').replace(/<\/a>/g, '[/url]');
     text = text.replace(/<\/img>/g, '').replace(/<img src="([^"]+)" style="max-width:100%">/g, '[img]$1[/img]');
@@ -308,6 +309,13 @@ var BBC = (function() {
   $(document).on('click', function() {
     if (active && !active.closest('.editable').is(':hover')) deactivate(active);
   });
+  $(document).on('change', 'textarea.comment-content', function() {
+    var preview = $(this).parent().find('.comment-content.preview');
+    if (preview.length) {
+      preview.html(rich($(this).val()));
+    }
+  });
+  $('textarea.comment-content').trigger('change');
   return {
     rich: rich, poor: poor
   }
@@ -395,7 +403,7 @@ var BBC = (function() {
       }
     }
     function createTagItem(name) {
-      var item = $('<li class="tag"><i title="Remove Tag" class="fa fa-times remove"></i>' + name + '</li>');
+      var item = $('<li class="tag"><i title="Remove Tag" class="fa fa-times remove"></i><a href="/tags/' + name + '">' + name + '</a></li>');
       list.append(item);
       item.find('.remove').on('click', function() {
         removeTag(item, name);
@@ -621,6 +629,8 @@ $(document).on('click', '.state-toggle', function(ev) {
     var me = $(this);
     var action = me.attr('data-action');
     var url = me.attr('data-url');
+    var id = me.attr('data-id');
+    var callback = me.attr('data-callback');
     var popup;
     if (action == 'delete') {
       me.on('click', function() {
@@ -633,6 +643,8 @@ $(document).on('click', '.state-toggle', function(ev) {
               ajax.post(url, function(json) {
                 if (json.ref) {
                   document.location.replace(json.ref);
+                } else  if (callback) {
+                  window[callback](id);
                 }
               });
               popup.close();
@@ -862,6 +874,72 @@ var Popup = (function() {
   return Popup;
 })();
 
+var paginator = (function() {
+  function requestPage(context, page) {
+    if (page == context.attr('data-page')) return;
+    context.attr('data-page', page);
+    page = parseInt(page);
+    arguments = arguments || {};
+    arguments.page = page;
+    context.find('ul').addClass('waiting');
+    context.find('.pagination .pages .button.selected').removeClass('selected');
+    ajax.get(context.attr('data-type') + '?page=' + context.attr('data-page') + '&' + context.attr('data-args'), function(json) {
+      populatePage(context, json);
+    }, {});
+  }
+  function populatePage(context, json) {
+    var container = context.find('ul');
+    container.html(json.content);
+    container.removeClass('waiting');
+    context.attr('data-page', json.page);
+    context.find('.pagination').each(function() {
+      repaintPages($(this), json.page, json.pages);
+    });
+  }
+  function repaintPages(context, page, pages) {
+    var index = page > 4 ? page - 4 : 0;
+    context.find('.pages .button').each(function() {
+      if (index > page + 4 || index > pages) {
+        $(this).remove();
+      } else {
+        $(this).attr('data-page-to', index).attr('href', '#/page/' + (index + 1)).text(index + 1);
+        if (index == page) {
+          $(this).addClass('selected');
+        }
+      }
+      index++;
+    });
+    context = context.find('.pages');
+    while (index <= page + 4 && index <= pages) {
+      context.append('<a class="button" data-page-to="' + index + '" href="#/page/' + ++index + '">' + index + '</a> ');
+    }
+    document.location.hash = '/page/' + (page + 1);
+  }
+  $(document).on('click', '.pagination .pages .button, .pagination .button.left, .pagination .button.right', function() {
+    paginator.goto($(this));
+  });
+  var hash = document.location.hash;
+  var page = -2;
+  if (hash == '#first') page = 0;
+  if (hash == '#last') page = -1;
+  if (hash.indexOf('#/page/') == 0) {
+    page = parseInt(hash.match(/#\/page\/([0-9]*)/)[1]);
+  }
+  if (page > -2) {
+    $(document).ready(function() {
+      requestPage($('.paginator'), page - 1);
+    });
+  }
+  return {
+    repaint: function(context, json) {
+      populatePage(context, json);
+    },
+    goto: function(button) {
+      requestPage(button.closest('.paginator'), button.attr('data-page-to'));
+    }
+  }
+})();
+
 $(document).on('focus', 'label input, label select', function() {
   $(this).closest('label').addClass('focus');
 }).on('blur', 'label input, label select', function() {
@@ -880,6 +958,94 @@ function error(message) {
     this.show();
   });
 }
+
+function postComment(sender, thread_id) {
+  sender = $(sender).parent();
+  sender.addClass('posting');
+  ajax.post('comments/new', function(json) {
+    sender.removeClass('posting');
+    paginator.repaint($('#thread-' + thread_id).closest('.paginator'), json);
+    scrollTo('#comment_' + json.focus);
+    sender.find('textarea').val('').change();
+  }, 0, {
+    thread: thread_id,
+    comment: sender.find('textarea').val()
+  });
+}
+
+function editComment(sender) {
+  sender = $(sender).parent();
+  ajax.post('comments/edit', function(html) {
+    sender.removeClass('editing');
+  }, 1, {
+    id: sender.attr('data-id'),
+    comment: sender.find('textarea').val()
+  });
+}
+
+function removeComment(id) {
+  id = $('#comment_' + id);
+  if (id.length) {
+    id.css({
+      'min-height': 0,
+      height: id.height(), overflow: 'hidden'
+    }).css('transition', '0.5s ease all').css({
+      opacity: 0, height: 0
+    });
+    setTimeout(function() {
+      id.remove();
+    }, 500);
+  }
+}
+
+function findComment(sender) {
+  sender = $(sender);
+  var container = sender.parent();
+  var parent = sender.attr('href');
+  if (!$(parent).length) {
+    ajax.get('comments/get', function(html) {
+      container.parent().prepend(html);
+      $('.comment.highlight').removeClass('highlight');
+      scrollTo(parent).addClass('highlight').addClass('inline');
+    }, {
+      id: sender.attr('data-comment-id')
+    }, 1);
+  } else {
+    parent = $(parent);
+    if (parent.hasClass('inline')) {
+      container.parent().prepend(parent);
+    }
+    $('.comment.highlight').removeClass('highlight');
+    scrollTo(parent).addClass('highlight');
+  }
+}
+
+var decode_entities = (function() {
+  var div = document.createElement('DIV');
+  return function(string) {
+    div.innerHTML = string;
+    return div.innerText;
+  }
+})();
+
+function replyTo(sender) {
+  sender = $(sender).parent();
+  textarea = sender.closest('.page').find('.post-box textarea');
+  textarea.focus();
+  textarea.val('>>' + sender.attr('data-o-id') + ' [q]\n' + decode_entities(sender.attr('data-comment')) + '\n[/q]' + textarea.val());
+  textarea.change();
+}
+
+$(document).on('click', '.reply-comment', function() {
+  replyTo(this);
+});
+$(document).on('click', '.edit-comment-submit', function() {
+  editComment(this);
+});
+$(document).on('click', '.comment .mention', function(ev) {
+  findComment(this);
+  ev.preventDefault();
+});
 
 function lazyLoad(button) {
   var target = $('#' + button.attr('data-target'));
@@ -907,4 +1073,4 @@ function timeoutOn(target, func, time) {
 
 $(document).on('click', '.load-more button', function() {
   lazyLoad($(this));
-})
+});

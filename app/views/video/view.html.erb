@@ -3,7 +3,7 @@
 		<%= render partial: 'video' %>
 		<div class="page resize-holder column-right column-mobile-fragmented right center">
 			<section class="artist-bio bio">
-				<a href="/artist/<%= @artist.id %>-<%= @artist.name %>">
+				<a href="/artist/<%= @artist.id %>-<%= url_safe @artist.name %>">
 					<span class="avatar">
 						<span style="background-image:url('/avatar/<%= @artist.id %>');"></span>
 					</span>
@@ -50,7 +50,7 @@ $('html,body').scrollTop(200);
 			</section>
 		</div>
 		<section class="page column-left">
-			<%= render partial: '/layouts/comments', locals: {identifier: @video.id, title: @video.title + " by " + @artist.name } %>
+			<%= render partial: '/thread/view', locals: {identifier: @video.id, title: @video.title + " by " + @artist.name } %>
 		</section>
 <% else %>
 <%= render layout: '/layouts/error', locals: { title: 'Nothing to see here!' } do %>

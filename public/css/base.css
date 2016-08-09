@@ -117,6 +117,10 @@ table {
   width: 240px;
   height: 240px;
 }
+.avatar.medium {
+  width: 60px;
+  height: 60px;
+}
 .avatar.small {
   width: 30px;
   height: 30px;
@@ -473,7 +477,7 @@ div.page .positioner {
   padding: 3px;
 }
 
-button, .button, #search > *, input[type=submit], .tag-editor .tag, .tag-editor {
+button, .button, #search > *, input[type=submit], .tag, .tag-editor {
   display: inline-block;
   padding: 5px 15px;
   text-decoration: none;
@@ -688,6 +692,26 @@ label input[type=checkbox]:not(:checked) + i {
    margin-right: 20px;
    font-size: 1.25em;
 }
+#login .notices-bell {
+  position: relative;
+  line-height: 33px;
+  text-decoration: none;
+  font-size: 1.25em;
+  margin-right: 20px;
+  float: left;
+}
+#login .notices-bell span {
+  position: absolute;
+  top: -6px;
+  right: -50%;
+  display: block;
+  background: #f00;
+  color: #fff;
+  border-radius: 100%;
+  font-size: 11px;
+  padding: 3px 5px;
+  line-height: 13px;
+}
 
 .drop-down {
   margin-top: -1px;
@@ -780,7 +804,155 @@ label input[type=checkbox]:not(:checked) + i {
 }
 
 .comments {
-   min-height:340px
+  min-height: 340px;
+  padding: 0;
+}
+.comments li.comment {
+  list-style: none;
+  padding-bottom: 10px;
+}
+.comments li.comment .content:not(.editing) textarea ~ * {
+  display: none;
+}
+
+
+.comment {
+  min-height: 100px;
+}
+
+.comment .bio {
+  float: left;
+  padding-right: 20px;
+}
+
+.comment .name {
+  border-bottom: solid 1px rgba(0,0,150, 0.3);;
+  margin-bottom: 10px;
+}
+.comment .name a {
+  text-decoration: none;
+  width: 100%;
+}
+
+.comment blockquote {
+  background: rgba(0,250,250, 0.3);
+  padding: 3px;
+  margin: 3px;
+  border-radius: 5px;
+  border: dotted 1px #eee;
+}
+
+.comment .content {
+  transition: background 0.5s ease;
+  position: relative;
+  padding: 10px;
+  margin-left: 70px;
+  border: 1px solid rgb(204, 204, 204);
+  border-radius: 5px;
+  box-shadow: 0px 0px 12px rgba(0, 0, 0, 0.07) inset;
+  background: rgb(255, 255, 250);
+  text-shadow: 1px 1px rgba(255, 255, 255, 0.8);
+  vertical-align: middle;
+  min-height: 120px;
+}
+.comment.basic > .content {
+  margin-left: 0;
+}
+.comment.highlight > .content blockquote {
+  background: rgba(0,250,250, 1.3);
+}
+.comment.highlight > .content {
+  border-color: rgb(204,204,255);
+  box-shadow: 0 0 12px rgba(0, 0, 255, 0.07) inset,
+    0 0 15px -3px rgba(0,0,255,0.3);
+}
+.comment.highlight > .content::after {
+  border-color: transparent #09f9f9 transparent transparent;
+}
+.comment .content::before {
+  content: '';
+  display: block;
+  position: absolute;
+  top: 20px;
+  left: -20px;
+  border: solid 10px;
+  border-color: transparent rgb(204, 204, 204) transparent transparent;
+}
+.comment .content::after {
+  content: '';
+  display: block;
+  position: absolute;
+  top: 20px;
+  left: -19px;
+  border: solid 10px;
+  border-color: transparent rgb(247, 247, 247) transparent transparent;
+}
+.comment.basic > .content::before, .comment.basic > .content::after {
+  display: none;
+}
+
+.comment .content .comment-content {
+  resize: vertical;
+  width: 100%;
+  min-height: 120px;
+  border: none;
+}
+
+.comment .content.editing .preview, .comment .content textarea {
+  display: none;
+}
+.comment .content.editing textarea {
+  display: block;
+}
+.comment .edit-comment, .comment .remove-comment, .comment .reply-comment {
+  float: right;
+  cursor: pointer;
+  margin-left: 5px;
+}
+
+.comment .content .posting-spinner {
+  display: none;
+}
+.comment .content.posting button.green {
+  position: relative;
+}
+.comment .content.posting .posting-spinner {
+  display: inline;
+  width: 100%;
+  position: absolute;
+  top: 30%;
+  left: 0;
+}
+.comment .content.posting button.green span {
+  opacity: 0;
+}
+
+.comment a.mention {
+  color: #ccc;
+  font-size: 8px;
+  display: inline-block;
+  width: auto;
+  padding-right: 3px;
+}
+
+ul.notifications {
+  list-style: none;
+  padding: 20px;
+}
+ul.notifications li {
+  border: solid 1px rgba(0,0,0,0.1);
+}
+ul.notifications li + li {
+  border-top: none;
+}
+ul.notifications li a {
+  display: block;
+  padding: 10px;
+  text-decoration: none;
+  font-weight: initial;
+}
+ul.notifications li:hover {
+  background: rgb(250,250,250);
 }
 
 img.iconic, img.emoticon {
@@ -1320,13 +1492,17 @@ form.uploading .progressor + div {
   background: none;
 }
 
-.tag-editor .tags {
+.tags {
   display: inline;
   margin: 0;
   padding: 0;
 }
-.tag-editor .tag {
+.tag {
   margin: 2px;
+}
+.tag a {
+  text-decoration: none;
+  color: #000;
 }
 .tag-editor .tag .remove {
   vertical-align: middle;

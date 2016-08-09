@@ -11,13 +11,13 @@ puts params[:name]
   
   def list
     @page = params[:page].to_i
-    @results = Pagination.paginate(Tag.includes(:videos, :tag_type).order(:name), @page, 50, false)
+    @results = Pagination.paginate(Tag.includes(:videos, :tag_type).order(:name), @page, 100, false)
     render template: '/view/listing', locals: {type_id: 3, type: 'genres', type_label: 'Tag', items: @results}
   end
   
   def page
     @page = params[:page].to_i
-    @results = Pagination.paginate(Tag.includes(:videos, :tag_type).order(:name), @page, 50, false)
+    @results = Pagination.paginate(Tag.includes(:videos, :tag_type).order(:name), @page, 100, false)
     render json: {
       content: render_to_string(partial: '/layouts/genre_thumb_h.html.erb', collection: @results.records),
       pages: @results.pages,

@@ -87,6 +87,14 @@ Rails.application.routes.draw do
   post 'ajax/update/star' => 'album#arrangeStar'
   post 'ajax/delete/star' => 'album#removeStar'
   
+  get 'notifications' => 'thread#notifications'
+  
+  post 'ajax/comments/new' => 'thread#post_comment'
+  post 'ajax/comments/delete/:id' => 'thread#remove_comment'
+  post 'ajax/comments/edit' => 'thread#edit_comment'
+  get 'ajax/comments/get' => 'thread#get_comment'
+  get 'ajax/comments/:thread_id' => 'thread#page'
+  
   get '/' => 'welcome#index'
   root 'welcome#index'
 end

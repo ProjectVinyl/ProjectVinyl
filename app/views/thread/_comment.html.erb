@@ -1,0 +1,36 @@
+<li class="comment" id="comment_<%= comment.get_open_id %>">
+	<div class="artist-bio bio">
+		<a href="<%= comment.user.link %>">
+			<span class="avatar medium">
+				<span style="background-image:url('<%= comment.user.avatar %>');"></span>
+			</span>
+		</a>
+	</div>
+	<div class="content" data-id="<%= comment.id %>" data-o-id="<%= comment.get_open_id %>" data-comment="<%= comment.bbc_content %>">
+	<% if user_signed_in? && (current_user.is_admin || current_user.id == comment.user_id) %>
+		<a title="Delete Comment" class="remove-comment confirm-button" data-action="delete" data-url="comments/delete/<%= comment.id %>" data-id="<%= comment.get_open_id %>" data-callback="removeComment" data-title="Delete Comment" data-icon="warning"><i class="fa fa-trash"></i></a>
+	<% end %>
+	<% if user_signed_in? && current_user.id == comment.user_id %>
+		<a title="Edit Comment" class="edit-comment state-toggle" data-state="editing"><i class="fa fa-pencil"></i></a>
+	<% end %>
+	<% if user_signed_in? %>
+		<a title="Reply" class="reply-comment" ><i class="fa fa-reply"></i></a>
+	<% end %>
+		<div class="name">
+			<a href="<%= comment.user.link %>"><%= comment.user.username %></a>
+	<% comment.mentions.each do |mention| %>
+		<a href="#comment_<%= Comment.encode_open_id(mention.parent_id) %>" data-comment-id="<%= mention.parent_id %>" class="mention">
+			&gt;&gt;<%= Comment.encode_open_id(mention.parent_id) %>
+		</a>
+	<% end %>
+		</div>
+		<div class="comment-content preview">
+			<%= raw comment.html_content %>
+		</div>
+	<% if user_signed_in? && current_user.id == comment.user_id %>
+		<textarea name="comment_<%= comment.id %>" class="comment-content"><%= raw comment.bbc_content %></textarea>
+		<hr>
+		<button class="green edit-comment-submit">Edit Comment</button>
+	<% end %>
+	</div>
+</li>

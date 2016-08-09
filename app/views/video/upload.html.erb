@@ -52,23 +52,42 @@ $('#cover-upload').on('accept', function() {
 					<span class="edit"><i class="fa fa-pencil"></i></span>
 					<span style="display:none">11</span>
 				</h1>
-				<span class="editable post-content">
-					<span class="content">Description</span>
-					<%= f.text_area :description, autofocus: true, class: "input" %>
-					<span class="edit"><i class="fa fa-pencil" ></i></span>
-				</span>
+				<div class="comment basic post-box">
+					
+					<div class="content editing">
+						<div class="name">
+							<%= f.label :description %>
+						</div>
+						<div class="comment-content preview"></div>
+						<%= f.text_area :description, autofocus: true, class: "comment-content" %>
+						<hr>
+						<button class="blue state-toggle" data-state="editing" data-true="Preview" data-false="Edit">Preview</button>
+					</div>
+				</div>
 				<div class="post-tags">
 					<%= render layout: 'layouts/tageditor' do %>
-						<%= f.text_area :genres_string %>
+						<%= f.text_area :tag_string %>
 					<% end %>
 				</div>
-				<% if current_user.is_admin %>
-				<div class="actions popper auto-lookup" data-action="artist">
-					<%= f.label "Artist" %>
-					<%= f.text_field :artist_id, autocomplete: "off" %>
-					<ul class="pop-out"></ul>
+				<div class="properties">
+					<table>
+						<tr>
+							<td class="label"><%= f.label :source %></td>
+							<td class="field">
+								<%= f.text_field :source, class: "input" %>
+							</td>
+						</tr>
+					<% if current_user.is_admin %>
+						<tr>
+							<td class="label"><%= f.label "Artist" %></td>
+							<td class="actions popper auto-lookup field" data-action="artist">
+								<%= f.text_field :artist_id, autocomplete: "off" %>
+								<ul class="pop-out"></ul>
+							</td>
+						</tr>
+					<% end %>
+					</table>
 				</div>
-				<% end %>
 				<div class="actions">
 					<button id="change_video" class="action" type="button" onclick="$('#video_file').trigger('click');">Change Main File</button>
 					<span class="notify bob-holder">

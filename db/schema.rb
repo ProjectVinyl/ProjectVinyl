@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160808072135) do
+ActiveRecord::Schema.define(version: 20160809200616) do
 
   create_table "album_items", force: :cascade do |t|
     t.integer "album_id", limit: 4
@@ -55,10 +55,31 @@ ActiveRecord::Schema.define(version: 20160808072135) do
   add_index "artists", ["name"], name: "index_artists_on_name", unique: true, using: :btree
   add_index "artists", ["tag_id"], name: "index_artists_on_tag_id", using: :btree
 
+  create_table "comment_replies", force: :cascade do |t|
+    t.integer "parent_id",  limit: 4
+    t.integer "comment_id", limit: 4
+  end
+
+  create_table "comments", force: :cascade do |t|
+    t.integer  "user_id",      limit: 4
+    t.integer  "parent_id",    limit: 4
+    t.integer  "video_id",     limit: 4
+    t.text     "html_content", limit: 65535
+    t.text     "bbc_content",  limit: 65535
+    t.datetime "created_at",                 null: false
+    t.datetime "updated_at",                 null: false
+  end
+
   create_table "genres", force: :cascade do |t|
     t.string "name",        limit: 255
     t.text   "description", limit: 65535
     t.string "safe_name",   limit: 255
+  end
+
+  create_table "notifications", force: :cascade do |t|
+    t.string  "message", limit: 255
+    t.string  "source",  limit: 255
+    t.integer "user_id", limit: 4
   end
 
   create_table "tag_types", force: :cascade do |t|
@@ -88,6 +109,7 @@ ActiveRecord::Schema.define(version: 20160808072135) do
     t.datetime "created_at",                                         null: false
     t.datetime "updated_at",                                         null: false
     t.boolean  "is_admin",                           default: false
+    t.integer  "notification_count",     limit: 4,   default: 0
   end
 
   add_index "users", ["email"], name: "index_users_on_email", unique: true, using: :btree
@@ -116,6 +138,7 @@ ActiveRecord::Schema.define(version: 20160808072135) do
     t.boolean  "hidden",                    default: false
     t.integer  "views",       limit: 4,     default: 0
     t.boolean  "processed"
+    t.string   "source",      limit: 255,   default: ""
   end
 
   add_index "videos", ["artist_id"], name: "index_videos_on_artist_id", using: :btree
