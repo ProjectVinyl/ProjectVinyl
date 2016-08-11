@@ -6,6 +6,11 @@ puts params[:name]
       @totalUsers = @tag.users.length
       @videos = @tag.videos.where(hidden: false).order(:created_at).reverse_order.limit(16)
       @users = @tag.users.order(:updated_at).reverse_order.limit(16)
+      if @tag.tag_type_id == 1
+        @user = User.where(tag_id: @tag.id).first
+      end
+      @implies = @tag.implications
+      @implied = @tag.implicators
     end
   end
   

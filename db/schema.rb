@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160810170228) do
+ActiveRecord::Schema.define(version: 20160811201318) do
 
   create_table "album_items", force: :cascade do |t|
     t.integer "album_id", limit: 4
@@ -27,37 +27,20 @@ ActiveRecord::Schema.define(version: 20160810170228) do
     t.text     "description", limit: 65535
     t.datetime "created_at",                                null: false
     t.datetime "updated_at",                                null: false
-    t.integer  "owner_id",    limit: 4
-    t.string   "owner_type",  limit: 255
+    t.integer  "user_id",     limit: 4
     t.integer  "featured",    limit: 4,     default: 0
     t.boolean  "hidden",                    default: false
     t.string   "safe_title",  limit: 255
   end
 
-  add_index "albums", ["owner_id"], name: "index_albums_on_owner_id", using: :btree
+  add_index "albums", ["user_id"], name: "index_albums_on_user_id", using: :btree
 
   create_table "artist_genres", force: :cascade do |t|
-    t.integer "artist_id", limit: 4
-    t.integer "tag_id",    limit: 4
-    t.integer "user_id",   limit: 4
+    t.integer "tag_id",  limit: 4
+    t.integer "user_id", limit: 4
   end
 
-  add_index "artist_genres", ["artist_id"], name: "index_artist_genres_on_artist_id", using: :btree
   add_index "artist_genres", ["user_id"], name: "index_artist_genres_on_user_id", using: :btree
-
-  create_table "artists", force: :cascade do |t|
-    t.string   "name",        limit: 255
-    t.text     "description", limit: 65535
-    t.text     "bio",         limit: 65535
-    t.string   "mime",        limit: 255
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.boolean  "banner_set"
-    t.integer  "tag_id",      limit: 4
-  end
-
-  add_index "artists", ["name"], name: "index_artists_on_name", unique: true, using: :btree
-  add_index "artists", ["tag_id"], name: "index_artists_on_tag_id", using: :btree
 
   create_table "comment_replies", force: :cascade do |t|
     t.integer "parent_id",  limit: 4
@@ -66,7 +49,6 @@ ActiveRecord::Schema.define(version: 20160810170228) do
 
   create_table "comments", force: :cascade do |t|
     t.integer  "user_id",      limit: 4
-    t.integer  "parent_id",    limit: 4
     t.integer  "video_id",     limit: 4
     t.text     "html_content", limit: 65535
     t.text     "bbc_content",  limit: 65535
@@ -74,16 +56,24 @@ ActiveRecord::Schema.define(version: 20160810170228) do
     t.datetime "updated_at",                 null: false
   end
 
-  create_table "genres", force: :cascade do |t|
-    t.string "name",        limit: 255
-    t.text   "description", limit: 65535
-    t.string "safe_name",   limit: 255
+  create_table "notifications", force: :cascade do |t|
+    t.string   "message",    limit: 255
+    t.string   "source",     limit: 255
+    t.integer  "user_id",    limit: 4
+    t.string   "sender",     limit: 255
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.boolean  "unread",                 default: true
   end
 
-  create_table "notifications", force: :cascade do |t|
-    t.string  "message", limit: 255
-    t.string  "source",  limit: 255
-    t.integer "user_id", limit: 4
+  create_table "tag_implications", force: :cascade do |t|
+    t.integer "tag_id",     limit: 4
+    t.integer "implied_id", limit: 4
+  end
+
+  create_table "tag_type_implications", force: :cascade do |t|
+    t.integer "tag_type_id", limit: 4
+    t.integer "implied_id",  limit: 4
   end
 
   create_table "tag_types", force: :cascade do |t|
@@ -111,7 +101,6 @@ ActiveRecord::Schema.define(version: 20160810170228) do
     t.datetime "last_sign_in_at"
     t.string   "current_sign_in_ip",     limit: 255
     t.string   "last_sign_in_ip",        limit: 255
-    t.integer  "artist_id",              limit: 4
     t.datetime "created_at",                                           null: false
     t.datetime "updated_at",                                           null: false
     t.boolean  "is_admin",                             default: false
@@ -139,7 +128,6 @@ ActiveRecord::Schema.define(version: 20160810170228) do
   add_index "video_genres", ["video_id"], name: "index_video_genres_on_video_id", using: :btree
 
   create_table "videos", force: :cascade do |t|
-    t.integer  "artist_id",   limit: 4
     t.string   "title",       limit: 255
     t.text     "description", limit: 65535
     t.boolean  "audio_only"
@@ -159,7 +147,6 @@ ActiveRecord::Schema.define(version: 20160810170228) do
     t.string   "safe_title",  limit: 255
   end
 
-  add_index "videos", ["artist_id"], name: "index_videos_on_artist_id", using: :btree
   add_index "videos", ["created_at"], name: "index_videos_on_created_at", using: :btree
   add_index "videos", ["user_id"], name: "index_videos_on_user_id", using: :btree
 

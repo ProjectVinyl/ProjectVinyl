@@ -1,0 +1,44 @@
+<%= form_for(@user, as: "user", url: "/ajax/banner/upload", "html": { "class": "async" }) do |f| %>
+<div class="uploaded-preview">
+	<div id="banner-upload" class="banner file-select image-selector uploaded-preview" data-type="image">
+		<span class="preview" style="background-image: url('<%= @user.banner %>');"></span>
+		<span class="drop-icon" style="box-shadow: none;">
+			<i class="fa fa-camera"></i>
+		</span>
+		<%= f.file_field :banner %>
+	</div>
+	<div class="progressor">
+		<div class="cover-block">
+			<div class="message">
+			Uploading...
+			</div>
+			<div class="progress">
+				<div class="fill"></div>
+			</div>
+		</div>
+	</div>
+	<script>
+initFileSelect($('#banner-upload')).on('accept', function(e, file) {
+  var form = $(this).closest('form');
+  ajax.form(form, e, {
+    'success': function() {
+       form.removeClass('uploading');
+       var av = $('#banner');
+       av.css({
+         'background-size': 'cover',
+         'background-image': 'url(<%= @user.banner %>?' + new Date().getTime() + ')'
+       });
+    }
+  });
+});
+	</script>
+</div>
+<div class="foot">
+	<label class="button right">
+		<input name="erase" type="checkbox"></input>
+		<i class="fa fa-check"></i>
+		Remove current Image
+	</label>
+	<button class="green cancel">Done</button>
+</div>
+<% end %>

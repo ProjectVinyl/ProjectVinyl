@@ -18,6 +18,10 @@ class ImgsController < ApplicationController
     serveRaw(Rails.root.join('public', 'images', 'default-avatar'), 'png', 'image')
   end
   
+  def banner
+    serveRaw(Rails.root.join('public', 'images', 'banner'), 'png', 'image')
+  end
+  
   def stream
    # if (video = Video.where(id: params[:id]).first) && !video.hidden
    #    serveRaw(Rails.root.join('public', 'stream', params[:id]), video.file, video.audio_only ? 'audio' : 'video')

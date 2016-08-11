@@ -1,8 +1,8 @@
 class Video < ActiveRecord::Base
   belongs_to :user
-  has_many :album_items
+  has_many :album_items, dependent: :destroy
   has_many :albums, :through => :album_items
-  has_many :video_genres
+  has_many :video_genres, dependent: :destroy
   has_many :tags, :through => :video_genres
   
   def transferTo(user)
@@ -15,7 +15,6 @@ class Video < ActiveRecord::Base
     delFile(self.cover_path.to_s + ".png")
     delFile(self.cover_path.to_s + "-small.png")
     delFile(Rails.root.join('public', 'stream', self.id.to_s + '.webm'))
-    self.album_items.destroy
     self.destroy
   end
   

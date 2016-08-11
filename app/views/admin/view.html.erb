@@ -9,7 +9,7 @@
 		<thead>
 			<td>Id</td>
 			<td>Contact</td>
-			<td>Artist</td>
+			<td>Name</td>
 			<td>Created</td>
 			<td>Last Active</td>
 			<td>Votes</td>
@@ -20,7 +20,7 @@
 			<tr>
 				<td><%= user.id %></td>
 				<td><%= user.email %></td>
-				<td><a href="<%= user.link %>"></a></td>
+				<td><a href="<%= user.link %>"><%= user.username %></a></td>
 				<td><%= since user.created_at %></td>
 				<td><%= since user.updated_at %></td>
 				<td><%= user.votes.count %></td>

@@ -1,7 +1,7 @@
 class AlbumController < ApplicationController
   def view
     if @album = Album.where(id: params[:id].split(/-/)[0]).first
-      if @album.owner_type != 'Artist'
+      if @album.hidden
         render 'layouts/error', locals: { title: 'Access Denied', description: "You can't do that right now." }
         return
       end
@@ -24,7 +24,7 @@ class AlbumController < ApplicationController
       album = params[:album]
       initial = album[:initial]
       album = current_user.albums.create(description: ApplicationHelper.demotify(album[:description]))
-      album.setTitle(ApplicationHelper.demotify(album[:title]))
+      album.setTitle(ApplicationHelper.demotify(params[:album][:title]))
       if initial
         if initial = Video.where(id: initial).first
           album.addItem(initial)
@@ -57,10 +57,10 @@ class AlbumController < ApplicationController
   
   def delete
     if user_signed_in? && album = Album.where(id: params[:id]).first
-      if album.owner_type == 'Artist' && (current_user.is_admin || album.owner_id == current_user.id)
+      if !album.hidden && (current_user.is_admin || album.user_id == current_user.id)
         album.destroy
         render json: {
-          ref: url_for(action: "view", controller: "artist", id: album.owner_id)
+          ref: url_for(action: "view", controller: "artist", id: album.user_id)
         }
         return
       end
@@ -133,7 +133,7 @@ class AlbumController < ApplicationController
   
   def list
     @page = params[:page].to_i
-    @results = Pagination.paginate(Album.where(owner_type: 'Artist').order(:created_at), @page, 50, true)
+    @results = Pagination.paginate(Album.where(hidden: false).order(:created_at), @page, 50, true)
     render template: '/view/listing', locals: {type_id: 1, type: 'albums', type_label: 'Album', items: @results}
   end
   
@@ -141,7 +141,7 @@ class AlbumController < ApplicationController
     @page = params[:page].to_i
     @user = params[:user]
     if @artist.nil?
-      @results = Pagination.paginate(Album.where(owner_type: 'Artist').order(:created_at), @page, 50, true)
+      @results = Pagination.paginate(Album.where(hidden: false).order(:created_at), @page, 50, true)
     else
       @results = Pagination.paginate(User.find(@user.to_i).albums.order(:created_at), @page, 8, true)
     end

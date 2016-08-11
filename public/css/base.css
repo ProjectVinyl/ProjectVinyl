@@ -136,6 +136,10 @@ table {
   z-index: 200;
   margin: -20px;
 }
+.post .hovercard .avatar {
+  float: none;
+  margin: 0px;
+}
 .hovercard li {
   list-style: none;
 }
@@ -227,7 +231,17 @@ button.green, .button.green, input[type=submit].green {
   background: #7bb042 !important;
 }
 
-.post .actions .star.starred {
+button.blue, .button.blue, input.blue[type="submit"] {
+    color: #fff;
+    border: 1px solid #3480b5;
+    border-bottom-color: #3179ab;
+    border-top-color: #3787bf;
+    text-shadow: -1px -1px #3480b5;
+    background: #3d95d3 !important;
+}
+
+.post .actions .star.starred,
+button.yellow, .button.yellow, input.yellow[type="submit"] {
   border: 1px solid #c7c739;
   border-bottom-color: #b7b736;
   border-top-color: #c7c73c;
@@ -346,6 +360,10 @@ header ul li:hover, header ul li.selected {
   height: 200px;
   background: url(../images/banner.png) no-repeat center left,
         url(../images/banner_b.png) center right #fff; 
+}
+#banner-upload {
+  width: 600px;
+  height: 100px;
 }
 #banner .title {
   height: 150px;
@@ -513,6 +531,9 @@ button, .button, #search > *, input[type=submit], .tag, .tag-editor {
   transition: background 0.5s ease, border 0.5s ease, color 0.5s ease, text-shadow 0.5s ease;
   font-weight: initial;
   line-height: 20px;
+}
+.button-fw {
+  min-width: 80px;
 }
 
 .split-button {
@@ -970,20 +991,33 @@ ul.notifications {
   list-style: none;
   padding: 20px;
 }
-ul.notifications li {
+.notification {
   border: solid 1px rgba(0,0,0,0.1);
 }
-ul.notifications li + li {
+.notification + .notification {
   border-top: none;
 }
-ul.notifications li a {
+.notification a {
   display: block;
   padding: 10px;
   text-decoration: none;
   font-weight: initial;
 }
-ul.notifications li:hover {
+.notification:hover {
   background: rgb(250,250,250);
+}
+.notification.unread {
+  background: rgba(200,250,200,0.6);
+}
+.notification::before {
+  font: normal normal normal 14px/1 FontAwesome;
+  display: block;
+  float: left;
+  padding: 10px;
+  color: #337287;
+}
+.notification[class*=comments_]::before {
+  content: "\f064";
 }
 
 img.iconic, img.emoticon {
@@ -1043,9 +1077,9 @@ img.emoticon {
 }
 .popup-container .popup {
   transition: box-shadow 0.35s linear;
-  border: solid 1px #aaa;
-  border-radius: 2px;
+  border-radius: 5px;
   overflow: hidden;
+  background: #fff;
 }
 .popup-container.focus .popup {
   box-shadow: 0 0 10px 0 rgba(0,0,0,0.3);
@@ -1053,7 +1087,7 @@ img.emoticon {
 .popup-container .popup .content {
   background: #fff;
   min-height: 100px;
-  width: 400px;
+  min-width: 400px;
   overflow-y: auto;
   overflow-x: hidden;
 }
@@ -1067,12 +1101,12 @@ img.emoticon {
   padding: 10px;
 }
 .popup-container .popup > h1 {
-  width: 100%;
+  border: none;
   cursor: move;
-  background: rgba(255,255,255,0.8);
+  background: #fff;
   position: relative;
   margin: 0;
-  padding: 10px;
+  padding: 15px;
   font-size: 15px;
 }
 .popup-container .popup h1 > .fa {
@@ -1332,6 +1366,44 @@ form.uploading .progressor + div {
   vertical-align: top;
   line-height: 0px;
 }
+form.error .progress .fill {
+  background: red;
+}
+
+form.waiting .progress .fill {
+  background: orange;
+  animation: 1s linear infinite intermediate;
+  background: repeating-linear-gradient(
+    45deg,
+    rgba(255, 165, 0, 0.6), rgba(255, 165, 0, 0.6) 30%,
+    rgba(255, 165, 0, 1) 30%, rgba(255, 165, 0, 1) 71%,
+    rgba(255, 165, 0, 0.6) 71%, rgba(255, 165, 0, 0.6) 100%
+  );
+  background: webkit-repeating-linear-gradient(
+    45deg,
+    rgba(255, 165, 0, 0.6), rgba(255, 165, 0, 0.6) 30%,
+    rgba(255, 165, 0, 1) 30%, rgba(255, 165, 0, 1) 71%,
+    rgba(255, 165, 0, 0.6) 71%, rgba(255, 165, 0, 0.6) 100%
+  );
+  background-size: 30px 100%;
+}
+
+@keyframes intermediate {
+  0% {background-position: 0 0;}
+  100% {background-position: 30px 0;}
+}
+@-moz-keyframes intermediate {
+  0% {background-position: 0 0;}
+  100% {background-position: 30px 0;}
+}
+@-webkit-keyframes intermediate {
+  0% {background-position: 0 0;}
+  100% {background-position: 30px 0;}
+}
+@-o-keyframes intermediate {
+  0% {background-position: 0 0;}
+  100% {background-position: 30px 0;}
+}
 
 .progressor div.message, .bobber {
   position: absolute;
@@ -1534,6 +1606,7 @@ form.uploading .progressor + div {
 .tag a {
   text-decoration: none;
   color: #000;
+  font-weight: initial;
 }
 .tag-editor .tag .remove {
   vertical-align: middle;
@@ -1550,6 +1623,19 @@ form.uploading .progressor + div {
   text-shadow: none;
   cursor: pointer;
   font-size: 8px;
+}
+.tags.artist-tags {
+  display: inline-block;
+  overflow: hidden;
+  border-right: solid 1px rgba(0,0,150, 0.3);
+  float: left;
+  padding-right: 10px;
+  margin-right: 10px;
+}
+.tags.artist-tags .tag {
+  border-color: rgba(0,0,150, 0.3);
+  float: initial;
+  display: inline-block;
 }
 
 .popper {

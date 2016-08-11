@@ -97,7 +97,6 @@
 			</div>
 			<button class="action share"><i class="fa fa-share"></i> Share</button>
 		<% if user_signed_in? %>
-		<% if @modificationsAllowed %>
 			<div class="split-button popper">
 				<button class="action star split-icon<% if @video.isStarredBy(current_user) %> starred<% end %>" data-action="star" data-id="<%= @video.id %>">
 					<i class="fa fa-star"></i>
@@ -112,7 +111,7 @@
 							New Album
 						</span>
 					</li>
-					<% @video.user.albums.each do |album| %>
+					<% current_user.albums.each do |album| %>
 					<li class="action toggle" data-action="togglealbum" data-target="video" data-id="<%= @video.id %>" data-item="<%= album.id %>">
 						<span class="icon">
 						<% if album.album_items.where(video_id: @video.id).first %>
@@ -126,9 +125,6 @@
 					<% end %>
 				</ul>
 			</div>
-		<% else %>
-			<button class="action star<% if @video.isStarredBy(current_user) %> starred<% end %>" data-action="star" data-id="<%= @video.id %>"><i class="fa fa-star"></i></button>
-		<% end %>
 			<button class="action like<% if @video.isUpvotedBy(current_user) %> liked<% end %>" data-count="<%= @video.upvotes %>" data-action="like" data-id="<%= @video.id %>">
 				<i class="fa fa-thumbs-up"></i>
 				<% if @video.upvotes && @video.upvotes > 0 %>

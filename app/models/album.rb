@@ -1,16 +1,16 @@
 class Album < ActiveRecord::Base
-  belongs_to :user, foreign_key: "owner_id"
+  belongs_to :user
   has_many :album_items
   has_many :videos, :through => :album_items
   
   def setTitle(title)
     self.title = title
     self.safe_title = ApplicationHelper.url_safe(title)
-    self.safe
+    self.save
   end
   
   def ownedBy(user)
-    return self.owner_id == user.id || (self.hidden == false && user.is_admin)
+    return self.user_id == user.id || (self.hidden == false && user.is_admin)
   end
   
   def transferTo(user)

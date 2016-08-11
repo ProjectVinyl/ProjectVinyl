@@ -7,7 +7,7 @@
 		</div>
 		<% if @modificationsAllowed %>
 			<h1 class="editable short title" data-target="album" data-member="title" data-id="<%= @album.id %>">
-				<% if @album.owner_id == current_user.id %>
+				<% if @album.hidden && @album.owner_id == current_user.id %>
 				<span title="Private - Only you can see this album" class="before"><i class="fa fa-lock"></i></span>
 				<% end %>
 				<span class="content"><%= @album.title %></span>

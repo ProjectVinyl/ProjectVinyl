@@ -36,14 +36,18 @@ Rails.application.routes.draw do
   
   get 'profile/:id' => 'artist#view'
   get 'ajax/artist/hovercard' => 'artist#card'
+  get 'ajax/artist/update/banner' => 'artist#banner'
   post 'ajax/artist/lookup' => 'search#autofillArtist'
   patch 'ajax/update/artist' => 'artist#update'
   patch 'ajax/avatar/upload/:async' => 'artist#setavatar'
   patch 'ajax/avatar/upload' => 'artist#setavatar'
+  patch 'ajax/banner/upload/:async' => 'artist#setbanner'
+  patch 'ajax/banner/upload' => 'artist#setbanner'
   
   get 'cover/:id-small' => 'imgs#thumb'
   get 'cover/:id' => 'imgs#cover'
   get 'avatar/:id' => 'imgs#avatar'
+  get 'banner/:id' => 'imgs#banner'
   get 'stream/:id' => 'imgs#stream'
   
   get 'ajax/album/create' => 'album#new'
@@ -55,10 +59,8 @@ Rails.application.routes.draw do
   post 'ajax/update/album' => 'album#update'
   post 'ajax/delete/album/:id' => 'album#delete'
   
-  get 'tags/:name' => 'genre#view'
-
-
   get 'tags' => 'genre#list'
+  get 'tags/:name', to: 'genre#view', constraints: { name: /.*/ }
   get 'ajax/find/tags' => 'genre#find'
   get 'ajax/genres' => 'genre#page'
   

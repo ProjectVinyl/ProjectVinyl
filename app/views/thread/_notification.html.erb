@@ -1,0 +1,3 @@
+<li class="notification <%= notification.sender %><% if notification.unread %> unread<% end %>">
+	<a href="<%= notification.source %>"><%= raw notification.message %></a>
+</li>

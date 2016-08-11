@@ -3,7 +3,7 @@
 <% if @user.banner_set %>
 <style>
 #banner {
-  background-image: url('/banner/<%= @user.id %>');
+  background-image: url('<%= @user.banner %>');
   background-size: cover;
 }
 </style>
@@ -20,6 +20,17 @@
 			</h1>
 			<span class="content bio"><%= raw emotify @user.description %></span>
 		</div>
+		<div class="details space-fix">
+			<h1>Associated Tags</h1>
+			<% if @user.tag_id %>
+			<ul class="tags artist-tags">
+			<%= render partial: 'layouts/genre_thumb_h', locals: {genre_thumb_h: @user.tag} %>
+			</ul>
+			<% end %>
+			<ul class="tags">
+			<%= render partial: 'layouts/genre_thumb_h', collection: @user.tags.includes(:tag_type) %>
+			</ul>
+		</div>
 		<% if @modificationsAllowed %>
 		<div class="actions">
 			<div class="split-button popper">
@@ -35,7 +46,7 @@
 				<% end %>
 					<li class="action confirm-button" data-url="artist/update/banner" data-title="Select Banner Image" data-icon="">
 						<span class="icon"><i class="fa fa-pencil"></i></span>
-						<span class="label">Change Cover Image</span>
+						<span class="label">Change Banner Image</span>
 					</li>
 					<li class="action" id="toggle_edit">
 						<span class="icon"><i class="fa fa-pencil"></i></span>
@@ -50,9 +61,6 @@ $('#toggle_edit').on('click', function() {
 			</div>
 		</div>
 		<% end %>
-		<div class="details">
-			<%= render partial: '/layouts/taglist', locals: { collection: @user.tags } %>
-		</div>
 	</div>
 </section>
 <div class="reorderable" data-target="featured">
@@ -60,7 +68,7 @@ $('#toggle_edit').on('click', function() {
 	<%= render partial: 'featured_section', collection: @featured %>
 </div>
 <section style="width:100%" class="page recent-uploads resize-holder">
-	<h1 class="title resize-target">Recent Uploads<span> (<span class="count"><%= number_with_delimiter @user.videos.length %></span>)</span></h1>
+	<h1 class="title resize-target">Recent Uploads<span> (<span class="count"><%= number_with_delimiter @videos_count %></span>)</span></h1>
 	<% if @modificationsAllowed %><a class="button" href="/upload"><i class="fa fa-plus"></i> New</a><% end %>
 	<ul id="videos" class="horizontal video-list">
 		<%= render partial: '/layouts/video_thumb_h', collection: @videos.records %>
@@ -72,7 +80,7 @@ $('#toggle_edit').on('click', function() {
 	</div>
 </section>
 <section style="width:100%" class="page recent-uploads resize-holder">
-	<h1 class="title resize-target">Recent Albums<span> (<span class="count"><%= number_with_delimiter @user.albums.length %></span>)</span></h1>
+	<h1 class="title resize-target">Recent Albums<span> (<span class="count"><%= number_with_delimiter @albums_count %></span>)</span></h1>
 	<% if @modificationsAllowed %><button class="confirm-button" data-url="album/create" data-title="New Album" data-icon=""><i class="fa fa-plus"></i> New</button><% end %>
 	<ul id="albums" class="album-list horizontal">
 		<%= render partial: '/layouts/album_thumb_h', collection: @albums.records %>

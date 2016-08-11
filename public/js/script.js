@@ -62,8 +62,13 @@ var ajax = (function() {
               if (callbacks.progress) {
                 callbacks.progress.apply(form, [e, message, fill, percentage]);
               } else {
+                if (percentage >= 100) {
+                  form.addClass('waiting');
+                  message.text('Waiting for server...');
+                } else {
+                  message.text(Math.floor(percentage) + '%');
+                }
                 fill.css('width', percentage + '%');
-                message.text(Math.floor(percentage) + '%');
                 message.css({
                   'left': percentage + '%'
                 });
@@ -85,7 +90,7 @@ var ajax = (function() {
         }
       },
       error: function(e, err, msg) {
-        form.addClass('error');
+        form.removeClass('waiting').addClass('error');
         if (callbacks.error) return callbacks.error(message, err, msg);
         message.text(err + ": " + msg);
       },
@@ -320,7 +325,7 @@ var BBC = (function() {
     rich: rich, poor: poor
   }
 })();
-(function() {
+var initFileSelect = (function() {
   function validateTypes(type, file) {
     if (type == 'image') {
       return !!file.type.match(/image\//);
@@ -329,8 +334,7 @@ var BBC = (function() {
     }
     return false;
   }
-  $('.file-select').each(function() {
-    var me = $(this);
+  function initFileSelect(me) {
     var type = me.attr('data-type');
     var allowMulti = me.attr('allow-multi') || false;
     var input = me.find('input').first();
@@ -369,7 +373,12 @@ var BBC = (function() {
         }
       });
     }
+    return me;
+  }
+  $('.file-select').each(function() {
+    initFileSelect($(this));
   });
+  return initFileSelect;
 })();
 (function() {
   var KEY_ENTER = 13, KEY_COMMA = 188, KEY_BACKSPACE = 8;
@@ -516,7 +525,7 @@ $('.pop-out-toggle').on('click', function(e) {
     e.stopPropagation();
   }
 });
-$('.pop-out').on('mousedown click', function(e) {
+$('.pop-out').on('mousedown', function(e) {
   e.stopPropagation();
 });
 $(document).on('mousedown', function() {
@@ -568,8 +577,8 @@ $(document).on('mousedown', function() {
         count.text(likes);
       }
     }
-    ajax.post('/' + me.attr('data-action') + '/' + me.attr('data-id') + '/' + offset, function(xml) {
-      count.text(xml.count);
+    ajax.post(me.attr('data-action') + '/' + me.attr('data-id') + '/' + offset, function(json) {
+      if (count) count.text(json.count);
     });
     return me;
   }
@@ -588,7 +597,7 @@ $(document).on('mousedown', function() {
   function fave() {
     var me = $(this);
     me.toggleClass('starred');
-    ajax.post('/' + me.attr('data-action') + '/' + me.attr('data-id'), function(xml) {
+    ajax.post(me.attr('data-action') + '/' + me.attr('data-id'), function(xml) {
       if (xml.added) {
         me.addClass('starred');
       } else {
@@ -625,50 +634,50 @@ $(document).on('click', '.state-toggle', function(ev) {
   });
 })();
 (function() {
-  $(document).on('click', '.confirm-button', function() {
-    var me = $(this);
+  function init(me) {
+    me.addClass('loaded');
     var action = me.attr('data-action');
     var url = me.attr('data-url');
     var id = me.attr('data-id');
     var callback = me.attr('data-callback');
     var popup;
     if (action == 'delete') {
-      me.on('click', function() {
-        if (!popup) {
-          popup = new Popup(me.attr('data-title'), me.attr('data-icon'), function() {
-            this.content.append('<div class="message_content">Are you sure?</div><div class="foot"></div>');
-            var ok = $('<button>Ok</button>');
-            var cancel = $('<button class="right cancel" type="button">Cancel</button>');
-            ok.on('click', function() {
-              ajax.post(url, function(json) {
-                if (json.ref) {
-                  document.location.replace(json.ref);
-                } else  if (callback) {
-                  window[callback](id);
-                }
-              });
-              popup.close();
+      if (!popup) {
+        popup = new Popup(me.attr('data-title'), me.attr('data-icon'), function() {
+          this.content.append('<div class="message_content">Are you sure?</div><div class="foot"></div>');
+          var ok = $('<button>Ok</button>');
+          var cancel = $('<button class="right cancel" type="button">Cancel</button>');
+          ok.on('click', function() {
+            ajax.post(url, function(json) {
+              if (json.ref) {
+                document.location.replace(json.ref);
+              } else  if (callback) {
+                window[callback](id);
+              }
             });
-            cancel.on('click', function() {
-              popup.close();
-            });
-            this.content.find('.foot').append(ok);
-            this.content.find('.foot').append(cancel);
-            this.setPersistent();
-            this.show();
+            popup.close();
           });
-        }
-      });
+          cancel.on('click', function() {
+            popup.close();
+          });
+          this.content.find('.foot').append(ok);
+          this.content.find('.foot').append(cancel);
+          this.setPersistent();
+          this.show();
+        });
+      } else {
+        popup.show();
+      }
     } else {
-      me.on('click', function() {
-        if (!popup) {
-          popup = Popup.fetch(url, me.attr('data-title'), me.attr('data-icon'));
-          popup.setPersistent();
-        } else {
-          popup.show();
-        }
-      });
+      popup = Popup.fetch(url, me.attr('data-title'), me.attr('data-icon'));
+      popup.setPersistent();
     }
+    me.on('click', function() {
+      popup.show();
+    });
+  }
+  $(document).on('click', '.confirm-button:not(.loaded)', function() {
+    init($(this));
   });
 })();
 (function() {
@@ -781,7 +790,8 @@ var Popup = (function() {
         me.content.html(ev.responseText);
         me.content.find('.cancel').on('click', function() {
           me.close();
-        })
+        });
+        me.center();
       }, 1);
       this.show();
     }));
@@ -798,28 +808,55 @@ var Popup = (function() {
         this.container.addClass('focus');
       }
     },
+    center: function() {
+      this.x = ($(window).width() - this.container.width())/2 + $(window).scrollLeft();
+      this.y = ($(window).height() - this.container.height())/2 + $(window).scrollTop();
+      this.move(this.x, this.y);
+    },
+    bob: function(reverse, callback) {
+      if (reverse) {
+        this.container.css('transition', 'transform 0.5s ease, opacity 0.5s ease');
+        this.container.css({
+          'opacity': 0, 'transform': 'translate(0,30px)'
+        });
+      } else {
+        this.container.css('transition', 'transform 0.5s ease, opacity 0.5s ease');
+        timeoutOn(this, function() {
+          this.container.css({
+            'opacity': 1, 'transform': 'translate(0,0)'
+          });
+        }, 1);
+      }
+      timeoutOn(this, function() {
+        if (callback) callback(this);
+      }, 500);
+    },
     show: function() {
       $('.popup-container.focus').removeClass('focus');
       this.container.addClass('focus');
+      this.container.css({
+        'opacity': 0, 'transform': 'translate(0,30px)'
+      });
       this.container.css('display', '');
       $('body').append(this.container);
       if (this.x <= 0 || this.y <= 0) {
-        this.x = ($(window).width() - this.container.width())/2 + $(window).scrollLeft();
-        this.y = ($(window).height() - this.container.height())/2 + $(window).scrollTop();
-        this.move(this.x, this.y);
+        this.center();
       }
       this.fade = $('<div style="opacity:0" />');
       $('.fades').append(this.fade);
       timeoutOn(this, function() {
         this.fade.css('opacity', 1);
       }, 1);
+      this.bob();
     },
     close: function() {
-      if (!this.persistent) {
-        this.container.remove();
-      } else {
-        this.container.css('display', 'none');
-      }
+      this.bob(1, function(me) {
+        if (!me.persistent) {
+          me.container.remove();
+        } else {
+          me.container.css('display', 'none');
+        }
+      });
       if (this.fade) {
         this.fade.css('opacity', 0);
         timeoutOn(this, function() {
@@ -1062,7 +1099,7 @@ $(document).on('click', '.comment .mention', function(ev) {
       }, 500);
     }, 500);
   }
-  $(document).on('mouseenter', 'a.user-link', function() {
+  $(document).on('mouseenter', '.user-link', function() {
     var sender = $(this);
     var id = sender.attr('data-id');
     var usercard = $('.hovercard[data-id=' + id + ']');

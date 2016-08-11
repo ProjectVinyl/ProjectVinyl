@@ -17,7 +17,9 @@
 				<%= f.label :description %>
 			</td>
 			<td class="field">
-				<%= f.text_area :description %>
+				<%= render layout: '/thread/description_box' do %>
+					<%= f.text_area :description, class: "comment-content" %>
+				<% end %>
 			</td>
 		</tr>
 	</table>

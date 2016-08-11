@@ -1,5 +1,5 @@
 <li class="tag" style="float:left;padding:10px">
 	<a href="/tags/<%= genre_thumb_h.name %>">
-		<span style="color:<%= genre_thumb_h.get_colour %>"><%= genre_thumb_h.name %> (<%= genre_thumb_h.members %>)</span>
+		<span style="color:<%= genre_thumb_h.get_colour %>"><%= genre_thumb_h.name %> (<%= number_with_delimiter genre_thumb_h.members %>)</span>
 	</a>
 </li>

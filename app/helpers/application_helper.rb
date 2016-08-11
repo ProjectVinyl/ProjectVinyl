@@ -55,6 +55,9 @@ module ApplicationHelper
   end
   
   def self.emotify(text)
+    if text.nil? || text.length == 0
+      return ""
+    end
     text = text.gsub(/\[icon\]([^\[]+)\[\/icon\]/, '<i class="fa fa-fw fa-\1"></i>')
     text = text.gsub(/\n/,'<br>').gsub(/\[([\/]?([buis]|sup|sub|hr))\]/, '<\1>').gsub(/\[([\/]?)q\]/, '<\1blockquote>')
     text = text.gsub(/\[url=([^\]]+)\]/,'<a href="\1">').gsub(/\[\/url\]/,'</a>')
@@ -71,6 +74,9 @@ module ApplicationHelper
   end
   
   def self.demotify(text)
+    if text.nil? || text.length == 0
+      return ""
+    end
     text = text.gsub(/<i class="fa fa-fw fa-([^"]+)"><\/i>/, '[icon]\1[/icon]')
     text = text.gsub(/<br>/,'\n').gsub(/<([\/]?([buis]|sup|sub))>/, '[\1]').gsub(/<([\/]?)blockquote>/, '[\1q]')
     text = text.gsub(/<a data-link="1" href="([^"]+)">[^<]*<\/a>/, '\1')

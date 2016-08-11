@@ -10,11 +10,32 @@
 			</h1>
 			<span class="content bio"><%= @tag.description %></span>
 		</div>
-		<div class="details">
+		<span class="tag-list">
+			Used by <%= @totalVideos %> videos and <%= @totalUsers %> users
+		</span>
+		<% if @user %>
+		<span class="user-link right" data-id="<%= @user.id %>">
 			<span class="tag-list">
-				Used by <%= @totalVideos %> videos and <%= @totalArtists %> users
+			Associated User: <a href="<%= @user.link %>"><%= @user.username %></a>
 			</span>
+		</span>
+		<% end %>
+		<% if @implies.length %>
+		<div class="space-fix details">
+			<h1>Implies</h1>
+			<ul class="tags">
+				<%= render partial: "layouts/genre_thumb_h", collection: @implies %>
+			</ul>
 		</div>
+		<% end %>
+		<% if @implied.length %>
+		<div class="space-fix details">
+			<h1>Implied by</h1>
+			<ul class="tags">
+				<%= render partial: "layouts/genre_thumb_h", collection: @implied %>
+			</ul>
+		</div>
+		<% end %>
 	</div>
 </section>
 <section class="page" style="width: 100%">

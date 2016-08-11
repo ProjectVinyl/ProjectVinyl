@@ -4,8 +4,8 @@ class Comment < ActiveRecord::Base
   
   belongs_to :video
   belongs_to :user
-  has_one :artist, :through => :user
   
+  has_many :comment_replies, dependent: :destroy
   has_many :mentions, class_name: "CommentReply", foreign_key: "comment_id"
   
   def self.Finder
@@ -38,13 +38,15 @@ class Comment < ActiveRecord::Base
     bbc.gsub(QUOTED_TEXT,'').scan(REPLY_MATCHER) do |match|
       items << Comment.decode_open_id(match)
     end
-    message = self.user.username + " has <b>replied</b> to your comment on <b>" + self.video.title + "</b>"
-    source = "/view/" + self.video_id.to_s
+    recievers = []
     replied_to = (Comment.where('id IN (?) AND video_id = ?', items, self.video_id).map { |i|
-      i.user.send_notification(message, source)
+      recievers << i.user_id
       '(' + i.id.to_s + ',' + self.id.to_s + ')'
     }).join(', ')
     if replied_to.length > 0
+      Notification.notify_recievers(recievers, self,
+           self.user.username + " has <b>replied</b> to your comment on <b>" + self.video.title + "</b>",
+           "/view/" + self.video_id.to_s)
       ActiveRecord::Base.connection.execute('INSERT INTO comment_replies (`comment_id`,`parent_id`) VALUES ' + replied_to)
     end
   end

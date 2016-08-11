@@ -4,15 +4,15 @@ class User < ActiveRecord::Base
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :trackable, :validatable
   
-  has_many :votes
-  has_many :notifications
+  has_many :votes, dependent: :destroy
+  has_many :notifications, dependent: :destroy
   
   belongs_to :album, foreign_key: "star_id"
   has_many :album_items, :through => :album
   
   has_many :videos
-  has_many :all_albums, class_name: "Album", foreign_key: "owner_id"
-  has_many :artist_genres
+  has_many :all_albums, class_name: "Album", foreign_key: "user_id"
+  has_many :artist_genres, dependent: :destroy
   has_many :tags, :through => :artist_genres
   belongs_to :tag
   
@@ -46,8 +46,8 @@ class User < ActiveRecord::Base
   end
   
   def removeSelf
-    self.videos.each do |video|
-      video.removeSelf
+    self.all_albums.each do |album|
+      album.removeSelf
     end
     self.destroy
   end
@@ -58,7 +58,13 @@ class User < ActiveRecord::Base
   
   def stars
     if self.album.nil?
-      self.album = self.create_album(title: 'Starred Videos', description: 'My Favourites', hidden: true)
+      self.album = self.create_album(
+        owner_id: self.id,
+        title: 'Starred Videos',
+        safe_title: 'Starred-Videos',
+        description: 'My Favourites',
+        hidden: true)
+      self.save
     end
     return self.album
   end
@@ -93,6 +99,9 @@ class User < ActiveRecord::Base
   end
   
   def set_name(name)
+    if !name || name.length == 0
+      name = 'Background Pony #' + self.id.to_s
+    end
     self.username = name
     self.safe_name = ApplicationHelper.url_safe(name)
     self.save
@@ -103,6 +112,10 @@ class User < ActiveRecord::Base
   
   def avatar
     return '/avatar/' + self.id.to_s
+  end
+  
+  def banner
+    return '/banner/' + self.id.to_s
   end
   
   def link

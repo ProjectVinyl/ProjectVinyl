@@ -59,7 +59,12 @@ class ThreadController < ApplicationController
   
   def notifications
     if user_signed_in?
-      @notifications = current_user.notifications
+      @all = current_user.notifications.order(:created_at).reverse_order
+      @notifications = current_user.notification_count
+      @today = @all.where('created_at > ?', Time.zone.now.beginning_of_day)
+      @yesterday = @all.where('created_at > ? AND created_at < ?', Time.zone.yesterday.beginning_of_day, Time.zone.yesterday.end_of_day)
+      @week = @all.where('created_at > ? AND created_at < ?', 1.week.ago, Time.zone.now.yesterday.beginning_of_day)
+      current_user.notifications.where('created_at < ?', 1.week.ago).delete_all
       current_user.notification_count = 0
       current_user.save
     else

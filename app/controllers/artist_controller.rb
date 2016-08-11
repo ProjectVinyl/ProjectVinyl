@@ -3,7 +3,9 @@ class ArtistController < ApplicationController
     if @user = User.where(id: params[:id].split(/-/)[0]).first
       @videos = user_signed_in? && current_user.id == @user.id ? @user.videos : @user.videos.where(hidden: false)
       @videos = Pagination.paginate(@videos, 0, 8, true)
+      @videos_count = @videos.count
       @albums = Pagination.paginate(@user.albums, 0, 8, true)
+      @albums_count = @albums.count
       @modificationsAllowed = user_signed_in? && (current_user.id == @user.id || current_user.is_admin)
       @featured = @user.albums.where('featured > 0').order(:featured).reverse_order
     end
@@ -18,7 +20,7 @@ class ArtistController < ApplicationController
         user = current_user
       end
       if user
-        user.set_name(input[:name])
+        user.set_name(input[:username])
         user.description = ApplicationHelper.demotify(input[:description])
         user.bio = ApplicationHelper.demotify(input[:bio])
         user.setTags(input[:tag_string])
@@ -42,9 +44,13 @@ class ArtistController < ApplicationController
         user = current_user
       end
       if user
-        user.setBanner(params[:delete] ? false : params[:file])
+        user.setBanner(params[:erase] ? false : params[:user][:banner])
         user.save
-        render status: 200, nothing: true
+        if params[:async]
+          render json: { result: "success" }
+        else
+          redirect_to action: "view", id: user.id
+        end
         return
       end
     end
@@ -79,5 +85,10 @@ class ArtistController < ApplicationController
       return
     end
     render status: 404, nothing: true
+  end
+  
+  def banner
+    @user = current_user
+    render partial: 'banner'
   end
 end
