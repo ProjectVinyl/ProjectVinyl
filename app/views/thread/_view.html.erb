@@ -18,7 +18,7 @@ var disqus_config = function () {
 <% if user_signed_in? %>
 <div class="comment post-box">
 	<div class="artist-bio bio">
-		<a href="<%= current_user.link %>">
+		<a class="user-link" data-id="<%= current_user.id %>" href="<%= current_user.link %>">
 			<span class="avatar medium">
 				<span style="background-image:url('<%= current_user.avatar %>');"></span>
 			</span>
@@ -26,7 +26,7 @@ var disqus_config = function () {
 	</div>
 	<div class="content editing">
 		<div class="name">
-			<a href="<%= current_user.link %>"><%= current_user.username %></a>
+			<a class="user-link" data-id="<%= current_user.id %>" href="<%= current_user.link %>"><%= current_user.username %></a>
 		</div>
 		<div class="comment-content preview"></div>
 		<textarea class="comment-content"></textarea>

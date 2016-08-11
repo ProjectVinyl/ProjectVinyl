@@ -5,42 +5,128 @@ class User < ActiveRecord::Base
          :recoverable, :rememberable, :trackable, :validatable
   
   has_many :votes
-  has_one :album, as: :owner
-  has_many :album_items, :through => :album
   has_many :notifications
-  belongs_to :artist
+  
+  belongs_to :album, foreign_key: "star_id"
+  has_many :album_items, :through => :album
+  
+  has_many :videos
+  has_many :all_albums, class_name: "Album", foreign_key: "owner_id"
+  has_many :artist_genres
+  has_many :tags, :through => :artist_genres
+  belongs_to :tag
+  
+  def albums
+    return self.all_albums.where(hidden: false)
+  end
+  
+  def self.by_name_or_id(id)
+    return User.where('id = ? OR username = ?', id, id).first
+  end
+  
+  def self.tag_for(user)
+    if user.tag_id
+      return user.tag
+    end
+    if !(tag = Tag.where(short_name: user.username, tag_type_id: 1).first)
+      tag = Tag.create(tag_type_id: 1).set_name(user.username)
+    end
+    return tag
+  end
+  
+  def preload_tags
+    tags = Tag.joins('INNER JOIN `artist_genres` ON `artist_genres`.tag_id = `tags`.id').where('`artist_genres`.user_id = ? AND `tags`.user_count > 0', self.id)
+    tags.update_all('`tags`.user_count = `tags`.user_count - 1')
+    ArtistGenre.where(user_id: self.id).delete_all
+    return self.artist_genres
+  end
+  
+  def inc(ids)
+    Tag.where('id IN (?)', ids).update_all('user_count = user_count + 1')
+  end
+  
+  def removeSelf
+    self.videos.each do |video|
+      video.removeSelf
+    end
+    self.destroy
+  end
+  
+  def tag_string
+    return Tag.tag_string(self.tags)
+  end
   
   def stars
     if self.album.nil?
-      self.create_album(title: 'Starred Videos', 'description': 'My Favourites')
+      self.album = self.create_album(title: 'Starred Videos', description: 'My Favourites', hidden: true)
     end
     return self.album
   end
   
-  def username
-    if self.artist_id
-      return self.artist.name
+  def taglist
+    if self.is_admin
+      return "Admin"
     end
-    return 'Background Pony #' + self.id.to_s
+    return "User"
+  end
+  
+  def setTags(tags)
+    if tags
+      Tag.loadTags(tags, self)
+    end
+  end
+  
+  def setAvatar(avatar)
+    if !avatar || avatar.content_type.include?('image/')
+      if img('avatar', avatar)
+        self.mime = avatar.content_type
+      else
+        self.mime = nil
+      end
+    end
+  end
+  
+  def setBanner(banner)
+    if !banner || banner.content_type.include?('image/')
+      self.banner_set = img('banner', banner)
+    end
+  end
+  
+  def set_name(name)
+    self.username = name
+    self.safe_name = ApplicationHelper.url_safe(name)
+    self.save
+    if self.tag
+        user.tag.set_name(name)
+    end
   end
   
   def avatar
-    if self.artist_id
-      return '/avatar/' + self.artist_id.to_s
-    end
-    return '/images/default-avatar.png'
+    return '/avatar/' + self.id.to_s
   end
   
   def link
-    if self.artist_id
-      return '/artist/' + self.artist_id.to_s + '-' + ApplicationHelper.url_safe(self.username)
-    end
-    return '/users/edit'
+    return '/profile/' + self.id.to_s + '-' + self.safe_name
   end
   
   def send_notification(message, source)
     self.notifications.create(message: message, source: source)
     self.notification_count = self.notification_count + 1
     self.save
+  end
+  
+  private
+  def img(type, uploaded_io)
+    path = Rails.root.join('public', type, self.id.to_s)
+    if File.exists?(path)
+      File.delete(path)
+    end
+    if uploaded_io
+      File.open(path, 'wb') do |file|
+        file.write(uploaded_io.read)
+        return true
+      end
+    end
+    return false
   end
 end

@@ -4,7 +4,7 @@ class EmbedController < ActionController::Base
   protect_from_forgery with: :exception
   def view
     if @video = Video.where(id: params[:id].split(/-/)[0]).first
-      @artist = @video.artist
+      @user = @video.user
     end
   end
 end

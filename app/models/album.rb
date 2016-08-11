@@ -1,21 +1,23 @@
 class Album < ActiveRecord::Base
-  belongs_to :owner, polymorphic: true
+  belongs_to :user, foreign_key: "owner_id"
   has_many :album_items
   has_many :videos, :through => :album_items
   
-  def ownedBy(user)
-    if self.owner_type == 'User'
-      return self.owner_id == user.id
-    elsif self.owner_type == 'Artist'
-      return user.is_admin || (user.artist_id && self.owner_id == user.artist_id)
-    end
+  def setTitle(title)
+    self.title = title
+    self.safe_title = ApplicationHelper.url_safe(title)
+    self.safe
   end
   
-  def transferTo(artist)
-    self.artist = artist
+  def ownedBy(user)
+    return self.owner_id == user.id || (self.hidden == false && user.is_admin)
+  end
+  
+  def transferTo(user)
+    self.user = user
     self.save
     self.videos.each do |video|
-      video.transferTo(artist)
+      video.transferTo(user)
     end
   end
   

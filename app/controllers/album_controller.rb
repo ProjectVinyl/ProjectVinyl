@@ -5,8 +5,8 @@ class AlbumController < ApplicationController
         render 'layouts/error', locals: { title: 'Access Denied', description: "You can't do that right now." }
         return
       end
-      @artist = @album.owner
-      @items = @album.album_items.includes(:artist).order(:index)
+      @user = @album.user
+      @items = @album.album_items.includes(:user).order(:index)
       @modificationsAllowed = user_signed_in? && @album.ownedBy(current_user)
     end
   end
@@ -21,20 +21,19 @@ class AlbumController < ApplicationController
   
   def create
     if user_signed_in?
-      if current_user.artist_id
-        album = params[:album]
-        initial = album[:initial]
-        album = Artist.find(current_user.artist_id).albums.create(title: ApplicationHelper.demotify(album[:title]), description: ApplicationHelper.demotify(album[:description]))
-        if initial
-          if initial = Video.where(id: initial).first
-            album.addItem(initial)
-            redirect_to action: 'view', controller: "video", id: initial.id
-            return
-          end
+      album = params[:album]
+      initial = album[:initial]
+      album = current_user.albums.create(description: ApplicationHelper.demotify(album[:description]))
+      album.setTitle(ApplicationHelper.demotify(album[:title]))
+      if initial
+        if initial = Video.where(id: initial).first
+          album.addItem(initial)
+          redirect_to action: 'view', controller: "video", id: initial.id
+          return
         end
-        redirect_to action: 'view', id: album.id
-        return
       end
+      redirect_to action: 'view', id: album.id
+      return
     end
     redirect_to action: "index", controller: "welcome"
   end
@@ -47,8 +46,7 @@ class AlbumController < ApplicationController
           album.description = value
           album.save
         elsif params[:field] == 'title'
-          album.title = value
-          album.save
+          album.setTitle(value)
         end
         render status: 200, nothing: true
         return
@@ -59,10 +57,10 @@ class AlbumController < ApplicationController
   
   def delete
     if user_signed_in? && album = Album.where(id: params[:id]).first
-      if album.owner_type == 'Artist' && (current_user.is_admin || album.owner.id == current_user.artist_id)
+      if album.owner_type == 'Artist' && (current_user.is_admin || album.owner_id == current_user.id)
         album.destroy
         render json: {
-          ref: url_for(action: "view", controller: "artist", id: album.owner.id)
+          ref: url_for(action: "view", controller: "artist", id: album.owner_id)
         }
         return
       end
@@ -141,11 +139,11 @@ class AlbumController < ApplicationController
   
   def page
     @page = params[:page].to_i
-    @artist = params[:artist]
+    @user = params[:user]
     if @artist.nil?
       @results = Pagination.paginate(Album.where(owner_type: 'Artist').order(:created_at), @page, 50, true)
     else
-      @results = Pagination.paginate(Artist.find(@artist.to_i).albums.order(:created_at), @page, 8, true)
+      @results = Pagination.paginate(User.find(@user.to_i).albums.order(:created_at), @page, 8, true)
     end
     render json: {
       content: render_to_string(partial: '/layouts/album_thumb_h.html.erb', collection: @results.records),
@@ -156,9 +154,9 @@ class AlbumController < ApplicationController
   
   def starred
     if user_signed_in?
-      @artist = Artist.where(id: current_user.artist_id).first
-      @items = current_user.album_items.order(:index)
+      @user = current_user
       @album = current_user.stars
+      @items = current_user.album_items.order(:index)
       @modificationsAllowed = true
     end
     render template: '/album/view'

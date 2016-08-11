@@ -4,7 +4,7 @@
 <% end %>
 <% end %>
 <section class="page column-left">
-	<div id="video" style="background-image: url('/cover/<%= @video.id %>.png');" data-time="<%= @time %>" data-title="<%= @video.title %>" data-artist="<%= @artist.name %>" data-<% if @video.audio_only %>audio<% else %>video<% end %>="<%= @video.id %>" data-mime="<%= @video.file + "|" + @video.mime %>" <%if @album %>data-autoplay="true"<% end %> class="video"></div>
+	<div id="video" style="background-image: url('/cover/<%= @video.id %>.png');" data-time="<%= @time %>" data-title="<%= @video.title %>" data-artist="<%= @user.username %>" data-<% if @video.audio_only %>audio<% else %>video<% end %>="<%= @video.id %>" data-mime="<%= @video.file + "|" + @video.mime %>" <%if @album %>data-autoplay="true"<% end %> class="video"></div>
 	<% if !@video.processed %>
 	<div class="notice pending">This video is still being processed by our background ponies. If it does not play correctly try again later.</div>
 	<% end %>
@@ -19,7 +19,7 @@
 			<span style="display:none">11</span>
 		</h2>
 		<div class="tag-list subheading">
-			<span class="uploaded">Uploaded on <%= @video.created_at.to_time.strftime('%e %B %Y') %> by <%= @artist.name %></span>
+			<span class="uploaded">Uploaded on <%= @video.created_at.to_time.strftime('%e %B %Y') %> by <%= @user.username %></span>
 			<span class="views right"><%= number_with_delimiter @video.views %> views</span>
 		</div>
 		<span class="editable post-content" data-target="video" data-member="description" data-id="<%= @video.id %>">
@@ -31,7 +31,7 @@
 			<span class="content "><%= @video.title %></span>
 		</h2>
 		<div class="tag-list subheading">
-			<span class="uploaded">Uploaded on <%= @video.created_at.to_time.strftime('%e %B %Y') %> by <%= @artist.name %></span>
+			<span class="uploaded">Uploaded on <%= @video.created_at.to_time.strftime('%e %B %Y') %> by <%= @user.username %></span>
 			<span class="views right"><%= number_with_delimiter @video.views %> views</span>
 		</div>
 		<span class="post-content">
@@ -83,7 +83,7 @@
 				<% end %>
 					<li class="action">
 				<% if user_signed_in? %>
-						<a download target="_blank" href="/download/<%= @video.id %>-<%= url_safe @video.title %>">
+						<a download target="_blank" href="/download/<%= @video.id %>-<%= @video.safe_title %>">
 				<% else %>
 						<a target="_blank" href="/users/sign_in">
 				<% end %>
@@ -112,7 +112,7 @@
 							New Album
 						</span>
 					</li>
-					<% @video.artist.albums.each do |album| %>
+					<% @video.user.albums.each do |album| %>
 					<li class="action toggle" data-action="togglealbum" data-target="video" data-id="<%= @video.id %>" data-item="<%= album.id %>">
 						<span class="icon">
 						<% if album.album_items.where(video_id: @video.id).first %>

@@ -18,7 +18,7 @@ class AdminController < ApplicationController
     end
     @modificationsAllowed = true
     @video = Video.find(params[:id])
-    @artist = @video.artist
+    @user = @video.user
   end
   
   def album
@@ -36,20 +36,19 @@ class AdminController < ApplicationController
       render 'layouts/error', locals: { title: 'Access Denied', description: "You can't do that right now." }
       return
     end
-    @artist = Artist.find(params[:id])
+    @user = User.find(params[:id])
   end
   
   def transferItem
     if user_signed_in? && current_user.is_admin
-      artist = Artist.by_name_or_id(params[:item][:artist_id])
-      if artist
+      if (user = User.by_name_or_id(params[:item][:user_id]))
         if params[:type] == 'video'
           item = Video.where(id: params[:item][:id]).first
         elsif params[:type] == 'album'
           item = Album.where(id: params[:item][:id]).first
         end
         if item
-          item.transferTo(artist)
+          item.transferTo(user)
           redirect_to action: params[:type], id: params[:item][:id]
           return
         end

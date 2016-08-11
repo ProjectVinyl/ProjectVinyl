@@ -1,9 +1,9 @@
-<% if @artist %>
-<% title @artist.name %>
-<% if @artist.banner_set %>
+<% if @user %>
+<% title @user.username %>
+<% if @user.banner_set %>
 <style>
 #banner {
-  background-image: url('/banner/<%= @artist.id %>');
+  background-image: url('/banner/<%= @user.id %>');
   background-size: cover;
 }
 </style>
@@ -11,14 +11,14 @@
 <section style="width:100%" class="page artist-bio">
 	<div class="post">
 		<div class="space-fix">
-			<span class="date registered right underline">Registered <span title="<%= @artist.created_at %>"><%= since @artist.created_at %></span></span>
+			<span class="date registered right underline">Registered <span title="<%= @user.created_at %>"><%= since @user.created_at %></span></span>
 			<span class="avatar large">
-				<span style="background-image:url('/avatar/<%= @artist.id %>');"></span>
+				<span style="background-image:url('<%= @user.avatar %>');"></span>
 			</span>
 			<h1 class="title">
-				<a class="name" href="/artist/<%= @artist.id %>-<%= url_safe @artist.name %>"><%= @artist.name %></a>
+				<a class="name" href="<%= @user.link %>"><%= @user.username %></a>
 			</h1>
-			<span class="content bio"><%= raw emotify @artist.description %></span>
+			<span class="content bio"><%= raw emotify @user.description %></span>
 		</div>
 		<% if @modificationsAllowed %>
 		<div class="actions">
@@ -27,7 +27,7 @@
 				<ul class="pop-out">
 				<% if user_signed_in? && current_user.is_admin %>
 					<li class="action">
-						<a href="/admin/artist/<%= @artist.id %>">
+						<a href="/admin/artist/<%= @user.id %>">
 							<span class="icon"><i class="fa fa-gavel"></i></span>
 							<span class="label">Admin</span>
 						</a>
@@ -51,7 +51,7 @@ $('#toggle_edit').on('click', function() {
 		</div>
 		<% end %>
 		<div class="details">
-			<%= render partial: '/layouts/taglist', locals: { collection: @artist.tags } %>
+			<%= render partial: '/layouts/taglist', locals: { collection: @user.tags } %>
 		</div>
 	</div>
 </section>
@@ -60,26 +60,26 @@ $('#toggle_edit').on('click', function() {
 	<%= render partial: 'featured_section', collection: @featured %>
 </div>
 <section style="width:100%" class="page recent-uploads resize-holder">
-	<h1 class="title resize-target">Recent Uploads<span> (<span class="count"><%= number_with_delimiter @artist.videos.length %></span>)</span></h1>
+	<h1 class="title resize-target">Recent Uploads<span> (<span class="count"><%= number_with_delimiter @user.videos.length %></span>)</span></h1>
 	<% if @modificationsAllowed %><a class="button" href="/upload"><i class="fa fa-plus"></i> New</a><% end %>
 	<ul id="videos" class="horizontal video-list">
 		<%= render partial: '/layouts/video_thumb_h', collection: @videos.records %>
 	</ul>
 	<div class="load-more">
 	<% if @videos.pages > 0 %>
-		<button data-page="0" data-type="videos" data-id="<%= @artist.id %>" data-target="videos">Load More</button>
+		<button data-page="0" data-type="videos" data-id="<%= @user.id %>" data-target="videos">Load More</button>
 	<% end %>
 	</div>
 </section>
 <section style="width:100%" class="page recent-uploads resize-holder">
-	<h1 class="title resize-target">Recent Albums<span> (<span class="count"><%= number_with_delimiter @artist.albums.length %></span>)</span></h1>
+	<h1 class="title resize-target">Recent Albums<span> (<span class="count"><%= number_with_delimiter @user.albums.length %></span>)</span></h1>
 	<% if @modificationsAllowed %><button class="confirm-button" data-url="album/create" data-title="New Album" data-icon=""><i class="fa fa-plus"></i> New</button><% end %>
 	<ul id="albums" class="album-list horizontal">
 		<%= render partial: '/layouts/album_thumb_h', collection: @albums.records %>
 	</ul>
 	<div class="load-more">
 	<% if @albums.pages > 0 %>
-		<button data-page="0" data-type="albums" data-id="<%= @artist.id %>" data-target="albums">Load More</button>
+		<button data-page="0" data-type="albums" data-id="<%= @user.id %>" data-target="albums">Load More</button>
 	<% end %>
 	</div>
 </section>

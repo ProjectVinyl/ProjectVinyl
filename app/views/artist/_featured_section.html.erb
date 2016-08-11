@@ -10,7 +10,7 @@
 		<ul id="videos" class="horizontal video-list">
 			<%= render partial: '/layouts/video_thumb_h', collection: featured_section.videos.limit(4) %>
 			<li class="generic thumb">
-				<a class="thumb" href="/album/<%= featured_section.id %>-<%= url_safe featured_section.title %>">
+				<a class="thumb" href="/album/<%= featured_section.id %>-<%= featured_section.safe_title %>">
 					<span class="tile link">
 						View All
 						<br>

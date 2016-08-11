@@ -7,7 +7,7 @@
 		</div>
 		<% if @modificationsAllowed %>
 			<h1 class="editable short title" data-target="album" data-member="title" data-id="<%= @album.id %>">
-				<% if @album.owner == current_user %>
+				<% if @album.owner_id == current_user.id %>
 				<span title="Private - Only you can see this album" class="before"><i class="fa fa-lock"></i></span>
 				<% end %>
 				<span class="content"><%= @album.title %></span>
@@ -22,11 +22,7 @@
 			<div class="content description"><%= raw emotify @album.description %></div>
 		<% end %>
 			<span class="tag-list underline">
-				<% if @artist %>
-				By <a href="/artist/<%= @artist.id %>-<%= url_safe @artist.name %>"><%= @artist.name %></a>
-				<% else %>
-				<a href="">#<%= current_user.id %></a>
-				<% end %>
+				By <a href="<%= @user.link %>"><%= @user.username %></a>
 				| <%= number_with_delimiter @items.count %> videos
 				| last updated <%= since @album.updated_at %>
 			</span>
@@ -42,7 +38,7 @@
 							</a>
 						</li>
 					<% end %>
-					<% if @modificationsAllowed && @album.owner_type != 'User' %>
+					<% if @modificationsAllowed && !@album.hidden %>
 						<li class="action">
 							<a id="delete_album" data-title="Delete Album" data-icon="warning" data-action="delete" data-url="delete/album/<%= @album.id %>" class="confirm-button">
 								<span class="icon"><i class="fa fa-trash"></i></span>
@@ -52,7 +48,7 @@
 					<% end %>
 					</ul>
 				</div>
-				<a class="button action" style="margin-right: 10px;" <% if @items.first %>href="/view/<%= @items.first.video.id %>-<%= url_safe @items.first.video.title %>?list=<%= @album.id %>&index=<%= @items.first.index %>"<% end %>><i class="fa fa-play"></i> Play All</a>
+				<a class="button action" style="margin-right: 10px;" <% if @items.first %>href="/view/<%= @items.first.video.id %>-<%= @items.first.video.safe_title %>?list=<%= @album.id %>&index=<%= @items.first.index %>"<% end %>><i class="fa fa-play"></i> Play All</a>
 			</div>
 	</div>
 </section>

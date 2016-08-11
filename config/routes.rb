@@ -34,14 +34,10 @@ Rails.application.routes.draw do
   get 'videos' => 'video#list'
   get 'ajax/videos' => 'video#page'
   
-  get 'artist/create' => 'artist#new'
-  get 'artist/:id' => 'artist#view'
-  get 'artists' => 'artist#list'
-  get 'ajax/artists' => 'artist#page'
+  get 'profile/:id' => 'artist#view'
+  get 'ajax/artist/hovercard' => 'artist#card'
   post 'ajax/artist/lookup' => 'search#autofillArtist'
-  post 'ajax/create/artist' => 'artist#create'
   patch 'ajax/update/artist' => 'artist#update'
-  post 'ajax/delete/artist/:id' => 'admin#deleteArtist'
   patch 'ajax/avatar/upload/:async' => 'artist#setavatar'
   patch 'ajax/avatar/upload' => 'artist#setavatar'
   

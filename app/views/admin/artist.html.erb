@@ -1,5 +1,5 @@
 <% lim "900px" %>
 <section style="width:100%;" class="page properties">
-	<h1>Edit Artist</h1>
-	<%= render partial: 'artist/edit', locals: { artist: @artist, url: "/ajax/update/artist?artist_id=" + @artist.id.to_s } %>
+	<h1>Edit Profile</h1>
+	<%= render partial: 'artist/edit', locals: { user: @user, url: "/ajax/update/artist?artist_id=" + @user.id.to_s } %>
 </section>

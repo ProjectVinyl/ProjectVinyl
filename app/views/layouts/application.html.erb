@@ -20,7 +20,7 @@
 						<select name="type">
 							<option value="0">Song</option>
 							<option value="1">Album</option>
-							<option value="2">Artist</option>
+							<option value="2">User</option>
 							<option value="3">Tag</option>
 						</select>
 					</div>
@@ -48,9 +48,8 @@
 						</a>
 					</li>
 					<% end %>
-					<% if current_artist %>
 					<li>
-						<a href="/artist/<%= current_artist.id %>-<%= url_safe current_artist.name %>" rel="nofollow" title="settings">
+						<a href="<%= current_user.link %>" rel="nofollow" title="settings">
 							<span class="icon"><i class="fa fa-fw fa-user"></i></span>
 							<span class="label">Profile</span>
 						</a>
@@ -61,7 +60,6 @@
 							<span class="label">Upload</span>
 						</a>
 					</li>
-					<% end %>
 					<li>
 						<a href="/stars">
 							<span class="icon"><i class="fa fa-fw fa-star" ></i></span>
@@ -104,7 +102,7 @@
 		</div>
 		<ul>
 			<li class="albums<% if params[:action] == 'albums' %> selected<% end %>"><a href="/albums">Albums</a></li>
-               		<li class="artists<% if params[:action] == 'artists' %> selected<% end %>"><a href="/artists">Artists</a></li>
+               		<li class="artists<% if params[:action] == 'videos' %> selected<% end %>"><a href="/videos">Videos</a></li>
 			<li class="genres<% if params[:action] == 'tags' %> selected<% end %>"><a href="/tags">Tags</a></li>
 		</ul>
 	</header>

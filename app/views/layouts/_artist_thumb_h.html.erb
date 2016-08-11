@@ -1,9 +1,9 @@
 <li class="bio">
-	<a href="/artist/<%= artist_thumb_h.id %>-<%= url_safe artist_thumb_h.name %>">
+	<a href="<%= artist_thumb_h.link %>">
 		<span class="avatar">
-			<span style="background-image: url('/avatar/<%= artist_thumb_h.id %>');"></span>
+			<span style="background-image: url('<%= artist_thumb_h.avatar %>');"></span>
 		</span>
-		<h2><%= artist_thumb_h.name %></h2>
+		<h2><%= artist_thumb_h.username %></h2>
 	</a>
 	<div class="tag-list">
 		<%= number_with_delimiter artist_thumb_h.videos.length %> video<%= artist_thumb_h.videos.length == 1 ? "" : "s" %>

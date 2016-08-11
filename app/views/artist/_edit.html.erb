@@ -9,9 +9,9 @@
 			Avatar
 		</td>
 		<td class="field center">
-		<%= form_for(artist, as: "artist", url: "/ajax/avatar/upload", "html": { "class": "async" }) do |f| %>
+		<%= form_for(user, as: "user", url: "/ajax/avatar/upload", "html": { "class": "async" }) do |f| %>
 			<div id="avatar-upload" class="avatar file-select image-selector uploaded-preview" data-type="image">
-				<span class="preview" style="background-image: url('/avatar/<%= artist.id || 0 %>');"></span>
+				<span class="preview" style="background-image: url('<%= user.avatar %>');"></span>
 				<span class="drop-icon" style="box-shadow: none;">
 					<i class="fa fa-camera"></i>
 				</span>
@@ -34,7 +34,7 @@ $('#avatar-upload').on('accept', function(e, file) {
     'success': function() {
        form.removeClass('uploading');
        var av = $('#login .avatar.small span');
-       av.css('background-image', 'url(/avatar/<%= current_user.id %>?' + new Date().getTime() + ')');
+       av.css('background-image', 'url(<%= current_user.avatar %>?' + new Date().getTime() + ')');
     }
   });
 });
@@ -43,63 +43,58 @@ $('#avatar-upload').on('accept', function(e, file) {
 	</tr>
 </table>
 <% end %>
-<%= form_for(artist, as: "artist", url: url) do |f| %>
-	<table>
-		<tr class="section">
-			<td colspan="2">
-				Basic Information
-			</td>
-		</tr>
-		<tr>
-			<td class="label">
-				<%= f.label :name %>
-			</td>
-			<td class="field popper auto-lookup" data-action="artist">
-				<%= f.text_field :name, autofocus: true, autocomplete: "off" %>
-				<ul class="pop-out"></ul>
-			</td>
-		</tr>
-		<tr>		
-			<td class="label">
-			<%= f.label "Short Bio" %>
-			</td>
-			<td class="field">
-			<%= f.text_area :bio %>
-			</td>
-		</tr>
-		<tr>
-			<td class="label">
-			<%= f.label :description %>
-			</td>
-			<td class="field">
-			<%= f.text_area :description %>
-			</td>
-		</tr>
-		<tr>
-			<td class="label">
-			<%= f.label :genres %>
-			</td>
-			<td class="field">
-			<%= render layout: 'layouts/tageditor' do %>
-				<%= f.text_area :tag_string %>
-			<% end %>
-			</td>
-		</tr>
-		<tr class="actions">
-			<td class="label">
-			</td>
-			<td class="field">
-				<%= f.submit "Save Changes", class: "green" %>
-			</td>
-		</tr>
-	<% end %>
-	<% if current_user.is_admin %>
-		<tr class="actions">
+<%= form_for(user, as: "user", url: url) do |f| %>
+<table>
+	<tr class="section">
+		<td colspan="2">
+			Basic Information
+		</td>
+	</tr>
+	<tr>
 		<td class="label">
-			</td>
-			<td class="field">
-				<button class="confirm-button action red" data-action="delete" data-url="delete/artist/<%= artist.id %>" data-title="Delete Artist" data-icon="warning" type="button"><i class=\"fa fa-trash\"></i> Delete Artist</button>
-			</td>
-		</tr>
-	</table>
+			<%= f.label :display_name %>
+		</td>
+		<td class="field popper auto-lookup" data-action="artist">
+			<%= f.text_field :username, autofocus: true, autocomplete: "off" %>
+			<ul class="pop-out"></ul>
+		</td>
+	</tr>
+	<tr>		
+		<td class="label">
+		<%= f.label "Short Bio" %>
+		</td>
+		<td class="field">
+		<%= render layout: '/thread/description_box' do %>
+			<%= f.text_area :bio, class: "comment-content" %>
+		<% end %>
+		</td>
+	</tr>
+	<tr>
+		<td class="label">
+		<%= f.label :description %>
+		</td>
+		<td class="field">
+		<%= render layout: '/thread/description_box' do %>
+			<%= f.text_area :description, class: "comment-content" %>
+		<% end %>
+		</td>
+	</tr>
+	<tr>
+		<td class="label">
+		<%= f.label :genres %>
+		</td>
+		<td class="field">
+		<%= render layout: 'layouts/tageditor' do %>
+			<%= f.text_area :tag_string %>
+		<% end %>
+		</td>
+	</tr>
+	<tr class="actions">
+		<td class="label">
+		</td>
+		<td class="field">
+			<%= f.submit "Save Changes", class: "green" %>
+		</td>
+	</tr>
+</table>
 <% end %>

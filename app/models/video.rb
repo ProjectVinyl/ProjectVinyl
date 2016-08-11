@@ -1,12 +1,12 @@
 class Video < ActiveRecord::Base
-  belongs_to :artist
+  belongs_to :user
   has_many :album_items
   has_many :albums, :through => :album_items
   has_many :video_genres
   has_many :tags, :through => :video_genres
   
-  def transferTo(artist)
-    self.artist = artist
+  def transferTo(user)
+    self.user = user
     self.save
   end
   
@@ -25,6 +25,11 @@ class Video < ActiveRecord::Base
   
   def cover_path
     return Rails.root.join('public', 'cover', self.id.to_s)
+  end
+  
+  def setTitle(title)
+    self.title = title
+    self.safe_title = ApplicationHelper.url_safe(title)
   end
   
   def setFile(media)
@@ -90,8 +95,14 @@ class Video < ActiveRecord::Base
   end
   
   def preload_tags
+    tags = Tag.joins('INNER JOIN `video_genres` ON `video_genres`.tag_id = `tags`.id').where('`video_genres`.video_id = ? AND `tags`.video_count > 0', self.id)
+    tags.update_all('`tags`.video_count = `tags`.video_count - 1')
     VideoGenre.where(video_id: self.id).delete_all
     return self.video_genres
+  end
+  
+  def inc(ids)
+    Tag.where('id IN (?)', ids).update_all('video_count = video_count + 1')
   end
   
   def tag_string

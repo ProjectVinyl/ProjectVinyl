@@ -1,5 +1,5 @@
 		<div class="page column-left">
-			<h1>Searching for <%= @type_label %>s containing '<%= @query %>'</h1>
+			<h1>Searching for <%= @type_label %>s matching '<%= @query %>'</h1>
 			<% content_for :data do %>query=<%= @query %>&type=<%= @type %>&order=<%= @ascending ? 1 : 0 %>&orderby=<%= @orderby %><% end %>
 			<%= render layout: '/layouts/paginated', locals: {type: 'search',paginated: @results} do %>
 				<section class="search-result">
@@ -39,7 +39,7 @@
 								<select name="type" style="width:100%">
 									<option value="0"<% if @type == 0 %> selected<% end %>>Song</option>
 									<option value="1"<% if @type == 1 %> selected<% end %>>Album</option>
-									<option value="2"<% if @type == 2 %> selected<% end %>>Artist</option>
+									<option value="2"<% if @type == 2 %> selected<% end %>>User</option>
 									<option value="3"<% if @type == 3 %> selected<% end %>>Tag</option>
 								</select>
 							</div>

@@ -11,13 +11,14 @@ class SearchController < ApplicationController
       @results = Album.where('title LIKE ?', "%#{@query}%")
       @type_label= 'Album'
     elsif @type == 2
-      @results = Artist.where('name LIKE ?', "%#{@query}%")
-      @type_label = 'Artist'
+      @results = TagSelector.new(@query).userQuery(@page, 20).order(session, @orderby, @ascending).exec()
+      @type_label = 'User'
+      return
     elsif @type == 3
       @results = Tag.includes(:videos, :tag_type).where('name LIKE ?', "%#{@query}%")
       @type_label = 'Tag'
     else
-      @results = TagSelector.new(@query).videoQuery(@page, 20).order(@type, @orderby, @ascending).exec()
+      @results = TagSelector.new(@query).videoQuery(@page, 20).order(session, @orderby, @ascending).exec()
       @type_label = 'Song'
       return
     end
@@ -33,16 +34,16 @@ class SearchController < ApplicationController
     @results = []
     if params[:query]
       if @type == 1
-        @results = Pagination.paginate(orderBy(filter_by_tags(@query, false), @type, @orderby), @page, 20, !@ascending)
+        @results = Pagination.paginate(orderBy(Album.where('title LIKE ?', "%#{@query}%"), @type, @orderby), @page, 20, !@ascending)
         render json: {
-          content: render_to_string(partial: '/layouts/artist_thumb_h.html.erb', collection: @results.records),
+          content: render_to_string(partial: '/layouts/album_thumb_h.html.erb', collection: @results.records),
           pages: @results.pages,
           page: @results.page
         }
       elsif @type == 2
-        @results = Pagination.paginate(orderBy(Artist.where('name LIKE ?', "%#{@query}%"), @type, @orderby), @page, 20, !@ascending)
+        @results = TagSelector.new(@query).userQuery(@page, 20).order(session, @orderby, @ascending).exec()
         render json: {
-          content: render_to_string(partial: '/layouts/album_thumb_h.html.erb', collection: @results.records),
+          content: render_to_string(partial: '/layouts/artist_thumb_h.html.erb', collection: @results.records),
           pages: @results.pages,
           page: @results.page
         }
@@ -54,7 +55,7 @@ class SearchController < ApplicationController
           page: @results.page
         }
       else
-        @results = TagSelector.new(@query).videoQuery(@page, 20).order(@type, @orderby, @ascending).exec()
+        @results = TagSelector.new(@query).videoQuery(@page, 20).order(session, @orderby, @ascending).exec()
         render json: {
           content: render_to_string(partial: '/layouts/video_thumb_h.html.erb', collection: @results.records),
           pages: @results.pages,
@@ -73,7 +74,7 @@ class SearchController < ApplicationController
       }
     else
       render json: {
-        content: Artist.where('name LIKE ?', "%#{@query}%").uniq.limit(8).pluck(:id, :name),
+        content: User.where('username LIKE ?', "%#{@query}%").uniq.limit(8).pluck(:id, :name),
         match: 1
       }
     end

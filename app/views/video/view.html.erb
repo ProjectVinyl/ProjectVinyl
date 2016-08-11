@@ -3,25 +3,25 @@
 		<%= render partial: 'video' %>
 		<div class="page resize-holder column-right column-mobile-fragmented right center">
 			<section class="artist-bio bio">
-				<a href="/artist/<%= @artist.id %>-<%= url_safe @artist.name %>">
+				<a href="<%= @user.link %>">
 					<span class="avatar">
-						<span style="background-image:url('/avatar/<%= @artist.id %>');"></span>
+						<span style="background-image:url('<%= @user.avatar %>');"></span>
 					</span>
-					<h1 class="name resize-target"><%= @artist.name %></h1>
+					<h1 class="name resize-target"><%= @user.username %></h1>
 				</a>
-				<div class="bio short"><%= raw emotify @artist.bio %></div>
+				<div class="bio short"><%= raw emotify @user.bio %></div>
 			</section>
 			<% if @album %>
 			<section class="listing compact playlist column-mobile-shown">
 				<div class="controls">
 				<% if @prev_video %>
-					<a id="playlist_prev" class="slide-left" title="Previous" href="/view/<%= @prev_video.video.id %>-<%= url_safe @prev_video.video.title %>?list=<%= @album.id %>&index=<%= @prev_video.index %>">
+					<a id="playlist_prev" class="slide-left" title="Previous" href="/view/<%= @prev_video.video.id %>-<%= @prev_video.video.safe_title %>?list=<%= @album.id %>&index=<%= @prev_video.index %>">
 						<i class="fa fa-fw fa-step-backward"></i>
 					</span>
 				<% end %>
-				<a class="title<% if @next_video %> buff-right<% end %>" href="/album/<%= @album.id %>-<%= url_safe @album.title %>"><%= @album.title %></a>
+				<a class="title<% if @next_video %> buff-right<% end %>" href="/album/<%= @album.id %>-<%= @album.safe_title %>"><%= @album.title %></a>
 				<% if @next_video %>
-					<a id="playlist_next" class="slide-right" title="Next" href="/view/<%= @next_video.video.id %>-<%= url_safe @next_video.video.title %>?list=<%= @album.id %>&index=<%= @next_video.index %>">
+					<a id="playlist_next" class="slide-right" title="Next" href="/view/<%= @next_video.video.id %>-<%= @next_video.video.safe_title %>?list=<%= @album.id %>&index=<%= @next_video.index %>">
 						<i class="fa fa-fw fa-step-forward"></i>
 					</span>
 				<% end %>
@@ -50,7 +50,7 @@ $('html,body').scrollTop(200);
 			</section>
 		</div>
 		<section class="page column-left">
-			<%= render partial: '/thread/view', locals: {identifier: @video.id, title: @video.title + " by " + @artist.name } %>
+			<%= render partial: '/thread/view', locals: {identifier: @video.id, title: @video.title + " by " + @user.username } %>
 		</section>
 <% else %>
 <%= render layout: '/layouts/error', locals: { title: 'Nothing to see here!' } do %>

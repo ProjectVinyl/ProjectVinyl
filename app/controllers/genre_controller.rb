@@ -3,9 +3,9 @@ class GenreController < ApplicationController
 puts params[:name]
     if @tag = Tag.where("lower(name) = ?", params[:name].downcase).first
       @totalVideos = @tag.videos.length
-      @totalArtists = @tag.artists.length
+      @totalUsers = @tag.users.length
       @videos = @tag.videos.where(hidden: false).order(:created_at).reverse_order.limit(16)
-      @artists = @tag.artists.order(:updated_at).reverse_order.limit(16)
+      @users = @tag.users.order(:updated_at).reverse_order.limit(16)
     end
   end
   

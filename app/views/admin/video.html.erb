@@ -3,13 +3,13 @@
 		<%= render partial: 'video/video' %>
 		<div class="wrapper column-right right">
 			<section class="page artist-bio bio center resize-holder" style="width:100%">
-				<a href="/artist/<%= @artist.id %>-<%= @artist.name %>">
+				<a href="<%= @user.link %>">
 					<span class="avatar">
-						<span style="background-image:url('/avatar/<%= @artist.id %>');"></span>
+						<span style="background-image:url('<%= @user.avatar %>');"></span>
 					</span>
-					<h1 class="name resize-target"><%= @artist.name %></h1>
+					<h1 class="name resize-target"><%= @user.username %></h1>
 				</a>
-				<div class="bio short"><%= raw emotify @artist.bio %></div>
+				<div class="bio short"><%= raw emotify @user.bio %></div>
 			</section>
 			<section class="page properties" style="width:100%">
 				<%= form_for(@video, as: "item", url: "/admin/transfer?type=video", html: { method: :put }) do |f| %>
@@ -20,8 +20,8 @@
 							<%= f.label "Current Owner" %>
 						</td>
 						<td class="field">
-							<a href="/artist/<%= @video.artist.id %>">
-								<%= @video.artist.name %> (<%= @video.artist.id %>)
+							<a class="user-link" data-id="<%= @user.id %>" href="/<%= @user.link %>">
+								<%= @user.username %> (<%= @user.id %>)
 							</a>
 						</td>
 					</tr>
@@ -30,7 +30,7 @@
 							<%= f.label "New Owner" %>
 						</td>
 						<td class="field popper auto-lookup" data-action="artist">
-							<%= f.text_field :artist_id, autocomplete: "off" %>
+							<%= f.text_field :user_id, autocomplete: "off" %>
 							<ul class="pop-out"></ul>
 						</td>
 					</tr>

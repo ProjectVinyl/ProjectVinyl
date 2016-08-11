@@ -9,7 +9,7 @@ class Comment < ActiveRecord::Base
   has_many :mentions, class_name: "CommentReply", foreign_key: "comment_id"
   
   def self.Finder
-    return Comment.includes(:user, :artist, :mentions)
+    return Comment.includes(:user, :mentions)
   end
   
   def self.get_with_replies(id)

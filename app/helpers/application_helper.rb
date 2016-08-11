@@ -63,7 +63,7 @@ module ApplicationHelper
     Emoticons.each { |x|
       text = text.gsub(/:#{x}:/,'<img class="emoticon" src="/emoticons/' + x + '.png">')
     }
-    return text
+    return StathamSanitizer.new.sanitize(text, tags: %w(i b u s sup sub hr blockquote br img a), attributes: %w(class style href src data-link))
   end
   
   def emotify(text)
@@ -88,14 +88,6 @@ module ApplicationHelper
   
   def emoticons
     return Emoticons
-  end
-  
-  @current_artist = nil
-  def current_artist
-    if user_signed_in?
-      return @current_artist || @current_artist = Artist.where(id: current_user.artist_id).first
-    end
-    return nil
   end
   
   def since(date)
@@ -138,11 +130,7 @@ module ApplicationHelper
   end
   
   def url_safe(txt)
-    return ApplicationHelper.url_safe(txt)
-  end
-  
-  def self.url_unsafe(txt)
-    return txt.gsub(/%2B|\+/, '/')
+    raise "url_safe called from view (this should not happen)"
   end
   
   def title(page_title)

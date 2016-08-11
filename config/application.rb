@@ -27,5 +27,8 @@ module Projectvinyl
     config.generators do |g|
       g.assets false
     end
+    
+    # F***n' rails
+    config.autoload_paths += %W(#{config.root}/lib)
   end
 end

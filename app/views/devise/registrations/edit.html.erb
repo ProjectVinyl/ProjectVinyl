@@ -1,19 +1,7 @@
 <% lim "900px" %>
 <section style="width:100%;" class="page properties">
 	<h1>Profile Information</h1>
-<% if current_user.artist_id %>
-	<%= render partial: "/artist/edit", locals: { artist: current_artist, url: "/ajax/update/artist" } %>
-<% else %>
-	<div class="notice center">
-		<p>Your account is not assigned to an artist.</p>
-		<div class="super action">
-			<a href="/artist/create" class="button green">Create one now</a>
-		</div>
-		<p>
-			or <a href="/">contact support</a> if you need to have an existing one attached.
-		</p>
-	</div>
-<% end %>
+	<%= render partial: "/artist/edit", locals: { user: current_user, url: "/ajax/update/artist" } %>
 </section>
 <section style="width:100%;" class="page properties">
 	<h1>Account Settings</h1>
@@ -105,10 +93,6 @@ $('#close_account').on('click', function() {
 							Your account will be permanently deleted. This includes any starred videos.
 							Though you can always create a new account later.
 						</p>
-						The following will <b>not</b> be affected:
-						<ul>
-							<li>Connected Artist profile(s) and video galleries.
-						</ul>
 					</div>
 					<div class="foot">
 						<button class="right cancel" type="button">No thanks</button>

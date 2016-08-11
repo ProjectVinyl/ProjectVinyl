@@ -4,7 +4,11 @@ class Tag < ActiveRecord::Base
   has_many :video_genres
   has_many :videos, :through => :video_genres
   has_many :artist_genres
-  has_many :artists, :through => :artist_genres
+  has_many :users, :through => :artist_genres
+  
+  def self.sanitize_sql(arguments)
+    return Tag.sanitize_sql_for_conditions(arguments)
+  end
   
   def self.tag_string(tags)
     result = ''
@@ -20,7 +24,7 @@ class Tag < ActiveRecord::Base
   def self.find_matching_tags(name)
     result = []
     Tag.where('name LIKE ?', "%" + name.downcase + "%").limit(10).each do |tag|
-      result << { name: tag.name, members: VideoGenre.where(tag_id: tag.id).length, colour: tag.get_colour }
+      result << { name: tag.name, members: tag.members, colour: tag.get_colour }
     end
     return result
   end
@@ -34,7 +38,7 @@ class Tag < ActiveRecord::Base
     built = ''
     tag_string.each do |item|
       if tag = Tag.where('name = ?', item).first
-        result << tag
+        result << tag.id
       end
     end
     return result
@@ -45,7 +49,7 @@ class Tag < ActiveRecord::Base
     if tag_string == ''
       return result
     end
-    tag_string = tag_string.downcase.split(/,|;/)
+    tag_string = tag_string.downcase.split(/,|;/).uniq
     built = ''
     tag_string.each do |item|
       if item.length > 0 && !(tag = Tag.where('name = ?', item).first)
@@ -60,17 +64,31 @@ class Tag < ActiveRecord::Base
         end
       end
       if tag
-        result << tag
+        result << tag.id
       end
     end
     return result
   end
   
+  def self.expand_implications(tag_set)
+    implications_sql = ''
+  end
+  
   def self.loadTags(tag_string, sender)
     target = sender.preload_tags
-    Tag.parse_tag_string_with_create(tag_string).each_with_index do |tag, index|
-      target.create(tag_id: tag.id)
+    ids = Tag.parse_tag_string_with_create(tag_string)
+puts ids
+    entries = ids.map do |id|
+      { tag_id: id }
     end
+puts entries
+    target.create(entries)
+    sender.save
+    sender.inc(ids)
+  end
+  
+  def members
+    return self.video_count + self.user_count
   end
   
   def has_type
@@ -86,10 +104,6 @@ class Tag < ActiveRecord::Base
       return self.tag_type.colour
     end
     return ""
-  end
-  
-  def total_videos
-    return self.videos.uniq.length
   end
   
   def set_name(name)
