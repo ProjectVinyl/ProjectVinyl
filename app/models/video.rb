@@ -1,9 +1,20 @@
 class Video < ActiveRecord::Base
-  belongs_to :user
+  belongs_to :direct_user, class_name: "User", foreign_key: "user_id"
+  
+  has_one :comment_thread, as: :owner, dependent: :destroy
+  
   has_many :album_items, dependent: :destroy
   has_many :albums, :through => :album_items
   has_many :video_genres, dependent: :destroy
   has_many :tags, :through => :video_genres
+  
+  def user
+    return self.direct_user || @dummy || (@dummy = User.dummy(self.user_id))
+  end
+  
+  def user=(user)
+    self.direct_user = user
+  end
   
   def transferTo(user)
     self.user = user
@@ -29,6 +40,10 @@ class Video < ActiveRecord::Base
   def setTitle(title)
     self.title = title
     self.safe_title = ApplicationHelper.url_safe(title)
+    if self.comment_thread_id
+      self.comment_thread.title = title
+      self.comment_thread.save
+    end
   end
   
   def setFile(media)
@@ -93,15 +108,14 @@ class Video < ActiveRecord::Base
     end
   end
   
-  def preload_tags
-    tags = Tag.joins('INNER JOIN `video_genres` ON `video_genres`.tag_id = `tags`.id').where('`video_genres`.video_id = ? AND `tags`.video_count > 0', self.id)
-    tags.update_all('`tags`.video_count = `tags`.video_count - 1')
-    VideoGenre.where(video_id: self.id).delete_all
-    return self.video_genres
+  def drop_tags(ids)
+    Tag.where('id IN (?) AND video_count > 0', ids).update_all('video_count = video_count - 1')
+    VideoGenre.where('video_id = ? AND tag_id IN (?)', self.id, ids).delete_all
   end
   
-  def inc(ids)
+  def pick_up_tags(ids)
     Tag.where('id IN (?)', ids).update_all('video_count = video_count + 1')
+    return self.video_genres
   end
   
   def tag_string

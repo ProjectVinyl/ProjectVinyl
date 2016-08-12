@@ -54,7 +54,7 @@
 			</span>
 			<% if user_signed_in? %>
 			<span class="editing">
-				<%= render layout: 'layouts/tageditor' do %>
+				<%= render layout: 'layouts/tageditor', locals: {tags: @video.tags} do %>
 				<textarea data-target="video" data-id="<%= @video.id %>" name="tags"><%= raw @video.tag_string %></textarea>
 				<% end %>
 			</span>

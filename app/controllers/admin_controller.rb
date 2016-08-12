@@ -17,7 +17,7 @@ class AdminController < ApplicationController
       return
     end
     @modificationsAllowed = true
-    @video = Video.find(params[:id])
+    @video = Video.where(id: params[:id]).first
     @user = @video.user
   end
   
@@ -37,6 +37,20 @@ class AdminController < ApplicationController
       return
     end
     @user = User.find(params[:id])
+  end
+  
+  def view_report
+    if @report = Report.where(id: params[:id]).first
+      if user_signed_in? && (current_user.is_admin || current_user.id == @report.user_id)
+        @thread = @report.comment_thread
+        @order = '0'
+        @results = @comments = Pagination.paginate(@thread.get_comments, (params[:page] || -1).to_i, 10, false)
+        @video = Video.where(id: params[:id]).first
+        @user = @video.user
+        return
+      end
+    end
+    render 'layouts/error', locals: { title: 'Access Denied', description: "You can't do that right now." }
   end
   
   def transferItem
@@ -145,6 +159,47 @@ class AdminController < ApplicationController
         video.save
       end
       redirect_to action: 'video', id: params[:video][:id]
+      return
+    end
+    render status: 401, nothing: true
+  end
+  
+  def reporter
+    @video = Video.where(id: params[:id]).first
+    if @video
+      render json: {
+        content: render_to_string(partial: '/layouts/reporter', locals: { video: @video, report: Report.new })
+      }
+      return
+    end
+    render status: 401, nothing: true
+  end
+    
+  def report
+    if @video = Video.where(id: params[:id]).first
+      @recievers = User.where(is_admin: true).pluck(:id)
+      @report = params[:report]
+      @report = Report.create({
+        video_id: @video.id,
+        first: @report[:first],
+        source: @report[:source],
+        content_type_unrelated: @report[:content_type_unrelated] == '1',
+        content_type_offensive: @report[:content_type_offensive] == '1',
+        content_type_unrelated: @report[:content_type_unrelated] == '1',
+        content_type_unrelated: @report[:content_type_explicit] == '1',
+        copyright_holder: @report[:copyright_holder],
+        subject: @report[:subject],
+        other: @report[:other]
+      })
+      @report.name = @report[:name] || (user_signed_in? ? current_user.username : "")
+      if user_signed_in?
+        @report.user_id = current_user.id
+      end
+      @report.comment_thread = CommentThread.create(title: "Report: " + @video.title)
+      @report.save
+      Notification.notify_recievers(@recievers, @report,
+         "A new <b>Report</b> has been submitted for <b>" + @video.title + "</b>", @report.comment_thread)
+      render status: 200, nothing: true
       return
     end
     render status: 401, nothing: true

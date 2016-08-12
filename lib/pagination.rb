@@ -10,13 +10,17 @@ class Pagination
     if count <= pageSize
       return Pagination.new(records, 0, 0, reverse, count)
     end
+    pages = count / pageSize
+    if (pages * pageSize) == count
+      pages -= 1
+    end
     if count <= pageNumber * pageSize || pageNumber < 0
-      pageNumber = (records.count / pageSize)
+      pageNumber = pages
     end
     if pageNumber < 0
       pageNumber = 0
     end
-    return Pagination.new(records.offset(pageNumber * pageSize).limit(pageSize), count / pageSize, pageNumber, reverse, count)
+    return Pagination.new(records.offset(pageNumber * pageSize).limit(pageSize), pages, pageNumber, reverse, count)
   end
   
   def initialize(records, pages, page, reverse, count)

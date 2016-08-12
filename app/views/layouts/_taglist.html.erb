@@ -4,7 +4,7 @@
 		<% if index == 20 %>
 	<span class="overflow">
 		<% end %>
-		<a href="/tags/<%= item.get_as_string %>"><span><%= item.get_as_string %></span></a>
+		<a href="/tags/<%= item.short_name %>"><span><%= item.get_as_string %></span></a>
 	<% end %>
 	<% if collection.length > 20 %>
 	</span>

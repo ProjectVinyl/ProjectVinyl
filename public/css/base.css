@@ -582,6 +582,16 @@ input[type=text]:not(.tag), input[type=email], input[type=password] {
   vertical-align: middle;
 }
 
+.auto-lookup.invalid input {
+  position: relative;
+  background: #fcc !important;
+  border-color: #a88;
+}
+.auto-lookup.invalid::after {
+  content: 'Error: Invalid input';
+  content: attr(data-message);
+}
+
 textarea {
   padding: 8px;
   color: #444;
@@ -884,6 +894,7 @@ label input[type=checkbox]:not(:checked) + i {
 .comment .name a {
   text-decoration: none;
   width: 100%;
+  color: #333333;
 }
 
 .comment blockquote {
@@ -979,6 +990,10 @@ label input[type=checkbox]:not(:checked) + i {
   opacity: 0;
 }
 
+.comment .name a.user-link {
+  color: #337287;
+}
+.comment .name a.mention,
 .comment a.mention {
   color: #ccc;
   font-size: 8px;
@@ -1018,6 +1033,9 @@ ul.notifications {
 }
 .notification[class*=comments_]::before {
   content: "\f064";
+}
+.notification[class*=reports_]::before {
+  content: "\f11e";
 }
 
 img.iconic, img.emoticon {

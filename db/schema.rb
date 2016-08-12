@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160811201318) do
+ActiveRecord::Schema.define(version: 20160812110602) do
 
   create_table "album_items", force: :cascade do |t|
     t.integer "album_id", limit: 4
@@ -47,13 +47,24 @@ ActiveRecord::Schema.define(version: 20160811201318) do
     t.integer "comment_id", limit: 4
   end
 
+  create_table "comment_threads", force: :cascade do |t|
+    t.string   "title",      limit: 255, default: ""
+    t.integer  "user_id",    limit: 4
+    t.datetime "created_at",                          null: false
+    t.datetime "updated_at",                          null: false
+    t.integer  "owner_id",   limit: 4
+    t.string   "owner_type", limit: 255
+  end
+
+  add_index "comment_threads", ["owner_type", "owner_id"], name: "index_comment_threads_on_owner_type_and_owner_id", using: :btree
+
   create_table "comments", force: :cascade do |t|
-    t.integer  "user_id",      limit: 4
-    t.integer  "video_id",     limit: 4
-    t.text     "html_content", limit: 65535
-    t.text     "bbc_content",  limit: 65535
-    t.datetime "created_at",                 null: false
-    t.datetime "updated_at",                 null: false
+    t.integer  "user_id",           limit: 4
+    t.integer  "comment_thread_id", limit: 4
+    t.text     "html_content",      limit: 65535
+    t.text     "bbc_content",       limit: 65535
+    t.datetime "created_at",                      null: false
+    t.datetime "updated_at",                      null: false
   end
 
   create_table "notifications", force: :cascade do |t|
@@ -64,6 +75,26 @@ ActiveRecord::Schema.define(version: 20160811201318) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.boolean  "unread",                 default: true
+  end
+
+  create_table "reports", force: :cascade do |t|
+    t.integer  "comment_thread_id",       limit: 4
+    t.integer  "user_id",                 limit: 4
+    t.string   "first",                   limit: 255
+    t.string   "source",                  limit: 255
+    t.boolean  "content_type_unrelated"
+    t.boolean  "content_type_offensive"
+    t.boolean  "content_type_disturbing"
+    t.boolean  "content_type_explicit"
+    t.string   "copyright_holder",        limit: 255
+    t.text     "copyright_usage",         limit: 65535
+    t.boolean  "copyright_accept"
+    t.string   "subject",                 limit: 255
+    t.text     "other",                   limit: 65535
+    t.text     "name",                    limit: 65535
+    t.text     "contact",                 limit: 65535
+    t.datetime "created_at",                            null: false
+    t.datetime "updated_at",                            null: false
   end
 
   create_table "tag_implications", force: :cascade do |t|
@@ -128,23 +159,24 @@ ActiveRecord::Schema.define(version: 20160811201318) do
   add_index "video_genres", ["video_id"], name: "index_video_genres_on_video_id", using: :btree
 
   create_table "videos", force: :cascade do |t|
-    t.string   "title",       limit: 255
-    t.text     "description", limit: 65535
+    t.string   "title",             limit: 255
+    t.text     "description",       limit: 65535
     t.boolean  "audio_only"
-    t.string   "mime",        limit: 255
-    t.string   "file",        limit: 255
+    t.string   "mime",              limit: 255
+    t.string   "file",              limit: 255
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "upvotes",     limit: 4
-    t.integer  "downvotes",   limit: 4
-    t.integer  "length",      limit: 4
-    t.integer  "score",       limit: 4,     default: 0
-    t.boolean  "hidden",                    default: false
-    t.integer  "views",       limit: 4,     default: 0
+    t.integer  "upvotes",           limit: 4
+    t.integer  "downvotes",         limit: 4
+    t.integer  "length",            limit: 4
+    t.integer  "score",             limit: 4,     default: 0
+    t.boolean  "hidden",                          default: false
+    t.integer  "views",             limit: 4,     default: 0
     t.boolean  "processed"
-    t.string   "source",      limit: 255,   default: ""
-    t.integer  "user_id",     limit: 4
-    t.string   "safe_title",  limit: 255
+    t.string   "source",            limit: 255,   default: ""
+    t.integer  "user_id",           limit: 4
+    t.string   "safe_title",        limit: 255
+    t.integer  "comment_thread_id", limit: 4
   end
 
   add_index "videos", ["created_at"], name: "index_videos_on_created_at", using: :btree

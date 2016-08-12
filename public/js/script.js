@@ -397,22 +397,22 @@ var initFileSelect = (function() {
     } else {
       tags = [];
     }
-    for (var i = 0, len = tags.length; i < len; i++) {
-      createTagItem(tags[i]);
-    }
     value.val(tags.join(','));
-    function appendTag(name) {
+    list.find('.remove').on('click', function() {
+      removeTag($(this).parent(), $(this).attr('data-name'));
+    });
+    function appendTag(name, colour) {
       name = name.trim().toLowerCase().replace(/[^ a-z0-9\/&\-:]/g, '');
       if (name.length) {
         if (tags.indexOf(name) == -1) {
           tags.push(name);
           value.val(tags.join(','));
-          createTagItem(name);
+          createTagItem(name, colour);
         }
       }
     }
-    function createTagItem(name) {
-      var item = $('<li class="tag"><i title="Remove Tag" class="fa fa-times remove"></i><a href="/tags/' + name + '">' + name + '</a></li>');
+    function createTagItem(name, colour) {
+      var item = $('<li class="tag"><i title="Remove Tag" class="fa fa-times remove"></i><a style="color:' + colour + ';" href="/tags/' + name + '">' + name + '</a></li>');
       list.append(item);
       item.find('.remove').on('click', function() {
         removeTag(item, name);
@@ -435,19 +435,20 @@ var initFileSelect = (function() {
         });
       }
     }
+    
     function doSearch(name) {
       name = name.toLowerCase();
       if (name.length > 0) ajax.get('find/tags', function(json) {
         searchResults.empty();
         for (var i = json.results.length; i--; ) {
-          var item = $('<li style="color:' + json.results[i].colour + ';"><span>' + json.results[i].name + '</span> (' + json.results[i].members + ')' + '</li>');
+          var item = $('<li data-colour="' + json.results[i].colour + '" style="color:' + json.results[i].colour + ';"><span>' + json.results[i].name + '</span> (' + json.results[i].members + ')' + '</li>');
           item.on('click', function() {
             searchResults.removeClass('shown');
             var text = input.val().trim().split(/,|;/);
-            text[text.length - 1] = $(this).find('span').text();
-            for (var i = 0; i < text.length; i++) {
-              appendTag(text[i]);
+            for (var i = 0; i < text.length - 1; i++) {
+              appendTag(text[i], '');
             }
+            appendTag($(this).find('span').text(), $(this).attr('data-colour'));
             input.val('');
             save();
           });
@@ -532,7 +533,7 @@ $(document).on('mousedown', function() {
   $('.pop-out.shown').removeClass('shown');
 });
 (function() {
-  function lookup(popout, action, input) {
+  function lookup(sender, popout, action, input, validate) {
     ajax.post(action + '/lookup', function(json) {
       popout.empty();
       for (var i = 0; i < json.content.length; i++) {
@@ -546,15 +547,32 @@ $(document).on('mousedown', function() {
         popout.append(item);
       }
       popout[json.content.length ? 'addClass' : 'removeClass']('shown');
-    }, 0, { query: input.val() });
+      sender[json.reject ? 'addClass' : 'removeClass']('invalid');
+    }, 0, {
+      query: input.val(), validate: validate ? 1 : 0
+    });
   }
+  var autocomplete = null;
   $('.auto-lookup').each(function() {
-    var popout = $(this).find('.pop-out');
-    var input = $(this).find('input');
-    var action = $(this).attr('data-action');
-    input.on('keyup', function() {
-      lookup(popout, action, input);
+    var me = $(this);
+    var popout = me.find('.pop-out');
+    var input = me.find('input');
+    var action = me.attr('data-action');
+    var last_value = null;
+    var validate = me.hasClass('validate');
+    input.on('blur', function() {
+      clearIntervel(autocomplete);
+      autocomplete = null;
     })
+    input.on('focus', function(e) {
+      if (!autocomplete) autocomplete = setInterval(function() {
+        var value = input.val();
+        if (value != last_value) {
+          last_value = value;
+          lookup(me, popout, action, input, validate);
+        }
+      }, 1000);
+    });
   });
 })();
 (function() {
@@ -969,6 +987,7 @@ var paginator = (function() {
   }
   return {
     repaint: function(context, json) {
+      context.find('.pagination .pages .button.selected').removeClass('selected');
       populatePage(context, json);
     },
     goto: function(button) {
@@ -996,7 +1015,7 @@ function error(message) {
   });
 }
 
-function postComment(sender, thread_id) {
+function postComment(sender, thread_id, order) {
   sender = $(sender).parent();
   sender.addClass('posting');
   ajax.post('comments/new', function(json) {
@@ -1006,6 +1025,7 @@ function postComment(sender, thread_id) {
     sender.find('textarea').val('').change();
   }, 0, {
     thread: thread_id,
+    order: order,
     comment: sender.find('textarea').val()
   });
 }

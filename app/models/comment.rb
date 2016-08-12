@@ -2,26 +2,22 @@ class Comment < ActiveRecord::Base
   REPLY_MATCHER = /(?<=\>\>)[1234567890abcdefghijklmnopqrstuvwxyz]+(?= |\s|\n|$)/
   QUOTED_TEXT = /\[q\][^\]]*\[\/q\]/
   
-  belongs_to :video
-  belongs_to :user
+  belongs_to :comment_thread
+  belongs_to :direct_user, class_name: "User", foreign_key: "user_id"
   
   has_many :comment_replies, dependent: :destroy
   has_many :mentions, class_name: "CommentReply", foreign_key: "comment_id"
   
   def self.Finder
-    return Comment.includes(:user, :mentions)
+    return Comment.includes(:direct_user, :mentions)
   end
   
   def self.get_with_replies(id)
     return Comment.Finder.where(id: id).first
   end
   
-  def self.pull_thread(thread_id)
-    return Comment.Finder.where(video_id: thread_id).order(:created_at).reverse_order
-  end
-  
-  def self.thread_exists?(thread_id)
-    return !Video.where(id: thread_id).first.nil?
+  def user
+    return self.direct_user || @dummy_user || (@dummy_user = User.dummy(self.user_id))
   end
   
   def update_comment(bbc)
@@ -39,14 +35,14 @@ class Comment < ActiveRecord::Base
       items << Comment.decode_open_id(match)
     end
     recievers = []
-    replied_to = (Comment.where('id IN (?) AND video_id = ?', items, self.video_id).map { |i|
+    replied_to = (Comment.where('id IN (?) AND comment_thread_id = ?', items, self.comment_thread_id).map { |i|
       recievers << i.user_id
       '(' + i.id.to_s + ',' + self.id.to_s + ')'
     }).join(', ')
     if replied_to.length > 0
       Notification.notify_recievers(recievers, self,
-           self.user.username + " has <b>replied</b> to your comment on <b>" + self.video.title + "</b>",
-           "/view/" + self.video_id.to_s)
+           self.user.username + " has <b>replied</b> to your comment on <b>" + self.comment_thread.title + "</b>",
+           self.comment_thread.location)
       ActiveRecord::Base.connection.execute('INSERT INTO comment_replies (`comment_id`,`parent_id`) VALUES ' + replied_to)
     end
   end

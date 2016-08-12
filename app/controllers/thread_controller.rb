@@ -1,16 +1,34 @@
 class ThreadController < ApplicationController
+  def view
+    if @thread = CommentThread.where(id: params[:id]).first
+      if @thread.owner_id
+        redirect_to action: 'view', controller: @thread.owner_type.downcase, id: @thread.owner_id
+        return
+      end
+      @order = '0'
+      @results = @comments = Pagination.paginate(@thread.get_comments, (params[:page] || -1).to_i, 10, false)
+    end
+  end
+  
   def post_comment
-    if user_signed_in? && Comment.thread_exists?(params[:thread])
-      comment = Comment.create(user_id: current_user.id, video_id: params[:thread])
-      comment.update_comment(params[:comment])
-      @results = Pagination.paginate(Comment.pull_thread(params[:thread]), 0, 10, false)
-      render json: {
-        content: render_to_string(partial: '/thread/comment_set.html.erb', locals: { thread: @results.records }),
-        pages: @results.pages,
-        page: @results.page,
-        focus: comment.get_open_id
-      }
-      return
+    if user_signed_in?
+      if @thread = CommentThread.where(id: params[:thread]).first
+        comment = Comment.create(user_id: current_user.id, comment_thread_id: @thread.id)
+        comment.update_comment(params[:comment])
+        @results = Pagination.paginate(@thread.get_comments, params[:order] == '1' ? 0 : -1, 10, params[:order] == '1')
+        render json: {
+          content: render_to_string(partial: '/thread/comment_set.html.erb', locals: { thread: @results.records }),
+          pages: @results.pages,
+          page: @results.page,
+          focus: comment.get_open_id
+        }
+        if @thread.owner_type == 'Report'
+          Notification.notify_recievers(@thread.comments.pluck(:user_id).uniq, @thread.owner,
+            current_user.username + " has posted a reply to <b>" + @thread.title + "</b>",
+            @thread.location)
+        end
+        return
+      end
     end
     render status: 401, nothing: true
   end
@@ -48,8 +66,9 @@ class ThreadController < ApplicationController
   end
   
   def page
+    @thread = CommentThread.where(id: params[:thread_id]).first
     @page = params[:page].to_i
-    @results = Pagination.paginate(Comment.pull_thread(params[:thread_id]), @page, 10, false)
+    @results = Pagination.paginate(@thread.get_comments, @page, 10, params[:order] == '1')
     render json: {
       content: render_to_string(partial: '/thread/comment_set.html.erb', locals: { thread: @results.records }),
       pages: @results.pages,

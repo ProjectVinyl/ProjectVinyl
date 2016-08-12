@@ -1,18 +1,18 @@
-﻿<form class="async" action="/report/<%= video %>" method="post">
+﻿<%= form_for(report, as: "report", url: "/report/" + video.id.to_s, "html": { "class": "async" }) do |f| %>
 	<div class="group active" data-stage="start">
 		Please select the type of report you would like to submit.
 		<table>
 			<tr>
-				<td><label><input type="radio" name="first" data-to="stolen" value="stolen"></input><i class="fa"></i> This is my intellectual Property</label></td>
+				<td><label><%= f.radio_button :first, "stolen", data: {to: "stolen"} %><i class="fa"></i> This is my intellectual Property</label></td>
 			</tr>
 			<tr>
-				<td><label><input type="radio" name="first" data-to="copy" value="copy"></input><i class="fa"></i> This video uses copyrighted material</label></td>
+				<td><label><%= f.radio_button :first, "copy", data: {to: "copy"} %><i class="fa"></i> This video uses copyrighted material</label></td>
 			</tr>
 			<tr>
-				<td><label><input type="radio" name="first" data-to="content" value="content"></input><i class="fa"></i> This video features content of an inapropriate/disturbing nature</label></td>
+				<td><label><%= f.radio_button :first, "content", data: {to: "content"} %><i class="fa"></i> This video features content of an inapropriate/disturbing nature</label></td>
 			</tr>
 			<tr>
-				<td><label><input type="radio" name="first" data-to="other" value="other"></input><i class="fa"></i> Other</label></td>
+				<td><label><%= f.radio_button :first, "other", data: {to: "other"} %><i class="fa"></i> Other</label></td>
 			</tr>
 		</table>
 	</div>
@@ -23,7 +23,8 @@
 			<tr>
 				<td colspan="2">
 					<span>Please provide a link to where you believe this video may have come from. Must be older than the current report target.</span>
-					<input style="width:100%" type="text" name="source"></input>
+					<br>
+					<%= f.text_field :source, style: "width:100%", placeholder: "Source" %>
 				</td>
 			</tr>
 			<tr>
@@ -40,16 +41,16 @@
 		Please select the option(s) that best describe the content in this video.
 		<table>
 			<tr>
-				<td colspan="2"><label><input type="checkbox" name="content-type" value="unrelated"></input><i class="fa"></i> Unrelated content</label></td>
+				<td colspan="2"><label><%= f.check_box :content_type_unrelated %><i class="fa"></i> Unrelated content</label></td>
 			</tr>
 			<tr>
-				<td colspan="2"><label><input type="checkbox" name="content-type" value="offensive"></input><i class="fa"></i> Offensive/Deflamatory content</label></td>
+				<td colspan="2"><label><%= f.check_box :content_type_offensive %><i class="fa"></i> Offensive/Deflamatory content</label></td>
 			</tr>
 			<tr>
-				<td colspan="2"><label><input type="checkbox" name="content-type" value="disturbing"></input><i class="fa"></i> This video contains disturbing imagery</label></td>
+				<td colspan="2"><label><%= f.check_box :content_type_disturbing %><i class="fa"></i> This video contains disturbing imagery</label></td>
 			</tr>
 			<tr>
-				<td colspan="2"><label><input type="checkbox" name="content-type" value="po_n"></input><i class="fa"></i> Pornography</label></td>
+				<td colspan="2"><label><%= f.check_box :content_type_explicit %><i class="fa"></i> Pornography</label></td>
 			</tr>
 			<tr>
 				<td>
@@ -67,17 +68,17 @@
 			<tr>
 				<td colspan="2">
 					Name of copyright holder, entity, or organisation:
-					<input style="width:100%" type="text" name="copyright_holder"></input>
+					<%= f.text_field :copyright_holder, style: "width:100%" %>
 				</td>
 			</tr>
 			<tr>
 				<td colspan="2">
 					Describe <b>exactly</b> where the offending content occurs in the video, and the conditions under which it is used.
-					<textarea type="text" name="copyright_usage"></textarea>
+					<%= f.text_area :copyright_usage %>
 				</td>
 			</tr>
 			<tr>
-				<td colspan="2"><label><input type="checkbox" name="content-type" data-required="true" value="copyright_accept"></input><i class="fa"></i> I am or represent the copyright holder for the identified content in this video</label></td>
+				<td colspan="2"><label><input type="checkbox" name="copyright_accept" data-required="true" value="copyright_accept"></input><i class="fa"></i> I am or represent the copyright holder for the identified content in this video</label></td>
 			</tr>
 			<tr>
 				<td>
@@ -94,12 +95,12 @@
 		<table>
 			<tr>
 				<td colspan="2">
-					<input style="width:100%" type="text" name="subject" placeholder="Subject"></input>
+					<%= f.text_field :subject, style: "width:100%", placeholder: "Subject" %>
 				</td>
 			</tr>
 			<tr>
 				<td colspan="2">
-					<textarea type="text" name="other"></textarea>
+					<%= f.text_area :other %>
 				</td>
 			</tr>
 			<tr>
@@ -113,16 +114,28 @@
 		</table>
 	</div>
 	<div class="group" data-stage="final">
+		<% if user_signed_in? %>
+		Thank you!
+		<br>
+		Your report will be sent as <a href="<%= current_user.link %>"><%= current_user.username %></a>.
+		<table>
+			<tr>
+				<td>
+					<button class="goto right send" data-to="end">Send</button>
+				</td>
+			</tr>
+		</table>
+		<% else %>
 		Please enter your contact details, in case we need to get into contact with you.
 		<table>
 			<tr>
 				<td>
-					<input style="width:100%" type="text" name="name" placeholder="Name"></input>
+					<%= f.text_field :name, style: "width:100%", placeholder: "Name" %>
 				</td>
 			</tr>
 			<tr>
 				<td>
-					<input style="width:100%" type="text" name="contact" placeholder="Email"></input>
+					<%= f.text_field :contact, style: "width:100%", placeholder: "Email" %>
 				</td>
 			</tr>
 			<tr>
@@ -131,6 +144,7 @@
 				</td>
 			</tr>
 		</table>
+		<% end %>
 	</div>
 	<div class="group" data-stage="end">
 		<table>
@@ -217,6 +231,7 @@
         form.removeClass('reporting');
       },
       error: function(message, error, msg) {
+        form.removeClass('reporting');
         message.css('margin-left', '');
         message.html('<i style="color: red; font-size: 50px;" class="fa fa-times"></i></br>' + error + ': ' + msg);
         message.append('<br>Please contact <a href="mailto://support@projectvinyl.net">support@projectvinyl.net</a> for assistance.');
@@ -225,4 +240,4 @@
   });
 })();
 	</script>
-</form>
+<% end %>

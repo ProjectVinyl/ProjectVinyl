@@ -7,6 +7,7 @@ class MergeArtistsIntoUsers < ActiveRecord::Migration
     add_column :users, :mime, :string
     add_column :users, :banner_set, :boolean, default: false
     add_column :users, :tag_id, :integer
+    add_column :users, :star_id, :integer
     add_index :users, :username, unique: true
     add_index :users, :tag_id
     User.reset_column_information
@@ -42,6 +43,9 @@ class MergeArtistsIntoUsers < ActiveRecord::Migration
         user.username = 'Background Pony #' + user.id.to_s
         user.safe_name = ''
         user.banner_set = false
+      end
+      if star = Album.where(owner_id: user.id, owner_type: "User").first
+        user.star_id = star.id
       end
       user.save
     end

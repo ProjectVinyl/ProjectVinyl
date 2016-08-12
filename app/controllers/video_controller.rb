@@ -22,9 +22,12 @@ class VideoController < ApplicationController
         tags: @video.tags
       }
       @user = @video.user
-      @comments = Comment.pull_thread(@video.id)
-      @results = @comments = Pagination.paginate(@comments, 0, 10, false)
-      @queue = @user.videos.where(hidden: false).where.not(id: @video.id).order("RAND()").limit(7)
+      @thread = @video.comment_thread
+      @order = '1'
+      @results = @comments = Pagination.paginate(@thread.get_comments, 0, 10, true)
+      if !@user.isDummy
+        @queue = @user.videos.where(hidden: false).where.not(id: @video.id).order("RAND()").limit(7)
+      end
       if !@modificationsAllowed = user_signed_in? && current_user.id == @user.id
         @video.views = @video.views + 1
         @video.save
@@ -120,6 +123,7 @@ class VideoController < ApplicationController
                   file: ext,
                   audio_only: file.content_type.include?('audio/'),
                   upvotes: 0, downvotes: 0)
+          video.comment_thread = CommentThread.create(user_id: user)
           if params[:video][:tag_string]
             Tag.loadTags(params[:video][:tag_string], video)
           end

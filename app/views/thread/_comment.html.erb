@@ -1,6 +1,6 @@
 <li class="comment" id="comment_<%= comment.get_open_id %>">
 	<div class="artist-bio bio">
-		<a class="user-link" data-id="<%= comment.user_id %>" href="<%= comment.user.link %>">
+		<a <% if !comment.user.isDummy %>class="user-link" data-id="<%= comment.user_id %>" href="<%= comment.user.link %>"<% end %>>
 			<span class="avatar medium">
 				<span style="background-image:url('<%= comment.user.avatar %>');"></span>
 			</span>
@@ -17,7 +17,7 @@
 		<a title="Reply" class="reply-comment" ><i class="fa fa-reply"></i></a>
 	<% end %>
 		<div class="name">
-			<a class="user-link" data-id="<%= comment.user_id %>" href="<%= comment.user.link %>"><%= comment.user.username %></a>
+			<a <% if !comment.user.isDummy %>class="user-link" data-id="<%= comment.user_id %>" href="<%= comment.user.link %>"<% end %>><%= comment.user.username %></a>
 	<% comment.mentions.each do |mention| %>
 		<a href="#comment_<%= Comment.encode_open_id(mention.parent_id) %>" data-comment-id="<%= mention.parent_id %>" class="mention">
 			&gt;&gt;<%= Comment.encode_open_id(mention.parent_id) %>

@@ -1,7 +1,10 @@
+class Genre < ActiveRecord::Base
+end
 class CreateTags < ActiveRecord::Migration
   def change
     create_table :tags do |t|
-      t.string :name
+      t.string :name, default: ""
+      t.string :short_name, default: ""
       t.text :description
       t.integer :tag_type_id
     end
@@ -25,10 +28,8 @@ class CreateTags < ActiveRecord::Migration
     end
     add_column :artists, :tag_id, :integer
     add_index :artists, :tag_id
-    Artist.reset_column_information
-    Artist.all.each do |a|
-      a.tag = Tag.create(description: "", tag_type_id: 1).set_name(a.name)
-      a.save
-    end
+    remove_column :artist_genres, :genre_id
+    remove_column :video_genres, :genre_id
+    add_index :artists, :name, unique: true
   end
 end

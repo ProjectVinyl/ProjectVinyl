@@ -14,6 +14,7 @@ Rails.application.routes.draw do
   get 'terms' => 'staff#policy'
   
   get 'admin' => 'admin#view'
+  get 'admin/report/view/:id' => 'admin#view_report'
   get 'admin/album/:id' => 'admin#album'
   get 'admin/video/:id' => 'admin#video'
   put 'admin/video/reprocess' => 'admin#reprocessVideo'
@@ -64,13 +65,16 @@ Rails.application.routes.draw do
   get 'ajax/find/tags' => 'genre#find'
   get 'ajax/genres' => 'genre#page'
   
-  get 'ajax/reporter/:id' => 'ajax#reporter'
+  get 'ajax/reporter/:id' => 'admin#reporter'
+  post 'ajax/reporter/:id' => 'admin#report'
   
   post 'ajax/like/:id(/:incr)' => 'ajax#upvote'
   post 'ajax/dislike/:id(/:incr)' => 'ajax#downvote'
   post 'ajax/video/togglealbum' => 'ajax#toggleAlbum'
   post 'ajax/star/:id' => 'ajax#star'
   post 'ajax/report/:id' => 'ajax#report'
+  post 'report/:id' => 'admin#report'
+  post 'report/:id/:async' => 'admin#report'
   
   post 'ajax/create/video' => 'video#create'
   patch 'ajax/update/video/cover/:async' => 'video#updateCover'
@@ -87,11 +91,12 @@ Rails.application.routes.draw do
   
   get 'notifications' => 'thread#notifications'
   
+  get 'comments/:id' => 'thread#view'
   post 'ajax/comments/new' => 'thread#post_comment'
   post 'ajax/comments/delete/:id' => 'thread#remove_comment'
   post 'ajax/comments/edit' => 'thread#edit_comment'
   get 'ajax/comments/get' => 'thread#get_comment'
-  get 'ajax/comments/:thread_id' => 'thread#page'
+  get 'ajax/comments/:thread_id/:order' => 'thread#page'
   
   get '/' => 'welcome#index'
   root 'welcome#index'

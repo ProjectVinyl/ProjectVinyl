@@ -1,8 +1,40 @@
+class UserDummy
+  def initialize(id)
+    @id = id
+    @username = 'Background Pony #' + id.to_s(36)
+  end
+  
+  def id
+    return @id
+  end
+  
+  def bio
+    return ''
+  end
+  
+  def username
+    return @username
+  end
+  
+  def avatar
+    return '/images/default-avatar.png'
+  end
+  
+  def link
+    return ''
+  end
+  
+  def isDummy
+    return true
+  end
+end
 class User < ActiveRecord::Base
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable and :omniauthable
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :trackable, :validatable
+  
+  after_destroy :remove_assets
   
   has_many :votes, dependent: :destroy
   has_many :notifications, dependent: :destroy
@@ -11,13 +43,29 @@ class User < ActiveRecord::Base
   has_many :album_items, :through => :album
   
   has_many :videos
-  has_many :all_albums, class_name: "Album", foreign_key: "user_id"
+  has_many :all_albums, class_name: "Album", foreign_key: "user_id", dependent: :destroy
   has_many :artist_genres, dependent: :destroy
   has_many :tags, :through => :artist_genres
   belongs_to :tag
   
-  def albums
-    return self.all_albums.where(hidden: false)
+  SANITIZE = /[^a-zA-Z0-9]+/
+  BP_PONY = /^background pony #([0-9a-z]+)/
+  
+  def validate_name(name)
+    if (match = User.where('username = ? OR safe_name = ?', name, name).first) && match.id != self.id
+      return false
+    end
+    if bp_id = name.downcase.match(BP_PONY) && bp_id != self.id.to_s(36)
+      return false
+    end
+    if !(name && name.length > 0 && name.strip.length > 0)
+      return false
+    end
+    return name.gsub(SANITIZE, '').length > 0
+  end
+  
+  def self.dummy(id)
+    return UserDummy.new(id)
   end
   
   def self.by_name_or_id(id)
@@ -34,15 +82,18 @@ class User < ActiveRecord::Base
     return tag
   end
   
-  def preload_tags
-    tags = Tag.joins('INNER JOIN `artist_genres` ON `artist_genres`.tag_id = `tags`.id').where('`artist_genres`.user_id = ? AND `tags`.user_count > 0', self.id)
-    tags.update_all('`tags`.user_count = `tags`.user_count - 1')
-    ArtistGenre.where(user_id: self.id).delete_all
-    return self.artist_genres
+  def albums
+    return self.all_albums.where(hidden: false)
   end
   
-  def inc(ids)
+  def drop_tags(ids)
+    Tag.where('id IN (?) AND user_count > 0', ids).update_all('user_count = user_count - 1')
+    ArtistGenre.where('user_id = ? AND tag_id IN (?)', self.id, ids).delete_all
+  end
+  
+  def pick_up_tags(ids)
     Tag.where('id IN (?)', ids).update_all('user_count = user_count + 1')
+    return self.artist_genres
   end
   
   def removeSelf
@@ -99,14 +150,14 @@ class User < ActiveRecord::Base
   end
   
   def set_name(name)
-    if !name || name.length == 0
-      name = 'Background Pony #' + self.id.to_s
+    if !self.validate_name(name)
+      name = 'Background Pony #' + self.id.to_s(32)
     end
     self.username = name
     self.safe_name = ApplicationHelper.url_safe(name)
     self.save
     if self.tag
-        user.tag.set_name(name)
+        self.tag.set_name(name)
     end
   end
   
@@ -122,10 +173,20 @@ class User < ActiveRecord::Base
     return '/profile/' + self.id.to_s + '-' + self.safe_name
   end
   
+  def isDummy
+    return false
+  end
+  
   def send_notification(message, source)
     self.notifications.create(message: message, source: source)
     self.notification_count = self.notification_count + 1
     self.save
+  end
+  
+  protected
+  def remove_assets
+    img('avatar', false)
+    img('banner', false)
   end
   
   private

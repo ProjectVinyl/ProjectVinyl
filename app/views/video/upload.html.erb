@@ -104,15 +104,7 @@ $('#cover-upload').on('accept', function() {
 			<% end %>
 		</section>
 		<div class="page resize-holder column-right right center">
-			<section class="artist-bio bio">
-				<a href="<%= @user.link %>">
-					<span class="avatar">
-						<span style="background-image:url('<%= @user.avatar %>');"></span>
-					</span>
-					<h1 class="name resize-target"><%= @user.username %></h1>
-				</a>
-				<div class="bio short"><%= raw emotify @user.bio %></div>
-			</section>
+			<%= render partial: 'artist/bio', locals: {user: @user } %>
 			<section>
 				<h1 class="resize-target">
 					<a>Discovery Queue</a>

@@ -1,9 +1,4 @@
 class AjaxController < ApplicationController
-  def reporter
-    render json: {
-      content: render_to_string(partial: '/layouts/reporter', locals: { 'video': params[:id] })
-    }
-  end
   
   def upvote
     if user_signed_in?

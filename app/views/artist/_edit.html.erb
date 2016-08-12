@@ -54,7 +54,7 @@ $('#avatar-upload').on('accept', function(e, file) {
 		<td class="label">
 			<%= f.label :display_name %>
 		</td>
-		<td class="field popper auto-lookup" data-action="artist">
+		<td class="field popper auto-lookup validate" data-action="artist">
 			<%= f.text_field :username, autofocus: true, autocomplete: "off" %>
 			<ul class="pop-out"></ul>
 		</td>
@@ -84,7 +84,7 @@ $('#avatar-upload').on('accept', function(e, file) {
 		<%= f.label :associated_tags %>
 		</td>
 		<td class="field">
-		<%= render layout: 'layouts/tageditor' do %>
+		<%= render layout: 'layouts/tageditor', locals: { tags: user.tags } do %>
 			<%= f.text_area :tag_string %>
 		<% end %>
 		</td>

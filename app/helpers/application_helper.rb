@@ -132,11 +132,11 @@ module ApplicationHelper
   end
   
   def self.url_safe(txt)
-    return txt.gsub(/(\/|[^a-zA-Z0-9\-])+/,'-').gsub(/--/,'-').gsub(/(^-)|(-$)/,'')
+    return txt.gsub(/(\/|[^:\!\@\$\^&\*\(\)\+=_;:'",a-zA-Z0-9\-])+/,'-').gsub(/--/,'-').gsub(/(^-)|(-$)/,'')
   end
   
-  def url_safe(txt)
-    raise "url_safe called from view (this should not happen)"
+  def self.url_safe_for_tags(txt)
+    return txt.gsub(/(\/|[^:\!\@\$\^&\*\(\)\+=_;:'",a-zA-Z0-9 \-])+/,'-').gsub(/--/,'-').gsub(/(^-)|(-$)/,'')
   end
   
   def title(page_title)

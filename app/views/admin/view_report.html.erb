@@ -1,0 +1,72 @@
+<% title "Admin" %>
+<% lim "1100px" %>
+<section style="width:100%" class="page resize-holder">
+	<h1 class="title resize-target">Report #<%= @report.id %></h1>
+<div class="comment" >
+	<div class="artist-bio bio">
+		<a <% if !@report.user.isDummy %>class="user-link" data-id="<%= @report.user_id %>" href="<%= @report.user.link %>"<% end %>>
+			<span class="avatar medium">
+				<span style="background-image:url('<%= @report.user.avatar %>');"></span>
+			</span>
+		</a>
+	</div>
+	<div class="content">
+		<div class="name">
+			<a <% if !@report.user.isDummy %>class="user-link" data-id="<%= @report.user_id %>" href="<%= @report.user.link %>"<% end %>><%= @report.user.username %></a>
+		</div>
+		<div class="date right"><%= since @report.created_at %></div>
+		<table style="table-layout:auto" class="properties comment-content preview">
+			<ul class="horizontal video-list">
+			<%= render partial: 'layouts/video_thumb_h', locals: {video_thumb_h: @video} %>
+			</ul>
+			<tr>
+				<td>Report Type:</td>
+				<td><%= @report.first %></td>
+			</tr>
+			<% if @report.source %>
+			<tr>
+				<td>Source:</td>
+				<td><%= @report.source %></td>
+			</tr>
+			<% end %>
+			<tr>
+				<td>Reasons:</td>
+				<td>
+					<% if @report.content_type_unrelated %>Unrelated <% end %>
+					<% if @report.content_type_unrelated %>Offensive <% end %>
+					<% if @report.content_type_unrelated %>Disturbing <% end %>
+					<% if @report.content_type_unrelated %>Explicit <% end %>
+				</td>
+			</tr>
+			<% if @report.copyright_holder %>
+			<tr>
+				<td>Copyright Holder:</td>
+				<td><%= @report.copyright_holder %></td>
+			</tr>
+			<% end %>
+			<% if @report.subject %>
+			<tr>
+				<td>General Message:</td>
+				<td>
+					<b><%= @report.subject %></b>
+					<br>
+					<%= @report.other %>
+				</td>
+			</tr>
+			<% end %>
+			<% if @report.name %>
+			<tr>
+				<td>Contact Details:</td>
+				<td>
+					Name: <%= @report.name %>
+					Email: <%= (@report.contact || "").gsub(/a-zA-z/,'*') %>
+				</td>
+			</tr>
+			<% end %>
+		</table>
+	</div>
+</div>
+</section>
+<section style="width:100%" class="page resize-holder">
+<%= render template: 'thread/view' %>
+</section>
