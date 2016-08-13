@@ -10,11 +10,10 @@ class CreateTags < ActiveRecord::Migration
     end
     create_table :tag_types do |t|
       t.string :prefix
-      t.string :colour
     end
     TagType.create([
-      { prefix: "artist", colour: "#3a3" },
-      { prefix: "genre", colour: "#33a" }
+      { prefix: "artist" },
+      { prefix: "genre" }
     ])
     add_column :artist_genres, :tag_id, :integer
     ArtistGenre.reset_column_information

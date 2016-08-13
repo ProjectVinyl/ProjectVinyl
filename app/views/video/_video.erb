@@ -1,16 +1,16 @@
 <% if @metadata %>
-<% content_for :metadata do %>
-<%= render partial: "view/meta", locals: @metadata %>
-<% end %>
+	<% content_for :metadata do %>
+		<%= render partial: "view/meta", locals: @metadata %>
+	<% end %>
 <% end %>
 <section class="page column-left">
 	<div id="video" style="background-image: url('/cover/<%= @video.id %>.png');" data-time="<%= @time %>" data-title="<%= @video.title %>" data-artist="<%= @user.username %>" data-<% if @video.audio_only %>audio<% else %>video<% end %>="<%= @video.id %>" data-mime="<%= @video.file + "|" + @video.mime %>" <%if @album %>data-autoplay="true"<% end %> class="video"></div>
-	<% if !@video.processed %>
+<% if !@video.processed %>
 	<div class="notice pending">This video is still being processed by our background ponies. If it does not play correctly try again later.</div>
-	<% end %>
-	<% if @video.hidden %>
+<% end %>
+<% if @video.hidden %>
 	<div class="notice alert">This video has been hidden. It will not be shown on other parts of the site until being passed by moderation.</div>
-	<% end %>
+<% end %>
 	<div class="post description resize-holder">
 	<% if @modificationsAllowed %>
 		<h2 class="title editable post-title resize-target short" data-target="video" data-member="title" data-id="<%= @video.id %>">
@@ -18,48 +18,47 @@
 			<span class="edit"><i class="fa fa-pencil"></i></span>
 			<span style="display:none">11</span>
 		</h2>
+	<% else %>
+		<h2 class="title post-title resize-target short">
+			<span class="content "><%= @video.title %></span>
+		</h2>
+	<% end %>
 		<div class="tag-list subheading">
 			<span class="uploaded">Uploaded on <%= @video.created_at.to_time.strftime('%e %B %Y') %> by <%= @user.username %></span>
 			<span class="views right"><%= number_with_delimiter @video.views %> views</span>
 		</div>
+	<% if @modificationsAllowed %>
 		<span class="editable post-content" data-target="video" data-member="description" data-id="<%= @video.id %>">
 			<span class="content"><%= raw emotify @video.description %></span>
 			<span class="edit"><i class="fa fa-pencil" ></i></span>
 		</span>
 	<% else %>
-		<h2 class="title post-title resize-target short">
-			<span class="content "><%= @video.title %></span>
-		</h2>
-		<div class="tag-list subheading">
-			<span class="uploaded">Uploaded on <%= @video.created_at.to_time.strftime('%e %B %Y') %> by <%= @user.username %></span>
-			<span class="views right"><%= number_with_delimiter @video.views %> views</span>
-		</div>
 		<span class="post-content">
 			<span class="content"><%= raw emotify @video.description %></span>
 		</span>
 	<% end %>
 		<div class="post-tags">
-			<% if user_signed_in? %>
+		<% if user_signed_in? %>
 			<div class="editable post-content short tiny-link" data-target="video" data-member="source" data-id="<%= @video.id %>">
 				Source: <a href="<%= @video.source %>" class="content"><%= @video.source %></a>
 				<span class="edit">(edit)</i></span>
 			</div>
-			<% else %>
+		<% else %>
 			<div class="post-content tiny-link">
 				Source: <a href="<%= @video.source %>"><%= @video.source %></a>
 			</div>
-			<% end %>
+		<% end %>
 			<span class="normal">
 				<%= render partial: '/layouts/taglist', locals: { collection: @video.tags } %>
 			</span>
-			<% if user_signed_in? %>
+		<% if user_signed_in? %>
 			<span class="editing">
 				<%= render layout: 'layouts/tageditor', locals: {tags: @video.tags} do %>
 				<textarea data-target="video" data-id="<%= @video.id %>" name="tags"><%= raw @video.tag_string %></textarea>
 				<% end %>
 			</span>
 			<a href="#" class="state-toggle tiny-link" data-state="editing" data-true="(close)" data-false="(edit)">(edit)</a>
-			<% end %>
+		<% end %>
 		</div>
 		<div class="actions">
 			<div class="split-button popper">

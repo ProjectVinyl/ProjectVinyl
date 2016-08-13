@@ -2,9 +2,9 @@
 	<span class="value">
 		<%= yield %>
 	</span>
-	<ul class="tags"><% if tags %><% tags.includes(:tag_type).each do |tag| %><li class="tag">
+	<ul class="tags"><% if tags %><% tags.includes(:tag_type).each do |tag| %><li class="tag tag-<%= tag.namespace %>">
 		<i title="Remove Tag" data-name="<%= tag.get_as_string %>" class="fa fa-times remove"></i>
-		<a style="color:<%= tag.get_colour %>" href="/tags/<%= tag.short_name %>"><%= tag.get_as_string %></a>
+		<a href="/tags/<%= tag.short_name %>"><%= tag.get_as_string %></a>
 	</li><% end %><% end %></ul>
 	<input class="tag input" type="text" placeholder="Tag list..." ></input>
 	<ul class="search-results pop-out">

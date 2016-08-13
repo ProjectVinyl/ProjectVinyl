@@ -9,6 +9,7 @@ class AdminController < ApplicationController
     @unprocessed = Video.where("processed IS NULL or processed = ?", false).limit(5*8)
     @users = User.where(last_sign_in_at: Time.zone.now.beginning_of_month..Time.zone.now.end_of_day).limit(100).order(:last_sign_in_at).reverse_order
     @processorStatus = VideoProcessor.status
+    @reports = Report.includes(:video).where(resolved: nil).limit(20)
   end
   
   def video
@@ -28,7 +29,8 @@ class AdminController < ApplicationController
     end
     @modificationsAllowed = true
     @album = Album.find(params[:id])
-    @items = @album.album_items.include(:artist)
+    @items = @album.album_items.includes(:direct_user).order(:index)
+    @user = @album.user
   end
   
   def artist
@@ -45,7 +47,7 @@ class AdminController < ApplicationController
         @thread = @report.comment_thread
         @order = '0'
         @results = @comments = Pagination.paginate(@thread.get_comments, (params[:page] || -1).to_i, 10, false)
-        @video = Video.where(id: params[:id]).first
+        @video = @report.video
         @user = @video.user
         return
       end

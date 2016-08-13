@@ -6,7 +6,7 @@ class AlbumController < ApplicationController
         return
       end
       @user = @album.user
-      @items = @album.album_items.includes(:user).order(:index)
+      @items = @album.album_items.includes(:direct_user).order(:index)
       @modificationsAllowed = user_signed_in? && @album.ownedBy(current_user)
     end
   end

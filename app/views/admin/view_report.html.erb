@@ -2,7 +2,24 @@
 <% lim "1100px" %>
 <section style="width:100%" class="page resize-holder">
 	<h1 class="title resize-target">Report #<%= @report.id %></h1>
-<div class="comment" >
+<div class="comment<%= !@report.resolved.nil? ? (@report.resolved ? " resolved" : " closed") : "" %>" >
+	<% if !@report.resolved.nil? %>
+		<div class="notice alert resolution-status">
+		<% if @report.resolved %>
+			<span class="fa-stack fa-3x">
+				<i class="fa fa-circle fa-stack-2x"></i>
+				<i class="fa fa-check fa-inverse fa-stack-1x"></i>
+			</span>
+			<b>This report has been marked as Resolved.</b>
+		<% else %>
+			<span class="fa-stack fa-3x">
+				<i class="fa fa-circle fa-stack-2x"></i>
+				<i class="fa fa-ban fa-inverse fa-stack-1x"></i>
+			</span>
+			<b>This report has been closed.</b>
+		<% end %>
+		</div>
+	<% end %>
 	<div class="artist-bio bio">
 		<a <% if !@report.user.isDummy %>class="user-link" data-id="<%= @report.user_id %>" href="<%= @report.user.link %>"<% end %>>
 			<span class="avatar medium">

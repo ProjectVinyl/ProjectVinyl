@@ -1,51 +1,45 @@
-<% if @video %>
-		<% title @video.title %>
-		<%= render partial: 'video' %>
-		<div class="page resize-holder column-right column-mobile-fragmented right center">
-			<%= render partial: 'artist/bio', locals: {user: @user } %>
-			<% if @album %>
-			<section class="listing compact playlist column-mobile-shown">
-				<div class="controls">
-				<% if @prev_video %>
-					<a id="playlist_prev" class="slide-left" title="Previous" href="/view/<%= @prev_video.video.id %>-<%= @prev_video.video.safe_title %>?list=<%= @album.id %>&index=<%= @prev_video.index %>">
-						<i class="fa fa-fw fa-step-backward"></i>
-					</span>
-				<% end %>
-				<a class="title<% if @next_video %> buff-right<% end %>" href="/album/<%= @album.id %>-<%= @album.safe_title %>"><%= @album.title %></a>
-				<% if @next_video %>
-					<a id="playlist_next" class="slide-right" title="Next" href="/view/<%= @next_video.video.id %>-<%= @next_video.video.safe_title %>?list=<%= @album.id %>&index=<%= @next_video.index %>">
-						<i class="fa fa-fw fa-step-forward"></i>
-					</span>
-				<% end %>
-				</div>
-				<div class="scroll-container">
-					<div class="items<% if @album_editable %> reorderable<% end %>" data-target="albumitem">
-						<%= render partial: '/album/album_item', collection: @items %>
-					</div>
-				</div>
-				<script>
+<% title @video.title %>
+<%= render partial: 'video' %>
+<div class="page resize-holder column-right column-mobile-fragmented right center">
+	<%= render partial: 'artist/bio', locals: {user: @user } %>
+	<% if @album %>
+	<section class="listing compact playlist column-mobile-shown">
+		<div class="controls">
+		<% if @prev_video %>
+			<a id="playlist_prev" class="slide-left" title="Previous" href="/view/<%= @prev_video.video.id %>-<%= @prev_video.video.safe_title %>?list=<%= @album.id %>&index=<%= @prev_video.index %>">
+				<i class="fa fa-fw fa-step-backward"></i>
+			</span>
+		<% end %>
+		<a class="title<% if @next_video %> buff-right<% end %>" href="/album/<%= @album.id %>-<%= @album.safe_title %>"><%= @album.title %></a>
+		<% if @next_video %>
+			<a id="playlist_next" class="slide-right" title="Next" href="/view/<%= @next_video.video.id %>-<%= @next_video.video.safe_title %>?list=<%= @album.id %>&index=<%= @next_video.index %>">
+				<i class="fa fa-fw fa-step-forward"></i>
+			</span>
+		<% end %>
+		</div>
+		<div class="scroll-container">
+			<div class="items<% if @album_editable %> reorderable<% end %>" data-target="albumitem">
+				<%= render partial: '/album/album_item', collection: @items %>
+			</div>
+		</div>
+		<script>
 $(document).ready(function() {
   var selected = $('.playlist a.selected');
   if (selected.length) scrollTo(selected, '.playlist .scroll-container');
 });
 $('html,body').scrollTop(200);
-				</script>
-			</section>
-			<% end %>
-			<section>
-				<h1 class="resize-target">
-					<a>Discovery Queue</a>
-				</h1>
-				<ul class="queue">
-				<%= render partial: '/layouts/video_thumb_v', collection: @queue %>
-				</ul>
-			</section>
-		</div>
-		<section class="page column-left">
-			<%= render partial: '/thread/view', locals: {identifier: @video.id, title: @video.title + " by " + @user.username } %>
-		</section>
-<% else %>
-<%= render layout: '/layouts/error', locals: { title: 'Nothing to see here!' } do %>
-This is not the video you are looking for.
-<% end %>
-<% end %>
+		</script>
+	</section>
+	<% end %>
+	<section>
+		<h1 class="resize-target">
+			<a>Discovery Queue</a>
+		</h1>
+		<ul class="queue">
+		<%= render partial: '/layouts/video_thumb_v', collection: @queue %>
+		</ul>
+	</section>
+</div>
+<section class="page column-left">
+	<%= render partial: '/thread/view', locals: {identifier: @video.id, title: @video.title + " by " + @user.username } %>
+</section>

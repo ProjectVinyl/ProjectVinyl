@@ -3,6 +3,7 @@ class CreateReports < ActiveRecord::Migration
     create_table :reports do |t|
       t.integer :video_id
       t.integer :user_id
+      t.boolean :resolved
       t.string :first
       t.string :source
       t.boolean :content_type_unrelated

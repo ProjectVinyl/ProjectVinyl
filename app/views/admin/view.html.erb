@@ -34,7 +34,18 @@
 	<h1 class="title resize-target">Processor Status</h1>
 	<%= raw @processorStatus %>
 	<hr>
-	<button class="confirm-button action red" data-action="delete" data-url="admin/process/all" data-title="Process <%= @unprocessed_count %> Videos" data-icon="warning" type="button">Enqueue All Outstanding Videos</button>
+	<button class="confirm-button action red" data-action="delete" data-url="admin/process/all" data-title="Process <%= @unprocessed_count %> Videos" data-icon="warning" type="button">Poke Processor</button>
+</section>
+<section style="width:100%" class="page recent-reports resize-holder">
+	<h1 class="title resize-target">Submitted Reports</h1>
+	<ul id="reports" class="report-list">
+		<% @reports.each do |report| %>
+		<li class="generic">
+			<a href="admin/report/view/<%= report.id %>">Report #<%= report.id %></a>
+			<%= render partial: 'layouts/video_thumb_h', locals: {video_thumb_h: report.video } %>
+		</li>
+		<% end %>
+	</ul>
 </section>
 <section style="width:100%" class="page recent-uploads resize-holder">
 	<h1 class="title resize-target">Hidden Videos</h1>

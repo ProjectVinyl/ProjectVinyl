@@ -401,18 +401,24 @@ var initFileSelect = (function() {
     list.find('.remove').on('click', function() {
       removeTag($(this).parent(), $(this).attr('data-name'));
     });
-    function appendTag(name, colour) {
+    function appendTag(name) {
       name = name.trim().toLowerCase().replace(/[^ a-z0-9\/&\-:]/g, '');
       if (name.length) {
         if (tags.indexOf(name) == -1) {
           tags.push(name);
           value.val(tags.join(','));
-          createTagItem(name, colour);
+          createTagItem(name);
         }
       }
     }
-    function createTagItem(name, colour) {
-      var item = $('<li class="tag"><i title="Remove Tag" class="fa fa-times remove"></i><a style="color:' + colour + ';" href="/tags/' + name + '">' + name + '</a></li>');
+    function namespace(name) {
+      if (name.indexOf(':') != -1) {
+        return name.split(':')[0];
+      }
+      return ''
+    }
+    function createTagItem(name) {
+      var item = $('<li class="tag tag-' + namespace(name) + '"><i title="Remove Tag" class="fa fa-times remove"></i><a href="/tags/' + name + '">' + name + '</a></li>');
       list.append(item);
       item.find('.remove').on('click', function() {
         removeTag(item, name);
@@ -441,14 +447,14 @@ var initFileSelect = (function() {
       if (name.length > 0) ajax.get('find/tags', function(json) {
         searchResults.empty();
         for (var i = json.results.length; i--; ) {
-          var item = $('<li data-colour="' + json.results[i].colour + '" style="color:' + json.results[i].colour + ';"><span>' + json.results[i].name + '</span> (' + json.results[i].members + ')' + '</li>');
+          var item = $('<li class="tag-' + namespace(json.results[i].name) + '"><span>' + json.results[i].name + '</span> (' + json.results[i].members + ')' + '</li>');
           item.on('click', function() {
             searchResults.removeClass('shown');
             var text = input.val().trim().split(/,|;/);
-            for (var i = 0; i < text.length - 1; i++) {
-              appendTag(text[i], '');
+            text[text.length - 1] = $(this).find('span').text()
+            for (var i = 0; i < text.length; i++) {
+              appendTag(text[i]);
             }
-            appendTag($(this).find('span').text(), $(this).attr('data-colour'));
             input.val('');
             save();
           });
@@ -461,6 +467,7 @@ var initFileSelect = (function() {
     }
     var input = me.find('.input');
     var last_value = '';
+    var handled_back = false;
     input.on('keydown', function(e) {
       if (e.which == KEY_ENTER || e.which == KEY_COMMA) {
         var text = input.val().trim().split(/,|;/);
@@ -471,17 +478,21 @@ var initFileSelect = (function() {
         save();
         e.preventDefault();
         e.stopPropagation();
-      }
-    })
-    input.on('keyup focus', function(e) {
-      if (e.which != KEY_ENTER && e.which != KEY_COMMA) {
-        var value = input.val();
-        if (!value.length) {
-          if (e.which == KEY_BACKSPACE) {
+        handled_back = false;
+      } else if (e.which == KEY_BACKSPACE) {
+        if (!handled_back) {
+          handled_back = true;
+          var value = input.val();
+          if (!value.length) {
             list.children('.tag').last().find('.remove').click();
           }
         }
+      } else {
+        handled_back = false;
       }
+    });
+    input.on('keyup', function() {
+      handled_back = false;
     });
     input.on('mousedown', function(e) {
       e.stopPropagation();
@@ -663,8 +674,8 @@ $(document).on('click', '.state-toggle', function(ev) {
       if (!popup) {
         popup = new Popup(me.attr('data-title'), me.attr('data-icon'), function() {
           this.content.append('<div class="message_content">Are you sure?</div><div class="foot"></div>');
-          var ok = $('<button>Ok</button>');
-          var cancel = $('<button class="right cancel" type="button">Cancel</button>');
+          var ok = $('<button class="button-fw green">Yes</button>');
+          var cancel = $('<button class="cancel button-fw blue" style="margin-left:20px;" type="button">No</button>');
           ok.on('click', function() {
             ajax.post(url, function(json) {
               if (json.ref) {
@@ -678,6 +689,7 @@ $(document).on('click', '.state-toggle', function(ev) {
           cancel.on('click', function() {
             popup.close();
           });
+          this.content.find('.foot').addClass('center');
           this.content.find('.foot').append(ok);
           this.content.find('.foot').append(cancel);
           this.setPersistent();
@@ -1005,7 +1017,7 @@ $(document).on('focus', 'label input, label select', function() {
 function error(message) {
   new Popup('Error', 'warning', function() {
     this.content.append('<div class="message_content">' + message + '</div><div class="foot"></div>');
-    var ok = $('<button class="right">Ok</button>');
+    var ok = $('<button class="right button-fw">Ok</button>');
     var me = this;
     ok.on('click', function() {
       me.close();
@@ -1015,19 +1027,25 @@ function error(message) {
   });
 }
 
-function postComment(sender, thread_id, order) {
+function postComment(sender, thread_id, order, report_state) {
   sender = $(sender).parent();
+  var comment = sender.find('textarea').val();
+  if (!comment.length) {
+    return error('You have to type something to post');
+  }
   sender.addClass('posting');
+  var data = {
+    thread: thread_id,
+    order: order,
+    comment: comment
+  };
+  if (report_state) data.report_state = report_state;
   ajax.post('comments/new', function(json) {
     sender.removeClass('posting');
     paginator.repaint($('#thread-' + thread_id).closest('.paginator'), json);
     scrollTo('#comment_' + json.focus);
     sender.find('textarea').val('').change();
-  }, 0, {
-    thread: thread_id,
-    order: order,
-    comment: sender.find('textarea').val()
-  });
+  }, 0, data);
 }
 
 function editComment(sender) {

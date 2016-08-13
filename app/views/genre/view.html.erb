@@ -20,7 +20,7 @@
 			</span>
 		</span>
 		<% end %>
-		<% if @implies.length %>
+		<% if @implies.length > 0 %>
 		<div class="space-fix details">
 			<h1>Implies</h1>
 			<ul class="tags">
@@ -28,7 +28,7 @@
 			</ul>
 		</div>
 		<% end %>
-		<% if @implied.length %>
+		<% if @implied.length > 0 %>
 		<div class="space-fix details">
 			<h1>Implied by</h1>
 			<ul class="tags">

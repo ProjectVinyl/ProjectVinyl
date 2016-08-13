@@ -11,4 +11,20 @@ class Notification < ActiveRecord::Base
     Notification.create(batch_data)
     User.where('id IN (?)', recievers).update_all('notification_count = notification_count + 1')
   end
+  
+  def self.notify_admins(sender, message, source)
+    Notification.notify_recievers_without_delete(User.where(is_admin: true).pluck(:id), sender, message, source)
+  end
+  
+  def self.notify_recievers_without_delete(recievers, sender, message, source)
+    sender = sender.class.table_name + "_" + sender.id.to_s
+    batch_data = recievers.uniq.map do |reciever|
+      { user_id: reciever,
+        message: message,
+        source: source,
+        sender: sender }
+    end
+    Notification.create(batch_data)
+    User.where('id IN (?)', recievers).update_all('notification_count = notification_count + 1')
+  end
 end

@@ -146,4 +146,8 @@ module ApplicationHelper
   def lim(page_width)
     content_for(:width) { page_width }
   end
+  
+  def load_time
+    return Time.now - @start_time
+  end
 end

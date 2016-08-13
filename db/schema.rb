@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160812110602) do
+ActiveRecord::Schema.define(version: 20160813174831) do
 
   create_table "album_items", force: :cascade do |t|
     t.integer "album_id", limit: 4
@@ -95,6 +95,8 @@ ActiveRecord::Schema.define(version: 20160812110602) do
     t.text     "contact",                 limit: 65535
     t.datetime "created_at",                            null: false
     t.datetime "updated_at",                            null: false
+    t.integer  "video_id",                limit: 4
+    t.boolean  "resolved"
   end
 
   create_table "tag_implications", force: :cascade do |t|
@@ -109,7 +111,6 @@ ActiveRecord::Schema.define(version: 20160812110602) do
 
   create_table "tag_types", force: :cascade do |t|
     t.string "prefix", limit: 255
-    t.string "colour", limit: 255
   end
 
   create_table "tags", force: :cascade do |t|

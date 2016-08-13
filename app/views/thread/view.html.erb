@@ -14,6 +14,15 @@
 			</span>
 		</a>
 	</div>
+	<script>
+function reportState(sender) {
+  sender = $(sender).parent();
+  if (sender.find('input[name=resolve]:checked').length) return 'resolve';
+  if (sender.find('input[name=close]:checked').length) return 'close';
+  if (sender.find('input[name=unresolve]:checked').length) return 'open';
+  return false;
+}
+	</script>
 	<div class="content editing">
 		<div class="name">
 			<a class="user-link" data-id="<%= current_user.id %>" href="<%= current_user.link %>"><%= current_user.username %></a>
@@ -21,12 +30,31 @@
 		<div class="comment-content preview"></div>
 		<textarea class="comment-content"></textarea>
 		<hr>
-		<button class="green" onclick="postComment(this, '<%= @thread.id %>', '<%= @order %>');">
+		<button class="green" onclick="postComment(this, '<%= @thread.id %>', '<%= @order %>', reportState(this));">
 			<span>Post Comment</span>
 			<i class="posting-spinner fa fw fa-spinner fa-spin"></i>
 		</button>
 		<button class="blue state-toggle button-fw" data-state="editing" data-true="Preview" data-false="Edit">Preview</button>
-		
+		<% if @thread.owner_type == "Report" %>
+		<% if @thread.owner.resolved.nil? %>
+		<label class="button blue right">
+			<input name="resolve" type="checkbox"></input>
+			<i class="fa fa-check"></i>
+			Mark As Resolved
+		</label>
+		<label class="button red right">
+			<input name="close" type="checkbox"></input>
+			<i class="fa fa-check"></i>
+			Close Report
+		</label>
+		<% else %>
+		<label class="button blue right">
+			<input name="unresolve" type="checkbox"></input>
+			<i class="fa fa-check"></i>
+			Re-open Report
+		</label>
+		<% end %>
+		<% end %>
 		</div>
 	</div>
 </div>

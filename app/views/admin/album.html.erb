@@ -13,8 +13,8 @@
 						<%= f.label "Current Owner" %>
 					</td>
 					<td class="field">
-						<a href="/artist/<%= @album.owner.id %>">
-							<%= @album.owner.name %> (<%= @album.owner.id %>)
+						<a href="<%= @user.link %>">
+							<%= @user.username %> (<%= @user.id %>)
 						</a>
 					</td>
 				</tr>
@@ -23,7 +23,7 @@
 						<%= f.label "Owner" %>
 					</td>
 					<td class="field popper auto-lookup" data-action="artist">
-						<%= f.text_field :owner_id, autocomplete: "off" %>
+						<%= f.text_field :user_id, autocomplete: "off" %>
 						<ul class="pop-out"></ul>
 					</td>
 				</tr>

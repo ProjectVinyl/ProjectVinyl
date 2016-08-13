@@ -16,6 +16,10 @@ class UserDummy
     return @username
   end
   
+  def queue(excluded)
+    @queue = Video.randomVideos(Video.where(hidden: false, user_id: @id).where.not(id: excluded), 7)
+  end
+  
   def avatar
     return '/images/default-avatar.png'
   end
@@ -86,6 +90,10 @@ class User < ActiveRecord::Base
     return self.all_albums.where(hidden: false)
   end
   
+  def queue(excluded)
+    return Video.randomVideos(self.videos.where(hidden: false).where.not(id: excluded), 7)
+  end
+    
   def drop_tags(ids)
     Tag.where('id IN (?) AND user_count > 0', ids).update_all('user_count = user_count - 1')
     ArtistGenre.where('user_id = ? AND tag_id IN (?)', self.id, ids).delete_all

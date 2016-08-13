@@ -1,5 +1,6 @@
 class Report < ActiveRecord::Base
   belongs_to :direct_user, class_name: "User", foreign_key: "user_id"
+  belongs_to :video
   
   has_one :comment_thread, as: :owner, dependent: :destroy
   

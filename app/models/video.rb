@@ -8,6 +8,19 @@ class Video < ActiveRecord::Base
   has_many :video_genres, dependent: :destroy
   has_many :tags, :through => :video_genres
   
+  def self.randomVideos(selection, limit)
+    selection = selection.pluck(:id)
+    if !selection || selection.length == 0
+      return []
+    end
+    if selection.length < limit
+      selected = selection
+    else
+      selected = selection.sample(limit)
+    end
+    return Video.where('id IN (?)', selected)
+  end
+  
   def user
     return self.direct_user || @dummy || (@dummy = User.dummy(self.user_id))
   end

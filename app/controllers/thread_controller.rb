@@ -22,8 +22,37 @@ class ThreadController < ApplicationController
           page: @results.page,
           focus: comment.get_open_id
         }
+        recievers = []
+        if @thread.user_id
+          recievers << @thread.user_id
+        end
         if @thread.owner_type == 'Report'
-          Notification.notify_recievers(@thread.comments.pluck(:user_id).uniq, @thread.owner,
+          if state = params[:report_state]
+            @report = @thread.owner
+            if state == 'open'
+              if !@report.resolved.nil?
+                @report.resolved = nil
+                Notification.notify_admins(@thread.owner, "Report <b>" + @thread.title + "</b> has been reopened", @thread.location)
+              end
+            elsif state == 'close'
+              if @report.resolved != false
+                @report.resolved = false
+                Notification.notify_admins(@thread.owner, "Report <b>" + @thread.title + "</b> has been closed", @thread.location)
+              end
+            elsif state == 'resolve'
+              if !@report.resolved
+                @report.resolved = true
+                Notification.notify_admins(@thread.owner, "Report <b>" + @thread.title + "</b> has been marked as resolved", @thread.location)
+              end
+            end
+            @report.save
+          end
+          recievers = recievers | @thread.comments.pluck(:user_id)
+          Notification.notify_recievers_without_delete(recievers, @thread.owner,
+            current_user.username + " has posted a reply to <b>" + @thread.title + "</b>",
+            @thread.location)
+        else
+          Notification.notify_recievers_without_delete(recievers, @thread,
             current_user.username + " has posted a reply to <b>" + @thread.title + "</b>",
             @thread.location)
         end

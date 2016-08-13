@@ -32,18 +32,20 @@ class Comment < ActiveRecord::Base
     CommentReply.where(parent_id: self.id).delete_all
     items = []
     bbc.gsub(QUOTED_TEXT,'').scan(REPLY_MATCHER) do |match|
-      items << Comment.decode_open_id(match)
+      items = items || Comment.decode_open_id(match)
     end
-    recievers = []
-    replied_to = (Comment.where('id IN (?) AND comment_thread_id = ?', items, self.comment_thread_id).map { |i|
-      recievers << i.user_id
-      '(' + i.id.to_s + ',' + self.id.to_s + ')'
-    }).join(', ')
-    if replied_to.length > 0
-      Notification.notify_recievers(recievers, self,
-           self.user.username + " has <b>replied</b> to your comment on <b>" + self.comment_thread.title + "</b>",
-           self.comment_thread.location)
-      ActiveRecord::Base.connection.execute('INSERT INTO comment_replies (`comment_id`,`parent_id`) VALUES ' + replied_to)
+    if items.length > 0
+      recievers = []
+      replied_to = (Comment.where('id IN (?) AND comment_thread_id = ?', items, self.comment_thread_id).map { |i|
+        recievers << i.user_id
+        '(' + i.id.to_s + ',' + self.id.to_s + ')'
+      }).join(', ')
+      if replied_to.length > 0
+        Notification.notify_recievers(recievers, self,
+             self.user.username + " has <b>replied</b> to your comment on <b>" + self.comment_thread.title + "</b>",
+             self.comment_thread.location)
+        ActiveRecord::Base.connection.execute('INSERT INTO comment_replies (`comment_id`,`parent_id`) VALUES ' + replied_to)
+      end
     end
   end
   

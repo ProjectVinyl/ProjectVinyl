@@ -1,47 +1,47 @@
 class VideoController < ApplicationController
   def view
-    if @video = Video.where(id: params[:id].split(/-/)[0]).first
-      @time = params[:t].to_i || 0
-      if !@video.processed && user_signed_in? && current_user.is_admin
-        if @video.processing
-          alert = "This video is still being processed. All is good."
+    if !(@video = Video.where(id: params[:id].split(/-/)[0]).first)
+      render '/layouts/error', locals: { title: 'Nothing to see here!', description: "This is not the video you are looking for." }
+      return
+    end
+    @time = params[:t].to_i || 0
+    if !@video.processed && user_signed_in? && current_user.is_admin
+      if @video.processing
+        alert = "This video is still being processed. All is good."
+      end
+    end
+    if @video.hidden && (!user_signed_in? || @video.user_id != current_user.id)
+      render 'layouts/error', locals: { title: 'Content Removed', description: "The video you are trying to access is currently not available." }
+      return
+    end
+    @metadata = {
+      type: "video",
+      mime: @video.mime,
+      title: @video.title,
+      description: @video.description,
+      url: url_for(action: "view", controller: "video", id: @video.id, only_path: false) + "-" + @video.safe_title,
+      embed_url: url_for(action: "view", controller: "embed", only_path: false, id: @video.id),
+      cover: url_for(action: "cover", controller: "imgs", only_path: false, id: @video.id),
+      tags: @video.tags
+    }
+    @user = @video.user
+    @thread = @video.comment_thread
+    @order = '1'
+    @results = @comments = Pagination.paginate(@thread.get_comments, 0, 10, true)
+    @queue = @user.queue(@video.id)
+    if !@modificationsAllowed = user_signed_in? && current_user.id == @user.id
+      @video.views = @video.views + 1
+      @video.save
+    end
+    if params[:list]
+      if @album = Album.where(id: params[:list]).first
+        @items = @album.album_items.includes(:direct_user).order(:index)
+        @index = params[:index].to_i || (@items.first ? @items.first.index : 0)
+        if @index > 0
+          @prev_video = @items.where(index: @index - 1).first
         end
-      end
-      if @video.hidden && (!user_signed_in? || @video.user_id != current_user.id)
-        render 'layouts/error', locals: { title: 'Content Removed', description: "The video you are trying to access is currently not available." }
-        return
-      end
-      @metadata = {
-        type: "video",
-        mime: @video.mime,
-        title: @video.title,
-        description: @video.description,
-        url: url_for(action: "view", controller: "video", id: @video.id, only_path: false) + "-" + @video.safe_title,
-        embed_url: url_for(action: "view", controller: "embed", only_path: false, id: @video.id),
-        cover: url_for(action: "cover", controller: "imgs", only_path: false, id: @video.id),
-        tags: @video.tags
-      }
-      @user = @video.user
-      @thread = @video.comment_thread
-      @order = '1'
-      @results = @comments = Pagination.paginate(@thread.get_comments, 0, 10, true)
-      if !@user.isDummy
-        @queue = @user.videos.where(hidden: false).where.not(id: @video.id).order("RAND()").limit(7)
-      end
-      if !@modificationsAllowed = user_signed_in? && current_user.id == @user.id
-        @video.views = @video.views + 1
-        @video.save
-      end
-      if params[:list]
-        if @album = Album.where(id: params[:list]).first
-          @items = @album.album_items.includes(:user).order(:index)
-          @index = params[:index].to_i || (@items.first ? @items.first.index : 0)
-          if @index > 0
-            @prev_video = @items.where(index: @index - 1).first
-          end
-          @next_video = @items.where(index: @index + 1).first
-          @album_editable = user_signed_in? && @album.ownedBy(current_user)
-        end
+        @next_video = @items.where(index: @index + 1).first
+        @album_editable = user_signed_in? && @album.ownedBy(current_user)
       end
     end
   end

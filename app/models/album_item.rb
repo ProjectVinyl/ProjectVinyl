@@ -1,7 +1,11 @@
 class AlbumItem < ActiveRecord::Base
   belongs_to :album
   belongs_to :video
-  has_one :user, :through => :video
+  has_one :direct_user, :through => :video
+  
+  def user
+    return self.direct_user || @dummy || (@dummy = User.dummy(self.user_id))
+  end
   
   def removeSelf()
     self.destroy

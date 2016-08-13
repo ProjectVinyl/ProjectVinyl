@@ -30,7 +30,7 @@ class Tag < ActiveRecord::Base
   def self.find_matching_tags(name)
     result = []
     Tag.includes(:tag_type).where('name LIKE ?', "%" + name.downcase + "%").limit(10).each do |tag|
-      result << { name: tag.name, link: tag.short_name, members: tag.members, colour: tag.get_colour }
+      result << { name: tag.name, link: tag.short_name, members: tag.members }
     end
     return result
   end
@@ -61,12 +61,12 @@ class Tag < ActiveRecord::Base
     end
     new_tags = names - existing_names
     new_tags.each do |name|
-      tag = Tag.create(name: name, description: '', tag_type_id: 0)
+      tag = Tag.create(description: '', tag_type_id: 0).set_name(name)
       if !name.index(':').nil?
         if type = TagType.where(prefix: name.split(':')[0]).first
           tag.tag_type = type
           tag.save
-          result << Tag.load_implications_from_type(tag.id, type)
+          result = result || Tag.load_implications_from_type(tag.id, type)
         end
       end
       result << tag.id
@@ -127,25 +127,24 @@ class Tag < ActiveRecord::Base
     return self.video_count + self.user_count
   end
   
-  def has_type
-    return self.tag_type_id && self.tag_type_id >= 1
-  end
-  
   def get_as_string
     return self.name
   end
   
-  def get_colour
-    if self.has_type
-      return self.tag_type.colour
+  def has_type
+    return self.tag_type_id & self.tag_type_id > 0
+  end
+  
+  def namespace
+    if self.name.index(':')
+      return self.name.split(':')[0]
     end
-    return ""
   end
   
   def set_name(name)
-    name = name.downcase.gsub(/:/, '_').gsub(/[;,]/,'')
+    name = name.downcase.gsub(/[;,]/,'')
     if self.has_type
-      name = self.tag_type.prefix + ":" + name
+      name = self.tag_type.prefix + ":" + name.gsub(/:/, '')
     end
     self.short_name = ApplicationHelper.url_safe_for_tags(name)
     self.name = name
