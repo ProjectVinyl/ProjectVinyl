@@ -8,37 +8,22 @@ class AlbumItem < ActiveRecord::Base
   end
   
   def removeSelf()
+    old_index = self.index
     self.destroy
-    self.album.album_items.order(:index).each_with_index do |i,index|
-      i.index = index
-      i.save
-    end
+    self.album.album_items.where('`album_items`.index > ?', old_index).update_all('`album_items`.index = `album_items`.index - 1')
   end
   
   def move(newIndex)
-    dirtyStart = newIndex
-    dirtyEnd = self.index
-    if self.index < dirtyStart
-      dirtyStart = dirtyEnd
-      dirtyEnd = newIndex
-    end
-    changed = self.album.album_items.where(index: dirtyStart..dirtyEnd)
-    if self.index == dirtyEnd
-      changed.each do |i|
-        i.index = i.index + 1
-        i.save
+    from = self.index
+    to = newIndex
+    if to != from
+      if to < from
+        self.album.album_items.where('`album_items`.index >= ? AND `album_items`.index < ?', to, from).update_all('`album_items`.index = `album_items`.index + 1')
+      else
+        self.album.album_items.where('`album_items`.index > ? AND `album_items`.index <= ?', from, to).update_all('`album_items`.index = `album_items`.index - 1')
       end
-    else
-      changed.each do |i|
-        i.index = i.index - 1
-        i.save
-      end
-    end
-    self.index = newIndex
-    self.save
-    self.album.album_items.order(:index).each_with_index do |i,index|
-      i.index = index
-      i.save
+      self.index = newIndex
+      self.save
     end
   end
 end
