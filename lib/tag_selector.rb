@@ -13,13 +13,13 @@ class TagSelector
       page = 0
     end
     @type = "video"
-    v_query = "SELECT v.*, a.username, g.name FROM video_genres t RIGHT JOIN videos v ON t.video_id = v.id, users a, tags g"
+    v_query = "SELECT v.*, a.username, g.name FROM video_genres t RIGHT JOIN videos v ON t.video_id = v.id LEFT JOIN users a ON v.user_id = a.id, tags g"
     query_strings = self.build_query_string("g.name IN (?)",
                                             "v.title LIKE ?",
                                             "a.username LIKE ?",
                                             "(g.name IN (?) AND COUNT(DISTINCT g.name) = ?)")
     v_query << " 
-WHERE (v.user_id = a.id AND ("
+WHERE (("
     if query_strings[0].index('g.name IN (').nil?
       v_query << "t.video_id IS NULL OR "
     end
