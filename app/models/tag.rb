@@ -66,7 +66,7 @@ class Tag < ActiveRecord::Base
         if type = TagType.where(prefix: name.split(':')[0]).first
           tag.tag_type = type
           tag.save
-          result = result || Tag.load_implications_from_type(tag.id, type)
+          result = result | Tag.load_implications_from_type(tag.id, type)
         end
       end
       result << tag.id
@@ -86,7 +86,7 @@ class Tag < ActiveRecord::Base
   end
   
   def self.expand_implications(tag_ids)
-    return tag_ids || TagImplication.where('tag_id IN (?)', tag_ids).pluck(:implied_id)
+    return tag_ids | TagImplication.where('tag_id IN (?)', tag_ids).pluck(:implied_id)
   end
   
   def self.loadTags(tag_string, sender)
@@ -101,20 +101,19 @@ class Tag < ActiveRecord::Base
   end
   
   def self.load_dif(added, removed, existing_ids, sender)
-    added = Tag.get_tag_ids_with_create(added)
-    added = Tag.expand_implications(added)
-    
-    removed = removed - added
-    
-    removed = Tag.get_tag_ids(removed)
-    
-    added = added - existing_ids
-    
+    if added.length > 0
+      added = Tag.get_tag_ids_with_create(added)
+      added = Tag.expand_implications(added)
+    end
+    if added.length > 0 && removed.length > 0
+      removed = removed - added
+    end
     if removed.length > 0
+      removed = Tag.get_tag_ids(removed)
       sender.drop_tags(removed)
     end
-    
     if added.length > 0
+      added = added - existing_ids
       entries = added.map do |id|
         { tag_id: id }
       end

@@ -32,7 +32,7 @@ class Comment < ActiveRecord::Base
     CommentReply.where(parent_id: self.id).delete_all
     items = []
     bbc.gsub(QUOTED_TEXT,'').scan(REPLY_MATCHER) do |match|
-      items = items || Comment.decode_open_id(match)
+      items = items | Comment.decode_open_id(match)
     end
     if items.length > 0
       recievers = []
