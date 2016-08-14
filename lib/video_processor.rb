@@ -78,7 +78,9 @@ class VideoProcessor
             db_object.save
           else
             db_object.update_status("sleep")
-            @@SleepTimer = @@SleepTimer + @@SleepIncriment
+            if @@sleepTimer < 3600
+              @@SleepTimer = @@SleepTimer + @@SleepIncriment
+            end
             sleep(@@SleepTimer)
           end
         end
