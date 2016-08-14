@@ -69,10 +69,6 @@ module ApplicationHelper
     return StathamSanitizer.new.sanitize(text, tags: %w(i b u s sup sub hr blockquote br img a), attributes: %w(class style href src data-link))
   end
   
-  def emotify(text)
-    return ApplicationHelper.emotify(text)
-  end
-  
   def self.demotify(text)
     if text.nil? || text.length == 0
       return ""

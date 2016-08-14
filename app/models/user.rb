@@ -8,7 +8,7 @@ class UserDummy
     return @id
   end
   
-  def bio
+  def html_bio
     return ''
   end
   
@@ -167,6 +167,20 @@ class User < ActiveRecord::Base
     if self.tag
         self.tag.set_name(name)
     end
+  end
+  
+  def set_description(text)
+    test = ApplicationHelper.demotify(text)
+    self.description = text
+    self.html_description = ApplicationHelper.emotify(text)
+    return self
+  end
+  
+  def set_bio(text)
+    test = ApplicationHelper.demotify(text)
+    self.bio = text
+    self.html_bio = ApplicationHelper.emotify(text)
+    return self
   end
   
   def avatar

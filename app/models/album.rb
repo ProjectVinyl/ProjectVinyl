@@ -3,7 +3,14 @@ class Album < ActiveRecord::Base
   has_many :album_items
   has_many :videos, :through => :album_items
   
-  def setTitle(title)
+  def set_description(text)
+    test = ApplicationHelper.demotify(text)
+    self.description = text
+    self.html_description = ApplicationHelper.emotify(text)
+    return self
+  end
+  
+  def set_title(title)
     self.title = title
     self.safe_title = ApplicationHelper.url_safe(title)
     self.save
@@ -24,10 +31,6 @@ class Album < ActiveRecord::Base
   def addItem(video)
     index = self.album_items.length
     self.album_items.create(video_id: video.id, index: index)
-    self.album_items.order(:index).each_with_index do |i,index|
-      i.index = index
-      i.save
-    end
   end
   
   def toggle(video)

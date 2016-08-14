@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160813174831) do
+ActiveRecord::Schema.define(version: 20160814080658) do
 
   create_table "album_items", force: :cascade do |t|
     t.integer "album_id", limit: 4
@@ -23,14 +23,15 @@ ActiveRecord::Schema.define(version: 20160813174831) do
   add_index "album_items", ["video_id"], name: "index_album_items_on_video_id", using: :btree
 
   create_table "albums", force: :cascade do |t|
-    t.string   "title",       limit: 255
-    t.text     "description", limit: 65535
-    t.datetime "created_at",                                null: false
-    t.datetime "updated_at",                                null: false
-    t.integer  "user_id",     limit: 4
-    t.integer  "featured",    limit: 4,     default: 0
-    t.boolean  "hidden",                    default: false
-    t.string   "safe_title",  limit: 255
+    t.string   "title",            limit: 255
+    t.text     "description",      limit: 65535
+    t.datetime "created_at",                                     null: false
+    t.datetime "updated_at",                                     null: false
+    t.integer  "user_id",          limit: 4
+    t.integer  "featured",         limit: 4,     default: 0
+    t.boolean  "hidden",                         default: false
+    t.string   "safe_title",       limit: 255
+    t.text     "html_description", limit: 65535
   end
 
   add_index "albums", ["user_id"], name: "index_albums_on_user_id", using: :btree
@@ -145,6 +146,8 @@ ActiveRecord::Schema.define(version: 20160813174831) do
     t.boolean  "banner_set",                           default: false
     t.integer  "tag_id",                 limit: 4
     t.integer  "star_id",                limit: 4
+    t.text     "html_description",       limit: 65535
+    t.text     "html_bio",               limit: 65535
   end
 
   add_index "users", ["email"], name: "index_users_on_email", unique: true, using: :btree
@@ -178,6 +181,7 @@ ActiveRecord::Schema.define(version: 20160813174831) do
     t.integer  "user_id",           limit: 4
     t.string   "safe_title",        limit: 255
     t.integer  "comment_thread_id", limit: 4
+    t.text     "html_description",  limit: 65535
   end
 
   add_index "videos", ["created_at"], name: "index_videos_on_created_at", using: :btree

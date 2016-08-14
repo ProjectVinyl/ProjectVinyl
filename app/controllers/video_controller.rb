@@ -117,19 +117,18 @@ class VideoController < ApplicationController
            ext = Mimes.ext(file.content_type)
           end
           video = user.videos.create(
-                  description: ApplicationHelper.demotify(video[:description]),
                   source: video[:source],
                   mime: file.content_type,
                   file: ext,
                   audio_only: file.content_type.include?('audio/'),
-                  upvotes: 0, downvotes: 0)
+                  upvotes: 0, downvotes: 0).set_description(video[:description])
           video.comment_thread = CommentThread.create(user_id: user)
           if params[:video][:tag_string]
             Tag.loadTags(params[:video][:tag_string], video)
           end
           video.setFile(file)
           video.setThumbnail(cover)
-          video.setTitle(nonil(ApplicationHelper.demotify(video[:title]), 'Untitled'))
+          video.set_title(nonil(video[:title], 'Untitled Video'))
           video.generateWebM
           if params[:async]
             render json: { result: "success", ref: "/view/" + video.id.to_s }
@@ -162,10 +161,10 @@ class VideoController < ApplicationController
       if video.user_id == current_user.id || current_user.is_admin
         value = ApplicationHelper.demotify(params[:value])
         if params[:field] == 'description'
-          video.description = value
+          video.set_description(value)
           video.save
         elsif params[:field] == 'title'
-          video.title = nonil(value, 'Untitled')
+          video.set_title(nonil(value, 'Untitled'))
           video.save
         end
         render status: 200, nothing: true

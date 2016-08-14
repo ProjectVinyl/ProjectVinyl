@@ -18,7 +18,7 @@
 			<h1 class="title">
 				<a class="name" href="<%= @user.link %>"><%= @user.username %></a>
 			</h1>
-			<span class="content bio"><%= raw emotify @user.description %></span>
+			<span class="content bio"><%= raw @user.html_description %></span>
 		</div>
 		<div class="details space-fix">
 			<h1>Associated Tags</h1>

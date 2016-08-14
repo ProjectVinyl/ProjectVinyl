@@ -29,12 +29,12 @@
 		</div>
 	<% if @modificationsAllowed %>
 		<span class="editable post-content" data-target="video" data-member="description" data-id="<%= @video.id %>">
-			<span class="content"><%= raw emotify @video.description %></span>
+			<span class="content"><%= raw @video.html_description %></span>
 			<span class="edit"><i class="fa fa-pencil" ></i></span>
 		</span>
 	<% else %>
 		<span class="post-content">
-			<span class="content"><%= raw emotify @video.description %></span>
+			<span class="content"><%= raw @video.html_description %></span>
 		</span>
 	<% end %>
 		<div class="post-tags">

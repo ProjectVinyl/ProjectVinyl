@@ -14,12 +14,12 @@
 				<span class="edit"><i class="fa fa-pencil"></i></span>
 			</h1>
 			<div class="editable content description" data-target="album" data-member="description" data-id="<%= @album.id %>">
-				<span class="content"><%= raw emotify @album.description %></span>
+				<span class="content"><%= raw @album.html_description %></span>
 				<span class="edit"><i class="fa fa-pencil" ></i></span>
 			</div>
 		<% else %>
 			<h1 class="title"><%= @album.title %></h1>
-			<div class="content description"><%= raw emotify @album.description %></div>
+			<div class="content description"><%= raw @album.html_description %></div>
 		<% end %>
 			<span class="tag-list underline">
 				By <a href="<%= @user.link %>"><%= @user.username %></a>

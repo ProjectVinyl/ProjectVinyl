@@ -49,16 +49,7 @@ class Video < ActiveRecord::Base
   def cover_path
     return Rails.root.join('public', 'cover', self.id.to_s)
   end
-  
-  def setTitle(title)
-    self.title = title
-    self.safe_title = ApplicationHelper.url_safe(title)
-    if self.comment_thread_id
-      self.comment_thread.title = title
-      self.comment_thread.save
-    end
-  end
-  
+    
   def setFile(media)
     File.open(self.video_path, 'wb') do |file|
       file.write(media.read)
@@ -213,6 +204,23 @@ class Video < ActiveRecord::Base
   
   def getTitle
     return self.hidden ? "Hidden Video" : self.title
+  end
+  
+  def set_title(title)
+    title = ApplicationHelper.demotify(title)
+    self.title = title
+    self.safe_title = ApplicationHelper.url_safe(title)
+    if self.comment_thread_id
+      self.comment_thread.title = title
+      self.comment_thread.save
+    end
+  end
+  
+  def set_description(text)
+    test = ApplicationHelper.demotify(text)
+    self.description = text
+    self.html_description = ApplicationHelper.emotify(text)
+    return self
   end
   
   def getDuration

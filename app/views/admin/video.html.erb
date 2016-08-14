@@ -9,7 +9,7 @@
 					</span>
 					<h1 class="name resize-target"><%= @user.username %></h1>
 				</a>
-				<div class="bio short"><%= raw emotify @user.bio %></div>
+				<div class="bio short"><%= raw @user.html_bio %></div>
 			</section>
 			<section class="page properties" style="width:100%">
 				<%= form_for(@video, as: "item", url: "/admin/transfer?type=video", html: { method: :put }) do |f| %>

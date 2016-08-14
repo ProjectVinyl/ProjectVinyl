@@ -21,8 +21,8 @@ class ArtistController < ApplicationController
       end
       if user
         user.set_name(input[:username])
-        user.description = ApplicationHelper.demotify(input[:description])
-        user.bio = ApplicationHelper.demotify(input[:bio])
+        user.set_description(input[:description])
+        user.set_bio(input[:bio])
         user.setTags(input[:tag_string])
         user.save
         if current_user.is_admin && params[:user_id]

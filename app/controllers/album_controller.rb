@@ -23,8 +23,9 @@ class AlbumController < ApplicationController
     if user_signed_in?
       album = params[:album]
       initial = album[:initial]
-      album = current_user.albums.create(description: ApplicationHelper.demotify(album[:description]))
-      album.setTitle(ApplicationHelper.demotify(params[:album][:title]))
+      album = current_user.albums.create()
+      album.set_description(album[:description])
+      album.set_title(params[:album][:title])
       if initial
         if initial = Video.where(id: initial).first
           album.addItem(initial)
@@ -43,10 +44,10 @@ class AlbumController < ApplicationController
       if album.ownedBy(current_user)
         value = ApplicationHelper.demotify(params[:value])
         if params[:field] == 'description'
-          album.description = value
+          album.set_description(value)
           album.save
         elsif params[:field] == 'title'
-          album.setTitle(value)
+          album.set_title(value)
         end
         render status: 200, nothing: true
         return
