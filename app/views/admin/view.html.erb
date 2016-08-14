@@ -37,7 +37,7 @@
 	<button class="confirm-button action red" data-action="delete" data-url="admin/process/all" data-title="Process <%= @unprocessed_count %> Videos" data-icon="warning" type="button">Poke Processor</button>
 </section>
 <section style="width:100%" class="page recent-reports resize-holder">
-	<h1 class="title resize-target">Submitted Reports</h1>
+	<h1 class="title resize-target">Open Reports (<%= @reports_count %>)</h1>
 	<ul id="reports" class="report-list">
 		<% @reports.each do |report| %>
 		<li class="generic">
@@ -48,7 +48,7 @@
 	</ul>
 </section>
 <section style="width:100%" class="page recent-uploads resize-holder">
-	<h1 class="title resize-target">Hidden Videos</h1>
+	<h1 class="title resize-target">Hidden Videos (<%= @hidden_count %>)</h1>
 	<ul id="videos" class="horizontal video-list">
 		<%= render partial: '/admin/video_thumb_h', collection: @hiddenvideos %>
 	</ul>

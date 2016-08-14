@@ -19,8 +19,8 @@ class VideoProcessor
   end
   
   def self.enqueue(video)
-    if !video.checkIndex && @@master.status
-      puts "[Processing Manager] Enqueued video"
+    if !video.checkIndex && @@master && @@master.status
+      puts "[Processing Manager] Enqueued video #" + video.id
     end
   end
   
@@ -65,7 +65,7 @@ class VideoProcessor
   def self.startManager
     puts "[Processing Manager] Attempting Master thread start"
     if @@master && @@master.status
-      return
+      return false
     end
     puts "[Processing Manager] Starting Master..."
     @@master = Thread.start {
@@ -92,7 +92,6 @@ class VideoProcessor
         puts "[Processing Manager] Master Shutting Down"
       end
     }
+    return true
   end
 end
-
-VideoProcessor.startManager

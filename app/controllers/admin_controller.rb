@@ -4,11 +4,13 @@ class AdminController < ApplicationController
       render 'layouts/error', locals: { title: 'Access Denied', description: "You can't do that right now." }
       return
     end
+    @hidden_count = Video.where(hidden: true).count
     @hiddenvideos = Video.where(hidden: true).limit(5*8).reverse_order
     @unprocessed_count = Video.where("processed IS NULL or processed = ?", false).count
     @unprocessed = Video.where("processed IS NULL or processed = ?", false).limit(5*8)
     @users = User.where(last_sign_in_at: Time.zone.now.beginning_of_month..Time.zone.now.end_of_day).limit(100).order(:last_sign_in_at).reverse_order
     @processorStatus = VideoProcessor.status
+    @reports_count = Report.includes(:video).where(resolved: nil).count
     @reports = Report.includes(:video).where(resolved: nil).limit(20)
   end
   
@@ -132,10 +134,11 @@ class AdminController < ApplicationController
       videos.each do |video|
         video.generateWebM()
       end
-      if videos.length > 0
-        VideoProcessor.startManager
+      if VideoProcessor.startManager
+        flash[:notice] = "Processing Manager restarted. " + VideoProcessor.queue.length.to_s + " videos in queue."
+      else
+        flash[:notice] = "Processing Manager already active. " + VideoProcessor.queue.length.to_s + " videos in queue."
       end
-      flash[:notice] = videos.length.to_s + " videos queued."
     end
     render json: { ref: url_for(action: "view") }
   end
