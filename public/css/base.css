@@ -1668,19 +1668,24 @@ form.waiting .progress .fill {
 .tag-editor .tag .remove {
   vertical-align: middle;
   display: inline-block;
-  height: 15px;
-  width: 15px;
+  height: 1.5em;
+  width: 1.5em;
   background: #faa;
   margin-right: 15px;
   margin-left: -6px;
   border-radius: 100%;
   text-align: center;
-  line-height: 14.5px;
-  color: #fff;
+  line-height: 1.5em;
+  color: #f8f8f8;
   text-shadow: none;
   cursor: pointer;
-  font-size: 8px;
+  font-size: 1em;
+  opacity: 0.8;
 }
+.tag-editor .tag .remove:hover {
+  opacity: 1;
+}
+
 .tags.artist-tags {
   display: inline-block;
   overflow: hidden;
