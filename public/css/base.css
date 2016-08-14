@@ -78,12 +78,9 @@ table {
     margin-left: 240px;
   }
 }
-.avatar, .genre-icon {
-  display: inline-block;
-  overflow: hidden;
-  width: 150px;
-  height: 150px;
-  border-radius: 100%;
+
+.genre-icon {
+  float: left;
 }
 .space-fix .genre-icon {
   margin-right: 10px;
@@ -92,15 +89,15 @@ table {
   margin-left: 10px;
 }
 .genre-icon {
-  background: #a66ebe;
+  color: #a66ebe;
 }
-.genre-icon i::before {
-  font-size: 85px;
-  line-height: 140px;
-  margin-left: -10px;
-  text-align: center;
-}
+
 .avatar {
+  display: inline-block;
+  overflow: hidden;
+  width: 150px;
+  height: 150px;
+  border-radius: 100%;
   background: no-repeat center rgb(178,230,251);
 }
 .avatar span, .genre-icon i::before, .genre-icon i {

@@ -2,17 +2,21 @@
 <section style="width:100%" class="page artist-bio">
 	<div class="post">
 		<div class="space-fix">
+			<span class="genre-icon fa-stack fa-4x">
+				<i class="fa fa-circle fa-stack-2x"></i>
+				<i class="fa fa-tag fa-inverse fa-stack-1x"></i>
+			</span>
 			<span class="genre-icon" style="float:left">
-				<i class="fa fa-music fa-inverse"></i>
+				<i class="fa fa-tag fa-inverse"></i>
 			</span>
 			<h1 class="title">
 				<a class="name" href="/tag/<%= @tag.name %>"><%= @tag.name %></a>
 			</h1>
 			<span class="content bio"><%= @tag.description %></span>
+			<div class="tag-list">
+				<br>Used by <%= @totalVideos %> videos and <%= @totalUsers %> users
+			</div>
 		</div>
-		<span class="tag-list">
-			Used by <%= @totalVideos %> videos and <%= @totalUsers %> users
-		</span>
 		<% if @user %>
 		<span class="user-link right" data-id="<%= @user.id %>">
 			<span class="tag-list">
