@@ -190,8 +190,8 @@ class AdminController < ApplicationController
         source: @report[:source],
         content_type_unrelated: @report[:content_type_unrelated] == '1',
         content_type_offensive: @report[:content_type_offensive] == '1',
-        content_type_unrelated: @report[:content_type_unrelated] == '1',
-        content_type_unrelated: @report[:content_type_explicit] == '1',
+        content_type_disturbing: @report[:content_type_disturbing] == '1',
+        content_type_explicit: @report[:content_type_explicit] == '1',
         copyright_holder: @report[:copyright_holder],
         subject: @report[:subject],
         other: @report[:other]
