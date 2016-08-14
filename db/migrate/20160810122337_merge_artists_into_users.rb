@@ -1,3 +1,7 @@
+class Artist < ActiveRecord::Base
+
+end
+
 class MergeArtistsIntoUsers < ActiveRecord::Migration
   def change
     add_column :users, :username, :string
@@ -30,15 +34,15 @@ class MergeArtistsIntoUsers < ActiveRecord::Migration
       end
     end
     
-    User.includes(:artist).all.each do |user|
-      if user.artist_id
-        user.username = user.artist.name
-        user.safe_name = ApplicationHelper.url_safe(user.artist.name)
-        user.description = user.artist.description
-        user.bio = user.artist.bio
-        user.mime = user.artist.mime
-        user.banner_set = user.artist.banner_set
-        user.tag_id = user.artist.tag_id
+    User.all.each do |user|
+      if user.artist_id && artist = Artist.where(id: user.artist_id).first
+        user.username = artist.name
+        user.safe_name = ApplicationHelper.url_safe(artist.name)
+        user.description = artist.description
+        user.bio = artist.bio
+        user.mime = artist.mime
+        user.banner_set = artist.banner_set
+        user.tag_id = artist.tag_id
       else
         user.username = 'Background Pony #' + user.id.to_s
         user.safe_name = ''
