@@ -327,16 +327,16 @@ header ul.drop-down li {
 header ul.drop-down {
   padding: 0;
 }
-header .albums:hover:after,
-header .albums:hover, header .albums.selected {
+header .albums:hover:after, header .albums:hover,
+header .albums.selected, header .albums.selected:after {
   background: #e6b91f;
 }
-header .artists:hover:after,
-header .artists:hover, header .artists.selected {
+header .artists:hover:after, header .artists:hover,
+header .artists.selected, header .artists.selected:after {
   background: #e97135;
 }
-header .genres:hover:after,
-header .genres:hover, header .genres.selected {
+header .genres:hover:after, header .genres:hover,
+header .genres.selected, header .genres.selected:after {
   background: #a66ebe;
 }
 header ul li img {
@@ -411,8 +411,8 @@ footer {
   color: #fff;
   background: #fff;
 }
-header ul li:after,
-footer::before, header ul::after {
+header ul li:after, header ul li.selected:after,
+footer:before, header ul:after {
   content: '';
   position: absolute;
   display: block;
@@ -427,6 +427,9 @@ header ul li:after {
   opacity: 0;
 }
 header ul li:hover:after {
+  z-index: 300;
+}
+header ul li:hover:after, header ul li.selected:after {
   opacity: 1;
 }
 footer::before, header ul::after {
