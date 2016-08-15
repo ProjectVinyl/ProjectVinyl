@@ -6,11 +6,8 @@
 				<i class="fa fa-circle fa-stack-2x"></i>
 				<i class="fa fa-tag fa-inverse fa-stack-1x"></i>
 			</span>
-			<span class="genre-icon" style="float:left">
-				<i class="fa fa-tag fa-inverse"></i>
-			</span>
 			<h1 class="title">
-				<a class="name" href="/tag/<%= @tag.name %>"><%= @tag.name %></a>
+				<a class="name" href="/tag/<%= @tag.short_name %>"><%= @tag.name %></a>
 			</h1>
 			<span class="content bio"><%= @tag.description %></span>
 			<div class="tag-list">

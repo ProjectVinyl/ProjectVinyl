@@ -16,7 +16,7 @@ puts params[:name]
   
   def list
     @page = params[:page].to_i
-    @results = Pagination.paginate(Tag.includes(:videos, :tag_type).order(:name), @page, 100, false)
+    @results = Pagination.paginate(Tag.where('tag_type_id > 0 OR video_count > 0 OR user_count > 0').includes(:videos, :tag_type).order(:name), @page, 100, false)
     render template: '/view/listing', locals: {type_id: 3, type: 'genres', type_label: 'Tag', items: @results}
   end
   

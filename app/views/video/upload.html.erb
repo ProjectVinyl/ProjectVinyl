@@ -64,7 +64,7 @@ $('#cover-upload').on('accept', function() {
 					</div>
 				</div>
 				<div class="post-tags">
-					<%= render layout: 'layouts/tageditor' do %>
+					<%= render layout: 'layouts/tageditor', locals: {tags: nil} do %>
 						<%= f.text_area :tag_string %>
 					<% end %>
 				</div>

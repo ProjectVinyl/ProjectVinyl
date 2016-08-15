@@ -1,6 +1,8 @@
 class Tag < ActiveRecord::Base
   belongs_to :tag_type
   
+  has_one :user
+  
   has_many :video_genres
   has_many :videos, :through => :video_genres
   has_many :artist_genres
@@ -61,15 +63,18 @@ class Tag < ActiveRecord::Base
     end
     new_tags = names - existing_names
     new_tags.each do |name|
-      tag = Tag.create(description: '', tag_type_id: 0).set_name(name)
-      if !name.index(':').nil?
-        if type = TagType.where(prefix: name.split(':')[0]).first
-          tag.tag_type = type
-          tag.save
-          result = result | Tag.load_implications_from_type(tag.id, type)
+      name = name.strip
+      if name.index('uploader:') != 0 && name.index('title:') != 0
+        tag = Tag.create(description: '', tag_type_id: 0)
+        if !name.index(':').nil?
+          if type = TagType.where(prefix: name.split(':')[0]).first
+            tag.tag_type = type
+            tag.save
+            result = result | Tag.load_implications_from_type(tag.id, type)
+          end
         end
+        result << tag.id
       end
-      result << tag.id
     end
     return result
   end
@@ -141,7 +146,7 @@ class Tag < ActiveRecord::Base
   end
   
   def set_name(name)
-    name = name.downcase.gsub(/[;,]/,'')
+    name = name.downcase.strip.gsub(/[;,]/,'')
     if self.has_type
       name = self.tag_type.prefix + ":" + name.gsub(/:/, '')
     end

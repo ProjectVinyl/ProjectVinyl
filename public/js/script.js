@@ -508,7 +508,7 @@ var initFileSelect = (function() {
       }, 1000);
     });
     input.on('blur', function() {
-      clearIntervel(autocomplete);
+      clearInterval(autocomplete);
       autocomplete = null;
     })
   });
@@ -572,7 +572,7 @@ $(document).on('mousedown', function() {
     var last_value = null;
     var validate = me.hasClass('validate');
     input.on('blur', function() {
-      clearIntervel(autocomplete);
+      clearInterval(autocomplete);
       autocomplete = null;
     })
     input.on('focus', function(e) {

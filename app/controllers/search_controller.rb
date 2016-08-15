@@ -1,9 +1,24 @@
 class SearchController < ApplicationController
   def index
-    @query = params[:query]
-    @page = params[:page].to_i
     @type_label = params[:type]
     @type = @type_label.to_i
+    if @type == 2 || @type == 0
+      @title_query = params[:query] || ""
+      @tag_query = params[:tagquery] || ""
+      @query = ""
+      if @title_query.length > 0
+        @query << "title:" + @title_query
+      end
+      if @tag_query.length > 0 && @query.length > 0
+        @query << ","
+      end
+      @query << @tag_query
+      @tag = Tag.where('name = ? OR short_name = ?', @tag_query, @tag_query).first
+    else
+      @query = @title_query = params[:query] || ""
+    end
+    @page = params[:page].to_i
+    
     @ascending = params[:order] == '1'
     @orderby = params[:orderby].to_i
     @results = []

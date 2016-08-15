@@ -23,7 +23,7 @@ WHERE (("
     if query_strings[0].index('g.name IN (').nil?
       v_query << "t.video_id IS NULL OR "
     end
-    v_query << "g.id = t.tag_id)) AND (" + query_strings[0] + ")"
+    v_query << "g.id = t.tag_id)) AND (v.hidden = false) AND (" + query_strings[0] + ")"
     v_query << " GROUP BY v.id"
     v_query << " HAVING (" + query_strings[1] + ")"
     @main_sql = v_query
@@ -74,13 +74,15 @@ WHERE ("
       end
     elsif @type == 'user'
       if ordering == 1 || ordering == 2 || ordering == 3
-        @ordering = "a.created_at, a.updated_at"
+        @ordering = "a.username, a.created_at, a.updated_at"
       elsif ordering == 4
         if @page == 0
-          ordering_columns = ["v.length","v.created_at","v.updated_at","v.score","v.views","v.description"]
+          ordering_columns = ["a.username","a.email","a.encrypted_password","a.updated_at"]
           session[:random_ordering] = "'" + ordering_columns[Random.new(0..ordering_columns.length)] + "','" + ordering_columns[Random.new(0..ordering_columns.length)] + "'"
         end
         @ordering = session[:random_ordering]
+      else
+        @ordering = "a.username"
       end
     end
     if !ascending
@@ -90,21 +92,23 @@ WHERE ("
   end
   
   def exec()
-    sql = @main_sql + " ORDER BY " + @ordering + " LIMIT " + @limit.to_s + " OFFSET " + (@page * @limit).to_s
+    sql = @main_sql + " ORDER BY " + @ordering + " LIMIT " + @limit.to_s + " OFFSET " + (@page * @limit).to_s + ";"
     if @type == 'video'
-      @records = Video.find_by_sql(sql)
+      @records = Video.find_by_sql(sql) #ActiveRecord::Base.connection.exec_query
     else
       @records = User.find_by_sql(sql)
     end
     if @records.length == 0 && @page > 0
-      @page = @page - 1
-      sql = @main_sql + " ORDER BY " + @ordering + " LIMIT " + @limit.to_s + " OFFSET " + (@page * @limit).to_s
+      @page -= 1
+      sql = @main_sql + " ORDER BY " + @ordering + " LIMIT " + @limit.to_s + " OFFSET " + (@page * @limit).to_s + ";"
       if @type == 'video'
         @records = Video.find_by_sql(sql) #ActiveRecord::Base.connection.exec_query
       else
         @records = User.find_by_sql(sql)
       end
     end
+    @count = ActiveRecord::Base.connection.execute("SELECT COUNT(*) FROM (" + @main_sql + ") AS `matches`;").first[0].to_i
+    @pages = @count / @limit
     return self
   end
   
@@ -132,7 +136,7 @@ WHERE ("
           else
             query_string << self.system_tag_matcher(opset.shift, name_matcher, ' AND ')
           end
-        else
+        elsif data.length > 0
           and_group << data
         end
       elsif op == OR
@@ -154,7 +158,9 @@ WHERE ("
             having_string << self.sanitize([having_clause, and_group, and_group.length]) + " OR "
             and_group = []
           end
-          and_group << data
+          if data.length > 0
+            and_group << data
+          end
         end
       elsif op == TITLE
         if and_group.length > 0
@@ -170,7 +176,7 @@ WHERE ("
           and_group = []
         end
         query_string << self.system_tag_matcher(opset.shift, name_matcher, ' AND ')
-      else
+      elsif op.length > 0
         and_group << op
       end
     end
@@ -259,7 +265,19 @@ WHERE ("
     @page
   end
   
+  def page_size
+    @limit
+  end
+  
   def pages
-    (@page + @records.length / @limit)
+    @pages
+  end
+  
+  def count
+    @count
+  end
+  
+  def length
+    @count
   end
 end

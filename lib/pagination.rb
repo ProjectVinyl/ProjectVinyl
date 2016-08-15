@@ -2,13 +2,13 @@ class Pagination
   def self.paginate(records, pageNumber, pageSize, reverse)
     count = records.count
     if count == 0
-      return Pagination.new(records, 0, 0, false, count)
+      return Pagination.new(records, pageSize, 0, 0, false, count)
     end
     if pageNumber.nil?
       pageNumber = 0
     end
     if count <= pageSize
-      return Pagination.new(records, 0, 0, reverse, count)
+      return Pagination.new(records, pageSize, 0, 0, reverse, count)
     end
     pages = count / pageSize
     if (pages * pageSize) == count
@@ -20,10 +20,11 @@ class Pagination
     if pageNumber < 0
       pageNumber = 0
     end
-    return Pagination.new(records.offset(pageNumber * pageSize).limit(pageSize), pages, pageNumber, reverse, count)
+    return Pagination.new(records.offset(pageNumber * pageSize).limit(pageSize), pageSize, pages, pageNumber, reverse, count)
   end
   
-  def initialize(records, pages, page, reverse, count)
+  def initialize(records, limit, pages, page, reverse, count)
+    @size = limit
     @count = count
     @records = reverse ? records.reverse_order() : records
     @page = page
@@ -40,6 +41,10 @@ class Pagination
   
   def page
     @page
+  end
+  
+  def page_size
+    @size
   end
   
   def pages
