@@ -9,9 +9,6 @@ class TagSelector
   end
   
   def videoQuery(page, limit)
-    if page < 0
-      page = 0
-    end
     @type = "video"
     v_query = "SELECT v.*, a.username, g.name FROM video_genres t RIGHT JOIN videos v ON t.video_id = v.id LEFT JOIN users a ON v.user_id = a.id, tags g"
     query_strings = self.build_query_string("g.name IN (?)",
@@ -33,9 +30,6 @@ WHERE (("
   end
   
   def userQuery(page, limit)
-    if page < 0
-      page = 0
-    end
     @type = "user"
     v_query = "SELECT a.*, g.name tag_name FROM artist_genres t RIGHT JOIN users a ON t.user_id = a.id, tags g"
     query_strings = self.build_query_string("g.name IN (?)",
@@ -92,23 +86,23 @@ WHERE ("
   end
   
   def exec()
+    @count = ActiveRecord::Base.connection.execute("SELECT COUNT(*) FROM (" + @main_sql + ") AS `matches`;").first[0].to_i
+    @pages = @count / @limit
+    if (@pages * @limit) == @count
+      @pages -= 1
+    end
+    if @page.nil?
+      @page = 0
+    end
+    if @page < 0
+      @page = @pages
+    end
     sql = @main_sql + " ORDER BY " + @ordering + " LIMIT " + @limit.to_s + " OFFSET " + (@page * @limit).to_s + ";"
     if @type == 'video'
       @records = Video.find_by_sql(sql) #ActiveRecord::Base.connection.exec_query
     else
       @records = User.find_by_sql(sql)
     end
-    if @records.length == 0 && @page > 0
-      @page -= 1
-      sql = @main_sql + " ORDER BY " + @ordering + " LIMIT " + @limit.to_s + " OFFSET " + (@page * @limit).to_s + ";"
-      if @type == 'video'
-        @records = Video.find_by_sql(sql) #ActiveRecord::Base.connection.exec_query
-      else
-        @records = User.find_by_sql(sql)
-      end
-    end
-    @count = ActiveRecord::Base.connection.execute("SELECT COUNT(*) FROM (" + @main_sql + ") AS `matches`;").first[0].to_i
-    @pages = @count / @limit
     return self
   end
   
