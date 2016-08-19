@@ -391,12 +391,18 @@ var initFileSelect = (function() {
     var searchResults = me.find('.search-results');
     var target = value.attr('data-target');
     var id = value.attr('data-id');
-
+    
     if (tags.length) {
       tags = tags.split(',');
     } else {
       tags = [];
     }
+    if (list.children().length == 0 && tags.length > 0) {
+      for (var i = 0; i < tags.length; i++) {
+        createTagItem(tags[i]);
+      }
+    }
+    
     value.val(tags.join(','));
     list.find('.remove').on('click', function() {
       removeTag($(this).parent(), $(this).attr('data-name'));
@@ -1174,7 +1180,7 @@ function lazyLoad(button) {
     }
   }, {
     page: page,
-    artist: button.attr('data-id')
+    user: button.attr('data-id')
   });
 }
 

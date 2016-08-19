@@ -1,6 +1,7 @@
 class ArtistController < ApplicationController
   def view
     if @user = User.where(id: params[:id].split(/-/)[0]).first
+      @tags = @user.tags.includes(:tag_type)
       @videos = user_signed_in? && current_user.id == @user.id ? @user.videos : @user.videos.where(hidden: false)
       @videos = Pagination.paginate(@videos, 0, 8, true)
       @videos_count = @videos.count
@@ -37,11 +38,11 @@ class ArtistController < ApplicationController
   end
   
   def setbanner
-    if user_signed_in?
-      if current_user.is_admin && params[:user_id]
-        user = User.where(id: params[:user_id]).first
-      elsif
+    if user_signed_in? && (current_user.id_admin || current_user.id == params[:id])
+      if current_user.id == params[:id]
         user = current_user
+      elsif
+        user = User.where(id: params[:id]).first
       end
       if user
         user.setBanner(params[:erase] ? false : params[:user][:banner])
@@ -88,7 +89,15 @@ class ArtistController < ApplicationController
   end
   
   def banner
-    @user = current_user
-    render partial: 'banner'
+    if current_user.is_admin || current_user.id == params[:id]
+      if current_user.id == params[:id]
+        @user = current_user
+      else
+        @user = User.where(id: params[:id]).first
+      end
+      render partial: 'banner'
+      return
+    end
+    render status: 404, nothing: true
   end
 end

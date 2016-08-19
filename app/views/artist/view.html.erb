@@ -21,6 +21,7 @@
 			<span class="content bio"><%= raw @user.html_description %></span>
 		</div>
 		<div class="details space-fix">
+		<% if @user.tag_id || @tags.length %>
 			<h1>Associated Tags</h1>
 			<% if @user.tag_id %>
 			<ul class="tags artist-tags">
@@ -28,8 +29,9 @@
 			</ul>
 			<% end %>
 			<ul class="tags">
-			<%= render partial: 'layouts/genre_thumb_h', collection: @user.tags.includes(:tag_type) %>
+			<%= render partial: 'layouts/genre_thumb_h', collection: @tags.includes(:tag_type) %>
 			</ul>
+		<% end %>
 		</div>
 		<% if @modificationsAllowed %>
 		<div class="actions">
@@ -44,18 +46,9 @@
 						</a>
 					</li>
 				<% end %>
-					<li class="action confirm-button" data-url="artist/update/banner" data-title="Select Banner Image" data-icon="">
+					<li class="action confirm-button" data-url="artist/update/banner/<%= @user.id %>" data-title="Select Banner Image" data-icon="">
 						<span class="icon"><i class="fa fa-pencil"></i></span>
 						<span class="label">Change Banner Image</span>
-					</li>
-					<li class="action" id="toggle_edit">
-						<span class="icon"><i class="fa fa-pencil"></i></span>
-						<span class="label">Edit Profile</span>
-						<script>
-$('#toggle_edit').on('click', function() {
-  $('body').toggleClass('editing');
-});
-						</script>
 					</li>
 				</ul>
 			</div>
@@ -70,12 +63,12 @@ $('#toggle_edit').on('click', function() {
 <section style="width:100%" class="page recent-uploads resize-holder">
 	<h1 class="title resize-target">Recent Uploads<span> (<span class="count"><%= number_with_delimiter @videos_count %></span>)</span></h1>
 	<% if @modificationsAllowed %><a class="button" href="/upload"><i class="fa fa-plus"></i> New</a><% end %>
-	<ul id="videos" class="horizontal video-list">
+	<ul id="uploads" class="horizontal video-list">
 		<%= render partial: '/layouts/video_thumb_h', collection: @videos.records %>
 	</ul>
 	<div class="load-more">
 	<% if @videos.pages > 0 %>
-		<button data-page="0" data-type="videos" data-id="<%= @user.id %>" data-target="videos">Load More</button>
+		<button data-page="0" data-type="videos" data-id="<%= @user.id %>" data-target="uploads">Load More</button>
 	<% end %>
 	</div>
 </section>

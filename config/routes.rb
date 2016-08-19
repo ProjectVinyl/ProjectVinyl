@@ -37,13 +37,13 @@ Rails.application.routes.draw do
   
   get 'profile/:id' => 'artist#view'
   get 'ajax/artist/hovercard' => 'artist#card'
-  get 'ajax/artist/update/banner' => 'artist#banner'
+  get 'ajax/artist/update/banner/:id' => 'artist#banner'
   post 'ajax/artist/lookup' => 'search#autofillArtist'
   patch 'ajax/update/artist' => 'artist#update'
   patch 'ajax/avatar/upload/:async' => 'artist#setavatar'
   patch 'ajax/avatar/upload' => 'artist#setavatar'
-  patch 'ajax/banner/upload/:async' => 'artist#setbanner'
-  patch 'ajax/banner/upload' => 'artist#setbanner'
+  patch 'ajax/banner/upload/:id/:async' => 'artist#setbanner'
+  patch 'ajax/banner/upload/:id' => 'artist#setbanner'
   
   get 'cover/:id-small' => 'imgs#thumb'
   get 'cover/:id' => 'imgs#cover'
