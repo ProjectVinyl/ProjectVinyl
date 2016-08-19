@@ -43,6 +43,7 @@ $('#video-upload').on('accept', function(e, file) {
 $('#cover-upload').on('accept', function() {
   $('.notify').removeClass('shown');
 });
+
 				</script>
 			</div>
 			<div class="hidden post description resize-holder">
@@ -82,7 +83,7 @@ $('#cover-upload').on('accept', function() {
 					<button id="change_video" class="action" type="button" onclick="$('#video_file').trigger('click');">Change Main File</button>
 					<span class="notify bob-holder">
 						<div class="bobber bob-left">
-							Cover art is required to upload audio files
+							Cover art is required to upload audio files.
 						</div>
 						<%= f.submit "Upload", class: "action right green" %>
 					</span>

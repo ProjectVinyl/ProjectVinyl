@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160814142653) do
+ActiveRecord::Schema.define(version: 20160815145321) do
 
   create_table "album_items", force: :cascade do |t|
     t.integer "album_id", limit: 4
@@ -78,7 +78,7 @@ ActiveRecord::Schema.define(version: 20160814142653) do
     t.boolean  "unread",                 default: true
   end
 
-  create_table "processing_worker", force: :cascade do |t|
+  create_table "processing_workers", force: :cascade do |t|
     t.boolean "running",               default: false
     t.string  "status",  limit: 255,   default: ""
     t.text    "message", limit: 65535
