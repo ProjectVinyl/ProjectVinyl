@@ -50,7 +50,7 @@ class Tag < ActiveRecord::Base
     end
     return Tag.where('name IN (?)', names.uniq).pluck(:id).uniq
   end
-    
+  
   def self.get_tag_ids_with_create(names)
     if !names || names.length == 0
       return []
@@ -65,13 +65,13 @@ class Tag < ActiveRecord::Base
     new_tags.each do |name|
       name = name.strip
       if name.index('uploader:') != 0 && name.index('title:') != 0
-        tag = Tag.create(description: '', tag_type_id: 0).set_name(name)
-        if !name.index(':').nil?
-          if type = TagType.where(prefix: name.split(':')[0]).first
-            tag.tag_type = type
-            tag.save
-            result = result | Tag.load_implications_from_type(tag.id, type)
-          end
+        tag = Tag.create(description: '', tag_type_id: 0)
+        if !name.index(':').nil? && type = TagType.where(prefix: name.split(':')[0]).first
+          tag.tag_type = type
+          tag.set_name(name.sub(name.split(':')[0], '').strip)
+          result = result | Tag.load_implications_from_type(tag.id, type)
+        else
+          tag.set_name(name)
         end
         result << tag.id
       end
