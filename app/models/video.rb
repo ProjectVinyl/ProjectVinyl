@@ -207,6 +207,7 @@ class Video < ActiveRecord::Base
   end
   
   def set_title(title)
+    title = ApplicationHelper.check_and_trunk(title, self.title || "Untitled")
     title = ApplicationHelper.demotify(title)
     self.title = title
     self.safe_title = ApplicationHelper.url_safe(title)

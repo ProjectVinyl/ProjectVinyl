@@ -54,6 +54,16 @@ module ApplicationHelper
     return false
   end
   
+  def self.check_and_trunk(str, defa)
+    if !str || (str = str.strip).length == 0
+      return defa
+    end
+    if str.length > 250
+      return str[0,250]
+    end
+    return str
+  end
+  
   def self.emotify(text)
     if text.nil? || text.length == 0
       return ""

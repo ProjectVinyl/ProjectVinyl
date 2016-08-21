@@ -164,7 +164,7 @@ class VideoController < ApplicationController
           video.set_description(value)
           video.save
         elsif params[:field] == 'title'
-          video.set_title(nonil(value, 'Untitled'))
+          video.set_title(value)
           video.save
         end
         render status: 200, nothing: true

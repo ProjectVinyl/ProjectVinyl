@@ -146,6 +146,7 @@ class Tag < ActiveRecord::Base
   end
   
   def set_name(name)
+    name = ApplicationHelper.check_and_trunk(name)
     name = name.downcase.strip.gsub(/[;,]/,'')
     if self.has_type
       name = self.tag_type.prefix + ":" + name.gsub(/:/, '')

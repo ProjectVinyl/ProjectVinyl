@@ -161,6 +161,7 @@ class User < ActiveRecord::Base
     if !self.validate_name(name)
       name = 'Background Pony #' + self.id.to_s(32)
     end
+    name = ApplicationHelper.check_and_trunk(name, self.username)
     self.username = name
     self.safe_name = ApplicationHelper.url_safe(name)
     self.save
