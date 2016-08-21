@@ -27,23 +27,45 @@
 					<%= f.file_field :file %>
 				</div>
 				<script>
-$('#video-upload').on('accept', function(e, file) {
-  if ($(this).hasClass('shown')) {
-    $('.hidden').removeClass('hidden');
-    $('.shown').addClass('hidden').removeClass('shown');
-    $('#video_title .content').text(file.title);
-    $('#video_title input').val(file.title);
+(function() {
+  var has_cover = false;
+  var needs_cover = false;
+  
+  $('#video-upload').on('accept', function(e, file) {
+    if ($(this).hasClass('shown')) {
+      $('.hidden').removeClass('hidden');
+      $('.shown').addClass('hidden').removeClass('shown');
+      var title = cleanup(file.title);
+      $('#video_title .content').text(title);
+      $('#video_title input').val(title);
+    }
+    needs_cover = file.mime.match(/audio\//);
+    validateInput();
+  });
+  $('#cover-upload').on('accept', function() {
+    has_cover = true;
+    validateInput();
+  });
+  $('#new_video').on('tagschange', validateInput);
+  $('#new_video').on('change', 'h1#video_title input', validateInput);
+  
+  function cleanup(title) {
+    return title.replace(/^[0-9]*/g, '').replace(/[-_]/g,' ').trim()
   }
-  if (file.mime.match(/audio\//)) {
+  
+  function notify(msg) {
     $('.notify').addClass('shown');
-  } else {
+    $('.notify .bobber').text(msg);
+  }
+  
+  function validateInput() {
+    tit = $('#video_title input').val();
+    if (!tit || tit == '') return notify('You need to provide a title.');
+    if (needs_cover && !has_cover) return notify('Audio files require a cover image.');
+    if ($('.tag-editor')[0].getActiveTagsArray().length == 0) return notify('You need at least one tag.');
     $('.notify').removeClass('shown');
   }
-});
-$('#cover-upload').on('accept', function() {
-  $('.notify').removeClass('shown');
-});
-
+})();
 				</script>
 			</div>
 			<div class="hidden post description resize-holder">
