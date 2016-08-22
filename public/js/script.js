@@ -385,6 +385,9 @@ var initFileSelect = (function() {
   $('.tag-editor').each(function() {
     var me = $(this);
     me.find('.values').remove();
+    me[0].getActiveTagsArray = function() {
+      return tags;
+    };
     var value = me.find('.value textarea');
     var list = me.find('ul.tags');
     var tags = value.val().replace(/,,|^,|,$/g,'');
@@ -437,6 +440,7 @@ var initFileSelect = (function() {
       save();
     }
     function save() {
+      me.trigger('tagschange');
       if (target && id) {
         ajax.post('update/' + target, function() {
           
