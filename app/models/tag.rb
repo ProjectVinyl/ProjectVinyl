@@ -135,6 +135,20 @@ class Tag < ActiveRecord::Base
     return self.name
   end
   
+  def suffex
+    if self.has_type
+      prefix = self.tag_type.prefix
+      if self.name.index(prefix) == 0
+        return self.name.sub(prefix + ":", '')
+      end
+    end
+    return self.name
+  end
+  
+  def tag_string
+    return Tag.tag_string(self.implications)
+  end
+  
   def has_type
     return self.tag_type_id & self.tag_type_id > 0
   end
@@ -155,5 +169,13 @@ class Tag < ActiveRecord::Base
     self.name = name
     self.save
     return self
+  end
+  
+  def get_description
+    if self.description.nil? || self.description.length == 0
+      self.description = "No description Provided"
+      self.save
+    end
+    return self.description
   end
 end

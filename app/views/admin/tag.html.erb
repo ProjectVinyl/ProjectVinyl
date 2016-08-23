@@ -1,0 +1,63 @@
+<% lim "900px" %>
+<section style="width:100%;" class="page properties">
+	<h1>Editing Tag <%= @tag.name %></h1>
+	<%= form_for(@tag, as: "tag", url: "/ajax/tag/update") do |f| %>
+	<table>
+		<tr>
+			<td class="label">Domain</td>
+			<td class="field" title="this cannot be changed">
+				<%= @prefix %>
+			</td>
+		</tr>
+		<tr>
+			<td class="label"><%= f.label :name %></td>
+			<td class="field">
+				<% if @prefix != 'artist' || !@user %>
+				<%= f.text_field :suffex, autofocus: true, autocomplete: "off" %>
+				<% else %>
+				<span title="Tag name synced to the associated artist. You cannot change it here.">
+					<%= @tag.name %>
+				</span>
+				<% end %>
+			</td>
+		</tr>
+		<% if @prefix == 'artist' %>
+		<tr>
+			<td class="label">Associated User</td>
+			<td class="field">
+				<% if @user %>
+				<a href="<%= @user.link %>"><%= @user.username %></a>
+				<% else %>
+				This tag is unclaimed.
+				<% end %>
+			</td>
+		</tr>
+		<% end %>
+		<tr>
+			<td class="label"><%= f.label :description %></td>
+			<td class="field">
+				<%= render layout: '/thread/description_box' do %>
+					<%= f.text_area :description, class: "comment-content" %>
+				<% end %>
+			</td>
+		</tr>
+		<tr>
+			<td class="label">
+				<%= f.label :implications %>
+			</td>
+			<td class="field">
+			<%= render layout: 'layouts/tageditor', locals: { tags: @tag.implications } do %>
+				<%= f.text_area :tag_string %>
+			<% end %>
+			</td>
+		</tr>
+		<tr class="actions">
+			<td class="label">
+			</td>
+			<td class="field">
+				<%= f.submit "Save Changes", class: "green" %>
+			</td>
+		</tr>
+	</table>
+	<% end %>
+</section>

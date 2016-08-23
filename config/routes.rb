@@ -20,6 +20,7 @@ Rails.application.routes.draw do
   put 'admin/video/reprocess' => 'admin#reprocessVideo'
   put 'admin/video/resetthumb' => 'admin#extractThumbnail'
   get 'admin/artist/:id' => 'admin#artist'
+  get 'admin/tag/:id' => 'admin#tag'
   put 'admin/visibility' => 'admin#visibility'
   put 'admin/transfer' => 'admin#transferItem'
   post 'ajax/admin/process/all' => 'admin#batch_preprocessVideos'

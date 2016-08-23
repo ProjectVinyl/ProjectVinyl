@@ -1,28 +1,29 @@
 <% if @tag %>
 <section style="width:100%" class="page artist-bio">
 	<div class="post">
-		<div class="space-fix">
-			<span class="genre-icon fa-stack fa-4x">
-				<i class="fa fa-circle fa-stack-2x"></i>
-				<i class="fa fa-tag fa-inverse fa-stack-1x"></i>
-			</span>
-			<h1 class="title">
-				<a class="name" href="/tag/<%= @tag.short_name %>"><%= @tag.name %></a>
-			</h1>
-			<span class="content bio"><%= @tag.description %></span>
-			<div class="tag-list">
-				<br>Used by <%= @totalVideos %> videos and <%= @totalUsers %> users
-			</div>
-		</div>
-		<% if @user %>
-		<span class="user-link right" data-id="<%= @user.id %>">
-			<span class="tag-list">
-			Associated User: <a href="<%= @user.link %>"><%= @user.username %></a>
-			</span>
+		<span class="genre-icon fa-stack fa-4x">
+			<i class="fa fa-circle fa-stack-2x"></i>
+			<i class="fa fa-tag fa-inverse fa-stack-1x"></i>
 		</span>
-		<% end %>
+		<div class="tag-header">
+		<h2 class="title" style="margin-left:0;">
+			<a class="name" href="/tag/<%= @tag.short_name %>"><%= @tag.name %></a>
+		</h2>
+			<div class="tag-list subheading">
+				<span>Used by <%= @totalVideos %> videos and <%= @totalUsers %> users</span>
+				<% if @user %>
+				<span class="right">
+					Associated User:
+					<span class="user-link" data-id="<%= @user.id %>">
+						<a href="<%= @user.link %>"><%= @user.username %></a>
+					</span>
+				</span>
+			<% end %>
+			</div>
+			<span class="content bio"><%= @tag.get_description %></span>
+		</div>
 		<% if @implies.length > 0 %>
-		<div class="space-fix details">
+		<div class="space-fix">
 			<h1>Implies</h1>
 			<ul class="tags">
 				<%= render partial: "layouts/genre_thumb_h", collection: @implies %>
@@ -30,11 +31,26 @@
 		</div>
 		<% end %>
 		<% if @implied.length > 0 %>
-		<div class="space-fix details">
+		<div class="space-fix">
 			<h1>Implied by</h1>
 			<ul class="tags">
 				<%= render partial: "layouts/genre_thumb_h", collection: @implied %>
 			</ul>
+		</div>
+		<% end %>
+		<% if current_user.is_admin %>
+		<div class="actions">
+			<div class="split-button popper">
+				<button class="action options pop-out-toggle"><i class="fa fa-gear"></i> Options</button>
+				<ul class="pop-out">
+					<li class="action">
+						<a href="/admin/tag/<%= @tag.id %>">
+							<span class="icon"><i class="fa fa-gavel"></i></span>
+							<span class="label">Admin</span>
+						</a>
+					</li>
+				</ul>
+			</div>
 		</div>
 		<% end %>
 	</div>

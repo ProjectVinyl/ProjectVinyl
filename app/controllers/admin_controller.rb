@@ -43,6 +43,16 @@ class AdminController < ApplicationController
     @user = User.find(params[:id])
   end
   
+  def tag
+    if !user_signed_in? || !current_user.is_admin
+      render 'layouts/error', locals: { title: 'Access Denied', description: "You can't do that right now." }
+      return
+    end
+    @tag = Tag.find(params[:id])
+    @prefix = (@tag.tag_type_id > 0 ? @tag.tag_type.prefix : "[none]")
+    @user = User.where(tag_id: @tag.id).first
+  end
+  
   def view_report
     if @report = Report.where(id: params[:id]).first
       if user_signed_in? && (current_user.is_admin || current_user.id == @report.user_id)

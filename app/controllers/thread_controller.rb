@@ -73,7 +73,7 @@ class ThreadController < ApplicationController
   
   def get_comment
     if comment = Comment.where(id: params[:id]).first
-      render partial: '/thread/comment', locals: { comment: comment }
+      render partial: '/thread/comment', locals: { comment: comment, indirect: false }
       return
     end
     render status: 404, nothing: true
@@ -99,7 +99,7 @@ class ThreadController < ApplicationController
     @page = params[:page].to_i
     @results = Pagination.paginate(@thread.get_comments, @page, 10, params[:order] == '1')
     render json: {
-      content: render_to_string(partial: '/thread/comment_set.html.erb', locals: { thread: @results.records }),
+      content: render_to_string(partial: '/thread/comment_set.html.erb', locals: { thread: @results.records, indirect: false }),
       pages: @results.pages,
       page: @results.page
     }
