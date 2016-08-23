@@ -26,14 +26,22 @@ class SearchController < ApplicationController
       @results = Album.where('title LIKE ?', "%#{@query}%")
       @type_label= 'Album'
     elsif @type == 2
-      @results = TagSelector.new(@query).userQuery(@page, 20).order(session, @orderby, @ascending).exec()
+      begin
+        @results = TagSelector.new(@query).userQuery_two(@page, 20).order(session, @orderby, @ascending).exec()
+      rescue LexerError => e
+        @derpy = e
+      end
       @type_label = 'User'
       return
     elsif @type == 3
       @results = Tag.includes(:videos, :tag_type).where('name LIKE ?', "%#{@query}%")
       @type_label = 'Tag'
     else
-      @results = TagSelector.new(@query).videoQuery(@page, 20).order(session, @orderby, @ascending).exec()
+      begin
+        @results = TagSelector.new(@query).videoQuery_two(@page, 20).order(session, @orderby, @ascending).exec()
+      rescue LexerError => e
+        @derpy = e
+      end
       @type_label = 'Song'
       return
     end
@@ -56,7 +64,7 @@ class SearchController < ApplicationController
           page: @results.page
         }
       elsif @type == 2
-        @results = TagSelector.new(@query).userQuery(@page, 20).order(session, @orderby, @ascending).exec()
+        @results = TagSelector.new(@query).userQuery_two(@page, 20).order(session, @orderby, @ascending).exec()
         render json: {
           content: render_to_string(partial: '/layouts/artist_thumb_h.html.erb', collection: @results.records),
           pages: @results.pages,
@@ -70,7 +78,7 @@ class SearchController < ApplicationController
           page: @results.page
         }
       else
-        @results = TagSelector.new(@query).videoQuery(@page, 20).order(session, @orderby, @ascending).exec()
+        @results = TagSelector.new(@query).videoQuery_two(@page, 20).order(session, @orderby, @ascending).exec()
         render json: {
           content: render_to_string(partial: '/layouts/video_thumb_h.html.erb', collection: @results.records),
           pages: @results.pages,

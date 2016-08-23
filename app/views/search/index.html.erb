@@ -1,4 +1,4 @@
-		<div class="page resize-holder" style="width:100%;">
+﻿		<div class="page resize-holder" style="width:100%;">
 			<section>
 				<h1 class="resize-target">
 					<a>Search</a>
@@ -57,6 +57,18 @@ $('#search_type').on('change', function() {
 			</section>
 		</div>
 		<div class="page" style="width:100%;">
+		<% if @derpy %>
+				<h1>Searching for- Uh, oh!</h1>
+				<p class="center">
+					<img class="iconic" style="max-height:200px;" src="/images/derpy.png"></img>
+					<br>
+					You searched for <u><%= @query %></u> but I don't know what that means. :'c
+				</p>
+				<hr>
+				<p class="center">
+					<%= @derpy.message %>
+				</p>
+		<% else %>
 			<% if @query.length == 0 %>
 				<h1>Showing all <%= @type_label %>s found <%= number_with_delimiter @results.count %> match<% if @results.count != 1 %>es<% end %></h1>
 			<% else %>
@@ -87,4 +99,5 @@ $('#search_type').on('change', function() {
 					<% end %>
 				</section>
 			<% end %>
+		<% end %>
 		</div>

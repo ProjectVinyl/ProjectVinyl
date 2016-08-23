@@ -81,15 +81,30 @@ table {
 
 .genre-icon {
   float: left;
+  color: #a66ebe;
 }
-.space-fix .genre-icon {
+
+.post .genre-icon {
   margin-right: 10px;
 }
-.space-fix .genre-icon + .title {
-  margin-left: 10px;
+
+.tag-header {
+  vertical-align: middle;
+  height: 8em;
+  padding-top: 1em;
 }
-.genre-icon {
-  color: #a66ebe;
+.tag-header .title {
+  font-size: 1.5em;
+  padding: 0;
+  line-height: 0.5em;
+}
+
+.post .tag-header {
+  margin-left: 8em;
+}
+
+.post .subheading {
+  margin-bottom: 10px;
 }
 
 .avatar {
@@ -251,7 +266,7 @@ a {
   font-weight: bold;
   outline: none;
 }
-h1 a {
+h1 a, h2 a {
   text-decoration: none;
   font-weight: inherit;
 }
