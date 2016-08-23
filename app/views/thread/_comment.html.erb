@@ -1,4 +1,9 @@
 <li class="comment" id="comment_<%= comment.get_open_id %>">
+	<% if indirect %>
+	<div class="artist-bio bio">
+		<%= render partial: 'layouts/video_thumb_i', locals: {video_thumb_i: comment.comment_thread.owner} %>
+	</div>
+	<% else %>
 	<div class="artist-bio bio">
 		<a <% if !comment.user.isDummy %>class="user-link" data-id="<%= comment.user_id %>" href="<%= comment.user.link %>"<% end %>>
 			<span class="avatar medium">
@@ -6,7 +11,8 @@
 			</span>
 		</a>
 	</div>
-	<div class="content" data-id="<%= comment.id %>" data-o-id="<%= comment.get_open_id %>" data-comment="<%= comment.bbc_content %>">
+	<% end %>
+	<div<% if indirect %> style="margin-left:200px;"<% end %> class="content" data-id="<%= comment.id %>" data-o-id="<%= comment.get_open_id %>" data-comment="<%= comment.bbc_content %>">
 	<% if user_signed_in? && (current_user.is_admin || current_user.id == comment.user_id) %>
 		<a title="Delete Comment" class="remove-comment confirm-button" data-action="delete" data-url="comments/delete/<%= comment.id %>" data-id="<%= comment.get_open_id %>" data-callback="removeComment" data-title="Delete Comment" data-icon="warning"><i class="fa fa-trash"></i></a>
 	<% end %>

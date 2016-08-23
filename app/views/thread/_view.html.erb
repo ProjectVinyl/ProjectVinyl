@@ -44,7 +44,7 @@ var disqus_config = function () {
 <% end %>
 <%= render layout: '/layouts/paginated', locals: {type: "comments/" + @thread.id.to_s + "/" + @order, paginated: @comments} do %>
 <ul id="thread-<%= @thread.id %>" class="comments">
-	<%= render partial: '/thread/comment_set', locals: {thread: @comments.records} %>
+	<%= render partial: '/thread/comment_set', locals: {thread: @comments.records, indirect: false} %>
 </ul>
 <% end %>
 </div>

@@ -1,7 +1,7 @@
 <h1 class="title"><%= @thread.title.nil? || @thread.title.length == 0 ? "Comments" : @thread.title %></h1>
 <%= render layout: '/layouts/paginated', locals: {type: "comments/" + @thread.id.to_s + "/" + @order, paginated: @comments} do %>
 <ul id="thread-<%= @thread.id %>" class="comments">
-	<%= render partial: '/thread/comment_set', locals: {thread: @comments.records} %>
+	<%= render partial: '/thread/comment_set', locals: {thread: @comments.records, indirect: false} %>
 </ul>
 <% end %>
 <% if user_signed_in? %>

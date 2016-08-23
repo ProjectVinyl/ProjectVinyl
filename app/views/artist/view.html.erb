@@ -21,7 +21,7 @@
 			<span class="content bio"><%= raw @user.html_description %></span>
 		</div>
 		<div class="details space-fix">
-		<% if @user.tag_id || @tags.length %>
+		<% if @user.tag_id || @tags.length > 0 %>
 			<h1>Associated Tags</h1>
 			<% if @user.tag_id %>
 			<ul class="tags artist-tags">
@@ -83,6 +83,12 @@
 		<button data-page="0" data-type="albums" data-id="<%= @user.id %>" data-target="albums">Load More</button>
 	<% end %>
 	</div>
+</section>
+<section style="width:100%" class="page recent-comments resize-holder">
+	<h1 class="title resize-target">Recent Comments</h1>
+	<ul class="comments">
+	<%= render partial: 'thread/comment_set', locals: { thread: @comments, indirect: true } %>
+	</ul>
 </section>
 <% else %>
 <%= render layout: '/layouts/error', locals: { title: 'Nothing to see here!' } do %>
