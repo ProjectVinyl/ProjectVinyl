@@ -42,7 +42,7 @@ class Video < ActiveRecord::Base
               len = Ffmpeg.getVideoLength(v.video_path)
             end
             if !(len.nil? || len == 0) && len != Ffmpeg.getVideoLength(v.webm_path)
-              v.delFile(v.webm_path)
+              File.delete(v.webm_path)
               result[3] += 1
               batch[3] << v.id
             end
