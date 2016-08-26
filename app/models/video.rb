@@ -36,10 +36,16 @@ class Video < ActiveRecord::Base
           if !File.exists?(v.webm_path)
             result[1] += 1
             batch[1] << v.id
-          elsif Ffmpeg.getVideoLength(v.video_path) != Ffmpeg.getVideoLength(v.webm_path)
-            v.delFile(v.webm_path)
-            result[3] += 1
-            batch[3] << v.id
+          else
+            len = v.length
+            if (len.nil? || len == 0) && !no_src
+              len = Ffmpeg.getVideoLength(v.video_path)
+            end
+            if !(len.nil? || len == 0) && len != Ffmpeg.getVideoLength(v.webm_path)
+              v.delFile(v.webm_path)
+              result[3] += 1
+              batch[3] << v.id
+            end
           end
         end
         if !File.exists?(v.cover_path.to_s + '.png') || !File.exists?(v.cover_path.to_s + "-small.png")
@@ -292,16 +298,16 @@ class Video < ActiveRecord::Base
     return self.length
   end
   
-  private
-  def move_files(from, to)
-    renameFile(Video.video_file_path(from, self), Video.video_file_path(to, self))
-    renameFile(Video.webm_file_path(from, self), Video.webm_file_path(to, self))
-  end
-  
+  protected
   def delFile(path)
     if File.exists?(path)
       File.delete(path)
     end
+  end
+  private
+  def move_files(from, to)
+    renameFile(Video.video_file_path(from, self), Video.video_file_path(to, self))
+    renameFile(Video.webm_file_path(from, self), Video.webm_file_path(to, self))
   end
   
   def renameFile(from, to)
