@@ -21,6 +21,41 @@ class Video < ActiveRecord::Base
     return Video.where('id IN (?)', selected)
   end
   
+  def self.verify_integrity
+    result = [0,0,0,0]
+    Video.all.find_in_batches do |o|
+      batch = [[],[],[],[]]
+      o.each do |v|
+        no_src = false
+        if !File.exists?(v.video_path)
+          result[0] += 1
+          batch[0] << v.id
+          no_src = true
+        end
+        if !v.audio_only
+          if !File.exists?(v.webm_path)
+            result[1] += 1
+            batch[1] << v.id
+          elsif Ffmpeg.getVideoLength(v.video_path) != Ffmpeg.getVideoLength(v.webm_path)
+            v.delFile(v.webm_path)
+            result[3] += 1
+            batch[3] << v.id
+          end
+        end
+        if !File.exists?(v.cover_path.to_s + '.png') || !File.exists?(v.cover_path.to_s + "-small.png")
+          result[2] += 1
+          batch[2] << v.id
+          if !no_src
+            Ffmpeg.extractThumbnail(v.video_path, v.cover_path, v.getDuration().to_f / 2)
+          end
+        end
+      end
+      Video.where('id IN (?)', batch[0]).update_all(hidden: true)
+      Video.where('id IN (?)', batch[1] | batch[3]).update_all(processed: nil)
+    end
+    return result
+  end
+  
   def user
     return self.direct_user || @dummy || (@dummy = User.dummy(self.user_id))
   end
@@ -36,20 +71,43 @@ class Video < ActiveRecord::Base
   
   def removeSelf
     delFile(self.video_path)
+    delFile(self.webm_path)
     delFile(self.cover_path.to_s + ".png")
     delFile(self.cover_path.to_s + "-small.png")
-    delFile(Rails.root.join('public', 'stream', self.id.to_s + '.webm'))
     self.destroy
   end
   
   def video_path
-    return Rails.root.join('public', 'stream', self.id.to_s + self.file)
+    return Video.video_file_path(self.hidden ? 'private' : 'public', self)
   end
   
+  def webm_path
+    return Video.webm_file_path(self.hidden ? 'private' : 'public', self)
+  end
+  
+  def self.video_file_path(root, video)
+    return Rails.root.join(root, 'stream', video.id.to_s + video.file)
+  end
+  
+  def self.webm_file_path(root, video)
+    return Rails.root.join(root, 'stream', video.id.to_s + '.webm')
+  end
+  
+  def set_hidden(val)
+    if self.hidden != val
+      if self.hidden
+        move_files('private', 'public')
+      else
+        move_files('public', 'private')
+      end
+      self.hidden = val
+    end
+  end
+    
   def cover_path
     return Rails.root.join('public', 'cover', self.id.to_s)
   end
-    
+  
   def setFile(media)
     File.open(self.video_path, 'wb') do |file|
       file.write(media.read)
@@ -235,18 +293,25 @@ class Video < ActiveRecord::Base
   end
   
   private
+  def move_files(from, to)
+    renameFile(Video.video_file_path(from, self), Video.video_file_path(to, self))
+    renameFile(Video.webm_file_path(from, self), Video.webm_file_path(to, self))
+  end
+  
   def delFile(path)
     if File.exists?(path)
       File.delete(path)
     end
   end
   
-  def computeLength
-    file = Rails.root.join('public', 'stream', self.id.to_s + (self.audio_only ? '.mp3' : '.webm')).to_s
-    if !self.audio_only && !File.exists?(file)
-      file = Rails.root.join('public', 'stream', self.id.to_s + '.mp4').to_s
+  def renameFile(from, to)
+    if File.exists?(from)
+      File.rename(from, to)
     end
-    self.length = Ffmpeg.getVideoLength(file)
+  end
+  
+  def computeLength
+    self.length = Ffmpeg.getVideoLength(self.video_path)
     save()
     return self.length
   end

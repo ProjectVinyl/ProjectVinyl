@@ -24,6 +24,7 @@ Rails.application.routes.draw do
   put 'admin/visibility' => 'admin#visibility'
   put 'admin/transfer' => 'admin#transferItem'
   post 'ajax/admin/process/all' => 'admin#batch_preprocessVideos'
+  post 'ajax/admin/verify' => 'admin#verify_integrity'
   
   get 'view/:id' => 'video#view'
   get 'ajax/view/:id' => 'video#go_next'
@@ -50,7 +51,7 @@ Rails.application.routes.draw do
   get 'cover/:id' => 'imgs#cover'
   get 'avatar/:id' => 'imgs#avatar'
   get 'banner/:id' => 'imgs#banner'
-  get 'stream/:id' => 'imgs#stream'
+  get 'stream/:id' => 'imgs#stream', constraints: { id: /.*/ }
   
   get 'ajax/album/create' => 'album#new'
   get 'album/:id' => 'album#view'

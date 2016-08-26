@@ -23,24 +23,28 @@ class ImgsController < ApplicationController
   end
   
   def stream
-   # if (video = Video.where(id: params[:id]).first) && !video.hidden
-   #    serveRaw(Rails.root.join('public', 'stream', params[:id]), video.file, video.audio_only ? 'audio' : 'video')
-   # else
-       render status: 404, nothing: true
-   # end
+    id = params[:id].split('.')[0]
+    if (video = Video.where(id: id).first) && video.hidden
+       if user_signed_in? && current_user.is_admin
+         ext = video.file
+         if params[:id].index('.')
+           ext = '.' + params[:id].split('.')[1]
+         end
+         serveDirect(ext == '.webm' ? video.webm_path : video.video_path, ext == '.webm' ? 'video/webm' : video.mime)
+       else
+         render :file => 'public/403.html',  status: 403, :layout => false
+       end
+    else
+      render :file => 'public/404.html', :status => :not_found, :layout => false
+    end
   end
   
   private
-  def serveFile(file, defau, ext, type)
-    file = Rails.root.join('storage', file)
-    if File.exists? file + "." + ext
-      serveRaw(file, ext, type)
-    else
-      serveRaw(defau, ext, type)
-    end
-  end
   def serveRaw(file, ext, type)
-    response.headers['Content-Length'] = File.size(file.to_s + "." + ext).to_s
-    send_file file.to_s + "." + ext, :disposition => 'inline', :type => type + "/" + ext, :filename => File.basename(file).to_s + '.' + ext, :x_sendfile => true
+    serveDirect(file.to_s + "." + ext, type + "/" + ext)
+  end
+  def serveDirect(file, mime)
+    response.headers['Content-Length'] = File.size(file.to_s).to_s
+    send_file file.to_s, :disposition => 'inline', :type => mime, :filename => File.basename(file).to_s, :x_sendfile => true
   end
 end

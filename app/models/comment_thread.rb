@@ -4,8 +4,11 @@ class CommentThread < ActiveRecord::Base
   
   belongs_to :owner, polymorphic: true
   
-  def get_comments
-    return comments.includes(:direct_user, :mentions)
+  def get_comments(all)
+    if all
+      return comments.includes(:direct_user, :mentions)
+    end
+    return comments.where(hidden: false).includes(:direct_user, :mentions)
   end
   
   def location

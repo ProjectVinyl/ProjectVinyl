@@ -1,7 +1,7 @@
 <% title "Admin" %>
 <% lim "1100px" %>
 <section style="width:100%" class="page resize-holder">
-	<h1 class="title resize-target">Report #<%= @report.id %></h1>
+	<h1 class="title resize-target">Report #<%= @report.id %> <%= @report.comment_thread.title %></h1>
 <div class="comment<%= !@report.resolved.nil? ? (@report.resolved ? " resolved" : " closed") : "" %>" >
 	<% if !@report.resolved.nil? %>
 		<div class="notice alert resolution-status">
@@ -34,7 +34,9 @@
 		<div class="date right"><%= since @report.created_at %></div>
 		<table style="table-layout:auto" class="properties comment-content preview">
 			<ul class="horizontal video-list">
-			<%= render partial: 'layouts/video_thumb_h', locals: {video_thumb_h: @video} %>
+			<% if @video %>
+				<%= render partial: 'layouts/video_thumb_h', locals: {video_thumb_h: @video} %>
+			<% end %>
 			</ul>
 			<tr>
 				<td>Report Type:</td>
@@ -46,6 +48,7 @@
 				<td><%= @report.source %></td>
 			</tr>
 			<% end %>
+			<% if @report.video %>
 			<tr>
 				<td>Reasons:</td>
 				<td>
@@ -55,6 +58,7 @@
 					<% if @report.content_type_unrelated %>Explicit <% end %>
 				</td>
 			</tr>
+			<% end %>
 			<% if @report.copyright_holder %>
 			<tr>
 				<td>Copyright Holder:</td>
@@ -69,6 +73,11 @@
 					<br>
 					<%= @report.other %>
 				</td>
+			</tr>
+			<% elsif @report.other %>
+			<tr>
+				<td>Other: </td>
+				<td><%= raw @report.other %></td>
 			</tr>
 			<% end %>
 			<% if @report.name %>

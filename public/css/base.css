@@ -911,6 +911,17 @@ label input[type=checkbox]:not(:checked) + i {
   min-height: 100px;
 }
 
+.comment.deleted, .comment.deleted .content {
+  min-height: 0;
+}
+.comment.deleted .content::before, .comment.deleted .content::after {
+  display: none;
+}
+.comment.deleted .content {
+  background: #fee;
+  border-color: #a88;
+}
+
 .comment .bio {
   float: left;
   padding-right: 20px;
@@ -928,7 +939,7 @@ label input[type=checkbox]:not(:checked) + i {
   color: #333333;
 }
 
-.comment blockquote {
+blockquote {
   background: rgba(0,250,250, 0.3);
   padding: 3px;
   margin: 3px;

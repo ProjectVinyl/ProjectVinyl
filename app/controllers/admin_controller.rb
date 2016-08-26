@@ -6,8 +6,8 @@ class AdminController < ApplicationController
     end
     @hidden_count = Video.where(hidden: true).count
     @hiddenvideos = Video.where(hidden: true).limit(5*8).reverse_order
-    @unprocessed_count = Video.where("processed IS NULL or processed = ?", false).count
-    @unprocessed = Video.where("processed IS NULL or processed = ?", false).limit(5*8)
+    @unprocessed_count = Video.where("(processed IS NULL or processed = ?) AND hidden = false", false).count
+    @unprocessed = Video.where("(processed IS NULL or processed = ?) AND hidden = false", false).limit(5*8)
     @users = User.where(last_sign_in_at: Time.zone.now.beginning_of_month..Time.zone.now.end_of_day).limit(100).order(:last_sign_in_at).reverse_order
     @processorStatus = VideoProcessor.status
     @reports_count = Report.includes(:video).where(resolved: nil).count
@@ -58,9 +58,9 @@ class AdminController < ApplicationController
       if user_signed_in? && (current_user.is_admin || current_user.id == @report.user_id)
         @thread = @report.comment_thread
         @order = '0'
-        @results = @comments = Pagination.paginate(@thread.get_comments, (params[:page] || -1).to_i, 10, false)
+        @results = @comments = Pagination.paginate(@thread.get_comments(true), (params[:page] || -1).to_i, 10, false)
         @video = @report.video
-        @user = @video.user
+        @user = @report.user
         return
       end
     end
@@ -167,10 +167,10 @@ class AdminController < ApplicationController
     if user_signed_in? && current_user.is_admin
       video = Video.find(params[:video][:id])
       if video.hidden
-        video.hidden = false
+        video.set_hidden(false)
         video.save
       else
-        video.hidden = true
+        video.set_hidden(true)
         video.save
       end
       redirect_to action: 'video', id: params[:video][:id]
@@ -189,10 +189,56 @@ class AdminController < ApplicationController
     end
     render status: 401, nothing: true
   end
-    
+  
+  def verify_integrity
+    if user_signed_in? && current_user.is_admin
+      if !(Report.where('created_at > ?', Time.zone.now.yesterday.beginning_of_day).first)
+        @report = Report.create(user_id: 0, first: "System", other: "Working...", resolved: false)
+        @report.comment_thread = CommentThread.create(user_id: 0, title: 'System Integrity Report (' + Time.zone.now.to_s + ')')
+        @report.save
+        Thread.start {
+          begin
+            user_component = User.verify_integrity
+            video_component = Video.verify_integrity
+            @report.other = ""
+            @report.other << "User avatars reset: " + user_component[0].to_s
+            @report.other << "<br>User banners reset: " + user_component[1].to_s
+            @report.other << "<br>Missing video files: " + video_component[0].to_s
+            @report.other << "<br>Missing webm files : " + video_component[1].to_s
+            if video_component[3] > 0
+              @report.other << "<br>Dropped " + video_component[3].to_s + " Damaged webm files"
+            end
+            if (video_component[3] + video_component[1]) > 0
+              @report.other << "<br>" + (video_component[3] + video_component[1]) + " have been scheduled for reprocessing."
+            end
+            @report.other << "<br>Missing covers : " + video_component[2].to_s
+            if video_component[0] > 0
+              @report.other << "<br><br>Damaged videos have been removed from public listings until they can be repaired."
+            end
+          rescue Exception => e
+            @report.other << "<br>Check did not complete correctly. <br>" + e.to_s
+            puts e
+            puts e.backtrace
+          ensure
+            @report.resolved = nil
+            Notification.notify_admins(@report,
+              "A system integrity report has been generated", @report.comment_thread.location)
+            @report.save
+            ActiveRecord::Base.connection.close
+          end
+        }
+        flash[:notice] = "Success! An integrity check has been launched. A report will be generated upon completion."
+      else
+        flash[:notice] = "Access Denied: You cannot perform an integrity check more than once per day."
+      end
+    else
+      flash[:notice] = "Access Denied: You do not have the required permissions."
+    end
+    render json: { ref: url_for(action: "view") }
+  end
+  
   def report
     if @video = Video.where(id: params[:id]).first
-      @recievers = User.where(is_admin: true).pluck(:id)
       @report = params[:report]
       @report = Report.create({
         video_id: @video.id,
@@ -210,10 +256,10 @@ class AdminController < ApplicationController
       if user_signed_in?
         @report.user_id = current_user.id
       end
-      @report.comment_thread = CommentThread.create(title: "Report: " + @video.title)
+      @report.comment_thread = CommentThread.create(user_id: @report.user_id, title: "Report: " + @video.title)
       @report.save
-      Notification.notify_recievers(@recievers, @report,
-         "A new <b>Report</b> has been submitted for <b>" + @video.title + "</b>", @report.comment_thread)
+      Notification.notify_admins(@report,
+         "A new <b>Report</b> has been submitted for <b>" + @video.title + "</b>", @report.comment_thread.location)
       render status: 200, nothing: true
       return
     end

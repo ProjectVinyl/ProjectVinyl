@@ -9,11 +9,7 @@ class Comment < ActiveRecord::Base
   has_many :mentions, class_name: "CommentReply", foreign_key: "comment_id"
   
   def self.Finder
-    return Comment.includes(:direct_user, :mentions)
-  end
-  
-  def self.get_with_replies(id)
-    return Comment.Finder.where(id: id).first
+    return Comment.where(hidden: false).includes(:direct_user, :mentions)
   end
   
   def user

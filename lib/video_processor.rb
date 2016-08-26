@@ -1,8 +1,9 @@
 class ProcessingWorker < ActiveRecord::Base
-  def update_status(s)
-    if self.status != s
+  def update_status(s, m)
+    if !self.running || self.status != s || self.message != m
       self.running = true
       self.status = s
+      self.message = m
       self.save
     end
   end
@@ -38,7 +39,7 @@ class VideoProcessor
   def self.status
     workers = ProcessingWorker.all
     result = "<div>Control flag: " + @@flag.to_s + "</div>"
-    result << "<div>Videos in queue: " + VideoProcessor.queue.length.to_s + "</div>"
+    result << "<div>Videos in queue: " + VideoProcessor.queue.count.to_s + "</div>"
     result << "<div>Workers: " + workers.length.to_s + "</div>"
     workers.each do |worker|
       result << '<div>Thread #' + worker.id.to_s + ", status: " + worker.status + ", message: " + worker.message + '</div>'
@@ -47,18 +48,23 @@ class VideoProcessor
   end
   
   def self.enqueue(video)
-    if !video.checkIndex && @@master && @@master.status
-      puts "[Processing Manager] Enqueued video #" + video.id
-      ProcessingManager.startManager
+    if !video.checkIndex
+      puts "[Processing Manager] Enqueued video #" + video.id.to_s
+      VideoProcessor.startManager
     end
   end
   
   def self.queue
-    return Video.where(processed: nil).order(:id)
+    return Video.where(processed: nil, hidden: false).order(:id)
   end
   
   def self.dequeue
-    return VideoProcessor.queue.first
+    ActiveRecord::Base.connection.execute('SELECT GET_LOCK("processor", 300);')
+    result = VideoProcessor.queue.first
+    result.processed = false
+    result.save
+    ActiveRecord::Base.connection.execute('SELECT RELEASE_LOCK("processor");')
+    return result
   end
   
   def self.processor(db_object)
@@ -72,21 +78,18 @@ class VideoProcessor
     end
     return Thread.start {
       begin
-        puts "[Processing Manager] Spinning thread #(" + id.to_s + ")"
+        puts "[Processing Manager] Spinning thread #(" + db_object.id.to_s + ")"
         while @@flag
           if video = VideoProcessor.dequeue()
-            db_object.update_status("running")
             @@SleepTimer = 0
-            db_object.message = "Current video id:" + video.id.to_s + " (working)"
-            db_object.save
+            db_object.update_status("running", "Current video id:" + video.id.to_s + " (working)")
             video.generateWebM_sync
-            db_object.message = "Waiting"
-            db_object.save
+            db_object.update_status("running", "Waiting")
           else
-            db_object.update_status("sleep")
             if @@sleepTimer < 3600
               @@SleepTimer = @@SleepTimer + @@SleepIncriment
             end
+            db_object.update_status("sleep", "Wake up in " + @@SleepTimer + " seconds")
             sleep(@@SleepTimer)
           end
         end
@@ -108,19 +111,22 @@ class VideoProcessor
   
   def self.startManager
     puts "[Processing Manager] Attempting Master thread start"
+    started_any = false
     result = 0
     count = ProcessingWorker.all.count
     while count < @@required_worker_count
       VideoProcessor.processor(nil)
+      started_any = true
       count += 1
       result += 1
     end
     ProcessingWorker.where(running: false).each do |i|
       if result < @@required_worker_count
         VideoProcessor.processor(i)
+        started_any = true
       end
       result += 1
     end
-    return result
+    return started_any
   end
 end

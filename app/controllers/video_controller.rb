@@ -27,7 +27,7 @@ class VideoController < ApplicationController
     @user = @video.user
     @thread = @video.comment_thread
     @order = '1'
-    @results = @comments = Pagination.paginate(@thread.get_comments, 0, 10, true)
+    @results = @comments = Pagination.paginate(@thread.get_comments(user_signed_in? && current_user.is_admin), 0, 10, true)
     @queue = @user.queue(@video.id)
     if !@modificationsAllowed = user_signed_in? && current_user.id == @user.id
       @video.views = @video.views + 1

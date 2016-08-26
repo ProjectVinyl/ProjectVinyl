@@ -6,7 +6,7 @@ class ThreadController < ApplicationController
         return
       end
       @order = '0'
-      @results = @comments = Pagination.paginate(@thread.get_comments, (params[:page] || -1).to_i, 10, false)
+      @results = @comments = Pagination.paginate(@thread.get_comments(user_signed_in? && current_user.is_admin), (params[:page] || -1).to_i, 10, false)
     end
   end
   
@@ -15,9 +15,9 @@ class ThreadController < ApplicationController
       if @thread = CommentThread.where(id: params[:thread]).first
         comment = Comment.create(user_id: current_user.id, comment_thread_id: @thread.id)
         comment.update_comment(params[:comment])
-        @results = Pagination.paginate(@thread.get_comments, params[:order] == '1' ? 0 : -1, 10, params[:order] == '1')
+        @results = Pagination.paginate(@thread.get_comments(current_user.is_admin), params[:order] == '1' ? 0 : -1, 10, params[:order] == '1')
         render json: {
-          content: render_to_string(partial: '/thread/comment_set.html.erb', locals: { thread: @results.records }),
+          content: render_to_string(partial: '/thread/comment_set.html.erb', locals: { thread: @results.records, indirect: false }),
           pages: @results.pages,
           page: @results.page,
           focus: comment.get_open_id
@@ -80,15 +80,23 @@ class ThreadController < ApplicationController
   end
   
   def remove_comment
-    if user_signed_in?
-      if comment = Comment.where(id: params[:id]).first
-        if current_user.is_admin || current_user.id == comment.user_id
-          comment.destroy
+    if user_signed_in? && comment = Comment.where(id: params[:id]).first
+      if current_user.is_admin || current_user.id == comment.user_id
+        if comment.hidden && current_user.is_admin
+          comment.hidden = false
+          comment.save
           render json: {
-            message: "success"
+            message: "success",
+            content: render_to_string(partial: '/thread/comment.html.erb', locals: { comment: comment, indirect: false }),
           }
-          return
+        else
+          comment.hidden = true
+          comment.save
+          render json: {
+            message: "success", reload: true
+          }
         end
+        return
       end
     end
     render status: 401, nothing: true
@@ -97,7 +105,7 @@ class ThreadController < ApplicationController
   def page
     @thread = CommentThread.where(id: params[:thread_id]).first
     @page = params[:page].to_i
-    @results = Pagination.paginate(@thread.get_comments, @page, 10, params[:order] == '1')
+    @results = Pagination.paginate(@thread.get_comments(user_signed_in? && current_user.is_admin), @page, 10, params[:order] == '1')
     render json: {
       content: render_to_string(partial: '/thread/comment_set.html.erb', locals: { thread: @results.records, indirect: false }),
       pages: @results.pages,

@@ -72,6 +72,26 @@ class User < ActiveRecord::Base
     return UserDummy.new(id)
   end
   
+  def self.verify_integrity
+    result = [0,0]
+    User.all.find_in_batches do |o|
+      o.each do |u|
+        if u.mime && !File.exists?(Rails.root.join('public', 'avatar', u.id.to_s))
+          puts u.avatar
+          u.setAvatar(false)
+          u.save
+          result[0] += 1
+        end
+        if u.banner_set && !File.exists?(Rails.root.join('public', 'banner', u.id.to_s))
+          u.setBanner(false)
+          u.save
+          result[1] += 1
+        end
+      end
+    end
+    return result
+  end
+  
   def self.by_name_or_id(id)
     return User.where('id = ? OR username = ?', id, id).first
   end

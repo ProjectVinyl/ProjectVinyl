@@ -1,4 +1,12 @@
-<li class="comment" id="comment_<%= comment.get_open_id %>">
+<li class="comment<% if comment.hidden %> deleted<% end %>" id="comment_<%= comment.get_open_id %>">
+<% if comment.hidden %>
+	<div class="content">
+		Comment Hidden
+		<% if user_signed_in? && current_user.is_admin %>
+		<a title="Restore Comment" class="remove-comment confirm-button" data-action="delete" data-url="comments/delete/<%= comment.id %>" data-id="<%= comment.get_open_id %>" data-callback="removeComment" data-title="Restore Comment" data-icon="warning"><i class="fa fa-trash"></i></a>
+		<% end %>
+	</div>
+<% else %>
 	<% if indirect %>
 	<div class="artist-bio bio">
 		<%= render partial: 'layouts/video_thumb_i', locals: {video_thumb_i: comment.comment_thread.owner} %>
@@ -39,4 +47,5 @@
 		<button class="green edit-comment-submit">Edit Comment</button>
 	<% end %>
 	</div>
+<% end %>
 </li>

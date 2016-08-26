@@ -690,8 +690,8 @@ $(document).on('click', '.state-toggle', function(ev) {
             ajax.post(url, function(json) {
               if (json.ref) {
                 document.location.replace(json.ref);
-              } else  if (callback) {
-                window[callback](id);
+              } else if (callback) {
+                window[callback](id, json);
               }
             });
             popup.close();
@@ -1068,8 +1068,11 @@ function editComment(sender) {
   });
 }
 
-function removeComment(id) {
+function removeComment(id, json) {
   id = $('#comment_' + id);
+  if (json.content) {
+    return id.after(json.content).remove();
+  }
   if (id.length) {
     id.css({
       'min-height': 0,

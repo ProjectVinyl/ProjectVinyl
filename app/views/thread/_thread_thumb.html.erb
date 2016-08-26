@@ -1,0 +1,12 @@
+<a href="/comments/<%= thread_thumb.id %>">
+	<div>
+		<div><%= thread_thumb.title %></div>
+	</div>
+	<div>
+		<span>posted by ??? <%= since thread_thumb.created_at %></span>
+	</div>
+	<div>
+		<span><%= thread_thumb.comments.length %> Replies</span>
+	</div>
+</a>
+

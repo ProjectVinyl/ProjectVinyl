@@ -1,7 +1,7 @@
 class GenreController < ApplicationController
   def view
-puts params[:name]
     if @tag = Tag.where("short_name = ? OR name = ?", params[:name].downcase, params[:name].downcase).first
+      @modificationsAllowed = user_signed_in? && current_user.is_admin
       @totalVideos = @tag.videos.length
       @totalUsers = @tag.users.length
       @videos = @tag.videos.where(hidden: false).order(:created_at).reverse_order.limit(16)

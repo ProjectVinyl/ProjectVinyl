@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160815145321) do
+ActiveRecord::Schema.define(version: 20160825141842) do
 
   create_table "album_items", force: :cascade do |t|
     t.integer "album_id", limit: 4
@@ -64,8 +64,9 @@ ActiveRecord::Schema.define(version: 20160815145321) do
     t.integer  "comment_thread_id", limit: 4
     t.text     "html_content",      limit: 65535
     t.text     "bbc_content",       limit: 65535
-    t.datetime "created_at",                      null: false
-    t.datetime "updated_at",                      null: false
+    t.datetime "created_at",                                      null: false
+    t.datetime "updated_at",                                      null: false
+    t.boolean  "hidden",                          default: false
   end
 
   create_table "notifications", force: :cascade do |t|

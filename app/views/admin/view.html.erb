@@ -35,6 +35,7 @@
 	<%= raw @processorStatus %>
 	<hr>
 	<button class="confirm-button action red" data-action="delete" data-url="admin/process/all" data-title="Process <%= @unprocessed_count %> Videos" data-icon="warning" type="button">Poke Processor</button>
+	<button class="confirm-button action blue" data-action="delete" data-url="admin/verify" data-title="Verify System Integrity" data-icon="warning" type="button">Verify System Integrity</button>
 </section>
 <section style="width:100%" class="page recent-reports resize-holder">
 	<h1 class="title resize-target">Open Reports (<%= @reports_count %>)</h1>
@@ -42,7 +43,9 @@
 		<% @reports.each do |report| %>
 		<li class="generic">
 			<a href="admin/report/view/<%= report.id %>">Report #<%= report.id %></a>
-			<%= render partial: 'layouts/video_thumb_h', locals: {video_thumb_h: report.video } %>
+			<% if report.video %>
+				<%= render partial: 'layouts/video_thumb_h', locals: {video_thumb_h: report.video } %>
+			<% end %>
 		</li>
 		<% end %>
 	</ul>
