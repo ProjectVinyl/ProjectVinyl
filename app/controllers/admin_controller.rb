@@ -199,22 +199,11 @@ class AdminController < ApplicationController
         Thread.start {
           begin
             user_component = User.verify_integrity
-            video_component = Video.verify_integrity
             @report.other = ""
             @report.other << "User avatars reset: " + user_component[0].to_s
             @report.other << "<br>User banners reset: " + user_component[1].to_s
-            @report.other << "<br>Missing video files: " + video_component[0].to_s
-            @report.other << "<br>Missing webm files : " + video_component[1].to_s
-            if video_component[3] > 0
-              @report.other << "<br>Dropped " + video_component[3].to_s + " Damaged webm files"
-            end
-            if (video_component[3] + video_component[1]) > 0
-              @report.other << "<br>" + (video_component[3] + video_component[1]) + " have been scheduled for reprocessing."
-            end
-            @report.other << "<br>Missing covers : " + video_component[2].to_s
-            if video_component[0] > 0
-              @report.other << "<br><br>Damaged videos have been removed from public listings until they can be repaired."
-            end
+            @report.save
+            Video.verify_integrity(@report)
           rescue Exception => e
             @report.other << "<br>Check did not complete correctly. <br>" + e.to_s
             puts e

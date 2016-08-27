@@ -21,45 +21,47 @@ class Video < ActiveRecord::Base
     return Video.where('id IN (?)', selected)
   end
   
-  def self.verify_integrity
-    result = [0,0,0,0]
-    Video.all.find_in_batches do |o|
-      batch = [[],[],[],[]]
-      o.each do |v|
-        no_src = false
-        if !File.exists?(v.video_path)
-          result[0] += 1
-          batch[0] << v.id
-          no_src = true
-        end
-        if !v.audio_only
-          if !File.exists?(v.webm_path)
-            result[1] += 1
-            batch[1] << v.id
+  def self.verify_integrity(report)
+    webms = []
+    sources = []
+    location = Rails.root.join('public', 'stream')
+    Dir.entries(location.to_s).each do |name|
+      if name.index('.')
+        split = name.split('.')
+        if (id = split[0].to_i) && id > 0
+          if split[1] == 'webm'
+            webms << id
           else
-            len = v.length
-            if (len.nil? || len == 0) && !no_src
-              len = Ffmpeg.getVideoLength(v.video_path)
-            end
-            if !(len.nil? || len == 0) && len != Ffmpeg.getVideoLength(v.webm_path)
-              File.delete(v.webm_path)
-              result[3] += 1
-              batch[3] << v.id
-            end
-          end
-        end
-        if !File.exists?(v.cover_path.to_s + '.png') || !File.exists?(v.cover_path.to_s + "-small.png")
-          result[2] += 1
-          batch[2] << v.id
-          if !no_src
-            Ffmpeg.extractThumbnail(v.video_path, v.cover_path, v.getDuration().to_f / 2)
+            sources << id
           end
         end
       end
-      Video.where('id IN (?)', batch[0]).update_all(hidden: true)
-      Video.where('id IN (?)', batch[1] | batch[3]).update_all(processed: nil)
     end
-    return result
+    total = Video.all.count
+    total_vid = Video.where('audio_only = false').count
+    report.other << "<br>Missing video files: " + (total - sources.length).to_s
+    report.other << "<br>Missing webm files : " + (total_vid - webms.length).to_s
+    report.save
+    Video.where('id NOT IN (?) AND audio_only = false AND processed = true', webms).update_all(processed: nil)
+    Video.where('id NOT IN (?) AND hidden = false', sources).update_all(hidden: true)
+    damaged = []
+    Video.where('id IN (?)', webms).find_in_batches do |batch|
+      batch.each do |video|
+        if Ffmpeg.getVideoLength(video.webm_path) != Ffmpeg.getVideoLength(video.video_path)
+          damaged << video.id
+          File.rename(video.webm_path, location.join('damaged', video.id.to_s + '.webm'))
+        end
+      end
+    end
+    if damaged.length > 0
+      report.other << "<br>Dropped " + damaged.length + " Damaged webm files"
+      report.save
+      Video.where('id IN (?)', damaged).update_all(processed: nil)
+    end
+    if (total - sources.length) > 0
+      report.other << "<br><br>Damaged videos have been removed from public listings until they can be repaired."
+      report.save
+    end
   end
   
   def user

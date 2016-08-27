@@ -1,4 +1,8 @@
 class ProcessingWorker < ActiveRecord::Base
+  def initialize
+    @e = nil
+  end
+  
   def update_status(s, m)
     if !self.running || self.status != s || self.message != m
       self.running = true
@@ -8,7 +12,7 @@ class ProcessingWorker < ActiveRecord::Base
     end
   end
   
-  def stop()
+  def stop
     if self.running
       self.message = "Shut Down"
       if @e
@@ -21,25 +25,28 @@ class ProcessingWorker < ActiveRecord::Base
   end
   
   def start
-    self.message = "Waiting"
-    self.save
+    puts "[Processing Manager] Spinning thread #(" + self.id.to_s + ")"
+    while (video = VideoProcessor.dequeue())
+      self.update_status("running", "Current video id:" + video.id.to_s + " (working)")
+      video.generateWebM_sync
+      self.update_status("running", "Waiting")
+    end
   end
   
   def exception=(e)
     @e = e
+    puts "[Processing Manager] Thread died #(" + self.id.to_s + ")"
+    puts @e
+    puts @e.backtrace
   end
 end
 
 class VideoProcessor
-  @@flag = true
   @@required_worker_count = 2
-  @@SleepIncriment = 15
-  @@SleepTimer = 0
   
   def self.status
     workers = ProcessingWorker.all
-    result = "<div>Control flag: " + @@flag.to_s + "</div>"
-    result << "<div>Videos in queue: " + VideoProcessor.queue.count.to_s + "</div>"
+    result = "<div>Videos in queue: " + VideoProcessor.queue.count.to_s + "</div>"
     result << "<div>Workers: " + workers.length.to_s + "</div>"
     workers.each do |worker|
       result << '<div>Thread #' + worker.id.to_s + ", status: " + worker.status + ", message: " + worker.message + '</div>'
@@ -59,11 +66,16 @@ class VideoProcessor
   end
   
   def self.dequeue
-    ActiveRecord::Base.connection.execute('SELECT GET_LOCK("processor", 300);')
-    result = VideoProcessor.queue.first
-    result.processed = false
-    result.save
-    ActiveRecord::Base.connection.execute('SELECT RELEASE_LOCK("processor");')
+    result = nil
+    begin
+      ActiveRecord::Base.connection.execute('SELECT GET_LOCK("processor", 300);')
+      if result = VideoProcessor.queue.first
+        result.processed = false
+        result.save
+      end
+    ensure
+      ActiveRecord::Base.connection.execute('SELECT RELEASE_LOCK("processor");')
+    end
     return result
   end
   
@@ -71,42 +83,21 @@ class VideoProcessor
     if db_object && db_object.running
       return
     end
-    if !db_object
-      db_object = ProcessingWorker.create(running: true, status: "running", message: "Waiting")
+    if db_object
+      db_object.update_status("running", "Ready")
     else
-      db_object.start
+      db_object = ProcessingWorker.create(running: true, status: "running", message: "Ready")
     end
-    return Thread.start {
+    Thread.start {
       begin
-        puts "[Processing Manager] Spinning thread #(" + db_object.id.to_s + ")"
-        while @@flag
-          if video = VideoProcessor.dequeue()
-            @@SleepTimer = 0
-            db_object.update_status("running", "Current video id:" + video.id.to_s + " (working)")
-            video.generateWebM_sync
-            db_object.update_status("running", "Waiting")
-          else
-            if @@sleepTimer < 3600
-              @@SleepTimer = @@SleepTimer + @@SleepIncriment
-            end
-            db_object.update_status("sleep", "Wake up in " + @@SleepTimer + " seconds")
-            sleep(@@SleepTimer)
-          end
-        end
+        db_object.start()
       rescue Exception => e
         db_object.exception = e
-        puts "[Processing Manager] Thread died #(" + index.to_s + ")"
-        puts e
-        puts e.backtrace
       ensure
-        db_object.stop(nil)
+        db_object.stop()
         ActiveRecord::Base.connection.close
       end
     }
-  end
-  
-  def self.stopMaster
-    @@flag = false
   end
   
   def self.startManager
