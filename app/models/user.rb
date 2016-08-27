@@ -77,7 +77,6 @@ class User < ActiveRecord::Base
     User.all.find_in_batches do |o|
       o.each do |u|
         if u.mime && !File.exists?(Rails.root.join('public', 'avatar', u.id.to_s))
-          puts u.avatar
           u.setAvatar(false)
           u.save
           result[0] += 1
