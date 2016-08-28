@@ -5,7 +5,9 @@ class Notification < ActiveRecord::Base
       { user_id: reciever,
         message: message,
         source: source,
-        sender: sender }
+        sender: sender,
+        unread: true
+      }
     end
     Notification.where('user_id IN (?) AND sender = ?', recievers, sender).delete_all
     Notification.create(batch_data)
@@ -22,7 +24,9 @@ class Notification < ActiveRecord::Base
       { user_id: reciever,
         message: message,
         source: source,
-        sender: sender }
+        sender: sender,
+        unread: true
+      }
     end
     Notification.create(batch_data)
     User.where('id IN (?)', recievers).update_all('notification_count = notification_count + 1')
