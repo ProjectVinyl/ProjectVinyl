@@ -49,12 +49,12 @@ class Video < ActiveRecord::Base
       batch.each do |video|
         if Ffmpeg.getVideoLength(video.webm_path) != Ffmpeg.getVideoLength(video.video_path)
           damaged << video.id
-          File.rename(video.webm_path, location.join('damaged', video.id.to_s + '.webm'))
+          File.rename(video.webm_path, location.join('damaged', video.id.to_s + ".webm"))
         end
       end
     end
     if damaged.length > 0
-      report.other << "<br>Dropped " + damaged.length + " Damaged webm files"
+      report.other << "<br>Dropped " + damaged.length.to_s + " Damaged webm files"
       report.save
       Video.where('id IN (?)', damaged).update_all(processed: nil)
     end

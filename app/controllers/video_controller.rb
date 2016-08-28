@@ -26,6 +26,10 @@ class VideoController < ApplicationController
     }
     @user = @video.user
     @thread = @video.comment_thread
+    if !@thread
+      @thread = @video.comment_thread = CommentThread.create(user_id: @user.id)
+      @video.save
+    end
     @order = '1'
     @results = @comments = Pagination.paginate(@thread.get_comments(user_signed_in? && current_user.is_admin), 0, 10, true)
     @queue = @user.queue(@video.id)
@@ -127,7 +131,7 @@ class VideoController < ApplicationController
                   mime: file.content_type,
                   file: ext,
                   audio_only: file.content_type.include?('audio/'),
-                  upvotes: 0, downvotes: 0).set_description(video[:description])
+                  upvotes: 0, downvotes: 0, hidden: false).set_description(video[:description])
           video.comment_thread = CommentThread.create(user_id: user)
           Tag.loadTags(params[:video][:tag_string], video)
           video.setFile(file)
