@@ -65,7 +65,7 @@ class Tag < ActiveRecord::Base
     new_tags.each do |name|
       name = name.strip
       if name.index('uploader:') != 0 && name.index('title:') != 0
-        tag = Tag.create(description: '', tag_type_id: 0)
+        tag = Tag.create(description: '', tag_type_id: 0, video_count: 0, user_count: 0)
         if !name.index(':').nil? && type = TagType.where(prefix: name.split(':')[0]).first
           tag.tag_type = type
           tag.set_name(name.sub(name.split(':')[0], '').strip)
