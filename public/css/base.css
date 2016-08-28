@@ -323,6 +323,7 @@ header ul li {
   margin: 0 10px;
   color: #008;
 }
+
 header.header ul li a {
   margin-top: -5px;
   color: inherit;
@@ -334,7 +335,11 @@ header ul.drop-down li {
   display: block;
   margin: 0;
   width: 100%;
+  padding: 0;
+}
+header ul.drop-down li a {
   padding: 0 10px;
+  width: 100%;
 }
 header ul.drop-down {
   padding: 0;
@@ -771,6 +776,10 @@ label input[type=checkbox]:not(:checked) + i {
 #login.drop-down-holder:hover {
   background: #fff;
   border-radius: 0 0 0 10px;
+}
+#login ul, #login ul li, #login ul li a {
+  color: #337287;
+  text-shadow: none;
 }
 #login img {
    max-height: 30px;
