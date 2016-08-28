@@ -116,6 +116,12 @@ class VideoController < ApplicationController
           if ext == ''
            ext = Mimes.ext(file.content_type)
           end
+          if !video[:tag_string]
+            return error(params[:async], "Error", "You need at least one tag.")
+          end
+          if !video[:title] || video[:title].strip.length == 0
+            return error(params[:async], "Error", "You need to specify a title.")
+          end
           video = user.videos.create(
                   source: video[:source],
                   mime: file.content_type,
@@ -123,9 +129,7 @@ class VideoController < ApplicationController
                   audio_only: file.content_type.include?('audio/'),
                   upvotes: 0, downvotes: 0).set_description(video[:description])
           video.comment_thread = CommentThread.create(user_id: user)
-          if params[:video][:tag_string]
-            Tag.loadTags(params[:video][:tag_string], video)
-          end
+          Tag.loadTags(params[:video][:tag_string], video)
           video.setFile(file)
           video.setThumbnail(cover)
           video.set_title(nonil(video[:title], 'Untitled Video'))

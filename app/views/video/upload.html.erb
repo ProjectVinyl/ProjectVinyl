@@ -50,7 +50,9 @@
   $('#new_video').on('change', 'h1#video_title input', validateInput);
   
   function cleanup(title) {
-    return title.replace(/^[0-9]*/g, '').replace(/[-_]/g,' ').trim()
+    return title.toLowerCase().replace(/^[0-9]*/g, '').replace(/[-_]|[^a-z\s]/gi,' ').replace(/(^|\s)[a-z]/g, function(i) {
+      return i.toUpperCase()
+    }).trim()
   }
   
   function notify(msg) {
