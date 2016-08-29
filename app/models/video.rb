@@ -117,19 +117,26 @@ class Video < ActiveRecord::Base
   end
   
   def setFile(media)
-    delFile(self.video_path.to_s)
-    delFile(self.webm_path.to_s)
-    self.processed = nil
+    if self.file
+      delFile(self.video_path.to_s)
+      delFile(self.webm_path.to_s)
+    end
     ext = File.extname(media.original_filename)
     if ext == ''
       ext = Mimes.ext(media.content_type)
     end
     self.file = ext
     self.mime = media.content_type
+    self.save_file(media)
+  end
+  
+  def save_file(media)
     File.open(self.video_path, 'wb') do |file|
       file.write(media.read)
       file.flush()
     end
+    self.processed = nil
+    self.save
   end
   
   def generateWebM
@@ -293,7 +300,7 @@ class Video < ActiveRecord::Base
   end
   
   def set_description(text)
-    test = ApplicationHelper.demotify(text)
+    text = ApplicationHelper.demotify(text)
     self.description = text
     self.html_description = ApplicationHelper.emotify(text)
     return self
@@ -328,9 +335,12 @@ class Video < ActiveRecord::Base
   end
   
   def computeLength
-    self.length = Ffmpeg.getVideoLength(self.video_path)
-    save()
-    return self.length
+    if self.file
+      self.length = Ffmpeg.getVideoLength(self.video_path)
+      save()
+      return self.length
+    end
+    return 0
   end
   
   def computeScore

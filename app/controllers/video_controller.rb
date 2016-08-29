@@ -122,16 +122,32 @@ class VideoController < ApplicationController
           if !video[:title] || video[:title].strip.length == 0
             return error(params[:async], "Error", "You need to specify a title.")
           end
+          ext = File.extname(file.original_filename)
+          if ext == ''
+            ext = Mimes.ext(file.content_type)
+          end
+          title = ApplicationHelper.check_and_trunk(video[:title], "Untitled Video")
+          title = ApplicationHelper.demotify(title)
+          text = ApplicationHelper.demotify(video[:description])
+          comments = CommentThread.create(user_id: user, title: title, owner_type: "Video")
           video = user.videos.create(
+                  title: title, safe_title: ApplicationHelper.url_safe(title),
+                  description: text, html_description: ApplicationHelper.emotify(text),
                   source: video[:source],
                   audio_only: file.content_type.include?('audio/'),
-                  upvotes: 0, downvotes: 0, views: 0, hidden: false).set_description(video[:description])
+                  file: ext, mime: file.content_type,
+                  comment_thread_id: comments.id,
+                  upvotes: 0,
+                  downvotes: 0,
+                  views: 0,
+                  hidden: false,
+                  processed: false
+          )
+          comments.owner_id = video.id
+          comments.save
           Tag.loadTags(params[:video][:tag_string], video)
-          video.setFile(file)
+          video.save_file(file)
           video.setThumbnail(cover)
-          video.set_title(nonil(video[:title], 'Untitled Video'))
-          comments = CommentThread.create(user_id: user, title: video.title, owner_id: video.id, owner_type: "Video")
-          video.comment_thread_id = comments.id
           video.save
           video.generateWebM
           if params[:async]
