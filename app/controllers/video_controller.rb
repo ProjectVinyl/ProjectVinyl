@@ -116,10 +116,6 @@ class VideoController < ApplicationController
       if file && (file.content_type.include?('video/') || file.content_type.include?('audio/'))
         if file.content_type.include?('video/') || (cover && cover.content_type.include?('image/'))
           video = params[:video]
-          ext = File.extname(file.original_filename)
-          if ext == ''
-           ext = Mimes.ext(file.content_type)
-          end
           if !video[:tag_string]
             return error(params[:async], "Error", "You need at least one tag.")
           end
@@ -128,8 +124,6 @@ class VideoController < ApplicationController
           end
           video = user.videos.create(
                   source: video[:source],
-                  mime: file.content_type,
-                  file: ext,
                   audio_only: file.content_type.include?('audio/'),
                   upvotes: 0, downvotes: 0, hidden: false).set_description(video[:description])
           video.comment_thread = CommentThread.create(user_id: user)
@@ -195,6 +189,10 @@ class VideoController < ApplicationController
   def updateCover
     if user_signed_in? && video = Video.where(id: params[:video][:id]).first
       if video.user_id == current_user.id || current_user.is_admin
+        if current_user.is_admin && (file = params[:video][:file])
+          video.setFile(file)
+          video.save
+        end
         if params[:erase]
           video.setThumbnail(false)
         elsif cover = params[:video][:cover]

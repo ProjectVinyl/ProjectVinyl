@@ -1,6 +1,6 @@
 <% if @video %>
 		<section class="page column-left">
-			<%= form_for(@video, as: "video", url: "/ajax/update/video/cover", html: {class: "edit_video async"}) do |f| %>
+			<%= form_for(@video, as: "video", url: "/ajax/update/video", html: {class: "edit_video async"}) do |f| %>
 			<%= f.text_field :id, hidden: true %>
 			<div class="progressor">
 				<div class="cover-block">
@@ -14,13 +14,65 @@
 			</div>
 			<div id="upload">
 				<div id="cover-upload" class="cover-block file-select image-selector" data-type="image">
-					<span class="preview" style="background-image:url('/cover/<%= @video.id %>');"></span>
+					<span class="preview" style="background-image:url('/cover/<%= @video.id %>.png');"></span>
 					<span class="drop-icon">
 						<i class="fa fa-picture-o"></i>
 						<div>Select Cover Art</div>
 					</span>
 					<%= f.file_field :cover %>
 				</div>
+				<% if current_user.is_admin %>
+				<div id="video-upload" class="hidden cover-block file-select video-drop" data-type="a/v">
+					<span class="drop-icon">
+						<i class="fa fa-upload"></i>
+						<div>Select an Audio/Video file to upload</div>
+					</span>
+					<%= f.file_field :file %>
+				</div>
+				<% end %>
+				<script>
+(function() {
+  var has_cover = false;
+  var needs_cover = <%= @video.audio_only %>;
+  
+  $('#video-upload').on('accept', function(e, file) {
+    if ($(this).hasClass('shown')) {
+      $('.hidden').removeClass('hidden');
+      $('.shown').addClass('hidden').removeClass('shown');
+      var title = cleanup(file.title);
+      $('#video_title .content').text(title);
+      $('#video_title input').val(title);
+    }
+    needs_cover = file.mime.match(/audio\//);
+    validateInput();
+  });
+  $('#cover-upload').on('accept', function() {
+    has_cover = true;
+    validateInput();
+  });
+  $('#new_video').on('tagschange', validateInput);
+  $('#new_video').on('change', 'h1#video_title input', validateInput);
+  
+  function cleanup(title) {
+    return title.toLowerCase().replace(/^[0-9]*/g, '').replace(/[-_]|[^a-z\s]/gi,' ').replace(/(^|\s)[a-z]/g, function(i) {
+      return i.toUpperCase()
+    }).trim()
+  }
+  
+  function notify(msg) {
+    $('.notify').addClass('shown');
+    $('.notify .bobber').text(msg);
+  }
+  
+  function validateInput() {
+    tit = $('#video_title input').val();
+    if (!tit || tit == '') return notify('You need to provide a title.');
+    if (needs_cover && !has_cover) return notify('Audio files require a cover image.');
+    if ($('.tag-editor')[0].getActiveTagsArray().length == 0) return notify('You need at least one tag.');
+    $('.notify').removeClass('shown');
+  }
+})();
+				</script>
 			</div>
 			<div class="post description resize-holder">
 				<div class="actions">
@@ -29,6 +81,9 @@
 						<i class="fa fa-check"></i>
 						Remove current Image
 					</label>
+					<% if current_user.is_admin %>
+					<button id="change_video" class="action" type="button" onclick="$('#video_file').trigger('click');">Change Main File</button>
+					<% end %>
 					<span class="notify bob-holder">
 						<div class="bobber bob-left">
 							Cover art is required to upload audio files
@@ -60,7 +115,7 @@
 					</span>
 					<h1 class="name resize-target"><%= @user.username %></h1>
 				</a>
-				<div class="bio short"><%= raw emotify @user.bio %></div>
+				<div class="bio short"><%= raw @user.html_bio %></div>
 			</section>
 			<section>
 				<h1 class="resize-target">

@@ -117,6 +117,15 @@ class Video < ActiveRecord::Base
   end
   
   def setFile(media)
+    delFile(self.video_path.to_s)
+    delFile(self.webm_path.to_s)
+    self.processed = nil
+    ext = File.extname(file.original_filename)
+    if ext == ''
+      ext = Mimes.ext(file.content_type)
+    end
+    self.file = ext
+    self.mime = media.content_type
     File.open(self.video_path, 'wb') do |file|
       file.write(media.read)
       file.flush()

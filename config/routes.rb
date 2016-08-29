@@ -79,8 +79,8 @@ Rails.application.routes.draw do
   post 'report/:id/:async' => 'admin#report'
   
   post 'ajax/create/video' => 'video#create'
-  patch 'ajax/update/video/cover/:async' => 'video#updateCover'
-  patch 'ajax/update/video/cover' => 'video#updateCover'
+  patch 'ajax/update/video/:async' => 'video#updateCover'
+  patch 'ajax/update/video' => 'video#updateCover'
   post 'ajax/update/video' => 'video#update'
   post 'ajax/delete/video/:id' => 'admin#deleteVideo'
   
