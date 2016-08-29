@@ -9,7 +9,7 @@ class ArtistController < ApplicationController
       @albums_count = @albums.count
       @modificationsAllowed = user_signed_in? && (current_user.id == @user.id || current_user.is_admin)
       @featured = @user.albums.where('featured > 0').order(:featured).reverse_order
-      @comments = Comment.Finder.where(user_id: @user.id).order(:created_at).limit(3)
+      @comments = Comment.Finder.joins(:comment_thread).select('`comments`.*').where("`comments`.user_id = ? AND `comment_threads`.id = comment_thread_id AND NOT `comment_threads`.owner_type = 'Report'", @user.id).order(:created_at).limit(3)
     end
   end
   
