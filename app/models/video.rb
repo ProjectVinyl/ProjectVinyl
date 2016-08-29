@@ -120,9 +120,9 @@ class Video < ActiveRecord::Base
     delFile(self.video_path.to_s)
     delFile(self.webm_path.to_s)
     self.processed = nil
-    ext = File.extname(file.original_filename)
+    ext = File.extname(media.original_filename)
     if ext == ''
-      ext = Mimes.ext(file.content_type)
+      ext = Mimes.ext(media.content_type)
     end
     self.file = ext
     self.mime = media.content_type
