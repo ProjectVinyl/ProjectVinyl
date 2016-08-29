@@ -36,13 +36,6 @@
   var needs_cover = <%= @video.audio_only %>;
   
   $('#video-upload').on('accept', function(e, file) {
-    if ($(this).hasClass('shown')) {
-      $('.hidden').removeClass('hidden');
-      $('.shown').addClass('hidden').removeClass('shown');
-      var title = cleanup(file.title);
-      $('#video_title .content').text(title);
-      $('#video_title input').val(title);
-    }
     needs_cover = file.mime.match(/audio\//);
     validateInput();
   });
@@ -50,14 +43,6 @@
     has_cover = true;
     validateInput();
   });
-  $('#new_video').on('tagschange', validateInput);
-  $('#new_video').on('change', 'h1#video_title input', validateInput);
-  
-  function cleanup(title) {
-    return title.toLowerCase().replace(/^[0-9]*/g, '').replace(/[-_]|[^a-z\s]/gi,' ').replace(/(^|\s)[a-z]/g, function(i) {
-      return i.toUpperCase()
-    }).trim()
-  }
   
   function notify(msg) {
     $('.notify').addClass('shown');
@@ -65,10 +50,7 @@
   }
   
   function validateInput() {
-    tit = $('#video_title input').val();
-    if (!tit || tit == '') return notify('You need to provide a title.');
     if (needs_cover && !has_cover) return notify('Audio files require a cover image.');
-    if ($('.tag-editor')[0].getActiveTagsArray().length == 0) return notify('You need at least one tag.');
     $('.notify').removeClass('shown');
   }
 })();
