@@ -125,12 +125,14 @@ class VideoController < ApplicationController
           video = user.videos.create(
                   source: video[:source],
                   audio_only: file.content_type.include?('audio/'),
-                  upvotes: 0, downvotes: 0, hidden: false).set_description(video[:description])
-          video.comment_thread = CommentThread.create(user_id: user)
+                  upvotes: 0, downvotes: 0, views: 0, hidden: false).set_description(video[:description])
           Tag.loadTags(params[:video][:tag_string], video)
           video.setFile(file)
           video.setThumbnail(cover)
           video.set_title(nonil(video[:title], 'Untitled Video'))
+          comments = CommentThread.create(user_id: user, title: video.title, owner_id: video.id, owner_type: "Video")
+          video.comment_thread_id = comments.id
+          video.save
           video.generateWebM
           if params[:async]
             render json: { result: "success", ref: "/view/" + video.id.to_s }
