@@ -187,7 +187,7 @@ WHERE (("
       groups = groups.map do |group|
         group.to_video_sql
       end
-      v_query << " AND " + groups.join(' OR ')
+      v_query << " AND ( " + groups.join(' OR ') + " )"
     end
     v_query << " GROUP BY v.id"
     @main_sql = v_query
@@ -461,6 +461,7 @@ WHERE ("
             opset << UPLOADER
             slurp = slurp.sub(/uploader\:/,'')
           end
+          opset << slurp
           slurp = ""
           opset << AND
         elsif prev == ' ' && i == '|'
