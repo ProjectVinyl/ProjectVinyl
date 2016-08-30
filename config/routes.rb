@@ -19,6 +19,8 @@ Rails.application.routes.draw do
   get 'admin/video/:id' => 'admin#video'
   put 'admin/video/reprocess' => 'admin#reprocessVideo'
   put 'admin/video/resetthumb' => 'admin#extractThumbnail'
+  get 'ajax/admin/videos/hidden' => 'admin#page_hidden'
+  get 'ajax/admin/videos/unprocessed' => 'admin#page_unprocessed'
   get 'admin/artist/:id' => 'admin#artist'
   get 'admin/tag/:id' => 'admin#tag'
   put 'admin/visibility' => 'admin#visibility'

@@ -4,14 +4,32 @@ class AdminController < ApplicationController
       render 'layouts/error', locals: { title: 'Access Denied', description: "You can't do that right now." }
       return
     end
-    @hidden_count = Video.where(hidden: true).count
-    @hiddenvideos = Video.where(hidden: true).limit(5*8).reverse_order
-    @unprocessed_count = Video.where("(processed IS NULL or processed = ?) AND hidden = false", false).count
-    @unprocessed = Video.where("(processed IS NULL or processed = ?) AND hidden = false", false).limit(5*8)
+    @hiddenvideos = Pagination.paginate(Video.where(hidden: true), 0, 40, true)
+    @unprocessed = Pagination.paginate(Video.where("(processed IS NULL or processed = ?) AND hidden = false", false), 0, 40, false)
     @users = User.where(last_sign_in_at: Time.zone.now.beginning_of_month..Time.zone.now.end_of_day).limit(100).order(:last_sign_in_at).reverse_order
     @processorStatus = VideoProcessor.status
     @reports_count = Report.includes(:video).where(resolved: nil).count
     @reports = Report.includes(:video).where(resolved: nil).limit(20)
+  end
+  
+  def page_hidden
+    @page = params[:page].to_i
+    @results = Pagination.paginate(Video.where(hidden: true), @page, 40, true)
+    render json: {
+      content: render_to_string(partial: '/admin/video_thumb_h.html.erb', collection: @results.records),
+      pages: @results.pages,
+      page: @results.page
+    }
+  end
+  
+  def page_unprocessed
+    @page = params[:page].to_i
+    @results = Pagination.paginate(Video.where("(processed IS NULL or processed = ?) AND hidden = false", false), @page, 40, false)
+    render json: {
+      content: render_to_string(partial: '/admin/video_thumb_h.html.erb', collection: @results.records),
+      pages: @results.pages,
+      page: @results.page
+    }
   end
   
   def video

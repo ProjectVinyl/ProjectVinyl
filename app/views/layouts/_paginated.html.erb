@@ -1,5 +1,5 @@
 <div class="paginator" data-type="<%= type %>" data-page="<%= paginated.page %>" data-args="<%= content_for :data %>">
-	<%= render '/layouts/pagination' %>
+	<%= render partial: '/layouts/pagination', locals: { results: paginated } %>
 	<%= yield %>
-	<%= render '/layouts/pagination' %>
+	<%= render partial: '/layouts/pagination', locals: { results: paginated } %>
 </div>
