@@ -4,7 +4,7 @@
 	<% end %>
 <% end %>
 <section class="page column-left">
-	<div id="video" style="background-image: url('/cover/<%= @video.id %>.png');" data-time="<%= @time %>" data-title="<%= @video.title %>" data-artist="<%= @user.username %>" data-<% if @video.audio_only %>audio<% else %>video<% end %>="<%= @video.id %>" data-mime="<%= @video.file + "|" + @video.mime %>" <%if @album %>data-autoplay="true"<% end %> class="video"></div>
+	<div id="video" style="background-image: url('/cover/<%= @video.id %>.png');" data-time="<%= @time %>" data-title="<%= @video.getTitle %>" data-artist="<%= @user.username %>" data-<% if @video.audio_only %>audio<% else %>video<% end %>="<%= @video.id %>" data-mime="<%= @video.file %>|<%= @video.mime %>" <%if @album %>data-autoplay="true"<% end %> class="video"></div>
 <% if !@video.processed %>
 	<div class="notice pending">This video is still being processed by our background ponies. If it does not play correctly try again later.</div>
 <% end %>

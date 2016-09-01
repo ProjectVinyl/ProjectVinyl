@@ -44,7 +44,11 @@ class ImgsController < ApplicationController
     serveDirect(file.to_s + "." + ext, type + "/" + ext)
   end
   def serveDirect(file, mime)
-    response.headers['Content-Length'] = File.size(file.to_s).to_s
-    send_file file.to_s, :disposition => 'inline', :type => mime, :filename => File.basename(file).to_s, :x_sendfile => true
+    if File.exists?(file)
+      response.headers['Content-Length'] = File.size(file.to_s).to_s
+      send_file file.to_s, :disposition => 'inline', :type => mime, :filename => File.basename(file).to_s, :x_sendfile => true
+    else
+      render :file => 'public/404.html', :status => :not_found, :layout => false
+    end
   end
 end

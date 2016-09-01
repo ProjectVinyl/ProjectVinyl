@@ -71,12 +71,14 @@ module ApplicationHelper
     text = text.gsub(/\[icon\]([^\[]+)\[\/icon\]/, '<i class="fa fa-fw fa-\1"></i>')
     text = text.gsub(/\n/,'<br>').gsub(/\[([\/]?([buis]|sup|sub|hr))\]/, '<\1>').gsub(/\[([\/]?)q\]/, '<\1blockquote>')
     text = text.gsub(/\[url=([^\]]+)\]/,'<a href="\1">').gsub(/\[\/url\]/,'</a>')
+    text = text.gsub(/\[img\]([^\]]+)\[\/img\]/, '<span class="img"><img src="\1"></span>')
     text = text.gsub(/([^">]|[\s\n]|<[\/]?br>|^)(http[s]?:\/\/[^\s\n<]+)([^"<]|[\s\n]|<br>|$)/, '\1<a data-link="1" href="\2">\2</a>\3')
-    text = text.gsub(/\[img\]([^\]]+)\[\/img\]/, '<img src="\1" style="max-width:100%" />')
+    text = text.gsub(/\[spoiler\]/, '<div class="spoiler">').gsub(/\[\/spoiler\]/, '</div>')
     Emoticons.each { |x|
       text = text.gsub(/:#{x}:/,'<img class="emoticon" src="/emoticons/' + x + '.png">')
     }
-    return StathamSanitizer.new.sanitize(text, tags: %w(i b u s sup sub hr blockquote br img a), attributes: %w(class style href src data-link))
+    return StathamSanitizer.new.sanitize(text, tags: %w(i b u s sup sub hr blockquote br img a div span), attributes: %w(class style href src data-link data-id),
+           styles: %w(max-width))
   end
   
   def self.demotify(text)
@@ -87,7 +89,8 @@ module ApplicationHelper
     text = text.gsub(/<br>/,'\n').gsub(/<([\/]?([buis]|sup|sub))>/, '[\1]').gsub(/<([\/]?)blockquote>/, '[\1q]')
     text = text.gsub(/<a data-link="1" href="([^"]+)">[^<]*<\/a>/, '\1')
     text = text.gsub(/<a href="([^"]+)"\>/, '[url=\1]').gsub(/<\/a>/,'[/url]')
-    text = text.gsub(/<\/img>/,'').gsub(/<img src="([^"]+)" style="max-width:100%">/, '[img]\1[/img]')
+    text = text.gsub(/<div class="spoiler">/, '[spoiler]').gsub(/<\/div>/,'[/spoiler]')
+    text = text.gsub(/<\/img>/,'').gsub(/<span class="img"><img src="([^"]+)"><\/span>/, '[img]\1[/img]')
     Emoticons.each { |x|
       text = text.gsub(/<img class="emoticon" src="\/emoticons\/#{x}">:/,':' + x + ':">')
     }

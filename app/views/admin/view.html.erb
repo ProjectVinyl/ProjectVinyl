@@ -52,7 +52,7 @@
 </section>
 <section style="width:100%" class="page recent-uploads resize-holder">
 	<h1 class="title resize-target">Hidden Videos (<%= @hiddenvideos.count %>)</h1>
-	<%= render layout: '/layouts/paginated', locals: {type: "admin/videos/hidden", paginated: @hiddenvideos} do %>
+	<%= render layout: '/layouts/paginated', locals: {type: "admin/videos/hidden", paginated: @hiddenvideos, id: "hidden"} do %>
 		<ul id="videos" class="horizontal video-list">
 			<%= render partial: '/admin/video_thumb_h', collection: @hiddenvideos.records %>
 		</ul>
@@ -60,7 +60,7 @@
 </section>
 <section style="width:100%" class="page recent-uploads resize-holder">
 	<h1 class="title resize-target">Unprocessed Videos (<%= @unprocessed.count %>)</h1>
-	<%= render layout: '/layouts/paginated', locals: {type: "admin/videos/unprocessed", paginated: @unprocessed} do %>
+	<%= render layout: '/layouts/paginated', locals: {type: "admin/videos/unprocessed", paginated: @unprocessed, id: "unprocessed"} do %>
 		<ul id="videos" class="horizontal video-list">
 			<%= render partial: '/admin/video_thumb_h', collection: @unprocessed.records %>
 		</ul>

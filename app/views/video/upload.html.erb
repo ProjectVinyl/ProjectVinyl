@@ -59,12 +59,32 @@
     $('.notify').addClass('shown');
     $('.notify .bobber').text(msg);
   }
+  function info(msg) {
+    $('.info').css('display', '');
+    $('.info').text(msg);
+  }
   
   function validateInput() {
     tit = $('#video_title input').val();
     if (!tit || tit == '') return notify('You need to provide a title.');
     if (needs_cover && !has_cover) return notify('Audio files require a cover image.');
-    if ($('.tag-editor')[0].getActiveTagsArray().length == 0) return notify('You need at least one tag.');
+    var tags = $('.tag-editor')[0].getActiveTagsArray();
+    var src = $('#video_source').val();
+    if (!src || src == '') {
+      var src_needed = false;
+      for (var i = 0; i < tags.length; i++) {
+        if (tags[i].trim().toLowerCase() == 'source needed') src_needed = true;
+      }
+      if (!src_needed) {
+        info("You have not provided a source. If you know what it is add it to the source field, otherwise consider tagging this video as 'source needed' so others know to search for one.");
+      } else {
+        $('.info').css('display', 'none');
+      }
+    } else {
+      $('.info').css('display', 'none');
+    }
+    if (tags.length == 0) return notify('You need at least one tag.');
+    if (tags.length == 1 && tags[0].trim().toLowerCase() == 'music') return notify("'music' is implied. Tags should be more specific than that. Do you perhaps know who the artist is?");
     $('.notify').removeClass('shown');
   }
 })();
@@ -99,6 +119,7 @@
 							<td class="label"><%= f.label :source %></td>
 							<td class="field">
 								<%= f.text_field :source, class: "input" %>
+								<span style="display:none;color:red;" class="info"></span>
 							</td>
 						</tr>
 					</table>

@@ -6,6 +6,29 @@
 	<%= render partial: 'section', locals: { collection: @month, type: 'month', label: 'Earlier this Month' } %>
 </section>
 <div style="margin-left:-10px;width:23%" class="wrapper resize-holder column-right right">
+	<% if @featured %>
+	<section style="width:100%" class="page featured">
+		<h1>Featured Video</h1>
+		<%= render partial: '/layouts/video_thumb_h', locals: {video_thumb_h: @featured} %>
+		<div class="scoring tag-list">
+			<span class="like">
+				<%= number_with_delimiter @featured.upvotes %> likes
+			</span>
+			<span title="Score" class="score">
+				<%= number_with_delimiter @featured.score %>
+			</span>
+			<span class="dislike">
+				<%= number_with_delimiter @featured.downvotes %> dislikes
+			</span>
+			<span class="comments">
+				<%= number_with_delimiter @featured.comment_thread.total_comments %> comments
+			</span>
+		</div>
+		<div class="description fade-away">
+			<%= raw @featured.html_description %>
+		</div>
+	</section>
+	<% end %>
 	<section style="width:100%" class="page">
 		<div style="min-height:600px">
 			<a style="text-decoration:none;" class="twitter-timeline"  href="https://twitter.com/Project_Vinyl" data-widget-id="733733333084086272">Tweets by @Project_Vinyl</a>
@@ -19,7 +42,7 @@
 		<a href="#donate">
 			<div></div>
 		</a>
-		<a class="source" href="https://derpibooru.org/549114">source</a>
+		<a class="source" href="//derpibooru.org/549114">source</a>
 	</section>
 </div>
 <style type="text/css">

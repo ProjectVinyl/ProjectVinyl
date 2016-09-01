@@ -104,6 +104,7 @@
 			<li class="albums<% if request.path == '/albums' %> selected<% end %>"><a href="/albums">Albums</a></li>
                		<li class="artists<% if request.path == '/videos' %> selected<% end %>"><a href="/videos">Videos</a></li>
 			<li class="genres<% if request.path == '/tags' %> selected<% end %>"><a href="/tags">Tags</a></li>
+			<li class="forum<% if request.path == '/forum' || request.path.index('/thread') == 0 %> selected<% end %>"><a href="/forum">Forums</a></li>
 		</ul>
 	</header>
 	<main class="wrapper" style="<%= content_for?(:width) ? ' max-width:' + content_for(:width) + ';' : '' %>">

@@ -1,7 +1,11 @@
 class UserDummy
   def initialize(id)
     @id = id
-    @username = 'Background Pony #' + id.to_s(36)
+    if id
+      @username = 'Background Pony #' + id.to_s(36)
+    else
+      @username = 'Anonymous'
+    end
   end
   
   def id

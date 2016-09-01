@@ -1,5 +1,6 @@
 class Comment < ActiveRecord::Base
   REPLY_MATCHER = /(?<=\>\>)[1234567890abcdefghijklmnopqrstuvwxyz]+(?= |\s|\n|$)/
+  MENTION_MATCHER = /(?<=@)[^\s\[\<]+(?= |\s|\s|$)/
   QUOTED_TEXT = /\[q\][^\]]*\[\/q\]/
   
   belongs_to :comment_thread
@@ -18,7 +19,8 @@ class Comment < ActiveRecord::Base
   
   def update_comment(bbc)
     self.bbc_content = ApplicationHelper.demotify(bbc)
-    self.html_content = ApplicationHelper.emotify(self.bbc_content)
+    bbc = Comment.extract_mentions(self.bbc_content, self.comment_thread, self.comment_thread.get_title, self.comment_thread.location)
+    self.html_content = ApplicationHelper.emotify(bbc)
     self.extract_reply_tos(bbc)
     self.save
     return self.html_content
@@ -38,11 +40,23 @@ class Comment < ActiveRecord::Base
       }).join(', ')
       if replied_to.length > 0
         Notification.notify_recievers(recievers, self,
-             self.user.username + " has <b>replied</b> to your comment on <b>" + self.comment_thread.title + "</b>",
+             self.user.username + " has <b>replied</b> to your comment on <b>" + self.comment_thread.get_title + "</b>",
              self.comment_thread.location)
         ActiveRecord::Base.connection.execute('INSERT INTO comment_replies (`comment_id`,`parent_id`) VALUES ' + replied_to)
       end
     end
+  end
+  
+  def self.extract_mentions(bbc, sender, title, location)
+    recievers = []
+    bbc.gsub(QUOTED_TEXT, '').scan(MENTION_MATCHER) do |match|
+      if user = User.where('LOWER(username) = ? OR LOWER(safe_name) = ?', match, match).first
+        recievers << user.id
+        bbc = bbc.sub('@' + match, '<a class="user-link" data-id="' + user.id.to_s + '" href="' + user.link + '">' + match + '</a>') 
+      end
+    end
+    Notification.notify_recievers(recievers, sender, "You have been <b>mentioned</b> on <b>" + title + "</b>", location)
+    return bbc
   end
   
   def get_open_id

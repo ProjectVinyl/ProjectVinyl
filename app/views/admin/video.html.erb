@@ -43,18 +43,50 @@
 					</tr>
 				</table>
 				<% end %>
-				<%= form_for(@video, as: "video", url: "/admin/visibility", html: { method: :put }) do |f| %>
-					<%= f.text_field :id, hidden: true %>
 				<table>
 					<tr class="actions">
 						<td class="label">
-							<%= f.label "Visibility" %>
+							Visibility
 						</td>
 						<td class="field">
-							<%= f.submit @video.hidden ? "Show" : "Hide", class: "green" %>
+							<button class="action toggle blue" data-action="hide" data-target="video" data-id="<%= @video.id %>">
+								<span class="icon">
+									<% if @video.hidden %>
+										<i class="fa fa-check"></i>
+									<% end %>
+								</span>
+								<span class="label">Unlist Video</span>
+							</button>
 						</td>
 					</tr>
-				<% end %>
+					<tr class="actions">
+						<td class="label">
+							Featured
+						</td>
+						<td class="field">
+							<button class="action toggle blue" data-action="feature" data-target="video" data-id="<%= @video.id %>">
+								<span class="icon">
+									<% if @video.featured %>
+										<i class="fa fa-check"></i>
+									<% end %>
+								</span>
+								<span class="label">Feature Video</span>
+							</button>
+						</td>
+					</tr>
+					<tr>
+						<td class="label">Disable Comments</td>
+						<td class="field">
+							<button class="action toggle blue" data-action="lock" data-target="thread" data-id="<%= @video.comment_thread.id %>">
+								<span class="icon">
+									<% if @video.comment_thread.locked %>
+										<i class="fa fa-check"></i>
+									<% end %>
+								</span>
+								<span class="label">Disable Comments</span>
+							</button>
+						</td>
+					</tr>
 				</table>
 				<%= form_for(@video, as: "video", url: "/admin/video/reprocess", html: { method: :put }) do |f| %>
 					<%= f.text_field :id, hidden: true %>

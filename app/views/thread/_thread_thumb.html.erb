@@ -1,12 +1,40 @@
-<a href="/comments/<%= thread_thumb.id %>">
-	<div>
-		<div><%= thread_thumb.title %></div>
+<li class="thread">
+	<div class="thumb">
+		<div class="avatar medium">
+			<span style="background-image:url('<%= thread_thumb.user.avatar %>');"></span>
+		</div>
 	</div>
-	<div>
-		<span>posted by ??? <%= since thread_thumb.created_at %></span>
+	<div class="info">
+		<div class="title">
+			<% if thread_thumb.locked %>
+				<i class="fa fa-lock" title="Thread Locked"></i>
+			<% end %>
+			<% if thread_thumb.pinned %>
+				<i class="fa fa-thumb-tack"></i>
+			<% end %>
+			<a href="/thread/<%= thread_thumb.id %>-<%= thread_thumb.safe_title %>">
+				<%= thread_thumb.get_title %>
+			</a>
+		</div>
+		<div>
+			posted 
+			<span title="<%= thread_thumb.created_at %>">
+				<%= since thread_thumb.created_at %>
+			</span>
+			by 
+			<a class="user-link" data-id="<%= thread_thumb.user.id %>" href="<%= thread_thumb.user.link %>">
+				<%= thread_thumb.user.username %>
+			</a>
+		</div>
 	</div>
-	<div>
-		<span><%= thread_thumb.comments.length %> Replies</span>
+	<div class="replies">
+		<span><%= number_with_delimiter thread_thumb.total_comments %> replies</span>
 	</div>
-</a>
-
+	<div class="activity">
+		<span>
+			<% if last_comment = thread_thumb.comments.order(:updated_at).reverse_order.limit(1).first %>
+			active <%= since last_comment.updated_at %>
+			<% end %>
+		</span>
+	</div>
+</li>

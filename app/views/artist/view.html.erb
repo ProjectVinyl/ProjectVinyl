@@ -56,10 +56,6 @@
 		<% end %>
 	</div>
 </section>
-<div class="reorderable" data-target="featured">
-	<span class="bump" data-index="0"></span>
-	<%= render partial: 'featured_section', collection: @featured %>
-</div>
 <section style="width:100%" class="page recent-uploads resize-holder">
 	<h1 class="title resize-target">Recent Uploads<span> (<span class="count"><%= number_with_delimiter @videos_count %></span>)</span></h1>
 	<% if @modificationsAllowed %><a class="button" href="/upload"><i class="fa fa-plus"></i> New</a><% end %>

@@ -94,7 +94,7 @@ class Video < ActiveRecord::Base
   end
   
   def self.video_file_path(root, video)
-    return Rails.root.join(root, 'stream', video.id.to_s + video.file)
+    return Rails.root.join(root, 'stream', video.id.to_s + (video.file || ".mp4"))
   end
   
   def self.webm_file_path(root, video)
@@ -285,11 +285,11 @@ class Video < ActiveRecord::Base
   end
   
   def getTitle
-    return self.hidden ? "Hidden Video" : self.title
+    return self.hidden ? "Hidden Video" : (self.title || "Untitled Video")
   end
   
   def set_title(title)
-    title = ApplicationHelper.check_and_trunk(title, self.title || "Untitled")
+    title = ApplicationHelper.check_and_trunk(title, self.title || "Untitled Video")
     title = ApplicationHelper.demotify(title)
     self.title = title
     self.safe_title = ApplicationHelper.url_safe(title)
@@ -302,6 +302,7 @@ class Video < ActiveRecord::Base
   def set_description(text)
     text = ApplicationHelper.demotify(text)
     self.description = text
+    text = Comment.extract_mentions(text, self.comment_thread, self.getTitle, '/view/' + self.id.to_s)
     self.html_description = ApplicationHelper.emotify(text)
     return self
   end

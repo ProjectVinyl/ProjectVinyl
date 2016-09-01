@@ -41,5 +41,5 @@ $('html,body').scrollTop(200);
 	</section>
 </div>
 <section class="page column-left">
-	<%= render partial: '/thread/view', locals: {identifier: @video.id, title: @video.title + " by " + @user.username } %>
+	<%= render partial: '/thread/view', locals: {identifier: @video.id, title: @video.getTitle + " by " + @user.username } %>
 </section>

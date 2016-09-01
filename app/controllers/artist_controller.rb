@@ -8,7 +8,6 @@ class ArtistController < ApplicationController
       @albums = Pagination.paginate(@user.albums, 0, 8, true)
       @albums_count = @albums.count
       @modificationsAllowed = user_signed_in? && (current_user.id == @user.id || current_user.is_admin)
-      @featured = @user.albums.where('featured > 0').order(:featured).reverse_order
       @comments = Comment.Finder.joins(:comment_thread).select('`comments`.*').where("`comments`.user_id = ? AND `comment_threads`.id = comment_thread_id AND NOT `comment_threads`.owner_type = 'Report'", @user.id).order(:created_at).limit(3)
     end
   end

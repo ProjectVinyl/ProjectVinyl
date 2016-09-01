@@ -183,15 +183,11 @@ class AdminController < ApplicationController
   
   def visibility
     if user_signed_in? && current_user.is_admin
-      video = Video.find(params[:video][:id])
-      if video.hidden
-        video.set_hidden(false)
-        video.save
-      else
-        video.set_hidden(true)
+      if video = Video.where(id: params[:id]).first
+        video.set_hidden(!video.hidden)
         video.save
       end
-      redirect_to action: 'video', id: params[:video][:id]
+      render json: { :added => video.hidden }
       return
     end
     render status: 401, nothing: true

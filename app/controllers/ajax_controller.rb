@@ -41,4 +41,42 @@ class AjaxController < ApplicationController
     end
     render status: 401, nothing: true
   end
+  
+  def togglePin
+    if user_signed_in? && current_user.is_admin
+      if thread = CommentThread.where(id: params[:id]).first
+        thread.pinned = !thread.pinned
+        thread.save
+        render json: { :added => thread.pinned }
+        return
+      end
+    end
+    render status: 401, nothing: true
+  end
+  
+  def toggleLock
+    if user_signed_in? && current_user.is_admin
+      if thread = CommentThread.where(id: params[:id]).first
+        thread.locked = !thread.locked
+        thread.save
+        render json: { :added => thread.locked }
+        return
+      end
+    end
+    render status: 401, nothing: true
+  end
+  
+  def toggleFeature
+    if user_signed_in? && current_user.is_admin
+      if video = Video.where(id: params[:id]).first
+        Video.where(featured: true).update_all(featured: false)
+        video.featured = !video.featured
+        video.save
+        render json: { :added => video.featured }
+        return
+      end
+    end
+    render status: 401, nothing: true
+  end
+  
 end

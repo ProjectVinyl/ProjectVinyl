@@ -56,6 +56,56 @@ table {
   width: 100%;
 }
 
+.featured .scoring {
+  text-align: center;
+}
+.featured .scoring span {
+  display: inline-block;
+  min-height: 0;
+  padding: 5px;
+  border-radius: 3px;
+}
+.featured .scoring .score {
+  color: #000;
+  border: 1px solid #d6d6d6;
+  border-bottom-color: #cacaca;
+  border-top-color: #e2e2e2;
+  background: #f8f8f8;
+}
+.featured .scoring .like {
+  color: #fff;
+  border: 1px solid #699739;
+  border-bottom-color: #638f36;
+  border-top-color: #6fa03c;
+  text-shadow: -1px -1px #699739;
+  background: #7bb042 !important;
+}
+.featured .scoring .dislike {
+  color: #fff;
+  border: 1px solid #a73535;
+  border-bottom-color: #9d3232;
+  border-top-color: #b03838;
+  text-shadow: -1px -1px #a73535;
+  background: rgb(236, 72, 72) !important;
+}
+.featured .scoring .comments {
+  color: #fff;
+  border: 1px solid #3480b5;
+  border-bottom-color: #3179ab;
+  border-top-color: #3787bf;
+  text-shadow: -1px -1px #3480b5;
+  background: #3d95d3 !important;
+}
+
+.featured .description {
+  overflow: hidden;
+  max-height: 200px;
+}
+.featured .description img,
+.featured .description div {
+  display: none;
+}
+
 .post {
   width: 100%;
 }
@@ -158,6 +208,15 @@ table {
 .user-link {
   position: relative;
 }
+.description .user-link, .comment-content .user-link {
+  color: #000;
+  text-decoration: none;
+  font-weight: bold;
+}
+.description .user-link:before, .comment-content .user-link:before {
+  content: '@';
+}
+
 .hovercard.shown {
   transform: scale(1,1);
 }
@@ -356,6 +415,10 @@ header .genres:hover:after, header .genres:hover,
 header .genres.selected, header .genres.selected:after {
   background: #a66ebe;
 }
+header .forum:hover:after, header .forum:hover,
+header .forum.selected, header .forum.selected:after {
+  background: #6aaadd;
+}
 header ul li img {
   border-radius: 100%;
   max-height: 30px;
@@ -450,6 +513,9 @@ header ul li:hover:after, header ul li.selected:after {
   opacity: 1;
 }
 footer::before, header ul::after {
+  background: -webkit-linear-gradient(90deg, #6aaadd 0, #e6b91f 33%, #e97135 66%, #a66ebe 100%);
+  background: -moz-linear-gradient(90deg, #6aaadd 0, #e6b91f 33%, #e97135 66%, #a66ebe 100%);
+  background: -o-linear-gradient(90deg, #6aaadd 0, #e6b91f 33%, #e97135 66%, #a66ebe 100%);
   background: linear-gradient(90deg, #6aaadd 0, #e6b91f 33%, #e97135 66%, #a66ebe 100%);
 }
 footer::before {
@@ -529,6 +595,9 @@ div.page .positioner {
 
 .page img, .notice {
   max-width: 100%;
+}
+
+.notice {
   background:  #fff;
   border: solid 1px #ccc;
   box-shadow: 1px 1px 1px 0 #ccc;
@@ -875,6 +944,7 @@ label input[type=checkbox]:not(:checked) + i {
   border: none;
   outline: solid 2px #aaa;
   width: 100%;
+  max-width: 100%;
   resize: none;
   font: inherit;
   color: inherit;
@@ -882,6 +952,9 @@ label input[type=checkbox]:not(:checked) + i {
   text-shadow: inherit;
   padding: 0;
   margin: 0;
+}
+.editable.short.editing .input {
+  width: auto;
 }
 .editable input.input {
   margin-top: -8px;
@@ -954,6 +1027,54 @@ blockquote {
   margin: 3px;
   border-radius: 5px;
   border: dotted 1px #eee;
+}
+
+.spoiler {
+  padding: 1px;
+  display: inline-block;
+  background: #858585;
+  color: #858585;
+  text-shadow: none;
+}
+.spoiler * {
+  opacity: 0;
+}
+.spoiler .img {
+  background: #fff;
+  position: relative;
+  padding: 0;
+  margin: 0;
+  display: inline-block;
+  opacity: 0.1;
+}
+.spoiler .img::after {
+  font-family: 'FontAwesome';
+  position: absolute;
+  display: block;
+  top: 45%;
+  left: 0;
+  content: '\f071';
+  color: #000;
+  text-align: center;
+  width: 100%;
+  line-height: 100%;
+  font-size: 40px;
+}
+
+.spoiler:hover .img::after, .spoiler.revealed .img::after {
+  display: none;
+}
+.spoiler:hover .img, .spoiler.revealed .img,
+.spoiler:hover, .spoiler.revealed {
+  text-shadow: inherit;
+  color: inherit;
+  background: none;
+}
+.spoiler:hover *, .spoiler.revealed * {
+  opacity: 1;
+}
+.spoiler.revealed {
+  background: #e5e5e5;
 }
 
 .comment .content {
@@ -1137,30 +1258,6 @@ img.emoticon {
   background: #95ffd5;
   padding: 5px 20px;
 }
-.image-set {
-  text-align: center;
-  list-style: none;
-  padding: 10px 0 10px 0;
-}
-.image-set img {
-  vertical-align: middle;
-  margin: 5px;
-  transition: all 0.5s ease;
-}
-.image-set.banners img {
-  width: 244px;
-}
-.image-set.logos img {
-  width: 150px;
-}
-.image-set img:hover {
-  transform: scale(3);
-  -moz-transform: scale(3);
-  -webkit-transform: scale(3);
-  -o-transform: scale(3);
-  -ms-transform: scale(3);
-  padding: 1px;
-}
 
 .popup-container {
   position: absolute;
@@ -1235,6 +1332,21 @@ img.emoticon {
   background: rgba(0,0,0,.2);
 }
 
+.fade-away {
+  position: relative;
+}
+.fade-away::after {
+  pointer-events: none;
+  position: absolute;
+  content: '';
+  bottom: 0;
+  height: 50%;
+  right: 0;
+  left: 0;
+  background: -webkit-linear-gradient(0deg, rgba(255,255,255,1) 30%, rgba(255,255,255,0) 100%);
+  background: linear-gradient(0deg, rgba(255,255,255,1) 30%, rgba(255,255,255,0) 100%);
+}
+
 .right {
   float: right;
 }
@@ -1287,7 +1399,7 @@ img.emoticon {
   padding: 5px;
   font-size: 50%;
   background: rgba(255,255,255,0.3);
-  content: 'Pssst, hey. Hey you. If you like what you see, maybe you should consider donating keep this site running? kthanks.';
+  content: 'Pssst, hey. Hey you. If you like what you see, maybe you should consider donating to keep this site running? kthanks.';
   text-decoration: none;
 }
 .donate div:hover::after {
@@ -1382,21 +1494,21 @@ section.modal .actions {
   padding: 10px;
   border-top: solid 1px #eee;
 }
-.properties .label {
+.properties td.label {
   background: rgba(180,180,180,0.1);
   width: 25%;
   border-right: solid 1px #eee;
 }
-.properties .field {
+.properties td.field {
   width: 75%;
 }
-.properties .field textarea,
-.properties .field input[type=text],
-.properties .field input[type=email],
-.properties .field input[type=password] {
+.properties td.field textarea,
+.properties td.field input[type=text],
+.properties td.field input[type=email],
+.properties td.field input[type=password] {
   width: 100%;
 }
-.properties .field textarea {
+.properties td.field textarea {
   resize: vertical;
 }
 .properties .section {
@@ -1867,13 +1979,17 @@ form.waiting .progress .fill {
     border-radius: 0;
   }
 }
-@media(max-width: 375px) {
+@media(max-width: 455px) {
   header ul li, header ul li a {
     font-size: 13px;
   }
 }
 @media(max-width: 345px) {
+  header ul {
+    height: 80px;
+  }
   #search {
+    bottom: 80px;
     padding-left: 0;
     padding-right: 0;
   }

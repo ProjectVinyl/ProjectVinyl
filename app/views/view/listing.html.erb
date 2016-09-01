@@ -1,6 +1,7 @@
+<% title type_label + "s" %>
 <section class="page" style="width: 100%">
 	<h1>All <%= type_label %>s</h1>
-	<%= render layout: '/layouts/paginated', locals: {type: type, paginated: items} do %>
+	<%= render layout: '/layouts/paginated', locals: {type: type, paginated: items, id: "page"} do %>
 		<section class="search-result">
 			<% if type_id == 0 %>
 			<ul id="videos" class="horizontal video-list">
@@ -18,6 +19,17 @@
 			<ul id="genres" class="horizontal genre-list">
 				<%= render partial: 'layouts/genre_thumb_h', collection: items.records %>
 			</ul>
+			<% elsif type_id == 4 %>
+			<div class="listing thread-list">
+			<% if user_signed_in? %>
+				<div class="actions">
+					<button class="confirm-button action green" data-action="create" data-url="thread/new" data-title="New Thread" data-icon="pencil" type="button"><i class="fa fa-plus"></i> New Thread</button>
+				</div>
+			<% end %>
+				<ul class="items">
+					<%= render partial: 'thread/thread_thumb', collection: items.records %>
+				</ul>
+			</div>
 			<% end %>
 		</section>
 	<% end %>

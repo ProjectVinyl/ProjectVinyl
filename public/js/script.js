@@ -46,6 +46,11 @@ var ajax = (function() {
     if (e) e.preventDefault();
     var message = form.find('.progressor .message');
     var fill = form.find('.progressor .fill');
+    var uploadedBytes = 0;
+    var totalBytes = 0;
+    var secondsRemaining = 0;
+    var timeStarted = new Date();
+    var timer;
     callbacks = callbacks || {};
     $.ajax({
       type: form.attr('method'),
@@ -56,6 +61,8 @@ var ajax = (function() {
         var xhr = $.ajaxSettings.xhr();
         if (xhr.upload) {
           xhr.upload.addEventListener('progress', function(e) {
+            uploadedBytes = e.loaded;
+            totalBytes = e.total
             if (e.lengthComputable) {
               if (!message.hasClass('plain')) message.addClass('bobber');
               var percentage = Math.min((e.loaded / e.total) * 100, 100);
@@ -66,7 +73,21 @@ var ajax = (function() {
                   form.addClass('waiting');
                   message.text('Waiting for server...');
                 } else {
-                  message.text(Math.floor(percentage) + '%');
+                  var measure = 's';
+                  var time = secondsRemaining;
+                  if (time >= 60) {
+                    time /= 60;
+                    measure = 'm';
+                  }
+                  if (time >= 60) {
+                    time /= 60;
+                    measure = 'h';
+                  }
+                  if (time >= 24) {
+                    time /= 24;
+                    measure = 'd';
+                  }
+                  message.text(time + measure + ' remaining (' + Math.floor(percentage) + '% )');
                 }
                 fill.css('width', percentage + '%');
                 message.css({
@@ -82,14 +103,21 @@ var ajax = (function() {
         return xhr;
       },
       beforeSend: function() {
+        timer = setInterval(function() {
+          var timeElapsed = (new Date()) - timeStarted;
+          var uploadSpeed = uploadedBytes / (timeElapsed / 1000);
+          secondsRemaining = (totalBytes - uploadedBytes) / uploadSpeed;
+        }, 1000);
         form.addClass('uploading');
       },
       success: callbacks.success || function (data) {
+        if (timer) clearInterval(timer);
         if (data.ref) {
           document.location.href = data.ref;
         }
       },
       error: function(e, err, msg) {
+        if (timer) clearInterval(timer);
         form.removeClass('waiting').addClass('error');
         if (callbacks.error) return callbacks.error(message, err, msg);
         message.text(err + ": " + msg);
@@ -167,11 +195,13 @@ var BBC = (function() {
   var emptyMessage = 'A description has not been written yet.';
   function rich(text) {
     text = text.replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    text = text.replace(/@([^\s\[\<]+)/, '<a class="user-link" data-id="0" href="/">$1</a>');
     text = text.replace(/\[icon\]([^\[]+)\[\/icon\]/g, '<i class="fa fa-fw fa-$1"></i>');
     text = text.replace(/\n/g, '<br>').replace(/\[([\/]?([buis]|sup|sub|hr))\]/g, '<$1>').replace(/\[([\/]?)q\]/g, '<$1blockquote>');
     text = text.replace(/\[url=([^\]]+)]/g, '<a href="$1">').replace(/\[\/url]/g, '</a>');
+    text = text.replace(/\[spoiler\]/g, '<div class="spoiler">').replace(/\[\/spoiler\]/g, '</div>');
+    text = text.replace(/\[img\]([^\[]+)\[\/img\]/g, '<span class="img"><img src="$1"></span>');
     text = text.replace(/([^">]|[\s]|<[\/]?br>|^)(http[s]?:\/\/[^\s\n<]+)([^"<]|[\s\n]|<br>|$)/g, '$1<a data-link="1" href="$2">$2</a>$3');
-    text = text.replace(/\[img\]([^\[]+)\[\/img\]/g, '<img src="$1" style="max-width:100%"></img>');
     var i = emoticons.length;
     while (i--) {
       text = text.replace(new RegExp(':' + emoticons[i] + ':', 'g'), '<img class="emoticon" src="/emoticons/' + emoticons[i] + '.png">');
@@ -180,10 +210,12 @@ var BBC = (function() {
   }
   function poor(text) {
     text = text.replace(/<i class="fa fa-fw fa-([^"]+)"><\/i>/g, '[icon]$1[/icon]');
+    text = text.replace(/<a class="user-link" data-id="[0-9]+" href="[^"]+">([^<]+)<\/a>/g, '@$1');
     text = text.replace(/<br>/g, '\n').replace(/<([\/]?([buis]|sup|sub|hr))>/g, '[$1]').replace(/<([\/]?)blockquote>/g, '[$1q]');
     text = text.replace(/<a data-link="1" href="([^"]+)">[^<]*<\/a>/g, '$1');
+    text = text.replace(/<\/img>/g, '').replace(/<span class="img"><img src="([^"]+)"><\/span>/g, '[img]$1[/img]');
     text = text.replace(/<a href="([^"]+)">/g, '[url=$1]').replace(/<\/a>/g, '[/url]');
-    text = text.replace(/<\/img>/g, '').replace(/<img src="([^"]+)" style="max-width:100%">/g, '[img]$1[/img]');
+    text = text.replace(/\<div class="spoiler">/g, '[spoiler]').replace(/<\/div>/g, '[/spoiler]');
     var i = emoticons.length;
     while (i--) {
       text = text.replace(new RegExp('<img class="emoticon" src="/emoticons/' + emoticons[i] + '.png">', 'g'), ':' + emoticons[i] + ':');
@@ -197,6 +229,7 @@ var BBC = (function() {
       if (short) {
         textarea = $('<input class="input" />');
         textarea.css('height', content.innerHeight());
+        textarea.css('width', content.innerWidth() + 20);
         content.after(textarea);
       } else {
         textarea = $('<textarea class="input" />');
@@ -211,6 +244,14 @@ var BBC = (function() {
         textarea.css('margin-bottom', height);
         textarea.css('height', textarea[0].scrollHeight + 20);
         textarea.css('margin-bottom', '');
+      });
+    } else {
+      textarea.on('keydown keyup', function(ev) {
+        var width = textarea.width();
+        textarea.css('width', 0);
+        textarea.css('margin-left', width);
+        textarea.css('width', textarea[0].scrollWidth + 20);
+        textarea.css('margin-left', '');
       });
     }
     textarea.on('change', function() {
@@ -261,13 +302,18 @@ var BBC = (function() {
     var text = content.text().toLowerCase().trim();
     var textarea = holder.find('.input');
     if (!editing) {
+      content.find('.hovercard').remove();
       textarea.val(poor(content.html()));
       holder.addClass('editing');
     } else {
       if (!text || !text.length || text == emptyMessage.toLowerCase()) {
         content.text(emptyMessage);
       }
-      content.html(rich(textarea.val()));
+      if (short) {
+        content.text(poor(textarea.val()));
+      } else {
+        content.html(rich(textarea.val()));
+      }
       holder.removeClass('editing');
       holder.trigger('change');
     }
@@ -320,7 +366,7 @@ var BBC = (function() {
       preview.html(rich($(this).val()));
     }
   });
-  $('textarea.comment-content').trigger('change');
+  $('.post-box textarea.comment-content').trigger('change');
   return {
     rich: rich, poor: poor
   }
@@ -975,11 +1021,12 @@ var paginator = (function() {
   }
   function repaintPages(context, page, pages) {
     var index = page > 4 ? page - 4 : 0;
+    var id = context.attr('data-id');
     context.find('.pages .button').each(function() {
-      if (index > page + 4 || index > pages) {
+      if (index >= page + 4 || index > pages) {
         $(this).remove();
       } else {
-        $(this).attr('data-page-to', index).attr('href', '#/page/' + (index + 1)).text(index + 1);
+        $(this).attr('data-page-to', index).attr('href', '#/' + id + '/' + (index + 1)).text(index + 1);
         if (index == page) {
           $(this).addClass('selected');
         }
@@ -988,24 +1035,31 @@ var paginator = (function() {
     });
     context = context.find('.pages');
     while (index <= page + 4 && index <= pages) {
-      context.append('<a class="button" data-page-to="' + index + '" href="#/page/' + ++index + '">' + index + '</a> ');
+      context.append('<a class="button' + (index == page ? ' selected' : '') + '" data-page-to="' + index + '" href="#/' + id + '/' + ++index + '">' + index + '</a> ');
     }
-    document.location.hash = '/page/' + (page + 1);
+    document.location.hash = '/' + id + '/' + (page + 1);
   }
   $(document).on('click', '.pagination .pages .button, .pagination .button.left, .pagination .button.right', function() {
     paginator.goto($(this));
   });
   var hash = document.location.hash;
   var page = -2;
-  if (hash == '#first') page = 0;
-  if (hash == '#last') page = -1;
-  if (hash.indexOf('#/page/') == 0) {
-    page = parseInt(hash.match(/#\/page\/([0-9]*)/)[1]);
-  }
-  if (page > -2) {
-    $(document).ready(function() {
-      requestPage($('.paginator'), page - 1);
-    });
+  var match;
+  if (match = hash.match(/#\/([^\/]+)/)) {
+    var id = match[1];
+    hash = hash.replace('/' + id, '');
+    if (hash.indexOf('#first') == 0) {
+      page = 0;
+    } else if (hash.indexOf('#last') == 0) {
+      page = -1;
+    } else {
+      page = parseInt(hash.match(/#\/([0-9]+)/)[1]);
+    }
+    if (page > -2) {
+      $(document).ready(function() {
+        requestPage($('.pagination[data-id=' + id +']').closest('.paginator'), page - 1);
+      });
+    }
   }
   return {
     repaint: function(context, json) {
@@ -1133,6 +1187,9 @@ $(document).on('click', '.edit-comment-submit', function() {
 $(document).on('click', '.comment .mention', function(ev) {
   findComment(this);
   ev.preventDefault();
+});
+$(document).on('click', '.spoiler', function() {
+  $(this).toggleClass('revealed');
 });
 
 (function() {

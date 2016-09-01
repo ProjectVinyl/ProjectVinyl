@@ -1,49 +1,4 @@
-<% title @thread.get_title + " - Forum" %>
-<% if @modificationsAllowed %>
-<h1 class="editable short title" data-target="thread" data-member="title" data-id="<%= @thread.id %>">
-	<a href="/">Home</a> <i class="fa fa-chevron-right"></i> <a href="/forum">Forum</a> <i class="fa fa-chevron-right"></i> 
-	<% if @thread.locked %>
-		<i class="fa fa-lock" title="Thread Locked"></i>
-	<% end %>
-	<% if @thread.pinned %>
-		<i class="fa fa-thumb-tack"></i>
-	<% end %>
-	<span class="content"><%= @thread.get_title %></span>
-	<span class="edit"><i class="fa fa-pencil"></i></span>
-</h1>
-<% if current_user.is_admin %>
-<div class="actions">
-	<button class="action toggle blue" data-action="pin" data-target="thread" data-id="<%= @thread.id %>">
-		<span class="icon">
-		<% if @thread.pinned %>
-			<i class="fa fa-check"></i>
-		<% end %>
-		</span>
-		<span class="label">Pin Thread</span>
-	</button>
-	<button class="action toggle blue" data-action="lock" data-target="thread" data-id="<%= @thread.id %>">
-		<span class="icon">
-		<% if @thread.locked %>
-			<i class="fa fa-check"></i>
-		<% end %>
-		</span>
-		<span class="label">Lock Thread</span>
-	</button>
-</div>
-<hr>
-<% end %>
-<% else %>
-<h1 class="title">
-	<a href="/">Home</a> <i class="fa fa-chevron-right"></i> <a href="/forum">Forum</a> <i class="fa fa-chevron-right"></i> 
-	<% if @thread.locked %>
-		<i class="fa fa-lock" title="Thread Locked"></i>
-	<% end %>
-	<% if @thread.pinned %>
-		<i class="fa fa-thumb-tack"></i>
-	<% end %>
-	<%= @thread.title.nil? || @thread.title.length == 0 ? "Comments" : @thread.title %>
-</h1>
-<% end %>
+<h1 class="title">Comments</h1>
 <%= render layout: '/layouts/paginated', locals: {type: "comments/" + @thread.id.to_s + "/" + @order, paginated: @comments, id: "page"} do %>
 <ul id="thread-<%= @thread.id %>" class="comments">
 	<%= render partial: '/thread/comment_set', locals: {thread: @comments.records, indirect: false} %>
@@ -83,6 +38,27 @@ function reportState(sender) {
 			<i class="posting-spinner fa fw fa-spinner fa-spin"></i>
 		</button>
 		<button class="blue state-toggle button-fw" data-state="editing" data-true="Preview" data-false="Edit">Preview</button>
+		<% if @thread.owner_type == "Report" %>
+		<% if @thread.owner.resolved.nil? %>
+		<label class="button blue right">
+			<input name="resolve" type="checkbox"></input>
+			<i class="fa fa-check"></i>
+			Mark As Resolved
+		</label>
+		<label class="button red right">
+			<input name="close" type="checkbox"></input>
+			<i class="fa fa-check"></i>
+			Close Report
+		</label>
+		<% else %>
+		<label class="button blue right">
+			<input name="unresolve" type="checkbox"></input>
+			<i class="fa fa-check"></i>
+			Re-open Report
+		</label>
+		<% end %>
+		<% end %>
+		</div>
 	</div>
 </div>
 <% end %>

@@ -1,4 +1,5 @@
-﻿		<div class="page resize-holder" style="width:100%;">
+﻿<% title @query.length > 0 ? "Searching for " + @query : "Search" %>
+		<div class="page resize-holder" style="width:100%;">
 			<section>
 				<h1 class="resize-target">
 					<a>Search</a>
@@ -78,7 +79,7 @@ $('#search_type').on('change', function() {
 				<%= render partial: '/genre/bio', locals: {tag: @tag} %>
 			<% end %>
 			<% content_for :data do %>query=<%= @query %>&type=<%= @type %>&order=<%= @ascending ? 1 : 0 %>&orderby=<%= @orderby %><% end %>
-			<%= render layout: '/layouts/paginated', locals: {type: 'search',paginated: @results} do %>
+			<%= render layout: '/layouts/paginated', locals: {type: 'search',paginated: @results, id: "page"} do %>
 				<section class="search-result">
 					<% if @type == 0 %>
 					<ul id="videos" class="horizontal video-list">

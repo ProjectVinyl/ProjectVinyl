@@ -1,13 +1,13 @@
-<div class="pagination">
-	<a class="button left" data-page-to="0" href="#/first">First</a>
+<div class="pagination" data-id="<%= pagination_id %>">
+	<a class="button left" data-page-to="0" href="#/<%= pagination_id %>/first">First</a>
 	<span class="pages">
 		<% i = results.page > 4 ? results.page - 4 : 0 %>
 		<% while i < results.page + 4 && i <= results.pages do %>
-		<a class="button<% if i == results.page %> selected<% end %>" data-page-to="<%= i %>" href="#/page/<%= i + 1 %>">
+		<a class="button<% if i == results.page %> selected<% end %>" data-page-to="<%= i %>" href="#/<%= pagination_id %>/<%= i + 1 %>">
 			<%= i + 1 %>
 		</a>
 		<% i = i + 1 %>
 		<% end %>
 	</span>
-	<a class="button right" data-page-to="-1" href="#/last">Last</a>
+	<a class="button right" data-page-to="-1" href="#/<%= pagination_id %>/last">Last</a>
 </div>

@@ -19,9 +19,9 @@ class VideoController < ApplicationController
       mime: @video.mime,
       title: @video.title,
       description: @video.description,
-      url: url_for(action: "view", controller: "video", id: @video.id, only_path: false) + "-" + @video.safe_title,
+      url: url_for(action: "view", controller: "video", id: @video.id, only_path: false) + "-" + (@video.safe_title || "untitled-video"),
       embed_url: url_for(action: "view", controller: "embed", only_path: false, id: @video.id),
-      cover: url_for(action: "cover", controller: "imgs", only_path: false, id: @video.id),
+      cover: url_for(action: "cover", controller: "imgs", only_path: false, id: @video.id) + ".png",
       tags: @video.tags
     }
     @user = @video.user
@@ -231,8 +231,16 @@ class VideoController < ApplicationController
   end
   
   def download
-    @video = Video.find(params[:id].split(/-/)[0])
-    file = Rails.root.join("public", "stream", @video.id.to_s + @video.file).to_s
+    if !(@video = Video.where(id: params[:id].split(/-/)[0]).first)
+      return render :file => 'public/404.html', :status => :not_found, :layout => false
+    end
+    if @video.hidden
+      return render :file => 'public/502.html', :status => 502, :layout => false
+    end
+    file = @video.video_path.to_s
+    if !File.exists?(file)
+      return render :file => 'public/404.html', :status => :not_found, :layout => false
+    end
     response.headers['Content-Length'] = File.size(file).to_s
     send_file(file,
         :filename => "#{@video.id}_#{@video.title}_by_#{@video.user.username}#{@video.file}",

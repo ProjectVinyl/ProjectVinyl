@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160827131912) do
+ActiveRecord::Schema.define(version: 20160901112755) do
 
   create_table "album_items", force: :cascade do |t|
     t.integer "album_id", limit: 4
@@ -49,12 +49,16 @@ ActiveRecord::Schema.define(version: 20160827131912) do
   end
 
   create_table "comment_threads", force: :cascade do |t|
-    t.string   "title",      limit: 255, default: ""
-    t.integer  "user_id",    limit: 4
-    t.datetime "created_at",                          null: false
-    t.datetime "updated_at",                          null: false
-    t.integer  "owner_id",   limit: 4
-    t.string   "owner_type", limit: 255
+    t.string   "title",          limit: 255, default: ""
+    t.integer  "user_id",        limit: 4
+    t.datetime "created_at",                                 null: false
+    t.datetime "updated_at",                                 null: false
+    t.integer  "owner_id",       limit: 4
+    t.string   "owner_type",     limit: 255
+    t.boolean  "locked",                     default: false
+    t.boolean  "pinned",                     default: false
+    t.integer  "total_comments", limit: 4,   default: 0
+    t.string   "safe_title",     limit: 255
   end
 
   add_index "comment_threads", ["owner_type", "owner_id"], name: "index_comment_threads_on_owner_type_and_owner_id", using: :btree
@@ -189,6 +193,7 @@ ActiveRecord::Schema.define(version: 20160827131912) do
     t.string   "safe_title",        limit: 255
     t.integer  "comment_thread_id", limit: 4
     t.text     "html_description",  limit: 65535
+    t.boolean  "featured",                        default: false
   end
 
   add_index "videos", ["created_at"], name: "index_videos_on_created_at", using: :btree
