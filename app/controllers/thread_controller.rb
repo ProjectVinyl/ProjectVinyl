@@ -16,7 +16,7 @@ class ThreadController < ApplicationController
     if user_signed_in?
       thread = params[:thread]
       thread = CommentThread.create(
-        user_id: current_user.id
+        user_id: current_user.id, total_comments: 1
       )
       thread.set_title(params[:thread][:title])
       thread.save
