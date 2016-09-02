@@ -18,7 +18,8 @@ class ThreadController < ApplicationController
       thread = CommentThread.create(
         user_id: current_user.id
       )
-      thread.set_title(thread[:title])
+      thread.set_title(params[:thread][:title])
+      thread.save
       comment = Comment.create(user_id: current_user.id, comment_thread_id: thread.id)
       comment.update_comment(params[:thread][:description])
       redirect_to action: 'view', id: thread.id
