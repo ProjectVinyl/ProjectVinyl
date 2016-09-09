@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160901112755) do
+ActiveRecord::Schema.define(version: 20160904213842) do
 
   create_table "album_items", force: :cascade do |t|
     t.integer "album_id", limit: 4
@@ -116,6 +116,16 @@ ActiveRecord::Schema.define(version: 20160901112755) do
     t.integer "implied_id", limit: 4
   end
 
+  create_table "tag_subscriptions", force: :cascade do |t|
+    t.integer  "user_id",    limit: 4
+    t.integer  "tag_id",     limit: 4
+    t.datetime "created_at",                           null: false
+    t.datetime "updated_at",                           null: false
+    t.boolean  "watch",                default: false
+    t.boolean  "spoiler",              default: false
+    t.boolean  "hide",                 default: false
+  end
+
   create_table "tag_type_implications", force: :cascade do |t|
     t.integer "tag_type_id", limit: 4
     t.integer "implied_id",  limit: 4
@@ -132,6 +142,7 @@ ActiveRecord::Schema.define(version: 20160901112755) do
     t.string  "short_name",  limit: 255,   default: ""
     t.integer "video_count", limit: 4,     default: 0
     t.integer "user_count",  limit: 4,     default: 0
+    t.integer "alias_id",    limit: 4
   end
 
   create_table "users", force: :cascade do |t|
@@ -159,6 +170,7 @@ ActiveRecord::Schema.define(version: 20160901112755) do
     t.integer  "star_id",                limit: 4
     t.text     "html_description",       limit: 65535
     t.text     "html_bio",               limit: 65535
+    t.integer  "feed_count",             limit: 4,     default: 0
   end
 
   add_index "users", ["email"], name: "index_users_on_email", unique: true, using: :btree

@@ -1,11 +1,12 @@
 class Tag < ActiveRecord::Base
   belongs_to :tag_type
+  belongs_to :alias, class_name: "Tag", foreign_key: "alias_id"
   
   has_one :user
   
-  has_many :video_genres
+  has_many :video_genres, counter_cache: "video_count"
   has_many :videos, :through => :video_genres
-  has_many :artist_genres
+  has_many :artist_genres, counter_cache: "user_count"
   has_many :users, :through => :artist_genres
   
   has_many :tag_implications, dependent: :destroy
@@ -13,6 +14,7 @@ class Tag < ActiveRecord::Base
   
   has_many :implying_tags, class_name: "TagImplication", foreign_key: "implied_id"
   has_many :implicators, :through => :implying_tags, foreign_key: "tag_id"
+  has_many :aliases, class_name: "Tag", foreign_key: "alias_id"
   
   def self.sanitize_sql(arguments)
     return Tag.sanitize_sql_for_conditions(arguments)
@@ -41,14 +43,20 @@ class Tag < ActiveRecord::Base
     if !tag_string || tag_string.length == 0
       return []
     end
-    return tag_string.downcase.split(/,|;/).uniq
+    tag_string = tag_string.downcase.split(/,|;/).uniq
+    return tag_string.select do |i|
+      i.index('uploader:') != 0 && i.index('title:') != 0
+    end
   end
   
   def self.get_tag_ids(names)
     if !names || names.length == 0
       return []
     end
-    return Tag.where('name IN (?)', names.uniq).pluck(:id).uniq
+    result = Tag.where('name IN (?)', names.uniq).pluck(:id, :alias_id).map do |t|
+      t[1] || t[0]
+    end
+    return result.uniq
   end
   
   def self.get_tag_ids_with_create(names)
@@ -57,8 +65,8 @@ class Tag < ActiveRecord::Base
     end
     result = []
     existing_names = []
-    Tag.where('name IN (?)', names).each do |tag|
-      result << tag.id
+    Tag.includes(:alias).where('name IN (?)', names).each do |tag|
+      result << (tag.alias_id || tag.id)
       existing_names << tag.name
     end
     new_tags = names - existing_names
@@ -76,7 +84,7 @@ class Tag < ActiveRecord::Base
         result << tag.id
       end
     end
-    return result
+    return result.uniq
   end
   
   def self.load_implications_from_type(id, type)
@@ -97,7 +105,6 @@ class Tag < ActiveRecord::Base
   def self.loadTags(tag_string, sender)
     existing_ids = sender.tags.pluck(:id).uniq
     existing = sender.tags.pluck(:name).uniq
-    
     loaded = Tag.split_tag_string(tag_string)
     common = existing & loaded
     if existing.length != loaded.length || common.length != existing.length
@@ -124,9 +131,10 @@ class Tag < ActiveRecord::Base
       end
       sender.pick_up_tags(added).create(entries)
     end
+    TagSubscription.notify_subscribers(added, removed, existing_ids - removed)
     sender.save
   end
-  
+    
   def members
     return self.video_count + self.user_count
   end
@@ -177,5 +185,19 @@ class Tag < ActiveRecord::Base
       self.save
     end
     return self.description
+  end
+  
+  def set_alias(tag)
+    tag = (tag.alias_id || tag.id)
+    if tag && tag != self.id
+      self.alias_id = tag
+    end
+  end
+  
+  def alias_tag
+    if self.alias_id
+      return self.alias.name
+    end
+    return ""
   end
 end

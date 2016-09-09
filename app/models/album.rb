@@ -43,4 +43,22 @@ class Album < ActiveRecord::Base
       return true
     end
   end
+  
+  def all_items
+    @items = @items || self.album_items.includes(:direct_user, video: :tags).order(:index)
+  end
+  
+  def get_next(user, current)
+    potentials = self.all_items.where('`album_items`.index > ?', current).select do |i|
+      !(i.video.isHiddenBy(user))
+    end
+    return potentials.first
+  end
+  
+  def get_prev(user, current)
+    potentials = self.all_items.where('`album_items`.index < ?', current).select do |i|
+      !(i.video.isHiddenBy(user))
+    end
+    return potentials.last
+  end
 end

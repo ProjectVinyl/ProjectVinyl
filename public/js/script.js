@@ -1,3 +1,6 @@
+if (navigator.userAgent.indexOf("OPR") !== -1) {
+  $('html').addClass('opera');
+}
 $(window).ready(function () {
 	function scroller() {
 		var top = window.scrollY;
@@ -228,7 +231,7 @@ var BBC = (function() {
     if (!textarea.length) {
       if (short) {
         textarea = $('<input class="input" />');
-        textarea.css('height', content.innerHeight());
+        textarea.css('height', content.innerHeight() + 20);
         textarea.css('width', content.innerWidth() + 20);
         content.after(textarea);
       } else {
@@ -429,6 +432,7 @@ var initFileSelect = (function() {
 (function() {
   var KEY_ENTER = 13, KEY_COMMA = 188, KEY_BACKSPACE = 8;
   $('.tag-editor').each(function() {
+    var history = [];
     var me = $(this);
     me.find('.values').remove();
     me[0].getActiveTagsArray = function() {
@@ -458,32 +462,51 @@ var initFileSelect = (function() {
     });
     function appendTag(name) {
       name = name.trim().toLowerCase().replace(/[^ a-z0-9\/&\-:]/g, '');
-      if (name.length) {
+      if (name.length && name.indexOf('uploader:') != 0 && name.indexOf('title:') != 0) {
         if (tags.indexOf(name) == -1) {
-          tags.push(name);
-          value.val(tags.join(','));
-          createTagItem(name);
+          pickupTag(name);
+          history.unshift({type: 1, tag: name});
         }
       }
+    }
+    function pickupTag(name) {
+      tags.push(name);
+      value.val(tags.join(','));
+      createTagItem(name);
     }
     function namespace(name) {
       if (name.indexOf(':') != -1) {
         return name.split(':')[0];
       }
-      return ''
+      return '';
     }
     function createTagItem(name) {
-      var item = $('<li class="tag tag-' + namespace(name) + '"><i title="Remove Tag" class="fa fa-times remove"></i><a href="/tags/' + name + '">' + name + '</a></li>');
+      var item = $('<li class="tag tag-' + namespace(name) + '" data-name="' + name + '"><i title="Remove Tag" class="fa fa-times remove"></i><a href="/tags/' + name + '">' + name + '</a></li>');
       list.append(item);
       item.find('.remove').on('click', function() {
         removeTag(item, name);
       });
     }
     function removeTag(self, name) {
+      dropTag(self, name);
+      history.unshift({type: -1, tag: name});
+    }
+    function dropTag(self, name) {
       tags.splice(tags.indexOf(name), 1);
       self.remove();
       value.val(tags.join(','));
       save();
+    }
+    function undo() {
+      if (history.length) {
+        var item = history.shift();
+        if (item.type > 0) {
+          dropTag(list.find('[data-name="' + item.tag + '"]'), item.tag);
+        } else {
+          pickupTag(item.tag);
+          save();
+        }
+      }
     }
     function save() {
       me.trigger('tagschange');
@@ -543,6 +566,11 @@ var initFileSelect = (function() {
             list.children('.tag').last().find('.remove').click();
           }
         }
+      } else if (e.ctrlKey && e.which == 90) {
+        undo();
+        e.preventDefault();
+        e.stopPropagation();
+        handled_back = false;
       } else {
         handled_back = false;
       }
@@ -566,7 +594,12 @@ var initFileSelect = (function() {
     input.on('blur', function() {
       clearInterval(autocomplete);
       autocomplete = null;
-    })
+    });
+    $(this).on('mouseup', function(e) {
+      input.focus();
+      e.preventDefault();
+      e.stopPropagation();
+    });
   });
 })();
 var shares = {
@@ -701,9 +734,15 @@ $(document).on('click', '.state-toggle', function(ev) {
   me.text(me.attr('data-' + me.parent().hasClass(state)));
 });
 (function() {
-  function toggle(sender, action, id, item_id) {
+  function toggle(sender, family, action, id, item_id) {
     ajax.post(action, function(json) {
-      sender.find('.icon').html(json.added ? '<i class="fa fa-check"></i>' : '');
+      if (family) {
+        $('.action.toggle[data-family=' + family + '][data-id=' + id + ']').each(function() {
+          $(this).find('.icon').html(json[$(this).attr('data-action')] ? '<i class="fa fa-check"></i>' : '')
+        });
+      } else {
+        sender.find('.icon').html(json.added ? '<i class="fa fa-check"></i>' : '');
+      }
     }, false, {
       id: id, item: item_id
     });
@@ -711,10 +750,11 @@ $(document).on('click', '.state-toggle', function(ev) {
   $('.action.toggle').each(function() {
     var me = $(this);
     var target = me.attr('data-target') + '/' + me.attr('data-action');
+    var family = me.attr('data-family');
     var id = me.attr('data-id');
     var item = me.attr('data-item');
     me.on('click', function(e) {
-      toggle(me, target, id, item);
+      toggle(me, family, target, id, item);
     });
   });
 })();
@@ -1172,7 +1212,7 @@ var decode_entities = (function() {
 
 function replyTo(sender) {
   sender = $(sender).parent();
-  textarea = sender.closest('.page').find('.post-box textarea');
+  textarea = sender.closest('.page, body').find('.post-box textarea');
   textarea.focus();
   textarea.val('>>' + sender.attr('data-o-id') + ' [q]\n' + decode_entities(sender.attr('data-comment')) + '\n[/q]' + textarea.val());
   textarea.change();
@@ -1190,6 +1230,11 @@ $(document).on('click', '.comment .mention', function(ev) {
 });
 $(document).on('click', '.spoiler', function() {
   $(this).toggleClass('revealed');
+});
+
+$(document).on('touchstart', '.drop-down-holder', function(e) {
+  $(this).toggleClass('hover');
+  e.preventDefault();
 });
 
 (function() {

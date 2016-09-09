@@ -1,4 +1,5 @@
-<a <% if !album_item.video.hidden %>href="/view/<%= album_item.video.id %>-<%= album_item.video.safe_title %>?list=<%= album_item.album.id %>&index=<%= album_item.index %>"<% end %> class="<% if album_item.video.hidden %>hidden-item<% end %><% if @index == album_item.index %> selected<% end %>" data-id="<%= album_item.id %>" data-index="<%= album_item.index %>">
+<% if !album_item.video.isHiddenBy(current_user) %>
+<a <% if !album_item.video.hidden && !album_item.video.isSpoileredBy(current_user) %>href="/view/<%= album_item.video.id %>-<%= album_item.video.safe_title %>?list=<%= album_item.album.id %>&index=<%= album_item.index %>"<% end %> class="<% if album_item.video.hidden %>hidden-item<% end %><% if @index == album_item.index %> selected<% end %>" data-id="<%= album_item.id %>" data-index="<%= album_item.index %>">
 	<div class="title">
 		<div><%= album_item.video.getTitle %></div>
 		<div class="author">
@@ -9,3 +10,4 @@
 	<div class="remove" title="Remove" data-id="<%= album_item.id %>"><span><i class="fa fa-times"></i></span></div>
 <% end %>
 </a>
+<% end %>

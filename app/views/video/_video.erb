@@ -49,7 +49,7 @@
 			</div>
 		<% end %>
 			<span class="normal">
-				<%= render partial: '/layouts/taglist', locals: { collection: @video.tags } %>
+				<%= render partial: '/layouts/genre_thumb_h', collection: @video.tags %>
 			</span>
 		<% if user_signed_in? %>
 			<span class="editing">
@@ -82,7 +82,7 @@
 				<% end %>
 					<li class="action">
 				<% if user_signed_in? %>
-						<a download target="_blank" href="/download/<%= @video.id %>-<%= @video.safe_title %>">
+						<a download target="_blank" href="/download/<%= @video.id %>">
 				<% else %>
 						<a target="_blank" href="/users/sign_in">
 				<% end %>
@@ -168,7 +168,15 @@
 				<tr>
 					<td class="label">Embed</td>
 					<td class="field">
-						<input name="share_field" type="text" value="<%= '<iframe width="560" height="315" src="http://www.projectvinyl.net/embed/' + @video.id.to_s + '" frameborder="0" allowfullscreen></iframe>' %>"></input>
+						<input id="share_field" name="share_field" type="text" data-value="<%= '<iframe width="560" height="315" src="http://www.projectvinyl.net/embed/{id}{extra}" frameborder="0" allowfullscreen></iframe>' %>" value="<%= '<iframe width="560" height="315" src="http://www.projectvinyl.net/embed/' + @video.id.to_s + '" frameborder="0" allowfullscreen></iframe>' %>"></input>
+						<% if @album %><div>
+							<input id="album_share_toggle" data-first="<%= @items.length > 1 ? @items.first.video_id : @video.id %>" data-id="<%= @video.id %>" data-index="<%= @index %>" data-album-id="<%= @album.id %>" type="checkbox" value="playlist"></input>
+							Share with playlist from the
+							<select id="album_share_type">
+								<option>current video</option>
+								<option>beginning</option>
+							</select>.
+						</div><% end %>
 					</td>
 				</tr>
 				<tr>
@@ -192,9 +200,6 @@
     } else {
       $('.slideout.shown').removeClass('shown');
       holder.addClass('shown');
-      /*setTimeout(function() {
-        scrollTo(holder[0]);
-      }, 1);*/
     }
   }
   $('.action.report').on('click', function() {
@@ -213,10 +218,30 @@
     slideOut($('.slideout.share'));
   });
   $('.action.test').on('click', function() {
-    $('#embed_preview').css('display', '').find('iframe').attr('src', '/embed/<%= @video.id %>');
+    $('#embed_preview').css('display', '');
+    updateShareIframe();
     slideOut($(this).closest('.slideout'));
     slideOut($(this).closest('.slideout'));
   });
+  $('#album_share_toggle, #album_share_type').on('change', function() {
+    updateShareIframe();
+  });
+  function updateShareIframe() {
+    var toggle = $('#album_share_toggle');
+    var type = $('#album_share_type').val();
+    var share_field = $('#share_field');
+    var htm = share_field.attr('data-value');
+    var id = toggle.attr(toggle[0].checked && type == 'beginning' ? 'data-first' : 'data-id');
+    var extra = '';
+    if (toggle[0].checked) {
+      extra += '?list=' + toggle.attr('data-album-id') + '&index='
+      extra += type == 'beginning' ? 0 : toggle.attr('data-index');
+    }
+    htm = htm.replace('{id}', id);
+    htm = htm.replace('{extra}', extra);
+    $('#embed_preview iframe').attr('src', '/embed/' + id + extra);
+    share_field.val(htm);
+  }
 })();
 		</script>
 	</div>

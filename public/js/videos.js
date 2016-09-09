@@ -27,7 +27,7 @@ function Player() {}
     {name: '0.25x', value: 0.25}
   ];
   Player.generate = function(holder) {
-    holder.html('<div class="player" >\
+    holder.prepend('<div class="player" >\
 								<span class="playing"></span>\
                 <span class="suspend" style="display:none"><i class="fa fa-pulse fa-spinner"></i></span>\
 								<span class="pause resize-holder">\
@@ -79,9 +79,12 @@ function Player() {}
       Player.fullscreenPlayer.fullscreen(Player.isFullscreen());
     }
   });
+  function canGen(childs) {
+    return !childs.length || (childs.length == 1 && childs.first().hasClass('playlist'));
+  }
   Player.prototype = {
     constructor: function(el) {
-      if (!el.children().length) Player.generate(el);
+      if (canGen(el.children())) Player.generate(el);
       var me = this;
       
       this.dom = el;
@@ -104,11 +107,17 @@ function Player() {}
       
       resize.apply(el);
       
-      el.find('.title').text(this.title = el.attr('data-title'));
-      el.find('.artist').text(this.artist = el.attr('data-artist'));
+      el.find('h1 .title').text(this.title = el.attr('data-title'));
+      el.find('h1 .artist').text(this.artist = el.attr('data-artist'));
       
       el.on('click', function(ev) {
-        if (!me.removeContext(ev)) me.toggleVideo();
+        if (!me.removeContext(ev)) {
+          if (me.dom.playlist && me.dom.playlist.hasClass('visible')) {
+            me.dom.playlist.toggleClass('visible');
+          } else {
+            me.toggleVideo();
+          }
+        }
       });
       el.on('contextmenu', function(ev) {
         me.showContext(ev);
@@ -224,6 +233,41 @@ function Player() {}
         ev.stopPropagation();
       });
     },
+    setPlaylist: function(album_id, album_index) {
+      this.album = {
+        id: album_id, index: album_index
+      };
+      this.dom.playlist = $('.playlist');
+      this.dom.playlist.link = $('<div class="playlist-toggle"><i class="fa fa-list" /></div>');
+      this.dom.append(this.dom.playlist.link);
+      var me = this;
+      this.dom.playlist.link.on('click', function(ev) {
+        me.dom.playlist.toggleClass('visible');
+        me.halt(ev);
+      });
+      this.addContext('Autoplay', this.autoplay(!document.cookie.replace(/(?:(?:^|.*;\s*)autoplay\s*\=\s*([^;]*).*$)|^.*$/, "$1")), function() {
+        val(me.__autoplay = !me.__autoplay);
+        document.cookie = 'autoplay=' + (on ? ';' : '1;');
+      });
+      this.dom.playlist.on('click', '.items a, #playlist_next, #playlist_prev', function(ev) {
+        var next = $(this);
+        ajax.get(next.attr('href'), function(json) {
+          me.redirect = next.attr('href');
+          me.loadAttributesAndRestart(json);
+          if (json.next) {
+            $('#playlist_next').attr('href', json.next);
+          }
+          if (json.prev) {
+            $('#playlist_prev').attr('href', json.prev);
+          }
+          $('.playlist a.selected').removeClass('selected');
+          var selected = $('.playlist a[data-id=' + json.id + ']');
+          selected.addClass('selected');
+          scrollTo(selected, '.playlist .scroll-container');
+        });
+        me.halt(ev);
+      });
+    },
     addContext: function(title, initial, callback) {
       var item = $('<li><div class="label">' + title + '</div></li>');
       var value = $('<div class="value" ></div>');
@@ -243,10 +287,8 @@ function Player() {}
       return speed.name;
     },
     fullscreen: function(on) {
-      console.log('Player.fullscreen(' + on + ')');
       this.onfullscreen(on);
       if (!Player.requestFullscreen) return false;
-      console.log('got request fullscreen');
       if (fadeControl != null) clearTimeout(fadeControl);
       if (Player.fullscreenPlayer && Player.fullscreenPlayer != this) {
         Player.fullscreenPlayer.fullscreen(false);
@@ -268,8 +310,6 @@ function Player() {}
         this.controls.css('opacity', '');
       }
       Player.fullscreenPlayer = on ? this : null;
-      console.log('set fullscreen to ' + Player.fullscreenPlayer);
-      console.log('completed');
       return on;
     },
     onfullscreen: function(on) {
@@ -292,8 +332,9 @@ function Player() {}
       if (!this.video) this.start();
     },
     loadAttributesAndRestart: function(attr) {
-      this.dom.find('.title').text(this.title = attr.title);
-      this.dom.find('.artist').text(this.artist = attr.artist);
+      this.dom.css('background-image', "url('/cover/" + attr.source + ".png')");
+      this.dom.find('h1 .title').text(this.title = attr.title);
+      this.dom.find('h1 .artist').text(this.artist = attr.artist);
       this.source = attr.source;
       this.mime = attr.mime;
       this.audioOnly = attr.audioOnly;
@@ -324,6 +365,14 @@ function Player() {}
         video.on('pause', function() {
           me.pause();
         });
+        video.on('play', function() {
+          me.player.addClass('playing');
+          me.player.removeClass('stopped');
+          me.player.removeClass('paused');
+          me.video.loop = !!me.__loop;
+          sendMessage(me);
+          me.volume(this.volume, this.muted);
+        });
         video.on('abort error', function() {
           me.pause();
           me.player.addClass('stopped');
@@ -332,7 +381,7 @@ function Player() {}
           if (me.__autoplay) {
             var next = $('#playlist_next');
             if (next.length) {
-              if (Player.fullscreenPlayer == me) {
+              if (Player.fullscreenPlayer == me || me.album) {
                 ajax.get(next.attr('href'), function(json) {
                   me.redirect = next.attr('href');
                   me.loadAttributesAndRestart(json);
@@ -381,13 +430,7 @@ function Player() {}
         });
         this.volume(me.video.volume, video.muted);
       }
-      this.player.addClass('playing');
-      this.player.removeClass('stopped');
-      this.player.removeClass('paused');
-      this.video.loop = !!this.__loop;
-      sendMessage(this);
       this.video.play();
-      this.volume(this.video.volume, this.video.muted);
     },
     stop: function() {
       this.pause();

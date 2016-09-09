@@ -1,8 +1,9 @@
+<% if !video_thumb_v.isHiddenBy(current_user) %>
 <li class="generic">
 	<a class="thumb" href="/view/<%= video_thumb_v.id %>-<%= video_thumb_v.safe_title %>">
-		<div class="tile" style="background-image:url('/<%= video_thumb_v.hidden ? 'images/default-cover' : 'cover/' + video_thumb_v.id.to_s %>-small.png');">
+		<div class="tile" style="background-image:url('/<%= video_thumb_v.hidden || video_thumb_v.isSpoileredBy(current_user) ? 'images/default-cover' : 'cover/' + video_thumb_v.id.to_s %>-small.png');">
 			<div class="details">
-				<div class="title"><%= video_thumb_v.getTitle %></div>
+				<div class="title"><%= video_thumb_v.isSpoileredBy(current_user) ? "Spoilered" : video_thumb_v.getTitle %></div>
 				<div class="published detail"><%= since video_thumb_v.created_at %></div>
 				<div class="views detail"><%= number_with_delimiter video_thumb_v.views %> views</div>
 			</div>
@@ -12,3 +13,4 @@
 		</div>
 	</a>
 </li>
+<% end %>

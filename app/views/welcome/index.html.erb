@@ -1,21 +1,16 @@
-﻿<section class="page column-left" style="width:76%">
-	<%= render partial: 'section', locals: { collection: @popular, type: 'popular', label: 'Popular' } %>
-	<%= render partial: 'section', locals: { collection: @today, type: 'today', label: 'Today' } %>
-	<%= render partial: 'section', locals: { collection: @yesterday, type: 'yesterday', label: 'Yesterday' } %>
-	<%= render partial: 'section', locals: { collection: @week, type: 'week', label: 'Earlier this Week' } %>
-	<%= render partial: 'section', locals: { collection: @month, type: 'month', label: 'Earlier this Month' } %>
-</section>
-<div style="margin-left:-10px;width:23%" class="wrapper resize-holder column-right right">
+﻿<div style="margin-left:-10px;width:23%" class="wrapper resize-holder column-right right column-mobile-fragmented">
 	<% if @featured %>
-	<section style="width:100%" class="page featured">
+	<section style="width:100%" class="page featured column-mobile-shown">
 		<h1>Featured Video</h1>
-		<%= render partial: '/layouts/video_thumb_h', locals: {video_thumb_h: @featured} %>
+		<ul class="horizontal center">
+			<%= render partial: 'video_thumb_h', locals: {video_thumb_h: @featured} %>
+		</ul>
 		<div class="scoring tag-list">
 			<span class="like">
 				<%= number_with_delimiter @featured.upvotes %> likes
 			</span>
 			<span title="Score" class="score">
-				<%= number_with_delimiter @featured.score %>
+				<%= number_with_delimiter @featured.score || 0 %>
 			</span>
 			<span class="dislike">
 				<%= number_with_delimiter @featured.downvotes %> dislikes
@@ -35,6 +30,35 @@
 			<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
 		</div>
 	</section>
+	<% if @comments.length > 0 %>
+	<section style="width:100%" class="properties ribbed page">
+		<h1>Recent Activity</h1>
+		<table style="table-layout: auto">
+		<% @comments.each do |c| %>
+			<tr class="activity">
+				<td>
+				<span class="avatar small left">
+					<% if c.comment_thread.owner_type == "Video" %>
+						<span style="background-image:url('/cover/<%= c.comment_thread.owner_id %>-small.png');"></span>
+					<% else %>
+						<span style="background-image:url('<%= c.comment_thread.user.avatar %>');"></span>
+					<% end %>
+				</span>
+				</td>
+				<td>
+				<div>
+					<a href="<%= c.comment_thread.location %>">#<%= c.get_open_id %></a>
+					by <a href="<%= c.user.link %>"><%= c.user.username %></a>
+				</div>
+				<div>
+					<%= since c.updated_at %>
+				</div>
+				</td>
+			</tr>
+		<% end %>
+		</table>
+	</section>
+	<% end %>
 	<section style="width:100%" class="page donate">
 		<h1>
 			<a>Donate</a>
@@ -44,7 +68,29 @@
 		</a>
 		<a class="source" href="//derpibooru.org/549114">source</a>
 	</section>
-</div>
+</div><section class="page column-left" style="width:76%">
+	<%= render partial: 'section', locals: { collection: @popular, type: 'popular', label: 'Popular' } %>
+	<% if @featured_album %>
+</section>
+<section class="page column-left resize-holder" style="width:76%">
+		<%= render partial: 'featured_album', locals: { featured_album: @featured_album } %>
+</section>
+<section class="page column-left" style="width:76%">
+	<% end %>
+	<% @all.group_by(&:period).each do |week, n| %>
+		<%= render partial: 'section', locals: { collection: n, label: week } %>
+	<% end %>
+	<% if @feed && @feed.length > 0 %>
+</section>
+<section class="page column-left" style="width:76%">
+	<div class="group feed">
+		<h1><a href="/videos/watched">Watched Videos (<%= number_with_delimiter @feed.length %>)</a></h1>
+		<ul class="horizontal latest">
+			<%= render partial: '/layouts/video_thumb_h', collection: @feed %>
+		</ul>
+	</div>
+	<% end %>
+</section>
 <style type="text/css">
 iframe.twitter-timeline {
   min-width: 100% !important;
@@ -64,7 +110,7 @@ function resizeGrid(grid, beside) {
     do {
       calculatedWidth = 60 + (182 * n) + 45 * (--n) + 60;
     } while (calculatedWidth > width)
-      grid.css('width', calculatedWidth + 'px');
+    grid.css('width', calculatedWidth + 'px');
     if (beside) {
       beside.css('width', (beside.parent().innerWidth() - calculatedWidth - 5) + 'px');
     }

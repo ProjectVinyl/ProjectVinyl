@@ -39,12 +39,12 @@ class VideoController < ApplicationController
     end
     if params[:list]
       if @album = Album.where(id: params[:list]).first
-        @items = @album.album_items.includes(:direct_user).order(:index)
+        @items = @album.all_items
         @index = params[:index].to_i || (@items.first ? @items.first.index : 0)
         if @index > 0
-          @prev_video = @items.where(index: @index - 1).first
+          @prev_video = @album.get_prev(current_user, @index)
         end
-        @next_video = @items.where(index: @index + 1).first
+        @next_video = @album.get_next(current_user, @index)
         @album_editable = user_signed_in? && @album.ownedBy(current_user)
       end
     end
@@ -56,13 +56,16 @@ class VideoController < ApplicationController
         if @album = Album.where(id: params[:list]).first
           @items = @album.album_items.order(:index)
           @index = params[:index].to_i || (@items.first ? @items.first.index : 0)
-          @next_video = @items.where(index: @index + 1).first
+          if @index > 0
+            @prev_video = @album.get_prev(current_user, @index)
+          end
+          @next_video = @album.get_next(current_user, @index)
           render json: {
             id: @album.album_items.where(index: @index).first.id,
-            next: @prev_video ? ("/view/" + @prev_video.video.id.to_s + "-" + ApplicationHelper.url_safe(@prev_video.video.title) + "?list=" + @album.id.to_s + "&index=" + @prev_video.index.to_s) : nil,
-            prev: @next_video ? ("/view/" + @next_video.video.id.to_s + "-" + ApplicationHelper.url_safe(@next_video.video.title) + "?list=" + @album.id.to_s + "&index=" + @next_video.index.to_s) : nil,
+            prev: @prev_video ? ("/view/" + @prev_video.video.id.to_s + "-" + @prev_video.video.safe_title + "?list=" + @album.id.to_s + "&index=" + @prev_video.index.to_s) : nil,
+            next: @next_video ? ("/view/" + @next_video.video.id.to_s + "-" + @next_video.video.safe_title + "?list=" + @album.id.to_s + "&index=" + @next_video.index.to_s) : nil,
             title: @video.title,
-            artist: @video.user.name,
+            artist: @video.user.username,
             audioOnly: @video.audio_only,
             source: @video.id,
             mime: [ @video.file, @video.mime ]
@@ -243,24 +246,24 @@ class VideoController < ApplicationController
     end
     response.headers['Content-Length'] = File.size(file).to_s
     send_file(file,
-        :filename => "#{@video.id}_#{@video.title}_by_#{@video.user.username}#{@video.file}",
+        :filename => "#{@video.id}_#{@video.title}_by_#{@video.artists_string}#{@video.file}",
         :type => @video.mime
     )
   end
   
   def list
     @page = params[:page].to_i
-    @results = Pagination.paginate(Video.where(hidden: false).order(:created_at), @page, 50, true)
-    render template: '/view/listing', locals: {type_id: 0, type: 'videos', type_label: 'Song', items: @results}
+    @results = Pagination.paginate(Video.Finder.order(:created_at), @page, 50, true)
+    render template: '/view/listing', locals: {type_id: 0, type: 'videos', type_label: 'Video', items: @results}
   end
   
   def page
     @page = params[:page].to_i
     @user = params[:user]
     if @user.nil?
-      @results = Pagination.paginate(Video.where(hidden: false).order(:created_at), @page, 50, true)
+      @results = Pagination.paginate(Video.Finder.order(:created_at), @page, 50, true)
     else
-      @results = Pagination.paginate(User.find(@user.to_i).videos.order(:created_at), @page, 8, true)
+      @results = Pagination.paginate(User.find(@user.to_i).videos.includes(:tag).order(:created_at), @page, 8, true)
     end
     render json: {
       content: render_to_string(partial: '/layouts/video_thumb_h.html.erb', collection: @results.records),

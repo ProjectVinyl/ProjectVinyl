@@ -3,18 +3,12 @@
 <section style="width:100%;" class="page properties">
 	<h1 class="title">Notifications (<%= current_user.notifications.length %>)</h1>
 	<ul class="notifications">
-	<% if current_user.notifications.length > 0 %>
-		<% if @today.length > 0 %>
-			<b>Today</b>
-			<%= render partial: "thread/notification", collection: @today %>
-		<% end %>
-		<% if @yesterday.length > 0 %>
-			<b>Yesterday</b>
-			<%= render partial: "thread/notification", collection: @yesterday %>
-		<% end %>
-		<% if @week.length > 0 %>
-			<b>Week</b>
-			<%= render partial: "thread/notification", collection: @week %>
+	<% if @all.length > 0 %>
+		<% @all.group_by(&:period).each do |week, n| %>
+			<b><%= week %></b>
+			<p>
+				<%= render partial: "thread/notification", collection: n.sort %>
+			</p>
 		<% end %>
 		<% current_user.notifications.where(unread: true).update_all(unread: false) %>
 	<% else %>

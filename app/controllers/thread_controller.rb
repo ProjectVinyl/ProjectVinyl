@@ -15,12 +15,10 @@ class ThreadController < ApplicationController
   def create
     if user_signed_in?
       thread = params[:thread]
-      thread = CommentThread.create(
-        user_id: current_user.id, total_comments: 1
-      )
+      thread = CommentThread.create(user_id: current_user.id)
       thread.set_title(params[:thread][:title])
       thread.save
-      comment = Comment.create(user_id: current_user.id, comment_thread_id: thread.id)
+      comment = thread.comments.create(user_id: current_user.id)
       comment.update_comment(params[:thread][:description])
       redirect_to action: 'view', id: thread.id
       return
@@ -66,9 +64,8 @@ class ThreadController < ApplicationController
   def post_comment
     if user_signed_in?
       if (@thread = CommentThread.where(id: params[:thread]).first) && !@thread.locked
-        comment = Comment.create(user_id: current_user.id, comment_thread_id: @thread.id)
+        comment = @thread.comments.create(user_id: current_user.id)
         comment.update_comment(params[:comment])
-        CommentThread.where(id: @thread.id).update_all('total_comments = total_comments + 1')
         @results = Pagination.paginate(@thread.get_comments(current_user.is_admin), params[:order] == '1' ? 0 : -1, 10, params[:order] == '1')
         render json: {
           content: render_to_string(partial: '/thread/comment_set.html.erb', locals: { thread: @results.records, indirect: false }),
@@ -182,9 +179,6 @@ class ThreadController < ApplicationController
     if user_signed_in?
       @all = current_user.notifications.order(:created_at).reverse_order
       @notifications = current_user.notification_count
-      @today = @all.where('created_at > ?', Time.zone.now.beginning_of_day)
-      @yesterday = @all.where('created_at > ? AND created_at < ?', Time.zone.yesterday.beginning_of_day, Time.zone.yesterday.end_of_day)
-      @week = @all.where('created_at > ? AND created_at < ?', 1.week.ago, Time.zone.now.yesterday.beginning_of_day)
       current_user.notifications.where('created_at < ?', 1.week.ago).delete_all
       current_user.notification_count = 0
       current_user.save

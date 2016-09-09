@@ -33,10 +33,16 @@
 				<a href="<%= current_user.link %>" class="username">
 					<%= current_user.username %>
 				</a>
+				<a class="notices-bell" href="/videos/watched">
+					<i class="fa fa-globe"></i>
+					<% if current_user.feed_count > 0 %>
+						<span class="count"><% if current_user.feed_count > 999 %>999+<% else %><%= number_with_delimiter current_user.feed_count %><% end %></span>
+					<% end %>
+				</a>
 				<a class="notices-bell" href="/notifications">
 					<i class="fa fa-bell"></i>
 					<% if current_user.notification_count > 0 %>
-						<span class="count"><%= current_user.notification_count %></span>
+						<span class="count"><% if current_user.notification_count > 999 %>999+<% else %><%= number_with_delimiter current_user.notification_count %><% end %></span>
 					<% end %>
 				</a>
 				<ul class="drop-down" style="z-index:300;">
@@ -67,13 +73,19 @@
 						</a>
 					</li>
 					<li>
-						<a href="/users/edit" rel="nofollow" title="settings">
+						<a href="/filters" rel="nofollow">
+							<span class="icon"><i class="fa fa-fw fa-tag"></i></span>
+							<span class="label">Watch/Filter</span>
+						</a>
+					</li>
+					<li>
+						<a href="/users/edit" rel="nofollow">
 							<span class="icon"><i class="fa fa-fw fa-cog"></i></span>
 							<span class="label">Settings</span>
 						</a>
 					</li>
 					<li>
-						<a id="sign-out" href="/users/sign_out" rel="nofollow" title="sign out">
+						<a id="sign-out" href="/users/sign_out" rel="nofollow">
 							<span class="icon"><i class="fa fa-fw fa-sign-out"></i></span>
 							<span class="label">Sign Out</span>
 						</a>

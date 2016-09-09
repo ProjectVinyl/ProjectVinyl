@@ -2,6 +2,11 @@
     box-sizing: border-box;
 }
 
+/*Opera Fix*/
+body + div[is-visible] {
+  display: none !important;
+}
+
 #video {
   width: 100% !important;
   height: 100% !important;
@@ -42,4 +47,41 @@ img.iconic {
     background: none;
     border: none;
     box-shadow: none;
+}
+
+.listing.compact.playlist .controls a {
+  line-height: 13.5px;
+}
+.listing.compact.playlist {
+  transition: left 0.5s ease;
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: -50%;
+  width: 50%;
+  background: rgba(28,28,28,0.9);
+  color: #eee;
+}
+.listing.compact.playlist.visible {
+  left: 0;
+}
+.listing.compact a,
+.listing.compact .items a > div {
+  color: #eee;
+}
+
+.listing.compact a.selected, .listing.compact a:hover {
+  background: rgba(255,255,255,0.2);
+}
+.listing.compact.playlist .scroll-container {
+  position: absolute;
+  min-height: auto;
+  max-height: 100%;
+  top: 35px;
+  bottom: 0;
+  box-shadow: 0 0px 3px 0 #333 inset;
+}
+
+.video .controls .icon {
+  margin-top: -5px;
 }

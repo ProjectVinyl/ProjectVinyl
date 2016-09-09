@@ -1,0 +1,43 @@
+<% title "Filter Settings" %>
+<% lim "900px" %>
+<section class="page column-left properties" style="width:100%">
+<h1>Filter Settings</h1>
+<%= form_for(current_user, as: "user", url: '/filters') do |f| %>
+<table>
+	<tr>
+		<td class="label">Hidden Tags</td>
+		<td class="field">
+		Any tags you'd like to keep hidden. Videos with these tags will not show up on the site.
+		<%= render layout: 'layouts/tageditor', locals: { tags: current_user.hidden_tags_actual } do %>
+			<%= f.text_area :hidden_tag_string %>
+		<% end %>
+		</td>
+	</tr>
+	<tr>
+		<td class="label">Spoilered Tags</td>
+		<td class="field">
+		Spoilered tags. Any videos with these will be displayed with the option to view them, but have their thumbnail and title hidden.
+		<%= render layout: 'layouts/tageditor', locals: { tags: current_user.spoilered_tags_actual } do %>
+			<%= f.text_area :spoilered_tag_string %>
+		<% end %>
+		</td>
+	</tr>
+	<tr>
+		<td class="label">Watched Tags</td>
+		<td class="field">
+		Any tags you're specifically interested in. You will be notified when these tags are added to any videos and they may appear in your feed.
+		<%= render layout: 'layouts/tageditor', locals: { tags: current_user.watched_tags_actual } do %>
+			<%= f.text_area :watched_tag_string %>
+		<% end %>
+		</td>
+	</tr>
+	<tr class="actions">
+		<td class="label">
+		</td>
+		<td class="field">
+			<%= f.submit "Save Changes", class: "green" %>
+		</td>
+	</tr>
+</table>
+<% end %>
+</section>

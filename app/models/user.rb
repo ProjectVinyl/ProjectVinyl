@@ -36,6 +36,29 @@ class UserDummy
     return true
   end
 end
+
+class Subscription
+  def initialize(user)
+    @user = user
+  end
+  
+  def tags
+    return @user.watched
+  end
+  
+  def drop_tags(ids)
+    TagSubscription.where('user_id = ? AND tag_id IN (?)', @user.id, ids).delete_all
+  end
+  
+  def pick_up_tags(ids)
+    return @user.tag_subscriptions
+  end
+  
+  def save
+    @user.save
+  end
+end
+
 class User < ActiveRecord::Base
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable and :omniauthable
@@ -54,6 +77,16 @@ class User < ActiveRecord::Base
   has_many :all_albums, class_name: "Album", foreign_key: "user_id", dependent: :destroy
   has_many :artist_genres, dependent: :destroy
   has_many :tags, :through => :artist_genres
+  has_many :tag_subscriptions, dependent: :destroy
+  
+  has_many :hidden_tags, -> {where(hide: true)}, class_name: "TagSubscription"
+  has_many :spoilered_tags, -> {where(spoiler: true)}, class_name: "TagSubscription"
+  has_many :watched_tags, -> {where(watch: true, hide: false)}, class_name: "TagSubscription"
+  
+  has_many :hidden_tags_actual, :through => :hidden_tags, class_name: "Tag", source: "tag"
+  has_many :spoilered_tags_actual, :through => :spoilered_tags, class_name: "Tag", source: "tag"
+  has_many :watched_tags_actual, :through => :watched_tags, class_name: "Tag", source: "tag"
+  
   belongs_to :tag
   
   SANITIZE = /[^a-zA-Z0-9]+/
@@ -138,6 +171,18 @@ class User < ActiveRecord::Base
     return Tag.tag_string(self.tags)
   end
   
+  def hidden_tag_string
+    return Tag.tag_string(self.hidden_tags_actual)
+  end
+  
+  def spoilered_tag_string
+    return Tag.tag_string(self.spoilered_tags_actual)
+  end
+  
+  def watched_tag_string
+    return Tag.tag_string(self.watched_tags_actual)
+  end
+  
   def stars
     if self.album.nil?
       self.album = self.create_album(
@@ -156,6 +201,27 @@ class User < ActiveRecord::Base
       return "Admin"
     end
     return "User"
+  end
+  
+  def hides(tags)
+    @hidden_tag_ids = @hidden_tag_ids || self.hidden_tags_actual.pluck(:id,:alias_id).map do |t|
+      t[1] || t[0]
+    end
+    return (tags & @hidden_tag_ids).length > 0
+  end
+  
+  def spoilers(tags)
+    @spoilered_tag_ids = @spoilered_tag_ids || self.spoilered_tags_actual.pluck(:id,:alias_id).map do |t|
+      t[1] || t[0]
+    end
+    return (tags & @spoilered_tag_ids).length > 0
+  end
+  
+  def watches(tag) 
+    @watched_tag_ids = @watched_tag_ids || self.watched_tags_actual.pluck(:id,:alias_id).map do |t|
+      t[1] || t[0]
+    end
+    return ([tag.id] & @watched_tag_ids).length > 0
   end
   
   def setTags(tags)

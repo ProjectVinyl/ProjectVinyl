@@ -1,22 +1,31 @@
 <div class="post">
-	<div class="space-fix">
-		<span class="genre-icon fa-stack fa-4x">
-			<i class="fa fa-circle fa-stack-2x"></i>
-			<i class="fa fa-tag fa-inverse fa-stack-1x"></i>
-		</span>
-		<h1 class="title">
-			<a class="name" href="/tag/<%= tag.short_name %>"><%= @tag.name %></a>
-		</h1>
-		<span class="content bio"><%= tag.description %></span>
-		<div class="tag-list">
-			<br>Used by <%= tag.video_count %> videos and <%= tag.user_count %> users
-		</div>
-	</div>
-	<% if tag.user %>
-	<span class="user-link right" data-id="<%= tag.user.id %>">
-		<span class="tag-list">
-		Associated User: <a href="<%= tag.user.link %>"><%= @user.username %></a>
-		</span>
+	<span class="genre-icon fa-stack fa-4x">
+		<i class="fa fa-circle fa-stack-2x"></i>
+		<i class="fa fa-tag fa-inverse fa-stack-1x"></i>
 	</span>
+	<div class="tag-header">
+		<h2 class="title" style="margin-left:0;">
+			<a class="name" href="/tags/<%= tag.short_name %>"><%= @tag.name %></a>
+		</h2>
+		<div class="tag-list subheading">
+			Used by <%= tag.video_count %> videos and <%= tag.user_count %> users
+			<% if tag.user %>
+			<span class="user-link right" data-id="<%= tag.user.id %>">
+				<span class="tag-list">
+				Associated User: <a href="<%= tag.user.link %>"><%= @user.username %></a>
+				</span>
+			</span>
+			<% end %>
+		</div>
+		<span class="content bio"><%= tag.description %></span>
+	</div>
+	<% if tag.aliases.length > 0 %>
+	<div>
+		<h1>Aliases</h1>
+		<ul class="tags">
+			<%= render partial: "layouts/genre_thumb_h", collection: tag.aliases %>
+		</ul>
+		<hr>
+	</div>
 	<% end %>
 </div>

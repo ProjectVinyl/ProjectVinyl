@@ -1,7 +1,7 @@
 <% lim "900px" %>
 <section style="width:100%;" class="page properties">
 	<h1>Editing Tag <%= @tag.name %></h1>
-	<%= form_for(@tag, as: "tag", url: "/ajax/tag/update") do |f| %>
+	<%= form_for(@tag, as: "tag", url: "/ajax/tag/update/" + @tag.id.to_s) do |f| %>
 	<table>
 		<tr>
 			<td class="label">Domain</td>
@@ -33,6 +33,12 @@
 			</td>
 		</tr>
 		<% end %>
+		<tr>
+			<td class="label"><%= f.label :alias %></td>
+			<td class="field">
+				<%= f.text_field :alias_tag, autocomplete: "off" %>
+			</td>
+		</tr>
 		<tr>
 			<td class="label"><%= f.label :description %></td>
 			<td class="field">

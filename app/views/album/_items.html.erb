@@ -2,7 +2,8 @@
 	<div class="items<% if @modificationsAllowed %> reorderable<% end %>" data-target="albumitem">
 		<span class="bump" data-index="-1"></span>
 	<% @items.each do |item| %>
-		<a <% if !item.video.hidden %>href="/view/<%= item.video.id %>-<%= item.video.safe_title %>?list=<%= item.album_id %>&index=<%= item.index %>"<% else %>class="hidden-item"<% end %> data-id="<%= item.id %>" data-index="<%= item.index %>">
+		<% if !item.video.isHiddenBy(current_user) %>
+		<a <% if !item.video.hidden && !item.video.isSpoileredBy(current_user) %>href="/view/<%= item.video.id %>-<%= item.video.safe_title %>?list=<%= item.album_id %>&index=<%= item.index %>"<% else %>class="hidden-item"<% end %> data-id="<%= item.id %>" data-index="<%= item.index %>">
 		<% if @modificationsAllowed %>
 			<div class="handle"><i class="fa fa-ellipsis-v"></i></div>
 		<% end %>
@@ -19,6 +20,7 @@
 			<div class="remove" title="Remove" data-id="<%= item.id %>"><span><i class="fa fa-times"></i></span></div>
 		<% end %>
 		</a>
+		<% end %>
 	<% end %>
 	</div>
 </section>

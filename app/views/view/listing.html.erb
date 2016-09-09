@@ -1,6 +1,6 @@
 <% title type_label + "s" %>
 <section class="page" style="width: 100%">
-	<h1>All <%= type_label %>s</h1>
+	<h1>All <%= type_label %>s (<%= number_with_delimiter items.count %>)</h1>
 	<%= render layout: '/layouts/paginated', locals: {type: type, paginated: items, id: "page"} do %>
 		<section class="search-result">
 			<% if type_id == 0 %>

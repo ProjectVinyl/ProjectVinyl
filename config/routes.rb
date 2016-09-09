@@ -23,6 +23,7 @@ Rails.application.routes.draw do
   get 'ajax/admin/videos/unprocessed' => 'admin#page_unprocessed'
   get 'admin/artist/:id' => 'admin#artist'
   get 'admin/tag/:id' => 'admin#tag'
+  patch 'ajax/tag/update/:id' => 'genre#update'
   post 'ajax/video/hide' => 'admin#visibility'
   put 'admin/transfer' => 'admin#transferItem'
   post 'ajax/admin/process/all' => 'admin#batch_preprocessVideos'
@@ -36,6 +37,10 @@ Rails.application.routes.draw do
   post 'ajax/upload/:async' => 'video#create'
   post 'ajax/upload' => 'video#create'
   get 'video/edit/:id' => 'video#edit'
+  get 'videos/watched' => 'feed#view'
+  get 'filters' => 'feed#edit'
+  patch 'filters' => 'feed#update'
+  get 'ajax/feed' => 'feed#page'
   get 'videos' => 'video#list'
   get 'ajax/videos' => 'video#page'
   get 'forum' => 'thread#list'
@@ -70,6 +75,9 @@ Rails.application.routes.draw do
   get 'tags/:name', to: 'genre#view', constraints: { name: /.*/ }
   get 'ajax/find/tags' => 'genre#find'
   get 'ajax/genres' => 'genre#page'
+  post 'ajax/tag/hide' => 'genre#hide'
+  post 'ajax/tag/spoiler' => 'genre#spoiler'
+  post 'ajax/tag/watch' => 'genre#watch'
   
   get 'ajax/reporter/:id' => 'admin#reporter'
   post 'ajax/reporter/:id' => 'admin#report'

@@ -117,7 +117,7 @@ ul.horizontal > li + li {
   text-align: center;
 }
 
-.video .controls {
+.video > .controls {
   display: none;
   position: absolute;
   left: 0;
@@ -127,10 +127,10 @@ ul.horizontal > li + li {
   opacity: 0;
   transition: opacity 0.5s linear;
 }
-.video:hover .controls, .video.audio-only .controls {
+.video:hover > .controls, .video.audio-only > .controls {
   opacity: 1;
 }
-.video .controls:hover {
+.video > .controls:hover {
   opacity: 1 !important;
 }
 
@@ -147,18 +147,18 @@ ul.horizontal > li + li {
   opacity: 1;
 }
 
-.video .controls li {
+.video > .controls li {
   display: inline-block;
 }
 
-.video .controls .track {
+.video > .controls .track {
   position: relative;
   width: calc(100% - 80px);
   margin-left: 10px;
   height: 10px;
   cursor: pointer;
 }
-.video.audio-only .controls .track {
+.video.audio-only > .controls .track {
   background: rgba(8, 8, 8, 0.125);
   border-radius: 4px;
 }
@@ -384,6 +384,15 @@ ul.horizontal > li.generic {
 }
 ul.horizontal .thumb .tile {
   margin: 0;
+}
+
+ul.horizontal.genre-list {
+  overflow: visible;
+}
+ul.horizontal.center > li {
+  text-align: left;
+  float: none;
+  display: inline-block;
 }
 
 .load-more {
@@ -773,4 +782,26 @@ i.fa.fa-volume-mid {
 .listing.compact.playlist .items a .title .author span {
   border: none;
   padding-left: 0;
+}
+
+.playlist-toggle {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  cursor: pointer;
+  transition: opacity 0.25s linear;
+  color: #fff;
+  font-size: 1.5em;
+}
+
+.video .player.playing ~ .playlist-toggle {
+  opacity: 0;
+}
+
+.video:hover .player.playing ~ .playlist-toggle {
+  opacity: 0.2;
+}
+
+.video .player.playing ~ .playlist-toggle:hover {
+  opacity: 1;
 }

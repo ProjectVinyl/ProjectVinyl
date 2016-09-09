@@ -1,10 +1,10 @@
 <a class="thumb" href="/view/<%= video_thumb_i.id %>-<%= video_thumb_i.safe_title %>">
-	<div class="tile" style="background-image:url('/<%= video_thumb_i.hidden ? 'images/default-cover' : 'cover/' + video_thumb_i.id.to_s %>-small.png');">
+	<div class="tile" style="background-image:url('/<%= video_thumb_i.hidden || video_thumb_i.isSpoileredBy(current_user) ? 'images/default-cover' : 'cover/' + video_thumb_i.id.to_s %>-small.png');">
 		<span class="tag-list duration">
 			<%= duration video_thumb_i.getDuration %>
 		</span>
 	</div>
 	<div class="title">
-		<%= video_thumb_i.getTitle %>
+		<%= video_thumb_i.isSpoileredBy(current_user) ? "Spoilered" : video_thumb_i.getTitle %>
 	</div>
 </a>

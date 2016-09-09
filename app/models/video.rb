@@ -8,6 +8,10 @@ class Video < ActiveRecord::Base
   has_many :video_genres, dependent: :destroy
   has_many :tags, :through => :video_genres
   
+  def self.Finder
+    return Video.includes(:tags).where(hidden: false)
+  end
+  
   def self.randomVideos(selection, limit)
     selection = selection.pluck(:id)
     if !selection || selection.length == 0
@@ -82,6 +86,7 @@ class Video < ActiveRecord::Base
     delFile(self.webm_path)
     delFile(self.cover_path.to_s + ".png")
     delFile(self.cover_path.to_s + "-small.png")
+    Tag.where('id IN (?) AND video_count > 0', self.tags.pluck(:id)).update_all('video_count = video_count - 1')
     self.destroy
   end
   
@@ -208,6 +213,10 @@ class Video < ActiveRecord::Base
     return Tag.tag_string(self.tags)
   end
   
+  def artists_string
+    return Tag.tag_string(self.tags.where(tag_type_id: 1))
+  end
+  
   def getComputedScore
     if self.score.nil?
       computeScore()
@@ -259,6 +268,20 @@ class Video < ActiveRecord::Base
   
   def star(user)
     return user.stars.toggle(self)
+  end
+  
+  def isHiddenBy(user)
+    if user
+      return user.hides(@tag_ids || (@tag_ids = self.tags.map(&:id)))
+    end
+    return false
+  end
+  
+  def isSpoileredBy(user)
+    if user
+      return user.spoilers(@tag_ids || (@tag_ids = self.tags.map(&:id)))
+    end
+    return false
   end
   
   def isUpvotedBy(user)
@@ -315,6 +338,22 @@ class Video < ActiveRecord::Base
       return computeLength()
     end
     return self.length
+  end
+  
+  def period
+    if self.created_at > Time.zone.now.beginning_of_day
+      return "Today"
+    end
+    if self.created_at > Time.zone.now.yesterday.beginning_of_day
+      return "Yesterday"
+    end
+    if self.created_at > Time.zone.now.beginning_of_week
+      return "Earlier this Week"
+    end
+    if self.created_at > Time.zone.now.beginning_of_month
+      return "Earlier this Month"
+    end
+    self.created_at.strftime('%B %Y')
   end
   
   protected

@@ -101,10 +101,10 @@ class VideoMatchingGroup
       end
     end
     if @exclusions.length > 0
-      sql << Tag.sanitize_sql(["(SELECT COUNT(*) FROM video_genres g, tags t WHERE t.id = g.tag_id AND g.video_id = v.id AND t.name IN (?)) = 0", @exclusions])
+      sql << Tag.sanitize_sql(["(SELECT COUNT(*) FROM video_genres g, tags t LEFT JOIN tags q ON t.id = q.alias_id WHERE t.id = g.tag_id AND g.video_id = v.id AND (t.name IN (?) OR q.name IN (?))) = 0", @exclusions, @exclusions])
     end
     if @inclusions.length > 0
-      sql << Tag.sanitize_sql(["(SELECT COUNT(*) FROM video_genres g, tags t WHERE t.id = g.tag_id AND g.video_id = v.id AND t.name IN (?)) = ?", @inclusions, @inclusions.length])
+      sql << Tag.sanitize_sql(["(SELECT COUNT(*) FROM video_genres g, tags t LEFT JOIN tags q ON t.id = q.alias_id WHERE t.id = g.tag_id AND g.video_id = v.id AND (t.name IN (?) OR q.name IN (?))) = ?", @inclusions, @inclusions, @inclusions.length])
     end
     if @children.length > 0
       children = @children.map do |c|
@@ -128,10 +128,10 @@ class VideoMatchingGroup
       end
     end
     if @exclusions.length > 0
-      sql << Tag.sanitize_sql(["(SELECT COUNT(*) FROM artist_genres g, tags t WHERE t.id = g.tag_id AND g.user_id = users.id AND t.name IN (?)) = 0", @exclusions])
+      sql << Tag.sanitize_sql(["(SELECT COUNT(*) FROM artist_genres g, tags t LEFT JOIN tags q ON t.id = q.alias_id WHERE t.id = g.tag_id AND g.user_id = a.id AND (t.name IN (?) OR q.name IN (?))) = 0", @exclusions, @exclusions])
     end
     if @inclusions.length > 0
-      sql << Tag.sanitize_sql(["(SELECT COUNT(*) FROM artist_genres g, tags t WHERE t.id = g.tag_id AND g.user_id = users.id AND t.name IN (?)) = ?", @inclusions, @inclusions.length])
+      sql << Tag.sanitize_sql(["(SELECT COUNT(*) FROM artist_genres g, tags t LEFT JOIN tags q ON t.id = q.alias_id WHERE t.id = g.tag_id AND g.user_id = a.id AND (t.name IN (?) OR q.name IN (?))) = ?", @inclusions, @inclusions, @inclusions.length])
     end
     if @children.length > 0
       children = @children.map do |c|
@@ -221,7 +221,7 @@ WHERE ("
   
   def userQuery_two(page, limit)
     @type = "user"
-    v_query = "SELECT videos.* FROM users"
+    v_query = "SELECT a.* FROM users a"
     groups = self.interpret_opset(@opset)[0]
     if groups.length > 0
       groups = groups.map do |group|

@@ -1,8 +1,7 @@
-<section style="width:100%" class="page resize-holder">
 	<div class="post">
 		<div class="tile stack left">
-			<span <% if @items.second %>style="background-image:url('/cover/<%= @items.second.video_id %>-small.png');"<% end %> class="stack-item item-1">
-				<span <% if @items.first %>style="background-image:url('/cover/<%= @items.first.video_id %>-small.png');"<% end %> class="stack-item item-2"></span>
+			<span style="background-image:url('<% if @items.second %>/cover/<%= @items.second.video.id %>-small<% else %>/images/default-cover-g<% end %>.png');" class="stack-item item-1">
+				<span style="background-image:url('<% if @items.first %>/cover/<%= @items.first.video.id %>-small<% else %>/images/default-cover-g<% end %>.png');" class="stack-item item-2"></span>
 			</span>
 		</div>
 		<% if @modificationsAllowed %>
@@ -51,4 +50,3 @@
 				<a class="button action" style="margin-right: 10px;" <% if @items.first %>href="/view/<%= @items.first.video.id %>-<%= @items.first.video.safe_title %>?list=<%= @album.id %>&index=<%= @items.first.index %>"<% end %>><i class="fa fa-play"></i> Play All</a>
 			</div>
 	</div>
-</section>

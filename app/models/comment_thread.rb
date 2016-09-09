@@ -1,7 +1,7 @@
 class CommentThread < ActiveRecord::Base
   belongs_to :direct_user, class_name: "User", foreign_key: "user_id"
   
-  has_many :comments, dependent: :destroy
+  has_many :comments, dependent: :destroy, counter_cache: "total_comments"
   
   belongs_to :owner, polymorphic: true
   
