@@ -1232,12 +1232,19 @@ $(document).on('click', '.spoiler', function() {
   $(this).toggleClass('revealed');
 });
 
-$(document).on('touchstart', '.drop-down-holder', function(e) {
-  $(this).toggleClass('hover');
-  if ($(this).hasClass('hover')) {
-    e.peventDefault();
+$(document).on('touchstart', '.drop-down-holder:not(.hover)', function(e) {
+  $(this).addClass('hover');
+  e.preventDefault();
+  e.stopPropagation();
+  var lis = $(this).find('a, li');
+  lis.on('touchstart', function(e) {
     e.stopPropagation();
-  }
+  });
+  $(this).one('touchstart', function(e) {
+    $(this).removeClass('hover');
+    e.preventDefault();
+    e.stopPropagation();
+  });
 });
 
 (function() {
