@@ -1240,8 +1240,10 @@ $(document).on('touchstart', '.drop-down-holder:not(.hover)', function(e) {
   lis.on('touchstart', function(e) {
     e.stopPropagation();
   });
-  $(this).one('touchstart', function(e) {
+  $(this).one('touchstart touchmove', function(e) {
+    $(this).off('touchstart touchmove');
     $(this).removeClass('hover');
+    lis.off('touchstart');
     e.preventDefault();
     e.stopPropagation();
   });
