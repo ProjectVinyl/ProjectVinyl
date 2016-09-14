@@ -31,7 +31,7 @@ class VideoMatchingGroup
     end
   end
   
-  def take_param(op, opset)
+  def take_param(type, op, opset)
     if op == TITLE
       if (data = opset.shift) && data.length > 0
         @title_queries << data.strip
@@ -41,8 +41,10 @@ class VideoMatchingGroup
       end
     elsif op == UPLOADER
       if (data = opset.shift) && data.length > 0
-        @user_queries << data.strip
-        @dirty = true
+        if type != "user"
+          @user_queries << data.strip
+          @dirty = true
+        end
       else
         raise LexerError, "Uploader Operator requires a data parameter"
       end
@@ -117,13 +119,13 @@ class VideoMatchingGroup
   
   def to_user_sql
     sql = []
-    if @user_queries.length > 0
-      @user_queries.uniq.each do |user|
+    if @title_queries.length > 0
+      @title_queries.uniq.each do |user|
         sql << Tag.sanitize_sql(["username LIKE ?", '%' + user + '%'])
       end
     end
-    if @user_queries_exclusions.length > 0
-      @user_queries_exclusions.uniq.each do |user|
+    if @title_queries_exclusions.length > 0
+      @title_queries_exclusions.uniq.each do |user|
         sql << Tag.sanitize_sql(["username NOT LIKE ?", '%' + user + '%'])
       end
     end
@@ -154,6 +156,7 @@ class TagSelector
   
   def initialize(search_terms)
     @opset = TagSelector.loadOPS(search_terms)
+    @type = "unknown"
   end
   
   def videoQuery(page, limit)
@@ -306,7 +309,7 @@ WHERE ("
         end
         current_group = VideoMatchingGroup.new
       elsif op == AND
-        opset = current_group.take_param(opset.shift, opset)
+        opset = current_group.take_param(@type, opset.shift, opset)
       elsif op == GROUP_START
         child = self.interpret_opset(opset)
         current_group.child(child[0])
@@ -327,7 +330,7 @@ WHERE ("
         end
         opset = child[1]
       else
-        opset = current_group.take_param(op, opset)
+        opset = current_group.take_param(@type, op, opset)
       end
     end
     if current_group.dirty
