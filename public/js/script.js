@@ -1235,8 +1235,8 @@ $(document).on('click', '.spoiler', function() {
 $(document).on('touchstart', '.drop-down-holder', function(e) {
   $(this).toggleClass('hover');
   if ($(this).hasClass('hover')) {
-    ev.peventDefault();
-    ev.stopPropagation();
+    e.peventDefault();
+    e.stopPropagation();
   }
 });
 
