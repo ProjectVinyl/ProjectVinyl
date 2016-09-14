@@ -1234,7 +1234,6 @@ $(document).on('click', '.spoiler', function() {
 
 $(document).on('touchstart', '.drop-down-holder', function(e) {
   $(this).toggleClass('hover');
-  e.preventDefault();
 });
 
 (function() {
