@@ -137,6 +137,7 @@ function Player() {}
       el.on('contextmenu', function(ev) {
         me.showContext(ev);
       });
+      var active_touches = [];
       var tapped = false;
       el.on('touchstart', function(ev) {
         if (Player.fullscreenPlayer == this) {
@@ -157,6 +158,7 @@ function Player() {}
           }, 500);
         }
         me.dom.toggler.update(ev);
+        active_touches.push({identifier: ev.identifier});
       });
       el.on('touchmove touchend touchcancel', function(ev) {
         for (var i = 0; i < active_touches; i++) {
@@ -222,6 +224,7 @@ function Player() {}
         new TapToggler(this.controls.volume);
         this.controls.volume.on('touchstart', function(ev) {
           me.controls.volume.toggler.update(ev);
+          me.halt(ev);
         });
         
         this.controls.volume.bob = this.controls.find('.volume .bob');
@@ -673,8 +676,6 @@ function Player() {}
           hover_timeout = null;
           hover_flag = 0;
         }, 1700);
-        ev.preventDefault();
-        ev.stopPropagation();
       },
       interactable: function() {
         return !touching || hover_flag > 1;
