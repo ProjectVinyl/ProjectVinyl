@@ -1,4 +1,8 @@
 <% lim "900px" %>
+<h1 class="title">
+	<a href="/">Home</a> <i class="fa fa-chevron-right"></i> <a href="/admin">Admin</a> <i class="fa fa-chevron-right"></i> 
+	User <i class="fa fa-chevron-right"></i> <a href=""><%= @user.username %></a>
+</h1>
 <section style="width:100%;" class="page properties">
 	<h1>Edit Profile</h1>
 	<%= render partial: 'artist/edit', locals: { user: @user, url: "/ajax/update/artist?artist_id=" + @user.id.to_s } %>
