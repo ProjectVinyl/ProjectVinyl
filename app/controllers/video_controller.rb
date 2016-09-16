@@ -263,7 +263,7 @@ class VideoController < ApplicationController
     if @user.nil?
       @results = Pagination.paginate(Video.Finder.order(:created_at), @page, 50, true)
     else
-      @results = Pagination.paginate(User.find(@user.to_i).videos.includes(:tag).order(:created_at), @page, 8, true)
+      @results = Pagination.paginate(User.find(@user.to_i).videos.includes(:tags).order(:created_at), @page, 8, true)
     end
     render json: {
       content: render_to_string(partial: '/layouts/video_thumb_h.html.erb', collection: @results.records),
