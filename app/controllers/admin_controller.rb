@@ -6,7 +6,7 @@ class AdminController < ApplicationController
     end
     @hiddenvideos = Pagination.paginate(Video.where(hidden: true), 0, 40, true)
     @unprocessed = Pagination.paginate(Video.where("(processed IS NULL or processed = ?) AND hidden = false", false), 0, 40, false)
-    @users = User.where(last_sign_in_at: Time.zone.now.beginning_of_month..Time.zone.now.end_of_day).limit(100).order(:last_sign_in_at).reverse_order
+    @users = User.where('last_sign_in_at > ? OR updated_at > ?', Time.zone.now.beginning_of_month, Time.zone.now.beginning_of_month).limit(100).order(:last_sign_in_at).reverse_order
     @processorStatus = VideoProcessor.status
     @reports_count = Report.includes(:video).where(resolved: nil).count
     @reports = Report.includes(:video).where(resolved: nil).limit(20)
