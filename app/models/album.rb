@@ -50,14 +50,14 @@ class Album < ActiveRecord::Base
   
   def get_next(user, current)
     potentials = self.all_items.where('`album_items`.index > ?', current).select do |i|
-      !(i.video.isHiddenBy(user))
+      !(i.video.isHiddenBy(user) || i.video.hidden)
     end
     return potentials.first
   end
   
   def get_prev(user, current)
     potentials = self.all_items.where('`album_items`.index < ?', current).select do |i|
-      !(i.video.isHiddenBy(user))
+      !(i.video.isHiddenBy(user) || i.video.hidden)
     end
     return potentials.last
   end
