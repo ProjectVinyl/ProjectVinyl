@@ -1065,6 +1065,10 @@ label input[type=checkbox]:not(:checked) + i {
   color: #333333;
 }
 
+.comment .thumb .title {
+  max-width: 185px;
+}
+
 blockquote {
   background: rgba(0,250,250, 0.3);
   padding: 3px;
