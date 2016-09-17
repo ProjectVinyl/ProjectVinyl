@@ -1,0 +1,26 @@
+<h1 class="title resize-target">Processor Status</h1>
+<div>
+	Videos in queue: <%= VideoProcessor.queue.count.to_s %>
+</div>
+<div>
+	Total workers: <%= ProcessingWorker.all.count %>
+</div>
+<div class="listing compact">
+	<div class="items">
+	<% ProcessingWorker.all.each do |worker| %>
+		<a href="/view/<%= worker.video_id %>">
+			<% zombie = worker.zombie? %>
+			<div>
+				<span class="active-icon<% if worker.running || zombie %> active<% end %>" ></span>
+				#<%= worker.id %>
+			</div>
+			<div><% if worker.video %><%= worker.video.title %><% else %>unset<% end %> ( <%= worker.video_id %> )</div>
+			<div><span><%= zombie ? "zombie" : worker.status %></span></div>
+			<div><span><%= worker.message %></span></div>
+		</a>
+	<% end %>
+	</div>
+</div>
+<hr>
+<button class="confirm-button action red" data-action="delete" data-url="admin/process/all" data-title="Process <%= @unprocessed_count %> Videos" data-icon="warning" type="button">Poke Processor</button>
+<button class="confirm-button action blue" data-action="delete" data-url="admin/verify" data-title="Verify System Integrity" data-icon="warning" type="button">Verify System Integrity</button>

@@ -1,4 +1,6 @@
 class ProcessingWorker < ActiveRecord::Base
+  belongs_to :video
+  
   def initialize
     @e = nil
   end
@@ -24,9 +26,14 @@ class ProcessingWorker < ActiveRecord::Base
     self.save
   end
   
+  def zombie?
+    return self.running && !self.video_id.nil? && !File.exists?(Rails.root.join('encoding', self.video_id.to_s + '.webm'))
+  end
+  
   def start
     puts "[Processing Manager] Spinning thread #(" + self.id.to_s + ")"
     while (video = VideoProcessor.dequeue())
+      self.video_id = video.id
       self.update_status("running", "Current video id:" + video.id.to_s + " (working)")
       video.generateWebM_sync
       self.update_status("running", "Waiting")
@@ -110,6 +117,14 @@ class VideoProcessor
       started_any = true
       count += 1
       result += 1
+    end
+    ProcessingWorker.where(running: true).each do |i|
+      if i.zombie?
+        i.running = false
+        VideoProcessor.processor(i)
+        started_any = true
+        result += 1
+      end
     end
     ProcessingWorker.where(running: false).each do |i|
       if result < @@required_worker_count
