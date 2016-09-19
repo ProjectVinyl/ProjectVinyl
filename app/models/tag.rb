@@ -54,6 +54,9 @@ class Tag < ActiveRecord::Base
       return []
     end
     result = Tag.where('name IN (?)', names.uniq).pluck(:id, :alias_id).map do |t|
+      if t[1]
+        yield(t[0])
+      end
       t[1] || t[0]
     end
     return result.uniq
@@ -66,6 +69,9 @@ class Tag < ActiveRecord::Base
     result = []
     existing_names = []
     Tag.includes(:alias).where('name IN (?)', names).each do |tag|
+      if tag.alias_id
+        yield(tag.id)
+      end
       result << (tag.alias_id || tag.id)
       existing_names << tag.name
     end
@@ -103,7 +109,19 @@ class Tag < ActiveRecord::Base
   end
   
   def self.loadTags(tag_string, sender)
-    existing_ids = sender.tags.pluck(:id).uniq
+    aliased_from = []
+    aliased_to = []
+    existing_ids = sender.tags.pluck(:id, :alias_id).map do |t|
+      if t[1]
+        aliased_from << t[0]
+        aliased_to << t[1]
+      end
+      (t[1] || t[0])
+    end
+    if aliased_from.length > 0
+      sender.drop_tags(aliased_from)
+      sender.pick_up_tags(aliased_to)
+    end
     existing = sender.tags.pluck(:name).uniq
     loaded = Tag.split_tag_string(tag_string)
     common = existing & loaded
