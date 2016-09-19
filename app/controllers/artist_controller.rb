@@ -25,7 +25,6 @@ class ArtistController < ApplicationController
         user.set_description(input[:description])
         user.set_bio(input[:bio])
         user.setTags(input[:tag_string])
-        user.setSubscribed(input[:watched_tag_string])
         user.save
         if current_user.is_admin && params[:user_id]
           redirect_to action: "view", id: user.id
