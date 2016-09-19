@@ -20,8 +20,8 @@
 			</h1>
 			<span class="content bio"><%= raw @user.html_description %></span>
 		</div>
-		<div class="details">
 		<% if @user.tag_id || @tags.length > 0 %>
+		<div class="details">
 			<h1>Associated Tags</h1>
 			<% if @user.tag_id %>
 			<ul class="tags artist-tags">
@@ -31,8 +31,8 @@
 			<ul class="tags">
 			<%= render partial: 'layouts/genre_thumb_h', collection: @tags.includes(:tag_type) %>
 			</ul>
-		<% end %>
 		</div>
+		<% end %>
 		<% if @modificationsAllowed %>
 		<div class="actions">
 			<div class="split-button popper">
