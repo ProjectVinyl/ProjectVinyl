@@ -12,7 +12,7 @@
 			<% if tag.user %>
 			<span class="user-link right" data-id="<%= tag.user.id %>">
 				<span class="tag-list">
-				Associated User: <a href="<%= tag.user.link %>"><%= @user.username %></a>
+				Associated User: <a href="<%= tag.user.link %>"><%= tag.user.username %></a>
 				</span>
 			</span>
 			<% end %>
