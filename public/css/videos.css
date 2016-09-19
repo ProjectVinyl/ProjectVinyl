@@ -14,7 +14,9 @@ ul.horizontal > li + li {
 }
 
 .video {
-    background: #000 center/contain no-repeat;
+  background: #000 center/contain no-repeat;
+  -ms-touch-action: pan-x pan-y;
+  touch-action: pan-x pan-y;
 }
 
 .video .player, .video .player h1 a {
