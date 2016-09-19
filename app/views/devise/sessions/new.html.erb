@@ -2,24 +2,16 @@
 	<section style="width:100%;max-width:300px;" class="page modal">
 		<h1>Log in</h1>
 	<%= form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
-		<div class="label">
-			<%= f.label :email %>
-		</div>
-		<div class="field">
-			<%= f.email_field :email, autofocus: true %>
-		</div>
-		<div class="label">
-			<%= f.label :password %>
-		</div>
-		<div class="field">
-			<%= f.password_field :password, autocomplete: "off" %>
-		</div>
+		<%= f.email_field :email, autofocus: true, placeholder: "Email" %>
+		<br><br>
+		<%= f.password_field :password, autocomplete: "off", placeholder: "Password" %>
+		<% if devise_mapping.rememberable? -%>
+			<br><br>
+			<%= f.check_box :remember_me %>
+			<%= f.label :remember_me %>
+		<% end -%>
 		<div class="actions">
-			<%= f.submit "Log in" %>
-			<% if devise_mapping.rememberable? -%>
-				<%= f.check_box :remember_me %>
-				<%= f.label :remember_me %>
-			<% end -%>
+			<%= f.submit "Sign in" %>
 		</div>
 	<% end %>
 	<div class="tiny-foot">
