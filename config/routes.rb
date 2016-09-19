@@ -78,6 +78,8 @@ Rails.application.routes.draw do
   post 'ajax/tag/hide' => 'genre#hide'
   post 'ajax/tag/spoiler' => 'genre#spoiler'
   post 'ajax/tag/watch' => 'genre#watch'
+  get 'ajax/tags/videos' => 'genre#videos'
+  get 'ajax/tags/users' => 'genre#users'
   
   get 'ajax/reporter/:id' => 'admin#reporter'
   post 'ajax/reporter/:id' => 'admin#report'

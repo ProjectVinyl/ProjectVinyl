@@ -2,11 +2,14 @@ class ArtistController < ApplicationController
   def view
     if @user = User.where(id: params[:id].split(/-/)[0]).first
       @tags = @user.tags.includes(:tag_type)
+      if @user.tag_id
+        @art = @user.tag.videos.where(hidden: false)
+        @art_count = @art.count
+        @art = Pagination.paginate(@art, 0, 8, true)
+      end
       @videos = user_signed_in? && current_user.id == @user.id ? @user.videos : @user.videos.where(hidden: false)
       @videos = Pagination.paginate(@videos, 0, 8, true)
-      @videos_count = @videos.count
       @albums = Pagination.paginate(@user.albums, 0, 8, true)
-      @albums_count = @albums.count
       @modificationsAllowed = user_signed_in? && (current_user.id == @user.id || current_user.is_admin)
       @comments = Comment.Finder.joins(:comment_thread).select('`comments`.*').where("`comments`.user_id = ? AND `comment_threads`.id = comment_thread_id AND NOT `comment_threads`.owner_type = 'Report'", @user.id).order(:created_at).limit(3)
     end

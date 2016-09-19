@@ -10,8 +10,10 @@ class GenreController < ApplicationController
       @modificationsAllowed = user_signed_in? && current_user.is_admin
       @totalVideos = @tag.videos.length
       @totalUsers = @tag.users.length
-      @videos = @tag.videos.where(hidden: false).order(:created_at).reverse_order.limit(16)
-      @users = @tag.users.order(:updated_at).reverse_order.limit(16)
+      @videos = @tag.videos.where(hidden: false).order(:created_at)
+      @videos = Pagination.paginate(@videos, 0, 8, true)
+      @users = @tag.users.order(:updated_at)
+      @users = Pagination.paginate(@users, 0, 8, true)
       if @tag.tag_type_id == 1
         @user = User.where(tag_id: @tag.id).first
       end
@@ -62,6 +64,32 @@ class GenreController < ApplicationController
       pages: @results.pages,
       page: @results.page
     }
+  end
+  
+  def videos
+    if @tag = Tag.where(id: params[:id]).first
+      @results = Pagination.paginate(@tag.videos.includes(:tags).order(:created_at), params[:page].to_i, 8, true)
+      render json: {
+        content: render_to_string(partial: '/layouts/video_thumb_h.html.erb', collection: @results.records),
+        pages: @results.pages,
+        page: @results.page
+      }
+    else
+      render status: 404, nothing: true
+    end
+  end
+  
+  def users
+    if @tag = Tag.where(id: params[:id]).first
+      @results = Pagination.paginate(@tag.users.order(:updated_at_at), params[:page].to_i, 8, true)
+      render json: {
+        content: render_to_string(partial: '/layouts/artist_thumb_h.html.erb', collection: @results.records),
+        pages: @results.pages,
+        page: @results.page
+      }
+    else
+      render status: 404, nothing: true
+    end
   end
   
   def find

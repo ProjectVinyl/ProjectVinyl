@@ -93,8 +93,11 @@
 	<h1>Recent Users</h1>
 	<% if @users.length > 0 %>
 	<ul id="artists" class="horizontal artist-list">
-		<%= render partial: 'layouts/artist_thumb_h', collection: @users %>
+		<%= render partial: 'layouts/artist_thumb_h', collection: @users.records %>
 	</ul>
+	<% if @users.pages > 0 %>
+		<button data-page="0" data-url="tags/users" data-id="<%= @tag_id %>" data-target="artists">Load More</button>
+	<% end %>
 	<% else %>
 	No activity for this section
 	<% end %>
@@ -103,8 +106,11 @@
 	<h1>Recent Songs</h1>
 	<% if @videos.length > 0 %>
 	<ul id="videos" class="horizontal video-list">
-		<%= render partial: 'layouts/video_thumb_h', collection: @videos %>
+		<%= render partial: 'layouts/video_thumb_h', collection: @videos.records %>
 	</ul>
+	<% if @videos.pages > 0 %>
+		<button data-page="0" data-url="tags/videos" data-id="<%= @tag_id %>" data-target="songs">Load More</button>
+	<% end %>
 	<% else %>
 	No activity for this section
 	<% end %>

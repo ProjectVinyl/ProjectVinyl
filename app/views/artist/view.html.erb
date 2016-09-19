@@ -56,27 +56,40 @@
 		<% end %>
 	</div>
 </section>
+<% if @art %>
 <section style="width:100%" class="page recent-uploads resize-holder">
-	<h1 class="title resize-target">Recent Uploads<span> (<span class="count"><%= number_with_delimiter @videos_count %></span>)</span></h1>
+	<h1 class="title resize-target">Songs by <%= @user.username %><span> (<span class="count"><%= number_with_delimiter @art.count %></span>)</span></h1>
+	<ul id="songs" class="horizontal video-list">
+		<%= render partial: '/layouts/video_thumb_h', collection: @art.records %>
+	</ul>
+	<div class="load-more">
+	<% if @art.pages > 1 %>
+		<button data-page="0" data-url="tags/videos" data-id="<%= @user.tag_id %>" data-target="songs">Load More</button>
+	<% end %>
+	</div>
+</section>
+<% end %>
+<section style="width:100%" class="page recent-uploads resize-holder">
+	<h1 class="title resize-target">Recent Uploads<span> (<span class="count"><%= number_with_delimiter @videos.count %></span>)</span></h1>
 	<% if @modificationsAllowed %><a class="button" href="/upload"><i class="fa fa-plus"></i> New</a><% end %>
 	<ul id="uploads" class="horizontal video-list">
 		<%= render partial: '/layouts/video_thumb_h', collection: @videos.records %>
 	</ul>
 	<div class="load-more">
 	<% if @videos.pages > 0 %>
-		<button data-page="0" data-type="videos" data-id="<%= @user.id %>" data-target="uploads">Load More</button>
+		<button data-page="0" data-url="videos" data-id="<%= @user.id %>" data-target="uploads">Load More</button>
 	<% end %>
 	</div>
 </section>
 <section style="width:100%" class="page recent-uploads resize-holder">
-	<h1 class="title resize-target">Recent Albums<span> (<span class="count"><%= number_with_delimiter @albums_count %></span>)</span></h1>
+	<h1 class="title resize-target">Recent Albums<span> (<span class="count"><%= number_with_delimiter @albums.count %></span>)</span></h1>
 	<% if @modificationsAllowed %><button class="confirm-button" data-url="album/create" data-title="New Album" data-icon=""><i class="fa fa-plus"></i> New</button><% end %>
 	<ul id="albums" class="album-list horizontal">
 		<%= render partial: '/layouts/album_thumb_h', collection: @albums.records %>
 	</ul>
 	<div class="load-more">
 	<% if @albums.pages > 0 %>
-		<button data-page="0" data-type="albums" data-id="<%= @user.id %>" data-target="albums">Load More</button>
+		<button data-page="0" data-url="albums" data-id="<%= @user.id %>" data-target="albums">Load More</button>
 	<% end %>
 	</div>
 </section>
