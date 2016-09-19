@@ -1920,9 +1920,8 @@ span.active-icon {
 .tags.artist-tags {
   display: inline-block;
   border-right: solid 1px rgba(0,0,150, 0.3);
-  float: left;
   padding-right: 10px;
-  margin-right: 10px;
+  margin-right: 5px;
 }
 .tags.artist-tags .tag {
   border-color: rgba(0,0,150, 0.3);
