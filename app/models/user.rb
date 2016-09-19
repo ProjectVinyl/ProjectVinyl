@@ -32,6 +32,10 @@ class UserDummy
     return ''
   end
   
+  def is_admin
+    return false
+  end
+  
   def isDummy
     return true
   end
@@ -66,6 +70,7 @@ class User < ActiveRecord::Base
          :recoverable, :rememberable, :trackable, :validatable
   
   after_destroy :remove_assets
+  after_create :init_name
   
   has_many :votes, dependent: :destroy
   has_many :notifications, dependent: :destroy
@@ -282,7 +287,7 @@ class User < ActiveRecord::Base
   end
   
   def link
-    return '/profile/' + self.id.to_s + '-' + self.safe_name
+    return '/profile/' + self.id.to_s + '-' + (self.safe_name || ('Background Pony #' + self.id.to_s(32)))
   end
   
   def isDummy
@@ -299,6 +304,10 @@ class User < ActiveRecord::Base
   def remove_assets
     img('avatar', false)
     img('banner', false)
+  end
+  
+  def init_name
+    self.set_name(self.username)
   end
   
   private
