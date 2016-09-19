@@ -1180,6 +1180,26 @@ function removeComment(id, json) {
   }
 }
 
+
+$(document).ready(function() {
+  if (document.location.hash.indexOf('#comment_') == 0) {
+    lookupComment(document.location.hash.split('_')[1]);
+  }
+});
+
+function lookupComment(comment_id) {
+  var comment = $('#comment_' + comment_id);
+  if (comment.length) {
+    scrollTo(comment).addClass('highlight');
+  } else {
+    var pagination = $('.comments').parent();
+    ajax.get(pagination.attr('data-type') + '?comment=' + comment_id + '&' + pagination.attr('data-args'), function(json) {
+      paginator.repaint(pagination, json);
+      scrollTo($('#comment_' + comment_id)).addClass('highlight');
+    });
+  }
+}
+
 function findComment(sender) {
   sender = $(sender);
   var container = sender.parent();

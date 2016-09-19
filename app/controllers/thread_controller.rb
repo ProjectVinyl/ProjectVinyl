@@ -166,7 +166,11 @@ class ThreadController < ApplicationController
   
   def page
     @thread = CommentThread.where(id: params[:thread_id]).first
-    @page = params[:page].to_i
+    if params[:comment] && (@comment = Comment.where(comment_thread_id: @thread.id, id: Comment.decode_open_id(params[:comment])).first)
+      @page = @comment.page(:id, 10, params[:order] == '1')
+    else
+      @page = params[:page].to_i
+    end
     @results = Pagination.paginate(@thread.get_comments(user_signed_in? && current_user.is_admin), @page, 10, params[:order] == '1')
     render json: {
       content: render_to_string(partial: '/thread/comment_set.html.erb', locals: { thread: @results.records, indirect: false }),

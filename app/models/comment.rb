@@ -1,5 +1,5 @@
 class Comment < ActiveRecord::Base
-  REPLY_MATCHER = /(?<=\>\>)[1234567890abcdefghijklmnopqrstuvwxyz]+(?= |\s|\n|$)/
+  REPLY_MATCHER = /(?<=\>\>|&gt;&gt;)[1234567890abcdefghijklmnopqrstuvwxyz]+(?= |\s|\n|$)/
   MENTION_MATCHER = /(?<=@)[^\s\[\<]+(?= |\s|\s|$)/
   QUOTED_TEXT = /\[q\][^\]]*\[\/q\]/
   
@@ -61,6 +61,11 @@ class Comment < ActiveRecord::Base
   
   def get_open_id
     return Comment.encode_open_id(self.id)
+  end
+  
+  def page(order = :id, per_page = 30, reverse = false)
+    position = Comment.where('comment_thread_id = ? AND ' + order.to_s + ' ' + (reverse ? '>' : '<') + '= ?', self.comment_thread_id, self.send(order)).count
+    return (position.to_f / per_page).ceil
   end
   
   def self.encode_open_id(i)
