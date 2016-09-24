@@ -368,7 +368,7 @@ class Video < ActiveRecord::Base
   
   def computeHotness
     s = self.views
-    s += 2 * self.score
+    s += 2 * (self.score || 0)
     s += 3 * self.comment_thread.comments.count
     basescore = Math.log([s, 1].max)
     
