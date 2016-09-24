@@ -44,8 +44,8 @@ end
 
 class VirtualAlbum < Album
   def initialize(query, index)
+    @index = index < 0 ? 0 : index
     @offset = index < 20 ? 0 : index - 20;
-    @index = index
     @query = query.strip
     @items = []
     @videos = []
@@ -121,7 +121,7 @@ class VirtualAlbum < Album
   end
   
   def fetch_items
-    return TagSelector.new(@query).videoQuery_two(0, 20).order_by('v.id').offset(@offset).exec().records()
+    return TagSelector.new(@query).videoQuery_two(0, @index - @offset + 5).order_by('v.id').offset(@offset).exec().records()
   end
   
   def addItem(video)
