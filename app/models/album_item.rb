@@ -4,7 +4,7 @@ class AlbumItem < ActiveRecord::Base
   has_one :direct_user, :through => :video
   
   def user
-    return self.direct_user || @dummy || (@dummy = User.dummy(self.user_id))
+    return self.direct_user || @dummy || (@dummy = User.dummy(self.video.user_id))
   end
   
   def removeSelf()
@@ -25,5 +25,13 @@ class AlbumItem < ActiveRecord::Base
       self.index = newIndex
       self.save
     end
+  end
+  
+  def ref
+    return 'list=' + self.album_id.to_s + '&index=' + self.index.to_s
+  end
+  
+  def virtual?
+    self.album.virtual?
   end
 end

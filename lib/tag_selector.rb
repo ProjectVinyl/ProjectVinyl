@@ -238,6 +238,16 @@ WHERE ("
     return self
   end
   
+  def order_by(ordering)
+    @ordering = ordering
+    return self
+  end
+  
+  def offset(off)
+    @offset = off
+    return self
+  end
+  
   def order(session, ordering, ascending)
     @ordering = "v.created_at"
     if @type == 'video'
@@ -285,7 +295,7 @@ WHERE ("
     if @page < 0
       @page = @pages
     end
-    sql = @main_sql + " ORDER BY " + @ordering + " LIMIT " + @limit.to_s + " OFFSET " + (@page * @limit).to_s + ";"
+    sql = @main_sql + " ORDER BY " + @ordering + " LIMIT " + @limit.to_s + " OFFSET " + (@offset ? @offset : (@page * @limit)).to_s + ";"
     if @type == 'video'
       @records = Video.find_by_sql(sql) #ActiveRecord::Base.connection.exec_query
     else

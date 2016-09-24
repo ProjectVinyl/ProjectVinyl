@@ -25,6 +25,16 @@ class Video < ActiveRecord::Base
     return Video.where('id IN (?)', selected)
   end
   
+  def self.ensure_uniq(file)
+    if file
+      hash = Ffmpeg.compute_checksum(file.read)
+      if Video.where(checksum: hash).count == 0
+        return hash
+      end
+    end
+    return false
+  end
+  
   def self.verify_integrity(report)
     webms = []
     sources = []
@@ -356,6 +366,20 @@ class Video < ActiveRecord::Base
     self.created_at.strftime('%B %Y')
   end
   
+  def computeHotness
+    s = self.views
+    s += 2 * self.score
+    s += 3 * self.comment_thread.comments.count
+    basescore = Math.log([s, 1].max)
+    
+    timediff = (DateTime.now - self.created_at.to_datetime).weeks
+    if timediff > 3
+      x = timediff - 1
+      basescore *= Math.exp(-8 * x * x)
+    end
+    return basescore
+  end
+  
   protected
   def delFile(path)
     if File.exists?(path)
@@ -385,6 +409,7 @@ class Video < ActiveRecord::Base
   
   def computeScore
     self.score = self.upvotes - self.downvotes
+    self.heat = self.computeHotness
     save()
   end
   

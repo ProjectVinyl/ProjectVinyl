@@ -1,5 +1,10 @@
+require 'digest/md5'
+
 class Ffmpeg
-  
+   def self.compute_checksum(data)
+     return Digest::MD5.hexdigest(data)
+   end
+   
    def self.getVideoLength(file)
      output = `ffprobe -v error -show_entries stream=duration -of default=noprint_wrappers=1:nokey=1 "#{file}"`
      output = output.to_i

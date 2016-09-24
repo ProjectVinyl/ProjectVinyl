@@ -61,4 +61,8 @@ class Album < ActiveRecord::Base
     end
     return potentials.last
   end
+  
+  def virtual?
+    false
+  end
 end

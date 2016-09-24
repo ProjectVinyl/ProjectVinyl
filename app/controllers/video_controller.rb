@@ -35,10 +35,16 @@ class VideoController < ApplicationController
     @queue = @user.queue(@video.id)
     if !@modificationsAllowed = user_signed_in? && current_user.id == @user.id
       @video.views = @video.views + 1
+      @video.heat = @video.computeHotness
       @video.save
     end
-    if params[:list]
-      if @album = Album.where(id: params[:list]).first
+    if params[:list] || params[:q]
+      if params[:q]
+        @album = VirtualAlbum.new(params[:q], params[:index].to_i)
+      else
+        @album = Album.where(id: params[:list]).first
+      end
+      if @album
         @items = @album.all_items
         @index = params[:index].to_i || (@items.first ? @items.first.index : 0)
         if @index > 0
@@ -116,6 +122,7 @@ class VideoController < ApplicationController
       if checkError(params[:async], cover && cover.content_type.include?('image/') && cover.size == 0, "Error", "Cover file is empty")
         return
       end
+      
       if file && (file.content_type.include?('video/') || file.content_type.include?('audio/'))
         if file.content_type.include?('video/') || (cover && cover.content_type.include?('image/'))
           video = params[:video]
@@ -124,6 +131,9 @@ class VideoController < ApplicationController
           end
           if !video[:title] || video[:title].strip.length == 0
             return error(params[:async], "Error", "You need to specify a title.")
+          end
+          if !(checksum = Video.ensure_uniq(file))
+            return error(params[:async], "Duplication Error", "The uploaded video already exists.")
           end
           ext = File.extname(file.original_filename)
           if ext == ''
@@ -144,7 +154,8 @@ class VideoController < ApplicationController
                   downvotes: 0,
                   views: 0,
                   hidden: false,
-                  processed: false
+                  processed: false,
+                  checksum: checksum
           )
           comments.owner_id = video.id
           comments.save
@@ -259,11 +270,11 @@ class VideoController < ApplicationController
   
   def page
     @page = params[:page].to_i
-    @user = params[:user]
-    if @user.nil?
-      @results = Pagination.paginate(Video.Finder.order(:created_at), @page, 50, true)
-    else
+    
+    if @user = params[:id]
       @results = Pagination.paginate(User.find(@user.to_i).videos.includes(:tags).order(:created_at), @page, 8, true)
+    else
+      @results = Pagination.paginate(Video.Finder.order(:created_at), @page, 50, true)  
     end
     render json: {
       content: render_to_string(partial: '/layouts/video_thumb_h.html.erb', collection: @results.records),

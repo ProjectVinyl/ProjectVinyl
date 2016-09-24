@@ -24,11 +24,11 @@
 		<% if @album %>
 			<div class="listing compact playlist">
 				<div class="controls">
-					<a id="playlist_prev" class="slide-left" title="Previous" <% if @prev_video %>href="/view/<%= @prev_video.video.id %>-<%= @prev_video.video.safe_title %>?list=<%= @album.id %>&index=<%= @prev_video.index %>"<% end %>>
+					<a id="playlist_prev" class="slide-left" title="Previous" <% if @prev_video %>href="/view/<%= @prev_video.video.id %>-<%= @prev_video.video.safe_title %>?<%= @prev_video.ref %>"<% end %>>
 						<i class="fa fa-fw fa-step-backward"></i>
 					</a>
 					<a class="title buff-right" href="/album/<%= @album.id %>-<%= @album.safe_title %>"><%= @album.title %></a>
-					<a id="playlist_next" class="slide-right" title="Next" <% if @next_video %>href="/view/<%= @next_video.video.id %>-<%= @next_video.video.safe_title %>?list=<%= @album.id %>&index=<%= @next_video.index %>"<% end %>>
+					<a id="playlist_next" class="slide-right" title="Next" <% if @next_video %>href="/view/<%= @next_video.video.id %>-<%= @next_video.video.safe_title %>?<%= @next_video.ref %>"<% end %>>
 						<i class="fa fa-fw fa-step-forward"></i>
 					</a>
 				</div>

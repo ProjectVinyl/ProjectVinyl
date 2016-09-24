@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160915085631) do
+ActiveRecord::Schema.define(version: 20160923172058) do
 
   create_table "album_items", force: :cascade do |t|
     t.integer "album_id", limit: 4
@@ -207,8 +207,11 @@ ActiveRecord::Schema.define(version: 20160915085631) do
     t.integer  "comment_thread_id", limit: 4
     t.text     "html_description",  limit: 65535
     t.boolean  "featured",                        default: false
+    t.string   "checksum",          limit: 32
+    t.integer  "heat",              limit: 4
   end
 
+  add_index "videos", ["checksum"], name: "index_videos_on_checksum", using: :btree
   add_index "videos", ["created_at"], name: "index_videos_on_created_at", using: :btree
   add_index "videos", ["user_id"], name: "index_videos_on_user_id", using: :btree
 

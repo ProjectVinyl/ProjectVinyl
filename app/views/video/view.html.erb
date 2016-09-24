@@ -6,13 +6,13 @@
 	<section class="listing compact playlist column-mobile-shown">
 		<div class="controls">
 		<% if @prev_video %>
-			<a id="playlist_prev" class="slide-left" title="Previous" href="/view/<%= @prev_video.video.id %>-<%= @prev_video.video.safe_title %>?list=<%= @album.id %>&index=<%= @prev_video.index %>">
+			<a id="playlist_prev" class="slide-left" title="Previous" href="/view/<%= @prev_video.video.id %>-<%= @prev_video.video.safe_title %>?<%= @prev_video.ref %>">
 				<i class="fa fa-fw fa-step-backward"></i>
 			</span>
 		<% end %>
 		<a class="title<% if @next_video %> buff-right<% end %>" href="/album/<%= @album.id %>-<%= @album.safe_title %>"><%= @album.title %></a>
 		<% if @next_video %>
-			<a id="playlist_next" class="slide-right" title="Next" href="/view/<%= @next_video.video.id %>-<%= @next_video.video.safe_title %>?list=<%= @album.id %>&index=<%= @next_video.index %>">
+			<a id="playlist_next" class="slide-right" title="Next" href="/view/<%= @next_video.video.id %>-<%= @next_video.video.safe_title %>?<%= @next_video.ref %>">
 				<i class="fa fa-fw fa-step-forward"></i>
 			</span>
 		<% end %>
