@@ -121,6 +121,7 @@ class VideoProcessor
     ProcessingWorker.where(running: true).each do |i|
       if i.zombie?
         i.running = false
+        Video.where(id: i.video_id).update(processed: true)
         VideoProcessor.processor(i)
         started_any = true
         result += 1
