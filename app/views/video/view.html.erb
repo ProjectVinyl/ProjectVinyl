@@ -3,7 +3,7 @@
 <div class="page resize-holder column-right column-mobile-fragmented right center">
 	<%= render partial: 'artist/bio', locals: {user: @user } %>
 	<% if @album %>
-	<section class="listing compact playlist column-mobile-shown">
+	<section class="listing compact playlist column-mobile-shown<% if @album.virtual? %> virtual<% end %>">
 		<div class="controls">
 		<% if @prev_video %>
 			<a id="playlist_prev" class="slide-left" title="Previous" href="/view/<%= @prev_video.video.id %>-<%= @prev_video.video.safe_title %>?<%= @prev_video.ref %>">

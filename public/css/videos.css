@@ -673,6 +673,23 @@ i.fa.fa-volume-mid {
 .listing.compact.playlist a:not(.selected, .grabbed) {
   opacity: 0.6;
 }
+
+.listing.compact.playlist.virtual a.selected + a {
+  opacity: 0.5;
+}
+.listing.compact.playlist.virtual a.selected + a + a {
+  opacity: 0.25;
+}
+.listing.compact.playlist.virtual a.selected + a + a + a {
+  opacity: 0.125;
+}
+.listing.compact.playlist.virtual a.selected + a + a + a + a {
+  opacity: 0.05125;
+}
+.listing.compact.playlist.virtual a.selected + a + a + a + a + a {
+  opacity: 0;
+}
+
 .listing.compact a > div {
   overflow: hidden;
 }
