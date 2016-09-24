@@ -10,7 +10,16 @@
 					</span>
 					<span title="Search by one or more tags" id="search_tags"<% if @type == 1 || @type == 3 %> style="display:none;"<% end %>>
 						<input type="text" name="tagquery" placeholder="tags" style="width:100%;margin-top:10px;" value="<%= @tag_query %>"></input>
-						<a class="tiny-link" href="/search/syntax">Search Syntax</a>
+						<a class="tiny-link slider-toggle" href="#" data-target=".explanation">Search Syntax</a>
+						<div class="slideout explanation properties">
+							<div class="group active" style="padding:10px;white-space:normal;">
+								<p>ProjectVinyl's search function is designed to work similarly to that of Derpibooru. Searching for a single tag name returns all videos with that tag, a list of tags returns all videos that have all of those tags.</p>
+								<p>You can also combine results using the OR ( | ) and AND ( & ) operators. Note that they must have spacing on either side.</p>
+								<p>Use uploader:&lt;name&gt; to find videos uploaded by the named user.</p>
+								<p>Use title:&lt;title&gt; to find videos that contains the given term in their title. (or type the title in the top bar)</p>
+								<p>Parenthesis '(' and ')' may be used as well for additional control</p>
+							</div>
+						</div>
 					</span>
 					<span class="search-options">
 						<label>

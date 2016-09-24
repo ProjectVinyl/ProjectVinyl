@@ -94,7 +94,7 @@
 					</li>
 				</ul>
 			</div>
-			<button class="action share"><i class="fa fa-share"></i> Share</button>
+			<button class="action share slider-toggle" data-target=".slideout.share"><i class="fa fa-share"></i> Share</button>
 		<% if user_signed_in? %>
 			<div class="split-button popper">
 				<button class="action star split-icon<% if @video.isStarredBy(current_user) %> starred<% end %>" data-action="star" data-id="<%= @video.id %>">
@@ -151,7 +151,7 @@
 				<% end %>
 			</a>
 		<% end %>
-			<button class="action report right"><i class="fa fa-flag"></i> Report</button>
+			<button class="action report right slider-toggle loadable" data-url="reporter/<%= @video.id %>" data-target=".form.report"><i class="fa fa-flag"></i> Report</button>
 		</div>
 		<div class="slideout form report slide-group" data-offset="0"></div>
 		<div class="slideout share properties">
@@ -170,7 +170,7 @@
 					<td class="field">
 						<input id="share_field" name="share_field" type="text" data-value="<%= '<iframe width="560" height="315" src="http://www.projectvinyl.net/embed/{id}{extra}" frameborder="0" allowfullscreen></iframe>' %>" value="<%= '<iframe width="560" height="315" src="http://www.projectvinyl.net/embed/' + @video.id.to_s + '" frameborder="0" allowfullscreen></iframe>' %>"></input>
 						<% if @album %><div>
-							<input id="album_share_toggle" data-first="<%= @items.length > 1 ? @items.first.video_id : @video.id %>" data-id="<%= @video.id %>" data-index="<%= @index %>" data-album-id="<%= @album.id %>" type="checkbox" value="playlist"></input>
+							<input id="album_share_toggle" type="checkbox" value="playlist"></input>
 							Share with playlist from the
 							<select id="album_share_type">
 								<option>current video</option>
@@ -185,43 +185,17 @@
 						<div id="embed_preview" class="center" style="display:none;height:315px">
 							<iframe style="max-width:100%;" width="560px" height="100%" frameborder="0"></iframe>
 						</div>
-						<button class="action test center">Preview</button>
+						<button class="action test center" data-id="<%= @video.id %>"<% if @album %> data-first="<%= @items.length > 1 ? @items.first.video_id : @video.id %>" data-index="<%= @index %>" data-album-id="<%= @album.id %>"<% end %>>Preview</button>
 					</td>
 				</tr>
 			</table>
 		</div>
 		<script>
 (function() {
-  function slideOut(holder) {
-    holder.css('min-height', holder.find('.group.active').height());
-    holder.css('max-height', holder.find('.group.active').height() + 10);
-    if (holder.hasClass('shown')) {
-      holder.removeClass('shown');
-    } else {
-      $('.slideout.shown').removeClass('shown');
-      holder.addClass('shown');
-    }
-  }
-  $('.action.report').on('click', function() {
-    var holder = $(this).parents('.page').find('.form.report');
-    if (!$(this).hasClass('loaded')) {
-      $(this).addClass('loaded');
-      ajax('reporter/<%= @video.id %>', function(json) {
-        holder.html(json.content);
-        slideOut(holder);
-      });
-    } else {
-        slideOut(holder);
-    }
-  });
-  $('.action.share').on('click', function() {
-    slideOut($('.slideout.share'));
-  });
   $('.action.test').on('click', function() {
     $('#embed_preview').css('display', '');
     updateShareIframe();
-    slideOut($(this).closest('.slideout'));
-    slideOut($(this).closest('.slideout'));
+    slideOut(slideOut($(this).closest('.slideout')));
   });
   $('#album_share_toggle, #album_share_type').on('change', function() {
     updateShareIframe();
@@ -231,9 +205,9 @@
     var type = $('#album_share_type').val();
     var share_field = $('#share_field');
     var htm = share_field.attr('data-value');
-    var id = toggle.attr(toggle[0].checked && type == 'beginning' ? 'data-first' : 'data-id');
+    var id = $('.action.test').attr(toggle.length && toggle[0].checked && type == 'beginning' ? 'data-first' : 'data-id');
     var extra = '';
-    if (toggle[0].checked) {
+    if (toggle.length && toggle[0].checked) {
       extra += '?list=' + toggle.attr('data-album-id') + '&index='
       extra += type == 'beginning' ? 0 : toggle.attr('data-index');
     }

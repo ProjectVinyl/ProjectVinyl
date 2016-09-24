@@ -1311,7 +1311,7 @@ function lazyLoad(button) {
   var target = $('#' + button.attr('data-target'));
   var page = parseInt(button.attr('data-page')) + 1;
   button.addClass('working');
-  ajax.get(button.attr('data-type'), function(json) {
+  ajax.get(button.attr('data-url'), function(json) {
     button.removeClass('working');
     if (json.page == page) {
       target.append(json.content);
@@ -1321,7 +1321,7 @@ function lazyLoad(button) {
     }
   }, {
     page: page,
-    user: button.attr('data-id')
+    id: button.attr('data-id')
   });
 }
 
@@ -1330,6 +1330,33 @@ function timeoutOn(target, func, time) {
     func.apply(target);
   }, time);
 }
+
+function slideOut(holder) {
+  holder.css('min-height', holder.find('.group.active').height());
+  holder.css('max-height', holder.find('.group.active').height() + 10);
+  if (holder.hasClass('shown')) {
+    holder.removeClass('shown');
+  } else {
+    $('.slideout.shown').removeClass('shown');
+    holder.addClass('shown');
+  }
+  return holder;
+}
+
+$(document).on('click', '.slider-toggle', function(e) {
+  var me = $(this);
+  var holder = $(me.attr('data-target'));
+  if (me.hasClass('loadable') && !me.hasClass('loaded')) {
+    me.addClass('loaded');
+    ajax(me.attr('data-url'), function(json) {
+      holder.html(json.content);
+      slideOut(holder);
+    });
+  } else {
+    slideOut(holder);
+  }
+  e.preventDefault();
+});
 
 $(document).on('click', '.load-more button', function() {
   lazyLoad($(this));
