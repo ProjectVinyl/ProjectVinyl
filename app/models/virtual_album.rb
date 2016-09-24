@@ -44,14 +44,16 @@ end
 
 class VirtualAlbum < Album
   def initialize(query, index)
-    @offset = index > 0 ? index - 1 : 0
+    @offset = index < 20 ? 0 : index - 20;
     @index = index
-    @query = query
+    @query = query.strip
     @items = []
     @videos = []
-    self.fetch_items().each_with_index do |item,i|
-      @videos << item
-      @items << VirtualAlbumItem.new(self, item, @offset + i)
+    if @query && @query.length > 0
+      self.fetch_items().each_with_index do |item,i|
+        @videos << item
+        @items << VirtualAlbumItem.new(self, item, @offset + i)
+      end
     end
   end
   
@@ -119,7 +121,7 @@ class VirtualAlbum < Album
   end
   
   def fetch_items
-    return TagSelector.new(@query).videoQuery_two(0, 5).order_by('v.id').offset(@offset).exec().records()
+    return TagSelector.new(@query).videoQuery_two(0, 20).order_by('v.id').offset(@offset).exec().records()
   end
   
   def addItem(video)
@@ -129,7 +131,7 @@ class VirtualAlbum < Album
   
   def get_next(user, current)
     current -= @offset
-    if current >= @items.length - 1
+    if @items.length == 0 || current >= @items.length - 1
       return nil
     end
     return @items[current + 1]
@@ -137,7 +139,7 @@ class VirtualAlbum < Album
   
   def get_prev(user, current)
     current -= @offset
-    if current < 1
+    if @items.length == 0 || current < 1
       return nil
     end
     return @items[(current - 1) % @items.length]

@@ -3,7 +3,7 @@
 		<span class="bump" data-index="-1"></span>
 	<% @items.each do |item| %>
 		<% if !item.video.isHiddenBy(current_user) %>
-		<a <% if !item.video.hidden && !item.video.isSpoileredBy(current_user) %>href="/view/<%= item.video.id %>-<%= item.video.safe_title %>?<%= album_item.ref %>"<% else %>class="hidden-item"<% end %> data-id="<%= item.id %>" data-index="<%= item.index %>">
+		<a <% if !item.video.hidden && !item.video.isSpoileredBy(current_user) %>href="/view/<%= item.video.id %>-<%= item.video.safe_title %>?<%= item.ref %>"<% else %>class="hidden-item"<% end %> data-id="<%= item.id %>" data-index="<%= item.index %>">
 		<% if @modificationsAllowed %>
 			<div class="handle"><i class="fa fa-ellipsis-v"></i></div>
 		<% end %>

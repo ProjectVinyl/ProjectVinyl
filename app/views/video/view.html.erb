@@ -10,7 +10,7 @@
 				<i class="fa fa-fw fa-step-backward"></i>
 			</span>
 		<% end %>
-		<a class="title<% if @next_video %> buff-right<% end %>" href="/album/<%= @album.id %>-<%= @album.safe_title %>"><%= @album.title %></a>
+		<a class="title<% if @next_video %> buff-right<% end %>" <% if !@album.virtual? %>href="/album/<%= @album.id %>-<%= @album.safe_title %>"<% end %>><%= @album.title %></a>
 		<% if @next_video %>
 			<a id="playlist_next" class="slide-right" title="Next" href="/view/<%= @next_video.video.id %>-<%= @next_video.video.safe_title %>?<%= @next_video.ref %>">
 				<i class="fa fa-fw fa-step-forward"></i>
