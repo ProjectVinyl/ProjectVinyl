@@ -12,6 +12,7 @@ Rails.application.routes.draw do
   get 'fairuse' => 'staff#copyright'
   get 'policy' => 'staff#policy'
   get 'terms' => 'staff#policy'
+  get 'ajax/donate' => 'staff#donate'
   
   get 'admin' => 'admin#view'
   get 'admin/report/view/:id' => 'admin#view_report'

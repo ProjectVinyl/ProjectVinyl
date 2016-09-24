@@ -7,4 +7,8 @@ class StaffController < ApplicationController
   
   def policy
   end
+  
+  def donate
+    render partial: "donate"
+  end
 end
