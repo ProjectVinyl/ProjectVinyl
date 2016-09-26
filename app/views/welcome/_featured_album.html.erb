@@ -1,7 +1,7 @@
 <div class="regular-region">
 	<h1 class="title resize-target"><%= featured_album.title %></h1>
 	<ul id="videos" class="horizontal video-list">
-		<%= render partial: '/layouts/video_thumb_h', collection: featured_album.videos.limit(4) %>
+		<%= render partial: '/layouts/video_thumb_h', collection: featured_album.videos.where(hidden: false).limit(4) %>
 		<li class="generic thumb">
 			<a class="thumb" href="/album/<%= featured_album.id %>-<%= featured_album.safe_title %>">
 				<span class="tile link">
