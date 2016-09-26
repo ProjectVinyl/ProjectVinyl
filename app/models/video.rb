@@ -142,11 +142,12 @@ class Video < ActiveRecord::Base
     end
     self.file = ext
     self.mime = media.content_type
+    data = media.read
     hash = Ffmpeg.compute_checksum(data)
     if hash != self.checksum
       self.checksum = hash
     end
-    self.save_file(media.read)
+    self.save_file(data)
   end
   
   def save_file(data)
