@@ -34,8 +34,8 @@
 			<a <% if !comment.user.isDummy %>class="user-link" data-id="<%= comment.user_id %>" href="<%= comment.user.link %>"<% end %>>
 				<%= comment.user.username %>
 			</a>
-			<% if comment.user.is_admin %>
-				<i style="color:orange" onmouseover="e.stopPropagation();" class="fa fa-gavel" title="Admin"></i>
+                        <% if comment.user.is_admin %>
+				<i style="color:orange" onmouseover="e.stopPropagation();" class="fa fa-gavel icon" title="Admin"></i>
 			<% end %>
 	<% comment.mentions.each do |mention| %>
 		<a href="#comment_<%= Comment.encode_open_id(mention.parent_id) %>" data-comment-id="<%= mention.parent_id %>" class="mention">

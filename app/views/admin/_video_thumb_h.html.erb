@@ -1,11 +1,14 @@
 <li class="generic thumb<%= video_thumb_h.processed == false ? " notice" : "" %>">
 	<a class="thumb" href="/admin/video/<%= video_thumb_h.id %>">
-		<div class="tile" style="background-image:url('/<%= video_thumb_h.hidden ? 'images/default-cover' : 'cover/' + video_thumb_h.id.to_s %>-small.png');">
+		<div class="tile" style="background-image:url('<%= video_thumb_h.tiny_thumb(current_user) %>');">
 			<span class="tag-list duration">
 				<%= duration video_thumb_h.getDuration %>
 			</span>
 		</div>
 		<div class="title">
+			<% if video_thumb_h.hidden %>
+				<span title="Private - This item will not appear in public listings" class="icon"><i class="fa fa-lock"></i></span>
+			<% end %>
 			<%= video_thumb_h.title %>
 		</div>
 		<span class="date" title="<%= video_thumb_h.created_at %>">

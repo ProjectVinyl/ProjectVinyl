@@ -1,5 +1,5 @@
-<a class="thumb" href="/view/<%= video_thumb_i.id %>-<%= video_thumb_i.safe_title %>">
-	<div class="tile" style="background-image:url('/<%= video_thumb_i.hidden || video_thumb_i.isSpoileredBy(current_user) ? 'images/default-cover' : 'cover/' + video_thumb_i.id.to_s %>-small.png');">
+<a class="thumb<% if video_thumb_i.hidden %> thumb-hidden<% end %>" href="/view/<%= video_thumb_i.id %>-<%= video_thumb_i.safe_title %>">
+	<div class="tile" style="background-image:url('<%= video_thumb_i.tiny_thumb(current_user) %>');">
 		<span class="tag-list duration">
 			<%= duration video_thumb_i.getDuration %>
 		</span>

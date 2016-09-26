@@ -304,6 +304,9 @@ ul.horizontal > li + li {
 .thumb {
   text-decoration: none;
 }
+.thumb-hidden {
+  opacity: 0.3;
+}
 .tile {
   max-width: 250px;
   min-width: 170px;

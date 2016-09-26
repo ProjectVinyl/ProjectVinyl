@@ -1297,6 +1297,10 @@ img.iconic, img.emoticon {
   box-shadow: none;
 }
 
+.icon {
+  cursor: default;
+}
+
 img.emoticon {
   max-height: 20px;
   margin: 0 -5px 0 0;
