@@ -1,6 +1,14 @@
 if (navigator.userAgent.indexOf("OPR") !== -1) {
   $('html').addClass('opera');
 }
+
+var window_focused = false;
+$(window).on('focus', function() {
+  window_focused = true;
+});
+$(window).on('blur', function () {
+  window_focused = false;
+});
 $(window).ready(function () {
 	function scroller() {
 		var top = window.scrollY;
@@ -20,6 +28,7 @@ $(window).ready(function () {
 			$(window).on('scroll', scroller);
 		}
 	}
+  
 });
 var ajax = (function() {
   var token = $('meta[name=csrf-token]').attr('content');
@@ -90,7 +99,7 @@ var ajax = (function() {
                     time /= 24;
                     measure = 'd';
                   }
-                  message.text(time + measure + ' remaining (' + Math.floor(percentage) + '% )');
+                  message.text((Math.floor(time*100)/100) + measure + ' remaining (' + Math.floor(percentage) + '% )');
                 }
                 fill.css('width', percentage + '%');
                 message.css({
@@ -122,8 +131,8 @@ var ajax = (function() {
       error: function(e, err, msg) {
         if (timer) clearInterval(timer);
         form.removeClass('waiting').addClass('error');
-        if (callbacks.error) return callbacks.error(message, err, msg);
-        message.text(err + ": " + msg);
+        if (callbacks.error) return callbacks.error(message, msg, e.responseText);
+        message.text(e.responseText);
       },
       cache: false,
       contentType: false,
