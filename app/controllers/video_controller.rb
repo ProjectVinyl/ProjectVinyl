@@ -273,7 +273,11 @@ class VideoController < ApplicationController
     @page = params[:page].to_i
     
     if @user = params[:id]
-      @results = Pagination.paginate(User.find(@user.to_i).videos.includes(:tags).order(:created_at), @page, 8, true)
+      @results = User.find(@user.to_i).videos.includes(:tags)
+      if !user_signed_in? || current_user.id != @user
+        @result = @results.where(hidden: false)
+      end
+      @results = Pagination.paginate(@result.order(:created_at), @page, 8, true)
     else
       @results = Pagination.paginate(Video.Finder.order(:created_at), @page, 50, true)  
     end
