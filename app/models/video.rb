@@ -25,14 +25,14 @@ class Video < ActiveRecord::Base
     return Video.where('id IN (?)', selected)
   end
   
-  def self.ensure_uniq(file)
-    if file
-      hash = Ffmpeg.compute_checksum(file.read)
+  def self.ensure_uniq(data)
+    if data
+      hash = Ffmpeg.compute_checksum(data)
       if Video.where(checksum: hash).count == 0
-        return hash
+        return {valid: true, value: hash}
       end
     end
-    return false
+    return {valid: false}
   end
   
   def self.verify_integrity(report)
@@ -142,12 +142,16 @@ class Video < ActiveRecord::Base
     end
     self.file = ext
     self.mime = media.content_type
-    self.save_file(media)
+    hash = Ffmpeg.compute_checksum(data)
+    if hash != self.checksum
+      self.checksum = hash
+    end
+    self.save_file(media.read)
   end
   
-  def save_file(media)
+  def save_file(data)
     File.open(self.video_path, 'wb') do |file|
-      file.write(media.read)
+      file.write(data)
       file.flush()
     end
     self.processed = nil
@@ -278,6 +282,13 @@ class Video < ActiveRecord::Base
   
   def star(user)
     return user.stars.toggle(self)
+  end
+  
+  def mix_string(user)
+    result = self.tags.select do |t|
+      !(user.hides([t.id]) || user.spoilers([t.id])) && t.video_count > 1
+    end
+    return result.map(&:name).sort().join(' | ')
   end
   
   def isHiddenBy(user)

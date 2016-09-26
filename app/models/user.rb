@@ -21,7 +21,7 @@ class UserDummy
   end
   
   def queue(excluded)
-    @queue = Video.randomVideos(Video.where(hidden: false, user_id: @id).where.not(id: excluded), 7)
+    return Video.randomVideos(Video.where(hidden: false, user_id: @id).where.not(id: excluded), 6)
   end
   
   def avatar

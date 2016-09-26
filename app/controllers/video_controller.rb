@@ -132,7 +132,8 @@ class VideoController < ApplicationController
           if !video[:title] || video[:title].strip.length == 0
             return error(params[:async], "Error", "You need to specify a title.")
           end
-          if !(checksum = Video.ensure_uniq(file))
+          data = file.read
+          if !(checksum = Video.ensure_uniq(data))[:valid]
             return error(params[:async], "Duplication Error", "The uploaded video already exists.")
           end
           ext = File.extname(file.original_filename)
@@ -155,12 +156,12 @@ class VideoController < ApplicationController
                   views: 0,
                   hidden: false,
                   processed: false,
-                  checksum: checksum
+                  checksum: checksum[:value]
           )
           comments.owner_id = video.id
           comments.save
           Tag.loadTags(params[:video][:tag_string], video)
-          video.save_file(file)
+          video.save_file(data)
           video.setThumbnail(cover)
           video.save
           video.generateWebM
