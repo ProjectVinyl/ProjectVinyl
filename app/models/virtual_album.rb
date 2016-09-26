@@ -53,6 +53,9 @@ class VirtualAlbum < Album
       self.fetch_items().each_with_index do |item,i|
         @videos << item
         @items << VirtualAlbumItem.new(self, item, @offset + i)
+        if @offset + i == @index
+          @current = item
+        end
       end
     end
   end
@@ -100,6 +103,10 @@ class VirtualAlbum < Album
   
   def videos
     @videos
+  end
+  
+  def current(defau)
+    @current || (@videos.length ? @videos.first : defau)
   end
   
   def ownedBy(user)

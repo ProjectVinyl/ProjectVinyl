@@ -214,6 +214,13 @@ class Video < ActiveRecord::Base
     end
   end
   
+  def tiny_thumb(user)
+    if (self.hidden && (!user || self.user_id != user.id)) || self.isSpoileredBy(user)
+      return '/images/default-cover-small.png'
+    end
+    return '/cover/' + self.id.to_s + '-small.png'
+  end
+  
   def drop_tags(ids)
     Tag.where('id IN (?) AND video_count > 0', ids).update_all('video_count = video_count - 1')
     VideoGenre.where('video_id = ? AND tag_id IN (?)', self.id, ids).delete_all
@@ -292,6 +299,19 @@ class Video < ActiveRecord::Base
     return result.map(&:name).sort().join(' | ')
   end
   
+  def json
+    return {
+      id: self.id,
+      title: self.title,
+      description: self.description,
+      tags: self.tag_string,
+      uploader: {
+        id: self.user.id,
+        username: self.user.username
+       }
+    }
+  end
+  
   def isHiddenBy(user)
     if user
       return user.hides(@tag_ids || (@tag_ids = self.tags.map(&:id)))
@@ -330,7 +350,7 @@ class Video < ActiveRecord::Base
   end
   
   def getTitle
-    return self.hidden ? "Hidden Video" : (self.title || "Untitled Video")
+    return self.title || "Untitled Video"
   end
   
   def set_title(title)

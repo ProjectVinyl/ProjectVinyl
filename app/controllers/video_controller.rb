@@ -4,6 +4,23 @@ class VideoController < ApplicationController
       render '/layouts/error', locals: { title: 'Nothing to see here!', description: "This is not the video you are looking for." }
       return
     end
+    if params[:list] || params[:q]
+      if params[:q]
+        @album = VirtualAlbum.new(params[:q], params[:index].to_i)
+        @video = @album.current(@video)
+      else
+        @album = Album.where(id: params[:list]).first
+      end
+      if @album
+        @items = @album.all_items
+        @index = params[:index].to_i || (@items.first ? @items.first.index : 0)
+        if @index > 0
+          @prev_video = @album.get_prev(current_user, @index)
+        end
+        @next_video = @album.get_next(current_user, @index)
+        @album_editable = user_signed_in? && @album.ownedBy(current_user)
+      end
+    end
     @time = params[:t].to_i || 0
     if !@video.processed && user_signed_in? && current_user.is_admin
       if @video.processing
@@ -37,22 +54,6 @@ class VideoController < ApplicationController
       @video.views = @video.views + 1
       @video.heat = @video.computeHotness
       @video.save
-    end
-    if params[:list] || params[:q]
-      if params[:q]
-        @album = VirtualAlbum.new(params[:q], params[:index].to_i)
-      else
-        @album = Album.where(id: params[:list]).first
-      end
-      if @album
-        @items = @album.all_items
-        @index = params[:index].to_i || (@items.first ? @items.first.index : 0)
-        if @index > 0
-          @prev_video = @album.get_prev(current_user, @index)
-        end
-        @next_video = @album.get_next(current_user, @index)
-        @album_editable = user_signed_in? && @album.ownedBy(current_user)
-      end
     end
   end
   
@@ -180,6 +181,46 @@ class VideoController < ApplicationController
     error(params[:async], "Access Denied", "You can't do that right now.")
   end
   
+  def matching_videos
+    @videos = Video.where('title LIKE ?', '%' + params[:q] + '%').limit(10)
+    @videos = @videos.map do |v|
+      v.json
+    end
+    render json: @videos
+  end
+  
+  def video_details
+    if @video = Video.where(id: params[:id]).first
+      if !@video.hidden || (user_signed_in && current_user.is_admin)
+        render json: @video.json
+      end
+    else
+      render status: 404, nothing: true
+    end
+  end
+  
+  def video_update
+    if user_signed_in? && @video = Video.where(id: params[:id]).first
+      if @video.user_id == current_user.id || current_user.is_admin
+        if params[:tags]
+          Tag.loadTags(params[:tags], video)
+        end
+        if params[:source]
+          video.source = params[:source]
+        end
+        if params[:description]
+          video.set_description(params[:description])
+        end
+        if params[:title]
+          video.set_title(params[:title])
+        end
+        video.save
+        return render status: 200, nothing: true
+      end
+    end
+    render satus: 401, nothing: true
+  end
+  
   def update
     if user_signed_in? && video = Video.where(id: params[:id]).first
       if params[:field] == 'tags'
@@ -271,13 +312,13 @@ class VideoController < ApplicationController
   
   def page
     @page = params[:page].to_i
-    
     if @user = params[:id]
       @results = User.find(@user.to_i).videos.includes(:tags)
-      if !user_signed_in? || current_user.id != @user
-        @result = @results.where(hidden: false)
+puts user_signed_in?
+      if !user_signed_in? || current_user.id != @user.to_i
+        @results = @results.where(hidden: false)
       end
-      @results = Pagination.paginate(@result.order(:created_at), @page, 8, true)
+      @results = Pagination.paginate(@results.order(:created_at), @page, 8, true)
     else
       @results = Pagination.paginate(Video.Finder.order(:created_at), @page, 50, true)  
     end
