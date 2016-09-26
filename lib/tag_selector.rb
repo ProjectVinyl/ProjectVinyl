@@ -278,7 +278,7 @@ WHERE ("
       end
     end
     if !ascending
-      @ordering << " DESC"
+      @ordering = @ordering.gsub(', ', ' DESC, ') + " DESC"
     end
     return self
   end
