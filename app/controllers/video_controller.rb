@@ -7,7 +7,6 @@ class VideoController < ApplicationController
     if params[:list] || params[:q]
       if params[:q]
         @album = VirtualAlbum.new(params[:q], params[:index].to_i)
-        @video = @album.current(@video)
       else
         @album = Album.where(id: params[:list]).first
       end
