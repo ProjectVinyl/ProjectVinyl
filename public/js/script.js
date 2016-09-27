@@ -1370,3 +1370,8 @@ $(document).on('click', '.slider-toggle', function(e) {
 $(document).on('click', '.load-more button', function() {
   lazyLoad($(this));
 });
+$(document).on('click', '.mix a', function(e) {
+  var ref = $(this).attr('href');
+  document.location.replace(ref + '&t=' + $('#video .player')[0].getPlayerObj().video.currentTime);
+  e.preventDefault();
+});
