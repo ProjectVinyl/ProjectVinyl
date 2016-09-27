@@ -121,6 +121,10 @@ Rails.application.routes.draw do
   get 'ajax/comments/get' => 'thread#get_comment'
   get 'ajax/comments/:thread_id/:order' => 'thread#page'
   
+  get 'api/videos' => 'video#matching_videos'
+  get 'api/video/get/:id' => 'video#video_details'
+  post 'api/video/set/:id' => 'video#video_update'
+  
   get '/' => 'welcome#index'
   root 'welcome#index'
 end
