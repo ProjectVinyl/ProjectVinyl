@@ -294,7 +294,7 @@ class Video < ActiveRecord::Base
   
   def mix_string(user)
     result = self.tags.select do |t|
-      !(user.hides([t.id]) || user.spoilers([t.id])) && t.video_count > 1
+      !(user && (user.hides([t.id]) || user.spoilers([t.id]))) && t.video_count > 1
     end
     return result.map(&:name).sort().join(' | ')
   end
