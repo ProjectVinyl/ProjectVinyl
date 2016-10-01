@@ -6,7 +6,14 @@
 				<span style="background-image:url('<% if @items.first %>/cover/<%= @items.first.video.id %>-small<% else %>/images/default-cover-g<% end %>.png');" class="stack-item item-2"></span>
 			</span>
 		</span>
-		<div class="title"><%= album_thumb_h.title %></div>
+		<div class="title">
+			<% if album_thumb_h.hidden || album_thumb_h.listing == 2 %>
+				<span title="Private - Only you can see this album" class="icon"><i class="fa fa-lock"></i></span>
+			<% elsif album_thumb_h.listing == 1 %>
+				<span title="Unlisted - This album will not appear on the site but can be still accessed directly" class="icon"><i class="fa fa-unlock"></i></span>
+			<% end %>
+			<%= album_thumb_h.title %>
+		</div>
 		<span class="date" title="<%= album_thumb_h.created_at %>"><%= raw since album_thumb_h.created_at %></span>
 	</a>
 </li>

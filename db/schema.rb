@@ -11,12 +11,14 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160923172059) do
+ActiveRecord::Schema.define(version: 20160930195626) do
 
   create_table "album_items", force: :cascade do |t|
-    t.integer "album_id", limit: 4
-    t.integer "video_id", limit: 4
-    t.integer "index",    limit: 4
+    t.integer  "album_id",   limit: 4
+    t.integer  "video_id",   limit: 4
+    t.integer  "index",      limit: 4
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   add_index "album_items", ["album_id"], name: "index_album_items_on_album_id", using: :btree
@@ -32,6 +34,9 @@ ActiveRecord::Schema.define(version: 20160923172059) do
     t.boolean  "hidden",                         default: false
     t.string   "safe_title",       limit: 255
     t.text     "html_description", limit: 65535
+    t.boolean  "reverse_ordering",               default: false
+    t.integer  "ordering",         limit: 4,     default: 0
+    t.integer  "listing",          limit: 4,     default: 0
   end
 
   add_index "albums", ["user_id"], name: "index_albums_on_user_id", using: :btree

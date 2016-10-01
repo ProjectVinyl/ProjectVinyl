@@ -1,26 +1,17 @@
 <section style="width:100%" class="page listing compact">
-	<div class="items<% if @modificationsAllowed %> reorderable<% end %>" data-target="albumitem">
+	<% if @album.ordering && @album.ordering > 0 %>
+		<span class="album-notice">
+			<i class="fa fa-random -<% if @album.reverse_ordering %>asc<% else %>desc<% end %>"></i>
+			This playlist is automatically sorted by <%= @album.ordering_text %>.
+		</span>
+	<% end %>
+	<div id="items" class="items<% if @modificationsAllowed %> reorderable<% end %>" data-target="albumitem">
 		<span class="bump" data-index="-1"></span>
-	<% @items.each do |item| %>
-		<% if !item.video.isHiddenBy(current_user) %>
-		<a <% if !item.video.hidden && !item.video.isSpoileredBy(current_user) %>href="/view/<%= item.video.id %>-<%= item.video.safe_title %>?<%= item.ref %>"<% else %>class="hidden-item"<% end %> data-id="<%= item.id %>" data-index="<%= item.index %>">
-		<% if @modificationsAllowed %>
-			<div class="handle"><i class="fa fa-ellipsis-v"></i></div>
-		<% end %>
-			<div class="title">
-				<div><%= item.video.getTitle %></div>
-			</div>
-			<div class="duration">
-				<div><%= duration item.video.getDuration %></div>
-			</div>
-			<div class="author">
-				<span><%= item.video.user.username %></span>
-			</div>
-		<% if @modificationsAllowed %>
-			<div class="remove" title="Remove" data-id="<%= item.id %>"><span><i class="fa fa-times"></i></span></div>
-		<% end %>
-		</a>
-		<% end %>
+		<%= render partial: 'album/item', collection: @items.records %>
+	</div>
+	<div class="load-more">
+	<% if @items.pages > 0 %>
+		<button data-page="0" data-url="albums/items" data-id="<%= @album.id %>" data-target="items">Load More</button>
 	<% end %>
 	</div>
 </section>

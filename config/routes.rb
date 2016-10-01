@@ -64,11 +64,14 @@ Rails.application.routes.draw do
   get 'stream/:id' => 'imgs#stream', constraints: { id: /.*/ }
   
   get 'ajax/album/create' => 'album#new'
+  get 'ajax/album/update/:id' => 'album#edit'
   get 'album/:id' => 'album#view'
   get 'albums' => 'album#list'
+  get 'ajax/albums/items' => 'album#items'
   get 'ajax/albums' => 'album#page'
   
   post 'ajax/create/album' => 'album#create'
+  patch 'ajax/edit/album/:id' => 'album#update_ordering'
   post 'ajax/update/album' => 'album#update'
   post 'ajax/delete/album/:id' => 'album#delete'
   

@@ -1,14 +1,16 @@
 	<div class="post">
 		<div class="tile stack left">
-			<span style="background-image:url('<% if @items.second %>/cover/<%= @items.second.video.id %>-small<% else %>/images/default-cover-g<% end %>.png');" class="stack-item item-1">
-				<span style="background-image:url('<% if @items.first %>/cover/<%= @items.first.video.id %>-small<% else %>/images/default-cover-g<% end %>.png');" class="stack-item item-2"></span>
+			<span style="background-image:url('<% if @items.records.second %>/cover/<%= @items.records.second.video.id %>-small<% else %>/images/default-cover-g<% end %>.png');" class="stack-item item-1">
+				<span style="background-image:url('<% if @items.records.first %>/cover/<%= @items.records.first.video.id %>-small<% else %>/images/default-cover-g<% end %>.png');" class="stack-item item-2"></span>
 			</span>
 		</div>
 		<% if @modificationsAllowed %>
 			<h1 class="editable short title" data-target="album" data-member="title" data-id="<%= @album.id %>">
-				<% if @album.hidden && @album.user_id == current_user.id %>
+			<% if (@album.hidden || @album.listing == 2) && @album.user_id == current_user.id %>
 				<span title="Private - Only you can see this album" class="icon"><i class="fa fa-lock"></i></span>
-				<% end %>
+			<% elsif @album.listing == 1 %>
+				<span title="Unlisted - This album will not appear on the site but can be still accessed directly" class="icon"><i class="fa fa-unlock"></i></span>
+			<% end %>
 				<span class="content"><%= @album.title %></span>
 				<span class="edit"><i class="fa fa-pencil"></i></span>
 			</h1>
@@ -17,7 +19,12 @@
 				<span class="edit"><i class="fa fa-pencil" ></i></span>
 			</div>
 		<% else %>
-			<h1 class="title"><%= @album.title %></h1>
+			<h1 class="title">
+			<% if @album.listing == 1 %>
+				<span title="Unlisted - This album will not appear on the site but can be still accessed directly" class="icon"><i class="fa fa-unlock"></i></span>
+			<% end %>
+				<%= @album.title %>
+			</h1>
 			<div class="content description"><%= raw @album.html_description %></div>
 		<% end %>
 			<span class="tag-list underline">
@@ -26,10 +33,11 @@
 				| last updated <%= since @album.updated_at %>
 			</span>
 			<div class="actions">
+				<% if user_signed_in? %>
 				<div class="split-button popper">
 					<button class="action options pop-out-toggle"><i class="fa fa-gear"></i> Options</button>
 					<ul class="pop-out">
-					<% if user_signed_in? && current_user.is_admin %>
+					<% if current_user.is_admin %>
 						<li class="action">
 							<a href="/admin/album/<%= @album.id %>">
 								<span class="icon"><i class="fa fa-gavel"></i></span>
@@ -45,8 +53,17 @@
 							</a>
 						</li>
 					<% end %>
+					<% if @modificationsAllowed %>
+						<li class="action">
+							<a class="confirm-button" data-title="Album Settings" data-icon="cog" data-url="album/update/<%= @album.id %>">
+								<span class="icon"><i class="fa fa-cog"></i></span>
+								<span class="label">Settings</span>
+							</a>
+						</li>
+					<% end %>
 					</ul>
 				</div>
-				<a class="button action" style="margin-right: 10px;" <% if @items.first %>href="/view/<%= @items.first.video.id %>-<%= @items.first.video.safe_title %>?list=<%= @album.id %>&index=<%= @items.first.index %>"<% end %>><i class="fa fa-play"></i> Play All</a>
+				<% end %>
+				<a class="button action" style="margin-right: 10px;" <% if @items.records.first %>href="/view/<%= @items.records.first.video.id %>-<%= @items.records.first.video.safe_title %>?list=<%= @album.id %>&index=<%= @items.records.first.index %>"<% end %>><i class="fa fa-play"></i> Play All</a>
 			</div>
 	</div>
