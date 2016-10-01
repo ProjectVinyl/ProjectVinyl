@@ -260,7 +260,7 @@ WHERE ("
       elsif ordering == 4
         if @page == 0
           ordering_columns = ["v.length","v.created_at","v.updated_at","v.score","v.views","v.description"]
-          session[:random_ordering] = "'" + ordering_columns[Random.new(0..ordering_columns.length)] + "','" + ordering_columns[Random.new(0..ordering_columns.length)] + "'"
+          session[:random_ordering] = "'" + ordering_columns[rand(0..ordering_columns.length)] + "','" + ordering_columns[rand(0..ordering_columns.length)] + "'"
         end
         @ordering = session[:random_ordering]
       end
@@ -450,6 +450,9 @@ WHERE ("
   end
   
   def self.loadOPS(search_terms)
+    if !search_terms || search_terms.strip.length == 0
+      return []
+    end
     opset = []
     slurp = ""
     prev = ""
@@ -492,7 +495,7 @@ WHERE ("
           opset << slurp
           slurp = ""
           opset << OR
-        elsif i == ')' && prev == ' '
+        elsif i == ')' && prev != '\\'
           if open_count > 0
             if slurp.index('-') == 0
               slurp = slurp.sub(/-/,'')
@@ -515,10 +518,10 @@ WHERE ("
         else
           slurp << i
         end
-      elsif i == '('
+      elsif i == '(' && prev != '\\'
         opset << GROUP_START
         open_count += 1
-      elsif i == ')' && prev != '('
+      elsif i == ')' && prev != '\\'
         if open_count > 0
           opset << GROUP_END
           open_count -= 1
