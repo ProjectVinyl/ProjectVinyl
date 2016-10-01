@@ -2330,3 +2330,16 @@ span.active-icon {
     margin-bottom: 9px;
   }
 }
+
+/*Badges*/
+.fa-duck {
+  position: relative;
+}
+.fa-duck::before {
+  content: '';
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  margin-bottom: -0.1em;
+  background: url('/badges/duck.png') no-repeat center/cover;
+}

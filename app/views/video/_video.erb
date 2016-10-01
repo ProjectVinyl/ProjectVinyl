@@ -64,7 +64,7 @@
 			<div class="split-button popper">
 				<button class="action options pop-out-toggle"><i class="fa fa-gear"></i> Options</button>
 				<ul class="pop-out">
-				<% if user_signed_in? && current_user.is_admin %>
+				<% if user_signed_in? && current_user.is_contributor? %>
 					<li class="action">
 						<a href="/admin/video/<%= @video.id %>">
 							<span class="icon"><i class="fa fa-gavel"></i></span>

@@ -1,9 +1,76 @@
-<% lim "900px" %>
 <h1 class="title">
 	<a href="/">Home</a> <i class="fa fa-chevron-right"></i> <a href="/admin">Admin</a> <i class="fa fa-chevron-right"></i> 
 	User <i class="fa fa-chevron-right"></i> <a href=""><%= @user.username %></a>
 </h1>
-<section style="width:100%;" class="page properties">
+<section class="page properties column-left">
 	<h1>Edit Profile</h1>
 	<%= render partial: 'artist/edit', locals: { user: @user, url: "/ajax/update/artist?artist_id=" + @user.id.to_s } %>
+</section>
+<section class="page properties column-right right">
+	<table>
+		<tr>
+			<td class="label">
+				Roles
+			</td>
+			<td class="field">
+				<% if current_user.id == @user.id %>
+				<p style="color:red">You cannot change your own role.</p>
+				<% else %>
+				<button class="action toggle blue" data-family="role-flags" data-action="admin" data-target="user/role" data-id="<%= @user.id %>">
+					<span class="icon">
+						<% if @user.admin? %>
+						<i class="fa fa-check"></i>
+						<% end %>
+					</span>
+					<span class="label">Administrator</span>
+				</button>
+				<br><br>
+				<button class="action toggle blue" data-family="role-flags" data-action="contributor" data-target="user/role" data-id="<%= @user.id %>">
+					<span class="icon">
+						<% if @user.contributor? %>
+						<i class="fa fa-check"></i>
+						<% end %>
+					</span>
+					<span class="label">Moderator</span>
+				</button>
+				<br><br>
+				<button class="action toggle blue" data-family="role-flags" data-action="staff" data-target="user/role" data-id="<%= @user.id %>">
+					<span class="icon">
+						<% if @user.staff? %>
+						<i class="fa fa-check"></i>
+						<% end %>
+					</span>
+					<span class="label">Staff</span>
+				</button>
+				<% end %>
+			</td>
+		</tr>
+		<tr>
+			<td class="label">
+				Badges
+			</td>
+			<td>
+				<table>
+				<% had_badges = @user.badges.pluck(:id) %>
+				<% Badge.all.each do |i| %>
+					<tr>
+						<td>
+							<button class="action toggle blue" data-action="togglebadge/<%= i.id %>" data-target="user" data-id="<%= @user.id %>">
+								<span class="icon">
+									<% if had_badges.include?(i.id) %>
+									<i class="fa fa-check"></i>
+									<% end %>
+								</span>
+								<span class="label"><%= i.title %></span>
+							</button>
+						</td>
+						<td style="color:<%= i.colour %>">
+							<img src="/badges/<%= i.icon %>.png"></img>
+						</td>
+					</tr>	
+				<% end %>
+				</table>
+			</td>
+		</tr>
+	</table>
 </section>

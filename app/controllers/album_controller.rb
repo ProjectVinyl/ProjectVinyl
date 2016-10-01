@@ -95,7 +95,7 @@ class AlbumController < ApplicationController
   
   def delete
     if user_signed_in? && album = Album.where(id: params[:id]).first
-      if !album.hidden && (current_user.is_admin || album.user_id == current_user.id)
+      if !album.hidden && (current_user.is_staff? || album.user_id == current_user.id)
         album.destroy
         render json: {
           ref: url_for(action: "view", controller: "artist", id: album.user_id)

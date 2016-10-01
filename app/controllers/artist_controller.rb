@@ -7,7 +7,7 @@ class ArtistController < ApplicationController
         @art_count = @art.count
         @art = Pagination.paginate(@art, 0, 8, true)
       end
-      @modificationsAllowed = user_signed_in? && (current_user.id == @user.id || current_user.is_admin)
+      @modificationsAllowed = user_signed_in? && (current_user.id == @user.id || current_user.is_staff?)
       @videos = @modificationsAllowed ? @user.videos : @user.videos.where(hidden: false)
       @videos = Pagination.paginate(@videos, 0, 8, true)
       @albums = @modificationsAllowed ? @user.albums : @user.albums.where('`albums`.hidden = false AND `albums`.listing = 0')
@@ -19,7 +19,7 @@ class ArtistController < ApplicationController
   def update
     input = params[:user]
     if user_signed_in?
-      if current_user.is_admin && params[:user_id]
+      if current_user.is_staff? && params[:user_id]
         user = User.where(id: params[:user_id]).first
       elsif
         user = current_user
@@ -30,7 +30,7 @@ class ArtistController < ApplicationController
         user.set_bio(input[:bio])
         user.setTags(input[:tag_string])
         user.save
-        if current_user.is_admin && params[:user_id]
+        if current_user.is_staff? && params[:user_id]
           redirect_to action: "view", id: user.id
         else
           redirect_to action: "edit", controller: "devise/registrations"
@@ -65,7 +65,7 @@ class ArtistController < ApplicationController
   def setavatar
     input = params[:user]
     if user_signed_in?
-      if current_user.is_admin && params[:user_id]
+      if current_user.is_staff? && params[:user_id]
         user = User.where(id: params[:user_id]).first
       elsif
         user = current_user
@@ -93,7 +93,7 @@ class ArtistController < ApplicationController
   end
   
   def banner
-    if current_user.is_admin || current_user.id == params[:id]
+    if current_user.is_staff? || current_user.id == params[:id]
       if current_user.id == params[:id]
         @user = current_user
       else

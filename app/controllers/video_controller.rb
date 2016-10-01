@@ -21,11 +21,6 @@ class VideoController < ApplicationController
       end
     end
     @time = params[:t].to_i || 0
-    if !@video.processed && user_signed_in? && current_user.is_admin
-      if @video.processing
-        alert = "This video is still being processed. All is good."
-      end
-    end
     if @video.hidden && (!user_signed_in? || @video.user_id != current_user.id)
       render 'layouts/error', locals: { title: 'Content Removed', description: "The video you are trying to access is currently not available." }
       return
@@ -47,7 +42,7 @@ class VideoController < ApplicationController
       @video.save
     end
     @order = '1'
-    @results = @comments = Pagination.paginate(@thread.get_comments(user_signed_in? && current_user.is_admin), 0, 10, true)
+    @results = @comments = Pagination.paginate(@thread.get_comments(user_signed_in? && current_user.is_contributor?), 0, 10, true)
     @queue = @user.queue(@video.id)
     if !@modificationsAllowed = user_signed_in? && current_user.id == @user.id
       @video.views = @video.views + 1
@@ -85,11 +80,11 @@ class VideoController < ApplicationController
   
   def upload
     if user_signed_in?
-      if ApplicationHelper.read_only && !current_user.is_admin
+      if ApplicationHelper.read_only && !current_user.is_contributor?
         render 'layouts/error', locals: { title: 'Access Denied', description: "That feature is currently disabled. Please wait whilst we fix our servers." }
         return
       end
-      if current_user.is_admin && params[:user]
+      if current_user.is_contributor? && params[:user]
         @user = User.where(id: params[:user]).first
       else
         @user = User.where(id: current_user.id).first
@@ -104,11 +99,11 @@ class VideoController < ApplicationController
     
   def create
     if user_signed_in?
-      if ApplicationHelper.read_only && !current_user.is_admin
+      if ApplicationHelper.read_only && !current_user.is_contributor?
         error(params[:async], "Access Denied", "That feature is currently disabled.")
         return
       end
-      if current_user.is_admin && params[:video][:user_id]
+      if current_user.is_contributor? && params[:video][:user_id]
         user = User.by_name_or_id(params[:video][:user_id])
       end
       if !user
@@ -190,7 +185,7 @@ class VideoController < ApplicationController
   
   def video_details
     if @video = Video.where(id: params[:id]).first
-      if !@video.hidden || (user_signed_in && current_user.is_admin)
+      if !@video.hidden || (user_signed_in && current_user.is_contributor?)
         render json: @video.json
       end
     else
@@ -200,7 +195,7 @@ class VideoController < ApplicationController
   
   def video_update
     if user_signed_in? && @video = Video.where(id: params[:id]).first
-      if @video.user_id == current_user.id || current_user.is_admin
+      if @video.user_id == current_user.id || current_user.is_contributor?
         if params[:tags]
           Tag.loadTags(params[:tags], video)
         end
@@ -233,7 +228,7 @@ class VideoController < ApplicationController
         render status: 200, nothing: true
         return
       end
-      if video.user_id == current_user.id || current_user.is_admin
+      if video.user_id == current_user.id || current_user.is_contributor?
         value = ApplicationHelper.demotify(params[:value])
         if params[:field] == 'description'
           video.set_description(value)
@@ -252,7 +247,7 @@ class VideoController < ApplicationController
   def edit
     if user_signed_in?
       video = Video.where(id: params[:id]).first
-      if video.user_id == current_user.id || current_user.is_admin
+      if video.user_id == current_user.id || current_user.is_contributor?
         @video = video
 	@user = video.user
       end
@@ -261,20 +256,21 @@ class VideoController < ApplicationController
   
   def updateCover
     if user_signed_in? && video = Video.where(id: params[:video][:id]).first
-      if video.user_id == current_user.id || current_user.is_admin
-        if current_user.is_admin && (file = params[:video][:file])
+      if video.user_id == current_user.id || current_user.is_contributor?
+        if current_user.is_staff? && (file = params[:video][:file])
           video.setFile(file)
+          video.generateWebM()
           video.save
         end
-        if params[:erase]
-          video.setThumbnail(false)
-        elsif cover = params[:video][:cover]
+        if cover = params[:video][:cover]
           if cover.content_type.include?('image/')
             video.setThumbnail(cover)
           end
+        elsif params[:erase] || file
+          video.setThumbnail(false)
         end
         if params[:async]
-          flash[:notice] = "Cover Art change successfully. You may need to reload the page."
+          flash[:notice] = "Changes saved successfully. You may need to reload the page."
           render json: { result: "success", ref: "/view/" + video.id.to_s }
         else
           redirect_to action: "view", id: video.id

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160930195626) do
+ActiveRecord::Schema.define(version: 20161001180406) do
 
   create_table "album_items", force: :cascade do |t|
     t.integer  "album_id",   limit: 4
@@ -47,6 +47,15 @@ ActiveRecord::Schema.define(version: 20160930195626) do
   end
 
   add_index "artist_genres", ["user_id"], name: "index_artist_genres_on_user_id", using: :btree
+
+  create_table "badges", force: :cascade do |t|
+    t.string   "title",      limit: 255
+    t.string   "colour",     limit: 255
+    t.string   "icon",       limit: 255
+    t.integer  "badge_type", limit: 4,   default: 0
+    t.datetime "created_at",                         null: false
+    t.datetime "updated_at",                         null: false
+  end
 
   create_table "comment_replies", force: :cascade do |t|
     t.integer "parent_id",  limit: 4
@@ -151,6 +160,14 @@ ActiveRecord::Schema.define(version: 20160930195626) do
     t.integer "alias_id",    limit: 4
   end
 
+  create_table "user_badges", force: :cascade do |t|
+    t.integer  "badge_id",     limit: 4
+    t.integer  "user_id",      limit: 4
+    t.string   "custom_title", limit: 255
+    t.datetime "created_at",               null: false
+    t.datetime "updated_at",               null: false
+  end
+
   create_table "users", force: :cascade do |t|
     t.string   "email",                  limit: 255,   default: "",    null: false
     t.string   "encrypted_password",     limit: 255,   default: "",    null: false
@@ -164,7 +181,6 @@ ActiveRecord::Schema.define(version: 20160930195626) do
     t.string   "last_sign_in_ip",        limit: 255
     t.datetime "created_at",                                           null: false
     t.datetime "updated_at",                                           null: false
-    t.boolean  "is_admin",                             default: false
     t.integer  "notification_count",     limit: 4,     default: 0
     t.string   "username",               limit: 255
     t.string   "safe_name",              limit: 255
@@ -177,6 +193,7 @@ ActiveRecord::Schema.define(version: 20160930195626) do
     t.text     "html_description",       limit: 65535
     t.text     "html_bio",               limit: 65535
     t.integer  "feed_count",             limit: 4,     default: 0
+    t.integer  "role",                   limit: 4,     default: 0
   end
 
   add_index "users", ["email"], name: "index_users_on_email", unique: true, using: :btree

@@ -3,11 +3,11 @@ class GenreController < ApplicationController
     if @tag = Tag.where("short_name = ? OR name = ?", params[:name].downcase, params[:name].downcase).first
       if @tag.alias_id
         flash[:notice] = "The tag '" + @tag.name + "' has been aliased to '" + @tag.alias.name + "'"
-        if !user_signed_in? || !current_user.is_admin
+        if !user_signed_in? || !current_user.is_staff?
           return redirect_to action: "view", name: @tag.alias.short_name
         end
       end
-      @modificationsAllowed = user_signed_in? && current_user.is_admin
+      @modificationsAllowed = user_signed_in? && current_user.is_contributor?
       @totalVideos = @tag.videos.length
       @totalUsers = @tag.users.length
       @videos = @tag.videos.where(hidden: false).order(:created_at)
@@ -24,7 +24,7 @@ class GenreController < ApplicationController
   end
   
   def update
-    if user_signed_in? && current_user.is_admin
+    if user_signed_in? && current_user.is_staff?
       if @tag = Tag.where(id: params[:id]).first
         @tag.description = params[:tag][:description]
         if params[:tag][:alias_tag] && (@alias = Tag.where('name = ? OR id = ?', params[:tag][:alias_tag], params[:tag][:alias_tag]).first)

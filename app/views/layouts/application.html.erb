@@ -46,7 +46,7 @@
 					<% end %>
 				</a>
 				<ul class="drop-down" style="z-index:300;">
-					<% if current_user.is_admin %>
+					<% if current_user.is_contributor? %>
 					<li>
 						<a href="/admin" rel="nofollow">
 							<span class="icon"><i class="fa fa-fw fa-gavel"></i></span>

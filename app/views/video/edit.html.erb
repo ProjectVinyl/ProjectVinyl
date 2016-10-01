@@ -21,7 +21,7 @@
 					</span>
 					<%= f.file_field :cover %>
 				</div>
-				<% if current_user.is_admin %>
+				<% if current_user.is_staff? %>
 				<div id="video-upload" class="hidden cover-block file-select video-drop" data-type="a/v">
 					<span class="drop-icon">
 						<i class="fa fa-upload"></i>
@@ -63,7 +63,7 @@
 						<i class="fa fa-check"></i>
 						Remove current Image
 					</label>
-					<% if current_user.is_admin %>
+					<% if current_user.is_staff? %>
 					<button id="change_video" class="action" type="button" onclick="$('#video_file').trigger('click');">Change Main File</button>
 					<% end %>
 					<span class="notify bob-holder">

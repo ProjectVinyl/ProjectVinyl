@@ -1,4 +1,17 @@
 class AjaxController < ApplicationController
+  def notifications
+    if user_signed_in?
+      if current_user.notification_count != params[:notes].to_i || current_user.feed_count != params[:feeds].to_i
+        return render json: {
+          notices: current_user.notification_count,
+          feeds: current_user.feed_count
+        }
+      else
+        return render status: 204, nothing: true
+      end
+    end
+    render status: 401, nothing: true
+  end
   
   def upvote
     if user_signed_in?
@@ -43,7 +56,7 @@ class AjaxController < ApplicationController
   end
   
   def togglePin
-    if user_signed_in? && current_user.is_admin
+    if user_signed_in? && current_user.is_staff?
       if thread = CommentThread.where(id: params[:id]).first
         thread.pinned = !thread.pinned
         thread.save
@@ -55,7 +68,7 @@ class AjaxController < ApplicationController
   end
   
   def toggleLock
-    if user_signed_in? && current_user.is_admin
+    if user_signed_in? && current_user.is_contributor?
       if thread = CommentThread.where(id: params[:id]).first
         thread.locked = !thread.locked
         thread.save
@@ -67,7 +80,7 @@ class AjaxController < ApplicationController
   end
   
   def toggleFeature
-    if user_signed_in? && current_user.is_admin
+    if user_signed_in? && current_user.is_staff?
       if video = Video.where(id: params[:id]).first
         Video.where(featured: true).update_all(featured: false)
         video.featured = !video.featured
@@ -78,5 +91,4 @@ class AjaxController < ApplicationController
     end
     render status: 401, nothing: true
   end
-  
 end

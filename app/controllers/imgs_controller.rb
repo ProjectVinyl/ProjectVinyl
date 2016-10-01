@@ -25,7 +25,7 @@ class ImgsController < ApplicationController
   def stream
     id = params[:id].split('.')[0]
     if (video = Video.where(id: id).first) && video.hidden
-       if user_signed_in? && current_user.is_admin
+       if user_signed_in? && current_user.is_contributor?
          ext = video.file
          if params[:id].index('.')
            ext = '.' + params[:id].split('.')[1]

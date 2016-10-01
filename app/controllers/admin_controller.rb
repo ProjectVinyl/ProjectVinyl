@@ -1,6 +1,6 @@
 class AdminController < ApplicationController
   def view
-    if !user_signed_in? || !current_user.is_admin
+    if !user_signed_in? || !current_user.is_contributor?
       render 'layouts/error', locals: { title: 'Access Denied', description: "You can't do that right now." }
       return
     end
@@ -33,7 +33,7 @@ class AdminController < ApplicationController
   end
   
   def video
-    if !user_signed_in? || !current_user.is_admin
+    if !user_signed_in? || !current_user.is_contributor?
       render 'layouts/error', locals: { title: 'Access Denied', description: "You can't do that right now." }
       return
     end
@@ -43,18 +43,18 @@ class AdminController < ApplicationController
   end
   
   def album
-    if !user_signed_in? || !current_user.is_admin
+    if !user_signed_in? || !current_user.is_contributor?
       render 'layouts/error', locals: { title: 'Access Denied', description: "You can't do that right now." }
       return
     end
     @modificationsAllowed = true
     @album = Album.find(params[:id])
-    @items = @album.album_items.includes(:direct_user).order(:index)
+    @items = Pagination.paginate(@album.ordered(@album.album_items.includes(:direct_user)), 0, 50, false)
     @user = @album.user
   end
   
   def artist
-    if !user_signed_in? || !current_user.is_admin
+    if !user_signed_in? || !current_user.is_contributor?
       render 'layouts/error', locals: { title: 'Access Denied', description: "You can't do that right now." }
       return
     end
@@ -62,7 +62,7 @@ class AdminController < ApplicationController
   end
   
   def tag
-    if !user_signed_in? || !current_user.is_admin
+    if !user_signed_in? || !current_user.is_contributor?
       render 'layouts/error', locals: { title: 'Access Denied', description: "You can't do that right now." }
       return
     end
@@ -73,7 +73,7 @@ class AdminController < ApplicationController
   
   def view_report
     if @report = Report.where(id: params[:id]).first
-      if user_signed_in? && (current_user.is_admin || current_user.id == @report.user_id)
+      if user_signed_in? && (current_user.is_contributor? || current_user.id == @report.user_id)
         @thread = @report.comment_thread
         @order = '0'
         @results = @comments = Pagination.paginate(@thread.get_comments(true), (params[:page] || -1).to_i, 10, false)
@@ -86,7 +86,7 @@ class AdminController < ApplicationController
   end
   
   def transferItem
-    if user_signed_in? && current_user.is_admin
+    if user_signed_in? && current_user.is_contributor?
       if (user = User.by_name_or_id(params[:item][:user_id]))
         if params[:type] == 'video'
           item = Video.where(id: params[:item][:id]).first
@@ -95,16 +95,18 @@ class AdminController < ApplicationController
         end
         if item
           item.transferTo(user)
-          redirect_to action: params[:type], id: params[:item][:id]
-          return
+          return redirect_to action: params[:type], id: params[:item][:id]
         end
+      else
+        flash[:alert] = "Error: Destination user was not found."
+        return redirect_to action: params[:type], id: params[:item][:id]
       end
     end
     render status: 401, nothing: true
   end
   
   def deleteVideo
-    if user_signed_in? && current_user.is_admin
+    if user_signed_in? && current_user.is_contributor?
       if video = Video.where(id: params[:id]).first
         video.removeSelf
         flash[:notice] = "1 Item(s) deleted successfully"
@@ -118,7 +120,7 @@ class AdminController < ApplicationController
   end
   
   def deleteAlbum
-    if user_signed_in? && current_user.is_admin
+    if user_signed_in? && current_user.is_contributor?
       if album = Album.where(id: params[:id]).first
         album.destroy
         flash[:notice] = "1 Item(s) deleted successfully."
@@ -131,24 +133,8 @@ class AdminController < ApplicationController
     render json: { ref: url_for(action: "view") }
   end
   
-  def deleteArtist
-    if user_signed_in? && current_user.is_admin
-      if artist = Artist.where(id: params[:id]).first
-        albums = artist.albums.count
-        videos = artist.videos.count
-        artist.removeSelf
-        flash[:notice] = (albums + videos + 1).to_s + " Item(s) deleted successfully."
-      else
-        flash[:error] = "Item could not be found."
-      end
-    else
-      flash[:error] = "Access Denied: You can't do that right now."
-    end
-    render json: { ref: url_for(action: "view") }
-  end
-  
   def reprocessVideo
-    if user_signed_in? && current_user.is_admin
+    if user_signed_in? && current_user.is_contributor?
       if video = Video.where(id: params[:video][:id]).first
         flash[:notice] = "Processing Video: " + video.generateWebM()
       end
@@ -157,7 +143,7 @@ class AdminController < ApplicationController
   end
   
   def batch_preprocessVideos
-    if user_signed_in? && current_user.is_admin
+    if user_signed_in? && current_user.is_contributor?
       videos = Video.where(processed: nil)
       videos.each do |video|
         video.generateWebM()
@@ -172,7 +158,7 @@ class AdminController < ApplicationController
   end
   
   def extractThumbnail
-    if user_signed_in? && current_user.is_admin
+    if user_signed_in? && current_user.is_contributor?
       if video = Video.where(id: params[:video][:id]).first
         video.setThumbnail(false)
         flash[:notice] = "Thumbnail Reset."
@@ -182,12 +168,63 @@ class AdminController < ApplicationController
   end
   
   def visibility
-    if user_signed_in? && current_user.is_admin
+    if user_signed_in? && current_user.is_contributor?
       if video = Video.where(id: params[:id]).first
         video.set_hidden(!video.hidden)
         video.save
       end
-      render json: { :added => video.hidden }
+      return render json: { :added => video.hidden }
+    end
+    render status: 401, nothing: true
+  end
+  
+  def role
+    if user_signed_in? && current_user.is_staff?
+      if params[:id].to_i != current_user.id && user = User.where(id: params[:id]).first
+        if params[:role] == 'staff'
+          user.role = 1
+          user.save
+          return render json: {
+            staff: true, contributor: false, admin: false
+          }
+        elsif params[:role] == 'contributor'
+          if current_user.is_contributor?
+            user.role = 2
+            user.save
+            return render json: {
+              staff: false, contributor: true, admin: false
+            }
+          end
+        elsif params[:role] == 'admin'
+          if current_user.is_admin?
+            user.role = 3
+            user.save
+            return render json: {
+              staff: false, contributor: false, admin: true
+            }
+          end
+        end
+      end
+      if user
+        return render json: {
+          staff: user.staff?, contributor: user.contributor?, admin: user.admin?
+        }
+      end
+    end
+    render status: 401, nothing: true
+  end
+  
+  def togglebadge
+    if user_signed_in? && current_user.is_contributor?
+      if user = User.where(id: params[:id]).first
+        if existing = user.user_badges.where(badge_id: params[:badge_id]).first
+          existing.destroy
+          render json: { :added => false }
+        elsif badge = Badge.where(id: params[:badge_id]).first
+          user.user_badges.create(badge_id: badge.id)
+          render json: { :added => true }
+        end
+      end
       return
     end
     render status: 401, nothing: true
@@ -205,7 +242,7 @@ class AdminController < ApplicationController
   end
   
   def verify_integrity
-    if user_signed_in? && current_user.is_admin
+    if user_signed_in? && current_user.is_admin?
       if !(Report.where('created_at > ?', Time.zone.now.yesterday.beginning_of_day).first)
         @report = Report.create(user_id: 0, first: "System", other: "Working...", resolved: false)
         @report.comment_thread = CommentThread.create(user_id: 0, title: 'System Integrity Report (' + Time.zone.now.to_s + ')')

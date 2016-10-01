@@ -37,7 +37,7 @@
 				<div class="split-button popper">
 					<button class="action options pop-out-toggle"><i class="fa fa-gear"></i> Options</button>
 					<ul class="pop-out">
-					<% if current_user.is_admin %>
+					<% if current_user.is_contributor? %>
 						<li class="action">
 							<a href="/admin/album/<%= @album.id %>">
 								<span class="icon"><i class="fa fa-gavel"></i></span>

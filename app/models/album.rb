@@ -18,7 +18,7 @@ class Album < ActiveRecord::Base
   end
   
   def ownedBy(user)
-    return user && (self.user_id == user.id || (self.hidden == false && user.is_admin))
+    return user && (self.user_id == user.id || (self.hidden == false && user.is_staff?))
   end
   
   def transferTo(user)

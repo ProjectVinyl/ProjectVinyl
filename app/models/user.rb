@@ -9,35 +9,43 @@ class UserDummy
   end
   
   def id
-    return @id
+    @id
   end
   
   def html_bio
-    return ''
+    ''
   end
   
   def username
-    return @username
+    @username
   end
   
   def queue(excluded)
-    return Video.randomVideos(Video.where(hidden: false, user_id: @id).where.not(id: excluded), 6)
+    Video.randomVideos(Video.where(hidden: false, user_id: @id).where.not(id: excluded), 6)
   end
   
   def avatar
-    return '/images/default-avatar.png'
+    '/images/default-avatar.png'
   end
   
   def link
-    return ''
+    ''
   end
   
   def is_admin
-    return false
+    false
+  end
+  
+  def is_contributor
+    false
+  end
+  
+  def is_staff
+    false
   end
   
   def isDummy
-    return true
+    true
   end
 end
 
@@ -92,6 +100,8 @@ class User < ActiveRecord::Base
   has_many :spoilered_tags_actual, :through => :spoilered_tags, class_name: "Tag", source: "tag"
   has_many :watched_tags_actual, :through => :watched_tags, class_name: "Tag", source: "tag"
   
+  has_many :user_badges
+  has_many :badges, :through => :user_badges
   belongs_to :tag
   
   SANITIZE = /[^a-zA-Z0-9]+/
@@ -290,8 +300,32 @@ class User < ActiveRecord::Base
     return '/profile/' + self.id.to_s + '-' + (self.safe_name || ('Background Pony #' + self.id.to_s(32)))
   end
   
+  def admin?
+    self.is_admin?
+  end
+  
+  def contributor?
+    self.role == 2
+  end
+  
+  def staff?
+    self.role == 1
+  end
+  
+  def is_admin?
+    self.role > 2
+  end
+  
+  def is_contributor?
+    self.role > 1
+  end
+  
+  def is_staff?
+    self.role > 0
+  end
+  
   def isDummy
-    return false
+    false
   end
   
   def send_notification(message, source)

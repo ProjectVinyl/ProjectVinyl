@@ -2,8 +2,8 @@ class ThreadController < ApplicationController
   def view
     if @thread = CommentThread.where(id: params[:id].split('-')[0]).first
       @order = '0'
-      @modificationsAllowed = user_signed_in? && (current_user.id == @thread.user_id || current_user.is_admin)
-      @comments = Pagination.paginate(@thread.get_comments(user_signed_in? && current_user.is_admin), (params[:page] || -1).to_i, 10, false)
+      @modificationsAllowed = user_signed_in? && (current_user.id == @thread.user_id || current_user.is_contributor?)
+      @comments = Pagination.paginate(@thread.get_comments(user_signed_in? && current_user.is_contributor?), (params[:page] || -1).to_i, 10, false)
     end
   end
   
@@ -28,7 +28,7 @@ class ThreadController < ApplicationController
   
   def update
     if user_signed_in? && thread = CommentThread.where(id: params[:id]).first
-      if thread.user_id == current_user.id || current_user.is_admin
+      if thread.user_id == current_user.id || current_user.is_contributor?
         value = ApplicationHelper.demotify(params[:value])
         if params[:field] == 'title'
           thread.set_title(value)
@@ -66,7 +66,7 @@ class ThreadController < ApplicationController
       if (@thread = CommentThread.where(id: params[:thread]).first) && !@thread.locked
         comment = @thread.comments.create(user_id: current_user.id)
         comment.update_comment(params[:comment])
-        @results = Pagination.paginate(@thread.get_comments(current_user.is_admin), params[:order] == '1' ? 0 : -1, 10, params[:order] == '1')
+        @results = Pagination.paginate(@thread.get_comments(current_user.is_contributor?), params[:order] == '1' ? 0 : -1, 10, params[:order] == '1')
         render json: {
           content: render_to_string(partial: '/thread/comment_set.html.erb', locals: { thread: @results.records, indirect: false }),
           pages: @results.pages,
@@ -134,8 +134,8 @@ class ThreadController < ApplicationController
   
   def remove_comment
     if user_signed_in? && comment = Comment.where(id: params[:id]).first
-      if current_user.is_admin || current_user.id == comment.user_id
-        if comment.hidden && current_user.is_admin
+      if current_user.is_contributor? || current_user.id == comment.user_id
+        if comment.hidden && current_user.is_contributor?
           comment.hidden = false
           CommentThread.where(id: comment.comment_thread_id).update_all('total_comments = total_comments + 1')
           comment.save
@@ -147,7 +147,7 @@ class ThreadController < ApplicationController
           comment.hidden = true
           CommentThread.where(id: comment.comment_thread_id).update_all('total_comments = total_comments - 1')
           comment.save
-          if current_user.is_admin
+          if current_user.is_contributor?
             render json: {
               message: "success",
               content: render_to_string(partial: '/thread/comment.html.erb', locals: { comment: comment, indirect: false }),
@@ -171,7 +171,7 @@ class ThreadController < ApplicationController
     else
       @page = params[:page].to_i
     end
-    @results = Pagination.paginate(@thread.get_comments(user_signed_in? && current_user.is_admin), @page, 10, params[:order] == '1')
+    @results = Pagination.paginate(@thread.get_comments(user_signed_in? && current_user.is_contributor?), @page, 10, params[:order] == '1')
     render json: {
       content: render_to_string(partial: '/thread/comment_set.html.erb', locals: { thread: @results.records, indirect: false }),
       pages: @results.pages,
