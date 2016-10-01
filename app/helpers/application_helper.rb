@@ -6,48 +6,54 @@ module ApplicationHelper
     "applejackconfused",
     "applejackunsure",
     "applecry",
-    "eeyup",
     "fluttercry",
     "flutterrage",
     "fluttershbad",
     "fluttershyouch",
     "fluttershysad",
     "yay",
-    "heart",
     "pinkiecrazy",
     "pinkiegasp",
     "pinkiehappy",
     "pinkiesad2",
     "pinkiesmile",
     "pinkiesick",
-    "twistnerd",
     "rainbowderp",
     "rainbowdetermined2",
     "rainbowhuh",
     "rainbowkiss",
     "rainbowlaugh",
     "rainbowwild",
-    "scootangel",
     "raritycry",
     "raritydespair",
     "raritystarry",
     "raritywink",
     "duck",
     "unsuresweetie",
-    "coolphoto",
     "twilightangry2",
     "twilightoops",
     "twilightblush",
     "twilightsheepish",
     "twilightsmile",
     "facehoof",
-    "moustache",
-    "trixieshiftleft",
-    "trixieshiftright",
+    "cheericonfused",
+    "cheeriderp",
+    "cheerismile",
     "derpyderp1",
     "derpyderp2",
     "derpytongue2",
-    "trollestia"
+    "heart",
+    "eeyup",
+    "twistnerd",
+    "twistoo",
+    "scootangel",
+    "coolphoto",
+    "moustache",
+    "trixieshiftleft",
+    "trixieshiftright",
+    "trollestia",
+    "redheartgasp",
+    "zecora"
   ]
   
   def self.read_only
@@ -62,6 +68,10 @@ module ApplicationHelper
       return str[0,250]
     end
     return str
+  end
+  
+  def self.emoticons
+    Emoticons
   end
   
   def self.emotify(text)

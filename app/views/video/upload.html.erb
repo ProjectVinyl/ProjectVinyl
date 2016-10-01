@@ -97,17 +97,12 @@
 					<span class="edit"><i class="fa fa-pencil"></i></span>
 					<span style="display:none">11</span>
 				</h1>
-				<div class="comment basic post-box">
-					<div class="content editing">
-						<div class="name">
-							<%= f.label :description %>
-						</div>
-						<div class="comment-content preview"></div>
-						<%= f.text_area :description, autofocus: true, class: "comment-content" %>
-						<hr>
-						<button class="state-toggle button-fw" data-state="editing" data-true="Preview" data-false="Edit">Preview</button>
-					</div>
+				<div class="name">
+					<%= f.label :description %>
 				</div>
+				<%= render layout: 'thread/description_box' do %>
+					<%= f.text_area :description, autofocus: true, class: "comment-content" %>
+				<% end %>
 				<div class="post-tags">
 					<%= render layout: 'layouts/tageditor', locals: {tags: nil} do %>
 						<%= f.text_area :tag_string %>

@@ -7,7 +7,7 @@
 	<link type="text/css" href="/css/videos.css" rel="stylesheet" />
 	<script src="https://code.jquery.com/jquery-1.8.3.min.js" id="jquery" ></script>
 	<%= csrf_meta_tags %>
-	<script>var emoticons = <%= raw emoticons %>;</script>
+	<script>var emoticons = <%= raw emoticons %><% if user_signed_in? %>,current_user = {id:<%= current_user.id %>}<% end %>;</script>
 	<%= content_for(:metadata) %>
 </head>
 <body>
@@ -33,13 +33,13 @@
 				<a href="<%= current_user.link %>" class="username">
 					<%= current_user.username %>
 				</a>
-				<a class="notices-bell" href="/videos/watched">
+				<a class="notices-bell feeds" href="/videos/watched">
 					<i class="fa fa-globe"></i>
 					<% if current_user.feed_count > 0 %>
 						<span class="count"><% if current_user.feed_count > 999 %>999+<% else %><%= number_with_delimiter current_user.feed_count %><% end %></span>
 					<% end %>
 				</a>
-				<a class="notices-bell" href="/notifications">
+				<a class="notices-bell notices" href="/notifications">
 					<i class="fa fa-bell"></i>
 					<% if current_user.notification_count > 0 %>
 						<span class="count"><% if current_user.notification_count > 999 %>999+<% else %><%= number_with_delimiter current_user.notification_count %><% end %></span>

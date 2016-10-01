@@ -183,6 +183,7 @@ class Tag < ActiveRecord::Base
     if self.name.index(':')
       return self.name.split(':')[0]
     end
+    return ''
   end
   
   def set_name(name)

@@ -54,37 +54,7 @@
 <% if @thread.locked %>
 Thread locked
 <% else %>
-<div class="comment post-box">
-	<div class="artist-bio bio">
-		<a class="user-link" data-id="<%= current_user.id %>" href="<%= current_user.link %>">
-			<span class="avatar medium">
-				<span style="background-image:url('<%= current_user.avatar %>');"></span>
-			</span>
-		</a>
-	</div>
-	<script>
-function reportState(sender) {
-  sender = $(sender).parent();
-  if (sender.find('input[name=resolve]:checked').length) return 'resolve';
-  if (sender.find('input[name=close]:checked').length) return 'close';
-  if (sender.find('input[name=unresolve]:checked').length) return 'open';
-  return false;
-}
-	</script>
-	<div class="content editing">
-		<div class="name">
-			<a class="user-link" data-id="<%= current_user.id %>" href="<%= current_user.link %>"><%= current_user.username %></a>
-		</div>
-		<div class="comment-content preview"></div>
-		<textarea class="comment-content"></textarea>
-		<hr>
-		<button class="green" onclick="postComment(this, '<%= @thread.id %>', '<%= @order %>', reportState(this));">
-			<span>Post Comment</span>
-			<i class="posting-spinner fa fw fa-spinner fa-spin"></i>
-		</button>
-		<button class="blue state-toggle button-fw" data-state="editing" data-true="Preview" data-false="Edit">Preview</button>
-	</div>
-</div>
+<%= render partial: "thread/comment_box", locals: {invert: true} %>
 <% end %>
 <% end %>
 </div>
