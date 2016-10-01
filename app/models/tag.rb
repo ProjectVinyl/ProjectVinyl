@@ -68,10 +68,7 @@ class Tag < ActiveRecord::Base
     end
     result = []
     existing_names = []
-    Tag.includes(:alias).where('name IN (?)', names).each do |tag|
-      if tag.alias_id
-        yield(tag.id)
-      end
+    Tag.where('name IN (?)', names).each do |tag|
       result << (tag.alias_id || tag.id)
       existing_names << tag.name
     end
@@ -111,7 +108,7 @@ class Tag < ActiveRecord::Base
   def self.loadTags(tag_string, sender)
     aliased_from = []
     aliased_to = []
-    existing_ids = sender.tags.pluck(:id, :alias_id).map do |t|
+    existing = sender.tags.pluck(:id, :alias_id).map do |t|
       if t[1]
         aliased_from << t[0]
         aliased_to << t[1]
@@ -120,36 +117,37 @@ class Tag < ActiveRecord::Base
     end
     if aliased_from.length > 0
       sender.drop_tags(aliased_from)
-      sender.pick_up_tags(aliased_to)
+      aliased_to - existing
+      entries = aliased_to.map do |id|
+        { tag_id: id }
+      end
+      sender.pick_up_tags(aliased_to).create(entries)
     end
-    existing = sender.tags.pluck(:name).uniq
-    loaded = Tag.split_tag_string(tag_string)
+    loaded = Tag.get_tag_ids_with_create(Tag.split_tag_string(tag_string))
     common = existing & loaded
     if existing.length != loaded.length || common.length != existing.length
-      Tag.load_dif(loaded - common, existing - common, existing_ids, sender)
+      Tag.load_dif(loaded - common, existing - common, existing, sender)
     end
   end
   
-  def self.load_dif(added, removed, existing_ids, sender)
+  def self.load_dif(added, removed, existing, sender)
     if added.length > 0
-      added = Tag.get_tag_ids_with_create(added)
       added = Tag.expand_implications(added)
     end
     if added.length > 0 && removed.length > 0
       removed = removed - added
     end
     if removed.length > 0
-      removed = Tag.get_tag_ids(removed)
       sender.drop_tags(removed)
     end
     if added.length > 0
-      added = added - existing_ids
+      added = added - existing
       entries = added.map do |id|
         { tag_id: id }
       end
       sender.pick_up_tags(added).create(entries)
     end
-    TagSubscription.notify_subscribers(added, removed, existing_ids - removed)
+    TagSubscription.notify_subscribers(added, removed, existing - removed)
     sender.save
   end
     
