@@ -1,10 +1,10 @@
-<a class="thumb<% if video_thumb_i.hidden %> thumb-hidden<% end %>" href="/view/<%= video_thumb_i.id %>-<%= video_thumb_i.safe_title %>">
+<a class="thumb<% if video_thumb_i.hidden %> thumb-hidden<% end %>" href="/view/<%= video_thumb_i.id %>-<%= video_thumb_i.safe_title %>#comment_<%= comment %>">
 	<div class="tile" style="background-image:url('<%= video_thumb_i.tiny_thumb(current_user) %>');">
 		<span class="tag-list duration">
 			<%= duration video_thumb_i.getDuration %>
 		</span>
 	</div>
-	<div class="title">
-		<%= video_thumb_i.isSpoileredBy(current_user) ? "Spoilered" : video_thumb_i.getTitle %>
+	<div class="title"<% if !(spoilered = video_thumb_i.isSpoileredBy(current_user)) %> title="<%= video_thumb_i.getTitle %>"<% end %>>
+		<%= spoilered ? "Spoilered" : video_thumb_i.getTitle %>
 	</div>
 </a>
