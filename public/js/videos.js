@@ -518,6 +518,10 @@ function Player() {}
       var percentFill = (time/duration) * 100;
       this.controls.track.bob.css('left', percentFill + '%');
       this.controls.track.fill.css('right', (100 - percentFill) + '%');
+      if (this.dom.toggler.touching()) {
+        this.controls.track.preview.css('left', percentFill + '%');
+        this.controls.track.preview.attr('data-time', this.descriptive(time));
+      }
       this.suspend.css('display', 'none');
     },
     changetrack: function(progress) {
@@ -620,6 +624,7 @@ function Player() {}
       return times.reverse().join(':');
     },
     drawPreview: function(progress) {
+      if (!this.video) return;
       var duration = parseInt(this.video.duration);
       var time = duration * progress;
       this.controls.track.preview.css('left', ((time/duration) * 100) + '%');
@@ -676,6 +681,9 @@ function Player() {}
           hover_timeout = null;
           hover_flag = 0;
         }, 1700);
+      },
+      touching: function() {
+        return touching;
       },
       interactable: function() {
         return !touching || hover_flag > 1;
