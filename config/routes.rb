@@ -57,6 +57,9 @@ Rails.application.routes.draw do
   patch 'ajax/banner/upload/:id/:async' => 'artist#setbanner'
   patch 'ajax/banner/upload/:id' => 'artist#setbanner'
   
+  get 'users' => 'artist#list'
+  get 'ajax/users' => 'artist#page'
+  
   get 'cover/:id-small' => 'imgs#thumb'
   get 'cover/:id' => 'imgs#cover'
   get 'avatar/:id' => 'imgs#avatar'

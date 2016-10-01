@@ -104,4 +104,20 @@ class ArtistController < ApplicationController
     end
     render status: 404, nothing: true
   end
+  
+  def list
+    @page = params[:page].to_i
+    @results = Pagination.paginate(User.all.order(:created_at), @page, 50, true)
+    render template: '/view/listing', locals: {type_id: 2, type: 'users', type_label: 'User', items: @results}
+  end
+  
+  def page
+    @page = params[:page].to_i
+    @results = Pagination.paginate(User.all.order(:created_at), @page, 50, true)
+    render json: {
+      content: render_to_string(partial: 'layouts/artist_thumb_h', collection: @results.records),
+      pages: @results.pages,
+      page: @results.page
+    }
+  end
 end
