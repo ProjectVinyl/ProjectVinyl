@@ -1591,7 +1591,7 @@ li.bio, li.genre {
   margin: 10px;
   width: 200px;
   text-align: center;
-  min-height: 300px;
+  min-height: 320px;
   overflow: hidden;
 }
 li.bio > *, li.genre {
