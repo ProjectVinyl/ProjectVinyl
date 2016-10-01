@@ -9,7 +9,7 @@
 <% else %>
 	<% if indirect && comment.comment_thread.owner_type == 'Video' %>
 	<div class="artist-bio bio">
-		<%= render partial: 'layouts/video_thumb_i', locals: {video_thumb_i: comment.comment_thread.owner} %>
+		<%= render partial: 'layouts/video_thumb_i', locals: {video_thumb_i: comment.comment_thread.owner, comment: comment.get_open_id} %>
 	</div>
 	<% else %>
 	<div class="artist-bio bio">
@@ -50,6 +50,14 @@
 		<textarea name="comment_<%= comment.id %>" class="comment-content"><%= raw comment.bbc_content %></textarea>
 		<hr>
 		<button class="green edit-comment-submit">Edit Comment</button>
+		<a class="popper button button-bub right pop-out-toggle" title="Emoticons">
+			<i class="fa fa-smile-o"></i>
+			<ul class="pop-out" id="emoticons">
+				<% ApplicationHelper.emoticons.each do |e| %>
+					<li class="edit-action" data-action="emoticon" title=":<%= e %>:"><img alt=":<%= e %>:" src="/emoticons/<%= e %>.png" /></li>
+				<% end %>
+			</ul>
+		</a>
 	<% end %>
 	</div>
 <% end %>
