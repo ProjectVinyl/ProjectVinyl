@@ -313,7 +313,6 @@ class VideoController < ApplicationController
     @page = params[:page].to_i
     if @user = params[:id]
       @results = User.find(@user.to_i).videos.includes(:tags)
-puts user_signed_in?
       if !user_signed_in? || current_user.id != @user.to_i
         @results = @results.where(hidden: false)
       end
