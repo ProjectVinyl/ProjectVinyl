@@ -360,6 +360,20 @@ button.yellow, .button.yellow, input.yellow[type="submit"] {
   background: #e0e046;
 }
 
+div.tab, #upload .cover-block.tab {
+  display: none;
+}
+div.tab.selected, #upload .cover-block.tab.selected {
+  display: block;
+}
+ul.tab-set {
+  padding: 0;
+  list-style: none;
+}
+ul.tab-set li {
+  display: inline-block;
+}
+
 a {
   color: #337287;
   font-weight: bold;
@@ -644,7 +658,7 @@ div.page .positioner {
   padding: 3px;
 }
 
-button, .button, #search > *, input[type=submit], .tag, .tag-editor {
+button, .button, input[type=submit], .tag, .tag-editor {
   display: inline-block;
   padding: 5px 15px;
   text-decoration: none;
@@ -813,7 +827,7 @@ button:hover, .button:hover, button.selected, .button.selected, input[type=submi
    background: #fff;
 }
 
-button:active, .button:active, #search > button:active, input[type=submit]:active {
+button:active, .button:active, input[type=submit]:active {
    background: #f8f8f8;
    box-shadow: 0 0 5px 0 rgba(0,0,0,0.3) inset;
 }
@@ -844,7 +858,7 @@ input, select {
   -webkit-appearance: none;
 }
 .select::before {
-  content: "\f0ab";
+  content: "\f078";
   position: absolute;
   top: 5px;
   bottom: 5px;
@@ -875,23 +889,60 @@ label input[type=checkbox]:not(:checked) + i {
   display: none;
 }
 
-#search {
+#search, #login {
    position: absolute;
+   background: rgba(255,255,255,0.8);
    right: 25px;
-   bottom: 40px;
-   background: rgba(255,255,255,0.3);
    padding: 10px;
+}
+#search {
+   bottom: 40px;
    border-radius: 10px 10px 0 0;
+}
+#search > * {
+  display: inline-block;
+  padding: 5px 15px;
+  color: #303030;
+  text-shadow: 1px 1px #fafafa;
+  transition: background 0.5s ease;
+  background: rgb(255, 255, 250);
+  box-shadow: 0px 0px 12px rgba(0, 0, 0, 0.07) inset;
+  border: 1px solid rgb(204, 204, 204);
+  float: left;
+  height: 28px;
+  min-height: 28px;
+  margin: 0;
+}
+#search > *, #search .select::before {
+  line-height: 15px;
+  font-size: 13px;
+}
+#search button {
+  border-radius: 0 5px 5px 0;
+}
+#search .select {
+  border-radius: 5px 0 0 5px;
+}
+#search > :focus, #search > .focus {
+  background: rgb(250,250,250);
+}
+#search .select select {
+  padding-left: 5px;
+}
+#search input {
+  border-radius: 0;
+  padding-left: 5px;
+}
+#search input, #search .select {
+  border-right: none;
 }
 
 #login {
    position: absolute;
-   right: 25px;
    top: 0;
-   background: rgba(255,255,255,0.3);
-   padding: 10px;
    border-radius: 0 0 10px 10px;
 }
+
 #login.drop-down-holder:hover,
 #login.drop-down-holder.hover {
   background: #fff;
@@ -961,33 +1012,6 @@ label input[type=checkbox]:not(:checked) + i {
 }
 .drop-down li:hover {
   color: #008;
-}
-
-#search > * {
-  float: left;
-  height: 28px;
-  min-height: 28px;
-  margin: 0;
-  background: rgba(248,248,248,0.6);
-  border: none;
-  box-shadow: none;
-}
-
-#search > * + * {
-  border-left: none;
-  border-radius: 0 10px 10px 0;
-}
-
-#search input {
-  border-radius: 0;
-}
-
-#search input, #search .select {
-  border-right: none;
-}
-
-#search .select {
-  border-radius: 10px 0 0 10px;
 }
 
 .editable.editing {
@@ -1322,6 +1346,15 @@ blockquote {
   margin-top: 10px;
   border-radius: 5px;
 }
+.popper.pop-left #emoticons {
+  right: 0;
+  left: auto;
+}
+.popper.pop-right #emoticons {
+  left: 0;
+  right: auto;
+}
+
 
 .pop-out-shown::before,
 .pop-out-shown::after {
@@ -1983,6 +2016,18 @@ span.active-icon {
 .drag .drop-icon::before {
   opacity: 1;
   transform: scale(1.5,1.5);
+}
+
+#upload .controls {
+  opacity: 1;
+  margin-bottom: -50px;
+}
+#upload .track {
+  width: calc(100% - 20px);
+  background: rgba(0,0,0,0.1);
+}
+#upload .video {
+  margin-bottom: 50px;
 }
 
 .tag-editor {
