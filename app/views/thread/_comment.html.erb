@@ -30,7 +30,7 @@
 	<% if user_signed_in? %>
 		<a title="Reply" class="reply-comment" ><i class="fa fa-reply"></i></a>
 	<% end %>
-		<div class="name">
+		<div class="name<% if comment.user.banned? %> banned<% end %>">
 			<a <% if !comment.user.isDummy %>class="user-link" data-id="<%= comment.user_id %>" href="<%= comment.user.link %>"<% end %>>
 				<%= comment.user.username %>
 			</a>

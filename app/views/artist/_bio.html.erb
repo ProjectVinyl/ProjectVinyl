@@ -3,7 +3,7 @@
 		<span class="avatar">
 			<span style="background-image:url('<%= user.avatar %>');"></span>
 		</span>
-		<h1 class="name resize-target"><%= user.username %></h1>
+		<h1 class="name resize-target<% if user.banned? %> banned<% end %>"><%= user.username %></h1>
 	</a>
 	<div class="bio short"><%= raw user.html_bio %></div>
 </section>

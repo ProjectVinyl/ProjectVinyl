@@ -55,7 +55,8 @@ end
 
 class Badge < ActiveRecord::Base
   Types = [
-    BadgeInstance.new('Admin', 'gavel', 'orange'){|user| user.is_contributor?},
+    BadgeInstance.new('Admin', 'star', 'orange'){|user| user.admin?},
+    BadgeInstance.new('Moderator', 'gavel', 'orange'){|user| user.contributor?},
     (BadgeInstance.new('Artist', 'paint-brush', 'green'){|user| !user.tag_id.nil?}).adv_title{|user| 'Artist - ' + user.tag.name.split(':')[1]}
   ]
   

@@ -16,7 +16,7 @@
 				<% if current_user.id == @user.id %>
 				<p style="color:red">You cannot change your own role.</p>
 				<% else %>
-				<button class="action toggle blue" data-family="role-flags" data-action="admin" data-target="user/role" data-id="<%= @user.id %>">
+				<button class="action toggle blue<% if !current_user.is_admin? %> disable" disabled<% else %>"<% end %> data-family="role-flags" data-action="admin" data-target="user/role" data-id="<%= @user.id %>">
 					<span class="icon">
 						<% if @user.admin? %>
 						<i class="fa fa-check"></i>
@@ -25,7 +25,7 @@
 					<span class="label">Administrator</span>
 				</button>
 				<br><br>
-				<button class="action toggle blue" data-family="role-flags" data-action="contributor" data-target="user/role" data-id="<%= @user.id %>">
+				<button class="action toggle blue<% if !current_user.is_contributor? %> disable" disabled<% else %>"<% end %> data-family="role-flags" data-action="contributor" data-target="user/role" data-id="<%= @user.id %>">
 					<span class="icon">
 						<% if @user.contributor? %>
 						<i class="fa fa-check"></i>
@@ -34,7 +34,7 @@
 					<span class="label">Moderator</span>
 				</button>
 				<br><br>
-				<button class="action toggle blue" data-family="role-flags" data-action="staff" data-target="user/role" data-id="<%= @user.id %>">
+				<button class="action toggle blue<% if !current_user.is_staff? %> disable" disabled<% else %>"<% end %> data-family="role-flags" data-action="staff" data-target="user/role" data-id="<%= @user.id %>">
 					<span class="icon">
 						<% if @user.staff? %>
 						<i class="fa fa-check"></i>
@@ -42,34 +42,57 @@
 					</span>
 					<span class="label">Staff</span>
 				</button>
+				<br><br>
+				<button class="action toggle blue" data-family="role-flags" data-action="normal" data-target="user/role" data-id="<%= @user.id %>">
+					<span class="icon">
+						<% if @user.role == 0 %>
+						<i class="fa fa-check"></i>
+						<% end %>
+					</span>
+					<span class="label">Normal</span>
+				</button>
 				<% end %>
 			</td>
 		</tr>
 		<tr>
 			<td class="label">
+				Banned
+			</td>
+			<td class="field">
+				<% if current_user.id == @user.id %>
+				<p style="color:red">You cannot ban yourself.</p>
+				<% else %>
+				<button class="action toggle red" data-family="role-flags" data-action="banned" data-target="user/role" data-id="<%= @user.id %>">
+					<span class="icon">
+						<% if @user.banned? %>
+						<i class="fa fa-check"></i>
+						<% end %>
+					</span>
+					<span class="label">Ban User</span>
+				</button>
+				<% end %>
+			</td>
+		<tr>
+			<td class="label">
 				Badges
 			</td>
 			<td>
-				<table>
 				<% had_badges = @user.badges.pluck(:id) %>
 				<% Badge.all.each do |i| %>
-					<tr>
-						<td>
-							<button class="action toggle blue" data-action="togglebadge/<%= i.id %>" data-target="user" data-id="<%= @user.id %>">
-								<span class="icon">
-									<% if had_badges.include?(i.id) %>
-									<i class="fa fa-check"></i>
-									<% end %>
-								</span>
-								<span class="label"><%= i.title %></span>
-							</button>
-						</td>
-						<td style="color:<%= i.colour %>">
-							<img src="/badges/<%= i.icon %>.png"></img>
-						</td>
-					</tr>	
+					<div style="margin-bottom: 10px">
+						<button class="action toggle blue" data-action="togglebadge/<%= i.id %>" data-target="user" data-id="<%= @user.id %>">
+							<span class="icon">
+								<% if had_badges.include?(i.id) %>
+								<i class="fa fa-check"></i>
+								<% end %>
+							</span>
+							<span class="label"><%= i.title %></span>
+						</button>
+						<div class="right" style="color:<%= i.colour %>">
+							<i class="fa fa-3x fa-<%= i.icon %>"></i>
+						</div>
+					</div>
 				<% end %>
-				</table>
 			</td>
 		</tr>
 	</table>

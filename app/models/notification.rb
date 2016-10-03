@@ -25,7 +25,7 @@ class Notification < ActiveRecord::Base
   end
   
   def self.notify_admins(sender, message, source)
-    Notification.notify_recievers_without_delete(User.where(is_admin: true).pluck(:id), sender, message, source)
+    Notification.notify_recievers_without_delete(User.where('role > 1').pluck(:id), sender, message, source)
   end
   
   def self.notify_recievers_without_delete(recievers, sender, message, source)

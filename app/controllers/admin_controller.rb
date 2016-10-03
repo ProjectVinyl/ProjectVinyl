@@ -181,33 +181,18 @@ class AdminController < ApplicationController
   def role
     if user_signed_in? && current_user.is_staff?
       if params[:id].to_i != current_user.id && user = User.where(id: params[:id]).first
-        if params[:role] == 'staff'
-          user.role = 1
+        role = Roleable.role_for(params[:role])
+puts current_user.role
+        if role <= current_user.role
+          user.role = role
           user.save
-          return render json: {
-            staff: true, contributor: false, admin: false
-          }
-        elsif params[:role] == 'contributor'
-          if current_user.is_contributor?
-            user.role = 2
-            user.save
-            return render json: {
-              staff: false, contributor: true, admin: false
-            }
-          end
-        elsif params[:role] == 'admin'
-          if current_user.is_admin?
-            user.role = 3
-            user.save
-            return render json: {
-              staff: false, contributor: false, admin: true
-            }
-          end
         end
-      end
-      if user
         return render json: {
-          staff: user.staff?, contributor: user.contributor?, admin: user.admin?
+          admin: user.admin?,
+          contributor: user.contributor?,
+          staff: user.staff?,
+          normal: user.role == 0,
+          banned: user.banned?
         }
       end
     end

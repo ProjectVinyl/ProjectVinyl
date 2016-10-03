@@ -48,7 +48,7 @@
 				<td>
 				<div>
 					<a href="<%= c.comment_thread.location %>#comment_<%= c.get_open_id %>">#<%= c.get_open_id %></a>
-					by <a href="<%= c.user.link %>"><%= c.user.username %></a>
+					by <a<% if c.user.banned? %> class="banned"<% end %> href="<%= c.user.link %>"><%= c.user.username %></a>
 				</div>
 				<div>
 					<%= since c.updated_at %>

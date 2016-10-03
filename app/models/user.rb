@@ -1,4 +1,6 @@
 class UserDummy
+  include Roleable
+  
   def initialize(id)
     @id = id
     if id
@@ -32,16 +34,16 @@ class UserDummy
     ''
   end
   
-  def is_admin
+  def admin?
+    self.is_admin?
+  end
+  
+  def contributor?
     false
   end
   
-  def is_contributor
-    false
-  end
-  
-  def is_staff
-    false
+  def role
+    -1
   end
   
   def isDummy
@@ -76,6 +78,7 @@ class User < ActiveRecord::Base
   # :confirmable, :lockable, :timeoutable and :omniauthable
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :trackable, :validatable
+  include Roleable
   
   after_destroy :remove_assets
   after_create :init_name
@@ -298,30 +301,6 @@ class User < ActiveRecord::Base
   
   def link
     return '/profile/' + self.id.to_s + '-' + (self.safe_name || ('Background Pony #' + self.id.to_s(32)))
-  end
-  
-  def admin?
-    self.is_admin?
-  end
-  
-  def contributor?
-    self.role == 2
-  end
-  
-  def staff?
-    self.role == 1
-  end
-  
-  def is_admin?
-    self.role > 2
-  end
-  
-  def is_contributor?
-    self.role > 1
-  end
-  
-  def is_staff?
-    self.role > 0
   end
   
   def isDummy

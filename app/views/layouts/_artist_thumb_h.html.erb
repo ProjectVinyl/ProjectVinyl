@@ -3,7 +3,14 @@
 		<span class="avatar">
 			<span style="background-image: url('<%= artist_thumb_h.avatar %>');"></span>
 		</span>
-		<h2><%= artist_thumb_h.username %></h2>
+		<h2<% if artist_thumb_h.banned? %> class="banned"<% end %>>
+			<%= artist_thumb_h.username %>
+		</h2>
+		<span class="tag-list">
+			<% Badge.all_badges(artist_thumb_h) do |badge| %>
+			<i style="color:<%= badge.colour %>" onmouseover="e.stopPropagation();" class="fa fa-<%= badge.icon %> icon" title="<%= badge.title(artist_thumb_h) %>"></i>
+			<% end %>
+		</span>
 	</a>
 	<div class="tag-list">
 		<%= number_with_delimiter artist_thumb_h.videos.length %> video<%= artist_thumb_h.videos.length == 1 ? "" : "s" %>
