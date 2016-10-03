@@ -25,6 +25,7 @@ class VideoController < ApplicationController
       render 'layouts/error', locals: { title: 'Content Removed', description: "The video you are trying to access is currently not available." }
       return
     end
+    @tags = @video.display_tag_set
     @metadata = {
       type: "video",
       mime: @video.mime,
@@ -33,7 +34,7 @@ class VideoController < ApplicationController
       url: url_for(action: "view", controller: "video", id: @video.id, only_path: false) + "-" + (@video.safe_title || "untitled-video"),
       embed_url: url_for(action: "view", controller: "embed", only_path: false, id: @video.id),
       cover: url_for(action: "cover", controller: "imgs", only_path: false, id: @video.id) + ".png",
-      tags: @video.tags
+      tags: @tags
     }
     @user = @video.user
     @thread = @video.comment_thread
@@ -185,7 +186,7 @@ class VideoController < ApplicationController
   
   def video_details
     if @video = Video.where(id: params[:id]).first
-      if !@video.hidden || (user_signed_in && current_user.is_contributor?)
+      if !@video.hidden || (user_signed_in? && current_user.is_contributor?)
         render json: @video.json
       end
     else
@@ -266,6 +267,8 @@ class VideoController < ApplicationController
           if cover.content_type.include?('image/')
             video.setThumbnail(cover)
           end
+        elsif (time = params[:video][:time].to_f) >= 0
+          video.setThumbnailTime(time)
         elsif params[:erase] || file
           video.setThumbnail(false)
         end

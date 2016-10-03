@@ -214,6 +214,12 @@ class Video < ActiveRecord::Base
     end
   end
   
+  def setThumbnailTime(time)
+    delFile(self.cover_path.to_s + ".png")
+    delFile(self.cover_path.to_s + "-small.png")
+    Ffmpeg.extractThumbnail(self.video_path, self.cover_path, time)
+  end
+  
   def tiny_thumb(user)
     if (self.hidden && (!user || self.user_id != user.id)) || self.isSpoileredBy(user)
       return '/images/default-cover-small.png'
@@ -231,8 +237,14 @@ class Video < ActiveRecord::Base
     return self.video_genres
   end
   
+  def display_tag_set
+    self.tags.includes(:alias).map do |tag|
+      tag.alias || tag
+    end
+  end
+  
   def tag_string
-    return Tag.tag_string(self.tags)
+    return Tag.tag_string(self.display_tag_set)
   end
   
   def artists_string

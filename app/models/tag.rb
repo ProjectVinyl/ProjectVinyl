@@ -125,7 +125,7 @@ class Tag < ActiveRecord::Base
     end
     loaded = Tag.get_tag_ids_with_create(Tag.split_tag_string(tag_string))
     common = existing & loaded
-    if existing.length != loaded.length || common.length != existing.length
+    if existing.length != loaded.length || existing.length != common.length
       Tag.load_dif(loaded - common, existing - common, existing, sender)
     end
   end

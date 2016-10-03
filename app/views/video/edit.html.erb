@@ -12,8 +12,41 @@
 					</div>
 				</div>
 			</div>
-			<div id="upload">
-				<div id="cover-upload" class="cover-block file-select image-selector" data-type="image">
+			<div id="upload" class="tab-set">
+				<% if !@video.audio_only %>
+					<ul class="tab-set">
+						<li data-target="thumbupload" class="button selected">Upload Image</li>
+						<li data-target="thumbpick" class="button">Pick Time</li>
+					</ul>
+					<div data-tab="thumbpick" id="video" class="tab video" style="background-image: url('/cover/<%= @video.id %>.png');" data-title="<%= @video.getTitle %>" data-artist="<%= @user.username %>" data-video="<%= @video.id %>" data-mime="<%= @video.file %>|<%= @video.mime %>">
+						<input class="playlist" id="time" type="text" name="video[time]" value="-1">-1</input>
+					</div>
+					<script>
+$(document).ready(function() {
+  var video = $('#video .player');
+  var player = video[0].getPlayerObj();
+  var time_input = $('#video input');
+  player.pause = function() {
+    if (this.video) this.video.pause();
+  };
+  player.__start = player.start;
+  player.start = function() {
+    this.__start();
+    this.pause();
+  }
+  player.__changetrack = player.changetrack;
+  player.changetrack = function(progress) {
+    this.__changetrack(progress);
+    time_input.val(this.video.currentTime);
+  }
+  player.start();
+  player.volume(0, !0);
+  player.loop(!0);
+  $('#video .icon.fullscreen, #video .icon.volume').remove();
+});
+					</script>
+				<% end %>
+				<div data-tab="thumbupload" id="cover-upload" class="cover-block selected tab file-select image-selector" data-type="image">
 					<span class="preview" style="background-image:url('/cover/<%= @video.id %>.png');"></span>
 					<span class="drop-icon">
 						<i class="fa fa-picture-o"></i>

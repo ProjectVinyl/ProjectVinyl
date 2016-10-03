@@ -678,6 +678,21 @@ $(document).on('click', '.pop-out-toggle', function() {
     if (popout.length && !popout.hasClass('pop-out-shown')) {
       $('.pop-out-shown').removeClass('pop-out-shown');
       popout.addClass('pop-out-shown');
+      popout.removeClass('pop-left');
+      popout.removeClass('pop-right');
+      
+      var emoticons = $('.pop-out-shown .pop-out');
+      
+      var left = emoticons.offset().left;
+      var right = left + emoticons.width();
+      var width = $(window).width();
+      
+      if (right > width) {
+        popout.addClass('pop-left');
+      }
+      if (left < 0 ) {
+        popout.addClass('pop-right');
+      }
     } else {
       $('.pop-out-shown').removeClass('pop-out-shown');
     }
@@ -1310,6 +1325,16 @@ $(document).on('click', '.comment .mention', function(ev) {
 });
 $(document).on('click', '.spoiler', function() {
   $(this).toggleClass('revealed');
+});
+$(document).on('click', '.tab-set li.button', function() {
+  var me = $(this);
+  if (!me.hasClass('selected')) {
+    var other = me.parent().find('.selected');
+    other.removeClass('selected');
+    me.addClass('selected');
+    $('div[data-tab=' + other.attr('data-target') + ']').removeClass('selected').trigger('tabblur');
+    $('div[data-tab=' + me.attr('data-target') + ']').addClass('selected').trigger('tabfocus')
+  }
 });
 
 $(document).on('touchstart', '.drop-down-holder:not(.hover)', function(e) {

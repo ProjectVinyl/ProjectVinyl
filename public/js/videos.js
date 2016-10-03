@@ -592,7 +592,6 @@ function Player() {}
       if (y < 0) y = 0;
       if (y > height) y = height;
       y = height - y;
-      this.video.volume = y / height;
       this.volume(y / height, y == 0);
       this.halt(ev);
     },
@@ -602,6 +601,7 @@ function Player() {}
     },
     volume: function(volume, muted) {
       this.dom.find('.volume .indicator i').attr('class', muted ? 'fa fa-volume-off' : volume < 0.33 ? 'fa fa-volume-down' : volume < 0.66 ? 'fa fa-volume-mid' : 'fa fa-volume-up');
+      if (this.video) this.video.volume = volume;
       if (muted) volume = 0;
       volume *= 100;
       this.controls.volume.bob.css('bottom', volume + '%');

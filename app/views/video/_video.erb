@@ -49,7 +49,7 @@
 			</div>
 		<% end %>
 			<span class="normal">
-				<%= render partial: '/layouts/genre_thumb_h', collection: @video.tags %>
+				<%= render partial: '/layouts/genre_thumb_h', collection: @tags %>
 			</span>
 		<% if user_signed_in? %>
 			<span class="editing">
