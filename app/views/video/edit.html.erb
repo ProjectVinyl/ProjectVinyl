@@ -1,5 +1,11 @@
 <% if @video %>
-		<section class="page column-left">
+		<section class="page column-left<% if !@video.audio_only %> tab-set<% end %>">
+			<% if !@video.audio_only %>
+			<ul class="tab-set">
+				<li data-target="thumbupload" class="button selected">Upload Image</li>
+				<li data-target="thumbpick" class="button">Pick Time</li>
+			</ul>
+			<% end %>
 			<%= form_for(@video, as: "video", url: "/ajax/update/video", html: {class: "edit_video async"}) do |f| %>
 			<%= f.text_field :id, hidden: true %>
 			<div class="progressor">
@@ -12,12 +18,8 @@
 					</div>
 				</div>
 			</div>
-			<div id="upload" class="tab-set">
+			<div id="upload">
 				<% if !@video.audio_only %>
-					<ul class="tab-set">
-						<li data-target="thumbupload" class="button selected">Upload Image</li>
-						<li data-target="thumbpick" class="button">Pick Time</li>
-					</ul>
 					<div data-tab="thumbpick" id="video" class="tab video" style="background-image: url('/cover/<%= @video.id %>.png');" data-title="<%= @video.getTitle %>" data-artist="<%= @user.username %>" data-video="<%= @video.id %>" data-mime="<%= @video.file %>|<%= @video.mime %>">
 						<input class="playlist" id="time" type="text" name="video[time]" value="-1">-1</input>
 					</div>
