@@ -374,6 +374,55 @@ ul.tab-set li {
   display: inline-block;
 }
 
+.tab-set > ul.tab-set {
+  overflow-y: hidden;
+  background: rgba(100,100,120,0.1);
+  padding: 15px 15px 0 15px;
+  margin: -20px -20px 20px -20px;
+}
+.page.properties.tab-set > ul.tab-set {
+  margin: 0 0 20px 0;
+}
+
+ul.tab-set .button {
+  position: relative;
+  border-bottom: none;
+  border-radius: 0 ;
+  box-shadow: 0 0 10px -5px rgba(0,0,0,0.3);
+  margin-right: 10px;
+}
+ul.tab-set .button::before,
+ul.tab-set .button::after {
+  content: '';
+  display: block;
+  position: absolute;
+  top: 0;
+  width: 0;
+  height: 0;
+  border: solid #f8f8f8;
+  border-bottom-width: 30px;
+  transition: border 0.5s ease;
+}
+
+ul.tab-set .button.selected::before,
+ul.tab-set .button:hover::before {
+  border-color: transparent #fff #fff transparent;
+}
+ul.tab-set .button.selected::after,
+ul.tab-set .button:hover::after {
+  border-color: transparent transparent #fff #fff;
+}
+ul.tab-set .button:active::before,
+ul.tab-set .button::before {
+  right: 100%;
+  border-color: transparent #f8f8f8 #f8f8f8 transparent;
+}
+ul.tab-set .button:active::after,
+ul.tab-set .button::after {
+  left: 100%;
+  border-color: transparent transparent #f8f8f8 #f8f8f8;
+}
+
 a {
   color: #337287;
   font-weight: bold;
@@ -1558,6 +1607,7 @@ img.emoticon {
   bottom: 0;
   right: 0;
   background: rgba(0,0,0,.2);
+  z-index: 998;
 }
 
 .fade-away {
@@ -2406,14 +2456,21 @@ h1.banned, h2.banned, a.banned, .banned a.user-link, .comment .name a.user-link.
 }
 
 /*Badges*/
-.fa-duck {
+.fa-bit, .fa-duck {
   position: relative;
 }
+.fa-bit::before,
 .fa-duck::before {
   content: '';
   display: inline-block;
   width: 1em;
   height: 1em;
   margin-bottom: -0.1em;
-  background: url('/badges/duck.png') no-repeat center/cover;
+  background: no-repeat center/cover;
+}
+.fa-duck::before {
+  background-image: url('/badges/duck.png');
+}
+.fa-bit::before {
+    background-image: url('/badges/bit.png');
 }
