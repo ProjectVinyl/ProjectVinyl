@@ -7,7 +7,7 @@
 		<% @all.group_by(&:period).each do |week, n| %>
 			<b><%= week %></b>
 			<p>
-				<%= render partial: "thread/notification", collection: n.sort %>
+				<%= render partial: "thread/notification", collection: n %>
 			</p>
 		<% end %>
 		<% current_user.notifications.where(unread: true).update_all(unread: false) %>
