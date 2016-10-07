@@ -219,7 +219,11 @@ class AdminController < ApplicationController
           existing.destroy
           render json: { :added => false }
         elsif badge = Badge.where(id: params[:badge_id]).first
-          user.user_badges.create(badge_id: badge.id)
+          if badge.badge_type > 0 && params[:extra]
+            user.user_badges.create(badge_id: badge.id, custom_title: params[:extra])
+          else
+            user.user_badges.create(badge_id: badge.id)
+          end
           render json: { :added => true }
         end
       end

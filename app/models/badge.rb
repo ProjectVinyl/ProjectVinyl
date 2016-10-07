@@ -38,11 +38,12 @@ class UserBadge < ActiveRecord::Base
   
   def title(user)
     type = badge.badge_type
-    if type == 1
-      return custom_title
+    if type == 1 && self.custom_title
+      return self.badge.title + " - " + self.custom_title
     end
-    return badge.title
+    return self.badge.title
   end
+	
   
   def icon
     self.badge.icon
