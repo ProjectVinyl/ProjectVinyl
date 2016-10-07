@@ -110,6 +110,14 @@ class User < ActiveRecord::Base
   SANITIZE = /[^a-zA-Z0-9]+/
   BP_PONY = /^background pony #([0-9a-z]+)/
   
+  def active_for_authentication?
+    super && !self.banned?
+  end
+  
+  def inactive_message
+    self.banned? ? "You are banned." : super
+  end
+  
   def validate_name(name)
     if (match = User.where('username = ? OR safe_name = ?', name, name).first) && match.id != self.id
       return false
