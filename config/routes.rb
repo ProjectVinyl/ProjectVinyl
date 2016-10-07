@@ -117,6 +117,7 @@ Rails.application.routes.draw do
   post 'ajax/delete/star' => 'album#removeStar'
   
   get 'notifications' => 'thread#notifications'
+  get 'ajax/notifications' => 'ajax#notifications'
   
   get 'thread/:id' => 'thread#view'
   get 'ajax/thread/new' => 'thread#new'
