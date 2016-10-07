@@ -159,32 +159,9 @@ class TagSelector
     @type = "unknown"
   end
   
-  def videoQuery(page, limit)
-    @type = "video"
-    v_query = "SELECT v.*, a.username, g.name FROM video_genres t RIGHT JOIN videos v ON t.video_id = v.id LEFT JOIN users a ON v.user_id = a.id, tags g"
-    query_strings = self.build_query_string("g.name IN (?)",
-                                            "g.name != ?",
-                                            "v.title LIKE ?",
-                                            "a.username LIKE ?",
-                                            "(g.name != ? AND COUNT(DISTINCT g.name) = 0)",
-                                            "(g.name IN (?) AND COUNT(DISTINCT g.name) = ?)")
-    v_query << " 
-WHERE (("
-    if query_strings[0].index('g.name IN (').nil?
-      v_query << "t.video_id IS NULL OR "
-    end
-    v_query << "g.id = t.tag_id)) AND (v.hidden = false) AND (" + query_strings[0] + ")"
-    v_query << " GROUP BY v.id"
-    v_query << " HAVING (" + query_strings[1] + ")"
-    @main_sql = v_query
-    @page = page
-    @limit = limit
-    return self
-  end
-  
   def videoQuery_two(page, limit)
     @type = "video"
-    v_query = "SELECT v.* FROM videos v, users WHERE v.hidden = false AND v.user_id = users.id"
+    v_query = "SELECT v.* FROM videos v, users WHERE v.hidden = false AND v.duplicate_id = 0 AND v.user_id = users.id"
     groups = self.interpret_opset(@opset)[0]
     if groups.length > 0
       groups = groups.map do |group|
@@ -193,29 +170,6 @@ WHERE (("
       v_query << " AND ( " + groups.join(' OR ') + " )"
     end
     v_query << " GROUP BY v.id"
-    @main_sql = v_query
-    @page = page
-    @limit = limit
-    return self
-  end
-  
-  def userQuery(page, limit)
-    @type = "user"
-    v_query = "SELECT a.*, g.name tag_name FROM artist_genres t RIGHT JOIN users a ON t.user_id = a.id, tags g"
-    query_strings = self.build_query_string("g.name IN (?)",
-                                            "g.name != ?",
-                                            "a.username LIKE ?",
-                                            "",
-                                            "(g.name != ? AND COUNT(DISTINCT g.name) = 0)",
-                                            "(g.name IN (?) AND COUNT(DISTINCT g.name) = ?)")
-    v_query << " 
-WHERE ("
-    if query_strings[0].index('g.name IN (').nil?
-      v_query << "t.user_id IS NULL OR "
-    end
-    v_query << "(g.id = t.tag_id)) AND (" + query_strings[0] + ")"
-    v_query << " GROUP BY a.id"
-    v_query << " HAVING (" + query_strings[1] + ")"
     @main_sql = v_query
     @page = page
     @limit = limit
