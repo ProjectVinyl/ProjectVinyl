@@ -75,19 +75,39 @@ class Tag < ActiveRecord::Base
     new_tags = names - existing_names
     new_tags.each do |name|
       name = name.strip
-      if name.index('uploader:') != 0 && name.index('title:') != 0
-        tag = Tag.create(description: '', tag_type_id: 0, video_count: 0, user_count: 0)
-        if !name.index(':').nil? && type = TagType.where(prefix: name.split(':')[0]).first
-          tag.tag_type = type
-          tag.set_name(name.sub(name.split(':')[0], '').strip)
-          result = result | Tag.load_implications_from_type(tag.id, type)
-        else
-          tag.set_name(name)
+      if name && name.length > 0 && name.index('uploader:') != 0 && name.index('title:') != 0
+        tag = Tag.make(name: name, description: '', tag_type_id: 0, video_count: 0, user_count: 0)
+        if tag.short_name.nil?
+          if !name.index(':').nil? && type = TagType.where(prefix: name.split(':')[0]).first
+            tag.tag_type = type
+            tag.set_name(name.sub(name.split(':')[0], '').strip)
+            result = result | Tag.load_implications_from_type(tag.id, type)
+          else
+            tag.set_name(name)
+          end
         end
         result << tag.id
       end
     end
     return result.uniq
+  end
+  
+  # We don't use Tag.create any more because that can create duplicates
+  def self.make(hash)
+    values = Tag.hash_to_values(hash)
+    sql = 'INSERT INTO tags (' + values[:keys].join(',') + ') VALUES (?) ON DUPLICATE KEY UPDATE name = name;'
+    sql = Tag.sanitize_sql([sql, values[:values]])
+    ActiveRecord::Base.connection.execute(sql)
+    return Tag.where(name: hash[:name]).first
+  end
+  
+  def self.hash_to_values(hash)
+    values = []
+    keys = hash.map do |key,value|
+      values << value
+      key
+    end
+    return {values: values, keys: keys}
   end
   
   def self.load_implications_from_type(id, type)
@@ -105,6 +125,20 @@ class Tag < ActiveRecord::Base
     return tag_ids | TagImplication.where('tag_id IN (?)', tag_ids).pluck(:implied_id)
   end
   
+  def self.relation_to_ids(tags)
+    return tags.pluck(:id, :alias_id).map do |o|
+      (o[1] | o[0])
+    end
+  end
+  
+  def self.send_pickup_event(reciever, tags)
+    tags = tags.uniq
+    map = tags.map do |o|
+      {tag_id: o}
+    end
+    reciever.pick_up_tags(tags).create(map)
+  end
+  
   def self.loadTags(tag_string, sender)
     aliased_from = []
     aliased_to = []
@@ -117,11 +151,8 @@ class Tag < ActiveRecord::Base
     end
     if aliased_from.length > 0
       sender.drop_tags(aliased_from)
-      aliased_to - existing
-      entries = aliased_to.map do |id|
-        { tag_id: id }
-      end
-      sender.pick_up_tags(aliased_to).create(entries)
+      aliased_to = aliased_to - existing
+      Tag.send_pickup_event(sender, aliased_to)
     end
     loaded = Tag.get_tag_ids_with_create(Tag.split_tag_string(tag_string))
     common = existing & loaded
@@ -142,10 +173,7 @@ class Tag < ActiveRecord::Base
     end
     if added.length > 0
       added = added - existing
-      entries = added.map do |id|
-        { tag_id: id }
-      end
-      sender.pick_up_tags(added).create(entries)
+      Tag.send_pickup_event(sender, added)
     end
     TagSubscription.notify_subscribers(added, removed, existing - removed)
     sender.save
