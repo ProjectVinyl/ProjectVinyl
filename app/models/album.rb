@@ -31,7 +31,7 @@ class Album < ActiveRecord::Base
   
   def addItem(video)
     index = self.album_items.length
-    self.album_items.create(video_id: video.id, index: index)
+    self.album_items.create(video_id: video.id, index: index, o_video_id: video.id)
     self.repaint_ordering(self.album_items)
   end
   

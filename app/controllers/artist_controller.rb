@@ -3,12 +3,12 @@ class ArtistController < ApplicationController
     if @user = User.where(id: params[:id].split(/-/)[0]).first
       @tags = @user.tags.includes(:tag_type)
       if @user.tag_id
-        @art = @user.tag.videos.where(hidden: false)
+        @art = @user.tag.videos.listable
         @art_count = @art.count
         @art = Pagination.paginate(@art, 0, 8, true)
       end
       @modificationsAllowed = user_signed_in? && (current_user.id == @user.id || current_user.is_staff?)
-      @videos = @modificationsAllowed ? @user.videos : @user.videos.where(hidden: false)
+      @videos = @modificationsAllowed ? @user.videos.where(duplicate_id: 0) : @user.videos.listable
       @videos = Pagination.paginate(@videos, 0, 8, true)
       @albums = @modificationsAllowed ? @user.albums : @user.albums.where('`albums`.hidden = false AND `albums`.listing = 0')
       @albums = Pagination.paginate(@albums, 0, 8, true)

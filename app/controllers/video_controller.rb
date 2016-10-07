@@ -4,6 +4,10 @@ class VideoController < ApplicationController
       render '/layouts/error', locals: { title: 'Nothing to see here!', description: "This is not the video you are looking for." }
       return
     end
+    if @video.duplicate_id > 0
+      flash[:alert] = "The video you are looking for has been marked as a duplicate of the one below."
+      redirect_to action: 'view', id: @video.duplicate_id
+    end
     if params[:list] || params[:q]
       if params[:q]
         @album = VirtualAlbum.new(params[:q], params[:index].to_i)
@@ -54,6 +58,9 @@ class VideoController < ApplicationController
   
   def go_next
     if @video = Video.where(id: params[:id].split(/-/)[0]).first
+      if @video.duplicate_id > 0
+        @video = Video.where(id: @video.duplicate_id).first
+      end
       if params[:list]
         if @album = Album.where(id: params[:list]).first
           @items = @album.album_items.order(:index)
@@ -152,7 +159,8 @@ class VideoController < ApplicationController
                   views: 0,
                   hidden: false,
                   processed: false,
-                  checksum: checksum[:value]
+                  checksum: checksum[:value],
+                  duplicate_id: 0
           )
           comments.owner_id = video.id
           comments.save
@@ -288,6 +296,9 @@ class VideoController < ApplicationController
     if !(@video = Video.where(id: params[:id].split(/-/)[0]).first)
       return render :file => 'public/404.html', :status => :not_found, :layout => false
     end
+    if @video.duplicate_id > 0
+      @video = Video.where(id: @video.duplicate_id).first
+    end
     if @video.hidden
       return render :file => 'public/502.html', :status => 502, :layout => false
     end
@@ -304,8 +315,20 @@ class VideoController < ApplicationController
   
   def list
     @page = params[:page].to_i
-    @results = Pagination.paginate(Video.Finder.order(:created_at), @page, 50, true)
-    render template: '/view/listing', locals: {type_id: 0, type: 'videos', type_label: 'Video', items: @results}
+    type = 0
+    if params[:merged] && user_signed_in? && current_user.is_contributor?
+      @results = Video.where.not(duplicate_id: 0)
+      @data = 'merged=1'
+      type = -1
+    elsif params[:unlisted] && user_signed_in? && current_user.is_contributor?
+      @results = Video.where(hidden: true)
+      @data = 'unlisted=1'
+      type = -1
+    else
+      @results = Video.Finder
+    end
+    @results = Pagination.paginate(@results.order(:created_at), @page, 50, true)
+    render template: '/view/listing', locals: {type_id: type, type: 'videos', type_label: 'Video', items: @results}
   end
   
   def page
@@ -313,14 +336,23 @@ class VideoController < ApplicationController
     if @user = params[:id]
       @results = User.find(@user.to_i).videos.includes(:tags)
       if !user_signed_in? || current_user.id != @user.to_i
-        @results = @results.where(hidden: false)
+        @results = @results.listable
+      else
+        @results = @results.where(duplicate_id: 0)
       end
       @results = Pagination.paginate(@results.order(:created_at), @page, 8, true)
     else
-      @results = Pagination.paginate(Video.Finder.order(:created_at), @page, 50, true)  
+      if merged = (params[:merged] && user_signed_in? && current_user.is_contributor?)
+        @results = Video.where.not(duplicate_id: 0)
+      elsif merged = (params[:unlisted] && user_signed_in? && current_user.is_contributor?)
+        @results = Video.where(hidden: true)
+      else
+        @results = Video.Finder
+      end
+      @results = Pagination.paginate(@results.order(:created_at), @page, 50, true)  
     end
     render json: {
-      content: render_to_string(partial: '/layouts/video_thumb_h.html.erb', collection: @results.records),
+      content: render_to_string(partial: merged ? '/admin/video_thumb_h.html' : '/layouts/video_thumb_h.html.erb', collection: @results.records),
       pages: @results.pages,
       page: @results.page
     }

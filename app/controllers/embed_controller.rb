@@ -6,6 +6,9 @@ class EmbedController < ActionController::Base
     if @video = Video.where(id: params[:id].split(/-/)[0]).first
       @user = @video.user
     end
+    if @video.duplicate_id > 0
+      @video = Video.where(id: @video.duplicate_id).first
+    end
     if @video && params[:list]
       if @album = Album.where(id: params[:list]).first
         @items = @album.all_items

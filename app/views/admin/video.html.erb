@@ -11,38 +11,7 @@
 				<%= render partial: 'layouts/video_thumb_h', locals: {video_thumb_h: @video} %>
 			</ul>
 		</section>
-		<section class="page properties" style="width:100%">
-			<%= form_for(@video, as: "item", url: "/admin/transfer?type=video", html: { method: :put }) do |f| %>
-				<%= f.text_field :id, hidden: true %>
-			<table>
-				<tr>
-					<td class="label">
-						<%= f.label "Current Owner" %>
-					</td>
-					<td class="field">
-						<a class="user-link" data-id="<%= @user.id %>" href="<%= @user.link %>">
-							<%= @user.username %> (<%= @user.id %>)
-						</a>
-					</td>
-				</tr>
-				<tr>
-					<td class="label">
-						<%= f.label "New Owner" %>
-					</td>
-					<td class="field popper auto-lookup" data-action="artist">
-						<%= f.text_field :user_id, autocomplete: "off" %>
-						<ul class="pop-out"></ul>
-					</td>
-				</tr>
-				<tr class="actions">
-					<td class="label">
-					</td>
-					<td class="field">
-						<%= f.submit "Transfer Ownership", class: "green" %>
-					</td>
-				</tr>
-			</table>
-			<% end %>
+    <section class="page properties" style="width:100%">
 			<table>
 				<tr class="actions">
 					<td class="label">
@@ -87,46 +56,97 @@
 						</button>
 					</td>
 				</tr>
-			</table>
-			<%= form_for(@video, as: "video", url: "/admin/video/reprocess", html: { method: :put }) do |f| %>
-				<%= f.text_field :id, hidden: true %>
-			<table>
 				<tr class="actions">
 					<td class="label">
-						<%= f.label "Processed (" + (@video.processed ? "Yes" : @video.processed.nil? ? "No" : "In Progress") + ")" %>
+						Processed (<%= (@video.processed ? "Yes" : @video.processed.nil? ? "No" : "In Progress") %>)
 					</td>
 					<td class="field">
+          <%= form_for(@video, as: "video", url: "/admin/video/reprocess", html: { method: :put }) do |f| %>
+            <%= f.text_field :id, hidden: true %>
 						<%= f.submit "Restart" %>
+          <% end %>
 					</td>
 				</tr>
-			</table>
-			<% end %>
-			<%= form_for(@video, as: "video", url: "/admin/video/resetthumb", html: { method: :put }) do |f| %>
-				<%= f.text_field :id, hidden: true %>
-			<table>
 				<tr class="actions">
-					<td class="label">
-						<%= f.label "Reset Thumbnail" %>
-					</td>
+					<td class="label">Reset Thumbnail</td>
 					<td class="field">
+          <%= form_for(@video, as: "video", url: "/admin/video/resetthumb", html: { method: :put }) do |f| %>
+            <%= f.text_field :id, hidden: true %>
 						<%= f.submit "Restart" %>
 						<div>Thumbnail will be regenerated from source</div>
+          <% end %>
 					</td>
 				</tr>
-			</table>
-			<% end %>
-			<table>
 				<tr class="actions">
 					<td class="label">
 						Delete Item
 					</td>
 					<td class="field">
 						<button class="confirm-button action red" data-action="delete" data-url="delete/video/<%= @video.id %>" data-title="Delete Video" data-icon="warning" type="button"><i class=\"fa fa-trash\"></i> Delete Video</button>
+            <div>Removes this video and all related data from the system.
+            <br><b>(Action cannot be reversed)</b></div>
 					</td>
 				</tr>
 			</table>
 		</section>
 	</div>
+  <section class="page properties column-left">
+    <%= form_for(@video, as: "item", url: "/admin/transfer?type=video", html: { method: :put }) do |f| %>
+      <%= f.text_field :id, hidden: true %>
+    <table>
+      <tr>
+        <td class="label">
+          <%= f.label "Current Owner" %>
+        </td>
+        <td class="field" colspan="2">
+          <a class="user-link" data-id="<%= @user.id %>" href="<%= @user.link %>">
+            <%= @user.username %> (<%= @user.id %>)
+          </a>
+        </td>
+      </tr>
+      <tr>
+        <td class="label">
+          <%= f.label "New Owner" %>
+        </td>
+        <td class="field popper auto-lookup" data-action="artist">
+          <%= f.text_field :user_id, autocomplete: "off" %>
+          <ul class="pop-out"></ul>
+        </td>
+        <td class="field">
+          <%= f.submit "Transfer Ownership", class: "green" %>
+        </td>
+      </tr>
+    </table>
+    <% end %>
+  </section>
+  <section class="page properties column-left">
+    <%= form_for(@video, as: "video", url: "/admin/video/merge", html: { method: :put }) do |f| %>
+      <%= f.text_field :id, hidden: true %>
+    <table>
+      <tr class="actions">
+        <td class="label">
+          Merging
+        </td>
+        <td class="field">
+          <% if @video.duplicate_id > 0 %>
+            <%= f.submit "Unmerge Video", class: "blue" %>
+          <% else %>
+          <%= f.text_field :duplicate_id %>
+        </td>
+        <td class="field">
+            <%= f.submit "Merge Video", class: "green" %>
+          <% end %>
+        </td>
+      </tr>
+    </table>
+    <p>All data from this video (exclusing description, source, and title) will be combined 
+    with that of the destination video.
+    This video will remain on the system but any attempts to access it will result in a redirect
+    to the new video.
+    <br><b>(Action can be reversed)</b>
+    </p>
+    <% end %>
+  </section>
 <% else %>
 <%= render layout: '/layouts/error', locals: { title: 'Nothing to see here!' } do %>
 This is not the video you are looking for.

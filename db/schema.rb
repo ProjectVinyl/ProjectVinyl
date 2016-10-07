@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161001180406) do
+ActiveRecord::Schema.define(version: 20161005114338) do
 
   create_table "album_items", force: :cascade do |t|
     t.integer  "album_id",   limit: 4
@@ -19,6 +19,7 @@ ActiveRecord::Schema.define(version: 20161001180406) do
     t.integer  "index",      limit: 4
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "o_video_id", limit: 4, default: 0
   end
 
   add_index "album_items", ["album_id"], name: "index_album_items_on_album_id", using: :btree
@@ -78,13 +79,14 @@ ActiveRecord::Schema.define(version: 20161001180406) do
   add_index "comment_threads", ["owner_type", "owner_id"], name: "index_comment_threads_on_owner_type_and_owner_id", using: :btree
 
   create_table "comments", force: :cascade do |t|
-    t.integer  "user_id",           limit: 4
-    t.integer  "comment_thread_id", limit: 4
-    t.text     "html_content",      limit: 65535
-    t.text     "bbc_content",       limit: 65535
-    t.datetime "created_at",                                      null: false
-    t.datetime "updated_at",                                      null: false
-    t.boolean  "hidden",                          default: false
+    t.integer  "user_id",             limit: 4
+    t.integer  "comment_thread_id",   limit: 4
+    t.text     "html_content",        limit: 65535
+    t.text     "bbc_content",         limit: 65535
+    t.datetime "created_at",                                        null: false
+    t.datetime "updated_at",                                        null: false
+    t.boolean  "hidden",                            default: false
+    t.integer  "o_comment_thread_id", limit: 4,     default: 0
   end
 
   create_table "notifications", force: :cascade do |t|
@@ -160,6 +162,8 @@ ActiveRecord::Schema.define(version: 20161001180406) do
     t.integer "alias_id",    limit: 4
   end
 
+  add_index "tags", ["name"], name: "index_tags_on_name", unique: true, using: :btree
+
   create_table "user_badges", force: :cascade do |t|
     t.integer  "badge_id",     limit: 4
     t.integer  "user_id",      limit: 4
@@ -231,6 +235,7 @@ ActiveRecord::Schema.define(version: 20161001180406) do
     t.boolean  "featured",                        default: false
     t.string   "checksum",          limit: 32
     t.integer  "heat",              limit: 4
+    t.integer  "duplicate_id",      limit: 4,     default: 0
   end
 
   add_index "videos", ["checksum"], name: "index_videos_on_checksum", using: :btree

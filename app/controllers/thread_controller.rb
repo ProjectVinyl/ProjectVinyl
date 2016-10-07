@@ -64,7 +64,7 @@ class ThreadController < ApplicationController
   def post_comment
     if user_signed_in?
       if (@thread = CommentThread.where(id: params[:thread]).first) && !@thread.locked
-        comment = @thread.comments.create(user_id: current_user.id)
+        comment = @thread.comments.create(user_id: current_user.id, o_comment_thread_id: @thread.id)
         comment.update_comment(params[:comment])
         @results = Pagination.paginate(@thread.get_comments(current_user.is_contributor?), params[:order] == '1' ? 0 : -1, 10, params[:order] == '1')
         render json: {

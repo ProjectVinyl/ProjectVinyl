@@ -182,7 +182,6 @@ class AdminController < ApplicationController
     if user_signed_in? && current_user.is_staff?
       if params[:id].to_i != current_user.id && user = User.where(id: params[:id]).first
         role = Roleable.role_for(params[:role])
-puts current_user.role
         if role <= current_user.role
           user.role = role
           user.save
@@ -197,6 +196,20 @@ puts current_user.role
       end
     end
     render status: 401, nothing: true
+  end
+  
+  def merge
+    if user_signed_in? && current_user.is_staff?
+      if video = Video.where(id: params[:video][:id]).first
+        if other = Video.where(id: params[:video][:duplicate_id]).first
+          video.merge(current_user, other)
+        else
+          video.unmerge
+        end
+        flash[:notice] = "Changes Saved."
+      end
+    end
+    redirect_to action: "video", id: params[:video][:id]
   end
   
   def togglebadge

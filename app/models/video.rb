@@ -8,8 +8,9 @@ class Video < ActiveRecord::Base
   has_many :video_genres, dependent: :destroy
   has_many :tags, :through => :video_genres
   
+  scope :listable, -> { where(hidden: false, duplicate_id: 0) }
   def self.Finder
-    return Video.includes(:tags).where(hidden: false)
+    return Video.includes(:tags).listable
   end
   
   def self.randomVideos(selection, limit)
@@ -424,7 +425,46 @@ class Video < ActiveRecord::Base
     return basescore
   end
   
+  def merge(user, other)
+    self.do_unmerge
+    self.duplicate_id = other.id
+    AlbumItem.where(video_id: self.id).update_all('video_id = ' + other.id.to_s)
+    Comment.where(comment_thread_id: self.comment_thread_id).update_all(comment_thread_id: other.comment_thread_id)
+    mytags = Tag.relation_to_ids(self.tags)
+    tags = mytags - Tag.relation_to_ids(other.tags)
+    tags = tags.uniq
+    if tags.length > 0
+      Tag.send_pickup_event(other, tags)
+      self.drop_tags(mytags)
+    end
+    recievers = self.comment_thread.comments.pluck(:user_id) | [self.user_id]
+    Notification.notify_recievers_without_delete(recievers, self.comment_thread,
+            user.username + " has merged <b>" + self.title + "</b> into <b>" + other.title + "</b>",
+            other.comment_thread.location)
+    self.save
+    return self
+  end
+  
+  def unmerge
+    if self.do_unmerge
+      self.save
+    end
+  end
+  
   protected
+  def do_unmerge
+    if self.duplicate_id
+      if other = Video.where(id: self.duplicate_id).first
+        Tag.send_pickup_event(self, Tag.relation_to_ids(other.tags))
+        AlbumItem.where(video_id: other.id, o_video_id: self.id).update_all('video_id = o_video_id')
+        Comment.where(comment_thread_id: other.comment_thread_id, o_comment_thread_id: self.comment_thread_id).update_all('comment_thread_id = o_comment_thread_id')
+      end
+      self.duplicate_id = 0
+      return true
+    end
+    return false
+  end
+  
   def delFile(path)
     if File.exists?(path)
       File.delete(path)
