@@ -647,6 +647,28 @@ div.page .positioner {
    margin-right: 0;
 }
 
+.wrapper.auto-wrap,
+.page.column-left.auto-wrap {
+  position: relative;
+  display: inline;
+  background: none;
+  box-shadow: none;
+  margin: 0;
+}
+.column-left.auto-wrap > .page {
+  display: block;
+  overflow: hidden;
+  margin-bottom: 20px;
+  margin-top: 0;
+}
+.column-right.wrap-around-fixed {
+  position: relative;
+  z-index: 1;
+  margin-left: 15px !important;
+  margin-top: 10px !important;
+  margin-right: 0 !important;
+}
+
 .page img, .notice {
   max-width: 100%;
 }
@@ -2202,6 +2224,12 @@ span.active-icon {
   color: inherit;
 }
 
+h1.banned, h2.banned, a.banned, .banned a.user-link, .comment .name a.user-link.banned, .name.banned {
+  text-decoration: line-through !important;
+  color: #aaa !important;
+  
+}
+
 /*Screen size rules*/
 @media(max-width: 600px) {
   .page.right, .mobile-hidden {
@@ -2228,6 +2256,7 @@ span.active-icon {
   .column-mobile-fragmented > section.column-mobile-shown {
     display: block;
   }
+  .wrapper .wrapper.right.column-mobile-fragmented.wrap-around-fixed,
   .wrapper .wrapper.right.column-mobile-fragmented > section.column-mobile-shown {
     margin-left: 0 !important;
     margin-right: 0 !important;

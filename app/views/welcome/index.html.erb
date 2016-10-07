@@ -1,4 +1,4 @@
-﻿<div style="margin-left:-10px;width:23%" class="wrapper resize-holder column-right right column-mobile-fragmented">
+﻿<div style="margin-left:-10px;width:23%" class="wrapper resize-holder column-right right column-mobile-fragmented wrap-around-fixed">
 	<% if @featured %>
 	<section style="width:100%" class="page featured column-mobile-shown">
 		<h1>Featured Video</h1>
@@ -68,29 +68,32 @@
 		</a>
 		<a class="source" href="//derpibooru.org/549114">source</a>
 	</section>
-</div><section class="page column-left" style="width:76%">
-	<%= render partial: 'section', locals: { collection: @popular, type: 'popular', label: 'Popular' } %>
-	<% if @featured_album %>
-</section>
-<section class="page column-left resize-holder" style="width:76%">
-		<%= render partial: 'featured_album', locals: { featured_album: @featured_album } %>
-</section>
-<section class="page column-left" style="width:76%">
-	<% end %>
-	<% @all.group_by(&:period).each do |week, n| %>
-		<%= render partial: 'section', locals: { collection: n, label: week } %>
-	<% end %>
-	<% if @feed && @feed.length > 0 %>
-</section>
-<section class="page column-left" style="width:76%">
-	<div class="group feed">
-		<h1><a href="/videos/watched">Watched Videos (<%= number_with_delimiter @feed.length %>)</a></h1>
-		<ul class="horizontal latest">
-			<%= render partial: '/layouts/video_thumb_h', collection: @feed %>
-		</ul>
-	</div>
-	<% end %>
-</section>
+</div>
+<div class="wrapper column-left auto-wrap resize-holder" style="width: 76%">
+	<section class="page">
+		<%= render partial: 'section', locals: { collection: @popular, type: 'popular', label: 'Popular' } %>
+		<% if @featured_album %>
+	</section>
+	<section class="page">
+			<%= render partial: 'featured_album', locals: { featured_album: @featured_album } %>
+		<% end %>
+	</section>
+		<% @all.group_by(&:period).each do |week, n| %>
+	<section class="page">
+			<%= render partial: 'section', locals: { collection: n, label: week } %>
+	</section>
+		<% end %>
+		<% if @feed && @feed.length > 0 %>
+	<section class="page">
+		<div class="group feed auto-wrap-contents">
+			<h1><a href="/videos/watched">Watched Videos (<%= number_with_delimiter @feed.length %>)</a></h1>
+			<ul class="horizontal latest">
+				<%= render partial: '/layouts/video_thumb_h', collection: @feed %>
+			</ul>
+		</div>
+	</section>
+		<% end %>
+</div>
 <style type="text/css">
 iframe.twitter-timeline {
   min-width: 100% !important;
@@ -112,7 +115,7 @@ function resizeGrid(grid, beside) {
     } while (calculatedWidth > width)
     grid.css('width', calculatedWidth + 'px');
     if (beside) {
-      beside.css('width', (beside.parent().innerWidth() - calculatedWidth - 5) + 'px');
+      beside.css('width', (beside.parent().innerWidth() - (calculatedWidth + 15)) + 'px');
     }
   }
 }
