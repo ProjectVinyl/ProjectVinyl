@@ -913,3 +913,14 @@ i.fa.fa-volume-mid {
 .video .player.playing ~ .playlist-toggle:hover {
   opacity: 1;
 }
+
+.uploading #video .controls,
+.uploading .tab-set {
+  display: none;
+}
+.uploading #video {
+  height: 0 !important;
+}
+.uploading #video {
+  margin: 0;
+}
