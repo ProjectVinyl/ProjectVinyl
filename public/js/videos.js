@@ -435,9 +435,10 @@ function Player() {}
           sendMessage(me);
           me.volume(this.volume, this.muted);
         });
-        video.on('abort error', function() {
+        video.on('abort error', function(e) {
           me.pause();
           me.player.addClass('stopped');
+          console.log(e);
         });
         video.on('ended', function() {
           if (me.__autoplay) {

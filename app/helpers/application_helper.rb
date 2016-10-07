@@ -74,6 +74,10 @@ module ApplicationHelper
     Emoticons
   end
   
+  def emoticons
+    Emoticons
+  end
+  
   def self.emotify(text)
     if text.nil? || text.length == 0
       return ""
@@ -109,10 +113,6 @@ module ApplicationHelper
   
   def demotify(text)
     return ApplicationHelper.demotify(text)
-  end
-  
-  def emoticons
-    return Emoticons
   end
   
   def since(date)
