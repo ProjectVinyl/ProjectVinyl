@@ -150,7 +150,7 @@
 		<table>
 			<tr>
 				<td>
-					<div class="progressor" style="padding-top:0;text-align:center;">
+					<div class="progressor" style="display:block;padding-top:0;text-align:center;">
 						<span class="message plain">Sending...</span>
 					</div>
 				</td>
@@ -220,18 +220,18 @@
     }
   });
   $('.form.report form.async').on('submit', function(e) {
-    var form = $(this).parents('.form');
-    ajax.form($(this), e, {
+    var me = $(this);
+    ajax.form(me, e, {
       progress: function(e, message, fill, percentage) {
         if (percentage >= 100) {
           message.html('<i style="color: lightgreen; font-size: 50px;" class="fa fa-check"></i></br>Thank you! Your report will be addressed shortly.');
         }
       },
       success: function() {
-        form.removeClass('reporting');
+        me.removeClass('uploading');
       },
       error: function(message, error, msg) {
-        form.removeClass('reporting');
+        me.removeClass('uploading');
         message.css('margin-left', '');
         message.html('<i style="color: red; font-size: 50px;" class="fa fa-times"></i></br>' + error + ': ' + msg);
         message.append('<br>Please contact <a href="mailto://support@projectvinyl.net">support@projectvinyl.net</a> for assistance.');
