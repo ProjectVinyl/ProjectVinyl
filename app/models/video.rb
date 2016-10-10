@@ -157,18 +157,22 @@ class Video < ActiveRecord::Base
       file.flush()
     end
     self.processed = nil
-    self.save
+    self.generateWebM()
   end
   
   def generateWebM
     if !self.audio_only
-      self.processed = nil
-      self.save
+      if self.processed != nil
+        self.processed = nil
+        self.save
+      end
       VideoProcessor.enqueue(self)
       return "Processing Scheduled"
     else
-      self.processed = true
-      self.save
+      if !self.processed
+        self.processed = true
+        self.save
+      end
       return "Completed"
     end
   end
@@ -236,12 +240,6 @@ class Video < ActiveRecord::Base
   def pick_up_tags(ids)
     Tag.where('id IN (?)', ids).update_all('video_count = video_count + 1')
     return self.video_genres
-  end
-  
-  def display_tag_set
-    self.tags.includes(:alias).map do |tag|
-      tag.alias || tag
-    end
   end
   
   def tag_string

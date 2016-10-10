@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161005114338) do
+ActiveRecord::Schema.define(version: 20161005114339) do
 
   create_table "album_items", force: :cascade do |t|
     t.integer  "album_id",   limit: 4
@@ -43,8 +43,9 @@ ActiveRecord::Schema.define(version: 20161005114338) do
   add_index "albums", ["user_id"], name: "index_albums_on_user_id", using: :btree
 
   create_table "artist_genres", force: :cascade do |t|
-    t.integer "tag_id",  limit: 4
-    t.integer "user_id", limit: 4
+    t.integer "tag_id",   limit: 4
+    t.integer "user_id",  limit: 4
+    t.integer "o_tag_id", limit: 4
   end
 
   add_index "artist_genres", ["user_id"], name: "index_artist_genres_on_user_id", using: :btree
@@ -208,6 +209,7 @@ ActiveRecord::Schema.define(version: 20161005114338) do
   create_table "video_genres", force: :cascade do |t|
     t.integer "video_id", limit: 4
     t.integer "tag_id",   limit: 4
+    t.integer "o_tag_id", limit: 4
   end
 
   add_index "video_genres", ["video_id"], name: "index_video_genres_on_video_id", using: :btree

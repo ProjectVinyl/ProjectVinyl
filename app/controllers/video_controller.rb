@@ -29,7 +29,7 @@ class VideoController < ApplicationController
       render 'layouts/error', locals: { title: 'Content Removed', description: "The video you are trying to access is currently not available." }
       return
     end
-    @tags = @video.display_tag_set
+    @tags = @video.tags
     @metadata = {
       type: "video",
       mime: @video.mime,
@@ -164,11 +164,10 @@ class VideoController < ApplicationController
           )
           comments.owner_id = video.id
           comments.save
-          Tag.loadTags(params[:video][:tag_string], video)
           video.save_file(data)
           video.setThumbnail(cover)
+          Tag.loadTags(params[:video][:tag_string], video)
           video.save
-          video.generateWebM
           if params[:async]
             render json: { result: "success", ref: "/view/" + video.id.to_s }
           else
@@ -258,7 +257,7 @@ class VideoController < ApplicationController
       video = Video.where(id: params[:id]).first
       if video.user_id == current_user.id || current_user.is_contributor?
         @video = video
-	@user = video.user
+        @user = video.user
       end
     end
   end
@@ -268,7 +267,6 @@ class VideoController < ApplicationController
       if video.user_id == current_user.id || current_user.is_contributor?
         if current_user.is_staff? && (file = params[:video][:file])
           video.setFile(file)
-          video.generateWebM()
           video.save
         end
         if cover = params[:video][:cover]

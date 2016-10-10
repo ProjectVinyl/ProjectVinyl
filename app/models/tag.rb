@@ -76,15 +76,16 @@ class Tag < ActiveRecord::Base
     new_tags.each do |name|
       name = name.strip
       if name && name.length > 0 && name.index('uploader:') != 0 && name.index('title:') != 0
-        tag = Tag.make(name: name, description: '', tag_type_id: 0, video_count: 0, user_count: 0)
+        if !name.index(':').nil?
+          type = TagType.where(prefix: name.split(':')[0]).first
+        end
+        tag = Tag.make(name: name, description: '', tag_type_id: type ? type.id : 0, video_count: 0, user_count: 0)
         if tag.short_name.nil?
-          if !name.index(':').nil? && type = TagType.where(prefix: name.split(':')[0]).first
-            tag.tag_type = type
-            tag.set_name(name.sub(name.split(':')[0], '').strip)
+          if type
+            name = name.sub(name.split(':')[0], '').strip
             result = result | Tag.load_implications_from_type(tag.id, type)
-          else
-            tag.set_name(name)
           end
+          tag.set_name(name)
         end
         result << tag.id
       end
@@ -134,7 +135,7 @@ class Tag < ActiveRecord::Base
   def self.send_pickup_event(reciever, tags)
     tags = tags.uniq
     map = tags.map do |o|
-      {tag_id: o}
+      {tag_id: o, o_tag_id: o}
     end
     reciever.pick_up_tags(tags).create(map)
   end
@@ -178,7 +179,7 @@ class Tag < ActiveRecord::Base
     TagSubscription.notify_subscribers(added, removed, existing - removed)
     sender.save
   end
-    
+  
   def members
     return self.video_count + self.user_count
   end
@@ -233,9 +234,25 @@ class Tag < ActiveRecord::Base
   end
   
   def set_alias(tag)
+    tag_o = tag.alias || tag
     tag = (tag.alias_id || tag.id)
     if tag && tag != self.id
       self.alias_id = tag
+      Tag.where(alias_id: self.id).update_all(alias_id: tag)
+      User.where(tag_id: self.id).update_all(tag_id: tag)
+      ArtistGenre.where(o_tag_id: self.id).update_all(tag_id: tag)
+      VideoGenre.where(o_tag_id: self.id).update_all(tag_id: tag)
+      self.video_count = self.user_count = 0
+      tag_o.recount
+    end
+  end
+  
+  def unset_alias
+    if self.alias_id
+      ArtistGenre.where(o_tag_id: self.id).update_all('tag_id = o_tag_id')
+      VideoGenre.where(o_tag_id: self.id).update_all('tag_id = o_tag_id')
+      self.alias_id = nil
+      self.recount
     end
   end
   
@@ -244,5 +261,10 @@ class Tag < ActiveRecord::Base
       return self.alias.name
     end
     return ""
+  end
+  
+  def recount
+    self.video_count = VideoGenre.where(tag_id: self.id).count
+    self.user_count = ArtistGenre.where(tag_id: self.id).count
   end
 end
