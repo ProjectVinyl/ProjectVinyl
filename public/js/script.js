@@ -28,7 +28,7 @@ $(window).ready(function () {
 		}
 	}
   
-  if (window['current_user'] && window.SharedWorker && !!localStorage['give_me_notification']) {
+  if (window['current_user'] && window.SharedWorker && !!localStorage['give_me_notifications']) {
     var doc_title = $('#document_title');
     var title = doc_title.text();
     var worker = new SharedWorker('/js/notifications.js');
