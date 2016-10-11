@@ -40,6 +40,7 @@ class AdminController < ApplicationController
     @modificationsAllowed = true
     @video = Video.where(id: params[:id]).first
     @user = @video.user
+    @tags = @video.tags
   end
   
   def album
