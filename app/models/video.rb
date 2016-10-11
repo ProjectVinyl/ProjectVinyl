@@ -243,7 +243,7 @@ class Video < ActiveRecord::Base
   end
   
   def tag_string
-    return Tag.tag_string(self.display_tag_set)
+    return Tag.tag_string(self.tags)
   end
   
   def artists_string
