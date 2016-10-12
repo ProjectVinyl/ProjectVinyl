@@ -239,21 +239,24 @@ class TagSelector
   
   def exec()
     @count = ActiveRecord::Base.connection.execute("SELECT COUNT(*) FROM (" + @main_sql + ") AS `matches`;").first[0].to_i
-    @pages = @count / @limit
-    if (@pages * @limit) == @count
-      @pages -= 1
-    end
     if @page.nil?
       @page = 0
     end
-    if @page < 0
+    @pages = @count / @limit
+    
+    if (@pages * @limit) == @count
+      @pages -= 1
+    end
+    if @count <= @page * @limit || @page < 0
       @page = @pages
     end
     sql = @main_sql + " ORDER BY " + @ordering + " LIMIT " + @limit.to_s + " OFFSET " + (@offset ? @offset : (@page * @limit)).to_s + ";"
     if @type == 'video'
-      @records = Video.find_by_sql(sql) #ActiveRecord::Base.connection.exec_query
+      @records = Video.find_by_sql(sql)
+      ActiveRecord::Associations::Preloader.new.preload(@records, :tags)
     else
       @records = User.find_by_sql(sql)
+      ActiveRecord::Associations::Preloader.new.preload(@records, [:tags, :user_badges])
     end
     return self
   end

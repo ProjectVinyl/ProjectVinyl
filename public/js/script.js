@@ -1210,13 +1210,14 @@ var paginator = (function() {
   var match;
   if (match = hash.match(/#\/([^\/]+)/)) {
     var id = match[1];
-    hash = hash.replace('/' + id, '');
+    hash = hash.replace('/' + id + '/', '');
+		console.log(hash);
     if (hash.indexOf('#first') == 0) {
       page = 0;
     } else if (hash.indexOf('#last') == 0) {
       page = -1;
     } else {
-      page = parseInt(hash.match(/#\/([0-9]+)/)[1]);
+      page = parseInt(hash.match(/#([0-9]+)/)[1]);
     }
     if (page > -2) {
       $(document).ready(function() {
