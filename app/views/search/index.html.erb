@@ -87,7 +87,7 @@ $('#search_type').on('change', function() {
 			<% if @tag %>
 				<%= render partial: '/genre/bio', locals: {tag: @tag} %>
 			<% end %>
-			<% content_for :data do %>query=<%= @query %>&type=<%= @type %>&order=<%= @ascending ? 1 : 0 %>&orderby=<%= @orderby %><% end %>
+			<% @data = "query=" + @query + "&type=" + @type.to_s + "&order=" + (@ascending ? "1" : "0") + "&orderby=" + @orderby.to_s %>
 			<%= render layout: '/layouts/paginated', locals: {type: 'search',paginated: @results, id: "page"} do %>
 				<section class="search-result">
 					<% if @type == 0 %>
