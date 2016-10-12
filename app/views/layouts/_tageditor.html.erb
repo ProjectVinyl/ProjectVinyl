@@ -4,7 +4,7 @@
 	</span>
 	<ul class="tags"><% if tags %><% tags.includes(:tag_type).each do |tag| %><li class="tag tag-<%= tag.namespace %>">
 		<i title="Remove Tag" data-name="<%= tag.get_as_string %>" class="fa fa-times remove">
-		</i><a href="/tags/<%= tag.short_name %>"><%= tag.get_as_string %></a>
+		</i><a href="=<%= tag.link %>"><%= tag.get_as_string %></a>
 		<span><% if user_signed_in? %>
 		<% if current_user.hides([tag.id]) %>H<% end %>
 		<% if current_user.spoilers([tag.id]) %>S<% end %>

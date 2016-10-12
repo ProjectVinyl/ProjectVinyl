@@ -57,7 +57,7 @@ module ApplicationHelper
   ]
   
   def self.read_only
-    return false
+    false
   end
   
   def self.check_and_trunk(str, defa)
@@ -108,11 +108,11 @@ module ApplicationHelper
     Emoticons.each { |x|
       text = text.gsub(/<img class="emoticon" src="\/emoticons\/#{x}">:/,':' + x + ':">')
     }
-    return text.gsub(/</, '&lt;').gsub(/>/, '&gt;')
+    text.gsub(/</, '&lt;').gsub(/>/, '&gt;')
   end
   
   def demotify(text)
-    return ApplicationHelper.demotify(text)
+    ApplicationHelper.demotify(text)
   end
   
   def since(date)
@@ -147,15 +147,15 @@ module ApplicationHelper
     if hours < 10
       hours = '0' + hours.to_s
     end
-    return hours.to_s + ':' + minutes.to_s + ':' + seconds.to_s
+    hours.to_s + ':' + minutes.to_s + ':' + seconds.to_s
   end
   
   def self.url_safe(txt)
-    return txt.gsub(/(\/|[^:\!\@\$\^&\*\(\)\+=_;:'",a-zA-Z0-9\-])+/,'-').gsub(/--/,'-').gsub(/(^-)|(-$)/,'')
+    txt.gsub(/(\/|[^:\!\@\$\^&\*\(\)\+=_;:'",a-zA-Z0-9\-])+/,'-').gsub(/--/,'-').gsub(/(^-)|(-$)/,'')
   end
   
   def self.url_safe_for_tags(txt)
-    return txt.gsub(/(\/|[^:\!\@\$\^&\*\(\)\+=_;:'",a-zA-Z0-9 \-])+/,'-').gsub(/--/,'-').gsub(/(^-)|(-$)/,'')
+    txt.gsub(/(\/|[^:\!\@\$\^&\*\(\)\+=_;:'",a-zA-Z0-9 \-])+/,'-').gsub(/--/,'-').gsub(/(^-)|(-$)/,'')
   end
   
   def title(page_title)
@@ -167,6 +167,14 @@ module ApplicationHelper
   end
   
   def load_time
-    return Time.now - @start_time
+    Time.now - @start_time
+  end
+  
+  def self.valid_string?(s)
+    s && s.length > 0
+  end
+  
+  def valid_string(s)
+    ApplicationHelper.valid_string(s)
   end
 end

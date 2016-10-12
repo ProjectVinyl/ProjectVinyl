@@ -1,5 +1,5 @@
 <li class="tag tag-<%= genre_thumb_h.namespace %> drop-down-holder popper">
-	<a href="/tags/<%= genre_thumb_h.short_name %>">
+	<a href="<%= genre_thumb_h.link %>">
 		<span>
 			<%= genre_thumb_h.name %> (<%= number_with_delimiter genre_thumb_h.members %>)
 			<% if user_signed_in? %>

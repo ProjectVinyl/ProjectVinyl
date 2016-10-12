@@ -13,9 +13,11 @@ class SearchController < ApplicationController
         @query << ","
       end
       @query << @tag_query
-      @tag = Tag.includes(:alias).where('name = ? OR short_name = ?', @tag_query, @tag_query).first
-      if @tag && @tag.alias_id
-        @tag = @tag.alias
+      if ApplicationHelper.valid_string?(@tag_query)
+        @tag = Tag.includes(:alias).where('name = ? OR short_name = ?', @tag_query, @tag_query).first
+        if @tag && @tag.alias_id
+          @tag = @tag.alias
+        end
       end
     else
       @query = @title_query = params[:query] || ""

@@ -1,6 +1,7 @@
 class GenreController < ApplicationController
   def view
-    if @tag = Tag.where("short_name = ? OR name = ?", params[:name].downcase, params[:name].downcase).first
+    name = params[:name].downcase
+    if @tag = Tag.where("short_name = ? OR name = ? OR id = ?", name, name, name).first
       if @tag.alias_id
         flash[:notice] = "The tag '" + @tag.name + "' has been aliased to '" + @tag.alias.name + "'"
         if !user_signed_in? || !current_user.is_staff?

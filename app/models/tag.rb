@@ -203,7 +203,7 @@ class Tag < ActiveRecord::Base
   end
   
   def has_type
-    return self.tag_type_id & self.tag_type_id > 0
+    return self.tag_type_id && self.tag_type_id > 0
   end
   
   def namespace
@@ -211,6 +211,18 @@ class Tag < ActiveRecord::Base
       return self.name.split(':')[0]
     end
     return ''
+  end
+  
+  def link
+    result = '/tags/'
+    if ApplicationHelper.valid_string?(self.short_name)
+      return result + self.short_name
+    end
+    if ApplicationHelper.valid_string?(self.name)
+      self.set_name(self.name)
+      return result + self.name
+    end
+    return result + self.id.to_s
   end
   
   def set_name(name)
