@@ -68,7 +68,7 @@ class AdminController < ApplicationController
       return
     end
     @tag = Tag.find(params[:id])
-    @prefix = (@tag.tag_type_id > 0 ? @tag.tag_type.prefix : "[none]")
+    @prefix = (@tag.tag_type_id && @tag.tag_type_id > 0 ? @tag.tag_type.prefix : "[none]")
     @user = User.where(tag_id: @tag.id).first
   end
   
