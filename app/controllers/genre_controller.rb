@@ -69,7 +69,7 @@ class GenreController < ApplicationController
   
   def videos
     if @tag = Tag.where(id: params[:id]).first
-      @results = Pagination.paginate(@tag.videos.includes(:tags).order(:created_at), params[:page].to_i, 8, true)
+      @results = Pagination.paginate(@tag.videos.where(hidden: false).includes(:tags).order(:created_at), params[:page].to_i, 8, true)
       render json: {
         content: render_to_string(partial: '/layouts/video_thumb_h.html.erb', collection: @results.records),
         pages: @results.pages,

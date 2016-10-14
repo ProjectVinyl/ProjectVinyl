@@ -96,9 +96,11 @@
 	<ul id="artists" class="horizontal artist-list">
 		<%= render partial: 'layouts/artist_thumb_h', collection: @users.records %>
 	</ul>
+	<div class="load-more">
 	<% if @users.pages > 0 %>
-		<button data-page="0" data-url="tags/users" data-id="<%= @tag_id %>" data-target="artists">Load More</button>
+		<button data-page="0" data-url="tags/users" data-id="<%= @tag.id %>" data-target="artists">Load More</button>
 	<% end %>
+	</div>
 	<% else %>
 	No activity for this section
 	<% end %>
@@ -110,9 +112,11 @@
 	<ul id="videos" class="horizontal video-list">
 		<%= render partial: 'layouts/video_thumb_h', collection: @videos.records %>
 	</ul>
+	<div class="load-more">
 	<% if @videos.pages > 0 %>
-		<button data-page="0" data-url="tags/videos" data-id="<%= @tag_id %>" data-target="songs">Load More</button>
+		<button data-page="0" data-url="tags/videos" data-id="<%= @tag.id %>" data-target="songs">Load More</button>
 	<% end %>
+	</div>
 	<% else %>
 	No activity for this section
 	<% end %>
