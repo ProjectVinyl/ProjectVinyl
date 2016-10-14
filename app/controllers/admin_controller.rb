@@ -158,6 +158,20 @@ class AdminController < ApplicationController
     render json: { ref: url_for(action: "view") }
   end
   
+  def batch_dropVideos
+    if user_signed_in? && current_user.is_admin?
+      videos = Video.where(hidden: true)
+      videos.each do |video|
+        video.removeSelf
+      end
+      flash[:notice] = videos.length.to_s + " Item(s) deleted successfully."
+    else
+      flash[:error] = "Access Denied: You can't do that right now."
+    end
+    render json: { ref: url_for(action: "view") }
+  end
+  
+  
   def extractThumbnail
     if user_signed_in? && current_user.is_contributor?
       if video = Video.where(id: params[:video][:id]).first

@@ -57,6 +57,11 @@
 			<%= render partial: '/admin/video_thumb_h', collection: @hiddenvideos.records %>
 		</ul>
 	<% end %>
+	<% if current_user.is_admin? %>
+	<div class="actions">
+			<button class="confirm-button action red" data-action="delete" data-url="admin/hidden/drop" data-title="Drop <%= @hiddenvideos.count %> Videos" data-icon="warning" type="button">Drop</button>
+	</div>
+	<% end %>
 </section>
 <section style="width:100%" class="page recent-uploads resize-holder">
 	<h1 class="title resize-target">Unprocessed Videos (<%= @unprocessed.count %>)</h1>
