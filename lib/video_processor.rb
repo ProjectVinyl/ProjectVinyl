@@ -27,7 +27,37 @@ class ProcessingWorker < ActiveRecord::Base
   end
   
   def zombie?
-    return self.running && !self.video_id.nil? && !File.exists?(Rails.root.join('encoding', self.video_id.to_s + '.webm'))
+    return self.running && (self.video.nil? || !File.exists?(Rails.root.join('encoding', self.video_id.to_s + '.webm')))
+  end
+  
+  def dezombifie
+    if self.running
+      if !self.video_id.nil? && self.video_id > 0
+        has_encoding = File.exists?(Rails.root.join('encoding', self.video_id.to_s + '.webm'))
+        if video = self.video
+          has_webm = File.exists?(video.webm_path)
+          has_original = File.exists?(video.video_path)
+          if has_webm
+            video.processed = true
+          elsif has_encoding
+            video.processed = false
+          elsif has_original
+            video.processed = nil
+          else
+            video.hidden = true
+            video.processed = nil
+          end
+          video.save
+          if video.processed != false
+            self.running = false
+            self.save
+          end
+        else
+          self.running = false
+          self.save
+        end
+      end
+    end
   end
   
   def start
@@ -50,6 +80,7 @@ end
 
 class VideoProcessor
   @@required_worker_count = 2
+  @@semaphore = Mutex.new
   
   def self.status
     workers = ProcessingWorker.all
@@ -74,15 +105,17 @@ class VideoProcessor
   
   def self.dequeue
     result = nil
-    begin
-      ActiveRecord::Base.connection.execute('SELECT GET_LOCK("processor", 300);')
-      if result = VideoProcessor.queue.first
-        result.processed = false
-        result.save
+    @@semaphore.synchronize {
+      begin
+        ActiveRecord::Base.connection.execute('SELECT GET_LOCK("processor", 300);')
+        if result = VideoProcessor.queue.first
+          result.processed = false
+          result.save
+        end
+      ensure
+        ActiveRecord::Base.connection.execute('SELECT RELEASE_LOCK("processor");')
       end
-    ensure
-      ActiveRecord::Base.connection.execute('SELECT RELEASE_LOCK("processor");')
-    end
+    }
     return result
   end
   
@@ -118,21 +151,21 @@ class VideoProcessor
       count += 1
       result += 1
     end
-    ProcessingWorker.where(running: true).each do |i|
-      if i.zombie?
-        i.running = false
-        Video.where(id: i.video_id).update_all(processed: true)
-        VideoProcessor.processor(i)
-        started_any = true
-        result += 1
-      end
-    end
-    ProcessingWorker.where(running: false).each do |i|
+    ProcessingWorker.all.each do |i|
       if result < @@required_worker_count
-        VideoProcessor.processor(i)
-        started_any = true
+        if i.running
+          i.dezombifie
+          if !i.running
+          puts "De-zombified: " + i.id.to_s
+          end
+        end
+        if !i.running
+          puts "Started: " + i.id.to_s
+          VideoProcessor.processor(i)
+          started_any = true
+          result += 1
+        end
       end
-      result += 1
     end
     return started_any
   end

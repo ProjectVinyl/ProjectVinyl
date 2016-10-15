@@ -30,6 +30,7 @@ Rails.application.routes.draw do
   put 'admin/transfer' => 'admin#transferItem'
   post 'ajax/admin/process/all' => 'admin#batch_preprocessVideos'
   post 'ajax/admin/verify' => 'admin#verify_integrity'
+  post 'ajax/admin/requeue' => 'admin#rebuildQueue'
   post 'ajax/admin/hidden/drop' => 'admin#batch_dropVideos'
   post 'ajax/user/togglebadge/:badge_id' => 'admin#togglebadge'
   post 'ajax/user/role/:role' => 'admin#role'

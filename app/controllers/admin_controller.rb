@@ -143,12 +143,17 @@ class AdminController < ApplicationController
     redirect_to action: "video", id: params[:video][:id]
   end
   
+  def rebuildQueue
+    if user_signed_in? && current_user.is_contributor?
+      flash[:notice] = Video.rebuild_queue.to_s + " videos in queue."
+    else
+      flash[:error] = "Access Denied: You can't do that right now."
+    end
+    render json: { ref: url_for(action: "view") }
+  end
+  
   def batch_preprocessVideos
     if user_signed_in? && current_user.is_contributor?
-      videos = Video.where(processed: nil)
-      videos.each do |video|
-        video.generateWebM()
-      end
       if VideoProcessor.startManager
         flash[:notice] = "Processing Manager restarted. " + VideoProcessor.queue.length.to_s + " videos in queue."
       else
