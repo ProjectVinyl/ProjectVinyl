@@ -1,4 +1,8 @@
-		<section class="page column-left">
+		<section class="page tab-set column-left">
+			<ul class="hidden tab-set">
+				<li data-target="thumbpick" class="button selected">Pick Thumbnail</li>
+				<li data-target="thumbupload" class="button">Upload Image</li>
+			</ul>
 			<%= form_for(@video, as: "video", url: "ajax/upload", html: {class: "new_video async"}) do |f| %>
 			<div class="progressor">
 				<div class="cover-block">
@@ -11,13 +15,18 @@
 				</div>
 			</div>
 			<div id="upload">
-				<div id="cover-upload" class="hidden cover-block file-select image-selector" data-type="image">
-					<span class="preview"></span>
-					<span class="drop-icon">
-						<i class="fa fa-picture-o"></i>
-						<div>Select Cover Art</div>
-					</span>
-					<%= f.file_field :cover %>
+				<div class="hidden">
+					<div data-tab="thumbpick" id="video" class="tab selected video" data-video="0">
+						<input class="playlist" id="time" type="text" name="video[time]" value="-1">-1</input>
+					</div>
+					<div data-tab="thumbupload" id="cover-upload" class="cover-block tab file-select image-selector" data-type="image">
+						<span class="preview"></span>
+						<span class="drop-icon">
+							<i class="fa fa-picture-o"></i>
+							<div>Select Cover Art</div>
+						</span>
+						<%= f.file_field :cover %>
+					</div>
 				</div>
 				<div id="video-upload" class="shown cover-block file-select video-drop" data-type="a/v">
 					<span class="drop-icon">
@@ -27,10 +36,36 @@
 					<%= f.file_field :file %>
 				</div>
 				<script>
-(function() {
+var player = null;
+$(document).ready(function() {
+  var video = $('#video .player');
+  player = video[0].getPlayerObj();
+  var time_input = $('#video input');
+  player.pause = function() {
+    if (this.video) this.video.pause();
+		return false;
+  };
+  player.__start = player.start;
+  player.start = function() {
+    this.__start();
+    this.pause();
+  }
+  player.__changetrack = player.changetrack;
+  player.changetrack = function(progress) {
+    this.__changetrack(progress);
+    time_input.val(this.video.currentTime);
+  }
+  player.start();
+  player.volume(0, !0);
+  $('#video .icon.fullscreen, #video .icon.volume').remove();
+});
+(function(time, lastTime) {
   var has_cover = false;
   var needs_cover = false;
   
+	var time = $('#time');
+	var lastTime = -1;
+	
   $('#video-upload').on('accept', function(e, file) {
     if ($(this).hasClass('shown')) {
       $('.hidden').removeClass('hidden');
@@ -39,7 +74,15 @@
       $('#video_title .content').text(title);
       $('#video_title input').val(title);
     }
-    needs_cover = file.mime.match(/audio\//);
+    needs_cover = !!file.mime.match(/audio\//);
+		if (needs_cover) {
+			player.load(null);
+			$('a[data-target=thumbpick]').click();
+			$('a[data-target=thumbupload]').attr('data-disabled','1');
+		} else {
+			player.load(file.data);
+			$('a[data-target=thumbupload]').removeAttr('data-disabled').click();
+		}
     validateInput();
   });
   $('#cover-upload').on('accept', function() {
@@ -48,7 +91,15 @@
   });
   $('#new_video').on('tagschange', validateInput);
   $('#new_video').on('change', 'h1#video_title input', validateInput);
-  
+	
+  $('.tab[data-tab="thumbpick"]').on('tabblur', function() {
+		lastTime = time.val();
+		time.val(-1);
+		validateInput();
+	}).on('tabfocus', function() {
+		time.val(lastTime);
+		validateInput();
+	});
   function cleanup(title) {
     return title.toLowerCase().replace(/^[0-9]*/g, '').replace(/[-_]|[^a-z\s]/gi,' ').replace(/(^|\s)[a-z]/g, function(i) {
       return i.toUpperCase()
@@ -67,6 +118,7 @@
   function validateInput() {
     tit = $('#video_title input').val();
     if (!tit || tit == '') return notify('You need to provide a title.');
+		console.log(needs_cover);
     if (needs_cover && !has_cover) return notify('Audio files require a cover image.');
     var tags = $('.tag-editor')[0].getActiveTagsArray();
     var src = $('#video_source').val();

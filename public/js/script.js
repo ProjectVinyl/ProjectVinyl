@@ -515,7 +515,7 @@ var initFileSelect = (function() {
         } else {
           var title = input[0].files[0].name.split('.');
           title = title.splice(0, title.length - 1).join('.');
-          me.trigger('accept', {title: title, mime: input[0].files[0].type});
+          me.trigger('accept', {title: title, mime: input[0].files[0].type, data: input[0].files[0]});
         }
       });
     }

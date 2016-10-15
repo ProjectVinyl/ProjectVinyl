@@ -27,6 +27,8 @@ function Player() {}
     {name: '0.25x', value: 0.25}
   ];
   Player.createVideoElement = function(player) {
+		if (!player.source || player.source == "0") return $('<video></video>');
+		if (typeof player.source === 'string' && player.source.indexOf('blob') == 0) return $('<video src="' + player.source + '"></video>');
     return $('\
             <video>\
              <source src="/stream/' + player.source + '.webm" type="video/webm"></source>\
@@ -42,7 +44,7 @@ function Player() {}
 									<h1 class="resize-target" style="display:none;"><a><span class="title">undefined</span> - <span class="artist">undefined</span></a></h1>\
 								</span>\
 							</div>\
-							<div class="controls">\
+							<div class="controls playback-controls">\
 								<ul>\
 									<li class="track">\
 										<span class="fill"></span>\
@@ -104,7 +106,7 @@ function Player() {}
         return me;
       };
       this.video = null;
-      this.mime = el.attr('data-mime').split('|');
+      this.mime = (el.attr('data-mime') || ".mp4|video/m4v").split('|');
       this.controls = el.find('.controls');
       this.source = el.attr('data-video');
       if (!this.source) {
@@ -410,10 +412,27 @@ function Player() {}
       }
       this.start();
     },
+		load: function(data) {
+			this.audioOnly = false;
+			if (this.source) {
+				URL.revokeObjectURL(this.source);
+			}
+			if (data) {
+				this.source = this.video.src = URL.createObjectURL(data);
+				this.video.load();
+			}
+			if (!this.thumbtrack) {
+				this.thumbtrack = true;
+				var me = this;
+				this.video.addEventListener('loadedmetadata', function() {
+					me.changetrack(0.5);
+				});
+			}
+		},
     start: function() {
       if (!this.video) {
         var video;
-        if (this.audioOnly) {
+        if (this.audioOnly && this.source) {
           video = $('<audio src="/stream/' + this.source + this.mime[0] + '" type="' + this.mime[1] + '"></audio>');
         } else {
           video = Player.createVideoElement(this);
@@ -469,8 +488,7 @@ function Player() {}
               }
             }
           } else {
-            me.pause();
-            me.player.addClass('stopped');
+            if (me.pause()) me.player.addClass('stopped');
           }
         });
         var suspendTimer = null;
@@ -507,6 +525,7 @@ function Player() {}
       this.player.addClass('paused');
       if (this.video) this.video.pause();
       this.suspend.css('display', 'none');
+			return true;
     },
     toggleVideo: function() {
       if (!this.player.hasClass('playing')) {
@@ -526,7 +545,9 @@ function Player() {}
       this.suspend.css('display', 'none');
     },
     changetrack: function(progress) {
-      var duration = parseInt(this.video.duration);
+			if (progress < 0) progress = 0;
+			if (progress > 1) progress = 1;
+      var duration = parseFloat(this.video.duration) || 0;
       var time = duration * progress;
       this.video.currentTime = time;
       this.track(time, duration);

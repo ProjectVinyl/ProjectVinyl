@@ -119,7 +119,7 @@ ul.horizontal > li + li {
   text-align: center;
 }
 
-.video > .controls {
+.playback-controls {
   display: none;
   position: absolute;
   left: 0;
@@ -129,31 +129,31 @@ ul.horizontal > li + li {
   opacity: 0;
   transition: opacity 0.5s linear;
 }
-.video:hover > .controls, .video.hover > .controls, .video.audio-only > .controls {
+.video:hover .playback-controls, .video.hover .playback-controls, .video.audio-only .playback-controls {
   opacity: 1;
 }
-.video > .controls:hover {
+.video .playback-controls:hover {
   opacity: 1 !important;
 }
 
-.video .player.playing + .controls,
-.video .player.paused + .controls {
+.video .player.playing + .playback-controls,
+.video .player.paused + .playback-controls {
   display: block;
 }
 
-.video .player.paused + .controls {
+.video .player.paused + .playback-controls {
   opacity: 1 !important;
 }
 
-.video .player.paused + .controls {
+.video .player.paused + .playback-controls {
   opacity: 1;
 }
 
-.video > .controls li {
+.playback-controls li {
   display: inline-block;
 }
 
-.video > .controls .track {
+.playback-controls .track {
   transition: background 0.5s ease;
   position: relative;
   width: calc(100% - 80px);
@@ -161,15 +161,15 @@ ul.horizontal > li + li {
   height: 10px;
   cursor: pointer;
 }
-.video > .controls .track:hover {
+.playback-controls .track:hover {
   background: rgba(0,0,0,0.1);
 }
-.video.audio-only > .controls .track {
+.video.audio-only .playback-controls .track {
   background: rgba(8, 8, 8, 0.125);
   border-radius: 4px;
 }
 
-.video .controls .bob {
+.playback-controls .bob {
   position: absolute;
   background: red;
   border-radius: 100%;
@@ -177,7 +177,7 @@ ul.horizontal > li + li {
   height: 20px;
 }
 
-.video .controls .fill {
+.playback-controls .fill {
   position: absolute;
   background: grey;
   border-radius: 4px;
@@ -186,14 +186,14 @@ ul.horizontal > li + li {
   left: 0;
 }
 
-.video .controls .track .bob {
+.playback-controls .track .bob {
   top: 0;
   left: 0;
   margin: -5px 0 0 -10px;
   transition: left 0.25s linear;
 }
 
-.video .controls .track .fill {
+.playback-controls .track .fill {
   top: 0;
   right: 100%;
   transition: right 0.25s linear;
@@ -245,30 +245,30 @@ ul.horizontal > li + li {
   opacity: 1
 }
 
-.video .controls .icon {
+.playback-controls .icon {
   position: relative;
   width: 20px;
   height: 100%;
   cursor: pointer;
   float: right;
 }
-.video .controls .icon + .icon {
+.playback-controls .icon + .icon {
   margin-right: 5px;
 }
 
-.video .controls .icon .indicator {
+.playback-controls .icon .indicator {
   color: #fff;
   font-size: 1.5em;
 }
 
-.video .controls .volume:hover .slider, .video .controls .volume.hover .slider,
-.video.voluming .controls .volume .slider {
+.playback-controls .volume:hover .slider, .video .controls .volume.hover .slider,
+.video.voluming .playback-controls .volume .slider {
   opacity: 1;
   transition: height 0.25s linear, opacity 0.5s linear;
   height: 100px;
 }
 
-.video .controls .volume .slider {
+.playback-controls .volume .slider {
   opacity: 0;
   position: absolute;
   bottom: 20px;
@@ -282,14 +282,14 @@ ul.horizontal > li + li {
   border-radius: 4px;
 }
 
-.video .controls .volume .bob {
+.playback-controls .volume .bob {
   bottom: 0;
   left: 0;
   margin: 0 0 -10px -5px;
   transition: bottom 0.25s linear;
 }
 
-.video .controls .volume .fill {
+.playback-controls .volume .fill {
   top: 100%;
   right: 0;
   transition: top 0.25s linear;

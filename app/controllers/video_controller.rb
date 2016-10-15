@@ -165,7 +165,11 @@ class VideoController < ApplicationController
           comments.owner_id = video.id
           comments.save
           video.save_file(data)
-          video.setThumbnail(cover)
+          if params[:video][:time] && (time = params[:video][:time].to_f) >= 0
+            video.setThumbnailTime(time)
+          else
+            video.setThumbnail(cover)
+          end
           Tag.loadTags(params[:video][:tag_string], video)
           video.save
           if params[:async]

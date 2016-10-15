@@ -30,6 +30,7 @@ $(document).ready(function() {
   var time_input = $('#video input');
   player.pause = function() {
     if (this.video) this.video.pause();
+		return false;
   };
   player.__start = player.start;
   player.start = function() {
@@ -43,9 +44,16 @@ $(document).ready(function() {
   }
   player.start();
   player.volume(0, !0);
-  player.loop(!0);
   $('#video .icon.fullscreen, #video .icon.volume').remove();
 });
+(function(time, lastTime) {
+	$('.tab[data-tab="thumbpick"]').on('tabblur', function() {
+		lastTime = time.val();
+		time.val(-1);
+	}).on('tabfocus', function() {
+		time.val(lastTime);
+	});
+})($('#time'), -1);
 					</script>
 				<% end %>
 				<div data-tab="thumbupload" id="cover-upload" class="cover-block selected tab file-select image-selector" data-type="image">
