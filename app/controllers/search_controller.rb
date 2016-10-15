@@ -43,6 +43,12 @@ class SearchController < ApplicationController
       @type_label = 'Tag'
     else
       begin
+        if params[:quick]
+          @results = TagSelector.new(@query).videoQuery_two(0, 1).order_by('v.id').offset(-1).exec().records()
+          if @results.first
+            return redirect_to action: 'view', controller: 'embed', id: @results.first.id
+          end
+        end
         @results = TagSelector.new(@query).videoQuery_two(@page, 20).order(session, @orderby, @ascending).exec()
       rescue LexerError => e
         @derpy = e

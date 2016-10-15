@@ -250,6 +250,9 @@ class TagSelector
     if @count <= @page * @limit || @page < 0
       @page = @pages
     end
+    if @offset == -1
+      @offset = rand(@count)
+    end
     sql = @main_sql + " ORDER BY " + @ordering + " LIMIT " + @limit.to_s + " OFFSET " + (@offset ? @offset : (@page * @limit)).to_s + ";"
     if @type == 'video'
       @records = Video.find_by_sql(sql)
