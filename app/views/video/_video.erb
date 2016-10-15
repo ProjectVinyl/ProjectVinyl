@@ -200,22 +200,24 @@
   $('#album_share_toggle, #album_share_type').on('change', function() {
     updateShareIframe();
   });
-  function updateShareIframe() {
-    var toggle = $('#album_share_toggle');
-    var type = $('#album_share_type').val();
-    var share_field = $('#share_field');
-    var htm = share_field.attr('data-value');
-    var id = $('.action.test').attr(toggle.length && toggle[0].checked && type == 'beginning' ? 'data-first' : 'data-id');
-    var extra = '';
-    if (toggle.length && toggle[0].checked) {
-      extra += '?list=' + toggle.attr('data-album-id') + '&index='
-      extra += type == 'beginning' ? 0 : toggle.attr('data-index');
-    }
-    htm = htm.replace('{id}', id);
-    htm = htm.replace('{extra}', extra);
-    $('#embed_preview iframe').attr('src', '/embed/' + id + extra);
-    share_field.val(htm);
-  }
+	function updateShareIframe() {
+		var toggle = $('#album_share_toggle');
+		var type = $('#album_share_type').val();
+		var share_field = $('#share_field');
+		var htm = share_field.attr('data-value');
+		var button = $('.action.test');
+		var id = button.attr(toggle.length && toggle[0].checked && type == 'beginning' ? 'data-first' : 'data-id');
+		console.log(id);
+		var extra = '';
+		if (toggle.length && toggle[0].checked) {
+			extra += '?list=' + button.attr('data-album-id') + '&index='
+			extra += type == 'beginning' ? 0 : button.attr('data-index');
+		}
+		htm = htm.replace('{id}', id);
+		htm = htm.replace('{extra}', extra);
+		$('#embed_preview iframe').attr('src', '/embed/' + id + extra);
+		share_field.val(htm);
+	}
 })();
 		</script>
 	</div>
