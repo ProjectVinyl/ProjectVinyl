@@ -35,6 +35,8 @@ class SearchController < ApplicationController
         @results = TagSelector.new(@query).userQuery_two(@page, 20).order(session, @orderby, @ascending).exec()
       rescue LexerError => e
         @derpy = e
+      rescue Exception => e
+        @ditzy = e
       end
       @type_label = 'User'
       return
@@ -52,6 +54,8 @@ class SearchController < ApplicationController
         @results = TagSelector.new(@query).videoQuery_two(@page, 20).order(session, @orderby, @ascending).exec()
       rescue LexerError => e
         @derpy = e
+      rescue Exception => e
+        @ditzy = e
       end
       @type_label = 'Song'
       return
