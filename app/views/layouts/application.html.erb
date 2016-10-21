@@ -109,7 +109,7 @@
 		</div>
 		<ul>
 			<li class="albums<% if request.path == '/albums' %> selected<% end %>"><a href="/albums">Albums</a></li>
-               		<li class="artists<% if request.path == '/videos' %> selected<% end %>"><a href="/videos">Videos</a></li>
+			<li class="artists<% if request.path == '/videos' %> selected<% end %>"><a href="/videos">Videos</a></li>
 			<li class="genres<% if request.path == '/tags' %> selected<% end %>"><a href="/tags">Tags</a></li>
 			<li class="forum<% if request.path == '/forum' || request.path.index('/thread') == 0 %> selected<% end %>"><a href="/forum">Forums</a></li>
 		</ul>
@@ -122,13 +122,14 @@
 	</main>
 	<footer>
 		<a title="Home" href="/">projectvinyl.net</a>
-		<span class="date">Page generated in <span><%= load_time %> seconds</span></span>
 		<div>
 			<a href="/staff">Staff</a>
 			<a href="/policy">Policy</a>
 			<a href="/copyright">Copyright</a>
 		</div>
 		<span>© 2016 Project Vinyl Foundation</span>
+		<div class="date">Page generated in <span><%= load_time %> seconds</span></div>
+		<div class="date"><span>Powered by Muffins</span></div>
 	</footer>
 	<div class="fades"></div>
 	<script src="/js/videos.js" ></script>
