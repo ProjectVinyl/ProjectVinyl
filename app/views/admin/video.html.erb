@@ -11,7 +11,33 @@
 				<%= render partial: 'layouts/video_thumb_h', locals: {video_thumb_h: @video} %>
 			</ul>
 		</section>
+		<section class="page properties" style="width:100%">
+			<h1>Files</h1>
+			<table>
+				<tr>
+					<td class="label">Source</td>
+					<td class="field"><%= File.exists?(@video.video_path) ? "Yes" : "No" %></td>
+					<td>
+						<a class="button" href="/admin/files?p=<% if @video.hidden %>private<% else %>public<% end %>/stream&start=<%= @video.id.to_s + @video.file %>&offset=-5#<%= @video.id %>">View</a>
+					</td>
+				<tr>
+					<td class="label">Webm</td>
+					<td class="field"><%= File.exists?(@video.webm_path) ? "Yes" : "No" %></td>
+					<td>
+						<a class="button" href="/admin/files?p=<% if @video.hidden %>private<% else %>public<% end %>/stream&start=<%= @video.id %>.webm&offset=-5#<%= @video.id %>">View</a>
+					</td>
+				</tr>
+				<tr>
+					<td class="label">Cover</td>
+					<td class="field"><%= File.exists?(Rails.root.join('public', 'cover', @video.id.to_s + '.png')) ? 'Yes' : 'No' %></td>
+					<td>
+						<a class="button" href="/admin/files?p=public/cover&start=<%= @video.id %>.png&offset=-5#<%= @video.id %>">View</a>
+					</td>
+				</tr>
+			</table>
+		</section>
     <section class="page properties" style="width:100%">
+			<h1>Actions</h1>
 			<table>
 				<tr class="actions">
 					<td class="label">
@@ -91,6 +117,7 @@
 		</section>
 	</div>
   <section class="page properties column-left">
+		<h1>Ownership</h1>
     <%= form_for(@video, as: "item", url: "/admin/transfer?type=video", html: { method: :put }) do |f| %>
       <%= f.text_field :id, hidden: true %>
     <table>
@@ -120,9 +147,22 @@
     <% end %>
   </section>
   <section class="page properties column-left">
+		<h1>Duplication Status</h1>
     <%= form_for(@video, as: "video", url: "/admin/video/merge", html: { method: :put }) do |f| %>
       <%= f.text_field :id, hidden: true %>
     <table>
+			<tr>
+				<td class="label">Unique Hash</td>
+				<td class="field"><%= @video.checksum %></td>
+			</tr>
+			<tr>
+				<td class="label">Duplicate Hash</td>
+				<td class="field">
+					<% if @video.duplicate_id > 0 %>
+					<%= Video.where(id: @video.duplicate_id).first.checksum %>
+					<% end %>
+					</td>
+			</tr>
       <tr class="actions">
         <td class="label">
           Merging

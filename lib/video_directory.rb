@@ -39,6 +39,10 @@ class VideoFolder
   def ref
     @raw
   end
+  
+  def icon
+    "folder-o"
+  end
 end
 
 class VideoFile
@@ -120,6 +124,35 @@ class VideoFile
   
   def ref
     @raw
+  end
+  
+  def icon
+    if @type == 'png'
+      return 'picture-o'
+    end
+    if @type == 'webm'
+      return 'file-video-o'
+    end
+    mime = Mimes.mime('.' + @type)
+    if mime.index('image/') == 0
+      return 'file-image-o'
+    end
+    if mime.index('video/') == 0
+      return 'film'
+    end
+    if mime.index('audio/') == 0
+      return 'volume-up'
+    end
+    if mime.index('zip') || mime.index('compressed') || mime.index('octet')
+      return 'file-archive-o'
+    end
+    if mime.index('document')
+      return 'file-word-o'
+    end
+    if mime.index('/pdf')
+      return 'file-pdf-o'
+    end
+    return 'file-o'
   end
   
   protected
@@ -216,9 +249,13 @@ class VideoDirectory
     return self
   end
   
-  def start_from(filename)
+  def start_from(filename, offset)
     index = @raw_items.index(filename)
     if index
+      index += (offset || '0').to_i
+      if index < 0
+        return false
+      end
       @raw_items.shift(index + 1)
     else
       return false

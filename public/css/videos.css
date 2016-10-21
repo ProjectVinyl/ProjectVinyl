@@ -674,6 +674,10 @@ i.fa.fa-volume-mid {
   padding: 5px 30px;
   transition: background 0.25s ease;
 }
+.listing.compact .items .row:target {
+  outline: solid 5px rgba(170,170,255,0.6);
+  background: #eef;
+}
 .listing.compact .row.floater {
   position: absolute;
   padding: 0;

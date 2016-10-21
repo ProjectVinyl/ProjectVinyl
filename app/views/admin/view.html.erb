@@ -4,6 +4,15 @@
 	<a href="/">Home</a> <i class="fa fa-chevron-right"></i> <a href="/admin">Admin</a> <i class="fa fa-chevron-right"></i> 
 	Control Panel
 </h1>
+<section style="width:100%" class="page">
+	<div class="actions">
+		<a class="button" href="/users"><i class="fa fa-users"></i> Users</a>
+		<a class="button" href="/videos?unlisted=1"><i class="fa fa-eye-slash"></i> Unlisted Videos</a>
+		<a class="button" href="/videos?merged=1"><i class="fa fa-compress"></i> Merged Videos</a>
+		<a class="button" href="/admin/files?p=encoding"><i class="fa fa-file-code-o"></i> Encoding Folder</a>
+		<a class="button" href="/admin/files?p=public"><i class="fa fa-file-video-o"></i> Public Storage Folder</a>
+	</div>
+</section>
 <section style="width:100%" class="page resize-holder">
 	<h1 class="title resize-target">Recent Activity</h1>
 	<table class="auto">
@@ -30,9 +39,6 @@
 		<% end %>
 		</tbody>
 	</table>
-	<hr>
-	<a href="/videos?unlisted=1">Unlisted Videos</a>
-	<a href="/videos?merged=1">Merged Videos</a>
 </section>
 <section style="width:100%" class="page resize-holder">
 	<%= render partial: 'processor_status' %>

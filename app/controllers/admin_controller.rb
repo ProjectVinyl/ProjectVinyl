@@ -47,7 +47,7 @@ class AdminController < ApplicationController
     begin
       @location = @location.join('/')
       @public = VideoDirectory.Entries(@location).limit(50)
-      if params[:start] && !@public.start_from(params[:start]) && ajax
+      if params[:start] && !@public.start_from(params[:start], params[:offset]) && ajax
         return render json: {}
       end
       if params[:end] && !@public.end_with(params[:end]) && ajax
