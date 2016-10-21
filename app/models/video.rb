@@ -151,22 +151,26 @@ class Video < ActiveRecord::Base
   
   def self.reset_hidden_flags
     items = Video.where(hidden: true).each do |i|
-      i.move_files('public', 'private')
+      i.update_file_locations
     end
     items.length
   end
   
   def set_hidden(val)
     if self.hidden != val
-      if self.hidden
-        move_files('private', 'public')
-      else
-        move_files('public', 'private')
-      end
       self.hidden = val
+      self.update_file_locations
     end
   end
-    
+  
+  def update_file_locations
+    if self.hidden
+      move_files('public', 'private')
+    else
+      move_files('private', 'public')
+    end
+  end
+  
   def cover_path
     return Rails.root.join('public', 'cover', self.id.to_s)
   end
