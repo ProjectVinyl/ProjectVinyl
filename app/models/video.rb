@@ -89,6 +89,8 @@ class Video < ActiveRecord::Base
     report.save
     Video.where('id NOT IN (?) AND audio_only = false AND processed = true', webms).update_all(processed: nil)
     Video.where('id NOT IN (?) AND hidden = false', sources).update_all(hidden: true)
+    Video.reset_hidden_flags
+    
   #  damaged = []
   #  Video.where('id IN (?)', webms).find_in_batches do |batch|
   #    batch.each do |video|
@@ -145,6 +147,12 @@ class Video < ActiveRecord::Base
   
   def self.webm_file_path(root, video)
     return Rails.root.join(root, 'stream', video.id.to_s + '.webm')
+  end
+  
+  def self.reset_video_flags
+    Video.where(hidden: true).each do |i|
+      i.set_hidden(i.hidden)
+    end
   end
   
   def set_hidden(val)
