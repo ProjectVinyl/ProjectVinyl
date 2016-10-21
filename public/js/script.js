@@ -82,10 +82,10 @@ var ajax = (function() {
   function request(method, resource, callback, data, direct) {
     $.ajax({
       type: method,
-      datatype: 'json',
+      datatype: 'text',
       url: resource,
       success: direct ? callback : function(xml, type, ev) {
-        callback(JSON.parse(ev.responseText));
+        callback(ev.status == 204 ? {} : JSON.parse(ev.responseText), ev.status);
       },
       error: function(d) {
         console.log(method + ' ' + resource + '\n\n' + d.responseText);
