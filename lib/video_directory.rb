@@ -112,8 +112,8 @@ class VideoFile
   end
   
   def special_name
-    if @parent.names.key?(@name)
-      return @parent.names[@name]
+    if @parent.names.key?(@key)
+      return @parent.names[@key]
     end
     nil
   end
@@ -161,6 +161,7 @@ class VideoFile
     item = item.split('.')
     @type = item.pop
     @name = item.join('.')
+    @key = item.split(/\.|-/)
   end
 end
 
