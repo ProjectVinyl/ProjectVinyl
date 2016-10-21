@@ -1,0 +1,14 @@
+<div class="row row-group" data-stack-size="<%= file.stack_size %>">
+	<a <% if !file.directory? %>target="__top"<% end %> href="<%= file.link %>" class="row" data-type="<%= file.type %>">
+		<div><%= file.name %></div>
+		<div><span><%= file.special_name %></span></div>
+		<div><span><%= file.type %><span></div>
+	</a>
+	<% file.each do |f| %>
+	<a <% if !f.directory? %>target="__top"<% end %> href="<%= f.link %>" class="row" data-type="<%= f.type %>">
+		<div><%= f.name %></div>
+		<div></div>
+		<div><span><%= f.type %></span></div>
+	</a>
+	<% end %>
+</div>

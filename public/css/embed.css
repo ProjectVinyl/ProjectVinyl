@@ -13,12 +13,12 @@ body + div[is-visible] {
 }
 
 body {
-    margin: 0px;
-    padding: 0px;
-    color: #000;
-    font-family: Verdana,sans-serif;
-    line-height: 1.5em;
-    font-size: 13px;
+  margin: 0px;
+  padding: 0px;
+  color: #000;
+  font-family: Verdana,sans-serif;
+  line-height: 1.5em;
+  font-size: 13px;
 }
 html, body {
   position: absolute;
@@ -30,23 +30,23 @@ html, body {
 }
 
 a {
-    color: #337287;
-    font-weight: bold;
-    outline: none;
+  color: #337287;
+  font-weight: bold;
+  outline: none;
 }
 
 h1 {
-    font-size: 2em;
-    font-size-adjust: 0.75;
-    border-bottom: 1px solid rgba(0,0,150, 0.3);
-    text-shadow: 0 0.05em 0.03em rgba(0,0,0,0.3);
-    padding-bottom: 15px;
+  font-size: 2em;
+  font-size-adjust: 0.75;
+  border-bottom: 1px solid rgba(0,0,150, 0.3);
+  text-shadow: 0 0.05em 0.03em rgba(0,0,0,0.3);
+  padding-bottom: 15px;
 }
 
 img.iconic {
-    background: none;
-    border: none;
-    box-shadow: none;
+  background: none;
+  border: none;
+  box-shadow: none;
 }
 
 .listing.compact.playlist .controls a {
@@ -65,12 +65,14 @@ img.iconic {
 .listing.compact.playlist.visible {
   left: 0;
 }
-.listing.compact a,
-.listing.compact .items a > div {
+.playlist .controls a,
+.listing.compact .row,
+.listing.compact .items .row > div {
   color: #eee;
 }
 
-.listing.compact a.selected, .listing.compact a:hover {
+.playlist .controls a:hover,
+.listing.compact .row.selected, .listing.compact .row:hover {
   background: rgba(255,255,255,0.2);
 }
 .listing.compact.playlist .scroll-container {

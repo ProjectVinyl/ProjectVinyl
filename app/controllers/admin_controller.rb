@@ -12,6 +12,73 @@ class AdminController < ApplicationController
     @reports = Report.includes(:video).where(resolved: nil).limit(20)
   end
   
+  def files
+    render_path(params, false)
+  end
+  
+  def morefiles
+    render_path(params, true)
+  end
+  
+  def render_path(params, ajax)
+    if !user_signed_in? || !current_user.admin?
+      if ajax
+        return render status: 403, nothing: true
+      end
+      return render file: '/public/403.html', layout: false
+    end
+    @location = (params[:p] || "public/stream").strip
+    if @location == ''
+      @location = ['public']
+    else
+      @location = @location.split(/\/|\\/)
+    end
+    if @location.length == 0 && @location[0] != 'encoding'
+      @location = [ 'public' ] + @location
+    end
+    if @location.length > 1 && @location[1] != 'stream' && @location[1] != 'cover'
+      if @location[0] != 'encoding'
+        if ajax
+          return render status: 403, nothing: true
+        end
+        return render file: '/public/403.html', layout: false
+      end
+    end
+    begin
+      @location = @location.join('/')
+      @public = VideoDirectory.Entries(@location).limit(50)
+      if params[:start] && !@public.start_from(params[:start]) && ajax
+        return render json: {}
+      end
+      if params[:end] && !@public.end_with(params[:end]) && ajax
+        return render json: {}
+      end
+      if @location == 'public'
+        @public.filter do |loc|
+          name = loc.split('.')[0]
+          loc.index('.').nil? && (name == 'stream' || name == 'cover')
+        end
+      end
+      @public.names_resolver do |names,ids|
+        Video.where('id IN (' + ids.join(',') + ')').pluck(:id,:title).each do |i|
+          names[i[0].to_s] = i[1]
+        end
+      end
+    rescue Exception => e
+      if ajax
+        return render status: 404, nothing: true
+      end
+      render file: '/public/404.html', layout: false
+    end
+    if ajax
+      render json: {
+        :content => render_to_string(partial: '/admin/file.html.erb', collection: @public.items),
+        :start => @public.start_ref,
+        :end => @public.end_ref
+      }
+    end
+  end
+  
   def page_hidden
     @page = params[:page].to_i
     @results = Pagination.paginate(Video.where(hidden: true), @page, 40, true)

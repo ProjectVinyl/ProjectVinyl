@@ -16,6 +16,8 @@ Rails.application.routes.draw do
   
   get 'admin' => 'admin#view'
   get 'admin/report/view/:id' => 'admin#view_report'
+  get 'admin/files' => 'admin#files'
+  get 'ajax/admin/files' => 'admin#morefiles'
   get 'admin/album/:id' => 'admin#album'
   get 'admin/video/:id' => 'admin#video'
   put 'admin/video/reprocess' => 'admin#reprocessVideo'

@@ -8,7 +8,7 @@
 <div class="listing compact">
 	<div class="items">
 	<% ProcessingWorker.all.each do |worker| %>
-		<a href="/view/<%= worker.video_id %>">
+		<a class="row" href="/view/<%= worker.video_id %>">
 			<% zombie = worker.zombie? %>
 			<div>
 				<span class="active-icon<% if worker.running || zombie %> active<% end %>" ></span>
