@@ -150,9 +150,10 @@ class Video < ActiveRecord::Base
   end
   
   def self.reset_hidden_flags
-    Video.where(hidden: true).each do |i|
-      i.set_hidden(i.hidden)
+    items = Video.where(hidden: true).each do |i|
+      i.move_files('public', 'private')
     end
+    items.length
   end
   
   def set_hidden(val)
