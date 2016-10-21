@@ -87,8 +87,8 @@ class Video < ActiveRecord::Base
     report.other << "<br>Missing video files: " + (total - sources.length).to_s
     report.other << "<br>Missing webm files : " + (total_vid - webms.length).to_s
     report.save
-    Video.where('id NOT IN (?) AND audio_only = false AND processed = true', webms).update_all(processed: nil)
-    Video.where('id NOT IN (?) AND hidden = false', sources).update_all(hidden: true)
+    Video.where('id NOT IN (?) AND audio_only = false AND processed = true AND NOT file = ".webm"', webms).update_all(processed: nil)
+    Video.where('id NOT IN (?) AND hidden = false AND NOT file = ".webm"', sources).update_all(hidden: true)
     Video.reset_hidden_flags
     
   #  damaged = []
@@ -149,7 +149,7 @@ class Video < ActiveRecord::Base
     return Rails.root.join(root, 'stream', video.id.to_s + '.webm')
   end
   
-  def self.reset_video_flags
+  def self.reset_hidden_flags
     Video.where(hidden: true).each do |i|
       i.set_hidden(i.hidden)
     end
