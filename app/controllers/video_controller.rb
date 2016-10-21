@@ -301,7 +301,7 @@ class VideoController < ApplicationController
     if @video.duplicate_id > 0
       @video = Video.where(id: @video.duplicate_id).first
     end
-    if @video.hidden
+    if @video.hidden && (!user_signed_in? || current_user.id != @video.user_id || !current_user.is_contributor?)
       return render :file => 'public/502.html', :status => 502, :layout => false
     end
     file = @video.video_path.to_s
