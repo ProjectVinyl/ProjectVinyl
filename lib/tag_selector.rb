@@ -244,7 +244,7 @@ class TagSelector
     end
     @pages = @count / @limit
     
-    if (@pages * @limit) == @count
+    if @count > 0 && (@pages * @limit) == @count
       @pages -= 1
     end
     if @count <= @page * @limit || @page < 0
