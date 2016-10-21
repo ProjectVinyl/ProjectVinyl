@@ -31,31 +31,25 @@ class ProcessingWorker < ActiveRecord::Base
   end
   
   def dezombifie
-    if self.running
-      if !self.video_id.nil? && self.video_id > 0
-        has_encoding = File.exists?(Rails.root.join('encoding', self.video_id.to_s + '.webm'))
-        if video = self.video
-          has_webm = File.exists?(video.webm_path)
-          has_original = File.exists?(video.video_path)
-          if has_webm
-            video.processed = true
-          elsif has_encoding
-            video.processed = false
-          elsif has_original
-            video.processed = nil
-          else
-            video.hidden = true
-            video.processed = nil
-          end
-          video.save
-          if video.processed != false
-            self.running = false
-            self.save
-          end
-        else
+    if self.running && !self.video_id.nil? && self.video_id > 0
+      has_encoding = File.exists?(Rails.root.join('encoding', self.video_id.to_s + '.webm'))
+      if vid = self.video
+        has_webm = File.exists?(vid.webm_path)
+        has_original = File.exists?(vid.video_path)
+        if has_webm
+          vid.processed = true
+          self.running = false
+          self.save
+        elsif !has_original
+          vid.hidden = true
+          vid.processed = nil
           self.running = false
           self.save
         end
+        vid.save
+      else
+        self.running = false
+        self.save
       end
     end
   end
@@ -169,4 +163,22 @@ class VideoProcessor
     end
     return started_any
   end
+  
+  def self.scheduleRestart
+    controller = Thread.start {
+      begin
+        while (true)
+          sleep(2.hours)
+          if VideoProcessor.startManager > 0
+            return
+          end
+        end
+      rescue Exception => e
+      ensure
+        ActiveRecord::Base.connection.close
+      end
+    }
+  end
 end
+
+VideoProcessor.scheduleRestart
