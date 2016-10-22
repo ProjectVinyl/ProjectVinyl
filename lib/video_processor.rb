@@ -27,7 +27,7 @@ class ProcessingWorker < ActiveRecord::Base
   end
   
   def zombie?
-    return self.running && !self.video.nil? && !File.exists?(Rails.root.join('encoding', self.video_id.to_s + '.webm')) && File.exists?(Rails.roow.join('public', 'stream', self.video_id.to_s + '.webm'))
+    return self.running && !self.video.nil? && !File.exists?(Rails.root.join('encoding', self.video_id.to_s + '.webm')) && File.exists?(Rails.root.join('public', 'stream', self.video_id.to_s + '.webm'))
   end
   
   def start
