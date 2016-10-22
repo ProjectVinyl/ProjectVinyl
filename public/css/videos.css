@@ -733,8 +733,7 @@ i.fa.fa-volume-mid {
   opacity: 0;
 }
 
-.listing.compact .row > div,
-.listing.compact a > div {
+.listing.compact .row > div {
   overflow: hidden;
 }
 
@@ -925,6 +924,7 @@ i.fa.fa-volume-mid {
   overflow: visible;
 }
 .listing.compact.playlist .items .row span,
+.listing.compact.limit-overflow .items .row > div div,
 .listing.compact.playlist .items .row > div div {
   width: 0;
 }

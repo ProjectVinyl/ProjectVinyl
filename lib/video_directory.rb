@@ -158,10 +158,10 @@ class VideoFile
   protected
   def raw=(item)
     @raw = item
+    @key = item.split(/\.|-/)[0]
     item = item.split('.')
     @type = item.pop
     @name = item.join('.')
-    @key = item.split(/\.|-/)
   end
 end
 
@@ -268,15 +268,17 @@ class VideoDirectory
     index = @raw_items.index(filename)
     if index
       @raw_items = @raw_items.shift(index)
-      if @limit && @limit > 0 && @raw_items.length > @limit
-        @raw_items = @raw_items.pop(@limit)
-        @limit = 0
+      while @limit && @limit > 0 && @raw_items.length > @limit
+        @raw_items.shift(@limit)
       end
+      @limit = -1
     else
       return false
     end
     return self
   end
+  
+  
   
   def start_ref
     if @raw_items.length

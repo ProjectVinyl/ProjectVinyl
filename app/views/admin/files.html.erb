@@ -4,7 +4,7 @@
 	<a href="/">Home</a> <i class="fa fa-chevron-right"></i> <a href="/admin">Admin</a> <i class="fa fa-chevron-right"></i> 
 	Control Panel
 </h1>
-<section style="width:100%" class="page resize-holder listing compact">
+<section style="width:100%" class="page resize-holder listing compact limit-overflow">
 	<h3>
 	<% @public.parent.each_with_index do |part,index| %>
 		<% if index > 0 %>
@@ -20,7 +20,6 @@
 	<div id="files" data-path="<%= @public.full_path %>" data-start-ref="<%= @public.start_ref %>" data-ref="<%= @public.end_ref %>" class="items">
 		<div class="row header">
 			<div>Name</div>
-			<div></div>
 			<div style="width:10%;">Type</div>
 		</div>
 		<%= render partial: "file", collection: @public.items %>
@@ -31,11 +30,11 @@
 			var path = target.attr('data-path');
 			var start_from = target.attr('data-ref');
 			var end_with = target.attr('data-start-ref');
-			var pending = false;
+			var pending = [];
 			$(window).on('scroll', function() {
 				if (end_with && $(window).scrollTop() == 0) {
-					if (!pending) {
-						pending = true;
+					if (!pending[0]) {
+						pending[0] = true;
 						target.addClass('loading-before');
 						ajax.get('admin/files?p=' + path + '&end=' + end_with, function(json, status) {
 							if (json.start) {
@@ -44,23 +43,23 @@
 								} else {
 									end_with = json.start;
 								}
+								pending[0] = false;
 							}
 							target.find('.row.header').after(json.content);
-							pending = false;
 							target.removeClass('loading-before');
 						});
 					}
 					return;
 				}
 				if($(window).scrollTop() + $(window).height() == $(document).height()) {
-					if (!pending) {
-						pending = true;
+					if (!pending[1]) {
+						pending[1] = true;
 						target.addClass('loading-after');
 						ajax.get('admin/files?p=' + path + '&start=' + start_from, function(json, status) {
 							if (json.content) {
 								start_from = json.end;
 								target.append(json.content);
-								pending = false;
+								pending[1] = false;
 							}
 							target.removeClass('loading-after');
 						});
