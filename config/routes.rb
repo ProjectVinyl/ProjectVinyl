@@ -30,6 +30,7 @@ Rails.application.routes.draw do
   patch 'ajax/tag/update/:id' => 'genre#update'
   post 'ajax/video/hide' => 'admin#visibility'
   put 'admin/transfer' => 'admin#transferItem'
+  put 'admin/video/metadata' => 'admin#populateVideo'
   post 'ajax/admin/process/all' => 'admin#batch_preprocessVideos'
   post 'ajax/admin/verify' => 'admin#verify_integrity'
   post 'ajax/admin/requeue' => 'admin#rebuildQueue'

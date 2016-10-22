@@ -219,6 +219,15 @@ class AdminController < ApplicationController
     render json: { ref: url_for(action: "view") }
   end
   
+  def populateVideo
+    if user_signed_in? && current_user.is_contributor?
+      if @video = Video.where(id: params[:video][:id]).first
+        @video.pull_meta(params[:source], params[:title], params[:description])
+      end
+    end
+    redirect_to action: "video", id: params[:video][:id]
+  end
+  
   def batch_preprocessVideos
     if user_signed_in? && current_user.is_contributor?
       if VideoProcessor.startManager

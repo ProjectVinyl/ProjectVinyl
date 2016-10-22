@@ -11,6 +11,26 @@
 				<%= render partial: 'layouts/video_thumb_h', locals: {video_thumb_h: @video} %>
 			</ul>
 		</section>
+		<section class="page" style="width:100%">
+			<h1>Metadata</h1>
+			<%= form_for(@video, as: "video", url: "/admin/video/metadata", html: { method: :put }) do |f| %>
+				<%= f.text_field :id, hidden: true %>
+				<div class="post">
+					<input type="text" name="source" placeholder="source"></input>
+					<label class="button blue">
+						<input name="title" type="checkbox"></input>
+						<i class="fa fa-check"></i> Title
+					</label>
+					<label class="button blue">
+						<input name="description" type="checkbox"></input>
+						<i class="fa fa-check"></i> Description
+					</label>
+					<div class="actions">
+						<%= f.submit %>
+					</div>
+				</div>
+			<% end %>
+		</section>
 		<section class="page properties" style="width:100%">
 			<h1>Files</h1>
 			<table>
