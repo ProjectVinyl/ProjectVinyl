@@ -27,31 +27,7 @@ class ProcessingWorker < ActiveRecord::Base
   end
   
   def zombie?
-    return self.running && (self.video.nil? || !File.exists?(Rails.root.join('encoding', self.video_id.to_s + '.webm')))
-  end
-  
-  def dezombifie
-    if self.running && !self.video_id.nil? && self.video_id > 0
-      has_encoding = File.exists?(Rails.root.join('encoding', self.video_id.to_s + '.webm'))
-      if vid = self.video
-        has_webm = File.exists?(vid.webm_path)
-        has_original = File.exists?(vid.video_path)
-        if has_webm
-          vid.processed = true
-          self.running = false
-          self.save
-        elsif !has_original
-          vid.hidden = true
-          vid.processed = nil
-          self.running = false
-          self.save
-        end
-        vid.save
-      else
-        self.running = false
-        self.save
-      end
-    end
+    return self.running && !self.video.nil? && !File.exists?(Rails.root.join('encoding', self.video_id.to_s + '.webm')) && File.exists?(Rails.roow.join('public', 'stream', self.video_id.to_s + '.webm'))
   end
   
   def start
@@ -135,7 +111,6 @@ class VideoProcessor
   end
   
   def self.startManager
-    puts "[Processing Manager] Attempting Master thread start"
     started_any = false
     result = 0
     count = ProcessingWorker.all.count
@@ -145,40 +120,23 @@ class VideoProcessor
       count += 1
       result += 1
     end
-    ProcessingWorker.all.each do |i|
-      if result < @@required_worker_count
-        if i.running
-          i.dezombifie
-          if !i.running
-          puts "De-zombified: " + i.id.to_s
-          end
-        end
-        if !i.running
-          puts "Started: " + i.id.to_s
-          VideoProcessor.processor(i)
-          started_any = true
-          result += 1
-        end
+    ProcessingWorker.where(running: true).each do |i|
+      if i.zombie?
+        i.running = false
+        Video.where(id: i.video_id).update_all(processed: true)
+        VideoProcessor.processor(i)
+        started_any = true
+        result += 1
       end
+    end
+    ProcessingWorker.where(running: false).each do |i|
+      if result >= @@required_worker_count
+        break
+      end
+      VideoProcessor.processor(i)
+      started_any = true
+      result += 1
     end
     return started_any
   end
-  
-  def self.scheduleRestart
-    controller = Thread.start {
-      begin
-        while (true)
-          sleep(2.hours)
-          if VideoProcessor.startManager > 0
-            return
-          end
-        end
-      rescue Exception => e
-      ensure
-        ActiveRecord::Base.connection.close
-      end
-    }
-  end
 end
-
-VideoProcessor.scheduleRestart
