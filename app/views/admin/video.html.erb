@@ -15,8 +15,10 @@
 			<h1>Metadata</h1>
 			<%= form_for(@video, as: "video", url: "/admin/video/metadata", html: { method: :put }) do |f| %>
 				<%= f.text_field :id, hidden: true %>
-				<div class="post">
+				<label class="text-input" data-prefix="https://www.youtube.com/watch?v=">
 					<input type="text" name="source" placeholder="source"></input>
+				</label>
+				<div class="post">
 					<label class="button blue">
 						<input name="title" type="checkbox"></input>
 						<i class="fa fa-check"></i> Title

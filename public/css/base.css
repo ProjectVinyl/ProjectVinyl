@@ -785,7 +785,7 @@ button, .button, input[type=submit], .tag, .tag-editor {
   pointer-events: none;
 }
 
-input[type=text]:not(.tag), input[type=email], input[type=password] {
+input[type=text]:not(.tag), input[type=email], input[type=password], label.text-input {
   transition: background 0.5s ease;
   padding: 10px;
   border: 1px solid rgb(204, 204, 204);
@@ -837,12 +837,35 @@ textarea {
   }
 }
 
-.search-options label, input[type=text]:focus, input[type=email]:focus, input[type=password]:focus, textarea:focus {
+.search-options label, input[type=text]:focus, input[type=email]:focus, input[type=password]:focus, textarea:focus, label.text-input.focus {
   transition: background 0.125s ease;
 }
 
-.search-options label.focus, input[type=text]:focus, input[type=email]:focus, input[type=password]:focus, textarea:focus {
+.search-options label.focus, input[type=text]:focus, input[type=email]:focus, input[type=password]:focus, textarea:focus, label.text-input.focus {
   background: rgba(200,200,200,0.1);
+}
+
+label.text-input {
+  display: block;
+  white-space: nowrap;
+  max-width: 100%;
+  overflow: hidden;
+}
+
+label[data-prefix]::before {
+  content: attr(data-prefix);
+}
+
+label.text-input input[type=text] {
+  background: none;
+  border: none;
+  box-shadow: none;
+  padding: 0;
+  margin: 0;
+  vertical-align: top;
+  display: inline;
+  width: auto;
+  line-height: inherit;
 }
 
 .search-options label span:first-child {
@@ -1783,7 +1806,8 @@ section.modal .actions {
 .properties td.field textarea,
 .properties td.field input[type=text],
 .properties td.field input[type=email],
-.properties td.field input[type=password] {
+.properties td.field input[type=password],
+.properties td.field label.text-input {
   width: 100%;
 }
 .properties td.field textarea {
