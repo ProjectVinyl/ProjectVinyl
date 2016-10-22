@@ -354,15 +354,18 @@ class Video < ActiveRecord::Base
   end
   
   def pull_meta(src, tit, dsc)
-    meta = Youtube.get('https://www.youtube.com/watch?v=' + Youtube.video_id(src))
-    if tit && meta[:title]
-      self.set_title(meta[:title])
+    if src && src.length > 0
+      src = 'https://www.youtube.com/watch?v=' + Youtube.video_id(src)
+      meta = Youtube.get(src)
+      if tit && meta[:title]
+        self.set_title(meta[:title])
+      end
+      if dsc && meta[:description]
+        self.set_description(meta[:description][:bbc])
+      end
+      self.source = src
+      self.save
     end
-    if dsc && meta[:description]
-      self.set_description(meta[:description][:bbc])
-    end
-    self.source = src
-    self.save
   end
   
   def json
