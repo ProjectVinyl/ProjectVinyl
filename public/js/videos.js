@@ -18,6 +18,10 @@ function Player() {}
   Player.onFullscreen = function(func) {
     $(document).on('webkitfullscreenchange mozfullscreenchange fullscreenchange', func);
   };
+  var VIDEO_ELEMENT = document.createElement('video');
+  Player.canPlayType = function(mime) {
+    return !!(mime = VIDEO_ELEMENT.canPlayType(mime)).length && mime !== 'no';
+  };
   Player.speeds = [
     {name: 'Double', value: 2},
     {name: '1.5x', value: 1.5},
@@ -34,10 +38,55 @@ function Player() {}
              <source src="/stream/' + player.source + '.webm" type="video/webm"></source>\
              <source src="/stream/' + player.source + player.mime[0] + '" type="' + player.mime[1] + '"></source>\
             </video>');
-  }
+  };
+  Player.errorMessage = function(video) {
+    if (!video.error) {
+      switch (video.networkState) {
+        case HTMLMediaElement.NETWORK_NO_SOURCE:
+          return 'Network Error';
+      }
+      return 'Unknown Error';
+    }
+    switch (video.error.code) {
+      case video.error.MEDIA_ERR_ABORTED: return 'Playback Aborted';
+      case video.error.MEDIA_ERR_NETWORK: return 'Network Error';
+      case video.error.MEDIA_ERR_DECODE: return 'Feature not Supported';
+      case video.error.MEDIA_ERR_SRC_NOT_SUPPORTED: return 'Codec no supported';
+      default: return 'Unknown Error';
+    }
+  };
+  Player.noise = (function() {
+    var canvas = null, ctx = null;
+    var toggle = true;
+    function noise(ctx) {
+      var w = ctx.canvas.width,
+          h = ctx.canvas.height,
+          idata = ctx.createImageData(w, h),
+          buffer32 = new Uint32Array(idata.data.buffer),
+          len = buffer32.length,
+          i = 0;
+      for(; i < len;) buffer32[i++] = ((255 * Math.random())|0) << 24;
+      ctx.putImageData(idata, 0, 0);
+    }
+    function loop() {
+      toggle = !toggle;
+      if (toggle) return requestAnimationFrame(loop);
+      noise(ctx);
+      requestAnimationFrame(loop);
+    }
+    return function setupNoise() {
+      if (canvas !== null) return canvas;
+      canvas = document.createElement('canvas');
+      ctx = canvas.getContext('2d');
+      canvas.width = canvas.height = 256;
+      loop();
+      return canvas;
+    }
+  })();
   Player.generate = function(holder) {
     holder.prepend('<div class="player" >\
 								<span class="playing"></span>\
+                <span class="error"><span class="error-message"></span></span>\
                 <span class="suspend" style="display:none"><i class="fa fa-pulse fa-spinner"></i></span>\
 								<span class="pause resize-holder">\
 									<span class="playback"></span>\
@@ -99,6 +148,8 @@ function Player() {}
       
       this.dom = el;
       this.player = el.find('.player');
+      this.player.error = this.player.find('.error');
+      this.player.error.message = this.player.error.find('.error-message');
       this.suspend = el.find('.suspend');
       this.contextmenu = el.find('.contextmenu');
       this.contextmenu.unset = 1;
@@ -456,14 +507,16 @@ function Player() {}
           me.player.addClass('playing');
           me.player.removeClass('stopped');
           me.player.removeClass('paused');
+          me.player.removeClass('error');
           me.video.loop = !!me.__loop;
           sendMessage(me);
           me.volume(this.volume, this.muted);
         });
         video.on('abort error', function(e) {
-          me.pause();
-          me.player.addClass('stopped');
-          console.log(e);
+          me.error(e);
+        });
+        video.find('source').last().on('error', function(e) {
+          me.error(e);
         });
         video.on('ended', function() {
           if (me.__autoplay) {
@@ -517,6 +570,9 @@ function Player() {}
         });
         this.volume(me.video.volume, video.muted);
       }
+      if (this.video.networkState == HTMLMediaElement.NETWORK_NO_SOURCE) {
+        this.video.load();
+      }
       this.video.play();
     },
     stop: function() {
@@ -532,6 +588,19 @@ function Player() {}
       if (this.video) this.video.pause();
       this.suspend.css('display', 'none');
 			return true;
+    },
+    error: function(e) {
+      this.pause();
+      this.player.addClass('stopped');
+      this.player.addClass('error');
+      var message = Player.errorMessage(this.video);
+      this.player.error.message.text(message);
+      if (!this.noise) {
+        this.noise = Player.noise();
+        this.player.error.append(this.noise);
+      }
+      console.warn(message);
+      console.log(e);
     },
     toggleVideo: function() {
       if (!this.player.hasClass('playing')) {

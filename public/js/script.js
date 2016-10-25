@@ -1375,7 +1375,7 @@ $(document).on('click', '.comment .mention', function(ev) {
 $(document).on('click', '.spoiler', function() {
   $(this).toggleClass('revealed');
 });
-$(document).on('click', '.tab-set li.button', function() {
+$(document).on('click', '.tab-set li.button:not([data-disabled])', function() {
   var me = $(this);
   if (!me.hasClass('selected')) {
     var other = me.parent().find('.selected');

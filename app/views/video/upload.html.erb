@@ -77,11 +77,16 @@ $(document).ready(function() {
     needs_cover = !!file.mime.match(/audio\//);
 		if (needs_cover) {
 			player.load(null);
-			$('a[data-target=thumbpick]').click();
-			$('a[data-target=thumbupload]').attr('data-disabled','1');
+			$('li[data-target="thumbupload"]').click();
+			$('li[data-target="thumbpick"]').attr('data-disabled','1');
 		} else {
-			player.load(file.data);
-			$('a[data-target=thumbupload]').removeAttr('data-disabled').click();
+			if (Player.canPlayType(file.mime)) {
+				player.load(file.data);
+				$('li[data-target="thumbpick"]').removeAttr('data-disabled').click();
+			} else {
+				$('li[data-target="thumbupload"]').click();
+				$('li[data-target="thumbpick"]').attr('data-disabled', '1');
+			}
 		}
     validateInput();
   });

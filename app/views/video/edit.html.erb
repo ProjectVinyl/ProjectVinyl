@@ -24,9 +24,10 @@
 						<input class="playlist" id="time" type="text" name="video[time]" value="-1">-1</input>
 					</div>
 					<script>
+var video = null;
 $(document).ready(function() {
   var video = $('#video .player');
-  var player = video[0].getPlayerObj();
+  player = video[0].getPlayerObj();
   var time_input = $('#video input');
   player.pause = function() {
     if (this.video) this.video.pause();
@@ -81,6 +82,14 @@ $(document).ready(function() {
   $('#video-upload').on('accept', function(e, file) {
     needs_cover = file.mime.match(/audio\//);
     validateInput();
+		if (Player.canPlayType(file.mime)) {
+			player.load(file.data);
+			$('li[data-target="thumbpick"]').removeAttr('data-disabled').click();
+		} else {
+			console.log('Nope :T');
+			$('li[data-target="thumbupload"]').click();
+			$('li[data-target="thumbpick"]').attr('data-disabled', '1');
+		}
   });
   $('#cover-upload').on('accept', function() {
     has_cover = true;

@@ -391,6 +391,9 @@ ul.tab-set .button {
   box-shadow: 0 0 10px -5px rgba(0,0,0,0.3);
   margin-right: 10px;
 }
+ul.tab-set .button[data-disabled] {
+  opacity: 0.3;
+}
 ul.tab-set .button::before,
 ul.tab-set .button::after {
   content: '';
