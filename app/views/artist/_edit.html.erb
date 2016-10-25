@@ -1,4 +1,3 @@
-<%= form_for(user, as: "user", url: "/ajax/avatar/upload", "html": { "class": "async" }) do |f| %>
 <table>
 	<tr class="section">
 		<td colspan="2">
@@ -10,6 +9,7 @@
 			Avatar
 		</td>
 		<td class="field center">
+		<%= form_for(user, as: "user", url: "/ajax/avatar/upload", "html": { "class": "async" }) do |f| %>
 			<div id="avatar-upload" class="avatar file-select image-selector uploaded-preview" data-type="image">
 				<span class="preview" style="background-image: url('<%= user.avatar %>');"></span>
 				<span class="drop-icon" style="box-shadow: none;">
@@ -39,10 +39,10 @@ $('#avatar-upload').on('accept', function(e, file) {
   });
 });
 			</script>
+			<% end %>
 		</td>
 	</tr>
 </table>
-<% end %>
 <%= form_for(user, as: "user", url: url) do |f| %>
 <table>
 	<tr class="section">
