@@ -1,25 +1,31 @@
 class Youtube
-  def self.get(url)
-    result = {}
-    oembed_url = 
-    Ajax.get('https://www.youtube.com/oembed', url: 'http:' + url.sub(/http?(s):/, ''), format: 'json') do |body|
-      body = JSON.parse(body)
-      result[:title] = body['title']
-      result[:artist] = body['author_name']
-    end
-    Ajax.get(url) do |body|
-      if desk = Youtube.description_from_html(body)
-        desc_node = HTMNode.Parse("<div>" + desk + "</div>")
-        desc_node.getElementsByTagName('a').each do |a|
-          a.innerText = a.attributes['href']
+  def self.get(url, wanted_data = {})
+    if Youtube.flag_set(wanted_data, :title) || Youtube.flag_set(wanted_data, :artist)
+      Ajax.get('https://www.youtube.com/oembed', url: 'http:' + url.sub(/http?(s):/, ''), format: 'json') do |body|
+        body = JSON.parse(body)
+        if Youtube.flag_set(wanted_data, :title)
+          wanted_data[:title] = body['title']
         end
-        result[:description] = {
-          html: desc_node.innerHTML,
-          bbc: desc_node.innerBBC
-        }
+        if Youtube.flag_set(wanted_data, :artist)
+          result[:artist] = body['author_name']
+        end
       end
     end
-    return result
+    if Youtube.flag_set(wanted_data, :description)
+      Ajax.get(url) do |body|
+        if desk = Youtube.description_from_html(body)
+          desc_node = HTMNode.Parse("<div>" + desk + "</div>")
+          desc_node.getElementsByTagName('a').each do |a|
+            a.innerText = a.attributes['href']
+          end
+          result[:description] = {
+            html: desc_node.innerHTML,
+            bbc: desc_node.innerBBC
+          }
+        end
+      end
+    end
+    return wanted_data
   end
   
   def self.description_from_html(html)
@@ -45,5 +51,9 @@ class Youtube
       return url.split('v=')[1].split('&')[0]
     end
     return url.split('?')[0].split('/').last
+  end
+  
+  def self.flag_set(hash, key)
+    return hash.key?(key) && hash[key]
   end
 end

@@ -42,10 +42,6 @@ class VideoController < ApplicationController
     }
     @user = @video.user
     @thread = @video.comment_thread
-    if !@thread
-      @thread = @video.comment_thread = CommentThread.create(user_id: @user.id)
-      @video.save
-    end
     @order = '1'
     @results = @comments = Pagination.paginate(@thread.get_comments(user_signed_in? && current_user.is_contributor?), 0, 10, true)
     @queue = @user.queue(@video.id)
@@ -146,36 +142,37 @@ class VideoController < ApplicationController
           title = ApplicationHelper.check_and_trunk(video[:title], "Untitled Video")
           title = ApplicationHelper.demotify(title)
           text = ApplicationHelper.demotify(video[:description])
-          comments = CommentThread.create(user_id: user, title: title, owner_type: "Video")
-          video = user.videos.create(
-                  title: title, safe_title: ApplicationHelper.url_safe(title),
-                  description: text, html_description: ApplicationHelper.emotify(text),
-                  source: video[:source],
-                  audio_only: file.content_type.include?('audio/'),
-                  file: ext, mime: file.content_type,
-                  comment_thread_id: comments.id,
-                  upvotes: 0,
-                  downvotes: 0,
-                  views: 0,
-                  hidden: false,
-                  processed: false,
-                  checksum: checksum[:value],
-                  duplicate_id: 0
-          )
-          comments.owner_id = video.id
-          comments.save
-          video.save_file(data)
-          if params[:video][:time] && (time = params[:video][:time].to_f) >= 0
-            video.setThumbnailTime(time)
-          else
-            video.setThumbnail(cover)
+          Video.transaction do
+            @video = user.videos.create(
+                    title: title, safe_title: ApplicationHelper.url_safe(title),
+                    description: text, html_description: ApplicationHelper.emotify(text),
+                    source: video[:source],
+                    audio_only: file.content_type.include?('audio/'),
+                    file: ext,
+                    mime: file.content_type,
+                    upvotes: 0,
+                    downvotes: 0,
+                    views: 0,
+                    hidden: false,
+                    processed: false,
+                    checksum: checksum[:value],
+                    duplicate_id: 0
+            )
+            @comments = @video.comment_thread = CommentThread.create(user_id: user, title: title)
+            @comments.save
           end
-          Tag.loadTags(params[:video][:tag_string], video)
-          video.save
-          if params[:async]
-            render json: { result: "success", ref: "/view/" + video.id.to_s }
+          @video.save_file(data)
+          if params[:video][:time] && (time = params[:video][:time].to_f) >= 0
+            @video.setThumbnailTime(time)
           else
-            redirect_to action: "view", id: video.id
+            @video.setThumbnail(cover)
+          end
+          Tag.loadTags(params[:video][:tag_string], @video)
+          @video.save
+          if params[:async]
+            render json: { result: "success", ref: "/view/" + @video.id.to_s }
+          else
+            redirect_to action: "view", id: @video.id
           end
           return
         else
@@ -305,7 +302,7 @@ class VideoController < ApplicationController
       return render :file => 'public/502.html', :status => 502, :layout => false
     end
     file = @video.video_path.to_s
-    if !File.exists?(file)
+    if !File.exist?(file)
       return render :file => 'public/404.html', :status => :not_found, :layout => false
     end
     response.headers['Content-Length'] = File.size(file).to_s

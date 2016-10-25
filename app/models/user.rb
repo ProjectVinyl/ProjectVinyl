@@ -139,12 +139,12 @@ class User < ActiveRecord::Base
     result = [0,0]
     User.all.find_in_batches do |o|
       o.each do |u|
-        if u.mime && !File.exists?(Rails.root.join('public', 'avatar', u.id.to_s))
+        if u.mime && !File.exist?(Rails.root.join('public', 'avatar', u.id.to_s))
           u.setAvatar(false)
           u.save
           result[0] += 1
         end
-        if u.banner_set && !File.exists?(Rails.root.join('public', 'banner', u.id.to_s))
+        if u.banner_set && !File.exist?(Rails.root.join('public', 'banner', u.id.to_s))
           u.setBanner(false)
           u.save
           result[1] += 1
@@ -334,7 +334,7 @@ class User < ActiveRecord::Base
   private
   def img(type, uploaded_io)
     path = Rails.root.join('public', type, self.id.to_s)
-    if File.exists?(path)
+    if File.exist?(path)
       File.delete(path)
     end
     if uploaded_io

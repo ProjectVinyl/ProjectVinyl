@@ -6,7 +6,7 @@ class ImgsController < ApplicationController
   
   def thumb
     png = Rails.root.join('public', 'cover', params[:id]).to_s
-    if File.exists?(png + '.png')
+    if File.exist?(png + '.png')
       Ffmpeg.extractTinyThumbFromExisting(png)
       serveRaw(png, 'png', 'image')
       return
@@ -44,7 +44,7 @@ class ImgsController < ApplicationController
     serveDirect(file.to_s + "." + ext, type + "/" + ext)
   end
   def serveDirect(file, mime)
-    if File.exists?(file)
+    if File.exist?(file)
       response.headers['Content-Length'] = File.size(file.to_s).to_s
       send_file file.to_s, :disposition => 'inline', :type => mime, :filename => File.basename(file).to_s, :x_sendfile => true
     else

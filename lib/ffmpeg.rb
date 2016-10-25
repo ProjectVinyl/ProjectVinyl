@@ -17,7 +17,7 @@ class Ffmpeg
    def self.locked?(file)
      webm = file.to_s.split('.')[0] + '.webm'
      temp = Rails.root.join('encoding', File.basename(webm).to_s).to_s
-     if File.exists?(temp)
+     if File.exist?(temp)
        if File.mtime(temp) > Time.now.ago(1800)
          return true
        end
@@ -28,7 +28,7 @@ class Ffmpeg
    def self.try_unlock?(file)
      webm = file.to_s.split('.')[0] + '.webm'
      temp = Rails.root.join('encoding', File.basename(webm).to_s).to_s
-     if File.exists?(temp)
+     if File.exist?(temp)
        if File.mtime(temp) < Time.now.ago(1800)
          File.rename(temp, webm)
          return true
@@ -40,17 +40,18 @@ class Ffmpeg
    def self.produceWebM(file)
      webm = file.to_s.split('.')[0] + ".webm"
      temp = Rails.root.join('encoding', File.basename(webm).to_s).to_s
-     if File.exists?(webm)
+     if File.exist?(webm)
        yield
        return "Completed"
      end
-     if !File.exists?(file)
+     if !File.exist?(file)
        return "File Not Found"
      end
-     if File.exists?(temp)
+     if File.exist?(temp)
        if File.mtime(temp) < Time.now.ago(1800)
          File.rename(temp, webm)
          yield
+         puts 'Existin file found (' + temp.to_s + ')'
          return "Complete (Unlocked Index)"
        end
      end
@@ -59,7 +60,6 @@ class Ffmpeg
        begin
          while line = io.gets
            line.chomp!
-           puts line
          end
          io.close
          yield

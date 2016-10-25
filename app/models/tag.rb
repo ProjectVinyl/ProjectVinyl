@@ -20,6 +20,10 @@ class Tag < ActiveRecord::Base
     return Tag.sanitize_sql_for_conditions(arguments)
   end
   
+  def self.sanitize_name(name)
+    return ApplicationHelper.check_and_trunk(name, "").downcase.strip.gsub(/[;,]/,'')
+  end
+  
   def self.tag_string(tags)
     result = ''
     tags.each do |i|
@@ -32,11 +36,14 @@ class Tag < ActiveRecord::Base
   end
   
   def self.find_matching_tags(name)
-    result = []
-    Tag.includes(:tag_type).where('name LIKE ?', "%" + name.downcase + "%").limit(10).each do |tag|
-      result << { name: tag.name, link: tag.short_name, members: tag.members }
+    name = name.downcase
+    tags = Tag.includes(:tag_type, :alias).where('name LIKE ? OR short_name LIKE ?', "%" + name + "%", "%" + ApplicationHelper.url_safe_for_tags(name) + "%").limit(10)
+    tags = tags.map do |tag|
+      tag.alias || tag
     end
-    return result
+    return tags.uniq.map do |tag|
+      { name: tag.name, link: tag.short_name, members: tag.members }
+    end
   end
   
   def self.split_tag_string(tag_string)
@@ -140,7 +147,24 @@ class Tag < ActiveRecord::Base
     reciever.pick_up_tags(tags).create(map)
   end
   
+  def self.addTag(tag_name, sender)
+    existing = get_updated_tag_set(sender)
+    loaded = Tag.get_tag_ids_with_create([tag_name]) - existing
+    if loaded.length > 0
+      Tag.load_dif(loaded, [], existing, sender)
+    end
+  end
+  
   def self.loadTags(tag_string, sender)
+    existing = get_updated_tag_set(sender)
+    loaded = Tag.get_tag_ids_with_create(Tag.split_tag_string(tag_string))
+    common = existing & loaded
+    if existing.length != loaded.length || existing.length != common.length
+      Tag.load_dif(loaded - common, existing - common, existing, sender)
+    end
+  end
+  
+  def self.get_updated_tag_set(sender)
     aliased_from = []
     aliased_to = []
     existing = sender.tags.pluck(:id, :alias_id).map do |t|
@@ -155,11 +179,7 @@ class Tag < ActiveRecord::Base
       aliased_to = aliased_to - existing
       Tag.send_pickup_event(sender, aliased_to)
     end
-    loaded = Tag.get_tag_ids_with_create(Tag.split_tag_string(tag_string))
-    common = existing & loaded
-    if existing.length != loaded.length || existing.length != common.length
-      Tag.load_dif(loaded - common, existing - common, existing, sender)
-    end
+    return existing
   end
   
   def self.load_dif(added, removed, existing, sender)
@@ -226,8 +246,7 @@ class Tag < ActiveRecord::Base
   end
   
   def set_name(name)
-    name = ApplicationHelper.check_and_trunk(name, "")
-    name = name.downcase.strip.gsub(/[;,]/,'')
+    name = Tag.sanitize_name(name)
     if self.has_type
       name = self.tag_type.prefix + ":" + name.gsub(/:/, '')
     end

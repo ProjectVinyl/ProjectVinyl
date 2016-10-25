@@ -27,6 +27,10 @@
 						<input name="description" type="checkbox"></input>
 						<i class="fa fa-check"></i> Description
 					</label>
+					<label class="button blue">
+						<input name="tags" type="checkbox"></input>
+						<i class="fa fa-check"></i> Tags
+					</label>
 					<div class="actions">
 						<%= f.submit %>
 					</div>
@@ -38,20 +42,20 @@
 			<table>
 				<tr>
 					<td class="label">Source</td>
-					<td class="field"><%= File.exists?(@video.video_path) ? "Yes" : "No" %></td>
+					<td class="field"><%= File.exist?(@video.video_path) ? "Yes" : "No" %></td>
 					<td>
 						<a class="button" href="/admin/files?p=<% if @video.hidden %>private<% else %>public<% end %>/stream&start=<%= @video.id.to_s + @video.file %>&offset=-5#<%= @video.id %>">View</a>
 					</td>
 				<tr>
 					<td class="label">Webm</td>
-					<td class="field"><%= File.exists?(@video.webm_path) ? "Yes" : "No" %></td>
+					<td class="field"><%= File.exist?(@video.webm_path) ? "Yes" : "No" %></td>
 					<td>
 						<a class="button" href="/admin/files?p=<% if @video.hidden %>private<% else %>public<% end %>/stream&start=<%= @video.id %>.webm&offset=-5#<%= @video.id %>">View</a>
 					</td>
 				</tr>
 				<tr>
 					<td class="label">Cover</td>
-					<td class="field"><%= File.exists?(Rails.root.join('public', 'cover', @video.id.to_s + '.png')) ? 'Yes' : 'No' %></td>
+					<td class="field"><%= File.exist?(Rails.root.join('public', 'cover', @video.id.to_s + '.png')) ? 'Yes' : 'No' %></td>
 					<td>
 						<a class="button" href="/admin/files?p=public/cover&start=<%= @video.id %>.png&offset=-5#<%= @video.id %>">View</a>
 					</td>

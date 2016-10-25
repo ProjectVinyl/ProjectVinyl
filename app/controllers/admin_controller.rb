@@ -21,7 +21,7 @@ class AdminController < ApplicationController
   end
   
   def render_path(params, ajax)
-    if !user_signed_in? || !current_user.admin?
+    if !user_signed_in? || !current_user.contributor?
       if ajax
         return render status: 403, nothing: true
       end
@@ -222,7 +222,7 @@ class AdminController < ApplicationController
   def populateVideo
     if user_signed_in? && current_user.is_contributor?
       if @video = Video.where(id: params[:video][:id]).first
-        @video.pull_meta(params[:source], params[:title], params[:description])
+        @video.pull_meta(params[:source], params[:title], params[:description], params[:tags])
       end
     end
     redirect_to action: "video", id: params[:video][:id]

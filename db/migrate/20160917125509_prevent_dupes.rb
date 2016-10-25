@@ -5,7 +5,7 @@ class PreventDupes < ActiveRecord::Migration
     Video.reset_column_information
     Video.all.each do |v|
       file = v.video_path
-      if File.exists?(file)
+      if File.exist?(file)
         File.open(file, 'rb') do |io|
           v.checksum = Ffmpeg.compute_checksum(io.read)
           v.save

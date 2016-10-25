@@ -199,7 +199,6 @@ class Video < ActiveRecord::Base
       file.write(data)
       file.flush()
     end
-    self.processed = nil
     self.generateWebM()
   end
   
@@ -353,15 +352,20 @@ class Video < ActiveRecord::Base
     return result.map(&:name).sort().join(' | ')
   end
   
-  def pull_meta(src, tit, dsc)
+  def pull_meta(src, tit, dsc,tgs)
     if src && src.length > 0
       src = 'https://www.youtube.com/watch?v=' + Youtube.video_id(src)
-      meta = Youtube.get(src)
+      meta = Youtube.get(src, title: tit, description: desc, artist: tgs)
       if tit && meta[:title]
         self.set_title(meta[:title])
       end
       if dsc && meta[:description]
         self.set_description(meta[:description][:bbc])
+      end
+      if tgs && meta[:artist]
+        if (artist_tag = Tag.sanitize_name(meta[:artist])) && artist_tag.length > 0
+          Tag.addTag('artist:' + artist_tag, self)
+        end
       end
       self.source = src
       self.save
@@ -522,7 +526,7 @@ class Video < ActiveRecord::Base
   end
   
   def delFile(path)
-    if File.exists?(path)
+    if File.exist?(path)
       File.delete(path)
     end
   end
@@ -533,7 +537,7 @@ class Video < ActiveRecord::Base
   end
   
   def renameFile(from, to)
-    if File.exists?(from)
+    if File.exist?(from)
       File.rename(from, to)
     end
   end
