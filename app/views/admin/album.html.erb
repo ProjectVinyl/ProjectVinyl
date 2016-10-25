@@ -42,6 +42,21 @@
 				<% end %>
 					<tr class="actions">
 						<td class="label">
+							Featured
+						</td>
+						<td class="field">
+							<button class="action toggle blue" data-action="feature" data-target="album" data-id="<%= @album.id %>">
+								<span class="icon">
+									<% if @album.featured > 0 %>
+										<i class="fa fa-check"></i>
+									<% end %>
+								</span>
+								<span class="label">Feature Album</span>
+							</button>
+						</td>
+					</tr>
+					<tr class="actions">
+						<td class="label">
 							Delete Item
 						</td>
 						<td class="field">

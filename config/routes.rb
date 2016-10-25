@@ -76,6 +76,7 @@ Rails.application.routes.draw do
   
   get 'ajax/album/create' => 'album#new'
   get 'ajax/album/update/:id' => 'album#edit'
+  post 'ajax/album/feature' => 'ajax#toggleAlbumFeature'
   get 'album/:id' => 'album#view'
   get 'albums' => 'album#list'
   get 'ajax/albums/items' => 'album#items'

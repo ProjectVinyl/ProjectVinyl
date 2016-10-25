@@ -84,8 +84,24 @@ class AjaxController < ApplicationController
       if video = Video.where(id: params[:id]).first
         Video.where(featured: true).update_all(featured: false)
         video.featured = !video.featured
+        if video.featured
+          Tag.addTag('featured video', video)
+        end
         video.save
         render json: { :added => video.featured }
+        return
+      end
+    end
+    render status: 401, nothing: true
+  end
+  
+  def toggleAlbumFeature
+    if user_signed_in? && current_user.is_staff?
+      if album = Album.where(id: params[:id]).first
+        Album.where('featured > 0').update_all(featured: 0)
+        album.featured = album.featured > 0 ? 0 : 1
+        album.save
+        render json: { :added => album.featured > 0 }
         return
       end
     end
