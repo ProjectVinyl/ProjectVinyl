@@ -109,7 +109,7 @@
 <section class="page" style="width: 100%">
 	<h1>Recent Songs</h1>
 	<% if @videos.length > 0 %>
-	<ul id="videos" class="horizontal video-list">
+	<ul id="songs" class="horizontal video-list">
 		<%= render partial: 'layouts/video_thumb_h', collection: @videos.records %>
 	</ul>
 	<div class="load-more">
