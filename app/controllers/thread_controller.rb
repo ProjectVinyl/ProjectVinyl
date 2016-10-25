@@ -58,7 +58,7 @@ class ThreadController < ApplicationController
   end
   
   def listing_selector
-    return CommentThread.includes(:direct_user).where(owner_id: nil).order('pinned DESC, locked ASC, created_at DESC')
+    return CommentThread.includes(:direct_user).where(owner_id: nil, owner_type: nil).order('pinned DESC, locked ASC, created_at DESC')
   end
   
   def post_comment
