@@ -64,6 +64,7 @@ class Video < ActiveRecord::Base
     end
     Video.where('id NOT IN (?) AND audio_only = false', webms).update_all(processed: nil)
     Video.where('id IN (?)', workings).update_all(processed: false)
+    return VideoProcessor.queue.count
   end
   
   def self.verify_integrity(report)
