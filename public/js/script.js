@@ -8,6 +8,7 @@ $(window).on('focus', function() {
 $(window).on('blur', function () {
   window_focused = false;
 });
+var worker;
 $(window).ready(function () {
 	function scroller() {
 		var top = window.scrollY;
@@ -28,10 +29,10 @@ $(window).ready(function () {
 		}
 	}
   
-  if (window['current_user'] && window.SharedWorker && !!localStorage['give_me_notifications']) {
+  if (window['current_user'] && window.SharedWorker && (window['force_notifications'] || !!localStorage['give_me_notifications'])) {
     var doc_title = $('#document_title');
     var title = doc_title.text();
-    var worker = new SharedWorker('/js/notifications.js');
+    worker = new SharedWorker('/js/notifications.js');
     worker.port.addEventListener('message', function(e) {
       if (e.data.command == 'feeds') {
         if (e.data.count > 0) {
@@ -45,6 +46,11 @@ $(window).ready(function () {
         } else {
           $('.notices-bell.notices').html('<i class="fa fa-bell" />');
         }
+      } else if (e.data.command == 'chat') {
+        var chat = $('#chat');
+        chat.html(e.data.content);
+        chat = chat.parent();
+        chat.scrollTop(chat.height());
       }
       if (e.data.command == 'notices' || e.data.command == 'feeds') {
         if (!window_focused && e.data.count) {
@@ -72,9 +78,10 @@ $(window).ready(function () {
       notices: $('.notices-bell.notices span').length ? parseInt($('.notices-bell.notices span').text()) : 0,
       feeds: $('.notices-bell.feeds span').length ? parseInt($('.notices-bell.feeds span').text()) : 0
     });
-    document.addEventListener('beforeunload', function() {
+    window.onbeforeunload = function() {
       worker.port.postMessage({command: 'disconnect'});
-    });
+      return null;
+    };
   }
 });
 var ajax = (function() {
@@ -436,7 +443,7 @@ var BBC = (function() {
   $(document).on('mouseup', '.edit-action', function() {
     var me = $(this);
     var type = me.attr('data-action');
-    var textarea = me.parents('.content.editing').find('textarea')[0];
+    var textarea = me.parents('.content.editing').find('textarea, input.comment-content')[0];
     if (type == 'tag') {
       var tag = me.attr('data-tag');
       insertTags(textarea, '[' + tag + ']', '[/' + tag + ']');
@@ -466,7 +473,7 @@ var BBC = (function() {
   $(document).on('keydown', '#emoticons', function() {
     $(this).select();
   });
-  $('.post-box textarea.comment-content').trigger('change');
+  $('.post-box textarea.comment-content, .post-box input.comment-content').trigger('change');
   return {
     rich: rich, poor: poor
   }
@@ -855,14 +862,17 @@ $(document).on('click', '.state-toggle', function(ev) {
   me.text(me.attr('data-' + me.parent().hasClass(state)));
 });
 (function() {
-  function toggle(sender, family, action, id, item_id) {
+  function toggle(sender, family, action, id, item_id, check_icon, uncheck_icon) {
     ajax.post(action, function(json) {
       if (family) {
         $('.action.toggle[data-family=' + family + '][data-id=' + id + ']').each(function() {
-          $(this).find('.icon').html(json[$(this).attr('data-action')] ? '<i class="fa fa-check"></i>' : '')
+          var me = $(this);
+          var uncheck = me.attr('data-unchecked-icon');
+          var check = me.attr('data-checked-icon') || 'check';
+          me.find('.icon').html(json[$(this).attr('data-action')] ? '<i class="fa fa-' + check + '"></i>' : (uncheck ? '<i class="fa fa-' + uncheck + '"></i>' : ''))
         });
       } else {
-        sender.find('.icon').html(json.added ? '<i class="fa fa-check"></i>' : '');
+        sender.find('.icon').html(json.added ? '<i class="fa fa-' + check_icon + '"></i>' : (uncheck_icon ? '<i class="fa fa-' + uncheck_icon + '"></i>' : ''));
       }
     }, false, {
       id: id, item: item_id
@@ -875,9 +885,11 @@ $(document).on('click', '.state-toggle', function(ev) {
     var id = me.attr('data-id');
     var item = me.attr('data-item');
     var data = me.attr('data-with');
+    var check_icon = me.attr('data-checked-icon') || 'check';
+    var uncheck_icon = me.attr('data-unchecked-icon');
     if (data) data = $(data);
     me.on('click', function(e) {
-      toggle(me, family, target + (data ? '?extra=' + data.val() : ''), id, item);
+      toggle(me, family, target + (data ? '?extra=' + data.val() : ''), id, item, check_icon, uncheck_icon);
     });
   });
 })();
@@ -1257,7 +1269,8 @@ function error(message) {
 
 function postComment(sender, thread_id, order, report_state) {
   sender = $(sender).parent();
-  var comment = sender.find('textarea').val();
+  var input = sender.find('textarea, input.comment-content');
+  var comment = input.val();
   if (!comment.length) {
     return error('You have to type something to post');
   }
@@ -1272,7 +1285,30 @@ function postComment(sender, thread_id, order, report_state) {
     sender.removeClass('posting');
     paginator.repaint($('#thread-' + thread_id).closest('.paginator'), json);
     scrollTo('#comment_' + json.focus);
-    sender.find('textarea').val('').change();
+    input.val('').change();
+  }, 0, data);
+}
+
+function postChat(sender, thread_id, order, report_state) {
+  sender = $(sender).parent();
+  var input = sender.find('textarea, input.comment-content');
+  var comment = input.val();
+  if (!comment.length) {
+    return;
+  }
+  sender.addClass('posting');
+  var data = {
+    thread: thread_id,
+    order: order,
+    comment: comment,
+    quick: true
+  };
+  if (report_state) data.report_state = report_state;
+  ajax.post('comments/new', function(json) {
+    sender.removeClass('posting');
+    $('#chat').html(json.content);
+    scrollTo('#comment_' + json.focus, $('#comments-container .scroll-container'));
+    input.val('').change();
   }, 0, data);
 }
 
@@ -1282,7 +1318,7 @@ function editComment(sender) {
     sender.removeClass('editing');
   }, 1, {
     id: sender.attr('data-id'),
-    comment: sender.find('textarea').val()
+    comment: sender.find('textarea, input.comment-content').val()
   });
 }
 
