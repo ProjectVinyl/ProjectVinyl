@@ -93,6 +93,16 @@ class Ffmpeg
      return "#{hours}:#{minutes}:#{seconds}"
    end
    
+   def self.from_h_m_s(hms)
+    hms = hms.split(':').map do |t|
+      t.to_f
+    end
+    while hms.length < 3
+      hms.unshift 0
+    end
+    return (hms[0] * 3600) + (hms[1] * 60) + hms[2]
+   end
+   
    def self.extractThumbnail(source, destination, time)
      time = Ffmpeg.to_h_m_s(time)
      `ffmpeg -hide_banner -nostats -loglevel panic -y -i "#{source}" -ss #{time} -vframes 1 "#{destination}.png" -ss #{time} -vframes 1 -vf scale=-1:130 "#{destination}-small.png"`

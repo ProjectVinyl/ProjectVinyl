@@ -24,8 +24,18 @@
 							<option value="2">User</option>
 							<option value="3">Tag</option>
 						</select>
+						<script>
+							$('#search select').on('change', function() {
+								var val = $(this).val();
+								if (val == '0' || val == '2') {
+									$('#search input').attr({name: 'tagquery', placeholder: 'Tag Search'});
+								} else {
+									$('#search input').attr({name: 'query', placeholder: 'Search'});
+								}
+							});
+						</script>
 					</label>
-					<input type="text" name="query" placeholder="Search"></input>
+					<input type="text" name="tagquery" placeholder="Tag Search"></input>
 					<button type="submit"><i class="fa fa-search" ></i></button>
 				</div>
 			</form>

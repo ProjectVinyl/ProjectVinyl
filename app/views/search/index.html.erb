@@ -15,8 +15,30 @@
 							<div class="group active" style="padding:10px;white-space:normal;">
 								<p>ProjectVinyl's search function is designed to work similarly to that of Derpibooru. Searching for a single tag name returns all videos with that tag, a list of tags returns all videos that have all of those tags.</p>
 								<p>You can also combine results using the OR ( | ) and AND ( & ) operators. Note that they must have spacing on either side.</p>
-								<p>Use uploader:&lt;name&gt; to find videos uploaded by the named user.</p>
-								<p>Use title:&lt;title&gt; to find videos that contains the given term in their title. (or type the title in the top bar)</p>
+								<p>
+									Videos additionally have support for searching them by many of their special attributes.
+								</p>
+								<p>
+									System tags:
+									<ul>
+										<li>title:&lt;title&gt; - returns any videos with a matching name</li>
+										<li>source:&lt;source&gt; - returns any videos with a matching source</li>
+										<li>uploader:&lt;username&gt; - returns any videos posted by the named user</li>
+										<li>is:audio - returns videos only if they are an audio file</li>
+									</ul>
+								</p>
+								<p>
+									Ranged tags:
+									
+									<ul>
+										<li>length&lt;X - returns any videos with a length less than X where X is in the format of hh:mm:ss</li>
+										<li>score&lt;X- returns any videos with a score less than X</li>
+									</ul>
+									
+									The above tags may also be inverted by replacing the '&lt;' with a '&gt;'.
+									
+									eg length&gt;X - returns videos with a length <b>greater</b> than X.
+								</p>
 								<p>Parenthesis '(' and ')' may be used as well for additional control</p>
 							</div>
 						</div>

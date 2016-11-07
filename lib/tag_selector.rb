@@ -1,25 +1,63 @@
 class LexerError < SyntaxError
 end
 
+class RangeQuery
+  LENGTH_GT = -9
+  LENGTH_LT = -10
+  SCORE_GT = -11
+  SCORE_LT = -12
+  
+  def initialize(op, opset, invert)
+    @greater_than = op == LENGTH_GT || op == SCORE_GT
+    if invert
+      @greater_than = !@greater_than
+    end
+    @field = op == LENGTH_GT || op == LENGTH_LT ? 'length' : 'score'
+    if !(@value = opset.shift) || @value.length == 0
+      @value = 0
+    else
+      if @field == 'length'
+        @value = Ffmpeg.from_h_m_s(@value)
+      else
+        @value = @value.to_i
+      end
+    end
+  end
+  
+  def to_sql
+    Tag.sanitize_sql([@field + (@greater_than ? ' > ?' : ' < ?'), @value])
+  end
+end
+
 class VideoMatchingGroup
   OR = -1
   AND = -2
   NOT = -3
   TITLE = -4
   UPLOADER = -5
-  GROUP_START = -6
-  GROUP_END = -7
+  SOURCE = -6
+  GROUP_START = -7
+  GROUP_END = -8
+  LENGTH_GT = -9
+  LENGTH_LT = -10
+  SCORE_GT = -11
+  SCORE_LT = -12
+  AUDIO_ONLY = -13
   
   def initialize
     @neg = false
     @dirty = false
     @title_queries = []
     @title_queries_exclusions = []
+    @source_queries = []
+    @source_queries_exclusions = []
     @user_queries = []
     @user_queries_exclusions = []
     @inclusions = []
     @exclusions = []
     @children = []
+    @range_queries = []
+    @audio_only = nil
   end
   
   def child(groupings)
@@ -31,37 +69,64 @@ class VideoMatchingGroup
     end
   end
   
+  def absorb_param(dest, opset, name)
+    if (data = opset.shift) && data.length > 0
+      dest << data.strip
+      @dirty = true
+    else
+      raise LexerError, name + " Operator requires a data parameter"
+    end
+  end
+  
+  def absorb_param(dest, opset, name, condition)
+    if (data = opset.shift) && data.length > 0
+      if condition
+        dest << data.strip
+        @dirty = true
+      end
+    else
+      raise LexerError, name + " Operator requires a data parameter"
+    end
+  end
+  
+  def absorb(opset, name)
+    if !(data = opset.shift).nil?
+      yield(data)
+      @dirty = true
+    else
+      raise LexerError, name + " Operator requires a data parameter"
+    end
+  end
+  
   def take_param(type, op, opset)
     if op == TITLE
-      if (data = opset.shift) && data.length > 0
-        @title_queries << data.strip
-        @dirty = true
-      else
-        raise LexerError, "Title Operator requires a data parameter"
-      end
+      self.absorb_param(@title_queries, opset, "Title")
     elsif op == UPLOADER
-      if (data = opset.shift) && data.length > 0
-        if type != "user"
-          @user_queries << data.strip
-          @dirty = true
-        end
-      else
-        raise LexerError, "Uploader Operator requires a data parameter"
-      end
+      self.absorb_param_if(@user_queries, opset, "Uploader", type != user)
+    elsif op == SOURCE
+      self.absorb_param_if(@source_queries, opset, "Source", type != user)
     elsif op == NOT
-      data = opset.shift
-      if data == TITLE
-        @title_queries_exclusions << opset.shift.strip
-      elsif data == UPLOADER
-        @user_queries_exclusions << opset.shift.strip
-      elsif data
-        @exclusions << data.strip
-      else
-        raise LexerError, "Not Operator requires a data parameter"
+      self.absorb(opset, "Not") do |data|
+        if data == TITLE
+          self.absorb_param(@title_queries_exclusions, opset, "Title")
+        elsif data == UPLOADER
+          self.absorb_param_if(@user_queries_exclusions, opset, "Uploader", type != user)
+        elsif data == SOURCE
+          self.absorb_param_if(@source_queries_exclusions, opset, "Uploader", type != user)
+        elsif data == AUDIO_ONLY
+          @audio_only = false
+        elsif TagSelector.ranged?(data)
+          @range_queries << RangeQuery.new(data, opset, true)
+        else
+          @exclusions << data.strip
+        end
       end
-      if data
-        @dirty = true
-      end
+    elsif op == AUDIO_ONLY
+      @audio_only = true
+      @dirty = true
+    elsif TagSelector.ranged?(op)
+      @range_queries << RangeQuery.new(op, opset, false)
+      @dirty = true
     else
       op = op.strip
       if op.length > 0
@@ -102,11 +167,19 @@ class VideoMatchingGroup
         sql << Tag.sanitize_sql(["users.username NOT LIKE ?", '%' + user + '%'])
       end
     end
+    if @range_queries.length > 0
+      @range_queries.uniq.each do |r|
+        sql << r.to_sql
+      end
+    end
     if @exclusions.length > 0
       sql << Tag.sanitize_sql(["(SELECT COUNT(*) FROM video_genres g, tags t LEFT JOIN tags q ON t.id = q.alias_id WHERE t.id = g.tag_id AND g.video_id = v.id AND (t.name IN (?) OR q.name IN (?))) = 0", @exclusions, @exclusions])
     end
     if @inclusions.length > 0
       sql << Tag.sanitize_sql(["(SELECT COUNT(*) FROM video_genres g, tags t LEFT JOIN tags q ON t.id = q.alias_id WHERE t.id = g.tag_id AND g.video_id = v.id AND (t.name IN (?) OR q.name IN (?))) = ?", @inclusions, @inclusions, @inclusions.length])
+    end
+    if !@audio_only.nil?
+      sql << Tag.sanitize_sql(["audio_only = ?", @audio_only])
     end
     if @children.length > 0
       children = @children.map do |c|
@@ -151,8 +224,18 @@ class TagSelector
   NOT = -3
   TITLE = -4
   UPLOADER = -5
-  GROUP_START = -6
-  GROUP_END = -7
+  SOURCE = -6
+  GROUP_START = -7
+  GROUP_END = -8
+  LENGTH_GT = -9
+  LENGTH_LT = -10
+  SCORE_GT = -11
+  SCORE_LT = -12
+  AUDIO_ONLY = -13
+  
+  def self.ranged?(op)
+    return 1.is_a?(op.class) && op < -8 && op >= -12
+  end
   
   def initialize(search_terms)
     @opset = TagSelector.loadOPS(search_terms)
@@ -409,6 +492,35 @@ class TagSelector
     return ""
   end
   
+  def self.slurpSystemTags(slurp, opset)
+    if slurp.index('title:') == 0
+      opset << TITLE
+      slurp = slurp.sub(/title\:/,'')
+    elsif slurp.index('uploader:') == 0
+      opset << UPLOADER
+      slurp = slurp.sub(/uploader\:/,'')
+    elsif slurp.index('source:') == 0
+      opset << SOURCE
+      slurp = slurp.sub(/source\:/,'')
+    elsif slurp.index('length<') == 0
+      opset << LENGTH_LT
+      slurp = slurp.sub(/length</,'')
+    elsif slurp.index('length>') == 0
+      opset << LENGTH_GT
+      slurp = slurp.sub(/length>/,'')
+    elsif slurp.index('score<') == 0
+      opset << SCORE_LT
+      slurp = slurp.sub(/score</,'')
+    elsif slurp.index('score>') == 0
+      opset << SCORE_GT
+      slurp = slurp.sub(/score>/,'')
+    elsif slurp == 'is:audio'
+      opset << AUDIO_ONLY
+      slurp = ''
+    end
+    return slurp
+  end
+  
   def self.loadOPS(search_terms)
     if !search_terms || search_terms.strip.length == 0
       return []
@@ -430,14 +542,7 @@ class TagSelector
             slurp = slurp.sub(/-/,'')
             opset << NOT
           end
-          if slurp.index('title:') == 0
-            opset << TITLE
-            slurp = slurp.sub(/title\:/,'')
-          elsif slurp.index('uploader:') == 0
-            opset << UPLOADER
-            slurp = slurp.sub(/uploader\:/,'')
-          end
-          opset << slurp
+          opset << TagSelector.slurpSystemTags(slurp, opset)
           slurp = ""
           opset << AND
         elsif prev == ' ' && i == '|'
@@ -445,14 +550,7 @@ class TagSelector
             slurp = slurp.sub(/-/,'')
             opset << NOT
           end
-          if slurp.index('title:') == 0
-            opset << TITLE
-            slurp = slurp.sub(/title\:/,'')
-          elsif slurp.index('uploader:') == 0
-            opset << UPLOADER
-            slurp = slurp.sub(/uploader\:/,'')
-          end
-          opset << slurp
+          opset << TagSelector.slurpSystemTags(slurp, opset)
           slurp = ""
           opset << OR
         elsif i == ')' && prev != '\\'
@@ -461,14 +559,7 @@ class TagSelector
               slurp = slurp.sub(/-/,'')
               opset << NOT
             end
-            if slurp.index('title:') == 0
-              opset << TITLE
-              slurp = slurp.sub(/title\:/,'')
-            elsif slurp.index('uploader:') == 0
-              opset << UPLOADER
-              slurp = slurp.sub(/uploader\:/,'')
-            end
-            opset << slurp
+            opset << TagSelector.slurpSystemTags(slurp, opset)
             slurp = ""
             opset << GROUP_END
             open_count -= 1
@@ -498,13 +589,8 @@ class TagSelector
       prev = i
     end
     if slurp.length > 0
-      if slurp.index('title:') == 0
-        opset << TITLE
-        slurp = slurp.sub(/title\:/,'')
-      elsif slurp.index('uploader:') == 0
-        opset << UPLOADER
-        slurp = slurp.sub(/uploader\:/,'')
-      elsif slurp.index('-') == 0
+      slurp = TagSelector.slurpSystemTags(slurp, opset)
+      if slurp.index('-') == 0
         slurp = slurp.sub(/-/,'')
         opset << NOT
       end
