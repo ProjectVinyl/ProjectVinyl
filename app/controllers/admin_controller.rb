@@ -21,7 +21,7 @@ class AdminController < ApplicationController
   end
   
   def render_path(params, ajax)
-    if !user_signed_in? || !current_user.contributor?
+    if !user_signed_in? || !current_user.is_contributor?
       if ajax
         return render status: 403, nothing: true
       end
