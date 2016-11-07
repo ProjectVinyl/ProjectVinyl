@@ -7,7 +7,7 @@ class Youtube
           wanted_data[:title] = body['title']
         end
         if Youtube.flag_set(wanted_data, :artist)
-          result[:artist] = body['author_name']
+          wanted_data[:artist] = body['author_name']
         end
       end
     end
@@ -18,7 +18,7 @@ class Youtube
           desc_node.getElementsByTagName('a').each do |a|
             a.innerText = a.attributes['href']
           end
-          result[:description] = {
+          wanted_data[:description] = {
             html: desc_node.innerHTML,
             bbc: desc_node.innerBBC
           }
