@@ -353,10 +353,10 @@ class Video < ActiveRecord::Base
     return result.map(&:name).sort().join(' | ')
   end
   
-  def pull_meta(src, tit, dsc,tgs)
+  def pull_meta(src, tit, dsc, tgs)
     if src && src.length > 0
       src = 'https://www.youtube.com/watch?v=' + Youtube.video_id(src)
-      meta = Youtube.get(src, title: tit, description: desc, artist: tgs)
+      meta = Youtube.get(src, title: tit, description: dsc, artist: tgs)
       if tit && meta[:title]
         self.set_title(meta[:title])
       end
