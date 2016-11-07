@@ -2,6 +2,8 @@ class CommentThread < ActiveRecord::Base
   belongs_to :direct_user, class_name: "User", foreign_key: "user_id"
   
   has_many :comments, dependent: :destroy, counter_cache: "total_comments"
+  has_many :thread_subscriptions, dependent: :destroy
+  has_many :subscribers, :through => :thread_subscriptions, class_name: 'User'
   
   belongs_to :owner, polymorphic: true
   
@@ -41,7 +43,27 @@ class CommentThread < ActiveRecord::Base
     return '/thread/' + self.id.to_s
   end
   
-  def description
-    ""
+  def subscribed?(user)
+    return user && (self.thread_subscriptions.where(user_id: user.id).length > 0)
+  end
+  
+  def subscribe(user)
+    self.thread_subscriptions.create(user_id: user.id)
+  end
+  
+  def unsubscribe(user)
+    self.thread_subscriptions.where('user_id = ?', user.id).destroy_all
+  end
+  
+  def toggleSubscribe(user)
+    if !user
+      return false
+    end
+    if self.subscribed?(user)
+      self.unsubscribe(user)
+      return false
+    end
+    self.subscribe(user)
+    return true
   end
 end

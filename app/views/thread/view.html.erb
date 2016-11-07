@@ -42,6 +42,17 @@
 		<i class="fa fa-thumb-tack"></i>
 	<% end %>
 	<%= @thread.title.nil? || @thread.title.length == 0 ? "Comments" : @thread.title %>
+	<% if user_signed_in? %>
+	<button title="<% if @subscribed = @thread.subscribed?(current_user) %>Unsubscribe<% else %>Subscribe<% end %>" class="action button button-bub subscribe right toggle"
+			data-action="subscribe"
+			data-target="thread"
+			data-id="<%= @thread.id %>"
+			data-unchecked-icon="bell-slash">
+		<span class="icon">
+			<i class="fa fa-<% if @subscribed %>check<% else %>bell<% end %>"></i>
+		</span>
+	</button>
+	<% end %>
 </h1>
 <% end %>
 <%= render layout: '/layouts/paginated', locals: {type: "comments/" + @thread.id.to_s + "/" + @order, paginated: @comments, id: "page"} do %>

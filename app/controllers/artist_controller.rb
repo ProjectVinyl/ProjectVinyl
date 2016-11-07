@@ -41,6 +41,13 @@ class ArtistController < ApplicationController
     render 'layouts/error', locals: { title: 'Access Denied', description: "You can't do that right now." }
   end
   
+  def update_prefs
+    if user_signed_in?
+      current_user.prefs_cache.save(params[:settings])
+    end
+    redirect_to action: "edit", controller: "devise/registrations"
+  end
+  
   def setbanner
     if user_signed_in? && (current_user.id_admin || current_user.id == params[:id])
       if current_user.id == params[:id]

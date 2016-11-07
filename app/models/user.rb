@@ -80,11 +80,14 @@ class User < ActiveRecord::Base
          :recoverable, :rememberable, :trackable, :validatable
   include Roleable
   
+  prefs :preferences, :subscribe_on_reply => true, :subscribe_on_thread => true, :subscribe_on_upload => true
+  
   after_destroy :remove_assets
   after_create :init_name
   
   has_many :votes, dependent: :destroy
   has_many :notifications, dependent: :destroy
+  has_many :thread_subscriptions, dependent: :destroy
   
   belongs_to :album, foreign_key: "star_id"
   has_many :album_items, :through => :album
@@ -319,6 +322,18 @@ class User < ActiveRecord::Base
     self.notifications.create(message: message, source: source)
     self.notification_count = self.notification_count + 1
     self.save
+  end
+  
+  def subscribe_on_reply?
+    option :subscribe_on_reply
+  end
+  
+  def subscribe_on_upload?
+    option :subscribe_on_upload
+  end
+  
+  def subscribe_on_thread?
+    option :subscribe_on_thread
   end
   
   protected

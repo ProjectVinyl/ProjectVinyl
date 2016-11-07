@@ -1,5 +1,7 @@
 Rails.application.routes.draw do
   devise_for :users
+  put 'users/prefs' => 'artist#update_prefs'
+  
   
   get 'stars' => 'album#starred'
   get 'search' => 'search#index'
@@ -119,6 +121,8 @@ Rails.application.routes.draw do
   post 'ajax/update/albumitem' => 'album#arrange'
   post 'ajax/delete/albumitem' => 'album#removeItem'
   
+  post 'ajax/delete/notification' => 'thread#delete_notification'
+  
   post 'ajax/update/star' => 'album#arrangeStar'
   post 'ajax/delete/star' => 'album#removeStar'
   
@@ -131,6 +135,7 @@ Rails.application.routes.draw do
   post 'ajax/update/thread' => 'thread#update'
   post 'ajax/thread/pin' => 'ajax#togglePin'
   post 'ajax/thread/lock' => 'ajax#toggleLock'
+  post 'ajax/thread/subscribe' => 'ajax#toggleSubscribe'
   post 'ajax/comments/new' => 'thread#post_comment'
   post 'ajax/comments/delete/:id' => 'thread#remove_comment'
   post 'ajax/comments/edit' => 'thread#edit_comment'

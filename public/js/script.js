@@ -890,6 +890,7 @@ $(document).on('click', '.state-toggle', function(ev) {
     if (data) data = $(data);
     me.on('click', function(e) {
       toggle(me, family, target + (data ? '?extra=' + data.val() : ''), id, item, check_icon, uncheck_icon);
+      e.preventDefault();
     });
   });
 })();
@@ -1005,14 +1006,14 @@ $(document).on('click', '.state-toggle', function(ev) {
     }).on('mouseup', '.reorderable .handle', function(e) {
       $(document).off('mousemove', grabber);
     });
-    orderable.find('.remove').on('click', function(e) {
-      var me = $(this).parent();
-      ajax.post('delete/' + target, function() {
-        me.remove();
-      }, true, { id: $(this).attr('data-id') });
-      e.preventDefault();
-      e.stopPropagation();
-    });
+  });
+  $(document).on('click', '.removeable .remove', function(e) {
+    var me = $(this).parent();
+    ajax.post('delete/' + me.attr('data-target'), function() {
+      me.remove();
+    }, true, { id: me.attr('data-id') });
+    e.preventDefault();
+    e.stopPropagation();
   });
 })();
 var Popup = (function() {

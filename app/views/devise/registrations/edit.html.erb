@@ -7,6 +7,7 @@
 		<li data-target="profile" class="button selected">Profile</li>
 		<li data-target="account" class="button">Account</li>
 		<li data-target="filter" class="button">Content & Filter</li>
+		<li data-target="commenting" class="button">Notifications</li>
 		<li data-target="local" class="button">Local</li>
 	</ul>
 	<div data-tab="profile" class="tab selected">
@@ -112,6 +113,56 @@
 	</div>
 	<div data-tab="filter" class="tab">
 		<%= render partial: "feed/filter_settings" %>
+	</div>
+	<div data-tab="commenting" class="tab">
+		<h1>Notifications</h1>
+		<%= form_for(current_user.prefs_cache, as: 'settings', url: '/users/prefs', html: { method: :put }) do |f| %>
+		<table style="table-layout:auto;">
+			<tr>
+				<td class="label">
+					Subscribe On Reply
+				</td>
+				<td class="field">
+					<div>Subscribe to comment sections as soon as you post a reply.</div>
+					<label class="button">
+						<%= f.check_box :subscribe_on_reply %>
+						<i class="fa fa-check"></i> Enable
+					</label>
+				</td>
+			</tr>
+			<tr>
+				<td class="label">
+					Subscribe On Upload
+				</td>
+				<td class="field">
+					<div>You will be subscribed to new comments on any videos you upload.</div>
+					<label class="button">
+						<%= f.check_box :subscribe_on_upload %>
+						<i class="fa fa-check"></i> Enable
+					</label>
+				</td>
+			</tr>
+			<tr>
+				<td class="label">
+					Subscribe On New Thread
+				</td>
+				<td class="field">
+					<div>You will be subscribed to new comments on any threads you create.</div>
+					<label class="button">
+						<%= f.check_box :subscribe_on_thread %>
+						<i class="fa fa-check"></i> Enable
+					</label>
+				</td>
+			</tr>
+			<tr class="actions">
+				<td class="label">
+				</td>
+				<td class="field">
+					<%= f.submit "Save Changes", class: "green" %>
+				</td>
+			</tr>
+		</table>
+		<% end %>
 	</div>
 	<div data-tab="local" class="tab">
 		<h1>Local Settings</h1>

@@ -45,10 +45,13 @@ class VideoController < ApplicationController
     @order = '1'
     @results = @comments = Pagination.paginate(@thread.get_comments(user_signed_in? && current_user.is_contributor?), 0, 10, true)
     @queue = @user.queue(@video.id)
-    if !@modificationsAllowed = user_signed_in? && current_user.id == @user.id
+    if !(@modificationsAllowed = user_signed_in? && current_user.id == @user.id)
       @video.views = @video.views + 1
       @video.heat = @video.computeHotness
       @video.save
+    end
+    if !@video.processed
+      VideoProcessor.startManager
     end
   end
   
@@ -160,6 +163,9 @@ class VideoController < ApplicationController
             )
             @comments = @video.comment_thread = CommentThread.create(user_id: user, title: title)
             @comments.save
+            if current_user.subscribe_on_upload?
+              @comments.subscribe(current_user)
+            end
           end
           @video.save_file(data)
           if params[:video][:time] && (time = params[:video][:time].to_f) >= 0

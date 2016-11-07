@@ -20,6 +20,9 @@ class ThreadController < ApplicationController
       thread.save
       comment = thread.comments.create(user_id: current_user.id)
       comment.update_comment(params[:thread][:description])
+      if current_user.subscribe_on_thread?
+        thread.subscribe(current_user)
+      end
       redirect_to action: 'view', id: thread.id
       return
     end
@@ -68,6 +71,14 @@ class ThreadController < ApplicationController
         @thread.total_comments = @thread.comments.count
         @thread.save
         comment.update_comment(params[:comment])
+        
+        if params[:quick]
+          @comments = @thread.comments.includes(:direct_user).order(:created_at).reverse_order.limit(50).reverse()
+          return render json: {
+            content: render_to_string(partial: 'thread/chat_message_set', locals: { thread: @comments })
+          }
+        end
+        
         @results = Pagination.paginate(@thread.get_comments(current_user.is_contributor?), params[:order] == '1' ? 0 : -1, 10, params[:order] == '1')
         render json: {
           content: render_to_string(partial: '/thread/comment_set.html.erb', locals: { thread: @results.records, indirect: false }),
@@ -75,10 +86,7 @@ class ThreadController < ApplicationController
           page: @results.page,
           focus: comment.get_open_id
         }
-        recievers = []
-        if @thread.user_id
-          recievers << @thread.user_id
-        end
+        recievers = @thread.thread_subscriptions.pluck(:user_id)
         if @thread.owner_type == 'Report'
           if state = params[:report_state]
             @report = @thread.owner
@@ -100,14 +108,14 @@ class ThreadController < ApplicationController
             end
             @report.save
           end
-          recievers = recievers | @thread.comments.pluck(:user_id)
-          recievers = recievers.uniq - [current_user.id]
-          Notification.notify_recievers_without_delete(recievers, @thread.owner,
+          Notification.notify_recievers(recievers, @thread.owner,
             current_user.username + " has posted a reply to <b>" + @thread.title + "</b>",
             @thread.location)
         else
-          recievers = recievers.uniq - [current_user.id]
-          Notification.notify_recievers_without_delete(recievers, @thread,
+          if current_user.subscribe_on_reply? && !@thread.subscribed?(current_user)
+            @thread.subscribe(current_user)
+          end
+          Notification.notify_recievers(recievers, @thread,
             current_user.username + " has posted a reply to <b>" + @thread.title + "</b>",
             @thread.location)
         end
@@ -183,7 +191,7 @@ class ThreadController < ApplicationController
   
   def notifications
     if user_signed_in?
-      @all = current_user.notifications.order(:created_at).reverse_order
+      @all = current_user.notifications.order(:created_at).reverse_order.preload_comment_threads
       @notifications = current_user.notification_count
       current_user.notifications.where('created_at < ?', 1.week.ago).delete_all
       current_user.notification_count = 0
@@ -191,5 +199,16 @@ class ThreadController < ApplicationController
     else
       redirect_to action: "view", controller: "welcome"
     end
+  end
+  
+  def delete_notification
+    if user_signed_in?
+      if item = Notification.where(id: params[:id], user_id: current_user.id).first
+        item.destroy
+        return render status: 200, nothing: true
+      end
+      return render status: 404, nothing: true
+    end
+    render status: 402, nothing: true
   end
 end
