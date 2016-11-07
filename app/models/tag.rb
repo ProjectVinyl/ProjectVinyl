@@ -248,7 +248,7 @@ class Tag < ActiveRecord::Base
   def set_name(name)
     name = Tag.sanitize_name(name)
     if self.has_type
-      name = self.tag_type.prefix + ":" + name.gsub(/:/, '')
+      name = self.tag_type.prefix + ":" + name.sub(self.tag_type.prefix + ':', '')
     end
     self.short_name = ApplicationHelper.url_safe_for_tags(name)
     self.name = name
