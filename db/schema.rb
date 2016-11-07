@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161024081007) do
+ActiveRecord::Schema.define(version: 20161029200648) do
 
   create_table "album_items", force: :cascade do |t|
     t.integer  "album_id",   limit: 4
@@ -167,6 +167,13 @@ ActiveRecord::Schema.define(version: 20161024081007) do
 
   add_index "tags", ["name"], name: "index_tags_on_name", unique: true, using: :btree
 
+  create_table "thread_subscriptions", force: :cascade do |t|
+    t.integer  "user_id",           limit: 4
+    t.integer  "comment_thread_id", limit: 4
+    t.datetime "created_at",                  null: false
+    t.datetime "updated_at",                  null: false
+  end
+
   create_table "user_badges", force: :cascade do |t|
     t.integer  "badge_id",     limit: 4
     t.integer  "user_id",      limit: 4
@@ -201,6 +208,7 @@ ActiveRecord::Schema.define(version: 20161024081007) do
     t.text     "html_bio",               limit: 65535
     t.integer  "feed_count",             limit: 4,     default: 0
     t.integer  "role",                   limit: 4,     default: 0
+    t.string   "preferences",            limit: 255
   end
 
   add_index "users", ["email"], name: "index_users_on_email", unique: true, using: :btree
