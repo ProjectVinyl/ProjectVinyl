@@ -100,19 +100,19 @@ class VideoMatchingGroup
   
   def take_param(type, op, opset)
     if op == TITLE
-      self.absorb_param(@title_queries, opset, "Title")
+      self.absorb_param(@title_queries, opset, "Title", type != 'user')
     elsif op == UPLOADER
-      self.absorb_param_if(@user_queries, opset, "Uploader", type != user)
+      self.absorb_param_if(@user_queries, opset, "Uploader", type != 'user')
     elsif op == SOURCE
-      self.absorb_param_if(@source_queries, opset, "Source", type != user)
+      self.absorb_param_if(@source_queries, opset, "Source", type != 'user')
     elsif op == NOT
       self.absorb(opset, "Not") do |data|
         if data == TITLE
           self.absorb_param(@title_queries_exclusions, opset, "Title")
         elsif data == UPLOADER
-          self.absorb_param_if(@user_queries_exclusions, opset, "Uploader", type != user)
+          self.absorb_param_if(@user_queries_exclusions, opset, "Uploader", type != 'user')
         elsif data == SOURCE
-          self.absorb_param_if(@source_queries_exclusions, opset, "Uploader", type != user)
+          self.absorb_param_if(@source_queries_exclusions, opset, "Uploader", type != 'user')
         elsif data == AUDIO_ONLY
           @audio_only = false
         elsif TagSelector.ranged?(data)
