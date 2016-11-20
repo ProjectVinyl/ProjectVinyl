@@ -1,8 +1,7 @@
 class AdminController < ApplicationController
   def view
     if !user_signed_in? || !current_user.is_contributor?
-      render 'layouts/error', locals: { title: 'Access Denied', description: "You can't do that right now." }
-      return
+      return render 'layouts/error', locals: { title: 'Access Denied', description: "You can't do that right now." }
     end
     @hiddenvideos = Pagination.paginate(Video.where(hidden: true), 0, 40, true)
     @unprocessed = Pagination.paginate(Video.where("(processed IS NULL or processed = ?) AND hidden = false", false), 0, 40, false)
