@@ -77,8 +77,12 @@ class User < ActiveRecord::Base
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable and :omniauthable
   devise :database_authenticatable, :registerable,
-         :recoverable, :rememberable, :trackable, :validatable
+         :recoverable, :rememberable, :trackable, :validatable, :authentication_keys => [:login]
   include Roleable
+  
+  def self.with_badges
+    includes(user_badges: [:badge])
+  end
   
   prefs :preferences, :subscribe_on_reply => true, :subscribe_on_thread => true, :subscribe_on_upload => true
   
@@ -110,8 +114,30 @@ class User < ActiveRecord::Base
   has_many :badges, :through => :user_badges
   belongs_to :tag
   
+  validates :username, presence: true, uniqueness: {
+    case_sensitive: false
+  }
+  validates_format_of :username, with: /^[a-zA-Z0-9_\.]*$/, multiline: true
   SANITIZE = /[^a-zA-Z0-9]+/
   BP_PONY = /^background pony #([0-9a-z]+)/
+  
+  def self.find_for_database_authentication(warden_conditions)
+    conditions = warden_conditions.dup
+    if login = conditions.delete(:login)
+      where(conditions.to_hash).where(['lower(username) = :value OR lower(email) = :value', {:value => login.downcase}]).first
+    else
+      conditions[:email].downcase! if conditions[:email]
+      where(conditions.to_hash).first
+    end
+  end
+  
+  def login=(login)
+    @login = login
+  end
+  
+  def login
+    @login || self.username || self.email
+  end
   
   def active_for_authentication?
     super && !self.banned?
@@ -322,6 +348,10 @@ class User < ActiveRecord::Base
     self.notifications.create(message: message, source: source)
     self.notification_count = self.notification_count + 1
     self.save
+  end
+  
+  def message_count
+    return @message_count || (@message_count = Pm.where('state = 0 AND unread = true AND user_id = ?', self.id).count)
   end
   
   def subscribe_on_reply?

@@ -32,8 +32,8 @@
 	</div>
 	<div class="activity">
 		<span>
-			<% if last_comment = thread_thumb.comments.order(:updated_at).reverse_order.limit(1).first %>
-			active <%= since last_comment.updated_at %>
+			<% if thread_thumb.last_comment %>
+			active <%= since thread_thumb.last_comment.updated_at %>
 			<% end %>
 		</span>
 	</div>

@@ -4,124 +4,155 @@
 	<meta charset="utf-8">
 	<title id="document_title"><%= content_for?(:title) ? content_for(:title) + " - Project Vinyl" : "Project Vinyl - Premium Pony Tunes" %></title>
 	<link type="text/css" href="/css/font-awesome.min.css" rel="stylesheet" />
-	<link type="text/css" href="/css/base.css" rel="stylesheet" />
-	<link type="text/css" href="/css/videos.css" rel="stylesheet" />
+	<link type="text/css" href="/css/base.css?<%= assets_version %>" rel="stylesheet" />
+	<link type="text/css" href="/css/videos.css?<%= assets_version %>" rel="stylesheet" />
 	<script src="https://code.jquery.com/jquery-1.8.3.min.js" id="jquery" ></script>
 	<%= csrf_meta_tags %>
 	<script>var emoticons = <%= raw emoticons %><% if user_signed_in? %>,current_user = {id:<%= current_user.id %>}<% end %>;</script>
 	<%= content_for(:metadata) %>
 </head>
 <body>
-	<header class="header">
+	<header class="header<% if !user_signed_in? %> logged-out<% end %>">
 		<div id="banner">
-			<a href="/" class="title"><img src="/images/logo.svg"></img></a>
-			<form action="/search" method="get">
-				<div id="search">
-					<label class="select">
-						<select name="type">
-							<option value="0">Song</option>
-							<option value="1">Album</option>
-							<option value="2">User</option>
-							<option value="3">Tag</option>
-						</select>
-						<script>
-							$('#search select').on('change', function() {
-								var val = $(this).val();
-								if (val == '0' || val == '2') {
-									$('#search input').attr({name: 'tagquery', placeholder: 'Tag Search'});
-								} else {
-									$('#search input').attr({name: 'query', placeholder: 'Search'});
-								}
-							});
-						</script>
-					</label>
-					<input type="text" name="tagquery" placeholder="Tag Search"></input>
-					<button type="submit"><i class="fa fa-search" ></i></button>
-				</div>
-			</form>
-			<div id="login" <% if user_signed_in? %>class="drop-down-holder"<% end %>>
-				<% if user_signed_in? %>
-				<a href="<%= current_user.link %>" class="username">
-					<%= current_user.username %>
-				</a>
-				<a class="notices-bell feeds" href="/videos/watched">
-					<i class="fa fa-globe"></i>
-					<% if current_user.feed_count > 0 %>
-						<span class="count"><% if current_user.feed_count > 999 %>999+<% else %><%= number_with_delimiter current_user.feed_count %><% end %></span>
-					<% end %>
-				</a>
-				<a class="notices-bell notices" href="/notifications">
-					<i class="fa fa-bell"></i>
-					<% if current_user.notification_count > 0 %>
-						<span class="count"><% if current_user.notification_count > 999 %>999+<% else %><%= number_with_delimiter current_user.notification_count %><% end %></span>
-					<% end %>
-				</a>
-				<ul class="drop-down" style="z-index:300;">
-					<% if current_user.is_contributor? %>
-					<li>
-						<a href="/admin" rel="nofollow">
-							<span class="icon"><i class="fa fa-fw fa-gavel"></i></span>
-							<span class="label">Admin</span>
-						</a>
-					</li>
-					<% end %>
-					<li>
-						<a href="<%= current_user.link %>" rel="nofollow" title="settings">
-							<span class="icon"><i class="fa fa-fw fa-user"></i></span>
-							<span class="label">Profile</span>
-						</a>
-					</li>
-					<li>
-						<a href="/upload" rel="nofollow" title="upload">
-							<span class="icon"><i class="fa fa-fw fa-upload"></i></span>
-							<span class="label">Upload</span>
-						</a>
-					</li>
-					<li>
-						<a href="/stars">
-							<span class="icon"><i class="fa fa-fw fa-star" ></i></span>
-							<span class="label">Stars</span>
-						</a>
-					</li>
-					<li>
-						<a href="/users/edit" rel="nofollow">
-							<span class="icon"><i class="fa fa-fw fa-cog"></i></span>
-							<span class="label">Settings</span>
-						</a>
-					</li>
-					<li>
-						<a id="sign-out" href="/users/sign_out" rel="nofollow">
-							<span class="icon"><i class="fa fa-fw fa-sign-out"></i></span>
-							<span class="label">Sign Out</span>
-						</a>
-					</li>
-				</ul>
-				<a href="/users/edit" rel="nofollow" title="settings">
-					<span class="avatar small">
-						<span style="background-image:url('<%= current_user.avatar %>');"></span>
-					</span>
-				</a>
-				<script>
-				$(document).ready(function() {
-					$('#sign-out').on('click', function(e) {
-						e.preventDefault();
-						ajax.delete($(this).attr('href'), function() {
-							document.location.href = '/';
-						}, 1);
-						e.stopPropagation();
+			<div class="banner-overlay">
+				<div id="login" <% if user_signed_in? %>class="drop-down-holder"<% end %>>
+					<% if user_signed_in? %>
+					<a href="<%= current_user.link %>" class="username">
+						<%= current_user.username %>
+					</a>
+					<a class="notices-bell feeds" href="/videos/watched">
+						<i class="fa fa-globe"></i>
+						<% if current_user.feed_count > 0 %>
+							<span class="count"><% if current_user.feed_count > 999 %>999+<% else %><%= number_with_delimiter current_user.feed_count %><% end %></span>
+						<% end %>
+					</a>
+					<a class="notices-bell notices" href="/notifications">
+						<i class="fa fa-bell"></i>
+						<% if current_user.notification_count > 0 %>
+							<span class="count"><% if current_user.notification_count > 999 %>999+<% else %><%= number_with_delimiter current_user.notification_count %><% end %></span>
+						<% end %>
+						<% if current_user.message_count > 0 %>
+							<span class="count invert"><% if current_user.message_count > 999 %>999+<% else %><%= number_with_delimiter current_user.message_count %><% end %></span>
+						<% end %>
+					</a>
+					<ul class="drop-down" style="z-index:300;">
+						<% if current_user.is_contributor? %>
+						<li>
+							<a href="/admin" rel="nofollow">
+								<span class="icon"><i class="fa fa-fw fa-gavel"></i></span>
+								<span class="label">Admin</span>
+							</a>
+						</li>
+						<% end %>
+						<li>
+							<a href="<%= current_user.link %>" rel="nofollow" title="settings">
+								<span class="icon"><i class="fa fa-fw fa-user"></i></span>
+								<span class="label">Profile</span>
+							</a>
+						</li>
+						<li>
+							<a href="/messages" rel="nofollow" title="messages">
+								<span class="icon"><i class="fa fa-fw fa-envelope"></i></span>
+								<span class="label">Messages</span>
+							</a>
+						</li>
+						<li>
+							<a href="/upload" rel="nofollow" title="upload">
+								<span class="icon"><i class="fa fa-fw fa-upload"></i></span>
+								<span class="label">Upload</span>
+							</a>
+						</li>
+						<li>
+							<a href="/stars">
+								<span class="icon"><i class="fa fa-fw fa-star" ></i></span>
+								<span class="label">Stars</span>
+							</a>
+						</li>
+						<li>
+							<a href="/users/edit" rel="nofollow">
+								<span class="icon"><i class="fa fa-fw fa-cog"></i></span>
+								<span class="label">Settings</span>
+							</a>
+						</li>
+						<li>
+							<a id="sign-out" href="/users/sign_out" rel="nofollow">
+								<span class="icon"><i class="fa fa-fw fa-sign-out"></i></span>
+								<span class="label">Sign Out</span>
+							</a>
+						</li>
+					</ul>
+					<a href="/users/edit" rel="nofollow" title="settings">
+						<span class="avatar small">
+							<span style="background-image:url('<%= current_user.avatar %>');"></span>
+						</span>
+					</a>
+					<script>
+					$(document).ready(function() {
+						$('#sign-out').on('click', function(e) {
+							e.preventDefault();
+							ajax.delete($(this).attr('href'), function() {
+								document.location.href = '/';
+							}, 1);
+							e.stopPropagation();
+						});
 					});
-				});
-				</script>
-				<% else %>
-				<a href="/users/sign_in"><i class="fa fa-sign-in"></i> Sign-in</a>
-				<% end %>
+					</script>
+					<% else %>
+					<a class="confirm-button confirm-button-thin" data-url="login" data-title="Sign In" href="/users/sign_in"><i class="fa fa-sign-in"></i> Sign-in</a>
+					<% end %>
+				</div>
+				<div id="search">
+					<form action="/search" method="get">
+						<input type="text" name="tagquery" placeholder="Tag Search"></input>
+						<label class="select">
+							<select name="type">
+								<option value="0">Song</option>
+								<option value="1">Album</option>
+								<option value="2">User</option>
+								<option value="3">Tag</option>
+							</select>
+							<script>
+								$('#search select').on('change', function() {
+									var val = $(this).val();
+									if (val == '0' || val == '2') {
+										$('#search input').attr({name: 'tagquery', placeholder: 'Tag Search'});
+									} else {
+										$('#search input').attr({name: 'query', placeholder: 'Search'});
+									}
+								});
+							</script>
+						</label>
+						<button type="submit"><i class="fa fa-search" ></i></button>
+					</form>
+				</div>
 			</div>
+			<a href="/" class="title"><img src="/images/logo.svg"></img></a>
 		</div>
 		<ul>
-			<li class="albums<% if request.path == '/albums' %> selected<% end %>"><a href="/albums">Albums</a></li>
-			<li class="artists<% if request.path == '/videos' %> selected<% end %>"><a href="/videos">Videos</a></li>
-			<li class="genres<% if request.path == '/tags' %> selected<% end %>"><a href="/tags">Tags</a></li>
-			<li class="forum<% if request.path == '/forum' || request.path.index('/thread') == 0 %> selected<% end %>"><a href="/forum">Forums</a></li>
+			<li class="albums<% if request.path == '/albums' %> selected<% end %>">
+				<a href="/albums">
+					<i class="fa fa-fw fa-picture-o"></i>
+					<span> Albums</span>
+				</a>
+			</li>
+			<li class="artists<% if request.path == '/videos' %> selected<% end %>">
+				<a href="/videos">
+					<i class="fa fa-fw fa-play"></i>
+					<span> Videos</span>
+				</a>
+			</li>
+			<li class="genres<% if request.path == '/tags' %> selected<% end %>">
+				<a href="/tags">
+					<i class="fa fa-fw fa-tags"></i>
+					<span> Tags</span>
+				</a>
+			</li>
+			<li class="forum<% if request.path == '/forum' || request.path.index('/thread') == 0 %> selected<% end %>">
+				<a href="/forum">
+					<i class="fa fa-fw fa-users"></i>
+					<span> Forums</span>
+				</a>
+			</li>
 		</ul>
 	</header>
 	<main class="wrapper" style="<%= content_for?(:width) ? ' max-width:' + content_for(:width) + ';' : '' %>">
@@ -142,7 +173,7 @@
 		<div class="date"><span>Powered by Muffins</span></div>
 	</footer>
 	<div class="fades"></div>
-	<script src="/js/videos.js" ></script>
-	<script src="/js/script.js" ></script>
+	<script src="/js/videos.js?<%= assets_version %>" ></script>
+	<script src="/js/script.js?<%= assets_version %>" ></script>
 </body>
 </html>

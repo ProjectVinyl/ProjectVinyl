@@ -78,6 +78,10 @@ module ApplicationHelper
     Emoticons
   end
   
+  def assets_version
+    1
+  end
+  
   def self.emotify(text)
     if text.nil? || text.length == 0
       return ""

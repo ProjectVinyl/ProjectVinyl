@@ -59,6 +59,16 @@ $('#avatar-upload').on('accept', function(e, file) {
 			<ul class="pop-out"></ul>
 		</td>
 	</tr>
+	<% if current_user.is_contributor? %>
+	<tr>
+		<td class="label">
+			Artist tag
+		</td>
+		<td class="field">
+			<%= f.text_field "tag", value: @user.tag_id ? @user.tag.name : "" %>
+		</td>
+	</tr>
+	<% end %>
 	<tr>		
 		<td class="label">
 		<%= f.label "Short Bio" %>
@@ -66,16 +76,6 @@ $('#avatar-upload').on('accept', function(e, file) {
 		<td class="field">
 		<%= render layout: '/thread/description_box' do %>
 			<%= f.text_area :bio, class: "comment-content" %>
-		<% end %>
-		</td>
-	</tr>
-	<tr>
-		<td class="label">
-		<%= f.label :description %>
-		</td>
-		<td class="field">
-		<%= render layout: '/thread/description_box' do %>
-			<%= f.text_area :description, class: "comment-content" %>
 		<% end %>
 		</td>
 	</tr>

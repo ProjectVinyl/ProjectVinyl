@@ -15,6 +15,14 @@ class CommentThread < ActiveRecord::Base
     self.direct_user = user
   end
   
+  def private_message?
+    self.owner_type == 'Pm'
+  end
+  
+  def contributing?(user)
+    !private_message? || (Pm.where('comment_thread_id = ? AND (sender_id = ? OR receiver_id = ?)', self.id, user.id, user.id).count > 0)
+  end
+  
   def get_title
     return self.title && self.title.length > 0 ? self.title : "Untitled"
   end
@@ -26,11 +34,22 @@ class CommentThread < ActiveRecord::Base
     self.save
   end
   
+  def last_comment
+    return @last_comment || @last_comment = comments.order(:updated_at).reverse_order.limit(1).first
+  end
+  
   def get_comments(all)
-    if all
-      return comments.includes(:direct_user, :mentions)
+    result = comments.includes(
+      :direct_user => [ :user_badges => [ :badge ]]
+    ).includes(:mentions)
+    if !all
+      return result.where(hidden: false)
     end
-    return comments.where(hidden: false).includes(:direct_user, :mentions)
+    return result
+  end
+  
+  def description
+    ""
   end
   
   def location
@@ -39,6 +58,9 @@ class CommentThread < ActiveRecord::Base
     end
     if self.owner_type == 'Report'
       return '/admin/report/view/' + self.owner_id.to_s
+    end
+    if self.owner_type == 'Pm'
+      return '/message/' + self.id.to_s
     end
     return '/thread/' + self.id.to_s
   end
@@ -65,5 +87,40 @@ class CommentThread < ActiveRecord::Base
     end
     self.subscribe(user)
     return true
+  end
+  
+  def bump(sender, params, comment)
+    recievers = self.thread_subscriptions.pluck(:user_id) - [sender.id]
+    if self.owner_type == 'Report'
+      if state = params[:report_state]
+        @report = self.owner
+        if state == 'open'
+          if !@report.resolved.nil?
+            @report.resolved = nil
+            Notification.notify_admins(@report, "Report <b>" + self.title + "</b> has been reopened", self.location)
+          end
+        elsif state == 'close'
+          if @report.resolved != false
+            @report.resolved = false
+            Notification.notify_admins(@report, "Report <b>" + self.title + "</b> has been closed", self.location)
+          end
+        elsif state == 'resolve'
+          if !@report.resolved
+            @report.resolved = true
+            Notification.notify_admins(@report, "Report <b>" + self.title + "</b> has been marked as resolved", self.location)
+          end
+        end
+        @report.save
+      end
+      Notification.notify_recievers(recievers, @report,
+        sender.username + " has posted a reply to <b>" + self.title + "</b>", self.location)
+    elsif self.owner_type == 'Pm'
+      self.owner.bump(sender, comment)
+    else
+      if sender.subscribe_on_reply? && !self.subscribed?(sender)
+        self.subscribe(sender)
+      end
+      Notification.notify_recievers(recievers, self, sender.username + " has posted a reply to <b>" + self.title + "</b>", self.location)
+    end
   end
 end

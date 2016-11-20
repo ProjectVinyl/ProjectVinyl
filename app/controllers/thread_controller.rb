@@ -1,21 +1,24 @@
 class ThreadController < ApplicationController
   def view
-    if @thread = CommentThread.where(id: params[:id].split('-')[0]).first
-      @order = '0'
-      @modificationsAllowed = user_signed_in? && (current_user.id == @thread.user_id || current_user.is_contributor?)
-      @comments = Pagination.paginate(@thread.get_comments(user_signed_in? && current_user.is_contributor?), (params[:page] || -1).to_i, 10, false)
+    if !(@thread = CommentThread.where('id = ? AND (owner_type IS NULL OR owner_type = "video")', params[:id].split('-')[0]).first)
+      return render '/layouts/error', locals: { title: 'Nothing to see here!', description: "Either the thread does not exist or you don't have the neccessary permissions to see it." }
     end
+    @order = '0'
+    @modificationsAllowed = user_signed_in? && (current_user.id == @thread.user_id || current_user.is_contributor?)
+    @comments = Pagination.paginate(@thread.get_comments(user_signed_in? && current_user.is_contributor?), (params[:page] || -1).to_i, 10, false)
   end
   
   def new
     @thread = CommentThread.new
+    if params[:user] && @user = User.where(id: params[:user]).first
+      return render partial: 'pm/new'
+    end
     render partial: 'new'
   end
   
   def create
     if user_signed_in?
-      thread = params[:thread]
-      thread = CommentThread.create(user_id: current_user.id)
+      thread = CommentThread.create(user_id: current_user.id, total_comments: 1)
       thread.set_title(params[:thread][:title])
       thread.save
       comment = thread.comments.create(user_id: current_user.id)
@@ -78,7 +81,6 @@ class ThreadController < ApplicationController
             content: render_to_string(partial: 'thread/chat_message_set', locals: { thread: @comments })
           }
         end
-        
         @results = Pagination.paginate(@thread.get_comments(current_user.is_contributor?), params[:order] == '1' ? 0 : -1, 10, params[:order] == '1')
         render json: {
           content: render_to_string(partial: '/thread/comment_set.html.erb', locals: { thread: @results.records, indirect: false }),
@@ -86,40 +88,7 @@ class ThreadController < ApplicationController
           page: @results.page,
           focus: comment.get_open_id
         }
-        recievers = @thread.thread_subscriptions.pluck(:user_id)
-        if @thread.owner_type == 'Report'
-          if state = params[:report_state]
-            @report = @thread.owner
-            if state == 'open'
-              if !@report.resolved.nil?
-                @report.resolved = nil
-                Notification.notify_admins(@thread.owner, "Report <b>" + @thread.title + "</b> has been reopened", @thread.location)
-              end
-            elsif state == 'close'
-              if @report.resolved != false
-                @report.resolved = false
-                Notification.notify_admins(@thread.owner, "Report <b>" + @thread.title + "</b> has been closed", @thread.location)
-              end
-            elsif state == 'resolve'
-              if !@report.resolved
-                @report.resolved = true
-                Notification.notify_admins(@thread.owner, "Report <b>" + @thread.title + "</b> has been marked as resolved", @thread.location)
-              end
-            end
-            @report.save
-          end
-          Notification.notify_recievers(recievers, @thread.owner,
-            current_user.username + " has posted a reply to <b>" + @thread.title + "</b>",
-            @thread.location)
-        else
-          if current_user.subscribe_on_reply? && !@thread.subscribed?(current_user)
-            @thread.subscribe(current_user)
-          end
-          Notification.notify_recievers(recievers, @thread,
-            current_user.username + " has posted a reply to <b>" + @thread.title + "</b>",
-            @thread.location)
-        end
-        return
+        return @thread.bump(current_user, params, comment)
       end
     end
     render status: 401, nothing: true

@@ -15,6 +15,7 @@ Rails.application.routes.draw do
   get 'policy' => 'staff#policy'
   get 'terms' => 'staff#policy'
   get 'ajax/donate' => 'staff#donate'
+  get 'ajax/login' => 'staff#login'
   
   get 'admin' => 'admin#view'
   get 'admin/report/view/:id' => 'admin#view_report'
@@ -132,6 +133,7 @@ Rails.application.routes.draw do
   get 'thread/:id' => 'thread#view'
   get 'ajax/thread/new' => 'thread#new'
   post 'ajax/create/thread' => 'thread#create'
+  post 'ajax/create/message' => 'pm#create'
   post 'ajax/update/thread' => 'thread#update'
   post 'ajax/thread/pin' => 'ajax#togglePin'
   post 'ajax/thread/lock' => 'ajax#toggleLock'
@@ -141,6 +143,16 @@ Rails.application.routes.draw do
   post 'ajax/comments/edit' => 'thread#edit_comment'
   get 'ajax/comments/get' => 'thread#get_comment'
   get 'ajax/comments/:thread_id/:order' => 'thread#page'
+  
+  get 'message/:id' => 'pm#view'
+  get 'ajax/messages/tab' => 'pm#tab'
+  get 'ajax/message/new' => 'pm#new'
+  get 'messages' => 'pm#list'
+  get 'messages/:type' => 'pm#list'
+  get 'ajax/messages' => 'pm#page_threads'
+  post 'ajax/message/markread' => 'pm#mark_read'
+  post 'ajax/delete/message/:type' => 'pm#delete_pm'
+  
   
   get 'api/videos' => 'video#matching_videos'
   get 'api/video/get/:id' => 'video#video_details'

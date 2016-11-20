@@ -1,5 +1,6 @@
 var feed_count = 0;
 var notifications_count = 0;
+var message_count = 0;
 
 var step_delay_increment = 15000;
 var step_delay = 30000;
@@ -29,6 +30,7 @@ function heartbeat() {
   var url = '/ajax/notifications?';
   if (notifications_count !== undefined) url += 'notes=' + notifications_count;
   if (feed_count !== undefined) url += '&feeds=' + feed_count;
+  if (message_count !== undefined) url += '&mail=' + message_count;
   if (active_chats.length > 0) url += '&chat=' + active_chats.join(',');
   request.open('GET', url, true);
   request.send();
@@ -42,6 +44,9 @@ function sendMessage(msg) {
       }
       if (msg.notices !== undefined && msg.notices != notifications_count) {
         port.postMessage({ command: 'notices', count: (notifications_count = msg.notices) });
+      }
+      if (msg.mail !== undefined && msg.mail != message_count) {
+        port.postMessage({ command: 'mail', count: (message_count = msg.mail) });
       }
       if (port.chatId && msg.chats) {
         msg.chats.filter(function(chat) {

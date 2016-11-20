@@ -1,0 +1,17 @@
+<% @data = 'type=' + type %>
+<%= render layout: '/layouts/paginated', locals: {type: "messages", paginated: paginated, id: type} do %>
+	<section class="search-result">
+		<div class="listing thread-list">
+			<ul class="items">
+				<% if paginated.count > 0 %>
+				<%= render partial: 'pm/message_thumb', collection: paginated.records %>
+				<% else %>
+					<div class="mail_derpy">
+						<div class="derpy"></div>
+						<div>Nu-uh, no messages here</div>
+					</div>
+				<% end %>
+			</ul>
+		</div>
+	</section>
+<% end %>

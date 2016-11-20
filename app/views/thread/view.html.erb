@@ -10,6 +10,15 @@
 	<% end %>
 	<span class="content"><%= @thread.get_title %></span>
 	<span class="edit"><i class="fa fa-pencil"></i></span>
+	<button title="<% if @subscribed = @thread.subscribed?(current_user) %>Unsubscribe<% else %>Subscribe<% end %>" class="action button button-bub subscribe right toggle"
+			data-action="subscribe"
+			data-target="thread"
+			data-id="<%= @thread.id %>"
+			data-unchecked-icon="bell-slash">
+		<span class="icon">
+			<i class="fa fa-<% if @subscribed %>check<% else %>bell<% end %>"></i>
+		</span>
+	</button>
 </h1>
 <% if current_user.is_contributor? %>
 <div class="actions">

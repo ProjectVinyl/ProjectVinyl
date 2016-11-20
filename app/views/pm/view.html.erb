@@ -1,0 +1,13 @@
+<% title @thread.title + " - Private Messages" %>
+<h1 class="title">
+	<a href="/">Home</a> <i class="fa fa-chevron-right"></i> <a href="/messages">Messages</a> <i class="fa fa-chevron-right"></i> 
+	<%= @thread.title.nil? || @thread.title.length == 0 ? "Comments" : @thread.title %>
+</h1>
+<%= render layout: '/layouts/paginated', locals: {type: "comments/" + @thread.id.to_s + "/" + @order, paginated: @comments, id: "page"} do %>
+<ul id="thread-<%= @thread.id %>" class="comments">
+	<%= render partial: '/thread/comment_set', locals: {thread: @comments.records, indirect: false} %>
+</ul>
+<% end %>
+<hr>
+<%= render partial: "thread/comment_box", locals: {invert: true} %>
+</div>

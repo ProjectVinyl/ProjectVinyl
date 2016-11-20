@@ -32,7 +32,7 @@ $(window).ready(function () {
   if (window['current_user'] && window.SharedWorker && (window['force_notifications'] || !!localStorage['give_me_notifications'])) {
     var doc_title = $('#document_title');
     var title = doc_title.text();
-    worker = new SharedWorker('/js/notifications.js');
+    worker = new SharedWorker('/js/notifications.js?1');
     worker.port.addEventListener('message', function(e) {
       if (e.data.command == 'feeds') {
         if (e.data.count > 0) {
@@ -41,10 +41,15 @@ $(window).ready(function () {
           $('.notices-bell.feeds').html('<i class="fa fa-globe" />');
         }
       } else if (e.data.command == 'notices') {
+        $('.notices-bell.notices span:not(.invert)').remove();
         if (e.data.count > 0) {
-          $('.notices-bell.notices').html('<i class="fa fa-bell" /><span>' + e.data.count + '</span>');
+          $('.notices-bell.notices i').after('<span>' + e.data.count + '</span>');
+        }
+      } else if (e.data.command == 'mail') {
+        if (e.data.count > 0) {
+          $('.notices-bell.notices').append('<span class="invert">' + e.data.count + '</span>');
         } else {
-          $('.notices-bell.notices').html('<i class="fa fa-bell" />');
+          $('.notices-bell.notices span.invert').remove();
         }
       } else if (e.data.command == 'chat') {
         var chat = $('#chat');
@@ -52,7 +57,7 @@ $(window).ready(function () {
         chat = chat.parent();
         chat.scrollTop(chat.height());
       }
-      if (e.data.command == 'notices' || e.data.command == 'feeds') {
+      if (e.data.command == 'notices' || e.data.command == 'feeds' || e.data.command == 'mail') {
         if (!window_focused && e.data.count) {
           if (title.indexOf('*') !== 0) {
             title = '* ' + title;
@@ -781,17 +786,18 @@ $(document).on('mousedown', function() {
     });
   }
   var autocomplete = null;
-  $('.auto-lookup').each(function() {
-    var me = $(this);
+  $(document).on('focus', '.auto-lookup:not(.loaded) input', function() {
+    var input = $(this);
+    var me = input.parent();
+    me.addClass('loaded');
     var popout = me.find('.pop-out');
-    var input = me.find('input');
     var action = me.attr('data-action');
     var last_value = null;
     var validate = me.hasClass('validate');
     input.on('blur', function() {
       clearInterval(autocomplete);
       autocomplete = null;
-    })
+    });
     input.on('focus', function(e) {
       if (!autocomplete) autocomplete = setInterval(function() {
         var value = input.val();
@@ -863,6 +869,15 @@ $(document).on('click', '.state-toggle', function(ev) {
 });
 (function() {
   function toggle(sender, family, action, id, item_id, check_icon, uncheck_icon) {
+    var action = sender.attr('data-target') + '/' + sender.attr('data-action');
+    var family = sender.attr('data-family');
+    var id = sender.attr('data-id');
+    var item_id = sender.attr('data-item');
+    var data = sender.attr('data-with');
+    if (data) action += '?extra=' + $(data).val();
+    var check_icon = sender.attr('data-checked-icon') || 'check';
+    var uncheck_icon = sender.attr('data-unchecked-icon');
+    var state = sender.attr('data-state');
     ajax.post(action, function(json) {
       if (family) {
         $('.action.toggle[data-family=' + family + '][data-id=' + id + ']').each(function() {
@@ -873,25 +888,17 @@ $(document).on('click', '.state-toggle', function(ev) {
         });
       } else {
         sender.find('.icon').html(json.added ? '<i class="fa fa-' + check_icon + '"></i>' : (uncheck_icon ? '<i class="fa fa-' + uncheck_icon + '"></i>' : ''));
+        if (state) {
+          sender.parents(sender.attr('data-parent'))[json.added ? 'addClass' : 'removeClass'](state);
+        }
       }
     }, false, {
       id: id, item: item_id
     });
   }
-  $('.action.toggle').each(function() {
-    var me = $(this);
-    var target = me.attr('data-target') + '/' + me.attr('data-action');
-    var family = me.attr('data-family');
-    var id = me.attr('data-id');
-    var item = me.attr('data-item');
-    var data = me.attr('data-with');
-    var check_icon = me.attr('data-checked-icon') || 'check';
-    var uncheck_icon = me.attr('data-unchecked-icon');
-    if (data) data = $(data);
-    me.on('click', function(e) {
-      toggle(me, family, target + (data ? '?extra=' + data.val() : ''), id, item, check_icon, uncheck_icon);
-      e.preventDefault();
-    });
+  $(document).on('click', '.action.toggle', function(e) {
+    toggle($(this));
+    e.preventDefault();
   });
 })();
 (function() {
@@ -931,15 +938,18 @@ $(document).on('click', '.state-toggle', function(ev) {
         popup.show();
       }
     } else {
-      popup = Popup.fetch(url, me.attr('data-title'), me.attr('data-icon'));
+      popup = Popup.fetch(url, me.attr('data-title'), me.attr('data-icon'), me.hasClass('confirm-button-thin'));
       popup.setPersistent();
+      
     }
-    me.on('click', function() {
+    me.on('click', function(e) {
       popup.show();
+      e.preventDefault();
     });
   }
-  $(document).on('click', '.confirm-button:not(.loaded)', function() {
+  $(document).on('click', '.confirm-button:not(.loaded)', function(e) {
     init($(this));
+    e.preventDefault();
   });
 })();
 (function() {
@@ -1009,9 +1019,15 @@ $(document).on('click', '.state-toggle', function(ev) {
   });
   $(document).on('click', '.removeable .remove', function(e) {
     var me = $(this).parent();
-    ajax.post('delete/' + me.attr('data-target'), function() {
-      me.remove();
-    }, true, { id: me.attr('data-id') });
+    if (me.hasClass('repaintable')) {
+      ajax.post('delete/' + me.attr('data-target'), function(json) {
+        paginator.repaint(me.closest('.paginator'), json);
+      }, false, { id: me.attr('data-id') });
+    } else {
+      ajax.post('delete/' + me.attr('data-target'), function() {
+        me.remove();
+      }, true, { id: me.attr('data-id') });
+    }
     e.preventDefault();
     e.stopPropagation();
   });
@@ -1044,9 +1060,10 @@ var Popup = (function() {
     if (construct) construct.apply(this);
     return this;
   }
-  Popup.fetch = function(resource, title, icon) {
+  Popup.fetch = function(resource, title, icon, thin) {
     return (new Popup(title, icon, function() {
       this.content.html('<div class="loader"><i class="fa fa-pulse fa-spinner" /></div>');
+      if (thin) this.container.addClass('thin');
       var me = this;
       ajax(resource, function(xml, type, ev) {
         me.content.html(ev.responseText);
@@ -1224,7 +1241,6 @@ var paginator = (function() {
   if (match = hash.match(/#\/([^\/]+)/)) {
     var id = match[1];
     hash = hash.replace('/' + id + '/', '');
-		console.log(hash);
     if (hash.indexOf('#first') == 0) {
       page = 0;
     } else if (hash.indexOf('#last') == 0) {
@@ -1234,7 +1250,16 @@ var paginator = (function() {
     }
     if (page > -2) {
       $(document).ready(function() {
-        requestPage($('.pagination[data-id=' + id +']').closest('.paginator'), page - 1);
+        var pagination = $('.pagination[data-id=' + id +']');
+        if (pagination.length) {
+          requestPage(pagination.closest('.paginator'), page - 1);
+        } else {
+          var tab_switch = $('.tab-set.async a.button[data-target=' + id + ']');
+          if (tab_switch.length) {
+            tab_switch.attr('data-page', page - 1);
+            tab_switch.click();
+          }
+        }
       });
     }
   }
@@ -1399,6 +1424,60 @@ function replyTo(sender) {
   textarea.change();
 }
 
+function markRead() {
+  messageOperation({
+    id: 'read', callback: function() {
+      var me = $(this);
+      me.removeClass('unread');
+      me.find('button.button-bub.toggle i').attr('class', 'fa fa-star-o');
+    }
+  });
+}
+
+function markUnRead() {
+  messageOperation({
+    id: 'unread', callback: function() {
+      var me = $(this);
+      me.addClass('unread');
+      me.find('button.button-bub.toggle i').attr('class', 'fa fa-star');
+    }
+  });
+}
+
+function markDeleted() {
+  messageOperation({
+    id: 'delete', callback: function(me, json) {
+      paginator.repaint(me.closest('.paginator'), json);
+    }
+  });
+}
+
+function messageOperation(action) {
+  var checks = $('input.message_select:checked');
+  if (checks.length > 0) {
+    var ids = [];
+    checks.each(function() {
+      ids.push(this.value);
+    });
+    ajax.post('/messages/action', function(json) {
+      if (json.content) {
+        action.callback(checks, json);
+      } else {
+        checks.parents('li.thread').each(action.callback);
+      }
+    }, false, {
+      ids: ids.join(';'), op: action.id
+    });
+  }
+}
+
+$(document).on('change', '.message_select', function() {
+  if ($('input.message_select:checked').length) {
+    $('#batch_ops').removeClass('disabled');
+  } else {
+    $('#batch_ops').addClass('disabled');
+  }
+});
 $(document).on('click', '.reply-comment', function() {
   replyTo(this);
 });
@@ -1422,22 +1501,43 @@ $(document).on('click', '.tab-set li.button:not([data-disabled])', function() {
     $('div[data-tab=' + me.attr('data-target') + ']').addClass('selected').trigger('tabfocus')
   }
 });
+$(document).on('click', '.tab-set.async a.button:not([data-disabled])', function(e) {
+  var me = $(this);
+  if (!me.hasClass('selected')) {
+    var parent = me.parent();
+    var other = parent.find('.selected');
+    other.removeClass('selected');
+    me.addClass('selected');
+    var holder = $('.tab[data-tab=' + parent.attr('data-target') + ']');
+    holder.addClass('waiting');
+    ajax.get(parent.attr('data-url'), function(json) {
+      holder.html(json.content);
+      holder.removeClass('waiting');
+    }, {
+      type: me.attr('data-target'), page: (me.attr('data-page') || 0)
+    });
+  }
+  e.preventDefault();
+});
 
 $(document).on('touchstart', '.drop-down-holder:not(.hover)', function(e) {
-  $(this).addClass('hover');
+  var me = $(this);
+  me.addClass('hover');
   e.preventDefault();
   e.stopPropagation();
-  var lis = $(this).find('a, li');
+  var lis = me.find('a, li');
   lis.on('touchstart', function(e) {
     e.stopPropagation();
   });
-  $(this).one('touchstart touchmove', function(e) {
-    $(this).off('touchstart touchmove');
-    $(this).removeClass('hover');
+  function clos(e) {
+    me.off('touchstart touchmove');
+    me.removeClass('hover');
     lis.off('touchstart');
     e.preventDefault();
     e.stopPropagation();
-  });
+  }
+  me.one('touchstart touchmove', clos);
+  $(document).one('touchstart touchmove', clos);
 });
 
 (function() {

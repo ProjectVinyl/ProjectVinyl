@@ -5,9 +5,10 @@ class AjaxController < ApplicationController
         result = {
           chats: []
         }
-        if current_user.notification_count != params[:notes].to_i || current_user.feed_count != params[:feeds].to_i
+        if current_user.notification_count != params[:notes].to_i || current_user.feed_count != params[:feeds].to_i || current_user.message_count != params[:mail].to_i
           result[:notices] = current_user.notification_count
           result[:feeds] = current_user.feed_count
+          result[:mail] = current_user.message_count
         end
         ids = []
         values = {}
@@ -29,10 +30,11 @@ class AjaxController < ApplicationController
         end
         return render json: result
       end
-      if current_user.notification_count != params[:notes].to_i || current_user.feed_count != params[:feeds].to_i
+      if current_user.notification_count != params[:notes].to_i || current_user.feed_count != params[:feeds].to_i || current_user.message_count != params[:mail].to_i
         return render json: {
           notices: current_user.notification_count,
-          feeds: current_user.feed_count
+          feeds: current_user.feed_count,
+          mail: current_user.message_count
         }
       else
         return render status: 204, nothing: true

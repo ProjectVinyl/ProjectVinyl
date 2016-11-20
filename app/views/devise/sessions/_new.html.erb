@@ -1,6 +1,4 @@
-<div class="wrapper" style="text-align: center">
-	<section style="width:100%;max-width:300px;" class="page modal">
-		<h1>Log in</h1>
+<div class="modal">
 	<%= form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
 		<%= f.text_field :login, autofocus: true, placeholder: "Username Or Email" %>
 		<br><br>
@@ -17,5 +15,4 @@
 	<div class="tiny-foot">
 		<%= render "devise/shared/links" %>
 	</div>
-	</section>
 </div>

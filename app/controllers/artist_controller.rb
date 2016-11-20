@@ -25,10 +25,14 @@ class ArtistController < ApplicationController
         user = current_user
       end
       if user
+        if current_user.is_contributor?
+          user.tag = Tag.by_name_or_id(input[:tag]).first
+        end
         user.set_name(input[:username])
         user.set_description(input[:description])
         user.set_bio(input[:bio])
         user.setTags(input[:tag_string])
+        
         user.save
         if current_user.is_staff? && params[:user_id]
           redirect_to action: "view", id: user.id
@@ -92,7 +96,7 @@ class ArtistController < ApplicationController
   end
   
   def card
-    if user = User.where(id: params[:id]).first
+    if user = User.with_badges.where(id: params[:id]).first
       render partial: '/layouts/artist_thumb_h', locals: {artist_thumb_h: user}
       return
     end

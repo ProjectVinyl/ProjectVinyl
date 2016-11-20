@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161029200648) do
+ActiveRecord::Schema.define(version: 20161116140533) do
 
   create_table "album_items", force: :cascade do |t|
     t.integer  "album_id",   limit: 4
@@ -98,6 +98,16 @@ ActiveRecord::Schema.define(version: 20161029200648) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.boolean  "unread",                 default: true
+  end
+
+  create_table "pms", force: :cascade do |t|
+    t.integer "state",             limit: 4, default: 0
+    t.boolean "unread",                      default: false
+    t.integer "sender_id",         limit: 4
+    t.integer "receiver_id",       limit: 4
+    t.integer "comment_thread_id", limit: 4
+    t.integer "new_comment_id",    limit: 4
+    t.integer "user_id",           limit: 4
   end
 
   create_table "processing_workers", force: :cascade do |t|

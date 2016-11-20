@@ -38,8 +38,8 @@
 			</ul>
 		</div>
 		<% end %>
-		<% if @modificationsAllowed %>
 		<div class="actions">
+		<% if @modificationsAllowed %>
 			<div class="split-button popper">
 				<button class="action options pop-out-toggle"><i class="fa fa-gear"></i> Options</button>
 				<ul class="pop-out">
@@ -57,8 +57,11 @@
 					</li>
 				</ul>
 			</div>
-		</div>
 		<% end %>
+		<% if user_signed_in? %>
+			<button class="confirm-button" data-url="thread/new?user=<%= @user.id %>" data-title="New Message" data-icon="envelope"><i class="fa fa-envelope"></i> Send Message</button>
+		<% end %>
+		</div>
 	</div>
 </section>
 <% if @art %>

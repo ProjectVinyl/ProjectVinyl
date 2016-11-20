@@ -52,9 +52,18 @@ class Comment < ActiveRecord::Base
     bbc.gsub(QUOTED_TEXT, '').scan(MENTION_MATCHER) do |match|
       match_two = ApplicationHelper.url_safe(match)
       match_four = ApplicationHelper.url_safe(match.underscore)
-      if user = User.where('LOWER(username) = ? OR LOWER(safe_name) = ? OR LOWER(safe_name) = ?', match, match_two, match_four).first
-        recievers << user.id
-        bbc = bbc.sub('@' + match, '<a class="user-link" data-id="' + user.id.to_s + '" href="' + user.link + '">' + match + '</a>') 
+      if sender.private_message?
+        if user = User.where('LOWER(username) = ? OR LOWER(safe_name) = ? OR LOWER(safe_name) = ?', match, match_two, match_four).first
+          if sender.contributing?(user)
+            recievers << user.id
+          end
+          bbc = bbc.sub('@' + match, '<a class="user-link" data-id="' + user.id.to_s + '" href="' + user.link + '">' + match + '</a>') 
+        end
+      else
+        if user = User.where('LOWER(username) = ? OR LOWER(safe_name) = ? OR LOWER(safe_name) = ?', match, match_two, match_four).first
+            recievers << user.id
+          bbc = bbc.sub('@' + match, '<a class="user-link" data-id="' + user.id.to_s + '" href="' + user.link + '">' + match + '</a>') 
+        end
       end
     end
     Notification.notify_recievers(recievers, sender, "You have been <b>mentioned</b> on <b>" + title + "</b>", location)
