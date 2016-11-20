@@ -256,6 +256,9 @@ class Tag < ActiveRecord::Base
     else
       name = name.gsub(':','')
     end
+    if Tag.where('name = ? AND id != ?', name, self.id).count > 0
+      return false
+    end
     self.short_name = ApplicationHelper.url_safe_for_tags(name)
     self.name = name
     self.save

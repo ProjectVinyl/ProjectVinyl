@@ -33,7 +33,10 @@ class GenreController < ApplicationController
         else
           @tag.alias_id = nil
         end
-        @tag.set_name(params[:tag][:suffex])
+        if !@tag.set_name(params[:tag][:suffex])
+          flash[:alert] = "Duplicate Error: A Tag named '" + params[:tag][:suffex] + "' already exists"
+          @tag.save
+        end
         implications = Tag.split_tag_string(params[:tag][:tag_string])
         implications = Tag.get_tag_ids(implications)
         implications = Tag.expand_implications(implications)
