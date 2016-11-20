@@ -4,7 +4,7 @@
 		<div class="handle"><i class="fa fa-ellipsis-v"></i></div>
 	<% end %>
 		<div class="title">
-			<div><%= item.video.getTitle %></div>
+			<div><%= item.video.hidden ? "hidden" : item.video.getTitle %></div>
 		</div>
 		<div class="duration">
 			<div><%= duration item.video.getDuration %></div>
