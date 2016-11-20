@@ -35,6 +35,10 @@ class Tag < ActiveRecord::Base
     return result
   end
   
+  def self.by_name_or_id(name)
+    return !name || name.length == 0 ? [] : Tag.where('name = ? OR id = ? OR short_name = ?', name, name, name)
+  end
+  
   def self.find_matching_tags(name)
     name = name.downcase
     tags = Tag.includes(:tag_type, :alias).where('name LIKE ? OR short_name LIKE ?', "%" + name + "%", "%" + ApplicationHelper.url_safe_for_tags(name) + "%").limit(10)

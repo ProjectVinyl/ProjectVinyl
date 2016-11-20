@@ -28,7 +28,7 @@ class GenreController < ApplicationController
     if user_signed_in? && current_user.is_staff?
       if @tag = Tag.where(id: params[:id]).first
         @tag.description = params[:tag][:description]
-        if params[:tag][:alias_tag] && (@alias = Tag.where('name = ? OR id = ?', params[:tag][:alias_tag], params[:tag][:alias_tag]).first)
+        if params[:tag][:alias_tag] && (@alias = Tag.by_name_or_id(params[:tag][:alias_tag]).first)
           @tag.set_alias(@alias)
         else
           @tag.alias_id = nil
