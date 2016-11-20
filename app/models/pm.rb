@@ -25,7 +25,7 @@ class Pm < ActiveRecord::Base
   
   def self.send_pm(sender, receiver, subject, message)
     return Pm.transaction do
-      pm = Pm.create(user: sender, sender: sender, receiver: receiver, unread: true)
+      pm = Pm.create(user_id: sender.id, sender: sender, receiver: receiver, unread: false)
       thread = CommentThread.create(user: sender, owner: pm, total_comments: 1)
       thread.set_title(subject && subject.length > 0 ? subject : '[No Subject]')
       comment = thread.comments.create(user_id: sender.id)
@@ -34,8 +34,8 @@ class Pm < ActiveRecord::Base
       pm.new_comment_id = comment.id
       pm.save
       if sender.id != receiver.id
-        pm = Pm.create(user: receiver, sender: sender, receiver: receiver, unread: true, comment_thread_id: thread.id, new_comment_id: comment.id)
-        Notification.notify_recievers([receiver.id], pm, sender.username + " has sent you a Private Message: <b>" + thread.title + "</b>", pm.location)
+        pms = Pm.create(user_id: receiver.id, sender: sender, receiver: receiver, unread: true, comment_thread_id: thread.id, new_comment_id: comment.id)
+        Notification.notify_recievers([receiver.id], pms, sender.username + " has sent you a Private Message: <b>" + thread.title + "</b>", pms.location)
       end
       return pm
     end
