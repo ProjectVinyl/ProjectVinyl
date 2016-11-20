@@ -156,8 +156,9 @@
 		</ul>
 	</header>
 	<main class="wrapper" style="<%= content_for?(:width) ? ' max-width:' + content_for(:width) + ';' : '' %>">
-		<% if notice %><p class="notice"><%= notice %></p><% end %>
-		<% if alert %><p class="notice"><%= alert %></p><% end %>
+		<% flash.each do |key,value| %>
+			<p class="notice <%= key %>"><%= value %></p>
+		<% end %>
 		<%= yield %>
 		<span class="push"></span>
 	</main>
