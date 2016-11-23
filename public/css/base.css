@@ -719,19 +719,14 @@ div.page .positioner {
 }
 
 .notice {
-  background:  #fff;
-  border: solid 1px #ccc;
-  box-shadow: 1px 1px 1px 0 #ccc;
-  padding: 3px;
-}
-.notice {
+  background: #95ffd5;
   color: #555;
-  background: none;
-  border: none;
-  padding: 10px 20px;
+  padding: 5px 20px;
   border-radius: 10px;
+  box-shadow: 1px 1px 1px 0 #ccc;
   box-shadow: 0 0 10px 0 rgba(0,0,0,0.3);
 }
+
 .notice::before {
   content: '\f05a';
   font-family: 'FontAwesome';
@@ -1646,11 +1641,6 @@ img.emoticon {
   margin: 0 -5px 0 0;
   padding: 0 1px 0 1px;
   vertical-align: middle;
-}
-
-.notice {
-  background: #95ffd5;
-  padding: 5px 20px;
 }
 
 .popup-container {

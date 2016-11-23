@@ -342,6 +342,11 @@ ul.horizontal > li + li {
 .thumb-hidden {
   opacity: 0.3;
 }
+.thumb.working {
+  background: #95ffd5;
+  border: solid 1px #ccc !important;
+  margin: -1px;
+}
 .tile {
   max-width: 250px;
   min-width: 170px;
