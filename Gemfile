@@ -29,7 +29,12 @@ gem 'sdoc', '~> 0.4.0', group: :doc
 # gem 'bcrypt', '~> 3.1.7'
 
 # Use Unicorn as the app server
-gem 'unicorn'
+platforms :ruby do
+  gem 'unicorn'
+end
+
+# WebSockets + Unicorn = <3
+# gem 'tubesock'
 
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
