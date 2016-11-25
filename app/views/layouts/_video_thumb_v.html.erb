@@ -1,6 +1,6 @@
 <% if !video_thumb_v.isHiddenBy(current_user) %>
 <li class="generic">
-	<a class="thumb<% if video_thumb_v.hidden %> thumb-hidden<% end %>" href="/view/<%= video_thumb_v.id %>-<%= video_thumb_v.safe_title %>">
+	<a class="thumb<% if video_thumb_v.hidden %> thumb-hidden<% end %>" href="<%= video_thumb_v.link %>">
 		<div class="tile" style="background-image:url('<%= video_thumb_v.tiny_thumb(current_user) %>');">
 			<div class="details">
 				<div class="title"<% if !(spoilered = video_thumb_v.isSpoileredBy(current_user)) %> title="<%= video_thumb_v.getTitle %>"<% end %>>

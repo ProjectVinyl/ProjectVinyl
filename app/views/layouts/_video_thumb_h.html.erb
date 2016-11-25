@@ -1,6 +1,6 @@
 <% if !video_thumb_h.isHiddenBy(current_user) %>
 <li class="generic thumb">
-	<a class="thumb<% if video_thumb_h.hidden %> thumb-hidden<% end %>" href="/view/<%= video_thumb_h.id %>-<%= video_thumb_h.safe_title %>">
+	<a class="thumb<% if video_thumb_h.hidden %> thumb-hidden<% end %>" href="<%= video_thumb_h.link %>">
 		<div class="tile" style="background-image:url('<%= video_thumb_h.tiny_thumb(current_user) %>');">
 			<span class="tag-list duration">
 				<%= duration video_thumb_h.getDuration %>

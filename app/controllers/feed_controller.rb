@@ -8,7 +8,7 @@ class FeedController < ApplicationController
     @page = params[:page].to_i
     @videos = TagSubscription.get_feed_items(current_user)
     @videos = Pagination.paginate(@videos, @page, 30, false)
-    render template: '/view/listing', locals: {type_id: 0, type: 'feed', type_label: 'Watched Video', items: @videos}
+    render template: '/view/listing', locals: {type_id: 0, type: 'feed', type_label: 'Feed', items: @videos}
   end
   
   def edit

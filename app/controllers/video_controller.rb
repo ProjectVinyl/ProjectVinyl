@@ -1,6 +1,6 @@
 class VideoController < ApplicationController
   def view
-    if !(@video = Video.where(id: params[:id].split(/-/)[0]).first)
+    if !(@video = Video.where(id: params[:id]).first)
       render '/layouts/error', locals: { title: 'Nothing to see here!', description: "This is not the video you are looking for." }
       return
     end
@@ -70,8 +70,8 @@ class VideoController < ApplicationController
           @next_video = @album.get_next(current_user, @index)
           render json: {
             id: @album.album_items.where(index: @index).first.id,
-            prev: @prev_video ? ("/view/" + @prev_video.video.id.to_s + "-" + @prev_video.video.safe_title + "?list=" + @album.id.to_s + "&index=" + @prev_video.index.to_s) : nil,
-            next: @next_video ? ("/view/" + @next_video.video.id.to_s + "-" + @next_video.video.safe_title + "?list=" + @album.id.to_s + "&index=" + @next_video.index.to_s) : nil,
+            prev: @prev_video ? @prev_video.link : nil,
+            next: @next_video ? @next_video.link : nil,
             title: @video.title,
             artist: @video.user.username,
             audioOnly: @video.audio_only,

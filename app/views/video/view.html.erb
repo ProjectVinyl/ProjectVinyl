@@ -6,13 +6,13 @@
 	<section class="listing compact playlist column-mobile-shown<% if @album.virtual? %> virtual<% end %>">
 		<div class="controls">
 		<% if @prev_video %>
-			<a id="playlist_prev" class="slide-left" title="Previous" href="/view/<%= @prev_video.video.id %>-<%= @prev_video.video.safe_title %>?<%= @prev_video.ref %>">
+			<a id="playlist_prev" class="slide-left" title="Previous" href="<%= @prev_video.link %>">
 				<i class="fa fa-fw fa-step-backward"></i>
 			</span>
 		<% end %>
-		<a class="title<% if @next_video %> buff-right<% end %>" <% if !@album.virtual? %>href="/album/<%= @album.id %>-<%= @album.safe_title %>"<% end %>><%= @album.title %></a>
+		<a class="title<% if @next_video %> buff-right<% end %>" <% if !@album.virtual? %>href="<%= @album.link %>"<% end %>><%= @album.title %></a>
 		<% if @next_video %>
-			<a id="playlist_next" class="slide-right" title="Next" href="/view/<%= @next_video.video.id %>-<%= @next_video.video.safe_title %>?<%= @next_video.ref %>">
+			<a id="playlist_next" class="slide-right" title="Next" href="<%= @next_video.link %>">
 				<i class="fa fa-fw fa-step-forward"></i>
 			</span>
 		<% end %>
@@ -37,7 +37,7 @@ $('html,body').scrollTop(200);
 		</h1>
 		<ul class="queue">
 			<li class="generic mix">
-				<a class="thumb" href="/view/<%= @video.id %>-<%= @video.safe_title %>?q=<%= @video.mix_string(current_user) %>&index=0">
+				<a class="thumb" href="<%= @video.link %>?q=<%= @video.mix_string(current_user) %>&index=0">
 					<div class="tile" style="background-image:none,url('/cover/<%= @video.id.to_s %>-small.png');">
 						<div class="details">
 							<div class="title">MIX - <%= @video.title %></div>

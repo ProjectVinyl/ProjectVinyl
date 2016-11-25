@@ -1,6 +1,6 @@
 class ThreadController < ApplicationController
   def view
-    if !(@thread = CommentThread.where('id = ? AND (owner_type IS NULL OR owner_type = "video")', params[:id].split('-')[0]).first)
+    if !(@thread = CommentThread.where('id = ? AND (owner_type IS NULL OR owner_type = "video")', params[:id]).first)
       return render '/layouts/error', locals: { title: 'Nothing to see here!', description: "Either the thread does not exist or you don't have the neccessary permissions to see it." }
     end
     @order = '0'

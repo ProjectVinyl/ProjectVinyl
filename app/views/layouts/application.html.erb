@@ -20,7 +20,7 @@
 					<a href="<%= current_user.link %>" class="username">
 						<%= current_user.username %>
 					</a>
-					<a class="notices-bell feeds" href="/videos/watched">
+					<a class="notices-bell feeds" href="/feed">
 						<i class="fa fa-globe"></i>
 						<% if current_user.feed_count > 0 %>
 							<span class="count"><% if current_user.feed_count > 999 %>999+<% else %><%= number_with_delimiter current_user.feed_count %><% end %></span>

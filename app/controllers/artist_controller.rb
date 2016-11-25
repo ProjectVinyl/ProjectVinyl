@@ -1,6 +1,6 @@
 class ArtistController < ApplicationController
   def view
-    if @user = User.where(id: params[:id].split(/-/)[0]).first
+    if @user = User.where(id: params[:id]).first
       @tags = @user.tags.includes(:tag_type)
       if @user.tag_id
         @art = @user.tag.videos.listable
@@ -12,7 +12,7 @@ class ArtistController < ApplicationController
       @videos = Pagination.paginate(@videos, 0, 8, true)
       @albums = @modificationsAllowed ? @user.albums : @user.albums.where('`albums`.hidden = false AND `albums`.listing = 0')
       @albums = Pagination.paginate(@albums, 0, 8, true)
-      @comments = Comment.Finder.joins(:comment_thread).select('`comments`.*').where("`comments`.user_id = ? AND `comment_threads`.id = comment_thread_id AND NOT `comment_threads`.owner_type = 'Report'", @user.id).order(:created_at).reverse_order.limit(3)
+      @comments = Comment.Finder.joins(:comment_thread).select('`comments`.*').where("`comments`.user_id = ? AND `comment_threads`.id = comment_thread_id AND NOT `comment_threads`.owner_type = 'Report' AND NOT `comment_threads`.owner_type = 'Pm'", @user.id).order(:created_at).reverse_order.limit(3)
     end
   end
   

@@ -49,6 +49,10 @@ class Album < ActiveRecord::Base
     @items = @items || self.ordered(self.album_items.includes(:direct_user, video: :tags))
   end
   
+  def link
+    '/album/' + self.id + '-' + self.safe_title
+  end
+  
   CREATED = 1
   ADDED = 2
   SCORE = 3

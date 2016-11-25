@@ -286,11 +286,15 @@ class Video < ActiveRecord::Base
   end
   
   def tag_string
-    return Tag.tag_string(self.tags)
+    Tag.tag_string(self.tags)
+  end
+  
+  def link
+    '/' + self.id.to_s + '-' + self.safe_title.to_s
   end
   
   def artists_string
-    return Tag.tag_string(self.tags.where(tag_type_id: 1))
+    Tag.tag_string(self.tags.where(tag_type_id: 1))
   end
   
   def getComputedScore

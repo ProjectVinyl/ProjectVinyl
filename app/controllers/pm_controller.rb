@@ -1,6 +1,6 @@
 class PmController < ApplicationController
   def view
-    if !(user_signed_in? && @pm = Pm.find_for_user(params[:id].split('-')[0], current_user))
+    if !(user_signed_in? && @pm = Pm.find_for_user(params[:id], current_user))
       return render '/layouts/error', locals: { title: 'Nothing to see here!', description: "Either the thread does not exist or you don't have the neccessary permissions to see it." }
     end
     @order = '0'
