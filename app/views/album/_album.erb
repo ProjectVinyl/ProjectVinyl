@@ -64,6 +64,6 @@
 					</ul>
 				</div>
 				<% end %>
-				<a class="button action" style="margin-right: 10px;" <% if @items.records.first %>href="/view/<%= @items.records.first.video.id %>-<%= @items.records.first.video.safe_title %>?list=<%= @album.id %>&index=<%= @items.records.first.index %>"<% end %>><i class="fa fa-play"></i> Play All</a>
+				<a class="button action" style="margin-right: 10px;" <% if @items.records.first %>href="<%= @items.records.first.link %>"<% end %>><i class="fa fa-play"></i> Play All</a>
 			</div>
 	</div>

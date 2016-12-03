@@ -50,7 +50,7 @@ class Album < ActiveRecord::Base
   end
   
   def link
-    '/album/' + self.id + '-' + self.safe_title
+    '/album/' + self.id.to_s + '-' + self.safe_title
   end
   
   CREATED = 1
