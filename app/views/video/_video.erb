@@ -171,7 +171,7 @@
 					<td class="label">Embed</td>
 					<td class="field">
 						<input id="share_field" name="share_field" type="text" data-value="<%= '<iframe width="560" height="315" src="http://www.projectvinyl.net/embed/{id}{extra}" frameborder="0" allowfullscreen></iframe>' %>" value="<%= '<iframe width="560" height="315" src="http://www.projectvinyl.net/embed/' + @video.id.to_s + '" frameborder="0" allowfullscreen></iframe>' %>"></input>
-						<% if @album %><div>
+						<% if @album && !@album.virtual? %><div>
 							<input id="album_share_toggle" type="checkbox" value="playlist"></input>
 							Share with playlist from the
 							<select id="album_share_type">
@@ -188,6 +188,20 @@
 							<iframe style="max-width:100%;" width="560px" height="100%" frameborder="0"></iframe>
 						</div>
 						<button class="action test center" data-id="<%= @video.id %>"<% if @album %> data-first="<%= @items.length > 1 ? @items.first.video_id : @video.id %>" data-index="<%= @index %>" data-album-id="<%= @album.id %>"<% end %>>Preview</button>
+					</td>
+				</tr>
+				<tr>
+					<td class="label">Embed Codes</td>
+					<td class="field">
+						Projectvinyl preview
+						<p>
+							<input type="text" value="[<%= @video.id %>]"></input>
+						</p>
+						BBCode
+						<p>
+							<textarea rows="2">[url=http://wwww.projectvinyl.net/<%= @video.id %>][img]http://www.projectvinyl.net/cover/<%= @video.id %>-small.png[/img]
+							<%= @video.title %>[/url]</textarea>
+						</p>
 					</td>
 				</tr>
 			</table>
