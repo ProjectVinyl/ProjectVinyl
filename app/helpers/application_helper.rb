@@ -79,7 +79,7 @@ module ApplicationHelper
   end
   
   def assets_version
-    1
+    2
   end
   
   def self.emotify(text)
@@ -95,8 +95,13 @@ module ApplicationHelper
     Emoticons.each { |x|
       text = text.gsub(/:#{x}:/,'<img class="emoticon" src="/emoticons/' + x + '.png">')
     }
-    return StathamSanitizer.new.sanitize(text, tags: %w(i b u s sup sub hr blockquote br img a div span), attributes: %w(class style href src data-link data-id),
+    text = StathamSanitizer.new.sanitize(text, tags: %w(i b u s sup sub hr blockquote br img a div span), attributes: %w(class style href src data-link data-id),
            styles: %w(max-width))
+    text = text.gsub(/\[([0-9]+)\]/, '<iframe class="embed" src="/embed/\1" allowfullscreen></iframe>')
+    text.scan(/\[yt([^\]]+)\]/) do |match|
+      text = text.sub('[yt' + match[0] + ']', '<iframe class="embed" src="https://www.youtube.com/embed?v=' + Youtube.video_id(match[0]) + '" allowfullscreen></iframe>')
+    end
+    return text
   end
   
   def self.demotify(text)
@@ -112,6 +117,8 @@ module ApplicationHelper
     Emoticons.each { |x|
       text = text.gsub(/<img class="emoticon" src="\/emoticons\/#{x}">:/,':' + x + ':">')
     }
+    text = text.gsub(/<iframe class="embed" src="\/embed\/([0-9+])" allowfullscreen><\/iframe>/, '[\1]')
+    text = text.gsub(/<iframe class="embed" src="https:\/\/www.youtube.come\/embed?v=([^&"]+)[^"]*" allowfullscreen><\/iframe>/, '[yt\1]')
     text.gsub(/</, '&lt;').gsub(/>/, '&gt;')
   end
   

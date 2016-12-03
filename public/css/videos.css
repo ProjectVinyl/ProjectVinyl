@@ -195,6 +195,7 @@ ul.horizontal > li + li {
   margin-left: 10px;
   height: 10px;
   cursor: pointer;
+  border-radius: 4px;
 }
 .playback-controls .track:hover {
   background: rgba(0,0,0,0.1);
@@ -206,7 +207,8 @@ ul.horizontal > li + li {
 
 .playback-controls .bob {
   position: absolute;
-  background: red;
+  background: #f00;
+  box-shadow: 0 0 3px 5px #f00 inset;
   border-radius: 100%;
   width: 20px;
   height: 20px;
@@ -1025,4 +1027,11 @@ i.fa.fa-volume-mid {
 }
 .uploading #video {
   margin: 0;
+}
+
+iframe.embed {
+  border: none;
+  width: 560px;
+  height: 315px;
+  max-width: 100%;
 }

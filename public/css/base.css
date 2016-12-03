@@ -1,3 +1,4 @@
+/*Normalize*/
 * {
   box-sizing: border-box;
 }
@@ -56,17 +57,30 @@ html, body {
   text-align: center;
   background: #f1f1f1;
   font-family: Verdana,sans-serif;
-  line-height: 1.5em;
   font-size: 13px;
+  line-height: 1.5em;
+  -ms-text-size-adjust: 100%;
+  -webkit-text-size-adjust: 100%;
 }
 
 body {
   min-width: 270px;
 }
 
+article,
+aside,
+footer,
+header,
+nav,
+section {
+  display: block;
+}
+
 h1, h2 {
   font-size: 1.25em;
   font-size-adjust: 0.75;
+  -ms-text-size-adjust: 0.75;
+  -webkit-text-size-adjust: 0.75;
   line-height: 1.06;
   text-shadow: 0 0.05em 0.03em rgba(0,0,0,0.3);
   font-weight: normal;
@@ -80,6 +94,95 @@ h1 {
 h1, h1 a, h2, h2 a {
   color: rgb(102,102,184);
 }
+
+hr {
+  height: 0;
+  overflow: visible;
+}
+
+pre {
+  font-family: monospace, monospace;
+  font-size: 1em;
+}
+
+/* IE 10 IOS/Safari 8+ */
+a {
+  background-color: transparent; /* 1 */
+  -webkit-text-decoration-skip: objects; /* 2 */
+}
+
+abbr[title] {
+  border-bottom: none;
+  text-decoration: underline;
+  text-decoration: underline dotted;
+}
+
+/* IOS 4-7 */
+audio:not([controls]) {
+  display: none;
+  height: 0;
+}
+
+/* IE */
+textarea {
+  overflow: auto;
+}
+
+/* IE9- */
+audio,
+video {
+  display: inline-block;
+}
+
+/* IE10- */
+[type="checkbox"], [type="radio"] {
+  box-sizing: border-box;
+  padding: 0;
+}
+
+/*Chrome*/
+[type="checkbox"],
+[type="radio"] {
+  box-sizing: border-box; /* 1 */
+  padding: 0; /* 2 */
+}
+
+[type="search"] {
+  -webkit-appearance: textfield;
+  outline-offset: -2px;
+}
+
+[type="search"]::-webkit-search-cancel-button,
+[type="search"]::-webkit-search-decoration {
+  -webkit-appearance: none;
+}
+
+::-webkit-file-upload-button {
+  -webkit-appearance: button;
+  font: inherit;
+}
+
+details, menu {
+  display: block;
+}
+
+summary {
+  display: list-item;
+}
+
+canvas {
+  display: inline-block;
+}
+
+template {
+  display: none;
+}
+
+[hidden] {
+  display: none;
+}
+
+/*end normalize*/
 
 div.group {
   overflow: hidden;
@@ -563,13 +666,6 @@ header ul li:hover, header ul li.selected {
   max-width: 100%;
   height: 90px;
 }
-#banner > a.title:after {
-  content: 'BETA';
-  display: block;
-  font-size: 0.4em;
-  text-align: right;
-  margin-top: 0.7em;
-}
 
 main {
   display: inline-block;
@@ -800,7 +896,7 @@ button, .button, input[type=submit], .tag, .tag-editor {
   pointer-events: none;
 }
 
-input[type=text]:not(.tag), input[type=email], input[type=password], label.text-input {
+textarea, input[type=text]:not(.tag), input[type=email], input[type=password], label.text-input {
   transition: background 0.5s ease;
   padding: 10px;
   border: 1px solid rgb(204, 204, 204);
@@ -809,6 +905,9 @@ input[type=text]:not(.tag), input[type=email], input[type=password], label.text-
   background: rgb(255, 255, 250);
   text-shadow: 1px 1px rgba(255, 255, 255, 0.8);
   vertical-align: middle;
+  font-family: MS Shell Dlg \32, monospace;
+  font-size: 13.3333px;
+
 }
 
 .auto-lookup.invalid input {
@@ -821,7 +920,7 @@ input[type=text]:not(.tag), input[type=email], input[type=password], label.text-
   content: attr(data-message);
 }
 
-textarea {
+.content.editing textarea {
   padding: 8px;
   color: #444;
   border: solid 1px #ccc;
@@ -830,6 +929,7 @@ textarea {
   border-radius: 2px;
   min-height: 35px;
   font-family: Verdana,sans-serif;
+  box-shadow: none;
 }
 
 .search-options {
@@ -1013,11 +1113,10 @@ label input[type=checkbox]:checked + i + i {
   float: right;
   background: rgba(255,255,255,0.8);
   padding: 10px;
-  z-index: 3;
+  z-index: 999;
 }
 #login {
    border-radius: 0 0 0 10px;
-   z-index: 4;
 }
 #search {
   margin-right: 10px;

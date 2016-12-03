@@ -51,10 +51,13 @@ function Player() {}
       case video.error.MEDIA_ERR_ABORTED: return 'Playback Aborted';
       case video.error.MEDIA_ERR_NETWORK: return 'Network Error';
       case video.error.MEDIA_ERR_DECODE: return 'Feature not Supported';
-      case video.error.MEDIA_ERR_SRC_NOT_SUPPORTED: return 'Codec no supported';
+      case video.error.MEDIA_ERR_SRC_NOT_SUPPORTED: return 'Codec not supported';
       default: return 'Unknown Error';
     }
   };
+	Player.isready = function(video) {
+		return video.readyState == 4;
+	};
   Player.noise = (function() {
     var canvas = null, ctx = null;
     var toggle = true;
@@ -90,7 +93,7 @@ function Player() {}
                 <span class="suspend" style="display:none"><i class="fa fa-pulse fa-spinner"></i></span>\
 								<span class="pause resize-holder">\
 									<span class="playback"></span>\
-									<h1 class="resize-target" style="display:none;"><a><span class="title">undefined</span> - <span class="artist">undefined</span></a></h1>\
+									<h1 class="resize-target" style="display:none;"><a class="title"></a></h1>\
 								</span>\
 							</div>\
 							<div class="controls playback-controls">\
@@ -173,7 +176,7 @@ function Player() {}
       resize.apply(el);
       
       el.find('h1 .title').text(this.title = el.attr('data-title'));
-      el.find('h1 .artist').text(this.artist = el.attr('data-artist'));
+			if (this.artist = el.attr('data-artist')) el.find('h1 .artist').text(this.artist);
       
       new TapToggler(this.dom);
       el.on('click', function(ev) {
@@ -495,8 +498,16 @@ function Player() {}
           video = Player.createVideoElement(this);
         }
         this.video = video[0];
-        if (this.time) {
-          this.video.currentTime = parseInt(this.time);
+        if (this.time && this.time != '0') {
+					if (Player.isready(this.video)) {
+						this.video.currentTime = parseInt(this.time);
+					} else {
+						var t = parseInt(this.time);
+						this.video.addEventListener('canplay', function set_time() {
+							this.currentTime = t;
+							this.removeEventListener('canplay', set_time);
+						});
+					}
         }
         this.player.find('.playing').append(this.video);
         var me = this;
@@ -734,14 +745,17 @@ function Player() {}
             var temp_vid = this.preview.video = Player.createVideoElement(this)[0];
             var canvas = this.preview;
             var context = this.preview.getContext('2d');
-            temp_vid.addEventListener('loadeddata', function() {
-              temp_vid.currentTime = time;
+            temp_vid.addEventListener('loadeddata', function load_time() {
+              this.currentTime = time;
+							this.removeEventListener('loadeddata', load_time);
             });
             temp_vid.addEventListener('seeked', function() {
               context.drawImage(temp_vid, 0, 0, canvas.width, canvas.height);
             });
           } else {
-            this.preview.video.currentTime = time;
+						if (Player.isready(this.preview.video)) {
+							this.preview.video.currentTime = time;
+						}
           }
         }
       }

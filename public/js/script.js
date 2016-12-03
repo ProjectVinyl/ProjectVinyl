@@ -277,6 +277,8 @@ var BBC = (function() {
     while (i--) {
       text = text.replace(new RegExp(':' + emoticons[i] + ':', 'g'), '<img class="emoticon" src="/emoticons/' + emoticons[i] + '.png">');
     }
+		text = text.replace(/\[([0-9]+)\]/, '<iframe class="embed" src="/embed/$1" allowfullscreen></iframe>');
+		text = text.replace(/\[yt([^\]]+)\]/, '<iframe class="embed" src="https://www.youtube.com/embed?v=$1" allowfullscreen></iframe>');
     return text;
   }
   function poor(text) {
@@ -291,6 +293,8 @@ var BBC = (function() {
     while (i--) {
       text = text.replace(new RegExp('<img class="emoticon" src="/emoticons/' + emoticons[i] + '.png">', 'g'), ':' + emoticons[i] + ':');
     }
+		text = text.replace(/<iframe class="embed" src="\/embed\/([0-9+])" allowfullscreen><\/iframe>/, '[$1]');
+    text = text.replace(/<iframe class="embed" src="https:\/\/www.youtube.come\/embed?v=([^&"]+)[^"]*" allowfullscreen><\/iframe>/, '[yt$1]');
     return text;
   }
   function initEditable(holder, content, short) {
@@ -1620,7 +1624,15 @@ $(document).on('click', '.slider-toggle', function(e) {
   if (me.hasClass('loadable') && !me.hasClass('loaded')) {
     me.addClass('loaded');
     ajax(me.attr('data-url'), function(json) {
-      holder.html(json.content);
+      holder[0].innerHTML = json.content;
+			holder.find('script').each(function() {
+				var cs = document.createElement('SCRIPT');
+				cs.textContent = '(function(){' + this.innerText + '}).apply({})';
+				cs.onload = cs.onerror = function() {
+					cs.parentNode.removeChild(cs);
+				};
+				document.head.appendChild(cs);
+			});
       slideOut(holder);
     });
   } else {

@@ -2,6 +2,8 @@ class EmbedController < ActionController::Base
   # Prevent CSRF attacks by raising an exception.
   # For APIs, you may want to use :null_session instead.
   protect_from_forgery with: :exception
+  after_action :allow_embeds
+  
   def view
     if @video = Video.where(id: params[:id].split(/-/)[0]).first
       @user = @video.user
@@ -19,5 +21,10 @@ class EmbedController < ActionController::Base
         @next_video = @album.get_next(current_user, @index)
       end
     end
+  end
+  
+  private
+  def allow_embeds
+    response.headers.except! 'X-Frame-Options'
   end
 end
