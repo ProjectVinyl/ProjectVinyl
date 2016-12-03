@@ -6,7 +6,11 @@
 		<link type="text/css" href="/css/font-awesome.min.css" rel="stylesheet" />
 		<link type="text/css" href="/css/videos.css?<%= assets_version %>" rel="stylesheet" />
 		<link type="text/css" href="/css/embed.css?<%= assets_version %>" rel="stylesheet" />
+		<% if Rails.env.development? %>
+		<script src="/js/jquery-1.8.3.min.js" id="jquery"></script>
+		<% else %>
 		<script src="https://code.jquery.com/jquery-1.8.3.min.js" id="jquery" ></script>
+		<% end %>
 	</head>
 	<body class="embed">
 		<% if !@video || @video.hidden %>

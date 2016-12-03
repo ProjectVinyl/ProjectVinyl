@@ -6,7 +6,11 @@
 	<link type="text/css" href="/css/font-awesome.min.css" rel="stylesheet" />
 	<link type="text/css" href="/css/base.css?<%= assets_version %>" rel="stylesheet" />
 	<link type="text/css" href="/css/videos.css?<%= assets_version %>" rel="stylesheet" />
+	<% if Rails.env.development? %>
+	<script src="/js/jquery-1.8.3.min.js" id="jquery"></script>
+	<% else %>
 	<script src="https://code.jquery.com/jquery-1.8.3.min.js" id="jquery" ></script>
+	<% end %>
 	<%= csrf_meta_tags %>
 	<script>var emoticons = <%= raw emoticons %><% if user_signed_in? %>,current_user = {id:<%= current_user.id %>}<% end %>;</script>
 	<%= content_for(:metadata) %>
@@ -103,7 +107,7 @@
 				</div>
 				<div id="search">
 					<form action="/search" method="get">
-						<input type="text" name="tagquery" placeholder="Tag Search"></input>
+						<input type="search" name="tagquery" placeholder="Tag Search"></input>
 						<label class="select">
 							<select name="type">
 								<option value="0">Song</option>
