@@ -123,7 +123,6 @@ $(document).ready(function() {
   function validateInput() {
     tit = $('#video_title input').val();
     if (!tit || tit == '') return notify('You need to provide a title.');
-		console.log(needs_cover);
     if (needs_cover && !has_cover) return notify('Audio files require a cover image.');
     var tags = $('.tag-editor')[0].getActiveTagsArray();
     var src = $('#video_source').val();
