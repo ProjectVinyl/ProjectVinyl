@@ -607,7 +607,7 @@ var initFileSelect = (function() {
       });
     }
 		function createDisplayTagItem(name) {
-			norm.append('<li class="tag tag-' + namespace(name) + '" data-slug="' + name + '">\
+			norm.append('<li class="tag tag-' + namespace(name) + ' drop-down-holder popper" data-slug="' + name + '">\
 				<a href="/tags/' + name + '"><span>' + name + '</span></a>\
 				<ul class="drop-down pop-out">\
 					<li class="action toggle" data-family="tag-flags" data-action="hide" data-target="tag" data-id="' + name + '">\
@@ -918,7 +918,7 @@ $(document).on('click', '.state-toggle', function(ev) {
     var state = sender.attr('data-state');
     ajax.post(action, function(json) {
       if (family) {
-        $('.action.toggle[data-family=' + family + '][data-id=' + id + ']').each(function() {
+        $('.action.toggle[data-family="' + family + '"][data-id="' + id + '"]').each(function() {
           var me = $(this);
           var uncheck = me.attr('data-unchecked-icon');
           var check = me.attr('data-checked-icon') || 'check';
