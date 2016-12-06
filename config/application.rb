@@ -37,5 +37,7 @@ module Projectvinyl
     
     # F***n' rails
     config.autoload_paths += %W(#{config.root}/lib)
+    
+    config.active_support.escape_html_entities_in_json = false
   end
 end

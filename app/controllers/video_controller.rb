@@ -38,7 +38,8 @@ class VideoController < ApplicationController
       url: url_for(action: "view", controller: "video", id: @video.id, only_path: false) + "-" + (@video.safe_title || "untitled-video"),
       embed_url: url_for(action: "view", controller: "embed", only_path: false, id: @video.id),
       cover: url_for(action: "cover", controller: "imgs", only_path: false, id: @video.id) + ".png",
-      tags: @tags
+      tags: @tags,
+      oembed: @album ? {list: @album.id, index: @index} : {}
     }
     @user = @video.user
     @thread = @video.comment_thread

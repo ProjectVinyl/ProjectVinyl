@@ -104,6 +104,9 @@ class GenreController < ApplicationController
   
   def hide
     if user_signed_in?
+      if params[:id].to_i.to_s != params[:id]
+        params[:id] = Tag.where(name: params[:id]).first.id
+      end
       if (!subscription = TagSubscription.where(user_id: current_user.id, tag_id: params[:id]).first)
         subscription = TagSubscription.create(user_id: current_user.id, tag_id: params[:id], hide: false, spoiler: false, watch: false)
       end
@@ -118,6 +121,9 @@ class GenreController < ApplicationController
   
   def spoiler
     if user_signed_in?
+      if params[:id].to_i.to_s != params[:id]
+        params[:id] = Tag.where(name: params[:id]).first.id
+      end
       if (!subscription = TagSubscription.where(user_id: current_user.id, tag_id: params[:id]).first)
         subscription = TagSubscription.create(user_id: current_user.id, tag_id: params[:id], hide: false, spoiler: false, watch: false)
       end
@@ -132,6 +138,9 @@ class GenreController < ApplicationController
   
   def watch
     if user_signed_in?
+      if params[:id].to_i.to_s != params[:id]
+        params[:id] = Tag.where(name: params[:id]).first.id
+      end
       if (!subscription = TagSubscription.where(user_id: current_user.id, tag_id: params[:id]).first)
         subscription = TagSubscription.create(user_id: current_user.id, tag_id: params[:id], hide: false, spoiler: false, watch: false)
       end

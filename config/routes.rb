@@ -59,6 +59,7 @@ Rails.application.routes.draw do
   get 'video/edit/:id' => 'video#edit'
   
   get 'embed/:id' => 'embed#view'
+  get 'oembed' => 'embed#oembed'
   get 'download/:id' => 'video#download'
   
   get 'ajax/view/:id' => 'video#go_next'

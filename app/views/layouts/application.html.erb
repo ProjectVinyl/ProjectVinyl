@@ -11,8 +11,9 @@
 	<% else %>
 	<script src="https://code.jquery.com/jquery-1.8.3.min.js" id="jquery" ></script>
 	<% end %>
-	<%= csrf_meta_tags %>
 	<script>var emoticons = <%= raw emoticons %><% if user_signed_in? %>,current_user = {id:<%= current_user.id %>}<% end %>;</script>
+	<%= csrf_meta_tags %>
+	<meta name="theme-color" value="#a66ebe" >
 	<%= content_for(:metadata) %>
 </head>
 <body>

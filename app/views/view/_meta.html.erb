@@ -37,3 +37,7 @@
 <meta name="twitter:player:width" content="<%= width %>">
 <meta name="twitter:player:height" content="<%= height %>">
 <meta name="attribution" content="Alloy/">
+<% if oembed %>
+<link rel="alternate" type="application/json+oembed" href="/oembed?<%= {format: 'json', url: url + '?' + oembed.to_param}.to_param %>" title="<%= title %>">
+<link rel="alternate" type="application/xml+oembed" href="/oembed?<%= {format: 'xml', url: url + '?' + oembed.to_param}.to_param %>" title="<%= title %>">
+<% end %>
