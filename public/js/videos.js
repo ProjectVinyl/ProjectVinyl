@@ -373,7 +373,7 @@ function Player() {}
       });
       this.dom.playlist.on('click', '.items a, #playlist_next, #playlist_prev', function(ev) {
         var next = $(this);
-        ajax.get(next.attr('href'), function(json) {
+        ajax.get('view' + next.attr('href'), function(json) {
           me.redirect = next.attr('href');
           me.loadAttributesAndRestart(json);
           if (json.next) {
@@ -534,7 +534,7 @@ function Player() {}
             var next = $('#playlist_next');
             if (next.length) {
               if (Player.fullscreenPlayer == me || me.album) {
-                ajax.get(next.attr('href'), function(json) {
+                ajax.get('view' + next.attr('href'), function(json) {
                   me.redirect = next.attr('href');
                   me.loadAttributesAndRestart(json);
                   if (json.next) {

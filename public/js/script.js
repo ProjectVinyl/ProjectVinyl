@@ -92,10 +92,11 @@ $(window).ready(function () {
 var ajax = (function() {
   var token = $('meta[name=csrf-token]').attr('content');
   function request(method, resource, callback, data, direct) {
+		while (resource.indexOf('/') == 0) resource = resource.substring(1, resource.length);
     $.ajax({
       type: method,
       datatype: 'text',
-      url: resource,
+      url: '/ajax/' + resource,
       success: direct ? callback : function(xml, type, ev) {
         callback(ev.status == 204 ? {} : JSON.parse(ev.responseText), ev.status);
       },
@@ -106,7 +107,7 @@ var ajax = (function() {
     });
   }
   function result(resource, callback, direct) {
-    request('GET', '/ajax/' + resource, callback, {}, direct);
+    request('GET', resource, callback, {}, direct);
   }
   function auth(data) {
     if (!data) data = {};
@@ -199,7 +200,7 @@ var ajax = (function() {
     });
   };
   result.post = function(resource, callback, direct, data) {
-    request('POST', '/ajax/' + resource, callback, auth(data), direct);
+    request('POST', resource, callback, auth(data), direct);
   };
   result.delete = function(resource, callback, direct) {
     request('DELETE', resource, callback, {
@@ -207,7 +208,7 @@ var ajax = (function() {
     }, direct);
   };
   result.get = function(resource, callback, data, direct) {
-    request('GET', '/ajax/' + resource, callback, data, direct);
+    request('GET', resource, callback, data, direct);
   };
   return result;
 })();
@@ -568,7 +569,12 @@ var initFileSelect = (function() {
         createTagItem(tags[i]);
       }
     }
-    
+		
+		var norm = null;
+		if (me.parent().hasClass('editing')) {
+			norm = me.parent().parent().find('.normal');
+		}
+		
     value.val(tags.join(','));
     list.find('.remove').on('click', function() {
       removeTag($(this).parent(), $(this).attr('data-name'));
@@ -594,12 +600,34 @@ var initFileSelect = (function() {
       return '';
     }
     function createTagItem(name) {
-      var item = $('<li class="tag tag-' + namespace(name) + '" data-name="' + name + '"><i title="Remove Tag" class="fa fa-times remove"></i><a href="/tags/' + name + '">' + name + '</a></li>');
+      var item = $('<li class="tag tag-' + namespace(name) + '"><i title="Remove Tag" data-name="' + name + '" class="fa fa-times remove"></i><a href="/tags/' + name + '">' + name + '</a></li>');
       list.append(item);
       item.find('.remove').on('click', function() {
         removeTag(item, name);
       });
     }
+		function createDisplayTagItem(name) {
+			norm.append('<li class="tag tag-' + namespace(name) + '" data-slug="' + name + '">\
+				<a href="/tags/' + name + '"><span>' + name + '</span></a>\
+				<ul class="drop-down pop-out">\
+					<li class="action toggle" data-family="tag-flags" data-action="hide" data-target="tag" data-id="' + name + '">\
+						<span class="icon">\
+						</span>\
+							<span class="label">Hide</span>\
+					</li>\
+					<li class="action toggle" data-family="tag-flags" data-action="spoiler" data-target="tag" data-id="' + name + '">\
+						<span class="icon">\
+						</span>\
+							<span class="label">Spoiler</span>\
+					</li>\
+					<li class="action toggle" data-family="tag-flags" data-action="watch" data-target="tag" data-id="' + name + '">\
+						<span class="icon">\
+						</span>\
+							<span class="label">Watch</span>\
+					</li>\
+				</ul>\
+			</li>');
+		}
     function removeTag(self, name) {
       dropTag(self, name);
       history.unshift({type: -1, tag: name});
@@ -623,8 +651,14 @@ var initFileSelect = (function() {
     }
     function save() {
       me.trigger('tagschange');
+			if (norm) {
+				norm.html('');
+				for (var i = 0; i < tags.length; i++) {
+					createDisplayTagItem(tags[i]);
+				}
+			}
       if (target && id) {
-        ajax.post('update/' + target, function() {
+        ajax.post('update/' + target, function(response) {
           
         }, true, {
           id: id,
