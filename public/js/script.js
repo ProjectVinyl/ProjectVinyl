@@ -1087,7 +1087,7 @@ var Popup = (function() {
     this.container.on('click mousedown mousup', function() {
       me.focus();
     });
-    this.dom.find('.close').on('click', function() {
+    this.dom.find('.close').on('click touchend', function() {
       me.close();
     });
     this.dom.find('h1').on('mousedown', function(ev) {
@@ -1095,6 +1095,13 @@ var Popup = (function() {
       ev.preventDefault();
       ev.stopPropagation();
     });
+		this.dom.find('h1').on('touchstart', function(ev) {
+			var x = ev.originalEvent.touches[0].pageX || 0;
+			var y = ev.originalEvent.touches[0].pageY || 0;
+      me.touchgrab(x, y);
+      ev.preventDefault();
+      ev.stopPropagation();
+		});
     if (construct) construct.apply(this);
     return this;
   }
@@ -1198,9 +1205,24 @@ var Popup = (function() {
         me.release();
       });
     },
+    touchgrab: function(x, y) {
+      var me = this;
+      var offX = x - this.container.offset().left;
+      var offY = y - this.container.offset().top;
+      this.dragging = function(ev) {
+				var x = ev.originalEvent.touches[0].pageX || 0;
+				var y = ev.originalEvent.touches[0].pageY || 0;
+        me.move(x - offX, y - offY);
+      };
+      this.focus();
+      $(document).on('touchmove', this.dragging);
+      $(document).one('touchend', function() {
+        me.release();
+      });
+    },
     release: function() {
       if (this.dragging) {
-        $(document).off('mousemove', this.dragging);
+        $(document).off('mousemove touchmove', this.dragging);
         this.dragging = null;
       }
     },
@@ -1213,10 +1235,10 @@ var Popup = (function() {
         scrollX = 0;
         scrollY = 0;
       }
-      if (y < 0) y = 0;
-      if (x < 0) x = 0;
       if (x > $(window).width() - this.container.width() + scrollX) x = $(window).width() - this.container.width() + scrollX;
       if (y > $(window).height() - this.container.height() + scrollY) y = $(window).height() - this.container.height() + scrollY;
+      if (y < 0) y = 0;
+      if (x < 0) x = 0;
       this.container.css({top: this.y = y, left: this.x = x});
     },
     setFixed: function() {
@@ -1254,7 +1276,7 @@ var paginator = (function() {
     var index = page > 4 ? page - 4 : 0;
     var id = context.attr('data-id');
     context.find('.pages .button').each(function() {
-      if (index >= page + 4 || index > pages) {
+      if (index > page + 4 || index > pages) {
         $(this).remove();
       } else {
         $(this).attr('data-page-to', index).attr('href', '#/' + id + '/' + (index + 1)).text(index + 1);
