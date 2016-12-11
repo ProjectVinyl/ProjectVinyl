@@ -92,11 +92,10 @@ $(window).ready(function () {
 var ajax = (function() {
   var token = $('meta[name=csrf-token]').attr('content');
   function request(method, resource, callback, data, direct) {
-		while (resource.indexOf('/') == 0) resource = resource.substring(1, resource.length);
     $.ajax({
       type: method,
       datatype: 'text',
-      url: '/ajax/' + resource,
+      url: resource,
       success: direct ? callback : function(xml, type, ev) {
         callback(ev.status == 204 ? {} : JSON.parse(ev.responseText), ev.status);
       },
@@ -107,7 +106,7 @@ var ajax = (function() {
     });
   }
   function result(resource, callback, direct) {
-    request('GET', resource, callback, {}, direct);
+    result.get(resource, callback, {}, direct);
   }
   function auth(data) {
     if (!data) data = {};
@@ -200,7 +199,8 @@ var ajax = (function() {
     });
   };
   result.post = function(resource, callback, direct, data) {
-    request('POST', resource, callback, auth(data), direct);
+		while (resource.indexOf('/') == 0) resource = resource.substring(1, resource.length);
+    request('POST', '/ajax/' + resource, callback, auth(data), direct);
   };
   result.delete = function(resource, callback, direct) {
     request('DELETE', resource, callback, {
@@ -208,7 +208,8 @@ var ajax = (function() {
     }, direct);
   };
   result.get = function(resource, callback, data, direct) {
-    request('GET', resource, callback, data, direct);
+		while (resource.indexOf('/') == 0) resource = resource.substring(1, resource.length);
+    request('GET', '/ajax/' + resource, callback, data, direct);
   };
   return result;
 })();
