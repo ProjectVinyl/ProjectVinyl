@@ -15,10 +15,10 @@ Devise.setup do |config|
   config.mailer_sender = 'support@projectvinyl.net'
 
   # Configure the class responsible to send e-mails.
-  # config.mailer = 'Devise::Mailer'
+  config.mailer = 'Devise::Mailer'
 
   # Configure the parent class responsible to send e-mails.
-  # config.parent_mailer = 'ActionMailer::Base'
+  config.parent_mailer = 'ActionMailer::Base'
 
   # ==> ORM configuration
   # Load and configure the ORM. Supports :active_record (default) and
@@ -242,6 +242,9 @@ Devise.setup do |config|
   # Add a new OmniAuth provider. Check the wiki for more information on setting
   # up on your models and hooks.
   # config.omniauth :github, 'APP_ID', 'APP_SECRET', scope: 'user,public_repo'
+  
+  require 'Poniverse'
+  config.omniauth :poniverse, 'APP_ID', 'APP_SECRET', scope: 'basic'
 
   # ==> Warden configuration
   # If you want to use other strategies, that are not supported by Devise, or
@@ -249,7 +252,7 @@ Devise.setup do |config|
   #
   # config.warden do |manager|
   #   manager.intercept_401 = false
-  #   manager.default_strategies(scope: :user).unshift :some_external_strategy
+  #   manager.default_strategies(scope: :user).unshift some_external_strategy
   # end
 
   # ==> Mountable engine configurations

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161116140533) do
+ActiveRecord::Schema.define(version: 20161210190852) do
 
   create_table "album_items", force: :cascade do |t|
     t.integer  "album_id",   limit: 4
@@ -219,8 +219,15 @@ ActiveRecord::Schema.define(version: 20161116140533) do
     t.integer  "feed_count",             limit: 4,     default: 0
     t.integer  "role",                   limit: 4,     default: 0
     t.string   "preferences",            limit: 255
+    t.string   "uid",                    limit: 255
+    t.string   "provider",               limit: 255
+    t.string   "confirmation_token",     limit: 255
+    t.datetime "confirmed_at"
+    t.datetime "confirmation_sent_at"
+    t.string   "unconfirmed_email",      limit: 255
   end
 
+  add_index "users", ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true, using: :btree
   add_index "users", ["email"], name: "index_users_on_email", unique: true, using: :btree
   add_index "users", ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true, using: :btree
   add_index "users", ["tag_id"], name: "index_users_on_tag_id", using: :btree

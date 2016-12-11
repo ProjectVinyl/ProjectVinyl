@@ -75,14 +75,12 @@ end
 
 class User < ActiveRecord::Base
   # Include default devise modules. Others available are:
-  # :confirmable, :lockable, :timeoutable and :omniauthable
+  # , :lockable and :timeoutable
   devise :database_authenticatable, :registerable,
-         :recoverable, :rememberable, :trackable, :validatable, :authentication_keys => [:login]
+         :recoverable, :rememberable, :trackable, :validatable, :omniauthable, :confirmable,
+         :authentication_keys => [:login],
+         :omniauth_providers => [:poniverse]
   include Roleable
-  
-  def self.with_badges
-    includes(user_badges: [:badge])
-  end
   
   prefs :preferences, :subscribe_on_reply => true, :subscribe_on_thread => true, :subscribe_on_upload => true
   
@@ -139,6 +137,24 @@ class User < ActiveRecord::Base
     @login || self.username || self.email
   end
   
+  def self.from_omniauth(auth)
+    if user = where('provider = ? AND uid = ?', auth.provider, auth.uid).first
+      return user
+    end
+    if user = where('provider IS NULL AND uid IS NULL AND unconfirmed_email IS NULL AND email = ?', auth.info.email).first
+      result.provider = auth.provider
+      result.uid = auth.uid
+      result.save
+      return result
+    end
+    username = auth.info.nickname
+    username_count = where('username LIKE ?', username + '%').count
+    if username_count > 0
+      username = username + '#' + (username_count + 1).to_s
+    end
+    create(provider: auth.provider, uid: auth.uid, email: auth.info.email, username: username, password: Devise.friendly_token[0,20], confirmed_at: Time.now)
+  end
+  
   def active_for_authentication?
     super && !self.banned?
   end
@@ -158,6 +174,10 @@ class User < ActiveRecord::Base
       return false
     end
     return name.gsub(SANITIZE, '').length > 0
+  end
+  
+  def self.with_badges
+    includes(user_badges: [:badge])
   end
   
   def self.dummy(id)
@@ -329,6 +349,9 @@ class User < ActiveRecord::Base
   end
   
   def avatar
+    if !self.mime
+      return Gravatar.avatar_for(self.email, s: 800, d: 'http://www.projectvinyl.net/images/default-avatar.png', r: 'pg')
+    end
     return '/avatar/' + self.id.to_s
   end
   

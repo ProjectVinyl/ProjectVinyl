@@ -1,7 +1,7 @@
 Rails.application.routes.draw do
-  devise_for :users
+  devise_for :users, :controllers => { :omniauth_callbacks => 'callbacks'}
   put 'users/prefs' => 'artist#update_prefs'
-  
+  get 'auth/:provider/callback' => 'sessions#create'
   
   get 'stars' => 'album#starred'
   get 'search' => 'search#index'
