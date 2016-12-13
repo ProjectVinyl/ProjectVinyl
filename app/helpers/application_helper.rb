@@ -99,7 +99,7 @@ module ApplicationHelper
            styles: %w(max-width))
     text = text.gsub(/\[([0-9]+)\]/, '<iframe class="embed" src="/embed/\1" allowfullscreen></iframe>')
     text.scan(/\[yt([^\]]+)\]/) do |match|
-      text = text.sub('[yt' + match[0] + ']', '<iframe class="embed" src="https://www.youtube.com/embed?v=' + Youtube.video_id(match[0]) + '" allowfullscreen></iframe>')
+      text = text.sub('[yt' + match[0] + ']', '<iframe class="embed" src="https://www.youtube.com/embed/' + Youtube.video_id(match[0]) + '" allowfullscreen></iframe>')
     end
     return text
   end
@@ -118,7 +118,7 @@ module ApplicationHelper
       text = text.gsub(/<img class="emoticon" src="\/emoticons\/#{x}">:/,':' + x + ':">')
     }
     text = text.gsub(/<iframe class="embed" src="\/embed\/([0-9+])" allowfullscreen><\/iframe>/, '[\1]')
-    text = text.gsub(/<iframe class="embed" src="https:\/\/www.youtube.come\/embed?v=([^&"]+)[^"]*" allowfullscreen><\/iframe>/, '[yt\1]')
+    text = text.gsub(/<iframe class="embed" src="https:\/\/www.youtube.come\/embed\/([^&"]+)[^"]*" allowfullscreen><\/iframe>/, '[yt\1]')
     text.gsub(/</, '&lt;').gsub(/>/, '&gt;')
   end
   
