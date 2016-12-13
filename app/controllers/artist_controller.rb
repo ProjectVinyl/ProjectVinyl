@@ -19,8 +19,8 @@ class ArtistController < ApplicationController
   def update
     input = params[:user]
     if user_signed_in?
-      if current_user.is_contributor? && params[:user_id]
-        user = User.where(id: params[:user_id]).first
+      if current_user.is_contributor? && params[:user][:id]
+        user = User.where(id: params[:user][:id]).first
       else
         user = current_user
       end
@@ -76,8 +76,8 @@ class ArtistController < ApplicationController
   def setavatar
     input = params[:user]
     if user_signed_in?
-      if current_user.is_staff? && params[:user_id]
-        user = User.where(id: params[:user_id]).first
+      if current_user.is_staff? && params[:user][:id]
+        user = User.where(id: params[:user][:id]).first
       elsif
         user = current_user
       end

@@ -10,6 +10,7 @@
 		</td>
 		<td class="field center">
 		<%= form_for(user, as: "user", url: "/ajax/avatar/upload", "html": { "class": "async" }) do |f| %>
+			<%= f.text_field :id, hidden: true %>
 			<div id="avatar-upload" class="avatar file-select image-selector uploaded-preview" data-type="image">
 				<span class="preview" style="background-image: url('<%= user.avatar %>');"></span>
 				<span class="drop-icon" style="box-shadow: none;">
@@ -44,6 +45,7 @@ $('#avatar-upload').on('accept', function(e, file) {
 	</tr>
 </table>
 <%= form_for(user, as: "user", url: url) do |f| %>
+	<%= f.text_field :id, hidden: true %>
 <table>
 	<tr class="section">
 		<td colspan="2">
@@ -69,6 +71,16 @@ $('#avatar-upload').on('accept', function(e, file) {
 		</td>
 	</tr>
 	<% end %>
+	<tr>		
+		<td class="label">
+		<%= f.label "Description" %>
+		</td>
+		<td class="field">
+		<%= render layout: '/thread/description_box' do %>
+			<%= f.text_area :description, class: "comment-content" %>
+		<% end %>
+		</td>
+	</tr>
 	<tr>		
 		<td class="label">
 		<%= f.label "Short Bio" %>
