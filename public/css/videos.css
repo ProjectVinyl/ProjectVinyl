@@ -51,6 +51,12 @@ ul.horizontal > li + li {
   text-indent: 3px;
   opacity: 0.6;
 }
+.video:not(.unplayable) .player.paused::after {
+  content: "\f04c";
+}
+.video:not(.unplayable) .player.paused.stopped::after {
+  content: "\f01e";
+}
 .video:not(:hover) .player.error::after,
 .video:not(.unplayable) .player.playing::after {
   cursor: default;
