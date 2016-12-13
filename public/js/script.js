@@ -181,7 +181,11 @@ var ajax = (function() {
         }, 1000);
         form.addClass('uploading');
       },
-      success: callbacks.success || function (data) {
+      success: function (data) {
+				if (callbacks.success) {
+					form.removeClass('waiting');
+					return callbacks.success.apply(this, arguments);
+				}
         if (timer) clearInterval(timer);
         if (data.ref) {
           document.location.href = data.ref;
@@ -280,7 +284,7 @@ var BBC = (function() {
       text = text.replace(new RegExp(':' + emoticons[i] + ':', 'g'), '<img class="emoticon" src="/emoticons/' + emoticons[i] + '.png">');
     }
 		text = text.replace(/\[([0-9]+)\]/, '<iframe class="embed" src="/embed/$1" allowfullscreen></iframe>');
-		text = text.replace(/\[yt([^\]]+)\]/, '<iframe class="embed" src="https://www.youtube.com/embed?v=$1" allowfullscreen></iframe>');
+		text = text.replace(/\[yt([^\]]+)\]/, '<iframe class="embed" src="https://www.youtube.com/embed/$1" allowfullscreen></iframe>');
     return text;
   }
   function poor(text) {
@@ -296,7 +300,7 @@ var BBC = (function() {
       text = text.replace(new RegExp('<img class="emoticon" src="/emoticons/' + emoticons[i] + '.png">', 'g'), ':' + emoticons[i] + ':');
     }
 		text = text.replace(/<iframe class="embed" src="\/embed\/([0-9+])" allowfullscreen><\/iframe>/, '[$1]');
-    text = text.replace(/<iframe class="embed" src="https:\/\/www.youtube.come\/embed?v=([^&"]+)[^"]*" allowfullscreen><\/iframe>/, '[yt$1]');
+    text = text.replace(/<iframe class="embed" src="https:\/\/www.youtube.come\/embed\/([^&"]+)[^"]*" allowfullscreen><\/iframe>/, '[yt$1]');
     return text;
   }
   function initEditable(holder, content, short) {
