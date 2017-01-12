@@ -1,4 +1,4 @@
-source 'https://rubygems.org'
+source 'http://rubygems.org'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '4.2.6'
@@ -44,6 +44,16 @@ end
 
 # User sign-in/sign-out
 gem 'devise'
+
+# OAuth support with OmniAuth
+#gem 'omniauth'
+#gem 'omniauth-oauth2'
+
+#gem 'omniauth-twitter'
+#gem 'omniauth-facebook'
+#gem 'omniauth-google'
+#gem 'omniauth-amazon'
+#gem 'omniauth-github'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
