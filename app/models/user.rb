@@ -75,9 +75,9 @@ end
 
 class User < ActiveRecord::Base
   # Include default devise modules. Others available are:
-  # :omniauth_providers, :lockable and :timeoutable
+  # :omniauth_providers, :omniauthable, :lockable and :timeoutable
   devise :database_authenticatable, :registerable,
-         :recoverable, :rememberable, :trackable, :validatable, :omniauthable, :confirmable,
+         :recoverable, :rememberable, :trackable, :validatable, :confirmable,
          :authentication_keys => [:login]
   include Roleable
   
