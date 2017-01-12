@@ -1,6 +1,5 @@
 class VideoProcessor
   @@required_worker_count = 2
-  @@semaphore = Mutex.new
   
   def self.status
     workers = ProcessingWorker.all
