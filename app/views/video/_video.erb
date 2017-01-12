@@ -199,8 +199,7 @@
 						</p>
 						BBCode
 						<p>
-							<textarea rows="2">[url=http://wwww.projectvinyl.net/<%= @video.id %>][img]http://www.projectvinyl.net/cover/<%= @video.id %>-small.png[/img]
-							<%= @video.title %>[/url]</textarea>
+							<textarea rows="2">[url=http://wwww.projectvinyl.net/<%= @video.id %>][img]http://www.projectvinyl.net/cover/<%= @video.id %>-small.png[/img]<%= @video.title.strip %>[/url]</textarea>
 						</p>
 					</td>
 				</tr>
