@@ -75,11 +75,10 @@ end
 
 class User < ActiveRecord::Base
   # Include default devise modules. Others available are:
-  # , :lockable and :timeoutable
+  # :omniauth_providers, :lockable and :timeoutable
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :trackable, :validatable, :omniauthable, :confirmable,
-         :authentication_keys => [:login],
-         :omniauth_providers => [:poniverse]
+         :authentication_keys => [:login]
   include Roleable
   
   prefs :preferences, :subscribe_on_reply => true, :subscribe_on_thread => true, :subscribe_on_upload => true
@@ -135,24 +134,6 @@ class User < ActiveRecord::Base
   
   def login
     @login || self.username || self.email
-  end
-  
-  def self.from_omniauth(auth)
-    if user = where('provider = ? AND uid = ?', auth.provider, auth.uid).first
-      return user
-    end
-    if user = where('provider IS NULL AND uid IS NULL AND unconfirmed_email IS NULL AND email = ?', auth.info.email).first
-      result.provider = auth.provider
-      result.uid = auth.uid
-      result.save
-      return result
-    end
-    username = auth.info.nickname
-    username_count = where('username LIKE ?', username + '%').count
-    if username_count > 0
-      username = username + '#' + (username_count + 1).to_s
-    end
-    create(provider: auth.provider, uid: auth.uid, email: auth.info.email, username: username, password: Devise.friendly_token[0,20], confirmed_at: Time.now)
   end
   
   def active_for_authentication?
