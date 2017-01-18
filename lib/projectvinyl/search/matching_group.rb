@@ -104,7 +104,7 @@ module ProjectVinyl
       
       def take_param(type, op, opset)
         if op == Op::TITLE
-          self.absorb_param(@title_queries, opset, "Title", type != 'user')
+          self.absorb_param(@title_queries, opset, "Title")
         elsif op == Op::UPLOADER
           self.absorb_param_if(@user_queries, opset, "Uploader", type != 'user')
         elsif op == Op::SOURCE
