@@ -8,6 +8,8 @@ class Comment < ActiveRecord::Base
   
   has_many :comment_replies, dependent: :destroy
   has_many :mentions, class_name: "CommentReply", foreign_key: "comment_id"
+  has_many :likes, class_name: "CommentVote", foreign_key: "comment_id"
+  
   
   def self.Finder
     return Comment.where(hidden: false).includes(:direct_user, :mentions)
@@ -85,5 +87,27 @@ class Comment < ActiveRecord::Base
   
   def self.decode_open_id(s)
     return s.to_i(36)
+  end
+  
+  def isUpvotedBy(user)
+    if user
+      return self.likes.where(user_id: user.id).limit(1).length > 0
+    end
+    return false
+  end
+  
+  def upvote(user, incr)
+    incr = incr.to_i
+    vote = self.likes.where(user_id: user.id).first
+    if vote.nil? && incr > 0
+      vote = self.likes.create(user_id: user.id)
+    else
+      if incr < 0
+        vote.destroy
+      end
+    end
+    self.score = self.likes.count
+    self.save
+    return self.score
   end
 end

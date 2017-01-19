@@ -46,8 +46,7 @@ class AjaxController < ApplicationController
   def upvote
     if user_signed_in?
       if video = Video.where(id: params[:id]).first
-        render json: { :count => video.upvote(current_user, params[:incr]) }
-        return
+        return render json: { :count => video.upvote(current_user, params[:incr]) }
       end
     end
     render status: 401, nothing: true
@@ -56,8 +55,7 @@ class AjaxController < ApplicationController
   def downvote
     if user_signed_in?
       if video = Video.where(id: params[:id]).first
-        render json: { :count => video.downvote(current_user, params[:incr]) }
-        return
+        return render json: { :count => video.downvote(current_user, params[:incr]) }
       end
     end
     render status: 401, nothing: true
@@ -66,8 +64,16 @@ class AjaxController < ApplicationController
   def star
     if user_signed_in?
       if video = Video.where(id: params[:id]).first
-        render json: { :added => video.star(current_user) }
-        return
+        return render json: { :added => video.star(current_user) }
+      end
+    end
+    render status: 401, nothing: true
+  end
+  
+  def like
+    if user_signed_in?
+      if comment = Comment.where(id: params[:id]).first
+        return render json: { :added => comment.upvote(current_user, params[:incr]) }
       end
     end
     render status: 401, nothing: true

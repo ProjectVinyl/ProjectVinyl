@@ -158,6 +158,7 @@ Rails.application.routes.draw do
   post 'ajax/comments/new' => 'thread#post_comment'
   post 'ajax/comments/delete/:id' => 'thread#remove_comment'
   post 'ajax/comments/edit' => 'thread#edit_comment'
+  post 'ajax/comments/like/:id(/:incr)' => 'ajax#like'
   get 'ajax/comments/get' => 'thread#get_comment'
   get 'ajax/comments/:thread_id/:order' => 'thread#page'
   

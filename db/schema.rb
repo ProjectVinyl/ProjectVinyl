@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161210190852) do
+ActiveRecord::Schema.define(version: 20170119132116) do
 
   create_table "album_items", force: :cascade do |t|
     t.integer  "album_id",   limit: 4
@@ -26,14 +26,14 @@ ActiveRecord::Schema.define(version: 20161210190852) do
   add_index "album_items", ["video_id"], name: "index_album_items_on_video_id", using: :btree
 
   create_table "albums", force: :cascade do |t|
-    t.string   "title",            limit: 255
+    t.string   "title",            limit: 340
     t.text     "description",      limit: 65535
     t.datetime "created_at",                                     null: false
     t.datetime "updated_at",                                     null: false
     t.integer  "user_id",          limit: 4
     t.integer  "featured",         limit: 4,     default: 0
     t.boolean  "hidden",                         default: false
-    t.string   "safe_title",       limit: 255
+    t.string   "safe_title",       limit: 340
     t.text     "html_description", limit: 65535
     t.boolean  "reverse_ordering",               default: false
     t.integer  "ordering",         limit: 4,     default: 0
@@ -65,7 +65,7 @@ ActiveRecord::Schema.define(version: 20161210190852) do
   end
 
   create_table "comment_threads", force: :cascade do |t|
-    t.string   "title",          limit: 255, default: ""
+    t.string   "title",          limit: 340
     t.integer  "user_id",        limit: 4
     t.datetime "created_at",                                 null: false
     t.datetime "updated_at",                                 null: false
@@ -74,10 +74,17 @@ ActiveRecord::Schema.define(version: 20161210190852) do
     t.boolean  "locked",                     default: false
     t.boolean  "pinned",                     default: false
     t.integer  "total_comments", limit: 4,   default: 0
-    t.string   "safe_title",     limit: 255
+    t.string   "safe_title",     limit: 340
   end
 
   add_index "comment_threads", ["owner_type", "owner_id"], name: "index_comment_threads_on_owner_type_and_owner_id", using: :btree
+
+  create_table "comment_votes", force: :cascade do |t|
+    t.integer  "user_id",    limit: 4
+    t.integer  "comment_id", limit: 4
+    t.datetime "created_at",           null: false
+    t.datetime "updated_at",           null: false
+  end
 
   create_table "comments", force: :cascade do |t|
     t.integer  "user_id",             limit: 4
@@ -88,10 +95,11 @@ ActiveRecord::Schema.define(version: 20161210190852) do
     t.datetime "updated_at",                                        null: false
     t.boolean  "hidden",                            default: false
     t.integer  "o_comment_thread_id", limit: 4,     default: 0
+    t.integer  "score",               limit: 4
   end
 
   create_table "notifications", force: :cascade do |t|
-    t.string   "message",    limit: 255
+    t.string   "message",    limit: 340
     t.string   "source",     limit: 255
     t.integer  "user_id",    limit: 4
     t.string   "sender",     limit: 255
@@ -122,21 +130,21 @@ ActiveRecord::Schema.define(version: 20161210190852) do
   create_table "reports", force: :cascade do |t|
     t.integer  "comment_thread_id",       limit: 4
     t.integer  "user_id",                 limit: 4
-    t.string   "first",                   limit: 255
-    t.string   "source",                  limit: 255
+    t.string   "first",                   limit: 340
+    t.string   "source",                  limit: 340
     t.boolean  "content_type_unrelated"
     t.boolean  "content_type_offensive"
     t.boolean  "content_type_disturbing"
     t.boolean  "content_type_explicit"
-    t.string   "copyright_holder",        limit: 255
+    t.string   "copyright_holder",        limit: 340
     t.text     "copyright_usage",         limit: 65535
     t.boolean  "copyright_accept"
-    t.string   "subject",                 limit: 255
-    t.text     "other",                   limit: 65535
-    t.text     "name",                    limit: 65535
-    t.text     "contact",                 limit: 65535
-    t.datetime "created_at",                            null: false
-    t.datetime "updated_at",                            null: false
+    t.string   "subject",                 limit: 340
+    t.text     "other",                   limit: 16777215
+    t.text     "name",                    limit: 16777215
+    t.text     "contact",                 limit: 16777215
+    t.datetime "created_at",                               null: false
+    t.datetime "updated_at",                               null: false
     t.integer  "video_id",                limit: 4
     t.boolean  "resolved"
   end
@@ -166,12 +174,12 @@ ActiveRecord::Schema.define(version: 20161210190852) do
   end
 
   create_table "tags", force: :cascade do |t|
-    t.string  "name",        limit: 255,   default: ""
-    t.text    "description", limit: 65535
+    t.string  "name",        limit: 255,      default: ""
+    t.text    "description", limit: 16777215
     t.integer "tag_type_id", limit: 4
-    t.string  "short_name",  limit: 255,   default: ""
-    t.integer "video_count", limit: 4,     default: 0
-    t.integer "user_count",  limit: 4,     default: 0
+    t.string  "short_name",  limit: 255,      default: ""
+    t.integer "video_count", limit: 4,        default: 0
+    t.integer "user_count",  limit: 4,        default: 0
     t.integer "alias_id",    limit: 4
   end
 
@@ -206,8 +214,8 @@ ActiveRecord::Schema.define(version: 20161210190852) do
     t.datetime "created_at",                                           null: false
     t.datetime "updated_at",                                           null: false
     t.integer  "notification_count",     limit: 4,     default: 0
-    t.string   "username",               limit: 255
-    t.string   "safe_name",              limit: 255
+    t.string   "username",               limit: 340
+    t.string   "safe_name",              limit: 340
     t.text     "description",            limit: 65535
     t.text     "bio",                    limit: 65535
     t.string   "mime",                   limit: 255
@@ -242,7 +250,7 @@ ActiveRecord::Schema.define(version: 20161210190852) do
   add_index "video_genres", ["video_id"], name: "index_video_genres_on_video_id", using: :btree
 
   create_table "videos", force: :cascade do |t|
-    t.string   "title",             limit: 255
+    t.string   "title",             limit: 340
     t.text     "description",       limit: 65535
     t.boolean  "audio_only"
     t.string   "mime",              limit: 255
@@ -256,9 +264,9 @@ ActiveRecord::Schema.define(version: 20161210190852) do
     t.boolean  "hidden",                          default: false
     t.integer  "views",             limit: 4,     default: 0
     t.boolean  "processed"
-    t.string   "source",            limit: 255,   default: ""
+    t.string   "source",            limit: 340
     t.integer  "user_id",           limit: 4
-    t.string   "safe_title",        limit: 255
+    t.string   "safe_title",        limit: 340
     t.integer  "comment_thread_id", limit: 4
     t.text     "html_description",  limit: 65535
     t.boolean  "featured",                        default: false

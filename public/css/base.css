@@ -1482,6 +1482,19 @@ blockquote {
   margin-left: 5px;
 }
 
+.comment .content .like {
+  float: right;
+  border: none;
+  background: none;
+  padding: 0;
+  margin: 0;
+  margin-right: 10px;
+  color: #337287;
+}
+.comment .content .like.liked {
+  color: #3372ff;
+}
+
 .comment .content .posting-spinner {
   display: none;
 }
