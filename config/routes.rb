@@ -13,8 +13,8 @@ Rails.application.routes.draw do
   get 'policy' => 'staff#policy'
   get 'terms' => 'staff#policy'
   
-  get 'ajax/donate' => 'staff#donate'
-  get 'ajax/login' => 'staff#login'
+  get 'ajax/donate' => 'ajax#donate'
+  get 'ajax/login' => 'ajax#login'
   
   # Admin Actions #
   get 'admin' => 'admin#view'

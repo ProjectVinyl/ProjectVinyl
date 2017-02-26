@@ -151,4 +151,12 @@ class AjaxController < ApplicationController
     end
     render status: 401, nothing: true
   end
+  
+  def donate
+    render partial: "staff/donate"
+  end
+  
+  def login
+    render partial: "devise/sessions/new"
+  end
 end

@@ -7,12 +7,4 @@ class StaffController < ApplicationController
   
   def policy
   end
-  
-  def donate
-    render partial: "donate"
-  end
-  
-  def login
-    render partial: "devise/sessions/new"
-  end
 end
