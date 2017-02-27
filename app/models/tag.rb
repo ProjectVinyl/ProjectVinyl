@@ -65,9 +65,6 @@ class Tag < ActiveRecord::Base
       return []
     end
     result = Tag.where('name IN (?)', names.uniq).pluck(:id, :alias_id).map do |t|
-      if t[1]
-        yield(t[0])
-      end
       t[1] || t[0]
     end
     return result.uniq
