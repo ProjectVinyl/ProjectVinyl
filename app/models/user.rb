@@ -90,7 +90,7 @@ class User < ActiveRecord::Base
   include Elasticsearch::Model
   include Indexable
   
-  prefs :preferences, :subscribe_on_reply => true, :subscribe_on_thread => true, :subscribe_on_upload => true, :show_ads => false
+  prefs :preferences, :subscribe_on_reply => true, :subscribe_on_thread => true, :subscribe_on_upload => true
   
   after_destroy :remove_assets
   after_create :init_name
@@ -396,10 +396,6 @@ class User < ActiveRecord::Base
   
   def message_count
     return @message_count || (@message_count = Pm.where('state = 0 AND unread = true AND user_id = ?', self.id).count)
-  end
-  
-  def show_ads?
-    option :show_ads
   end
   
   def subscribe_on_reply?
