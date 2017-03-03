@@ -210,21 +210,22 @@ class VideoController < ApplicationController
   end
   
   def video_update
-    if user_signed_in? && @video = Video.where(id: params[:id]).first
+    id = params[:id] | (params[:video] ? params[:video][:id] : nil)
+    if user_signed_in? && @video = Video.where(id: id).first
       if @video.user_id == current_user.id || current_user.is_contributor?
         if params[:tags]
-          Tag.loadTags(params[:tags], video)
+          Tag.loadTags(params[:tags], @video)
         end
         if params[:source]
-          video.source = params[:source]
+          @video.source = params[:source]
         end
         if params[:description]
-          video.set_description(params[:description])
+          @video.set_description(params[:description])
         end
         if params[:title]
-          video.set_title(params[:title])
+          @video.set_title(params[:title])
         end
-        video.save
+        @video.save
         return render status: 200, nothing: true
       end
     end

@@ -7,4 +7,7 @@ class StaffController < ApplicationController
   
   def policy
   end
+  
+  def donate
+  end
 end

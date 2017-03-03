@@ -40,26 +40,38 @@
 		</span>
 	<% end %>
 		<div class="post-tags">
-		<% if user_signed_in? %>
-			<div class="editable post-content short tiny-link" data-target="video" data-member="source" data-id="<%= @video.id %>">
-				Source: <a href="<%= @video.source %>" class="content"><%= @video.source %></a>
-				<span class="edit">(edit)</i></span>
+			<div class="normal tiny-link">
+				Source: <a href="<%= @video.get_source %>"><%= @video.source %></a>
 			</div>
-		<% else %>
-			<div class="post-content tiny-link">
-				Source: <a href="<%= @video.source %>"><%= @video.source %></a>
-			</div>
-		<% end %>
-			<span class="normal">
+			<div class="normal tags">
 				<%= render partial: '/layouts/genre_thumb_h', collection: @tags %>
-			</span>
+			</div>
 		<% if user_signed_in? %>
-			<span class="editing">
+			<%= form_for(@video, as: "video", url: "ajax/video/edit", html: {class: "editing async form-state-toggle", "data-state": "editing"}) do |f| %>
+				<%= f.text_field :id, hidden: true %>
 				<%= render layout: 'layouts/tageditor', locals: {tags: @video.tags} do %>
-				<textarea data-target="video" data-id="<%= @video.id %>" name="tags"><%= raw @video.tag_string %></textarea>
+					<textarea name="tags"><%= raw @video.tag_string %></textarea>
 				<% end %>
-			</span>
-			<a href="#" class="state-toggle tiny-link" data-state="editing" data-true="(close)" data-false="(edit)">(edit)</a>
+				<div class="properties">
+					<table>
+						<tr>
+							<td class="label"><label for="video_source">Source</label></td>
+							<td class="field">
+								<input class="input" name="source" type="text">
+							</td>
+						</tr>
+						<tr>
+							<td class="label">
+							</td>
+							<td class="field">
+								<button class="form-submitter">Save Changes</button>
+								<button type="button" onclick="$(this).parents('.post-tags').toggleClass('editing')">Close</button>
+							</td>
+						</tr>
+					</table>
+				</div>
+			<% end %>
+			<button class="normal state-toggle" data-state="editing">Edit Tags Or Source</button>
 		<% end %>
 		</div>
 		<div class="actions">
@@ -83,15 +95,19 @@
 					</li>
 				<% end %>
 					<li class="action">
-				<% if user_signed_in? %>
 						<a download target="_blank" href="/download/<%= @video.id %>">
-				<% else %>
-						<a target="_blank" href="/users/sign_in">
-				<% end %>
 							<span class="icon">
 								<i class="fa fa-download"></i>
 							</span>
 							<span class="label">Download</span>
+						</a>
+					</li>
+					<li class="action">
+						<a href="/changes/<%= @video.id %>">
+							<span class="icon">
+								<i class="fa fa-history"></i>
+							</span>
+							<span class="label">Tag Changes</span>
 						</a>
 					</li>
 				</ul>

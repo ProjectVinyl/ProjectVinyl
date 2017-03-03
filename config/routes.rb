@@ -14,6 +14,7 @@ Rails.application.routes.draw do
   get 'terms' => 'staff#policy'
   
   get 'ajax/donate' => 'ajax#donate'
+  get 'donate' => 'staff#donate'
   get 'ajax/login' => 'ajax#login'
   
   # Admin Actions #
@@ -56,6 +57,8 @@ Rails.application.routes.draw do
   get 'view/:id' => 'video#view', constraints: { id: /([0-9]+).*/ }
   get 'upload' => 'video#upload'
   get 'video/edit/:id' => 'video#edit'
+  patch 'ajax/video/edit' => 'video#video_update'
+  patch 'ajax/video/edit/:async' => 'video#video_update'
   
   get 'embed/:id' => 'embed#view'
   get 'oembed' => 'embed#oembed'

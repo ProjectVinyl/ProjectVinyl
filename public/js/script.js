@@ -197,6 +197,11 @@ var ajax = (function() {
         if (callbacks.error) return callbacks.error(message, msg, e.responseText);
         message.text(e.responseText);
       },
+      complete: function() {
+        if (form.hasClass('form-state-toggle')) {
+          form.parent().toggleClass(form.attr('data-state'));
+        }
+      },
       cache: false,
       contentType: false,
       processData: false
@@ -577,7 +582,7 @@ var initFileSelect = (function() {
 		
 		var norm = null;
 		if (me.parent().hasClass('editing')) {
-			norm = me.parent().parent().find('.normal');
+			norm = me.parent().parent().find('.normal.tags');
 		}
 		
     value.val(tags.join(','));
@@ -605,7 +610,8 @@ var initFileSelect = (function() {
       return '';
     }
     function createTagItem(name) {
-      var item = $('<li class="tag tag-' + namespace(name) + '"><i title="Remove Tag" data-name="' + name + '" class="fa fa-times remove"></i><a href="/tags/' + name + '">' + name + '</a></li>');
+      var space = namespace(name);
+      var item = $('<li class="tag tag-' + space + '" data-slug="' + name.replace(space + ':', '') + '"><i title="Remove Tag" data-name="' + name + '" class="fa fa-times remove"></i><a href="/tags/' + name + '">' + name + '</a></li>');
       list.append(item);
       item.find('.remove').on('click', function() {
         removeTag(item, name);
