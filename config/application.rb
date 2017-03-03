@@ -32,12 +32,12 @@ module Projectvinyl
       'X-Frame-Options' => 'SAMEORIGIN',
       'X-XSS-Protection' => '1; mode=block',
       'X-Content-Type-Options' => 'nosniff',
-      'Content-Security-Policy' => "default-src 'self'; form-action 'self' https://syndication.twitter.com/; frame-ancestors *; child-src 'self' https://www.youtube.com; media-src 'self' blob:; img-src * blob: data:; script-src 'self' 'unsafe-inline' https://code.jquery.com/ http://platform.twitter.com/ http://196.25.211.41/ https://cdn.syndication.twimg.com/; style-src 'self' 'unsafe-inline' http://platform.twitter.com/ https://ton.twimg.com;"
+      'Content-Security-Policy' => "default-src 'self'; form-action 'self' https://syndication.twitter.com/; frame-ancestors *; child-src 'self' https://www.youtube.com; media-src 'self' blob:; img-src * blob: data:; script-src 'self' 'unsafe-inline' https://www.google.com/ https://code.jquery.com/ http://platform.twitter.com/ http://196.25.211.41/ https://cdn.syndication.twimg.com/; style-src 'self' 'unsafe-inline' http://platform.twitter.com/ https://ton.twimg.com;"
     }
     
     # F***n' rails
     config.autoload_paths += %W(#{config.root}/lib)
-    
+    config.eager_load_paths += %W(#{config.root}/lib)
     config.active_support.escape_html_entities_in_json = false
   end
 end

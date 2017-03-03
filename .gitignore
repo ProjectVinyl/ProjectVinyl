@@ -19,3 +19,4 @@
 
 .rake_tasks~
 .rbenv-vars
+.env

@@ -23,7 +23,7 @@ module ProjectVinyl
         @audio_only = nil
       end
       
-      def self.interpret_opset(opset)
+      def self.interpret_opset(type, opset)
         groupings = []
         current_group = MatchingGroup.new
         while opset.length > 0
@@ -34,9 +34,9 @@ module ProjectVinyl
             end
             current_group = MatchingGroup.new
           elsif op == Op::AND
-            opset = current_group.take_param(@type, opset.shift, opset)
+            opset = current_group.take_param(type, opset.shift, opset)
           elsif op == Op::GROUP_START
-            child = self.interpret_opset(opset)
+            child = self.interpret_opset(type, opset)
             current_group.child(child[0])
             opset = child[1]
           elsif op == Op::GROUP_END
@@ -44,9 +44,9 @@ module ProjectVinyl
               groupings << current_group
             end
             return [groupings,opset]
-          elsif op == Op::OR && opset[0] == Op::GROUP_START
+          elsif op == Op::OR && opset.peek(1) == Op::GROUP_START
             opset.shift
-            child = self.interpret_opset(opset)
+            child = self.interpret_opset(type, opset)
             child[0].negate
             if current_group
               current_group.child(child[0])
@@ -55,7 +55,7 @@ module ProjectVinyl
             end
             opset = child[1]
           else
-            opset = current_group.take_param(@type, op, opset)
+            opset = current_group.take_param(type, op, opset)
           end
         end
         if current_group.dirty
@@ -110,7 +110,7 @@ module ProjectVinyl
         elsif op == Op::SOURCE
           self.absorb_param_if(@source_queries, opset, "Source", type != 'user')
         elsif op == Op::VOTE_U
-          self.absorb_param_id(@like_queries, opset, "Upvoted", type != 'user')
+          self.absorb_param_if(@like_queries, opset, "Upvoted", type != 'user')
         elsif op == Op::VOTE_D
           self.absorb_param_if(@dislike_queries, opset, "Downvoted", type != 'user')
         elsif op == Op::AUDIO_ONLY
@@ -241,7 +241,7 @@ module ProjectVinyl
           end
           sql << '(' + children.join(' OR ') + ')'
         end
-        return sql.join(' AND ')
+        return (@neg ? " NOT " : "") + "(" + sql.join(' AND ') + ")"
       end
       
       def to_user_sql(sender)

@@ -70,6 +70,17 @@ class Tag < ActiveRecord::Base
     return result.uniq
   end
   
+  def self.get_name_mappings(names)
+    if !names || names.length == 0
+      return {}
+    end
+    result = {}
+    Tag.where('name IN (?)', names.uniq).pluck(:name, :id, :alias_id).each do |t|
+      result[t[0]] = t[2] || t[1]
+    end
+    return result
+  end
+  
   def self.get_tag_ids_with_create(names)
     if !names || names.length == 0
       return []
@@ -197,6 +208,7 @@ class Tag < ActiveRecord::Base
       added = added - existing
       Tag.send_pickup_event(sender, added)
     end
+    sender.tags_changed
     TagSubscription.notify_subscribers(added, removed, existing - removed)
     sender.save
   end
@@ -259,6 +271,7 @@ class Tag < ActiveRecord::Base
     self.short_name = ApplicationHelper.url_safe_for_tags(name)
     self.name = name
     self.save
+    Tag.reindex_for(self.videos, self.users)
     return self
   end
   
@@ -270,6 +283,16 @@ class Tag < ActiveRecord::Base
     return self.description
   end
   
+  def self.reindex_for(videos, users)
+    videos.each do |v|
+      v.update_index(defer: false)
+    end
+    users.each do |u|
+      u.update_index(defer: false)
+    end
+  end
+  
+  
   def set_alias(tag)
     tag_o = tag.alias || tag
     tag = (tag.alias_id || tag.id)
@@ -279,6 +302,7 @@ class Tag < ActiveRecord::Base
       User.where(tag_id: self.id).update_all(tag_id: tag)
       ArtistGenre.where(o_tag_id: self.id).update_all(tag_id: tag)
       VideoGenre.where(o_tag_id: self.id).update_all(tag_id: tag)
+      Tag.reindex_for(VideoGenre.where(o_tag_id: self.id).videos, ArtistGenre.where(o_tag_id: self.id).users)
       self.video_count = self.user_count = 0
       tag_o.recount
     end

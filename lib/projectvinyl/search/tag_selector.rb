@@ -19,7 +19,7 @@ module ProjectVinyl
       def videos
         @type = "video"
         v_query = "SELECT v.* FROM videos v, users WHERE v.hidden = false AND v.duplicate_id = 0 AND v.user_id = users.id"
-        groups = MatchingGroup.interpret_opset(@opset)[0]
+        groups = MatchingGroup.interpret_opset(@type, @opset)[0]
         if groups.length > 0
           groups = groups.map do |group|
             group.to_video_sql(@user)
@@ -34,7 +34,7 @@ module ProjectVinyl
       def users
         @type = "user"
         v_query = "SELECT a.* FROM users a"
-        groups = MatchingGroup.interpret_opset(@opset)[0]
+        groups = MatchingGroup.interpret_opset(@type, @opset)[0]
         if groups.length > 0
           groups = groups.map do |group|
             group.to_user_sql(@user)
@@ -57,6 +57,13 @@ module ProjectVinyl
         return self
       end
       
+      def random_order(session, ordering, possibles)
+        if @page == 0
+            session[:random_ordering] = "'" + possibles[rand(0..possibles.length)] + "','" + possibles[rand(0..possibles.length)] + "'"
+          end
+          return session[:random_ordering]
+      end
+      
       def order(session, ordering, ascending)
         @ordering = "v.created_at"
         if @type == 'video'
@@ -67,21 +74,13 @@ module ProjectVinyl
           elsif ordering == 3
             @ordering = "v.length, v.created_at, v.updated_at"
           elsif ordering == 4
-            if @page == 0
-              ordering_columns = ["v.length","v.created_at","v.updated_at","v.score","v.views","v.description"]
-              session[:random_ordering] = "'" + ordering_columns[rand(0..ordering_columns.length)] + "','" + ordering_columns[rand(0..ordering_columns.length)] + "'"
-            end
-            @ordering = session[:random_ordering]
+            @ordering = random_order(session, ordering, ["v.length","v.created_at","v.updated_at","v.score","v.views","v.description"])
           end
         elsif @type == 'user'
           if ordering == 1 || ordering == 2 || ordering == 3
             @ordering = "a.username, a.created_at, a.updated_at"
           elsif ordering == 4
-            if @page == 0
-              ordering_columns = ["a.username","a.email","a.encrypted_password","a.updated_at"]
-              session[:random_ordering] = "'" + ordering_columns[Random.new(0..ordering_columns.length)] + "','" + ordering_columns[Random.new(0..ordering_columns.length)] + "'"
-            end
-            @ordering = session[:random_ordering]
+            @ordering = random_order(session, ordering, ["a.username","a.email","a.encrypted_password","a.updated_at"])
           else
             @ordering = "a.username"
           end

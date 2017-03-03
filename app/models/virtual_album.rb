@@ -1,4 +1,4 @@
-require 'projectvinyl/search/tag_selector'
+require 'projectvinyl/elasticsearch/elastic_selector'
 
 class VirtualAlbumItem < AlbumItem
   def initialize(valbum, video, i)
@@ -130,7 +130,7 @@ class VirtualAlbum < Album
   end
   
   def fetch_items
-    return ProjectVinyl::Search::TagSelector.new(nil, @query).query(0, @index - @offset + 5).videos.order_by('v.id').offset(@offset).exec().records()
+    return ProjectVinyl::ElasticSearch::ElasticSelector.new(nil, @query).query(0, @index - @offset + 5).videos.order_by('v.id').offset(@offset).exec().records()
   end
   
   def addItem(video)

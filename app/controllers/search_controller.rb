@@ -1,4 +1,4 @@
-require 'projectvinyl/search/tag_selector'
+require 'projectvinyl/elasticsearch/elastic_selector'
 
 class SearchController < ApplicationController
   def index
@@ -34,7 +34,7 @@ class SearchController < ApplicationController
       @type_label= 'Album'
     elsif @type == 2
       begin
-        @results = ProjectVinyl::Search::TagSelector.new(current_user, @query).query(@page, 20).users.order(session, @orderby, @ascending).exec()
+        @results = ProjectVinyl::ElasticSearch::ElasticSelector.new(current_user, @query).query(@page, 20).users.order(session, @orderby, @ascending).exec()
       rescue ProjectVinyl::Search::LexerError => e
         @derpy = e
       rescue Exception => e
@@ -48,12 +48,12 @@ class SearchController < ApplicationController
     else
       begin
         if params[:quick]
-          @results = ProjectVinyl::Search::TagSelector.new(current_user, @query).query(0, 1).videos.order_by('v.id').offset(-1).exec().records()
+          @results = ProjectVinyl::ElasticSearch::ElasticSelector.new(current_user, @query).query(0, 1).videos.order_by('v.id').offset(-1).exec().records()
           if @results.first
             return redirect_to action: 'view', controller: 'embed', id: @results.first.id
           end
         end
-        @results = ProjectVinyl::Search::TagSelector.new(current_user, @query).query(@page, 20).videos.order(session, @orderby, @ascending).exec()
+        @results = ProjectVinyl::ElasticSearch::ElasticSelector.new(current_user, @query).query(@page, 20).videos.order(session, @orderby, @ascending).exec()
       rescue ProjectVinyl::Search::LexerError => e
         @derpy = e
       #rescue Exception => e
@@ -81,7 +81,7 @@ class SearchController < ApplicationController
           page: @results.page
         }
       elsif @type == 2
-        @results = ProjectVinyl::Search::TagSelector.new(current_user, @query).query(@page, 20).users.order(session, @orderby, @ascending).exec()
+        @results = ProjectVinyl::ElasticSearch::ElasticSelector.new(current_user, @query).query(@page, 20).users.order(session, @orderby, @ascending).exec()
         render json: {
           content: render_to_string(partial: '/layouts/artist_thumb_h.html.erb', collection: @results.records),
           pages: @results.pages,
@@ -95,7 +95,7 @@ class SearchController < ApplicationController
           page: @results.page
         }
       else
-        @results = ProjectVinyl::Search::TagSelector.new(current_user, @query).query(@page, 20).videos.order(session, @orderby, @ascending).exec()
+        @results = ProjectVinyl::ElasticSearch::ElasticSelector.new(current_user, @query).query(@page, 20).videos.order(session, @orderby, @ascending).exec()
         render json: {
           content: render_to_string(partial: '/layouts/video_thumb_h.html.erb', collection: @results.records),
           pages: @results.pages,

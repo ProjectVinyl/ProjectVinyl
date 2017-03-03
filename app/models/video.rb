@@ -1,4 +1,9 @@
+require 'elasticsearch/model'
+
 class Video < ActiveRecord::Base
+  include Elasticsearch::Model
+  include Indexable
+  
   belongs_to :direct_user, class_name: "User", foreign_key: "user_id"
   
   has_one :comment_thread, as: :owner, dependent: :destroy
@@ -9,6 +14,27 @@ class Video < ActiveRecord::Base
   has_many :tags, :through => :video_genres
   
   scope :listable, -> { where(hidden: false, duplicate_id: 0) }
+  
+  settings index: { number_of_shards: 1 } do
+    mappings dynamic: 'true' do
+      indexes :title
+      indexes :source
+    end
+    mappings dynamic: 'false' do
+      indexes :tags, type: 'keyword'
+      indexes :audio_only
+      indexes :user_id
+      indexes :length
+      indexes :score
+    end
+  end
+  
+  def as_indexed_json(options={})
+    json = as_json(only: ['title', 'user_id', 'source', 'audio_only', 'length', 'score'])
+    json["tags"] = self.tags.pluck(:name)
+    return json
+  end
+  
   def self.Finder
     return Video.includes(:tags).listable
   end
@@ -285,6 +311,10 @@ class Video < ActiveRecord::Base
     return self.video_genres
   end
   
+  def tags_changed
+    self.update_index(defer: false)
+  end
+  
   def tag_string
     Tag.tag_string(self.tags)
   end
@@ -375,6 +405,13 @@ class Video < ActiveRecord::Base
       self.source = src
       self.save
     end
+  end
+  
+  def get_source
+    if self.source && self.source.index('http:') != 0 && self.source.index('https:') != 0
+      return 'https:' + self.source
+    end
+    return self.source
   end
   
   def json

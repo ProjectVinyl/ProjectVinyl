@@ -1,3 +1,5 @@
+require 'elasticsearch/model'
+
 class UserDummy
   include Roleable
   
@@ -68,6 +70,10 @@ class Subscription
     return @user.tag_subscriptions
   end
   
+  def tags_changed
+    self.update_index(defer: false)
+  end
+  
   def save
     @user.save
   end
@@ -81,7 +87,10 @@ class User < ActiveRecord::Base
          :authentication_keys => [:login]
   include Roleable
   
-  prefs :preferences, :subscribe_on_reply => true, :subscribe_on_thread => true, :subscribe_on_upload => true
+  include Elasticsearch::Model
+  include Indexable
+  
+  prefs :preferences, :subscribe_on_reply => true, :subscribe_on_thread => true, :subscribe_on_upload => true, :show_ads => false
   
   after_destroy :remove_assets
   after_create :init_name
@@ -117,6 +126,21 @@ class User < ActiveRecord::Base
   validates_format_of :username, with: /^[a-zA-Z0-9_\.]*$/, multiline: true
   SANITIZE = /[^a-zA-Z0-9]+/
   BP_PONY = /^background pony #([0-9a-z]+)/
+  
+  settings index: { number_of_shards: 1 } do
+    mappings dynamic: 'true' do
+      indexes :username
+    end
+    mappings dynamic: 'false' do
+      indexes :tags, type: 'keyword'
+    end
+  end
+  
+  def as_indexed_json(options={})
+    json = as_json(only: ['username'])
+    json["tags"] = self.tags.pluck(:name)
+    return json
+  end
   
   def self.find_for_database_authentication(warden_conditions)
     conditions = warden_conditions.dup
@@ -372,6 +396,10 @@ class User < ActiveRecord::Base
   
   def message_count
     return @message_count || (@message_count = Pm.where('state = 0 AND unread = true AND user_id = ?', self.id).count)
+  end
+  
+  def show_ads?
+    option :show_ads
   end
   
   def subscribe_on_reply?
