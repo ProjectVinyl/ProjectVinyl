@@ -26,11 +26,13 @@ class Video < ActiveRecord::Base
       indexes :user_id
       indexes :length
       indexes :score
+      indexes :created_at
+      indexes :updated_at
     end
   end
   
   def as_indexed_json(options={})
-    json = as_json(only: ['title', 'user_id', 'source', 'audio_only', 'length', 'score'])
+    json = as_json(only: ['title', 'user_id', 'source', 'audio_only', 'length', 'score','created_at','updated_at'])
     json["tags"] = self.tags.pluck(:name)
     return json
   end

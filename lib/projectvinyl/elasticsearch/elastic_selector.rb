@@ -41,15 +41,26 @@ module ProjectVinyl
         if @page == 0
             session[:random_ordering] = possibles[rand(0..possibles.length)] + ';' + possibles[rand(0..possibles.length)]
           end
-          return session[:random_ordering]
+          return session[:random_ordering].split(';')
+      end
+      
+      def ordering
+        direction = @ascending ? 'asc' : 'desc'
+        @ordering.map do |i|
+          {i => {order: direction}}
+        end
       end
       
       def order(session, ordering, ascending)
         @ascending = ascending
+        if ordering == 5
+          @ordering = []
+          return self
+        end
         @ordering = [:created_at]
         if @type == 'video'
           if ordering == 4
-            @ordering = random_order(session, ordering, [:length,:created_at,:updated_at,:score,:views,:description])
+            @ordering = random_order(session, ordering, [:length,:created_at,:updated_at,:score])
             return self
           end
           @ordering << :updated_at
@@ -60,7 +71,7 @@ module ProjectVinyl
           end
         elsif @type == 'user'
           if ordering == 4
-            @ordering = random_order(session, ordering, [:username,:email,:encrypted_password,:updated_at])
+            @ordering = random_order(session, ordering, [:username,:created_at,:updated_at])
             return self
           end
           if ordering < 4
@@ -89,6 +100,11 @@ module ProjectVinyl
           size: @limit,
           query: elastic.to_hash
         }
+        #disable custom ordering for now
+        # elasticsearch Fielddata is disabled on text fields by default. Set fielddata=true on [created_at]
+        #if ordering.length > 0
+        #  params[:sort] = ordering
+        #end
         puts params[:query]
         
         @search = __exec(params)

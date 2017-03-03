@@ -133,11 +133,13 @@ class User < ActiveRecord::Base
     end
     mappings dynamic: 'false' do
       indexes :tags, type: 'keyword'
+      indexes :created_at
+      indexes :updated_at
     end
   end
   
   def as_indexed_json(options={})
-    json = as_json(only: ['username'])
+    json = as_json(only: ['username','created_at','updated_at'])
     json["tags"] = self.tags.pluck(:name)
     return json
   end
