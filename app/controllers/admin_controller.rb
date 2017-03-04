@@ -35,7 +35,7 @@ class AdminController < ApplicationController
     if @location.length == 0 && @location[0] != 'encoding'
       @location = [ 'public' ] + @location
     end
-    if @location.length > 1 && @location[1] != 'stream' && @location[1] != 'cover'
+    if @location.length > 1 && @location[1] != 'stream' && @location[1] != 'cover' && @location[1] != 'avatar'
       if @location[0] != 'encoding'
         if ajax
           return render status: 403, nothing: true
@@ -55,15 +55,24 @@ class AdminController < ApplicationController
       if @location == 'public'
         @public.filter do |loc|
           name = loc.split('.')[0]
-          loc.index('.').nil? && (name == 'stream' || name == 'cover')
+          loc.index('.').nil? && (name == 'stream' || name == 'cover' || name == 'avatar')
         end
       end
-      @public.names_resolver do |names,ids|
-        Video.where('id IN (' + ids.join(',') + ')').pluck(:id,:title).each do |i|
-          names[i[0].to_s] = i[1]
+      if @location.index('public/avatar') == 0
+        @public.names_resolver do |names,ids|
+          User.where('id IN (' + ids.join(',') + ')').pluck(:id,:username).each do |i|
+            names[i[0].to_s] = i[1]
+          end
+        end
+      else
+        @public.names_resolver do |names,ids|
+          Video.where('id IN (' + ids.join(',') + ')').pluck(:id,:title).each do |i|
+            names[i[0].to_s] = i[1]
+          end
         end
       end
     rescue Exception => e
+      raise e
       if ajax
         return render status: 404, nothing: true
       end

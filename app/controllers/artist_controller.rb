@@ -53,7 +53,7 @@ class ArtistController < ApplicationController
   end
   
   def setbanner
-    if user_signed_in? && (current_user.id_admin || current_user.id == params[:id])
+    if user_signed_in? && (current_user.is_staff? || current_user.id == params[:id])
       if current_user.id == params[:id]
         user = current_user
       elsif
@@ -82,7 +82,7 @@ class ArtistController < ApplicationController
         user = current_user
       end
       if user
-        user.setAvatar(input[:avatar])
+        user.setAvatar(params[:erase] ? false : input[:avatar])
         user.save
         if params[:async]
           render json: { result: "success" }

@@ -46,12 +46,12 @@ class VideoFolder
 end
 
 class VideoFile
-  def self.directory?(item)
-    item.index('.').nil?
+  def self.directory?(parent, item)
+    File.directory?(Rails.root.join(parent.full_path, item).to_s)
   end
   
   def self.create(parent, item)
-    if VideoFile.directory?(item)
+    if VideoFile.directory?(parent, item)
       return VideoFolder.new(parent, item)
     end
     VideoFile.new(parent, item)
@@ -133,24 +133,25 @@ class VideoFile
     if @type == 'webm'
       return 'file-video-o'
     end
-    mime = Mimes.mime('.' + @type)
-    if mime.index('image/') == 0
-      return 'file-image-o'
-    end
-    if mime.index('video/') == 0
-      return 'film'
-    end
-    if mime.index('audio/') == 0
-      return 'volume-up'
-    end
-    if mime.index('zip') || mime.index('compressed') || mime.index('octet')
-      return 'file-archive-o'
-    end
-    if mime.index('document')
-      return 'file-word-o'
-    end
-    if mime.index('/pdf')
-      return 'file-pdf-o'
+    if mime = Mimes.mime('.' + @type)
+      if mime.index('image/') == 0
+        return 'file-image-o'
+      end
+      if mime.index('video/') == 0
+        return 'film'
+      end
+      if mime.index('audio/') == 0
+        return 'volume-up'
+      end
+      if mime.index('zip') || mime.index('compressed') || mime.index('octet')
+        return 'file-archive-o'
+      end
+      if mime.index('document')
+        return 'file-word-o'
+      end
+      if mime.index('/pdf')
+        return 'file-pdf-o'
+      end
     end
     return 'file-o'
   end
@@ -160,8 +161,13 @@ class VideoFile
     @raw = item
     @key = item.split(/\.|-/)[0]
     item = item.split('.')
-    @type = item.pop
-    @name = item.join('.')
+    if item.length == 1
+      @type = 'file'
+      @name = item[0]
+    else
+      @type = item.pop
+      @name = item.join('.')
+    end
   end
 end
 
@@ -305,7 +311,7 @@ class VideoDirectory
       break if @limit && @limit > -1 && @items.length >= @limit
       if i.index('.') != 0
         key = i.split(/\.|-/)[0]
-        if !@names.key?(key) || VideoFile.directory?(i)
+        if !@names.key?(key) || VideoFile.directory?(self, i)
           @names[key] = key
           if !@filter || @filter.call(i)
             if @offset && @offset > 0

@@ -103,7 +103,7 @@ Rails.application.routes.draw do
   
   get 'cover/:id-small' => 'imgs#thumb'
   get 'cover/:id' => 'imgs#cover'
-  get 'avatar/:id' => 'imgs#avatar'
+  get 'avatar/:id' => 'imgs#avatar', constraints: { id: /[0-9]+/ }
   get 'banner/:id' => 'imgs#banner'
   get 'stream/:id' => 'imgs#stream', constraints: { id: /.*/ }
   

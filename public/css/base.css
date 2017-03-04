@@ -94,6 +94,9 @@ h1 {
 h1, h1 a, h2, h2 a {
   color: rgb(102,102,184);
 }
+h3 {
+ margin: 10px;
+}
 
 hr {
   height: 0;
@@ -1091,12 +1094,21 @@ label input[type=radio]:checked + i::before {
   content: '\f192';
 }
 
+.link input[type=checkbox],
 label.button input[type=checkbox] {
   display: none;
 }
 label input[type=checkbox]:not(:checked) + i,
 label input[type=checkbox]:checked + i + i {
   display: none;
+}
+
+.link {
+  cursor: pointer;
+  color: #f05;
+}
+.link:hover {
+  text-decoration: underline;
 }
 
 .banner-overlay {
@@ -2068,6 +2080,7 @@ form.uploading .progressor {
   padding-top: 25%;
   position: relative;
 }
+form.uploading .avatar ~ .progressor,
 form.uploading .uploaded-preview + .progressor {
   padding-top: 0;
 }

@@ -987,7 +987,7 @@ $(document).on('click', '.state-toggle', function(ev) {
         popup.show();
       }
     } else {
-      popup = Popup.fetch(url, me.attr('data-title'), me.attr('data-icon'), me.hasClass('confirm-button-thin'));
+      popup = Popup.fetch(url, me.attr('data-title'), me.attr('data-icon'), me.hasClass('confirm-button-thin'), me.attr('data-event-loaded'));
       popup.setPersistent();
       
     }
@@ -1116,7 +1116,8 @@ var Popup = (function() {
     if (construct) construct.apply(this);
     return this;
   }
-  Popup.fetch = function(resource, title, icon, thin) {
+  Popup.ScriptedEvents = { };
+  Popup.fetch = function(resource, title, icon, thin, loaded_func) {
     return (new Popup(title, icon, function() {
       this.content.html('<div class="loader"><i class="fa fa-pulse fa-spinner" /></div>');
       if (thin) this.container.addClass('thin');
@@ -1127,6 +1128,9 @@ var Popup = (function() {
           me.close();
         });
         me.center();
+        if (loaded_func && (loaded_func = Popup.ScriptedEvents[loaded_func])) {
+          loaded_func();
+        }
       }, 1);
       this.show();
     }));
@@ -1260,7 +1264,25 @@ var Popup = (function() {
   };
   return Popup;
 })();
-
+(function() {
+  Popup.ScriptedEvents.loadBannerSelector = function() {
+    var me = $('#banner-upload');
+    var base_path = me.attr('data-base-path');
+    initFileSelect(me).on('accept', function(e, file) {
+      var form = $(this).closest('form');
+      ajax.form(form, e, {
+        'success': function() {
+          form.removeClass('uploading');
+          var av = $('#banner');
+          av.css({
+            'background-size': 'cover',
+            'background-image': 'url(' + base_path + '?' + new Date().getTime() + ')'
+          });
+        }
+      });
+    });
+  };
+})();
 var paginator = (function() {
   function requestPage(context, page) {
     if (page == context.attr('data-page')) return;
@@ -1709,8 +1731,7 @@ $(document).on('click', '.slider-toggle', function(e) {
 });
 $(document).on('click', '.load-more button', function() {
   lazyLoad($(this));
-});
-$(document).on('click', '.mix a', function(e) {
+}).on('click', '.mix a', function(e) {
   var ref = $(this).attr('href');
   document.location.replace(ref + '&t=' + $('#video .player')[0].getPlayerObj().video.currentTime);
   e.preventDefault();
