@@ -36,8 +36,9 @@ $('html,body').scrollTop(200);
 			<a>Discovery Queue</a>
 		</h1>
 		<ul class="queue">
+			<% if (@mix_string = @video.mix_string(current_user)).length > 0 %>
 			<li class="generic mix">
-				<a class="thumb" href="<%= @video.link %>?q=<%= @video.mix_string(current_user) %>&index=0">
+				<a class="thumb" href="<%= @video.link %>?q=<%= @mix_string %>&index=0">
 					<div class="tile" style="background-image:none,url('/cover/<%= @video.id.to_s %>-small.png');">
 						<div class="details">
 							<div class="title">MIX - <%= @video.title %></div>
@@ -45,6 +46,7 @@ $('html,body').scrollTop(200);
 					</div>
 				</a>
 			</li>
+			<% end %>
 			<%= render partial: '/layouts/video_thumb_v', collection: @queue %>
 		</ul>
 		<%= render partial: '/view/ins', locals: {wide: false} %>
