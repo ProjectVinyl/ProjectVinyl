@@ -95,8 +95,8 @@
 					$(document).ready(function() {
 						$('#sign-out').on('click', function(e) {
 							e.preventDefault();
-							ajax.delete($(this).attr('href'), function() {
-								document.location.href = '/';
+							ajax.delete($(this).attr('href'), function(a, b) {
+								document.location.href = document.location.href;
 							}, 1);
 							e.stopPropagation();
 						});

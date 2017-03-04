@@ -5,28 +5,10 @@ class ApplicationController < ActionController::Base
   
   before_filter :set_start_time
   before_filter :configure_permitted_parameters, if: :devise_controller?
-  after_filter :store_last_location, if: :not_devise_controller?
-  after_filter :sign_out_after, if: :devise_controller?
+  after_filter :store_last_location, if: :content_page?
   
-  def not_devise_controller?
+  def content_page?
     !devise_controller? && controller_name != "ajax" && request.fullpath.index('/ajax/').nil?
-  end
-  
-  def stored_location_for(resource)
-    nil
-    #request.referrer
-  end
-  
-  def after_sign_in_path_for(resource)
-    #puts "user_return_to: "
-    #puts  session["user_return_to"]
-    session["user_return_to"] || root_path
-  end
-  
-  def after_sign_out_path_for(resource_or_scope)
-    puts "user_return_to (out): "
-    puts  request.referrer
-    request.referrer
   end
   
   protected
@@ -42,12 +24,6 @@ class ApplicationController < ActionController::Base
   
   def store_last_location
     return unless request.get?
-    session["user_return_to"] = request.fullpath
-  end
-  
-  def sign_out_after
-    #puts "Devise! " + controller_name
-    #puts action_name
-    #puts request.referrer
+    store_location_for('user',request.fullpath)
   end
 end
