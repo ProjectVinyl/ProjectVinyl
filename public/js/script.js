@@ -869,11 +869,11 @@ $(document).on('mousedown', function() {
     likes += offset;
     me.attr('data-count', likes);
     if (likes == 0) {
-      me.find('span').remove();
+      me.find('.count').remove();
     } else {
       var count = me.find('.count');
       if (!count.length) {
-        me.append('<span> (<span class="count" >' + likes + '</span>)</span>');
+        me.children('span').append('<span class="count" >' + likes + '</span>');
       } else {
         count.text(likes);
       }

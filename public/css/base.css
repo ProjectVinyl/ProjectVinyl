@@ -873,6 +873,7 @@ button, .button, input[type=submit], .tag, .tag-editor {
   display: block;
   float: left;
   line-height: inherit;
+  padding-bottom: 6px;
 }
 .split-button .split-icon {
   border-radius: 2px 0 0 2px;
@@ -1505,6 +1506,9 @@ blockquote {
 }
 .comment .content .like.liked {
   color: #3372ff;
+}
+.comment .content .like:active {
+  box-shadow: none;
 }
 
 .comment .content .posting-spinner {
@@ -2578,6 +2582,9 @@ h1.banned, h2.banned, a.banned, .banned a.user-link, .comment .name a.user-link.
 }
 @media(max-width:750px) {
   #login .username {
+    display: none;
+  }
+  .post .action.mobile-friendly span {
     display: none;
   }
 }
