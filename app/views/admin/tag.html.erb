@@ -1,7 +1,7 @@
 <% lim "900px" %>
 <h1 class="title">
 	<a href="/">Home</a> <i class="fa fa-chevron-right"></i> <a href="/admin">Admin</a> <i class="fa fa-chevron-right"></i> 
-	Tag <i class="fa fa-chevron-right"></i> <a href=""><%= @tag.name %></a>
+	Tag <i class="fa fa-chevron-right"></i> <a href="<%= @tag.link %>"><%= @tag.name %></a>
 </h1>
 <section style="width:100%;" class="page properties">
 	<h1>Editing Tag <%= @tag.name %></h1>
