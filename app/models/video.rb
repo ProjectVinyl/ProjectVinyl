@@ -19,15 +19,15 @@ class Video < ActiveRecord::Base
     mappings dynamic: 'true' do
       indexes :title
       indexes :source
+      indexes :audio_only, type: 'boolean'
+      indexes :user_id, type: 'integer'
+      indexes :length, type: 'integer'
+      indexes :score, type: 'integer'
+      indexes :created_at, type: 'date'
+      indexes :updated_at, type: 'date'
     end
     mappings dynamic: 'false' do
       indexes :tags, type: 'keyword'
-      indexes :audio_only
-      indexes :user_id
-      indexes :length
-      indexes :score
-      indexes :created_at
-      indexes :updated_at
     end
   end
   

@@ -130,11 +130,11 @@ class User < ActiveRecord::Base
   settings index: { number_of_shards: 1 } do
     mappings dynamic: 'true' do
       indexes :username
+      indexes :created_at, type: 'date'
+      indexes :updated_at, type: 'date'
     end
     mappings dynamic: 'false' do
       indexes :tags, type: 'keyword'
-      indexes :created_at
-      indexes :updated_at
     end
   end
   

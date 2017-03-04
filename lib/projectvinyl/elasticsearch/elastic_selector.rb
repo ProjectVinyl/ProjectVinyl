@@ -39,7 +39,7 @@ module ProjectVinyl
       
       def random_order(session, ordering, possibles)
         if @page == 0
-            session[:random_ordering] = possibles[rand(0..possibles.length)] + ';' + possibles[rand(0..possibles.length)]
+            session[:random_ordering] = possibles[rand(0..possibles.length)].to_s + ';' + possibles[rand(0..possibles.length)].to_s
           end
           return session[:random_ordering].split(';')
       end
@@ -65,9 +65,9 @@ module ProjectVinyl
           end
           @ordering << :updated_at
           if ordering == 2
-            @ordering = @ordering.shift(:score)
+            @ordering.unshift(:score)
           elsif ordering == 3
-            @ordering = @ordering.shift(:length)
+            @ordering.unshift(:length)
           end
         elsif @type == 'user'
           if ordering == 4
@@ -102,9 +102,9 @@ module ProjectVinyl
         }
         #disable custom ordering for now
         # elasticsearch Fielddata is disabled on text fields by default. Set fielddata=true on [created_at]
-        #if ordering.length > 0
-        #  params[:sort] = ordering
-        #end
+        if ordering.length > 0
+          params[:sort] = ordering
+        end
         puts params[:query]
         
         @search = __exec(params)
