@@ -9,7 +9,7 @@ class ApplicationController < ActionController::Base
   after_filter :sign_out_after, if: :devise_controller?
   
   def not_devise_controller?
-    !devise_controller? && controller_name != "ajax"
+    !devise_controller? && controller_name != "ajax" && request.fullpath.index('/ajax/').nil?
   end
   
   def stored_location_for(resource)
@@ -18,12 +18,12 @@ class ApplicationController < ActionController::Base
   end
   
   def after_sign_in_path_for(resource)
-    puts "user_return_to: "
-    puts  session["user_return_to"]
+    #puts "user_return_to: "
+    #puts  session["user_return_to"]
     session["user_return_to"] || root_path
   end
   
-  def after_sign_out_path_for(resource)
+  def after_sign_out_path_for(resource_or_scope)
     puts "user_return_to (out): "
     puts  request.referrer
     request.referrer
@@ -46,11 +46,8 @@ class ApplicationController < ActionController::Base
   end
   
   def sign_out_after
-    puts "Devise! " + controller_name
-    puts action_name
-    puts request.referrer
-    if controller_name == "sessions" && action_name == "destroy"
-      #redirect_to request.referrer
-    end
+    #puts "Devise! " + controller_name
+    #puts action_name
+    #puts request.referrer
   end
 end

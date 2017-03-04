@@ -90,26 +90,36 @@ module ProjectVinyl
         return User.search(params)
       end
       
+      def add_required_params(query)
+        if !query.key?(:bool)
+          return {term: { hidden: false }}
+        end
+        if !query[:bool].key?(:must)
+          query[:bool][:must] = []
+        end
+        query[:bool][:must] << {term: {hidden: false }}
+        return query
+      end
+      
       def exec()
         elastic = ElasticBuilder.interpret_opset(@type, @opset)
-        if @page.nil? || @page < 0
+        if @page.nil?
           @page = 0;
+        end
+        if @page < 0
+          @page = (@type == 'user' ? User : Video).count / @limit
         end
         params = {
           from: @limit * @page,
           size: @limit,
-          query: elastic.to_hash
+          query: add_required_params(elastic.to_hash)
         }
-        #disable custom ordering for now
-        # elasticsearch Fielddata is disabled on text fields by default. Set fielddata=true on [created_at]
         if ordering.length > 0
           params[:sort] = ordering
         end
-        puts params[:query]
-        
         @search = __exec(params)
         if @search.count == 0 && @search.results.total > 0 && @page > 0
-          @page = (@search.results.total / @limit).floor
+          @page = (@search.results.total / @limit).floor - 1
           params[:from] = @page * @limit
           @search = __exec(params)
         end
@@ -133,7 +143,7 @@ module ProjectVinyl
       end
       
       def pages
-        @search.results.total / @limit
+        (@search.results.total / @limit).floor
       end
       
       def count

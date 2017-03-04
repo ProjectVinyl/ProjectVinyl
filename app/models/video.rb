@@ -25,6 +25,7 @@ class Video < ActiveRecord::Base
       indexes :score, type: 'integer'
       indexes :created_at, type: 'date'
       indexes :updated_at, type: 'date'
+      indexes :hidden, type: 'boolean'
     end
     mappings dynamic: 'false' do
       indexes :tags, type: 'keyword'
@@ -32,7 +33,7 @@ class Video < ActiveRecord::Base
   end
   
   def as_indexed_json(options={})
-    json = as_json(only: ['title', 'user_id', 'source', 'audio_only', 'length', 'score','created_at','updated_at'])
+    json = as_json(only: ['title', 'user_id', 'source', 'audio_only', 'length', 'score','created_at','updated_at','hidden'])
     json["tags"] = self.tags.pluck(:name)
     return json
   end
