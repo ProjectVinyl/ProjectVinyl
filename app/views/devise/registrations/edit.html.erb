@@ -73,29 +73,6 @@
 			</tr>
 		</table>
 	<% end %>
-		<h1>Sponsored Content</h1>
-	<%= form_for(current_user.prefs_cache, as: 'settings', url: '/users/prefs', html: { method: :put }) do |f| %>
-		<table style="table-layout:auto;">
-			<tr>
-				<td class="label">
-					Show me Sponsored Content (Ads)
-				</td>
-				<td class="field">
-					<label class="button">
-						<%= f.check_box :show_ads %>
-						<i class="fa fa-check"></i> Enable
-					</label>
-				</td>
-			</tr>
-			<tr class="actions">
-				<td class="label">
-				</td>
-				<td class="field">
-					<%= f.submit "Save Changes", class: "green" %>
-				</td>
-			</tr>
-		</table>
-	<% end %>
 		<h1>Delete Account</h1>
 		<table>
 			<tr>
