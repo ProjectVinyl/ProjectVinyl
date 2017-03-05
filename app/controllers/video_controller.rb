@@ -55,18 +55,6 @@ class VideoController < ApplicationController
     end
   end
   
-  def changes
-    if !(@video = Video.where(id: params[:id]).first)
-      return render '/layouts/error', locals: { title: 'Nothing to see here!', description: "This is not the video you are looking for." }
-    end
-    if @video.duplicate_id > 0
-      flash[:alert] = 'The video you are looking for has been marked as a duplicate of the one below.'
-      return redirect_to action: 'view', id: @video.duplicate_id
-    end
-    @page = (params[:page] || 0).to_i
-    @history = Pagination.paginate([], @page, 20, true)
-  end
-  
   def go_next
     if @video = Video.where(id: params[:id].split(/-/)[0]).first
       if @video.duplicate_id > 0
@@ -173,7 +161,9 @@ class VideoController < ApplicationController
                     checksum: checksum[:value],
                     duplicate_id: 0
             )
-            TagHistory.record_source_change(current_user, @video, @video.source)
+            if @video.source && @video.source.strip != ''
+              TagHistory.record_source_change(current_user, @video, @video.source)
+            end
             @comments = @video.comment_thread = CommentThread.create(user_id: user, title: title)
             @comments.save
             if current_user.subscribe_on_upload?
