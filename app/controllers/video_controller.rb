@@ -212,7 +212,7 @@ class VideoController < ApplicationController
   end
   
   def video_update
-    id = params[:id] | (params[:video] ? params[:video][:id] : nil)
+    id = params[:id] || (params[:video] ? params[:video][:id] : nil)
     if user_signed_in? && @video = Video.where(id: id).first
       if @video.user_id == current_user.id || current_user.is_contributor?
         if params[:tags]
