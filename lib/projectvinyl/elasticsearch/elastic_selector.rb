@@ -7,7 +7,7 @@ module ProjectVinyl
       
       def initialize(sender, search_terms)
         @user = sender
-        @opset = ProjectVinyl::Search::Op.loadOPS(search_terms)
+        @opset = ProjectVinyl::Search::Op.loadOPS(search_terms.downcase)
         @type = "unknown"
       end
       
