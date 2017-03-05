@@ -200,6 +200,7 @@ var ajax = (function() {
       complete: function() {
         if (form.hasClass('form-state-toggle')) {
           form.parent().toggleClass(form.attr('data-state'));
+          form.removeClass('waiting').removeClass('uploading');
         }
       },
       cache: false,
