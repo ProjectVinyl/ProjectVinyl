@@ -72,11 +72,10 @@ class AdminController < ApplicationController
         end
       end
     rescue Exception => e
-      raise e
       if ajax
         return render status: 404, nothing: true
       end
-      render file: '/public/404.html', layout: false
+      return render file: '/public/404.html', layout: false
     end
     if ajax
       render json: {
