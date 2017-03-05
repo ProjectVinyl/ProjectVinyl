@@ -1,12 +1,11 @@
 class VideoController < ApplicationController
   def view
     if !(@video = Video.where(id: params[:id]).first)
-      render '/layouts/error', locals: { title: 'Nothing to see here!', description: "This is not the video you are looking for." }
-      return
+      return render '/layouts/error', locals: { title: 'Nothing to see here!', description: 'This is not the video you are looking for.' }
     end
     if @video.duplicate_id > 0
-      flash[:alert] = "The video you are looking for has been marked as a duplicate of the one below."
-      redirect_to action: 'view', id: @video.duplicate_id
+      flash[:alert] = 'The video you are looking for has been marked as a duplicate of the one below.'
+      return redirect_to action: 'view', id: @video.duplicate_id
     end
     if params[:list] || params[:q]
       if params[:q]
@@ -44,7 +43,7 @@ class VideoController < ApplicationController
     @user = @video.user
     @thread = @video.comment_thread
     @order = '1'
-    @results = @comments = Pagination.paginate(@thread.get_comments(user_signed_in? && current_user.is_contributor?), 0, 10, true)
+    @comments = Pagination.paginate(@thread.get_comments(user_signed_in? && current_user.is_contributor?), 0, 10, true)
     @queue = @user.queue(@video.id)
     if !(@modificationsAllowed = user_signed_in? && current_user.id == @user.id)
       @video.views = @video.views + 1
@@ -54,6 +53,18 @@ class VideoController < ApplicationController
     if !@video.processed
       VideoProcessor.startManager
     end
+  end
+  
+  def changes
+    if !(@video = Video.where(id: params[:id]).first)
+      return render '/layouts/error', locals: { title: 'Nothing to see here!', description: "This is not the video you are looking for." }
+    end
+    if @video.duplicate_id > 0
+      flash[:alert] = 'The video you are looking for has been marked as a duplicate of the one below.'
+      return redirect_to action: 'view', id: @video.duplicate_id
+    end
+    @page = (params[:page] || 0).to_i
+    @history = Pagination.paginate([], @page, 20, true)
   end
   
   def go_next
@@ -162,6 +173,7 @@ class VideoController < ApplicationController
                     checksum: checksum[:value],
                     duplicate_id: 0
             )
+            TagHistory.record_source_change(current_user, @video, @video.source)
             @comments = @video.comment_thread = CommentThread.create(user_id: user, title: title)
             @comments.save
             if current_user.subscribe_on_upload?
@@ -214,10 +226,13 @@ class VideoController < ApplicationController
     if user_signed_in? && @video = Video.where(id: id).first
       if @video.user_id == current_user.id || current_user.is_contributor?
         if params[:tags]
-          Tag.loadTags(params[:tags], @video)
+          if changes = Tag.loadTags(params[:tags], @video)
+            TagHistory.record_changes(current_user, @video, changes[0], changes[1])
+          end
         end
-        if params[:source]
+        if params[:source] && @video.source != params[:source]
           @video.source = params[:source]
+          TagHistory.record_source_change(current_user, @video, @video.source)
         end
         if params[:description]
           @video.set_description(params[:description])
@@ -235,13 +250,18 @@ class VideoController < ApplicationController
   def update
     if user_signed_in? && video = Video.where(id: params[:id]).first
       if params[:field] == 'tags'
-        Tag.loadTags(params[:value], video)
+        if changes = Tag.loadTags(params[:value], video)
+          TagHistory.record_changes(current_user, video, changes[0], changes[1])
+        end
         video.save
         render status: 200, nothing: true
         return
       elsif params[:field] == 'source'
-        video.source = params[:value]
-        video.save
+        if video.source != params[:value]
+          video.source = params[:value]
+          video.save
+          TagHistory.record_source_change(current_user, video, video.source)
+        end
         render status: 200, nothing: true
         return
       end

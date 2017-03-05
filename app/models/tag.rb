@@ -172,8 +172,9 @@ class Tag < ActiveRecord::Base
     loaded = Tag.get_tag_ids_with_create(Tag.split_tag_string(tag_string))
     common = existing & loaded
     if existing.length != loaded.length || existing.length != common.length
-      Tag.load_dif(loaded - common, existing - common, existing, sender)
+      return Tag.load_dif(loaded - common, existing - common, existing, sender)
     end
+    return nil
   end
   
   def self.get_updated_tag_set(sender)
@@ -211,6 +212,7 @@ class Tag < ActiveRecord::Base
     sender.tags_changed
     TagSubscription.notify_subscribers(added, removed, existing - removed)
     sender.save
+    return [added, removed]
   end
   
   def members

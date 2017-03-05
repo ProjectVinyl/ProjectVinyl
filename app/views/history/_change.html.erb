@@ -1,0 +1,34 @@
+<div class="row change">
+	<% if change.added.nil? %>
+	<div>
+		<div>
+			<%= change.value %>
+		</div>
+	</div>
+	<% else %>
+	<div>
+		<div>
+			#<a href="<%= change.tag.link %>">
+			<%= change.tag.name %>
+			</a>
+		</div>
+	</div>
+	<% end %>
+	<div class="duration action <%= change.action_class %>"><%= change.action %></div>
+	<div class="duration">
+		<%= since change.created_at %>
+	</div>
+	<div class="author">
+		<span>
+			<a href="<%= change.user.link %>">
+				<%= change.user.username %></span>
+			</a>
+			<% if change.user_id == @video.user_id %>
+				<b>(uploader)</b>
+			<% end %>
+			<% if change.user.is_staff? %>
+				<b>(staff)</b>
+			<% end %>
+		</span>
+	</div>
+</div>

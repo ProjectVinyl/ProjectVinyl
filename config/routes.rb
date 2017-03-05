@@ -60,6 +60,9 @@ Rails.application.routes.draw do
   patch 'ajax/video/edit' => 'video#video_update'
   patch 'ajax/video/edit/:async' => 'video#video_update'
   
+  get 'video/:id/changes' => 'history#view'
+  get 'ajax/history/:id' => 'history#page'
+  
   get 'embed/:id' => 'embed#view'
   get 'oembed' => 'embed#oembed'
   get 'download/:id' => 'video#download'

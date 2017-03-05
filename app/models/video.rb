@@ -160,6 +160,7 @@ class Video < ActiveRecord::Base
     delFile(self.cover_path.to_s + ".png")
     delFile(self.cover_path.to_s + "-small.png")
     Tag.where('id IN (?) AND video_count > 0', self.tags.pluck(:id)).update_all('video_count = video_count - 1')
+    TagHistory.destroy_for(self)
     self.destroy
   end
   
