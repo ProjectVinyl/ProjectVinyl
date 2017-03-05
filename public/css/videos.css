@@ -132,9 +132,12 @@ ul.horizontal > li + li {
   left: 0;
   right: 0;
   bottom: 0;
-  padding: 10px 10px 0 10px;
+  padding: 0;
   opacity: 0;
   transition: opacity 0.5s linear;
+}
+.playback-controls ul {
+  margin: 0 15px 15px 15px;
 }
 .video:hover .playback-controls, .video.hover .playback-controls, .video.audio-only .playback-controls {
   opacity: 1;
@@ -197,8 +200,8 @@ ul.horizontal > li + li {
 .playback-controls .track {
   transition: background 0.5s ease;
   position: relative;
-  width: calc(100% - 80px);
-  margin-left: 10px;
+  width: calc(100% - 70px);
+  margin-left: 5px;
   height: 10px;
   cursor: pointer;
   border-radius: 4px;
