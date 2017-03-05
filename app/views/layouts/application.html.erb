@@ -13,7 +13,8 @@
 	<% end %>
 	<script>var emoticons = <%= raw emoticons %><% if user_signed_in? %>,current_user = {id:<%= current_user.id %>}<% end %>;</script>
 	<%= csrf_meta_tags %>
-	<meta name="theme-color" value="#a66ebe" >
+	<meta name="theme-color" content="#a66ebe">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<%= content_for(:metadata) %>
 </head>
 <body>
