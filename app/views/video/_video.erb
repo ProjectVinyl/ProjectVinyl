@@ -145,15 +145,19 @@
 			</div>
 			<button class="action like<% if @video.isUpvotedBy(current_user) %> liked<% end %>" data-count="<%= @video.upvotes %>" data-action="like" data-id="<%= @video.id %>">
 				<i class="fa fa-thumbs-up"></i>
-				<% if @video.upvotes && @video.upvotes > 0 %>
-				<span> (<span class="count"><%= @video.upvotes %></span>)</span>
-				<% end %>
+				<span>
+					<% if @video.upvotes && @video.upvotes > 0 %>
+					<span class="count"><%= @video.upvotes %></span>
+					<% end %>
+				</span>
 			</button>
 			<button class="action dislike<% if @video.isDownvotedBy(current_user) %> liked<% end %>" data-count="<%= @video.downvotes %>" data-action="dislike" data-id="<%= @video.id %>">
 				<i class="fa fa-thumbs-down"></i>
-				<% if @video.downvotes && @video.downvotes > 0 %>
-				<span> (<span class="count"><%= @video.downvotes %></span>)</span>
-				<% end %>
+				<span>
+					<% if @video.downvotes && @video.downvotes > 0 %>
+					<span class="count"><%= @video.downvotes %></span>
+					<% end %>
+				</span>
 			</button>
 		<% else %>
 			<a target="_blank" href="/users/sign_in" class="button action star"><i class="fa fa-star"></i></a>
