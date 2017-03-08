@@ -130,7 +130,7 @@ class VirtualAlbum < Album
   end
   
   def fetch_items
-    return ProjectVinyl::ElasticSearch::ElasticSelector.new(nil, @query).query(0, @index - @offset + 5).videos.order_by('v.id').offset(@offset).exec().records()
+    return ProjectVinyl::ElasticSearch::ElasticSelector.new(nil, @query).query(0, @index - @offset + 5).videos.offset(@offset).exec().records()
   end
   
   def addItem(video)

@@ -9,6 +9,7 @@ module ProjectVinyl
         @user = sender
         @opset = ProjectVinyl::Search::Op.loadOPS(search_terms.downcase)
         @type = "unknown"
+        @ordering = []
       end
       
       def query(page, limit)
@@ -28,7 +29,7 @@ module ProjectVinyl
       end
       
       def order_by(ordering)
-        @ordering = ordering
+        @ordering = [ordering]
         return self
       end
       
