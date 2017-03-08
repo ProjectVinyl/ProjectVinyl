@@ -507,7 +507,9 @@ ul.horizontal {
   overflow: hidden;
 }
 ul.horizontal > li.generic {
-  float: left;
+  display: inline-block;
+  margin-left: -3px;
+  margin-right: -2px;
   border-top: none !important;
   border-bottom: solid 1px rgba(0,0,0,0.2);
   padding: 10px;
@@ -1057,4 +1059,10 @@ iframe.embed {
   width: 560px;
   height: 315px;
   max-width: 100%;
+}
+
+@media(max-width: 650px) {
+  ul.horizontal {
+    text-align: center;
+  }
 }

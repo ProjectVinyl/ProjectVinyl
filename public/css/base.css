@@ -258,6 +258,12 @@ table {
 
 .post {
   width: 100%;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  word-break: break-word;
+  -mox-hyphens: auto;
+  -webkit-hyphens: auto;
+  hyphens: auto;
 }
 .post + .post {
   margin-top: 10px;
@@ -767,7 +773,8 @@ div.page .positioner {
 
 .wrapper .page {
   vertical-align: top;
-  margin: 10px;
+  margin-top: 10px;
+  margin-bottom: 10px;
   max-width: 100%;
 }
 .wrapper .wrapper.column-left,
@@ -1806,10 +1813,19 @@ img.emoticon {
   overflow-y: auto;
   overflow-x: hidden;
 }
+.popup-container .popup .content {
+  margin-bottom: -5px;
+}
+
+.modal {
+  background: #fff;
+  min-height: 100px;
+}
 .popup-container .popup .content .message_content {
   padding: 10px 20px;
   min-height: 50px;
 }
+.modal .foot,
 .popup-container .popup .content .foot {
   display: block;
   overflow: hidden;
@@ -2573,6 +2589,9 @@ h1.banned, h2.banned, a.banned, .banned a.user-link, .comment .name a.user-link.
   .wrapper .wrapper.right.column-mobile-fragmented > section.column-mobile-shown {
     margin-left: 0 !important;
     margin-right: 0 !important;
+  }
+  .wrapper .page.column-left {
+    margin-left: 0;
   }
 }
 @media(max-width:820px) {
