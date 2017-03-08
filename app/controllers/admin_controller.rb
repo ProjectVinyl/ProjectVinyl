@@ -35,7 +35,7 @@ class AdminController < ApplicationController
     if @location.length == 0 && @location[0] != 'encoding'
       @location = [ 'public' ] + @location
     end
-    if @location.length > 1 && @location[1] != 'stream' && @location[1] != 'cover' && @location[1] != 'avatar'
+    if @location.length > 1 && @location[1] != 'stream' && @location[1] != 'cover' && @location[1] != 'avatar' && @location[1] != 'banner'
       if @location[0] != 'encoding'
         if ajax
           return render status: 403, nothing: true
@@ -55,7 +55,7 @@ class AdminController < ApplicationController
       if @location == 'public'
         @public.filter do |loc|
           name = loc.split('.')[0]
-          loc.index('.').nil? && (name == 'stream' || name == 'cover' || name == 'avatar')
+          loc.index('.').nil? && (name == 'stream' || name == 'cover' || name == 'avatar' || name == 'banner')
         end
       end
       if @location.index('public/avatar') == 0
