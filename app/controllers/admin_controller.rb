@@ -1,4 +1,7 @@
 class AdminController < ApplicationController
+  
+  before_action :authenticate_user!
+  
   def view
     if !user_signed_in? || !current_user.is_contributor?
       return render 'layouts/error', locals: { title: 'Access Denied', description: "You can't do that right now." }
@@ -58,7 +61,7 @@ class AdminController < ApplicationController
           loc.index('.').nil? && (name == 'stream' || name == 'cover' || name == 'avatar' || name == 'banner')
         end
       end
-      if @location.index('public/avatar') == 0
+      if @location.index('public/avatar') == 0 || @location.index('public/banner') == 0
         @public.names_resolver do |names,ids|
           User.where('id IN (' + ids.join(',') + ')').pluck(:id,:username).each do |i|
             names[i[0].to_s] = i[1]
