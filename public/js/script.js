@@ -534,7 +534,9 @@ var initFileSelect = (function() {
         }
         img.src = URL.createObjectURL(input[0].files[0]);
         preview.css('background-image', 'url(' + img.src + ')');
-        me.trigger('accept');
+        var title = input[0].files[0].name.split('.');
+        var ext = title[title.length - 1];
+        me.trigger('accept', {mime: input[0].files[0].type, type: ext});
       });
     } else {
       input.on('change', function() {
@@ -542,8 +544,9 @@ var initFileSelect = (function() {
           error('An encorrect file type was selected. Please try again.');
         } else {
           var title = input[0].files[0].name.split('.');
+          var ext = title[title.length - 1];
           title = title.splice(0, title.length - 1).join('.');
-          me.trigger('accept', {title: title, mime: input[0].files[0].type, data: input[0].files[0]});
+          me.trigger('accept', {title: title, mime: input[0].files[0].type, type: ext, data: input[0].files[0]});
         }
       });
     }
@@ -978,19 +981,22 @@ $(document).on('click', '.state-toggle', function(ev) {
           cancel.on('click', function() {
             popup.close();
           });
-          this.content.find('.foot').addClass('center');
-          this.content.find('.foot').append(ok);
-          this.content.find('.foot').append(cancel);
+          this.content.foot = this.content.find('.foot');
+          this.content.foot.addClass('center');
+          this.content.foot.append(ok);
+          this.content.foot.append(cancel);
           this.setPersistent();
           this.show();
         });
       } else {
         popup.show();
       }
+    } else if (action == 'secure') {
+      popup = Popup.iframe(url, me.attr('data-title'), me.attr('data-icon'), me.hasClass('confirm-button-thin'), me.attr('data-event-loaded'));
+      popup.setPersistent();
     } else {
       popup = Popup.fetch(url, me.attr('data-title'), me.attr('data-icon'), me.hasClass('confirm-button-thin'), me.attr('data-event-loaded'));
       popup.setPersistent();
-      
     }
     me.on('click', function(e) {
       popup.show();
@@ -998,7 +1004,11 @@ $(document).on('click', '.state-toggle', function(ev) {
     });
   }
   $(document).on('click', '.confirm-button:not(.loaded)', function(e) {
+    try {
     init($(this));
+    } catch (e) {
+      console.error(e);
+    }
     e.preventDefault();
   });
 })();
@@ -1136,6 +1146,46 @@ var Popup = (function() {
       this.show();
     }));
   }
+  function domain() {
+    return 'http' + (document.domain == 'localhost' ? '' : 's') + '://' +  document.location.hostname+(document.location.port ? ':'+document.location.port : '');
+  }
+  
+  function iframe(me, resource) {
+    resource = domain() + '/ajax/' + resource;
+    var frame = document.createElement('iframe');
+    frame.style['display'] = 'none';
+    frame.setAttribute('frameborder', '0');
+    frame.onload = function() {
+      frame.onload = 0;
+      me.content.find('.loader').remove();
+      frame.style.display = '';
+      if (document.location.protocol != 'https:') {
+        frame.contentWindow.postMessage('hellow', resource);
+        var f = function(e) {
+          if ((e.origin || e.originalEvent.origin) == domain()) {
+            frame.style.height = e.data;
+            me.center();
+          }
+          window.removeEventListener('mesage', f);
+        }
+        window.addEventListener('message', f);
+      } else {
+        frame.style.height = frame.contentWindow.document.body.scrollHeight + 'px';
+        me.center();
+        frame.onload = 0;
+      }
+    };
+    frame.src = resource;
+    me.content.append(frame);
+  }
+  Popup.iframe = function(resource, title, icon, thin) {
+    return (new Popup(title, icon, function() {
+      this.content.html('<div class="loader"><i class="fa fa-pulse fa-spinner" /></div>');
+      if (thin) this.container.addClass('thin');
+      iframe(this, resource);
+      this.show();
+    }));
+  };
   Popup.prototype = {
     setPersistent: function() {
       this.persistent = true;

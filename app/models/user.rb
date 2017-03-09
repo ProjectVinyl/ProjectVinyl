@@ -197,18 +197,18 @@ class User < ActiveRecord::Base
       o.each do |u|
         if File.exist?(Rails.root.join('public', 'avatar', u.id.to_s))
           if !u.mime
-            u.setAvatar(true)
+            u.mime = 'png'
             u.save
             result[0] += 1
           end
         else
-          if !u.mime
-            u.mime = "image/png"
+          if u.mime
+            u.mime = nil
             u.save
             result[0] += 1
           end
         end
-        if File.exist?(Rails.root.join('public', 'banner', u.id.to_s))
+        if File.exist?(Rails.root.join('public', 'banner', u.id.to_s + '.png'))
           if !u.banner_set
             u.banner_set = true
             u.save
@@ -329,9 +329,19 @@ class User < ActiveRecord::Base
   end
   
   def setAvatar(avatar)
-    if !avatar || avatar.content_type.include?('image/')
-      if img('avatar', avatar)
-        self.mime = avatar.content_type
+    delFile(avatar_path.to_s + '-small' + self.mime.to_s)
+    delFile(avatar_path.to_s + self.mime.to_s)
+    if avatar && avatar.content_type.include?('image/')
+      ext = File.extname(avatar.original_filename)
+      if ext == ''
+        ext = Mimes.ext(avatar.content_type)
+      end
+      if img(avatar_path.to_s + ext, avatar)
+        self.mime = ext
+        Ffmpeg.crop_avatar(avatar_path.to_s + self.mime, avatar_path.to_s + self.mime)
+        Ffmpeg.scale(avatar_path.to_s + self.mime, avatar_path.to_s + '-small' + self.mime, 30)
+        #normal: 240
+        #small: 30
       else
         self.mime = nil
       end
@@ -340,7 +350,8 @@ class User < ActiveRecord::Base
   
   def setBanner(banner)
     if !banner || banner.content_type.include?('image/')
-      self.banner_set = img('banner', banner)
+      delFile(banner_path.to_s + '.png')
+      self.banner_set = img(banner_path.to_s + '.png', banner)
     end
   end
   
@@ -371,15 +382,30 @@ class User < ActiveRecord::Base
     return self
   end
   
+  def avatar_path
+    Rails.root.join('public', 'avatar', self.id.to_s)
+  end
+  
+  def banner_path
+    Rails.root.join('public', 'banner', self.id.to_s)
+  end
+  
   def avatar
     if !self.mime
-      return Gravatar.avatar_for(self.email, s: 800, d: 'http://www.projectvinyl.net/images/default-avatar.png', r: 'pg')
+      return Gravatar.avatar_for(self.email, s: 240, d: 'http://www.projectvinyl.net/images/default-avatar.png', r: 'pg')
     end
-    return '/avatar/' + self.id.to_s
+    return '/avatar/' + self.id.to_s + self.mime
+  end
+  
+  def small_avatar
+    if !self.mime
+      return Gravatar.avatar_for(self.email, s: 30, d: 'http://www.projectvinyl.net/images/default-avatar.png', r: 'pg')
+    end
+    return '/avatar/' + self.id.to_s + '-small' + self.mime
   end
   
   def banner
-    return '/banner/' + self.id.to_s
+    return '/banner/' + self.id.to_s + '.png'
   end
   
   def link
@@ -414,20 +440,29 @@ class User < ActiveRecord::Base
   
   protected
   def remove_assets
-    img('avatar', false)
-    img('banner', false)
+    delFile(banner_path.to_s + '.png')
+    delFile(avatar_path.to_s + self.mime.to_s)
+    delFile(avatar_path.to_s + '-small' + self.mime.to_s)
   end
   
   def init_name
     self.set_name(self.username)
   end
   
-  private
-  def img(type, uploaded_io)
-    path = Rails.root.join('public', type, self.id.to_s)
+  def delFile(path)
     if File.exist?(path)
       File.delete(path)
     end
+  end
+  
+  private
+  def renameFile(from, to)
+    if File.exist?(from)
+      File.rename(from, to)
+    end
+  end
+  
+  def img(path, uploaded_io)
     if uploaded_io
       File.open(path, 'wb') do |file|
         file.write(uploaded_io.read)

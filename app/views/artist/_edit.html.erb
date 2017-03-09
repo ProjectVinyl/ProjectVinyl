@@ -41,7 +41,7 @@ $('#avatar-upload').on('accept', function(e, file) {
   ajax.form(form, e, {
     'success': function() {
        form.removeClass('uploading');
-       $('#login .avatar.small span, #avatar-upload .preview').css('background-image', 'url(/avatar/<%= user.id %>.png?' + new Date().getTime() + ')');
+       $('#login .avatar.small span, #avatar-upload .preview').css('background-image', 'url(/avatar/<%= user.id %>.' + file.type + '?' + new Date().getTime() + ')');
     }
   });
 }).parent().find('input#erase-avatar').on('change', function() {

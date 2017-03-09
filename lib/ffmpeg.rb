@@ -1,6 +1,18 @@
 require 'digest/md5'
 
 class Ffmpeg
+   INPUT_WIDTH = 'iw'
+   INPUT_HEIGHT = 'ih'
+   HEADER = '-hide_banner -nostats -loglevel panic -y'
+   
+   def self.max_of(width, height)
+    "max(#{width}\,#{height})"
+   end
+   
+   def self.min_of(width, height)
+    "min(#{width}\,#{height})"
+   end
+   
    def self.compute_checksum(data)
      return Digest::MD5.hexdigest(data)
    end
@@ -51,7 +63,7 @@ class Ffmpeg
        if File.mtime(temp) < Time.now.ago(1800)
          File.rename(temp, webm)
          yield
-         puts 'Existin file found (' + temp.to_s + ')'
+         puts 'Existing file found (' + temp.to_s + ')'
          return "Complete (Unlocked Index)"
        end
      end
@@ -105,10 +117,25 @@ class Ffmpeg
    
    def self.extractThumbnail(source, destination, time)
      time = Ffmpeg.to_h_m_s(time)
-     `ffmpeg -hide_banner -nostats -loglevel panic -y -i "#{source}" -ss #{time} -vframes 1 "#{destination}.png" -ss #{time} -vframes 1 -vf scale=-1:130 "#{destination}-small.png"`
+     `ffmpeg #{Ffmpeg::HEADER} -i "#{source}" -ss #{time} -vframes 1 "#{destination}.png" -ss #{time} -vframes 1 -vf scale=-1:130 "#{destination}-small.png"`
+   end
+   
+   def self.crop_avatar(source, destination)
+    `ffmpeg #{Ffmpeg::HEADER} -i "#{source}" -vf crop=min(iw\\,ih):min(iw\\,ih):(in_w-out_w)/2:(in_h-out_h)/2,scale=min(min(iw\\,ih)\\,240):min(min(iw\\,ih)\\,240) "#{destination}"`
+   end
+   
+   def self.crop_square(source, destination)
+    `ffmpeg #{Ffmpeg::HEADER} -i "#{source}" -vf crop=min(iw\\,ih):min(iw\\,ih):(in_w-out_w)/2:(in_h-out_h)/2 "#{destination}"`
+   end
+   
+   def self.scale(source, destination, *args)
+    if args.length == 1
+      args << args[0]
+    end
+    `ffmpeg #{Ffmpeg::HEADER} -i "#{source}" -vf scale=#{args[0]}:#{args[1]} "#{destination}"`
    end
    
    def self.extractTinyThumbFromExisting(png)
-     IO.popen('ffmpeg -hide_banner -nostats -loglevel panic -i "' + png.to_s + '.png" -vf scale=-1:130 "' + png.to_s + '-small.png"')
+     IO.popen("ffmpeg -hide_banner -nostats -loglevel panic -i \"#{png}.png\" -vf scale=-1:130 \"#{png}-small.png\"")
    end
 end
