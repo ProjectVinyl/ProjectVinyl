@@ -1031,6 +1031,7 @@ label[disabled] span::after {
 
 .search-result {
   min-height: 500px;
+  margin: 10px 0;
 }
 
 button, .button, .foobar, input[type=submit] {
@@ -2641,7 +2642,6 @@ h1.banned, h2.banned, a.banned, .banned a.user-link, .comment .name a.user-link.
     font-size: 13px;
   }
 }
-
 header > ul li a i {
   display: none !important;
 }
@@ -2671,6 +2671,40 @@ header > ul li a i {
   #login .username {
     display: inline;
     width: 50%;
+  }
+}
+@media (max-width: 500px) {
+  .paginator .pagination .pages {
+    position: relative;
+    display: inline-block;
+    overflow-y: visible;
+    transition: max-height 0.5s ease;
+    z-index: 9999999999999999999999;
+    height: 35px;
+  }
+  .paginator .pagination .pages .button {
+    display: block;
+    float: left;
+    clear: both;
+    margin-bottom: -36px;
+    transition: margin-bottom 0.5s ease 0.4s, transform 0.5s ease 0.4s, opacity 0.5s ease 0.4s;
+    opacity: 0;
+  }
+  .paginator .pagination .pages .button.selected {
+    opacity: 1;
+  }
+  .paginator .pagination .pages .button.selected::after {
+    display: inline-block;
+    margin-left: 5px;
+    border-left: solid 1px #eee;
+    padding-left: 5px;
+    content: ' \f063';
+    font-family: 'FontAwesome';
+  }
+  .paginator .pagination .pages:hover .button {
+    margin-bottom: 3px;
+    transform: translatey(-440%);
+    opacity: 1;
   }
 }
 
