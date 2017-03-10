@@ -77,36 +77,49 @@
 				Badges
 			</td>
 			<td>
+				<table>
 				<% had_badges = [] %>
 				<% @user.user_badges.includes(:badge).each do |i| %>
 					<% had_badges << i.badge.id %>
-					<div style="margin-bottom: 10px">
-						<button class="action toggle blue" data-action="togglebadge/<%= i.badge.id %>" data-target="user" data-id="<%= @user.id %>">
-							<span class="icon">
-								<i class="fa fa-check"></i>
-							</span>
-							<span class="label"><%= i.badge.title %></span>
-						</button>
-						<%= i.custom_title if i.badge.badge_type > 0 %>
-						<div class="right" style="color:<%= i.colour %>"<% if i.badge.badge_type > 0 %> title="<%= i.custom_title %>"<% end %>>
-							<i class="fa fa-3x fa-<%= i.icon %>"></i>
-						</div>
-					</div>
+					<tr>
+						<td>
+							<div style="margin-bottom: 10px">
+								<button class="action toggle blue" data-action="togglebadge/<%= i.badge.id %>" data-target="user" data-id="<%= @user.id %>">
+									<span class="icon">
+										<i class="fa fa-check"></i>
+									</span>
+									<span class="label"><%= i.badge.title %></span>
+								</button>
+								<div class="right" style="color:<%= i.colour %>"<% if i.badge.badge_type > 0 %> title="<%= i.custom_title %>"<% end %>>
+									<i class="fa fa-3x fa-<%= i.icon %>"></i>
+								</div>
+								<% if i.badge.badge_type > 0 %>
+								<div><%= i.custom_title %></div>
+								<% end %>
+							</div>
+						</td>
+					</tr>
 				<% end %>
+					<tr><td><hr></td></tr>
 				<% (had_badges.length > 0 ? Badge.where.not('id IN (?)', had_badges) : Badge.all).each do |i| %>
-					<div style="margin-bottom: 10px">
-						<button class="action toggle blue" data-action="togglebadge/<%= i.id %>" data-target="user" data-id="<%= @user.id %>" data-with="#reason_<%= i.id %>">
-							<span class="icon"></span>
-							<span class="label"><%= i.title %></span>
-						</button>
-						<% if i.badge_type > 0 %>
-							<input id="reason_<%= i.id %>" type="text"></input>
-						<% end %>
-						<div class="right" style="color:<%= i.colour %>">
-							<i class="fa fa-3x fa-<%= i.icon %>"></i>
-						</div>
-					</div>
+					<tr>
+						<td>
+							<div style="margin-bottom: 10px">
+								<button class="action toggle blue" data-action="togglebadge/<%= i.id %>" data-target="user" data-id="<%= @user.id %>" data-with="#reason_<%= i.id %>">
+									<span class="icon"></span>
+									<span class="label"><%= i.title %></span>
+								</button>
+								<% if i.badge_type > 0 %>
+									<input id="reason_<%= i.id %>" type="text"></input>
+								<% end %>
+								<div class="right" style="color:<%= i.colour %>" title="<%= i.title %>">
+									<i class="fa fa-3x fa-<%= i.icon %>"></i>
+								</div>
+							</div>
+						</td>
+					</tr>
 				<% end %>
+				</table>
 			</td>
 		</tr>
 	</table>
