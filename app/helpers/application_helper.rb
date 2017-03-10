@@ -188,4 +188,12 @@ module ApplicationHelper
   def valid_string(s)
     ApplicationHelper.valid_string(s)
   end
+  
+  def safe_to_display(num, max)
+    num = num || 0
+    if num > max
+      return number_with_delimiter(max) + '+'
+    end
+    number_with_delimiter num
+  end
 end

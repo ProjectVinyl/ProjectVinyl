@@ -12,7 +12,7 @@
 			<% if thread_thumb.pinned %>
 				<i class="fa fa-thumb-tack"></i>
 			<% end %>
-			<a href="/thread/<%= thread_thumb.id %>-<%= thread_thumb.safe_title %>">
+			<a href="<%= thread_thumb.link %>">
 				<%= thread_thumb.get_title %>
 			</a>
 		</div>

@@ -52,6 +52,10 @@ class CommentThread < ActiveRecord::Base
     ""
   end
   
+  def link
+    return '/thread/' + self.id.to_s + '-' + self.safe_title
+  end
+  
   def location
     if self.owner_type == 'Video'
       return '/view/' + self.owner_id.to_s

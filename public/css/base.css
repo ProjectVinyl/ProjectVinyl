@@ -207,13 +207,20 @@ table {
 }
 
 .featured .scoring {
+  display: table;
+  width: 100%;
+  border-spacing: 5px;
+  border-collapse: separate;
   text-align: center;
+  margin-top: 5px;
 }
-.featured .scoring span {
-  display: inline-block;
-  min-height: 0;
+.featured .scoring span,
+.featured .scoring a {
+  display: table-cell;
   padding: 5px;
   border-radius: 3px;
+  margin-top: 5px;
+  vertical-align: middle;
 }
 .featured .scoring .score {
   color: #000;
@@ -1032,6 +1039,7 @@ label[disabled] span::after {
 .search-result {
   min-height: 500px;
   margin: 10px 0;
+  overflow: hidden;
 }
 
 button, .button, .foobar, input[type=submit] {
@@ -1050,7 +1058,7 @@ button:hover, .button:hover, button.selected, .button.selected, input[type=submi
 
 button:active, .button:active, input[type=submit]:active {
    background: #f8f8f8;
-   box-shadow: 0 0 5px 0 rgba(0,0,0,0.3) inset;
+   box-shadow: 0 0 5px 0 rgba(0,0,0,0.1) inset;
 }
 
 button.disable, .button.disable, button.working, .button.working {
@@ -1309,6 +1317,8 @@ label input[type=checkbox]:checked + i + i {
   text-shadow: inherit;
   padding: 0;
   margin: 0;
+  box-shadow: none;
+  border-radius: 0;
 }
 .editable.short.editing .input {
   width: auto;
@@ -2696,20 +2706,29 @@ header > ul li a i {
   .paginator .pagination .pages .button.selected {
     opacity: 1;
     z-index: 1000;
+    padding-right: 3px;
   }
   .paginator .pagination .pages .button.selected::after {
     display: inline-block;
-    margin-left: 5px;
-    border-left: solid 1px #eee;
-    padding-left: 5px;
+    margin: 0 5px;
+    padding: 0 5px;
     content: ' \f063';
     font-family: 'FontAwesome';
+    transition: transform 0.5s ease-in 0.4s, -webkit-transform 0.5s ease-in 0.4s;
+    transform: rotate(0deg);
+    -webkit-transform: rotate(0deg);
   }
   .paginator .pagination .pages.hover .button,
   .paginator .pagination .pages:hover .button {
     margin-bottom: 3px;
     opacity: 1;
     transform: translatey(-440%);
+    -webkit-transform: translatey(-440%);
+  }
+  .paginator .pagination .pages.hover .button.selected::after,
+  .paginator .pagination .pages:hover .button.selected::after {
+    transform: rotate(180deg);
+    -webkit-transform: rotate(180deg);
   }
 }
 

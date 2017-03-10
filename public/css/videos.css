@@ -535,6 +535,7 @@ ul.horizontal.center > li {
 
 .load-more {
   text-align: center;
+  margin-top: 10px;
 }
 
 a.album {
