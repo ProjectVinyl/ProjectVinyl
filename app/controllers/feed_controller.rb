@@ -59,7 +59,7 @@ class FeedController < ApplicationController
   def page
     @page = params[:page].to_i
     @results = TagSubscription.get_feed_items(current_user)
-    @results = Pagination.paginate(@videos, @page, 30, false)
+    @results = Pagination.paginate(@results, @page, 30, false)
     render json: {
       content: render_to_string(partial: '/layouts/video_thumb_h.html.erb', collection: @results.records),
       pages: @results.pages,
