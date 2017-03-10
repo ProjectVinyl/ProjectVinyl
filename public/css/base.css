@@ -1292,6 +1292,9 @@ label input[type=checkbox]:checked + i + i {
   display: block;
   position: relative;
 }
+.editable.editing.inline {
+  display: inline-block;
+}
 .editable .input {
   display: none;
   background: none;
@@ -2692,6 +2695,7 @@ header > ul li a i {
   }
   .paginator .pagination .pages .button.selected {
     opacity: 1;
+    z-index: 1000;
   }
   .paginator .pagination .pages .button.selected::after {
     display: inline-block;
@@ -2701,10 +2705,11 @@ header > ul li a i {
     content: ' \f063';
     font-family: 'FontAwesome';
   }
+  .paginator .pagination .pages.hover .button,
   .paginator .pagination .pages:hover .button {
     margin-bottom: 3px;
-    transform: translatey(-440%);
     opacity: 1;
+    transform: translatey(-440%);
   }
 }
 

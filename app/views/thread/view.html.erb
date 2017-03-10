@@ -1,6 +1,6 @@
 <% title @thread.get_title + " - Forum" %>
 <% if @modificationsAllowed %>
-<h1 class="editable short title" data-target="thread" data-member="title" data-id="<%= @thread.id %>">
+<h1>
 	<a href="/">Home</a> <i class="fa fa-chevron-right"></i> <a href="/forum">Forum</a> <i class="fa fa-chevron-right"></i> 
 	<% if @thread.locked %>
 		<i class="fa fa-lock" title="Thread Locked"></i>
@@ -8,8 +8,10 @@
 	<% if @thread.pinned %>
 		<i class="fa fa-thumb-tack"></i>
 	<% end %>
-	<span class="content"><%= @thread.get_title %></span>
-	<span class="edit"><i class="fa fa-pencil"></i></span>
+	<span class="editable short inline title" data-target="thread" data-member="title" data-id="<%= @thread.id %>">
+		<span class="content"><%= @thread.get_title %></span>
+		<span class="edit"><i class="fa fa-pencil"></i></span>
+	</span>
 	<button title="<% if @subscribed = @thread.subscribed?(current_user) %>Unsubscribe<% else %>Subscribe<% end %>" class="action button button-bub subscribe right toggle"
 			data-action="subscribe"
 			data-target="thread"
@@ -20,7 +22,7 @@
 		</span>
 	</button>
 </h1>
-<% if current_user.is_contributor? %>
+<% if false && current_user.is_contributor? %>
 <div class="actions">
 	<button class="action toggle blue" data-action="pin" data-target="thread" data-id="<%= @thread.id %>">
 		<span class="icon">

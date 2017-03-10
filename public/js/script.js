@@ -951,7 +951,6 @@ $(document).on('click', '.state-toggle', function(ev) {
   }
   $(document).on('click', '.action.toggle', function(e) {
     toggle($(this));
-    e.preventDefault();
   });
 })();
 (function() {
@@ -1414,6 +1413,7 @@ var paginator = (function() {
     },
     goto: function(button) {
       requestPage(button.closest('.paginator'), button.attr('data-page-to'));
+      if (!button.hasClass('selected')) button.parent().removeClass('hover');
     }
   }
 })();
@@ -1664,7 +1664,7 @@ $(document).on('click', '.tab-set.async a.button:not([data-disabled])', function
   e.preventDefault();
 });
 
-$(document).on('touchstart', '.drop-down-holder:not(.hover)', function(e) {
+$(document).on('touchstart', '.drop-down-holder:not(.hover), .mobile-touch-toggle:not(.hover)', function(e) {
   var me = $(this);
   me.addClass('hover');
   e.preventDefault();
