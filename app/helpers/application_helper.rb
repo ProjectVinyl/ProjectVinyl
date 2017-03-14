@@ -91,6 +91,7 @@ module ApplicationHelper
     text = text.gsub(/\[url=([^\]]+)\]/,'<a href="\1">').gsub(/\[\/url\]/,'</a>')
     text = text.gsub(/\[img\]([^\]]+)\[\/img\]/, '<span class="img"><img src="\1"></span>')
     text = text.gsub(/([^">]|[\s\n]|<[\/]?br>|^)(http[s]?:\/\/[^\s\n<]+)([^"<]|[\s\n]|<br>|$)/, '\1<a data-link="1" href="\2">\2</a>\3')
+    text = text.gsub(/([^">]|[\s\n]|<[\/]?br>|^)(>>|&gt;&gt;)([0-9a-z]+)([^"<]|[\s\n]|<br>|$)/, '\1<a data-link="2" href="#comment_\3">\2\3</a>\4')
     text = text.gsub(/\[spoiler\]/, '<div class="spoiler">').gsub(/\[\/spoiler\]/, '</div>')
     Emoticons.each { |x|
       text = text.gsub(/:#{x}:/,'<img class="emoticon" src="/emoticons/' + x + '.png">')
@@ -111,6 +112,7 @@ module ApplicationHelper
     text = text.gsub(/<i class="fa fa-fw fa-([^"]+)"><\/i>/, '[icon]\1[/icon]')
     text = text.gsub(/<br>/,'\n').gsub(/<([\/]?([buis]|sup|sub))>/, '[\1]').gsub(/<([\/]?)blockquote>/, '[\1q]')
     text = text.gsub(/<a data-link="1" href="([^"]+)">[^<]*<\/a>/, '\1')
+    text = text.gsub(/<a data-link="2" href="[^"]+">([^<]*)<\/a>/, '\1')
     text = text.gsub(/<a href="([^"]+)"\>/, '[url=\1]').gsub(/<\/a>/,'[/url]')
     text = text.gsub(/<div class="spoiler">/, '[spoiler]').gsub(/<\/div>/,'[/spoiler]')
     text = text.gsub(/<\/img>/,'').gsub(/<span class="img"><img src="([^"]+)"><\/span>/, '[img]\1[/img]')
@@ -159,6 +161,16 @@ module ApplicationHelper
       hours = '0' + hours.to_s
     end
     hours.to_s + ':' + minutes.to_s + ':' + seconds.to_s
+  end
+  
+  def selected_path?(type)
+    if !@path_type
+      @path_type = request.path.split('/')[1]
+      if @path_type == 'thread'
+        @path_type = 'forum'
+      end
+    end
+    @path_type == type ? ' selected' : ''
   end
   
   def self.url_safe(txt)

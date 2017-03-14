@@ -285,6 +285,7 @@ var BBC = (function() {
     text = text.replace(/\[spoiler\]/g, '<div class="spoiler">').replace(/\[\/spoiler\]/g, '</div>');
     text = text.replace(/\[img\]([^\[]+)\[\/img\]/g, '<span class="img"><img src="$1"></span>');
     text = text.replace(/([^">]|[\s]|<[\/]?br>|^)(http[s]?:\/\/[^\s\n<]+)([^"<]|[\s\n]|<br>|$)/g, '$1<a data-link="1" href="$2">$2</a>$3');
+    text = text.replace(/([^">]|[\s]|<[\/]?br>|^)(>>|&gt;&gt;)([0-9a-z]+)([^"<]|[\s\n]|<br>|$)/g, '$1<a data-link="2" href="#comment_$3">$2$3</a>$4');
     var i = emoticons.length;
     while (i--) {
       text = text.replace(new RegExp(':' + emoticons[i] + ':', 'g'), '<img class="emoticon" src="/emoticons/' + emoticons[i] + '.png">');
@@ -298,6 +299,7 @@ var BBC = (function() {
     text = text.replace(/<a class="user-link" data-id="[0-9]+" href="[^"]+">([^<]+)<\/a>/g, '@$1');
     text = text.replace(/<br>/g, '\n').replace(/<([\/]?([buis]|sup|sub|hr))>/g, '[$1]').replace(/<([\/]?)blockquote>/g, '[$1q]');
     text = text.replace(/<a data-link="1" href="([^"]+)">[^<]*<\/a>/g, '$1');
+    text = text.replace(/<a data-link="2" href="[^"]+">([^<]*)<\/a>/g, '$1');
     text = text.replace(/<\/img>/g, '').replace(/<span class="img"><img src="([^"]+)"><\/span>/g, '[img]$1[/img]');
     text = text.replace(/<a href="([^"]+)">/g, '[url=$1]').replace(/<\/a>/g, '[/url]');
     text = text.replace(/\<div class="spoiler">/g, '[spoiler]').replace(/<\/div>/g, '[/spoiler]');
@@ -625,17 +627,17 @@ var initFileSelect = (function() {
 			norm.append('<li class="tag tag-' + namespace(name) + ' drop-down-holder popper" data-slug="' + name + '">\
 				<a href="/tags/' + name + '"><span>' + name + '</span></a>\
 				<ul class="drop-down pop-out">\
-					<li class="action toggle" data-family="tag-flags" data-action="hide" data-target="tag" data-id="' + name + '">\
+					<li class="action toggle" data-family="tag-flags" data-descriminator="hide" data-action="hide" data-target="tag" data-id="' + name + '">\
 						<span class="icon">\
 						</span>\
 							<span class="label">Hide</span>\
 					</li>\
-					<li class="action toggle" data-family="tag-flags" data-action="spoiler" data-target="tag" data-id="' + name + '">\
+					<li class="action toggle" data-family="tag-flags" data-descriminator="spoiler" data-action="spoiler" data-target="tag" data-id="' + name + '">\
 						<span class="icon">\
 						</span>\
 							<span class="label">Spoiler</span>\
 					</li>\
-					<li class="action toggle" data-family="tag-flags" data-action="watch" data-target="tag" data-id="' + name + '">\
+					<li class="action toggle" data-family="tag-flags" data-descriminator="watch" data-action="watch" data-target="tag" data-id="' + name + '">\
 						<span class="icon">\
 						</span>\
 							<span class="label">Watch</span>\
@@ -937,7 +939,7 @@ $(document).on('click', '.state-toggle', function(ev) {
           var me = $(this);
           var uncheck = me.attr('data-unchecked-icon');
           var check = me.attr('data-checked-icon') || 'check';
-          me.find('.icon').html(json[$(this).attr('data-action')] ? '<i class="fa fa-' + check + '"></i>' : (uncheck ? '<i class="fa fa-' + uncheck + '"></i>' : ''))
+          me.find('.icon').html(json[$(this).attr('data-descriminator')] ? '<i class="fa fa-' + check + '"></i>' : (uncheck ? '<i class="fa fa-' + uncheck + '"></i>' : ''))
         });
       } else {
         sender.find('.icon').html(json.added ? '<i class="fa fa-' + check_icon + '"></i>' : (uncheck_icon ? '<i class="fa fa-' + uncheck_icon + '"></i>' : ''));
@@ -1532,15 +1534,15 @@ function lookupComment(comment_id) {
 
 function findComment(sender) {
   sender = $(sender);
-  var container = sender.parent();
+  var container = sender.parents('comment');
   var parent = sender.attr('href');
   if (!$(parent).length) {
     ajax.get('comments/get', function(html) {
       container.parent().prepend(html);
       $('.comment.highlight').removeClass('highlight');
-      scrollTo(parent).addClass('highlight').addClass('inline');
+      if (parent = scrollTo(parent)) parent.addClass('highlight').addClass('inline');
     }, {
-      id: sender.attr('data-comment-id')
+      id: sender.attr('data-comment-id') || parseInt(parent.split('_')[1], 36)
     }, 1);
   } else {
     parent = $(parent);
@@ -1628,7 +1630,7 @@ $(document).on('click', '.reply-comment', function() {
 $(document).on('click', '.edit-comment-submit', function() {
   editComment(this);
 });
-$(document).on('click', '.comment .mention', function(ev) {
+$(document).on('click', '.comment .mention, .comment .comment-content a[data-link="2"]', function(ev) {
   findComment(this);
   ev.preventDefault();
 });
@@ -1786,4 +1788,13 @@ $(document).on('click', '.load-more button', function() {
   var ref = $(this).attr('href');
   document.location.replace(ref + '&t=' + $('#video .player')[0].getPlayerObj().video.currentTime);
   e.preventDefault();
+});
+
+$('#search select').on('change', function() {
+	var val = $(this).val();
+	if (val == '0' || val == '2') {
+		$('#search input').attr({name: 'tagquery', placeholder: 'Tag Search'});
+	} else {
+		$('#search input').attr({name: 'query', placeholder: 'Search'});
+	}
 });

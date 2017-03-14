@@ -11,7 +11,7 @@
 	</a>
 	<% if user_signed_in? %>
 	<ul class="drop-down pop-out">
-		<li class="action toggle" data-family="tag-flags" data-action="hide" data-target="tag" data-id="<%= genre_thumb_h.id %>">
+		<li class="action toggle" data-family="tag-flags" data-descriminator="hide" data-action="hide" data-target="tag" data-id="<%= genre_thumb_h.id %>">
 			<span class="icon">
 				<% if current_user.hides([genre_thumb_h.id]) %>
 				<i class="fa fa-check"></i>
@@ -20,7 +20,7 @@
 				<span class="label">Hide</span>
 			</span>
 		</li>
-		<li class="action toggle" data-family="tag-flags" data-action="spoiler" data-target="tag" data-id="<%= genre_thumb_h.id %>">
+		<li class="action toggle" data-family="tag-flags" data-descriminator="spoiler" data-action="spoiler" data-target="tag" data-id="<%= genre_thumb_h.id %>">
 			<span class="icon">
 				<% if current_user.spoilers([genre_thumb_h.id]) %>
 				<i class="fa fa-check"></i>
@@ -29,7 +29,7 @@
 				<span class="label">Spoiler</span>
 			</span>
 		</li>
-		<li class="action toggle" data-family="tag-flags" data-action="watch" data-target="tag" data-id="<%= genre_thumb_h.id %>">
+		<li class="action toggle" data-family="tag-flags" data-descriminator="watch" data-action="watch" data-target="tag" data-id="<%= genre_thumb_h.id %>">
 			<span class="icon">
 				<% if current_user.watches(genre_thumb_h) %>
 				<i class="fa fa-check"></i>
