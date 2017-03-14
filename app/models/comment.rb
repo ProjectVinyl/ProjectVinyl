@@ -10,6 +10,9 @@ class Comment < ActiveRecord::Base
   has_many :mentions, class_name: "CommentReply", foreign_key: "comment_id"
   has_many :likes, class_name: "CommentVote", foreign_key: "comment_id"
   
+  def self.Searchable
+    return Comment.joins(:comment_thread).where('`comments`.hidden = false AND (`comment_threads`.owner_type != "Report" AND `comment_threads`.owner_type != "Pm")')
+  end
   
   def self.Finder
     return Comment.where(hidden: false).includes(:direct_user, :mentions)

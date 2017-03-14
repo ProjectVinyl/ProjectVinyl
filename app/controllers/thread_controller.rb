@@ -1,6 +1,6 @@
 class ThreadController < ApplicationController
   def view
-    if !(@thread = CommentThread.where('id = ? AND (owner_type IS NULL OR owner_type = "video")', params[:id]).first)
+    if !(@thread = CommentThread.where('id = ? AND (owner_type = "Board" OR owner_type = "Video")', params[:id]).first)
       return render '/layouts/error', locals: { title: 'Nothing to see here!', description: "Either the thread does not exist or you don't have the neccessary permissions to see it." }
     end
     @order = '0'
@@ -40,31 +40,59 @@ class ThreadController < ApplicationController
           thread.set_title(value)
           thread.save
         end
-        render status: 200, nothing: true
-        return
+        return render status: 200, nothing: true
       end
     end
     render status: 401, nothing: true
   end
   
-  def list
-    @page = params[:page].to_i
-    @results = Pagination.paginate(listing_selector, @page, 50, false)
-    render template: '/view/listing', locals: {type_id: 4, type: 'threads', type_label: 'Thread', items: @results}
+  def move
+    if user_signed_in? && current_user.is_contributor? && thread = CommentThread.where(owner_type: 'Board', id: params[:id]).first
+      if board = Board.where(id: params[:item]).first
+        thread.owner_id = board.id
+        thread.save
+        return render json: {
+          board.id => true
+        }
+      end
+    end
+    render status: 401, nothing: true
   end
   
-  def page_threads
+  def search
     @page = params[:page].to_i
-    @results = Pagination.paginate(listing_selector, @page, 50, false)
+    @title_query = params[:title_query]
+    @poster_query = params[:poster_query]
+    @text_query = params[:text_query]
+    @ascending = params[:order] == '1'
+    @category = (params[:category] || 0).to_i
+    @results = []
+    @q = Comment.Searchable.where('`comment_threads`.owner_type = "Board"').order(:updated_at, :created_at)
+    if @title_query
+      @q = @q.where('`comment_threads`.title LIKE ?', '%' + @title_query + '%')
+    end
+    if @poster_query
+      @q = @q.joins(:direct_user).where('`users`.username LIKE ?', '%' + @poster_query + '%')
+    end
+    if @text_query
+      @q = @q.where('bbc_content LIKE ?', '%' + @text_query + '%')
+    end
+    if @category > 0
+      @q = @q.where('`comment_threads`.owner_id = ?', @category)
+    end
+    if @title_query || @poster_query || @text_query || (@category > 0)
+      @results = @q
+    end
+    @results = Pagination.paginate(@results, @page, 20, !@ascending)
+  end
+  
+  def page_search
+    search
     render json: {
-      content: render_to_string(partial: '/thread/thread_thumb.html.erb', collection: @results.records),
+      content: render_to_string(partial: '/thread/comment_set', locals: {thread: @results.records, indirect: true}),
       pages: @results.pages,
       page: @results.page
     }
-  end
-  
-  def listing_selector
-    return CommentThread.includes(:direct_user).where(owner_id: nil, owner_type: nil).order('pinned DESC, locked ASC, created_at DESC')
   end
   
   def post_comment
@@ -75,12 +103,6 @@ class ThreadController < ApplicationController
         @thread.save
         comment.update_comment(params[:comment])
         
-        if params[:quick]
-          @comments = @thread.comments.includes(:direct_user).order(:created_at).reverse_order.limit(50).reverse()
-          return render json: {
-            content: render_to_string(partial: 'thread/chat_message_set', locals: { thread: @comments })
-          }
-        end
         @results = Pagination.paginate(@thread.get_comments(current_user.is_contributor?), params[:order] == '1' ? 0 : -1, 10, params[:order] == '1')
         render json: {
           content: render_to_string(partial: '/thread/comment_set.html.erb', locals: { thread: @results.records, indirect: false }),

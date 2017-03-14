@@ -1,0 +1,73 @@
+﻿<% title "Forum Search" %>
+		<div class="page resize-holder" style="width:100%;">
+			<section>
+				<h1 class="resize-target">
+					<a>Forum Search</a>
+				</h1>
+				<form action="search" method="get" id="big-search">
+					<input type="text" name="title_query" placeholder="Thread Title" style="width:100%" value="<%= @title_query %>"></input>
+					<input type="text" name="poster_query" placeholder="Poster" style="width:100%;margin-top:10px;" value="<%= @poster_query %>"></input>
+					<input type="text" name="text_query" placeholder="Content" style="width:100%;margin-top:10px;" value="<%= @text_query %>"></input>
+					<span class="search-options">
+						<label>
+							<span>Order</span>
+							<div>
+								<select name="order" style="width:100%">
+									<option value="1"<% if @ascending %> selected<% end %>>Ascending</option>
+									<option value="0"<% if !@ascending %> selected<% end %>>Descending</option>
+								</select>
+							</div>
+						</label>
+						<label>
+							<span>Category</span>
+							<div>
+								<select name="board" style="width:100%">
+									<option value="0"<% if @category == 0 %> selected<% end %>>Everywhere</option>
+								<% Board.Listables.each do |d| %>
+									<option value="<%= d[0] %>"<% if @category == d[0] %> selected<% end %>><%= d[1] %></option>
+								<% end %>
+								</select>
+							</div>
+						</label>
+					</span>
+					<span>
+						<button type="submit"><i class="fa fa-search"></i> Search</button>
+					</span>
+				</form>
+			</section>
+		</div>
+		<div class="page" style="width:100%;">
+		<% if @derpy %>
+				<h1>Searching for- Uh, oh!</h1>
+				<p class="center">
+					<img class="iconic" style="max-height:200px;" src="/images/derpy.png"></img>
+					<br>
+					You searched for <u><%= @query %></u> but I don't know what that means. :'c
+				</p>
+				<hr>
+				<p class="center">
+					<%= @derpy.message %>
+				</p>
+		<% elsif @ditzy %>
+				<h1>Searching for- Uh, oh!</h1>
+				<p class="center">
+					<img class="iconic" style="max-height:200px;" src="/images/derpy.png"></img>
+					<br>
+					That wasn't me, I swear! D:
+				</p>
+				<hr>
+				<p class="center">
+					<%= @ditzy.message %>
+				</p>
+		<% else %>
+				<h1>Searching for Posts found <%= number_with_delimiter @results.count %> match<% if @results.count != 1 %>es<% end %></h1>
+			<% @data = URI.encode_www_form({title_query: @title_query, poster_query: @poster_query, text_query: @text_query, order: @ascending ? "1" : "0", board: @board}) %>
+			<%= render layout: '/layouts/paginated', locals: {type: 'forum/search',paginated: @results, id: "page"} do %>
+				<section class="search-result">
+					<ul id="thread" class="comments">
+						<%= render partial: '/thread/comment_set', locals: {thread: @results.records, indirect: true} %>
+					</ul>
+				</section>
+			<% end %>
+		<% end %>
+		</div>

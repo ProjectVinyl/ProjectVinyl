@@ -6,11 +6,7 @@
 	<link type="text/css" href="/css/font-awesome.min.css" rel="stylesheet" />
 	<link type="text/css" href="/css/base.css?<%= assets_version %>" rel="stylesheet" />
 	<link type="text/css" href="/css/videos.css?<%= assets_version %>" rel="stylesheet" />
-	<% if Rails.env.development? %>
-	<script src="/js/jquery-1.8.3.min.js" id="jquery"></script>
-	<% else %>
-	<script src="https://code.jquery.com/jquery-1.8.3.min.js" id="jquery" ></script>
-	<% end %>
+	<script src="<% if Rails.env.development? %>/js<% else %>https://code.jquery.com<% end %>/jquery-1.8.3.min.js" id="jquery"></script>
 	<script>var emoticons = <%= raw emoticons %><% if user_signed_in? %>,current_user = {id:<%= current_user.id %>}<% end %>;</script>
 	<%= csrf_meta_tags %>
 	<meta name="theme-color" content="#a66ebe">
@@ -29,16 +25,16 @@
 					<a class="notices-bell feeds" href="/feed">
 						<i class="fa fa-globe"></i>
 						<% if current_user.feed_count > 0 %>
-							<span class="count"><% if current_user.feed_count > 999 %>999+<% else %><%= number_with_delimiter current_user.feed_count %><% end %></span>
+							<span class="count"><%= safe_to_display current_user.feed_count, 999 %></span>
 						<% end %>
 					</a>
 					<a class="notices-bell notices" href="/notifications">
 						<i class="fa fa-bell"></i>
 						<% if current_user.notification_count > 0 %>
-							<span class="count"><% if current_user.notification_count > 999 %>999+<% else %><%= number_with_delimiter current_user.notification_count %><% end %></span>
+							<span class="count"><%= safe_to_display current_user.notification_count, 999 %></span>
 						<% end %>
 						<% if current_user.message_count > 0 %>
-							<span class="count invert"><% if current_user.message_count > 999 %>999+<% else %><%= number_with_delimiter current_user.message_count %><% end %></span>
+							<span class="count invert"><%= safe_to_display current_user.message_count, 999 %></span>
 						<% end %>
 					</a>
 					<ul class="drop-down" style="z-index:300;">
@@ -96,10 +92,10 @@
 					$(document).ready(function() {
 						$('#sign-out').on('click', function(e) {
 							e.preventDefault();
-							ajax.delete($(this).attr('href'), function(a, b) {
+							e.stopPropagation();
+							ajax.delete($(this).attr('href'), function() {
 								document.location.href = document.location.href;
 							}, 1);
-							e.stopPropagation();
 						});
 					});
 					</script>
@@ -117,16 +113,6 @@
 								<option value="2">User</option>
 								<option value="3">Tag</option>
 							</select>
-							<script>
-								$('#search select').on('change', function() {
-									var val = $(this).val();
-									if (val == '0' || val == '2') {
-										$('#search input').attr({name: 'tagquery', placeholder: 'Tag Search'});
-									} else {
-										$('#search input').attr({name: 'query', placeholder: 'Search'});
-									}
-								});
-							</script>
 						</label>
 						<button type="submit"><i class="fa fa-search" ></i></button>
 					</form>
@@ -135,25 +121,25 @@
 			<a href="/" class="title"><img src="/images/logo.svg"></img></a>
 		</div>
 		<ul>
-			<li class="albums<% if request.path == '/albums' %> selected<% end %>">
+			<li class="albums<%= selected_path? 'albums' %>">
 				<a href="/albums">
 					<i class="fa fa-fw fa-picture-o"></i>
 					<span> Albums</span>
 				</a>
 			</li>
-			<li class="artists<% if request.path == '/videos' %> selected<% end %>">
+			<li class="artists<%= selected_path? 'videos' %>">
 				<a href="/videos">
 					<i class="fa fa-fw fa-play"></i>
 					<span> Videos</span>
 				</a>
 			</li>
-			<li class="genres<% if request.path == '/tags' %> selected<% end %>">
+			<li class="genres<%= selected_path? 'tags' %>">
 				<a href="/tags">
 					<i class="fa fa-fw fa-tags"></i>
 					<span> Tags</span>
 				</a>
 			</li>
-			<li class="forum<% if request.path == '/forum' || request.path.index('/thread') == 0 %> selected<% end %>">
+			<li class="forum<%= selected_path? 'forum' %>">
 				<a href="/forum">
 					<i class="fa fa-fw fa-users"></i>
 					<span> Forums</span>

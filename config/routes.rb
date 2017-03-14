@@ -149,8 +149,16 @@ Rails.application.routes.draw do
   get 'ajax/tags/users' => 'genre#users'
   
   # Forums #
-  get 'forum' => 'thread#list'
+  get 'forum' => 'board#list'
+  get 'forum/search' => 'thread#search'
+  get 'forum/:id' => 'board#view'
   get 'ajax/threads' => 'thread#page_threads'
+  get '/ajax/forum/search' => 'thread#page_search'
+  
+  # Boards/Categories #
+  get 'ajax/board/new' => 'board#new'
+  post 'ajax/create/board' => 'board#create'
+  post 'ajax/delete/board/:id' => 'board#delete'
   
   # Threads #
   get 'thread/:id' => 'thread#view', constraints: { id: /([0-9]+).*/ }
@@ -161,6 +169,7 @@ Rails.application.routes.draw do
   post 'ajax/update/thread' => 'thread#update'
   post 'ajax/thread/pin' => 'ajax#togglePin'
   post 'ajax/thread/lock' => 'ajax#toggleLock'
+  post 'ajax/thread/move' => 'thread#move'
   post 'ajax/thread/subscribe' => 'ajax#toggleSubscribe'
   post 'ajax/comments/new' => 'thread#post_comment'
   post 'ajax/comments/delete/:id' => 'thread#remove_comment'

@@ -35,7 +35,7 @@ class CommentThread < ActiveRecord::Base
   end
   
   def last_comment
-    return @last_comment || @last_comment = comments.order(:updated_at).reverse_order.limit(1).first
+    return @last_comment || @last_comment = comments.order(:created_at, :updated_at).reverse_order.limit(1).first
   end
   
   def get_comments(all)

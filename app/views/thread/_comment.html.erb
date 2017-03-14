@@ -12,6 +12,13 @@
 		<%= render partial: 'layouts/video_thumb_i', locals: {video_thumb_i: comment.comment_thread.owner, comment: comment.get_open_id} %>
 	</div>
 	<% else %>
+		<% if indirect %>
+	<div>
+		<p>
+		In <a href="<%= comment.comment_thread.owner.link %>"><%= comment.comment_thread.owner.title %></a> - <a href="<%= comment.comment_thread.link %>"><%= comment.comment_thread.get_title %></a>
+		</p>
+	</div>
+		<% end %>
 	<div class="artist-bio bio">
 		<a <% if !comment.user.isDummy %>class="user-link" data-id="<%= comment.user_id %>" href="<%= comment.user.link %>"<% end %>>
 			<span class="avatar medium">
@@ -20,7 +27,7 @@
 		</a>
 	</div>
 	<% end %>
-	<div<% if indirect %> style="margin-left:200px;"<% end %> class="content" data-id="<%= comment.id %>" data-o-id="<%= comment.get_open_id %>" data-comment="<%= comment.bbc_content %>">
+	<div<% if indirect && comment.comment_thread.owner_type == 'Video' %> style="margin-left:200px;"<% end %> class="content" data-id="<%= comment.id %>" data-o-id="<%= comment.get_open_id %>" data-comment="<%= comment.bbc_content %>">
 	<% if user_signed_in? && (current_user.is_contributor? || current_user.id == comment.user_id) %>
 		<a title="Delete" class="remove-comment confirm-button" data-action="delete" data-url="comments/delete/<%= comment.id %>" data-id="<%= comment.get_open_id %>" data-callback="removeComment" data-title="Delete Comment" data-icon="warning"><i class="fa fa-trash"></i></a>
 	<% end %>
