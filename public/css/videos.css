@@ -792,8 +792,7 @@ i.fa.fa-volume-mid {
   overflow: hidden;
 }
 
-.listing.compact a,
-.thread-list .items .thread a {
+.listing.compact a, .thread-list .items .thread a {
   text-decoration: none;
 }
 
@@ -850,8 +849,7 @@ i.fa.fa-volume-mid {
   padding-top: 30px;
 }
 
-.thread-list .items,
-.thread-list .actions {
+.thread-list .items, .thread-list .actions {
   padding: 0;
   margin: 10px 0;
   display: table;
@@ -866,12 +864,16 @@ i.fa.fa-volume-mid {
   padding: 0 10px;
   color: #000;
   transition: background 0.25s ease;
+  white-space: nowrap;
 }
 .thread-list .items .thread.unread {
   background: #efe;
 }
 .thread-list .items .thread .thumb {
   width: 80px;
+}
+.thread-list .items .thread .info {
+  width: 100%;
 }
 .thread-list .items .thread .replies {
   text-align: right;

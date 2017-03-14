@@ -371,7 +371,7 @@ table {
 .user-link {
   position: relative;
 }
-.description .user-link, .comment-content .user-link {
+.description .user-link, .comment-content .user-link, .comment-content a[data-link="2"] {
   color: #000;
   text-decoration: none;
   font-weight: bold;
@@ -1146,6 +1146,7 @@ label input[type=checkbox]:checked + i + i {
 }
 #login {
    border-radius: 0 0 0 10px;
+   z-index: 1000;
 }
 #search {
   margin-right: 10px;
@@ -1797,7 +1798,7 @@ img.emoticon {
   min-width: 25%;
   max-width: 80%;
   text-align: left;
-  z-index: 999;
+  z-index: 3000;
 }
 .popup-container .properties {
   width: 800px;
@@ -1814,7 +1815,6 @@ img.emoticon {
 .popup-container .popup {
   transition: box-shadow 0.35s linear;
   border-radius: 5px;
-  overflow: hidden;
   background: #fff;
 }
 .popup-container.focus .popup {
@@ -1824,8 +1824,7 @@ img.emoticon {
   background: #fff;
   min-height: 100px;
   min-width: 400px;
-  overflow-y: auto;
-  overflow-x: hidden;
+  border-radius: 0 0 5px 5px;
 }
 .popup-container .popup .content {
   margin-bottom: -5px;
@@ -1854,6 +1853,7 @@ img.emoticon {
   margin: 0;
   padding: 15px;
   font-size: 15px;
+  border-radius: 5px 5px 0 0;
 }
 .popup-container .popup h1 > .fa {
   margin-right: 5px;
@@ -1887,7 +1887,7 @@ img.emoticon {
   bottom: 0;
   right: 0;
   background: rgba(0,0,0,.2);
-  z-index: 998;
+  z-index: 2000;
 }
 
 .fade-away {
@@ -2621,6 +2621,12 @@ h1.banned, h2.banned, a.banned, .banned a.user-link, .comment .name a.user-link.
     display: none;
   }
 }
+@media(max-width:430px) {
+  button.mobile-friendly span,
+  .button.mobile-friendly span {
+    display: none;
+  }
+}
 
 @media(max-width: 510px) {
   #login, #search {
@@ -2692,7 +2698,6 @@ header > ul li a i {
     display: inline-block;
     overflow-y: visible;
     transition: max-height 0.5s ease;
-    z-index: 9999999999999999999999;
     height: 35px;
   }
   .paginator .pagination .pages .button {
