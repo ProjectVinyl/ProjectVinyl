@@ -1,4 +1,5 @@
 <%= form_for(@thread, as: "thread", url: "/ajax/create/thread") do |f| %>
+<%= f.text_field :owner_id, hidden: true %>
 <div class="properties">
 	<table>
 		<tr>

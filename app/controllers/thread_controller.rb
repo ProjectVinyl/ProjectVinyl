@@ -13,12 +13,13 @@ class ThreadController < ApplicationController
     if params[:user] && @user = User.where(id: params[:user]).first
       return render partial: 'pm/new'
     end
+    @thread.owner_id = (params[:board] || 0).to_i
     render partial: 'new'
   end
   
   def create
     if user_signed_in?
-      thread = CommentThread.create(user_id: current_user.id, total_comments: 1)
+      thread = CommentThread.create(user_id: current_user.id, total_comments: 1, owner_type: 'Board', owner_id: params[:thread][:owner_id])
       thread.set_title(params[:thread][:title])
       thread.save
       comment = thread.comments.create(user_id: current_user.id)

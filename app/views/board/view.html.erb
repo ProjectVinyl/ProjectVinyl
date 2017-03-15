@@ -15,7 +15,7 @@
 	</button>
 	<% end %>
 	<% if user_signed_in? %>
-		<button class="confirm-button action mobile-friendly green" data-action="create" data-url="thread/new" data-title="New Thread" data-icon="pencil" type="button">
+		<button class="confirm-button action mobile-friendly green" data-action="create" data-url="thread/new?board=<%= @board.id %>" data-title="New Thread" data-icon="pencil" type="button">
 			<i class="fa fa-plus"></i>
 			<span> New Thread</span>
 		</button>
