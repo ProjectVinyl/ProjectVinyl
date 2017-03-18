@@ -39,7 +39,11 @@ class Video < ActiveRecord::Base
   end
   
   def self.Finder
-    return Video.includes(:tags).listable
+    Video.includes(:tags).listable
+  end
+  
+  def self.Popular
+    Video.Finder.order(:heat).reverse_order.limit(4)
   end
   
   def self.randomVideos(selection, limit)
@@ -518,17 +522,20 @@ class Video < ActiveRecord::Base
   end
   
   def computeHotness
-    s = self.views
-    s += 2 * (self.score || 0)
-    s += 3 * self.comment_thread.comments.count
-    basescore = Math.log([s, 1].max)
+    x = self.views || 0
+    x += 2 * (self.upvotes || 0)
+    x += 2 * (self.downvotes || 0)
+    x += 3 * self.comment_thread.comments.count
+    basescore = Math.log([x, 1].max)
     
-    timediff = (DateTime.now - self.created_at.to_datetime).weeks
-    if timediff > 3
-      x = timediff - 1
+    n = DateTime.now
+    c = self.created_at.to_datetime
+    if c < (n - 3.weeks)
+      x = ((n - c).to_f / 7) - 1
       basescore *= Math.exp(-8 * x * x)
     end
-    return basescore
+    self.heat = basescore * 1000
+    return self
   end
   
   def merge(user, other)
@@ -599,8 +606,7 @@ class Video < ActiveRecord::Base
   
   def computeScore
     self.score = self.upvotes - self.downvotes
-    self.heat = self.computeHotness
-    save()
+    self.computeHotness.save()
   end
   
   def computeCount(incr, count)

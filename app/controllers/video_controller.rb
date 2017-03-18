@@ -47,8 +47,7 @@ class VideoController < ApplicationController
     @queue = @user.queue(@video.id)
     if !(@modificationsAllowed = user_signed_in? && current_user.id == @user.id)
       @video.views = @video.views + 1
-      @video.heat = @video.computeHotness
-      @video.save
+      @video.computeHotness.save
     end
     if !@video.processed
       VideoProcessor.startManager
@@ -163,6 +162,13 @@ class VideoController < ApplicationController
             )
             if @video.source && @video.source.strip != ''
               TagHistory.record_source_change(current_user, @video, @video.source)
+            else
+              if !params[:video][:tag_string]
+                params[:video][:tag_string] = ''
+              elsif params[:video][:tag_string].strip != ''
+                params[:video][:tag_string] << ','
+              end
+              params[:video][:tag_string] << 'source needed'
             end
             @comments = @video.comment_thread = CommentThread.create(user_id: user, title: title)
             @comments.save

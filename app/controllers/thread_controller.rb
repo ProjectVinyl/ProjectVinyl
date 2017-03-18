@@ -104,6 +104,10 @@ class ThreadController < ApplicationController
         @thread.save
         comment.update_comment(params[:comment])
         
+        if @thread.owner_type == 'Video'
+          @thread.owner.computeHotness.save
+        end
+        
         @results = Pagination.paginate(@thread.get_comments(current_user.is_contributor?), params[:order] == '1' ? 0 : -1, 10, params[:order] == '1')
         render json: {
           content: render_to_string(partial: '/thread/comment_set.html.erb', locals: { thread: @results.records, indirect: false }),
