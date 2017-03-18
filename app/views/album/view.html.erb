@@ -1,11 +1,5 @@
-<% if @album %>
-	<% title @album.title %>
-	<section style="width:100%" class="page resize-holder">
-		<%= render partial: 'album' %>
-	</section>
-	<%= render partial: 'items' %>
-<% else %>
-<%= render layout: '/layouts/error', locals: { title: 'Nothing to see here!' } do %>
-This album appears to have been  moved or deleted.
-<% end %>
-<% end %>
+<% title @album.title %>
+<section style="width:100%" class="page resize-holder">
+	<%= render partial: 'album' %>
+</section>
+<%= render partial: 'items' %>

@@ -1,18 +1,17 @@
 class AlbumController < ApplicationController
   def view
-    if @album = Album.where(id: params[:id].split(/-/)[0]).first
-      if @album.hidden
-        render 'layouts/error', locals: { title: 'Access Denied', description: "You can't do that right now." }
-        return
-      end
-      if @album.listing == 2 && !@album.ownedBy(current_user)
-        render 'layouts/error', locals: { title: 'Album Hidden', description: "This album is private." }
-        return
-      end
-      @user = @album.user
-      @items = Pagination.paginate(@album.ordered(@album.album_items.includes(:direct_user)), 0, 50, false)
-      @modificationsAllowed = user_signed_in? && @album.ownedBy(current_user)
+    if !(@album = Album.where(id: params[:id].split(/-/)[0]).first)
+      return render '/layouts/error', locals: { title: 'Nothing to see here!', description: 'This album appears to have been  moved or deleted.' }
     end
+    if @album.hidden
+      return render 'layouts/error', locals: { title: 'Access Denied', description: "You can't do that right now." }
+    end
+    if @album.listing == 2 && !@album.ownedBy(current_user)
+      return render 'layouts/error', locals: { title: 'Album Hidden', description: "This album is private." }
+    end
+    @user = @album.user
+    @items = Pagination.paginate(@album.ordered(@album.album_items.includes(:direct_user)), 0, 50, false)
+    @modificationsAllowed = user_signed_in? && @album.ownedBy(current_user)
   end
   
   def starred
