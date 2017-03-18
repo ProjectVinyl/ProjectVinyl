@@ -5,7 +5,6 @@
 	<title id="document_title"><%= content_for?(:title) ? content_for(:title) + " - Project Vinyl" : "Project Vinyl - Premium Pony Tunes" %></title>
 	<link type="text/css" href="/css/font-awesome.min.css" rel="stylesheet" />
 	<link type="text/css" href="/css/base.css?<%= assets_version %>" rel="stylesheet" />
-	<link type="text/css" href="/css/videos.css?<%= assets_version %>" rel="stylesheet" />
 	<script src="<% if Rails.env.development? %>/js<% else %>https://code.jquery.com<% end %>/jquery-1.8.3.min.js" id="jquery"></script>
 	<script>var emoticons = <%= raw emoticons %><% if user_signed_in? %>,current_user = {id:<%= current_user.id %>}<% end %>;</script>
 	<%= csrf_meta_tags %>

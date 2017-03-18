@@ -1,65 +1,62 @@
+<!DOCTYPE html>
 <html lang="en">
-	<head>
-		<meta http-equiv="Content-type" content="text/html; charset=utf-8">
-		<title id="document_title">Project Vinyl - Premium Pony Tunes</title>
-		<link rel="icon" sizes="160x160" href="/images/favicon.png">
-		<link type="text/css" href="/css/font-awesome.min.css" rel="stylesheet" />
-		<link type="text/css" href="/css/videos.css?<%= assets_version %>" rel="stylesheet" />
-		<link type="text/css" href="/css/embed.css?<%= assets_version %>" rel="stylesheet" />
-		<% if Rails.env.development? %>
-		<script src="/js/jquery-1.8.3.min.js" id="jquery"></script>
-		<% else %>
-		<script src="https://code.jquery.com/jquery-1.8.3.min.js" id="jquery" ></script>
-		<% end %>
-	</head>
-	<body class="embed">
-		<% if !@video || @video.hidden %>
-		<div id="video" style="background-image: url('/images/default-cover.png');background-size:cover;" class="video unplayable">
-			<div class="player">
-				<span class="pause resize-holder">
-					<h1 class="resize-target">
-						<a><span class="title"><%= @video ? "Hidden Video" : "Video Not Found" %></span></a>
-					</h1>
-				</span>
-			</div>
+<head>
+	<meta http-equiv="Content-type" content="text/html; charset=utf-8">
+	<title id="document_title">Project Vinyl - Premium Pony Tunes</title>
+	<link rel="icon" sizes="160x160" href="/images/favicon.png">
+	<link type="text/css" href="/css/font-awesome.min.css" rel="stylesheet" />
+	<link type="text/css" href="/css/base.css?<%= assets_version %>" rel="stylesheet" />
+	<link type="text/css" href="/css/embed.css?<%= assets_version %>" rel="stylesheet" />
+	<script src="<% if Rails.env.development? %>/js<% else %>https://code.jquery.com<% end %>/jquery-1.8.3.min.js" id="jquery"></script>
+</head>
+<body class="embed">
+	<% if !@video || @video.hidden %>
+	<div id="video" style="background-image: url('/images/default-cover.png');background-size:cover;" class="video unplayable">
+		<div class="player">
+			<span class="pause resize-holder">
+				<h1 class="resize-target">
+					<a><span class="title"><%= @video ? "Hidden Video" : "Video Not Found" %></span></a>
+				</h1>
+			</span>
 		</div>
-		<% else %>
-		<div id="video" style="background-image: url('/cover/<%= @video.id %>.png');" data-title="<%= @video.title %>" data-artist="<%= @user.username %>" data-<% if @video.audio_only %>audio<% else %>video<% end %>="<%= @video.id %>" data-mime="<%= @video.file %>|<%= @video.mime %>" class="video">
-		<% if @album %>
-			<div class="listing compact playlist">
-				<div class="controls">
-					<a id="playlist_prev" class="slide-left" title="Previous" <% if @prev_video %>href="<%= @prev_video.link %>"<% end %>>
-						<i class="fa fa-fw fa-step-backward"></i>
-					</a>
-					<a class="title buff-right" href="<%= @album.link %>"><%= @album.title %></a>
-					<a id="playlist_next" class="slide-right" title="Next" <% if @next_video %>href="<%= @next_video.link %>"<% end %>>
-						<i class="fa fa-fw fa-step-forward"></i>
-					</a>
+	</div>
+	<% else %>
+	<div id="video" style="background-image: url('/cover/<%= @video.id %>.png');" data-title="<%= @video.title %>" data-artist="<%= @user.username %>" data-<% if @video.audio_only %>audio<% else %>video<% end %>="<%= @video.id %>" data-mime="<%= @video.file %>|<%= @video.mime %>" class="video">
+	<% if @album %>
+		<div class="listing compact playlist">
+			<div class="controls">
+				<a id="playlist_prev" class="slide-left" title="Previous" <% if @prev_video %>href="<%= @prev_video.link %>"<% end %>>
+					<i class="fa fa-fw fa-step-backward"></i>
+				</a>
+				<a class="title buff-right" href="<%= @album.link %>"><%= @album.title %></a>
+				<a id="playlist_next" class="slide-right" title="Next" <% if @next_video %>href="<%= @next_video.link %>"<% end %>>
+					<i class="fa fa-fw fa-step-forward"></i>
+				</a>
+			</div>
+			<div class="scroll-container">
+				<div class="items">
+					<%= render partial: '/album/album_item', collection: @items %>
 				</div>
-				<div class="scroll-container">
-					<div class="items">
-						<%= render partial: '/album/album_item', collection: @items %>
-					</div>
-				</div>
-				<script>
+			</div>
+			<script>
 $(document).ready(function() {
-  var selected = $('.playlist a.selected');
-  if (selected.length) scrollTo(selected, '.playlist .scroll-container');
+var selected = $('.playlist a.selected');
+if (selected.length) scrollTo(selected, '.playlist .scroll-container');
 });
-				</script>
-			</div>
-		<% end %>
+			</script>
 		</div>
-		<% end %>
-		<script src="/js/videos.js?<%= assets_version %>" ></script>
-		<script src="/js/script.js?<%= assets_version %>" ></script>
-		<% if @video && !@video.hidden %>
-		<script>
+	<% end %>
+	</div>
+	<% end %>
+	<script src="/js/videos.js?<%= assets_version %>" ></script>
+	<script src="/js/script.js?<%= assets_version %>" ></script>
+	<% if @video && !@video.hidden %>
+	<script>
 $('#video .player')[0].getPlayerObj().setEmbed('<%= @video.id %>');
 <% if @album %>
 $('#video .player')[0].getPlayerObj().setPlaylist('<%= @album.id %>', <%= @index %>);
 <% end %>
-		</script>
-		<% end %>
-	</body>
+	</script>
+	<% end %>
+</body>
 </html>
