@@ -1608,12 +1608,12 @@ blockquote {
 
 #emoticons {
   max-height: initial;
-  left: -120px;
+  left: -130px;
   overflow-x: hidden;
   padding: 10px;
   text-align: center;
   white-space: initial;
-  min-width: 270px;
+  min-width: 290px;
 }
 #emoticons li {
   background: none;
