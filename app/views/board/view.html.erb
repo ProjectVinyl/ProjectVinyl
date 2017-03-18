@@ -7,7 +7,7 @@
 		<span class="edit"><i class="fa fa-pencil"></i></span>
 	</span>
 </h1>
-<div class="actions">
+<div class="actions space-fix">
 	<% if current_user.is_contributor? %>
 	<button class="confirm-button action mobile-friendly red" data-action="delete" data-url="delete/board/<%= @board.id %>" data-title="Delete Board" data-icon="warning" type="button">
 		<i class="fa fa-trash"></i>
@@ -29,7 +29,7 @@
 <h1 class="title">
 	<a href="/">Home</a> <i class="fa fa-chevron-right"></i> <a href="/forum">Forum</a> <i class="fa fa-chevron-right"></i> <%= @board.title %>
 </h1>
-<div class="actions">
+<div class="actions space-fix">
 	<a class="button blue right" href="/forum/search?category=<%= @board.id %>"><i class="fa fa-search"></i> Find Post</a>
 </div>
 <% end %>

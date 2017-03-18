@@ -2,7 +2,7 @@
 <h1 class="title">
 	<a href="/">Home</a> <i class="fa fa-chevron-right"></i> Forum
 </h1>
-<div class="actions">
+<div class="actions space-fix">
 	<% if user_signed_in? && current_user.is_contributor? %>
 		<button class="confirm-button action mobile-friendly green" data-action="create" data-url="board/new" data-title="Create Category" data-icon="pencil" type="button">
 			<i class="fa fa-plus"></i>

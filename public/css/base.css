@@ -387,7 +387,7 @@ table {
 .post > * {
   vertical-align: top;
 }
-.post .space-fix {
+.space-fix {
   display: block;
   overflow-y: hidden;
 }
