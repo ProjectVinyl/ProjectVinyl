@@ -68,9 +68,7 @@
 		<a class="popper button button-bub right pop-out-toggle" title="Emoticons">
 			<i class="fa fa-smile-o"></i>
 			<ul class="pop-out" id="emoticons">
-				<% ApplicationHelper.emoticons.each do |e| %>
-					<li class="edit-action" data-action="emoticon" title=":<%= e %>:"><img alt=":<%= e %>:" src="/emoticons/<%= e %>.png" /></li>
-				<% end %>
+				<% ApplicationHelper.emoticons.each do |e| %><li class="edit-action" data-action="emoticon" title=":<%= e %>:"><img alt=":<%= e %>:" src="/emoticons/<%= e %>.png" /></li><% end %>
 			</ul>
 		</a>
 	<% end %>
