@@ -29,7 +29,7 @@
 		<% @users.each do |user| %>
 			<tr>
 				<td><%= user.id %></td>
-				<td><%= user.email %></td>
+				<td><%= email_escape user.email %></td>
 				<td><a href="<%= user.link %>"><%= user.username %></a></td>
 				<td><%= since user.created_at %></td>
 				<td><%= since user.updated_at %></td>

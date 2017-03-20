@@ -209,4 +209,8 @@ module ApplicationHelper
     end
     number_with_delimiter num
   end
+  
+  def email_escape(email)
+    return html_escape(email).gsub(/@/, '<i class="fa fa-at"></i>').html_safe
+  end
 end
