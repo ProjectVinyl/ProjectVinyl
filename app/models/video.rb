@@ -515,6 +515,12 @@ class Video < ActiveRecord::Base
     if self.created_at > Time.zone.now.beginning_of_week
       return "Earlier this Week"
     end
+    if self.created_at > (Time.zone.now.beginning_of_week - 1.week)
+      return "Last Week"
+    end
+    if self.created_at > (Time.zone.now.beginning_of_week - 2.week)
+      return "Two Weeks Ago"
+    end
     if self.created_at > Time.zone.now.beginning_of_month
       return "Earlier this Month"
     end
