@@ -962,6 +962,7 @@ $(document).on('click', '.state-toggle', function(ev) {
     var url = me.attr('data-url');
     var id = me.attr('data-id');
     var callback = me.attr('data-callback');
+    var max_width = me.attr('data-max-width');
     var popup;
     if (action == 'delete') {
       if (!popup) {
@@ -999,6 +1000,7 @@ $(document).on('click', '.state-toggle', function(ev) {
       popup = Popup.fetch(url, me.attr('data-title'), me.attr('data-icon'), me.hasClass('confirm-button-thin'), me.attr('data-event-loaded'));
       popup.setPersistent();
     }
+    if (popup && max_width) popup.content.css('max-width', max_width);
     me.on('click', function(e) {
       popup.show();
       e.preventDefault();
