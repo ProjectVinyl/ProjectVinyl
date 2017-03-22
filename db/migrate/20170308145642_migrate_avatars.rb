@@ -1,9 +1,9 @@
 class MigrateAvatars < ActiveRecord::Migration
   def change
     User.all.each do |user|
-      ext = user.mime ? Mimes.ext(user.mime) : 'png'
+      ext = user.mime ? Mimes.ext(user.mime) : '.png'
       from = Rails.root.join('public', 'avatar', user.id.to_s)
-      to = user.avatar_path + ext
+      to = user.avatar_path.to_s + ext
       small = user.avatar_path + '-small' + ext
       if File.exist?(from)
         File.rename(from, to)
