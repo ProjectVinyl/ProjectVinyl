@@ -53,7 +53,7 @@ class CommentThread < ActiveRecord::Base
   end
   
   def link
-    return '/thread/' + self.id.to_s + '-' + self.safe_title
+    return '/thread/' + self.id.to_s + '-' + (self.safe_title.nil? ? '' : self.safe_title)
   end
   
   def location
