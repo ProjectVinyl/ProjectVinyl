@@ -8,7 +8,7 @@ class ArtistController < ApplicationController
         @art = Pagination.paginate(@art, 0, 8, true)
       end
       @modificationsAllowed = user_signed_in? && (current_user.id == @user.id || current_user.is_staff?)
-      @videos = @modificationsAllowed ? @user.videos.where(duplicate_id: 0) : @user.videos.listable
+      @videos = @modificationsAllowed ? @user.videos.includes(:tags).where(duplicate_id: 0) : @user.videos.listable
       @videos = Pagination.paginate(@videos, 0, 8, true)
       @albums = @modificationsAllowed ? @user.albums : @user.albums.where('`albums`.hidden = false AND `albums`.listing = 0')
       @albums = Pagination.paginate(@albums, 0, 8, true)
