@@ -123,7 +123,7 @@ class User < ActiveRecord::Base
   validates :username, presence: true, uniqueness: {
     case_sensitive: false
   }
-  validates_format_of :username, with: /^[a-zA-Z0-9_\.]*$/, multiline: true
+  validates_format_of :username, with: /^[a-zA-Z0-9_\. ]*$/, multiline: true
   SANITIZE = /[^a-zA-Z0-9]+/
   BP_PONY = /^background pony #([0-9a-z]+)/
   
