@@ -345,6 +345,8 @@ class User < ActiveRecord::Base
       else
         self.mime = nil
       end
+    else
+      self.mime = nil
     end
   end
   
