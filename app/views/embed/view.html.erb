@@ -21,7 +21,7 @@
 		</div>
 	</div>
 	<% else %>
-	<div id="video" style="background-image: url('/cover/<%= @video.id %>.png');" data-title="<%= @video.title %>" data-artist="<%= @user.username %>" data-<% if @video.audio_only %>audio<% else %>video<% end %>="<%= @video.id %>" data-mime="<%= @video.file %>|<%= @video.mime %>" class="video">
+	<div id="video" style="background-image: url('<%= @video.thumb %>');" data-title="<%= @video.title %>" data-artist="<%= @user.username %>" data-<% if @video.audio_only %>audio<% else %>video<% end %>="<%= @video.id %>" data-mime="<%= @video.file %>|<%= @video.mime %>" class="video">
 	<% if @album %>
 		<div class="listing compact playlist">
 			<div class="controls">

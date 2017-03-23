@@ -89,6 +89,7 @@ class User < ActiveRecord::Base
   
   include Elasticsearch::Model
   include Indexable
+  include Uncachable
   
   prefs :preferences, :subscribe_on_reply => true, :subscribe_on_thread => true, :subscribe_on_upload => true
   
@@ -329,6 +330,7 @@ class User < ActiveRecord::Base
   end
   
   def setAvatar(avatar)
+    self.uncache
     delFile(avatar_path.to_s + '-small' + self.mime.to_s)
     delFile(avatar_path.to_s + self.mime.to_s)
     if avatar && avatar.content_type.include?('image/')
@@ -351,6 +353,7 @@ class User < ActiveRecord::Base
   end
   
   def setBanner(banner)
+    self.uncache
     if !banner || banner.content_type.include?('image/')
       delFile(banner_path.to_s + '.png')
       self.banner_set = img(banner_path.to_s + '.png', banner)
@@ -396,18 +399,18 @@ class User < ActiveRecord::Base
     if !self.mime
       return Gravatar.avatar_for(self.email, s: 240, d: 'http://www.projectvinyl.net/images/default-avatar.png', r: 'pg')
     end
-    return '/avatar/' + self.id.to_s + self.mime
+    return self.cache_bust('/avatar/' + self.id.to_s + self.mime)
   end
   
   def small_avatar
     if !self.mime
       return Gravatar.avatar_for(self.email, s: 30, d: 'http://www.projectvinyl.net/images/default-avatar.png', r: 'pg')
     end
-    return '/avatar/' + self.id.to_s + '-small' + self.mime
+    return self.cache_bust('/avatar/' + self.id.to_s + '-small' + self.mime)
   end
   
   def banner
-    return '/banner/' + self.id.to_s + '.png'
+    return self.cache_bust('/banner/' + self.id.to_s + '.png')
   end
   
   def link

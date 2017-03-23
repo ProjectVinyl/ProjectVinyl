@@ -3,6 +3,7 @@ require 'elasticsearch/model'
 class Video < ActiveRecord::Base
   include Elasticsearch::Model
   include Indexable
+  include Uncachable
   
   belongs_to :direct_user, class_name: "User", foreign_key: "user_id"
   
@@ -283,6 +284,7 @@ class Video < ActiveRecord::Base
   end
   
   def setThumbnail(cover)
+    self.uncache
     if cover && cover.content_type.include?('image/')
       delFile(self.cover_path.to_s + ".png")
       delFile(self.cover_path.to_s + "-small.png")
@@ -297,16 +299,28 @@ class Video < ActiveRecord::Base
   end
   
   def setThumbnailTime(time)
+    self.uncache
     delFile(self.cover_path.to_s + ".png")
     delFile(self.cover_path.to_s + "-small.png")
     Ffmpeg.extractThumbnail(self.video_path, self.cover_path, time)
+  end
+  
+  def self.thumb_for(video)
+    return video ? video.tiny_thumb : '/images/default-cover-g.png'
+  end
+  
+  def thumb
+    if self.hidden
+      return '/images/default-cover.png'
+    end
+    return self.cache_bust('/cover/' + self.id.to_s + '.png')
   end
   
   def tiny_thumb(user)
     if (self.hidden && (!user || self.user_id != user.id)) || self.isSpoileredBy(user)
       return '/images/default-cover-small.png'
     end
-    return '/cover/' + self.id.to_s + '-small.png'
+    return self.cache_bust('/cover/' + self.id.to_s + '-small.png')
   end
   
   def drop_tags(ids)
