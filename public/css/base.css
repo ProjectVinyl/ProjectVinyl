@@ -3763,7 +3763,7 @@ header > ul li a i {
   ul.horizontal {
     text-align: center;
   }
-  ul.horizontal li {
+  ul.horizontal li.generic {
     text-align: left;
   }
 }
