@@ -13,6 +13,7 @@ class HistoryController < ApplicationController
   end
   
   def page
+    @video = Video.where(id: params[:id]).first
     @page = params[:page].to_i
     @results = TagHistory.where(video_id: params[:id]).order(:created_at)
     @results = Pagination.paginate(@results, @page, 20, true)
