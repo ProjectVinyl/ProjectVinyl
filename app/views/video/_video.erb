@@ -47,7 +47,7 @@
 				<%= render partial: '/layouts/genre_thumb_h', collection: @tags %>
 			</div>
 		<% if user_signed_in? %>
-			<%= form_for(@video, as: "video", url: "ajax/video/edit", html: {class: "editing async form-state-toggle", "data-state": "editing"}) do |f| %>
+			<%= form_for(@video, as: "video", url: "/ajax/video/edit", html: {class: "editing async form-state-toggle", "data-state": "editing"}) do |f| %>
 				<%= f.text_field :id, hidden: true %>
 				<%= render layout: 'layouts/tageditor', locals: {tags: @video.tags} do %>
 					<textarea name="tags"><%= raw @video.tag_string %></textarea>
@@ -57,7 +57,7 @@
 						<tr>
 							<td class="label"><label for="video_source">Source</label></td>
 							<td class="field">
-								<input class="input" name="source" type="text">
+								<input class="input" name="source" type="text" value="<%= @video.source %>"></input>
 							</td>
 						</tr>
 						<tr>
