@@ -421,10 +421,14 @@ class Video < ActiveRecord::Base
       end
       if tgs && meta[:artist]
         if (artist_tag = Tag.sanitize_name(meta[:artist])) && artist_tag.length > 0
-          Tag.addTag('artist:' + artist_tag, self)
+          artist_tag = Tag.addTag('artist:' + artist_tag, self)
+          if artist_tag != nil
+            TagHistory.record_changes_auto(self, artist_tag[0], artist_tag[1])
+          end
         end
       end
       self.source = src
+      TagHistory.record_source_change_auto(self, src)
       self.save
     end
   end

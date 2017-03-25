@@ -226,7 +226,7 @@ class VideoController < ApplicationController
             TagHistory.record_changes(current_user, @video, changes[0], changes[1])
           end
         end
-        if params[:source] && @video.source != params[:source]
+        if params[:source] && (@video.source != params[:source])
           @video.source = params[:source]
           TagHistory.record_source_change(current_user, @video, @video.source)
         end

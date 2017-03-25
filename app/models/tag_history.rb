@@ -7,16 +7,34 @@ class TagHistory < ActiveRecord::Base
     TagHistory.where(video_id: video.id).destroy_all
   end
   
+  def self.record_changes_auto(video, added_tags, removed_tags)
+    video = video.id
+    entries = []
+    added_tags.each do |i|
+      entires << {tag_id: i, video_id: video, user_id: 0, added: true}
+    end
+    removed_tags.each do |i|
+      entries << {tag_id: i, video_id: video, user_id: 0, added: false}
+    end
+    TagHistory.create(entries)
+  end
+  
   def self.record_changes(user, video, added_tags, removed_tags)
     user = user.id
     video = video.id
-    entries = added_tags.map do |i|
-      {tag_id: i, video_id: video, user_id: user, added: true}
+    entries = []
+    added_tags.each do |i|
+      entires << {tag_id: i, video_id: video, user_id: user, added: true}
     end
-    entries |= removed_tags.map do |i|
-      {tag_id: i, video_id: video, user_id: user, added: false}
+    removed_tags.each do |i|
+      entries << {tag_id: i, video_id: video, user_id: user, added: false}
     end
     TagHistory.create(entries)
+  end
+  
+  def self.record_source_change_auto(video, neu)
+    video = video.id
+    TagHistory.create(user_id: 0, video_id: video, added: nil, value: neu)
   end
   
   def self.record_source_change(user, video, neu)

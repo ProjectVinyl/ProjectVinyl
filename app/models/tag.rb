@@ -163,8 +163,9 @@ class Tag < ActiveRecord::Base
     existing = get_updated_tag_set(sender)
     loaded = Tag.get_tag_ids_with_create([tag_name]) - existing
     if loaded.length > 0
-      Tag.load_dif(loaded, [], existing, sender)
+      return Tag.load_dif(loaded, [], existing, sender)
     end
+    return nil
   end
   
   def self.loadTags(tag_string, sender)
