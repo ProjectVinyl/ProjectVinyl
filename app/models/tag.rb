@@ -304,7 +304,7 @@ class Tag < ActiveRecord::Base
       User.where(tag_id: self.id).update_all(tag_id: tag)
       ArtistGenre.where(o_tag_id: self.id).update_all(tag_id: tag)
       VideoGenre.where(o_tag_id: self.id).update_all(tag_id: tag)
-      Tag.reindex_for(VideoGenre.where(o_tag_id: self.id).videos, ArtistGenre.where(o_tag_id: self.id).users)
+      Tag.reindex_for(Video.joins(:video_genres).where('`video_genres`.`o_tag_id` = ?', self.id), User.joins(:artist_genres).where('`artist_genres`.`o_tag_id` = ?', self.id))
       self.video_count = self.user_count = 0
       tag_o.recount
     end
