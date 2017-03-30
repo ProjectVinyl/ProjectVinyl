@@ -23,7 +23,7 @@
 	</button>
 </h1>
 <% if current_user.is_contributor? %>
-<div class="actions space-fix">
+<div class="actions">
 	<% if @thread.owner_type == 'Board' %>
 	<button class="action toggle blue" data-action="pin" data-target="thread" data-id="<%= @thread.id %>">
 		<span class="icon">
