@@ -1,5 +1,4 @@
-<% if !video_thumb_v.isHiddenBy(current_user) %>
-<li class="generic">
+<% if !video_thumb_v.isHiddenBy(current_user) %><li class="generic">
 	<a class="thumb<% if video_thumb_v.hidden %> thumb-hidden<% end %>" href="<%= video_thumb_v.link %>">
 		<div class="tile" style="background-image:url('<%= video_thumb_v.tiny_thumb(current_user) %>');">
 			<div class="details">
@@ -17,5 +16,4 @@
 			</span>
 		</div>
 	</a>
-</li>
-<% end %>
+</li><% end %>

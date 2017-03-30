@@ -106,8 +106,7 @@ class VideoController < ApplicationController
   def create
     if user_signed_in?
       if ApplicationHelper.read_only && !current_user.is_contributor?
-        error(params[:async], "Access Denied", "That feature is currently disabled.")
-        return
+        return error(params[:async], "Access Denied", "That feature is currently disabled.")
       end
       if current_user.is_contributor? && params[:video][:user_id]
         user = User.by_name_or_id(params[:video][:user_id])
