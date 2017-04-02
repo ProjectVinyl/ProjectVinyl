@@ -5,17 +5,46 @@ require 'projectvinyl/search/op'
 module ProjectVinyl
   module ElasticSearch
     class ElasticBuilder
-      def initialize
+      def initialize(parent)
+        @parent = parent
         @children = []
         @anded_children = []
         @must = []
         @must_not = []
         @neg = false
         @ranges = RangeQuery.new
+        
+        @must_owner = []
+        @must_not_owner = []
+        
+        @users = []
+      end
+      
+      def root
+        @parent || self
+      end
+      
+      def cache_user(user)
+        @users << user;
+      end
+      
+      def user_id_for(username)
+        if !@parent.nil?
+          return self.root.user_id_for(username)
+        end
+        if @users.length > 0 && @user_ids_cache.nil?
+          @user_ids_cache = {}
+          User.where('username IN ?', @users).pluck(id, username).each do |u|
+            @users_cache[u[1]] = u[0];
+          end
+        end
+        if @users_cache.has(username)
+          return @users_cache[username]
+        end
       end
       
       def self.interpret_opset(type, opset)
-        result = ElasticBuilder.new
+        result = ElasticBuilder.new(nil)
         result.take_all(type, opset)
         return result
       end
@@ -66,7 +95,7 @@ module ProjectVinyl
             if op_n[0] == ProjectVinyl::Search::Op::GROUP_START
               opset.shift
             end
-            child_group = ElasticBuilder.new
+            child_group = ElasticBuilder.new(self)
             if neg
               child_group.negate
             end
@@ -83,7 +112,7 @@ module ProjectVinyl
             end
             if op_n[0] == ProjectVinyl::Search::Op::GROUP_START
               opset.shift
-              child_group = ElasticBuilder.new
+              child_group = ElasticBuilder.new(self)
               if neg
                 child_group.negate
               end
@@ -107,7 +136,9 @@ module ProjectVinyl
         if op == ProjectVinyl::Search::Op::TITLE
           self.absorb_param(@must, opset, type == 'user' ? 'username' : 'title')
         elsif op == ProjectVinyl::Search::Op::UPLOADER
-          self.absorb_param_if(@must, opset, 'user_id', type != 'user')
+          if op = self.absorb_param_if(@must_owner, opset, 'user_id', type != 'user')
+            self.root.cache_user(op)
+          end
         elsif op == ProjectVinyl::Search::Op::SOURCE
           self.absorb_param_if(@must, opset, 'source', type != 'user')
         elsif op == ProjectVinyl::Search::Op::AUDIO_ONLY && type != 'user'
@@ -120,7 +151,9 @@ module ProjectVinyl
             if data == ProjectVinyl::Search::Op::TITLE
               self.absorb_param(@must_not, opset, type == 'user' ? 'username' : 'title')
             elsif data == ProjectVinyl::Search::Op::UPLOADER
-              self.absorb_param_if(@must_not, opset, 'user_id', type != 'user')
+              if op = self.absorb_param_if(@must_not_owner, opset, 'user_id', type != 'user')
+                self.root.cache_user(op)
+              end
             elsif data == ProjectVinyl::Search::Op::SOURCE
               self.absorb_param_if(@must_not, opset, 'source', type != 'user')
             elsif data == ProjectVinyl::Search::Op::AUDIO_ONLY && type != 'user'
@@ -169,6 +202,14 @@ module ProjectVinyl
       
       def must(holder)
         m = @neg ? @must_not : baked_inclusions
+        if @neg
+          @must_owner.each do |o|
+            if i = self.user_id_for(o[:term][:user_id])
+              o[:term][:user_id] = i
+              m << o
+            end
+          end
+        end
         if m.length > 0
           holder[:must] = m;
         end
@@ -177,6 +218,14 @@ module ProjectVinyl
       
       def must_not(holder)
         m = @neg ? baked_inclusions : @must_not
+        if !@neg
+          @must_not_owner.each do |o|
+            if i = self.user_id_for(o[:term][:user_id])
+              o[:term][:user_id] = i
+              m << o
+            end
+          end
+        end
         if m.length > 0
           holder[:must_not] = m;
         end
