@@ -3,6 +3,10 @@ class AlbumItem < ActiveRecord::Base
   belongs_to :video
   has_one :direct_user, :through => :video
   
+  def tiny_thumb(user)
+    self.video.tiny_thumb(user)
+  end
+  
   def user
     self.direct_user || @dummy || (@dummy = User.dummy(self.video.user_id))
   end

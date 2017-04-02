@@ -305,8 +305,8 @@ class Video < ActiveRecord::Base
     Ffmpeg.extractThumbnail(self.video_path, self.cover_path, time)
   end
   
-  def self.thumb_for(video)
-    return video ? video.tiny_thumb : '/images/default-cover-g.png'
+  def self.thumb_for(video, user)
+    return video ? video.tiny_thumb(user) : '/images/default-cover-g.png'
   end
   
   def thumb

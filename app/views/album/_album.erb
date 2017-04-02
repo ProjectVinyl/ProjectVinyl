@@ -1,7 +1,7 @@
 	<div class="post">
 		<div class="tile stack left">
-			<span style="background-image:url('<%= Video.thumb_for(@items.records.second %>');" class="stack-item item-1">
-				<span style="background-image:url('<%= Video.thumb_for(@items.records.first %>');" class="stack-item item-2"></span>
+			<span style="background-image:url('<%= Video.thumb_for(@items.records.second, current_user) %>');" class="stack-item item-1">
+				<span style="background-image:url('<%= Video.thumb_for(@items.records.first, current_user) %>');" class="stack-item item-2"></span>
 			</span>
 		</div>
 		<% if @modificationsAllowed %>
