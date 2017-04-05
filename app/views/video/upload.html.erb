@@ -1,215 +1,118 @@
-		<section class="page tab-set column-left">
-			<ul class="hidden tab-set">
-				<li data-target="thumbpick" class="button selected">Pick Thumbnail</li>
-				<li data-target="thumbupload" class="button">Upload Image</li>
-			</ul>
-			<%= form_for(@video, as: "video", url: "ajax/upload", html: {class: "new_video async"}) do |f| %>
-			<div class="progressor">
-				<div class="cover-block">
-					<div class="message">
-						Uploading...
-					</div>
-					<div class="progress">
-						<div class="fill"></div>
-					</div>
-				</div>
-			</div>
-			<div id="upload">
-				<div class="hidden">
-					<div data-tab="thumbpick" id="video" class="tab selected video" data-video="0">
-						<input class="playlist" id="time" type="text" name="video[time]" value="-1">-1</input>
-					</div>
-					<div data-tab="thumbupload" id="cover-upload" class="cover-block tab file-select image-selector" data-type="image">
-						<span class="preview"></span>
-						<span class="drop-icon">
-							<i class="fa fa-picture-o"></i>
-							<div>Select Cover Art</div>
-						</span>
-						<%= f.file_field :cover %>
-					</div>
-				</div>
-				<div id="video-upload" class="shown cover-block file-select video-drop" data-type="a/v">
-					<span class="drop-icon">
-						<i class="fa fa-upload"></i>
-						<div>Select an Audio/Video file to upload</div>
-					</span>
-					<%= f.file_field :file %>
-				</div>
-				<script>
-var player = null;
-$(document).ready(function() {
-  var video = $('#video .player');
-  player = video[0].getPlayerObj();
-  var time_input = $('#video input');
-  player.pause = function() {
-    if (this.video) this.video.pause();
-		return false;
-  };
-  player.__start = player.start;
-  player.start = function() {
-    this.__start();
-    this.pause();
-  }
-  player.__changetrack = player.changetrack;
-  player.changetrack = function(progress) {
-    this.__changetrack(progress);
-    time_input.val(this.video.currentTime);
-  }
-  player.start();
-  player.volume(0, !0);
-  $('#video .icon.fullscreen, #video .icon.volume').remove();
-});
-(function(time, lastTime) {
-  var has_cover = false;
-  var needs_cover = false;
-  
-	var time = $('#time');
-	var lastTime = -1;
-	
-  $('#video-upload').on('accept', function(e, file) {
-    if ($(this).hasClass('shown')) {
-      $('.hidden').removeClass('hidden');
-      $('.shown').addClass('hidden').removeClass('shown');
-      var title = cleanup(file.title);
-      $('#video_title .content').text(title);
-      $('#video_title input').val(title);
-    }
-    needs_cover = !!file.mime.match(/audio\//);
-		if (needs_cover) {
-			player.load(null);
-			$('li[data-target="thumbupload"]').click();
-			$('li[data-target="thumbpick"]').attr('data-disabled','1');
-		} else {
-			if (Player.canPlayType(file.mime)) {
-				player.load(file.data);
-				$('li[data-target="thumbpick"]').removeAttr('data-disabled').click();
-			} else {
-				$('li[data-target="thumbupload"]').click();
-				$('li[data-target="thumbpick"]').attr('data-disabled', '1');
-			}
-		}
-    validateInput();
-  });
-  $('#cover-upload').on('accept', function() {
-    has_cover = true;
-    validateInput();
-  });
-  $('#new_video').on('tagschange', validateInput);
-  $('#new_video').on('change', 'h1#video_title input', validateInput);
-	
-  $('.tab[data-tab="thumbpick"]').on('tabblur', function() {
-		lastTime = time.val();
-		time.val(-1);
-		validateInput();
-	}).on('tabfocus', function() {
-		time.val(lastTime);
-		validateInput();
-	});
-  function cleanup(title) {
-    return title.toLowerCase().replace(/^[0-9]*/g, '').replace(/[-_]|[^a-z\s]/gi,' ').replace(/(^|\s)[a-z]/g, function(i) {
-      return i.toUpperCase()
-    }).trim()
-  }
-  
-  function notify(msg) {
-    $('.notify').addClass('shown');
-    $('.notify .bobber').text(msg);
-  }
-  function info(msg) {
-    $('.info').css('display', '');
-    $('.info').text(msg);
-  }
-  
-  function validateInput() {
-    tit = $('#video_title input').val();
-    if (!tit || tit == '') return notify('You need to provide a title.');
-    if (needs_cover && !has_cover) return notify('Audio files require a cover image.');
-    var tags = $('.tag-editor')[0].getActiveTagsArray();
-    var src = $('#video_source').val();
-    if (!src || src == '') {
-      var src_needed = false;
-      for (var i = 0; i < tags.length; i++) {
-        if (tags[i].trim().toLowerCase() == 'source needed') src_needed = true;
-      }
-      if (!src_needed) {
-        info("You have not provided a source. If you know what it is add it to the source field, otherwise consider tagging this video as 'source needed' so others know to search for one.");
-      } else {
-        $('.info').css('display', 'none');
-      }
-    } else {
-      $('.info').css('display', 'none');
-    }
-    if (tags.length == 0) return notify('You need at least one tag.');
-    if (tags.length == 1 && tags[0].trim().toLowerCase() == 'music') return notify("'music' is implied. Tags should be more specific than that. Do you perhaps know who the artist is?");
-    $('.notify').removeClass('shown');
-  }
-})();
-				</script>
-			</div>
-			<div class="hidden post description resize-holder">
-				<h1 id="video_title" class="title editable post-title resize-target short">
-					<span class="content ">Title</span>
-					<%= f.text_field :title, class: "input" %>
-					<span class="edit"><i class="fa fa-pencil"></i></span>
-					<span style="display:none">11</span>
-				</h1>
-				<div class="name">
-					<%= f.label :description %>
-				</div>
-				<%= render layout: 'thread/description_box' do %>
-					<%= f.text_area :description, autofocus: true, class: "comment-content" %>
-				<% end %>
-				<div class="post-tags">
-					<%= render layout: 'layouts/tageditor', locals: {tags: nil} do %>
-						<%= f.text_area :tag_string %>
-					<% end %>
-				</div>
-				<div class="properties">
-					<table>
-						<tr>
-							<td class="label"><%= f.label :source %></td>
-							<td class="field">
-								<%= f.text_field :source, class: "input" %>
-								<span style="display:none;color:red;" class="info"></span>
-							</td>
-						</tr>
-					</table>
-				</div>
-				<div class="actions">
-					<button id="change_video" class="action" type="button" onclick="$('#video_file').trigger('click');">Change Main File</button>
-					<span class="notify bob-holder">
-						<div class="bobber bob-left">
-							Cover art is required to upload audio files.
-						</div>
-						<%= f.submit "Upload", class: "action right green" %>
-					</span>
-				</div>
-				<div class="actions">
-					<a class="foobar action options"><i class="fa fa-gear"></i> Options</a>
-					<a class="foobar action share"><i class="fa fa-share"></i> Share</a>
-					<a class="foobar action star"><i class="fa fa-star"></i></a>
-					<a class="foobar action like">
-						<i class="fa fa-thumbs-up"></i>
-					</a>
-					<a class="foobar action dislike">
-						<i class="fa fa-thumbs-down"></i>
-					</a>
-					<a class="foobar action report right"><i class="fa fa-flag"></i> Report</a>
-				</div>
-				<div class="form report" data-offset="0"></div>
-			</div>
-			<% end %>
-		</section>
-		<div class="page resize-holder column-right right center">
-			<%= render partial: 'artist/bio', locals: {user: @user } %>
-			<section>
-				<h1 class="resize-target">
-					<a>Discovery Queue</a>
-				</h1>
-				<ul class="queue">
+<div id="uploader_frame" class="wrapper page tab-set" style="width:100%">
+	<ul class="tab-set tabs">
+		<li id="new_tab_button" class="button" title="Add">+</li>
+	</ul>
+</div>
+<div id="template" class="hidden">
+	<div data-tab="new[{id}]" class="tab selected">
+		<%= form_for(@video, as: "video", url: "ajax/upload", html: {class: "new_video async"}) do |f| %>
+			<section class="page tab-set column-left resize-holder uploaded-preview preview-selective">
+				<ul class="hidden tab-set tabs">
+					<li data-target="thumbpick_{id}" class="button selected">Pick Thumbnail</li>
+					<li data-target="thumbupload_{id}" class="button">Upload Image</li>
 				</ul>
+				<div class="progressor">
+					<div class="cover-block">
+						<div class="message">
+							Uploading...
+						</div>
+						<div class="progress">
+							<div class="fill"></div>
+						</div>
+					</div>
+				</div>
+				<div id="upload" class="preview-selective-selected">
+					<div class="hidden">
+						<div data-tab="thumbpick_{id}" id="video" data-pending="1" class="tab selected video" data-video="0">
+							<input class="playlist" id="time" type="text" name="video[time]" value="-1">-1</input>
+						</div>
+						<div data-tab="thumbupload_{id}" id="cover-upload" class="cover-block tab file-select image-selector" data-type="image">
+							<span class="preview"></span>
+							<span class="drop-icon">
+								<i class="fa fa-picture-o"></i>
+								<div>Select Cover Art</div>
+							</span>
+							<%= f.file_field :cover %>
+						</div>
+					</div>
+					<div id="video-upload" class="shown cover-block file-select video-drop" data-type="a/v">
+						<span class="drop-icon">
+							<i class="fa fa-upload"></i>
+							<div>Select an Audio/Video file to upload</div>
+						</span>
+						<%= f.file_field :file %>
+					</div>
+				</div>
+				<div class="hidden post description resize-holder">
+					<h1 id="video_title" class="title editable post-title resize-target short">
+						<span class="content ">Title</span>
+						<%= f.text_field :title, class: "input" %>
+						<span class="edit"><i class="fa fa-pencil"></i></span>
+						<span style="display:none">11</span>
+					</h1>
+					<%= render layout: 'thread/description_box' do %>
+						<%= f.text_area :description, autofocus: true, class: "comment-content" %>
+					<% end %>
+					<div class="post-tags">
+						<%= render layout: 'layouts/tageditor', locals: {tags: nil} do %>
+							<%= f.text_area :tag_string %>
+						<% end %>
+					</div>
+					<div class="properties">
+						<table>
+							<tr>
+								<td class="label"><%= f.label :source %></td>
+								<td class="field">
+									<%= f.text_field :source, class: "input" %>
+									<span style="display:none;color:red;" class="info"></span>
+								</td>
+							</tr>
+						</table>
+					</div>
+					<div class="actions">
+						<button id="change_video" class="action" type="button" onclick="$('#video_file').trigger('click');">Change Main File</button>
+						<span class="notify bob-holder">
+							<div class="bobber bob-left">
+								Cover art is required to upload audio files.
+							</div>
+							<%= f.submit "Upload", class: "action right green" %>
+						</span>
+					</div>
+					<div class="actions">
+						<a class="foobar action options"><i class="fa fa-gear"></i> Options</a>
+						<a class="foobar action share"><i class="fa fa-share"></i> Share</a>
+						<a class="foobar action star"><i class="fa fa-star"></i></a>
+						<a class="foobar action like">
+							<i class="fa fa-thumbs-up"></i>
+						</a>
+						<a class="foobar action dislike">
+							<i class="fa fa-thumbs-down"></i>
+						</a>
+						<a class="foobar action report right"><i class="fa fa-flag"></i> Report</a>
+					</div>
+					<div class="form report" data-offset="0"></div>
+				</div>
 			</section>
-		</div>
-		<section class="page column-left">
-			<div class="comments"></div>
-		</section>
+			<section class="page resize-holder column-right right center uploaded-preview preview-selective">
+				<span class="preview-selective-selected">
+					<%= render partial: 'artist/bio', locals: {user: @user } %>
+				</span>
+				<section class="hidden">
+					<h1 class="resize-target" style="font-size: 16.25px;">
+						<a>Include in Albums</a>
+					</h1>
+					<ul class="queue">
+						<% @user.albums.each do |album| %></li class="generic">
+							<label class="button">
+								<input type="checkbox" name="albums[<%= album.id %>]"></input>
+								<i class="fa fa-check"></i>
+								<%= album.title %>
+							</label>
+							<li><% end %>
+					</ul>
+				</section>
+			</section>
+		<% end %>
+	</div>
+</div>
+<script>$(document).on('envload', function() {new Uploader();});</script>

@@ -497,28 +497,38 @@ ul.tab-set li {
   display: inline-block;
 }
 
-.tab-set > .tab-set {
+.tab-set > .tab-set.tabs {
   overflow-y: hidden;
   background: rgba(100,100,120,0.1);
   padding: 15px 15px 0 15px;
   margin: -20px -20px 20px -20px;
 }
-.page.properties.tab-set > ul.tab-set {
+.page.properties.tab-set > .tab-set.tabs {
   margin: 0 0 20px 0;
 }
 
-.tab-set > .tab-set .button {
+.tab-set > .tab-set.tabs .button {
   position: relative;
   border-bottom: none;
   border-radius: 0 ;
   box-shadow: 0 0 10px -5px rgba(0,0,0,0.3);
   margin-right: 10px;
 }
-.tab-set > .tab-set .button[data-disabled] {
+.tab-set > .tab-set.tabs .button span {
+  display: inline-block;
+  overflow: hidden;
+  white-space: nowrap;
+  max-width: 200px;
+  max-height: 1.3em;
+}
+.tab-set > .tab-set.tabs .button i.fa-close {
+  margin-left: 20px;
+}
+.tab-set > .tab-set.tabs .button[data-disabled] {
   opacity: 0.3;
 }
-.tab-set > .tab-set .button::before,
-.tab-set > .tab-set .button::after {
+.tab-set > .tab-set.tabs .button::before,
+.tab-set > .tab-set.tabs .button::after {
   content: '';
   display: block;
   position: absolute;
@@ -530,23 +540,55 @@ ul.tab-set li {
   transition: border 0.5s ease;
 }
 
-.tab-set > .tab-set .button.selected::before,
-.tab-set > .tab-set .button:hover::before {
+.tab-set > .tab-set.tabs .button.selected::before,
+.tab-set > .tab-set.tabs .button:hover::before {
   border-color: transparent #fff #fff transparent;
 }
-.tab-set > .tab-set .button.selected::after,
-.tab-set > .tab-set .button:hover::after {
+.tab-set > .tab-set.tabs .button.selected::after,
+.tab-set > .tab-set.tabs .button:hover::after {
   border-color: transparent transparent #fff #fff;
 }
-.tab-set > .tab-set .button:active::before,
-.tab-set > .tab-set .button::before {
+.tab-set > .tab-set.tabs .button:active::before,
+.tab-set > .tab-set.tabs .button::before {
   right: 100%;
   border-color: transparent #f8f8f8 #f8f8f8 transparent;
 }
-.tab-set > .tab-set .button:active::after,
-.tab-set > .tab-set .button::after {
+.tab-set > .tab-set.tabs .button:active::after,
+.tab-set > .tab-set.tabs .button::after {
   left: 100%;
   border-color: transparent transparent #f8f8f8 #f8f8f8;
+}
+
+.tab-set > .tab-set.tabs .button span {
+  transition: background 0.5s ease, opacity 0.5s ease, max-width 0.5s ease, margin-right 0.5s ease;
+  max-width: 200px;
+  opacity: 1;
+}
+.tab-set > .tab-set.tabs .button.hidden {
+  display: inline-block !important;
+}
+.tab-set > .tab-set.tabs .button.hidden span {
+  transition: background 0.5s ease, opacity 0.25s linear, max-width 0.25s linear, margin-right 0.25s linear;
+  opacity: 0;
+  max-width: 0 !important;
+  margin-right: -20px;
+}
+
+.tab-set > .tab-set.tabs .button span.progress {
+  display: none;
+  position: absolute;
+  height: 3px;
+  width: 100%;
+  max-width: 100%;
+  top: 0px;
+  left: 0;
+  border-radius: 0 0 100% 100%;
+}
+.tab-set > .tab-set.tabs .button.uploading span.progress {
+  display: block;
+}
+.tab-set > .tab-set.tabs .button.uploading i {
+  display: none;
 }
 
 a {
@@ -819,6 +861,21 @@ div.page .positioner {
   margin-bottom: 20px;
   margin-top: 0;
 }
+.column-left.auto-wrap > .page.split {
+  z-index: 1;
+  position: relative;
+  margin-bottom: -10px;
+  box-shadow: -10px 0 10px -10px rgba(0,0,0,0.3),
+    10px -10px 10px -10px rgba(0,0,0,0.3);
+}
+.column-left.auto-wrap > .page.split ul {
+  margin-bottom: 0;
+}
+.column-left.auto-wrap > .page.split + .page {
+  z-index: 0;
+  overflow: visible;
+  padding-top: 0;
+}
 .column-right.wrap-around-fixed {
   position: relative;
   z-index: 1;
@@ -999,6 +1056,46 @@ label.text-input input[type=text] {
   display: inline;
   width: auto;
   line-height: inherit;
+}
+
+label.check-box {
+  background: rgba(200,200,200,0.1);
+  padding: 10px;
+  border-radius: 5px;
+  border: solid 2px #ddd;
+  display: inline-block;
+  text-align: left;
+  transition: color 0.1s ease;
+  color: #444;
+  box-shadow: 0 0 7px -4px #fff inset;
+}
+label.check-box:hover, label.check-box.focus {
+  background: rgba(200,200,255,0.2);
+}
+label.check-box input {
+  display: none;
+}
+label.check-box span {
+  vertical-align: bottom;
+  line-height: 1.3em;
+  pointer-events: none;
+}
+label.check-box span::before {
+  font-family: 'FontAwesome';
+  content: '\f096';
+  display: inline-block;
+  padding-right: 10px;
+  width: 1em;
+  height: 1em;
+  text-align: left;
+  font-size: 1.3em;
+  vertical-align: bottom;
+}
+label.check-box input:checked + span::before {
+  content: '\f046';
+}
+label.check-box:hover {
+  color: rgba(0,0,110,0.6);
 }
 
 .search-options label span:first-child {
@@ -1304,7 +1401,8 @@ label input[type=checkbox]:checked + i + i {
 .editable.editing.inline {
   display: inline-block;
 }
-.editable .input {
+.editable .input,
+.editable input.input, .editable textarea.input {
   display: none;
   background: none;
   border: none;
@@ -1314,7 +1412,7 @@ label input[type=checkbox]:checked + i + i {
   resize: none;
   font: inherit;
   color: inherit;
-  line-height: inherit;
+  line-height: 1.5em;
   text-shadow: inherit;
   padding: 0;
   margin: 0;
@@ -1325,8 +1423,8 @@ label input[type=checkbox]:checked + i + i {
   width: auto;
 }
 .editable input.input {
-  margin-top: -8px;
-  margin-bottom: -3px;
+  margin-top: -7px;
+  margin-bottom: -1px;
 }
 .editable.editing .input {
   display: inline;
@@ -1924,12 +2022,12 @@ img.emoticon {
   text-align: center;
 }
 
-.waiting {
+ul.waiting, .tab.waiting {
   position: relative;
   opacity: 0.2;
   transition: opacity 0.5s ease;
 }
-.waiting::after {
+ul.waiting::after, .tab.waiting::after {
   content: '\f110';
   position: absolute;
   top: 50%;
@@ -2105,11 +2203,12 @@ li.bio h2, li.genre h2 {
 }
 
 form .progressor, form.uploading > :not(.uploaded-preview),
+form.uploading .uploaded-preview.preview-selective > :not(.preview-selective-selected),
 form.uploading .drop-icon, form.uploading input {
   display: none;
 }
 form.uploading .progressor {
-  display: block;
+  display: block !important;
   width: 100%;
   padding-top: 25%;
   position: relative;
@@ -2134,6 +2233,7 @@ form.uploading .progressor + div {
   margin-top: 10px;
   overflow-x: hidden;
 }
+
 .progress .fill {
   position: absolute;
   top: 0;
@@ -2145,11 +2245,11 @@ form.uploading .progressor + div {
   vertical-align: top;
   line-height: 0px;
 }
-form.error .progress .fill {
+.error .progress .fill {
   background: red;
 }
 
-form.waiting .progress .fill {
+.waiting .progress .fill {
   background: orange;
   animation: 1s linear infinite intermediate;
   background: repeating-linear-gradient(
@@ -2326,6 +2426,26 @@ span.active-icon {
 .file-select {
   text-align: center;
   line-height: 1em;
+  overflow: hidden;
+  background: rgba(0,0,255,0.1);
+}
+.file-select::before {
+  content: '';
+  display: block;
+  border-radius: 100% /30%;
+  background: #fef;
+  position: absolute;
+  top: -30%;
+  left: -30%;
+  bottom: -30%;
+  right: -30%;
+  transition: all 0.4s ease;
+}
+.file-select.drag::before {
+  top: -0%;
+  left: -0%;
+  bottom: -0%;
+  right: -0%;
 }
 .drop-icon {
   position: absolute;
@@ -2335,15 +2455,24 @@ span.active-icon {
   margin-top: -3em;
   transition: color 0.25s ease;
   color: rgba(102,102,184,0.6);
+  line-height: 30px;
+}
+.drop-icon div {
+  transition: font-size 0.25s ease
 }
 .avatar.image-selector .drop-icon {
-  margin-top: -2em;
   display: none;
 }
 .avatar.image-selector:hover .drop-icon {
   display: block;
 }
 .drag .drop-icon {
+  color: rgba(0,0,255,0.1);
+}
+.drag .drop-icon div {
+  font-size: 0;
+}
+.drag .drop-icon i {
   color: #fff;
 }
 .drop-icon i {
@@ -3623,7 +3752,7 @@ i.fa.fa-volume-mid {
 }
 
 .uploading #video .controls,
-.uploading .tab-set {
+.uploading ul.tab-set {
   display: none;
 }
 .uploading #video {

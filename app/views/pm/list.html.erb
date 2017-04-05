@@ -1,7 +1,7 @@
 <% title "Private Messages" %>
 <h1>Private Messages</h1>
 <section class="page tab-set" style="width: 100%">
-	<div class="tab-set async" data-target="messages" data-url="messages/tab">
+	<div class="tab-set tabs async" data-target="messages" data-url="messages/tab">
 		<a href="/messages/new" class="button<% if @type == 'new' %> selected<% end %>" data-target="new"><i class="fa fa-star"></i> Unread<% if @new > 0 %> (<%= number_with_delimiter @new %>)<% end %></a>
 		<a href="/messages/received" class="button<% if @type == 'received' %> selected<% end %>" data-target="received"><i class="fa fa-inbox"></i> Inbox</a>
 		<a href="/messages/sent" class="button<% if @type == 'sent' %> selected<% end %>" data-target="sent"><i class="fa fa-reply"></i> Sent</a>
