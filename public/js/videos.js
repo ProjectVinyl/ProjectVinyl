@@ -55,6 +55,9 @@ function Player() {}
       default: return 'Unknown Error';
     }
   };
+	Player.errorPresent = function(video) {
+    return (video.error && video.error.code != video.error.MEDIA_ERR_ABORTED) || (video.networkState == HTMLMediaElement.NETWORK_NO_SOURCE);
+	};
 	Player.isready = function(video) {
 		return video.readyState == 4;
 	};
@@ -489,6 +492,30 @@ function Player() {}
 				});
 			}
 		},
+		loadURL: function(url) {
+			this.audioOnly = false;
+			if (this.source) {
+				URL.revokeObjectURL(this.source);
+			}
+			if (url) {
+				this.source = url;
+				if (this.audioOnly) {
+					this.video = null;
+					this.start();
+				} else {
+					if (!this.video) this.start();
+					this.video.src = this.source;
+				}
+				this.video.load();
+			}
+			if (!this.thumbtrack) {
+				this.thumbtrack = true;
+				var me = this;
+				this.video.addEventListener('loadedmetadata', function() {
+					me.changetrack(0.5);
+				});
+			}
+		},
     start: function() {
       if (!this.video) {
         var video;
@@ -602,16 +629,18 @@ function Player() {}
     },
     error: function(e) {
       this.pause();
-      this.player.addClass('stopped');
-      this.player.addClass('error');
-      var message = Player.errorMessage(this.video);
-      this.player.error.message.text(message);
-      if (!this.noise) {
-        this.noise = Player.noise();
-        this.player.error.append(this.noise);
-      }
-      console.warn(message);
-      console.log(e);
+			if (Player.errorPresent(this.video) {
+				var message = Player.errorMessage(this.video);
+				this.player.addClass('stopped');
+				this.player.addClass('error');
+				this.player.error.message.text(message);
+				if (!this.noise) {
+					this.noise = Player.noise();
+					this.player.error.append(this.noise);
+				}
+				console.warn(message);
+			}
+			console.log(e);
     },
     toggleVideo: function() {
       if (!this.player.hasClass('playing')) {
