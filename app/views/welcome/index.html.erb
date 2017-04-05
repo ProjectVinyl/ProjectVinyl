@@ -106,20 +106,7 @@ iframe.twitter-timeline {
 $(window).on('resize', function() {
   resizeGrid($('.column-left'), $('.column-right'));
 });
-resizeGrid($('.column-left'), $('.column-right'));
-function resizeGrid(grid, beside) {
-  grid.css('width', '');
-  if (beside.width() > 0) {
-    var width = grid.parent().innerWidth() - 195;
-    var calculatedWidth = width + 1;
-    var n = 10;
-    do {
-      calculatedWidth = 60 + (182 * n) + 45 * (--n) + 60;
-    } while (calculatedWidth > width)
-    grid.css('width', calculatedWidth + 'px');
-    if (beside) {
-      beside.css('width', (beside.parent().innerWidth() - (calculatedWidth + 15)) + 'px');
-    }
-  }
-}
+$(document).on('envload', function() {
+	resizeGrid($('.column-left'), $('.column-right'));
+});
 </script>
