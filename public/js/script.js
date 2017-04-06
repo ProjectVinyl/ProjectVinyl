@@ -672,6 +672,7 @@ var TagEditor = (function() {
       e.stopPropagation();
     });
     var autocomplete = null;
+    var me = this;
     this.input.on('focus', function(e) {
       if (!autocomplete) autocomplete = setInterval(function() {
         var value = self.input.val();
@@ -680,10 +681,12 @@ var TagEditor = (function() {
           self.doSearch(value.trim().split(/,|;/).reverse()[0]);
         }
       }, 1000);
+      me.dom.addClass('focus');
     });
     this.input.on('blur', function() {
       clearInterval(autocomplete);
       autocomplete = null;
+      me.dom.removeClass('focus');
     });
     el.on('mouseup', function(e) {
       self.input.focus();
@@ -796,6 +799,44 @@ var TagEditor = (function() {
 	});
 	return TagEditor;
 })();
+
+function ThumbPicker() { }
+Player.Extend(ThumbPicker, {
+  constructor: function(el) {
+    ThumbPicker.Super.constructor.call(this, el, true);
+    this.time_input = el.find('input');
+    el.find('.icon.fullscreen, .icon.volume').remove();
+  },
+  pause: function() {
+    if (this.video) this.video.pause();
+    return false;
+  },
+  start: function() {
+    if (!this.video) {
+      ThumbPicker.Super.start.call(this);
+      if (this.video) {
+        var me = this;
+        this.video.addEventListener('loadedmetadata', function() {
+          me.changetrack(0.5);
+        });
+      }
+    } else {
+      ThumbPicker.Super.start.call(this);
+    }
+    this.pause();
+  },
+  changetrack: function(progress) {
+    ThumbPicker.Super.changetrack.call(this, progress);
+    this.time_input.val(this.video.currentTime);
+  },
+  load: function(d) {
+    this.start();
+    this.volume(0, !0);
+    ThumbPicker.Super.load.call(this, d);
+    this.start();
+  }
+});
+
 var Uploader = (function() {
 	var INSTANCES = [];
 	var INDEX = 0;
@@ -847,18 +888,6 @@ var Uploader = (function() {
 		}
 	};
 	
-	function urlToBlob(url, callback) {
-		if (!url) return;
-		try {
-			var xhr = new XMLHttpRequest();
-			xhr.open('GET', url, true);
-			xhr.responseType = 'blob';
-			xhr.onload = function(e) {
-				if (this.status == 200) callback(this.response);
-			};
-			xhr.send();
-		} catch (e) { console.error(e); }
-	}
 	function Uploader() {
 		this.id = INDEX++;
 		this.el = $($('#template').html().replace(/\{id\}/g, this.id));
@@ -949,67 +978,9 @@ var Uploader = (function() {
 		uploading_queue.enqueue_all(INSTANCES);
 	};
 	Uploader.prototype = {
-		serialise: function() {
-			return JSON.stringify({
-				title: this.video_title.input.val(),
-				description: this.video_description.val(),
-				tags: this.tag_editor.tags,
-				time: this.video.time ? this.video.time.val() : 0,
-				video_file: this.player.source,
-				cover_file: this.cover.preview[0].src
-			});
-		},
-		deserialise: function(s) {
-			s = JSON.parse(s);
-			this.video_title.input.val(s.title);
-			this.title.text(s.title);
-			this.video_description.val(s.description);
-			this.tag_editor.loadTags(s.tags);
-			if (!this.player) this.initPlayer();
-			this.player.loadURL(s.video_file);
-			this.player.time = s.time;
-			this.player.start();
-			this.cover.preview[0].src = s.cover_file;
-			try {
-				var me = this;
-				urlToBlob(s.video_file, function(blob) {
-					me.video.input.val(blob);
-				});
-				urlToBlob(s.cover_file, function(blob) {
-					me.cover.input.val(blob);
-				});
-			} catch (e) {
-				console.error(e);
-			}
-			this.showUI(s.title + '(saved)');
-		},
 		initPlayer: function() {
-			this.player = new Player();
+			this.player = new ThumbPicker();
 			this.player.constructor(this.el.find('.video'));
-			var time_input = this.el.find('#video input');
-			this.video.time = time_input;
-			this.player.pause = function() {
-				if (this.video) this.video.pause();
-				return false;
-			};
-			this.player.__start = this.player.start;
-			this.player.start = function() {
-				this.__start();
-				this.pause();
-			}
-			this.player.__changetrack = this.player.changetrack;
-			this.player.changetrack = function(progress) {
-				this.__changetrack(progress);
-				time_input.val(this.video.currentTime);
-			}
-			this.player.__load = this.player.load;
-			this.player.load = function(d) {
-				this.start();
-				this.volume(0, !0);
-				this.__load(d);
-				this.start();
-			};
-			this.el.find('#video').find('.icon.fullscreen, .icon.volume').remove();
 		},
 		showUI: function(title) {
 			this.el.find('.hidden').removeClass('hidden');

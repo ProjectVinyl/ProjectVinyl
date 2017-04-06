@@ -147,7 +147,7 @@ class ThreadController < ApplicationController
           comment.save
           render json: {
             message: "success",
-            content: render_to_string(partial: '/thread/comment.html.erb', locals: { comment: comment, indirect: false }),
+            content: render_to_string(partial: '/thread/comment.html.erb', locals: { comment: comment, indirect: !params[:indirect].nil? }),
           }
         else
           comment.hidden = true
@@ -156,7 +156,7 @@ class ThreadController < ApplicationController
           if current_user.is_contributor?
             render json: {
               message: "success",
-              content: render_to_string(partial: '/thread/comment.html.erb', locals: { comment: comment, indirect: false }),
+              content: render_to_string(partial: '/thread/comment.html.erb', locals: { comment: comment, indirect: !params[:indirect].nil? }),
             }
           else
             render json: {

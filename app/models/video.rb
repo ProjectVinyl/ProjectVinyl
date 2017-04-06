@@ -57,7 +57,10 @@ class Video < ActiveRecord::Base
     else
       selected = selection.sample(limit)
     end
-    return Video.where('id IN (?)', selected)
+    return {
+      :ids => selected,
+      :videos => Video.Finder.where('id IN (?)', selected)
+    }
   end
   
   def self.ensure_uniq(data)

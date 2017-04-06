@@ -2,6 +2,7 @@ require 'elasticsearch/model'
 
 class UserDummy
   include Roleable
+  include Queues
   
   def initialize(id)
     @id = id
@@ -10,6 +11,10 @@ class UserDummy
     else
       @username = 'Anonymous'
     end
+  end
+  
+  def videos
+    Video.where(user_id: @id)
   end
   
   def id
@@ -22,10 +27,6 @@ class UserDummy
   
   def username
     @username
-  end
-  
-  def queue(excluded)
-    Video.randomVideos(Video.where(hidden: false, user_id: @id).where.not(id: excluded), 6)
   end
   
   def avatar
@@ -67,11 +68,11 @@ class Subscription
   end
   
   def pick_up_tags(ids)
-    return @user.tag_subscriptions
+    
   end
   
   def tags_changed
-    self.update_index(defer: false)
+    @user.update_index(defer: false)
   end
   
   def save
@@ -86,6 +87,7 @@ class User < ActiveRecord::Base
          :recoverable, :rememberable, :trackable, :validatable, :confirmable,
          :authentication_keys => [:login]
   include Roleable
+  include Queues
   
   include Elasticsearch::Model
   include Indexable
@@ -245,10 +247,6 @@ class User < ActiveRecord::Base
     return self.all_albums.where(hidden: false)
   end
   
-  def queue(excluded)
-    return Video.randomVideos(self.videos.where(hidden: false).where.not(id: excluded), 7)
-  end
-    
   def drop_tags(ids)
     Tag.where('id IN (?) AND user_count > 0', ids).update_all('user_count = user_count - 1')
     ArtistGenre.where('user_id = ? AND tag_id IN (?)', self.id, ids).delete_all
@@ -257,6 +255,10 @@ class User < ActiveRecord::Base
   def pick_up_tags(ids)
     Tag.where('id IN (?)', ids).update_all('user_count = user_count + 1')
     return self.artist_genres
+  end
+  
+  def tags_changed
+    self.update_index(defer: false)
   end
   
   def removeSelf

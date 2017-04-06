@@ -136,8 +136,10 @@ function Player() {}
     });
   }
   function sendMessage(me) {
-    me.__seed = '' + ((parseInt(localStorage['::activeplayer'] || '0') + 1) % 3);
-    localStorage.setItem('::activeplayer', me.__seed);
+    if (me.__sendMessages) {
+      me.__seed = '' + ((parseInt(localStorage['::activeplayer'] || '0') + 1) % 3);
+      localStorage.setItem('::activeplayer', me.__seed);
+    }
   }
   Player.onFullscreen(function() {
     if (Player.fullscreenPlayer) {
@@ -147,11 +149,20 @@ function Player() {}
   function canGen(childs) {
     return !childs.length || (childs.length == 1 && childs.first().hasClass('playlist'));
   }
+  Player.Extend = function(Child, overrides) {
+    Child.prototype = new this();
+    Child.Super = this.prototype;
+    Child.Extend = this.Extend;
+    var keys = Object.keys(overrides);
+    for (var i = keys.length; i-- > 0;) {
+      Child.prototype[keys[i]] = overrides[keys[i]];
+    }
+  };
   Player.prototype = {
-    constructor: function(el) {
+    constructor: function(el, standalone) {
       if (canGen(el.children())) Player.generate(el);
       var me = this;
-      
+      this.__sendMessages = !standalone;
       this.dom = el;
       this.player = el.find('.player');
       this.player.error = this.player.find('.error');
@@ -484,13 +495,6 @@ function Player() {}
 				}
 				this.video.load();
 			}
-			if (!this.thumbtrack) {
-				this.thumbtrack = true;
-				var me = this;
-				this.video.addEventListener('loadedmetadata', function() {
-					me.changetrack(0.5);
-				});
-			}
 		},
 		loadURL: function(url) {
 			this.audioOnly = false;
@@ -507,13 +511,6 @@ function Player() {}
 					this.video.src = this.source;
 				}
 				this.video.load();
-			}
-			if (!this.thumbtrack) {
-				this.thumbtrack = true;
-				var me = this;
-				this.video.addEventListener('loadedmetadata', function() {
-					me.changetrack(0.5);
-				});
 			}
 		},
     start: function() {
@@ -629,7 +626,7 @@ function Player() {}
     },
     error: function(e) {
       this.pause();
-			if (Player.errorPresent(this.video) {
+			if (Player.errorPresent(this.video)) {
 				var message = Player.errorMessage(this.video);
 				this.player.addClass('stopped');
 				this.player.addClass('error');
