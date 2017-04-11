@@ -5,27 +5,43 @@
 	</span>
 	<div class="tag-header">
 		<h2 class="title" style="margin-left:0;">
-			<a class="name" href="<%= tag.link %>"><%= @tag.name %></a>
+			<a class="name" href="<%= tag.link %>"><%= tag.name %></a>
 		</h2>
 		<div class="tag-list subheading">
-			Used by <%= tag.video_count %> videos and <%= tag.user_count %> users
+			<span>Used by <%= tag.video_count %> videos and <%= tag.user_count %> users</span>
 			<% if tag.user %>
-			<span class="user-link right" data-id="<%= tag.user.id %>">
-				<span class="tag-list">
-				Associated User: <a href="<%= tag.user.link %>"><%= tag.user.username %></a>
+			<span class="right">
+				Associated User:
+				<span class="user-link" data-id="<%= tag.user_id %>">
+					<a href="<%= tag.user.link %>"><%= tag.user.username %></a>
 				</span>
 			</span>
 			<% end %>
 		</div>
-		<span class="content bio"><%= tag.description %></span>
+		<span class="content bio"><%= tag.get_description %></span>
 	</div>
+	<% if tag.implications.length > 0 %>
+	<div>
+		<h1>Implies</h1>
+		<ul class="tags">
+			<%= render partial: "layouts/genre_thumb_h", collection: tag.implications %>
+		</ul>
+	</div>
+	<% end %>
+	<% if tag.implicators.length > 0 %>
+	<div>
+		<h1>Implied by</h1>
+		<ul class="tags">
+			<%= render partial: "layouts/genre_thumb_h", collection: tag.implicators %>
+		</ul>
+	</div>
+	<% end %>
 	<% if tag.aliases.length > 0 %>
 	<div>
 		<h1>Aliases</h1>
 		<ul class="tags">
 			<%= render partial: "layouts/genre_thumb_h", collection: tag.aliases %>
 		</ul>
-		<hr>
 	</div>
 	<% end %>
 </div>

@@ -8,6 +8,7 @@ module ProjectVinyl
       def initialize(sender, search_terms)
         @user = sender
         @opset = ProjectVinyl::Search::Op.loadOPS(search_terms.downcase)
+        @elastic = nil
         @type = "unknown"
         @ordering = []
       end
@@ -103,7 +104,9 @@ module ProjectVinyl
       end
       
       def exec()
-        elastic = ElasticBuilder.interpret_opset(@type, @opset)
+        if !@elastic
+          @elastic = ElasticBuilder.interpret_opset(@type, @opset)
+        end
         if @page.nil?
           @page = 0;
         end
@@ -113,7 +116,7 @@ module ProjectVinyl
         params = {
           from: @limit * @page,
           size: @limit,
-          query: add_required_params(elastic.to_hash)
+          query: add_required_params(@elastic.to_hash)
         }
         if ordering.length > 0
           params[:sort] = ordering
@@ -153,6 +156,13 @@ module ProjectVinyl
       
       def length
         @search.results.total
+      end
+      
+      def tags
+        if !@elastic
+          @elastic = ElasticBuilder.interpret_opset(@type, @opset)
+        end
+        return Tag.get_tags(@elastic.tags)
       end
     end
   end

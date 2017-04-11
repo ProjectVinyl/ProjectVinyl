@@ -6,6 +6,8 @@ module ProjectVinyl
   module ElasticSearch
     class ElasticBuilder
       def initialize(parent)
+        @data_pairs = {}
+        
         @parent = parent
         @children = []
         @anded_children = []
@@ -18,6 +20,16 @@ module ProjectVinyl
         @must_not_owner = []
         
         @users = []
+        @tags = []
+      end
+      
+      def tags
+        result = []
+        result |= @tags
+        @children.each do |i|
+          result |= i.tags
+        end
+        return result
       end
       
       def root
@@ -38,7 +50,7 @@ module ProjectVinyl
             @users_cache[u[1]] = u[0];
           end
         end
-        if @users_cache.has(username)
+        if @users_cache.key?(username)
           return @users_cache[username]
         end
       end
@@ -76,6 +88,18 @@ module ProjectVinyl
         else
           raise LexerError, name + " Operator requires a data parameter"
         end
+      end
+      
+      def absorb_prim(dest, key, value)
+        key = key.to_sym
+        if @data_pairs.key?(key)
+          @data_pairs[key][key] = value
+          return
+        end
+        pair = {key => value}
+        @data_pairs[key] = pair
+        dest << {term: pair}
+        @dirty = true
       end
       
       # reads all params and children into this group
@@ -142,8 +166,7 @@ module ProjectVinyl
         elsif op == ProjectVinyl::Search::Op::SOURCE
           self.absorb_param_if(@must, opset, 'source', type != 'user')
         elsif op == ProjectVinyl::Search::Op::AUDIO_ONLY && type != 'user'
-          @must['audio_only'] = true
-          @dirty = true
+          self.absorb_prim(@must, 'audio_only', true)
         elsif ProjectVinyl::Search::Op.ranged?(op)
           @ranges.record(op, opset, false)
         elsif op == ProjectVinyl::Search::Op::NOT
@@ -157,7 +180,7 @@ module ProjectVinyl
             elsif data == ProjectVinyl::Search::Op::SOURCE
               self.absorb_param_if(@must_not, opset, 'source', type != 'user')
             elsif data == ProjectVinyl::Search::Op::AUDIO_ONLY && type != 'user'
-              @must['audio_only'] = false
+              self.absorb_prim(@must, 'audio_only', false)
             elsif ProjectVinyl::Search::Op.ranged?(data)
               @ranges.record(data, opset, true)
             else
@@ -167,6 +190,7 @@ module ProjectVinyl
         else
           op = op.strip
           if op.length > 0
+            @tags << op
             @must << {term: {tags: op}}
             @dirty = true
           end

@@ -4,6 +4,11 @@ class SearchController < ApplicationController
   def index
     @type_label = params[:type]
     @type = @type_label.to_i
+    @page = params[:page].to_i
+    @ascending = params[:order] == '1'
+    @orderby = params[:orderby].to_i
+    @results = []
+    
     if @type == 2 || @type == 0
       @title_query = params[:query] || ""
       @tag_query = params[:tagquery] || ""
@@ -15,54 +20,39 @@ class SearchController < ApplicationController
         @query << ","
       end
       @query << @tag_query
-      if ApplicationHelper.valid_string?(@tag_query)
-        @tag = Tag.includes(:alias).where('name = ? OR short_name = ?', @tag_query, @tag_query).first
-        if @tag && @tag.alias_id
-          @tag = @tag.alias
-        end
-      end
     else
       @query = @title_query = params[:query] || ""
     end
-    @page = params[:page].to_i
     
-    @ascending = params[:order] == '1'
-    @orderby = params[:orderby].to_i
-    @results = []
     if @type == 1
-      @results = Album.where('title LIKE ?', "%#{@query}%")
       @type_label= 'Album'
-    elsif @type == 2
-      begin
-        @results = ProjectVinyl::ElasticSearch::ElasticSelector.new(current_user, @query).query(@page, 20).users.order(session, @orderby, @ascending).exec()
-      rescue ProjectVinyl::Search::LexerError => e
-        @derpy = e
-      rescue Exception => e
-        @ditzy = e
-      end
-      @type_label = 'User'
-      return
+      @results = Album.where('title LIKE ?', "%#{@query}%")
+      @results = Pagination.paginate(orderBy(@results, @type, @orderby), @page, 20, !@ascending)
     elsif @type == 3
-      @results = Tag.includes(:videos, :tag_type).where('name LIKE ?', "%#{@query}%")
       @type_label = 'Tag'
+      @results = Tag.includes(:videos, :tag_type).where('name LIKE ?', "%#{@query}%")
+      @results = Pagination.paginate(orderBy(@results, @type, @orderby), @page, 20, !@ascending)
     else
-      begin
+      try do
+        if @type == 2
+          @type_label = 'User'
+          @results = ProjectVinyl::ElasticSearch::ElasticSelector.new(current_user, @query).query(@page, 20).users.order(session, @orderby, @ascending).exec()
+          return
+        end
         if params[:quick]
-          @results = ProjectVinyl::ElasticSearch::ElasticSelector.new(current_user, @query).query(0, 1).videos.order_by('v.id').offset(-1).exec().records()
+          @results = ProjectVinyl::ElasticSearch::ElasticSelector.new(current_user, @query).query(0, 1).videos.order_by('v.id').offset(-1).exec()
+          @tags = @results.tags
           if @results.first
             return redirect_to action: 'view', controller: 'embed', id: @results.first.id
           end
         end
+        @type_label = 'Song'
         @results = ProjectVinyl::ElasticSearch::ElasticSelector.new(current_user, @query).query(@page, 20).videos.order(session, @orderby, @ascending).exec()
-      rescue ProjectVinyl::Search::LexerError => e
-        @derpy = e
-      #rescue Exception => e
-       # @ditzy = e
       end
-      @type_label = 'Song'
-      return
+      if !@derpy
+        @tags = @results.tags
+      end
     end
-    @results = Pagination.paginate(orderBy(@results, @type, @orderby), @page, 20, !@ascending)
   end
   
   def page
@@ -71,36 +61,15 @@ class SearchController < ApplicationController
     @type = params[:type].to_i
     @ascending = params[:order] == '1'
     @orderby = params[:orderby].to_i
-    @results = []
     if params[:query]
       if @type == 1
-        @results = Pagination.paginate(orderBy(Album.where('title LIKE ?', "%#{@query}%"), @type, @orderby), @page, 20, !@ascending)
-        render json: {
-          content: render_to_string(partial: '/layouts/album_thumb_h.html.erb', collection: @results.records),
-          pages: @results.pages,
-          page: @results.page
-        }
+        return render_search_results_json(Pagination.paginate(orderBy(Album.where('title LIKE ?', "%#{@query}%"), @type, @orderby), @page, 20, !@ascending), 'album')
       elsif @type == 2
-        @results = ProjectVinyl::ElasticSearch::ElasticSelector.new(current_user, @query).query(@page, 20).users.order(session, @orderby, @ascending).exec()
-        render json: {
-          content: render_to_string(partial: '/layouts/artist_thumb_h.html.erb', collection: @results.records),
-          pages: @results.pages,
-          page: @results.page
-        }
+        return render_search_results_json(ProjectVinyl::ElasticSearch::ElasticSelector.new(current_user, @query).query(@page, 20).users.order(session, @orderby, @ascending).exec(), 'artist')
       elsif @type == 3
-        @results = Pagination.paginate(orderBy(Tag.includes(:videos, :tag_type).where('name LIKE ?', "%#{@query}%"), @type, @orderby), @page, 20, !@ascending)
-        render json: {
-          content: render_to_string(partial: '/layouts/genre_thumb_h.html.erb', collection: @results.records),
-          pages: @results.pages,
-          page: @results.page
-        }
+        return render_search_results_json(Pagination.paginate(orderBy(Tag.includes(:videos, :tag_type).where('name LIKE ?', "%#{@query}%"), @type, @orderby), @page, 20, !@ascending), 'genre')
       else
-        @results = ProjectVinyl::ElasticSearch::ElasticSelector.new(current_user, @query).query(@page, 20).videos.order(session, @orderby, @ascending).exec()
-        render json: {
-          content: render_to_string(partial: '/layouts/video_thumb_h.html.erb', collection: @results.records),
-          pages: @results.pages,
-          page: @results.page
-        }
+        return render_search_results_json(ProjectVinyl::ElasticSearch::ElasticSelector.new(current_user, @query).query(@page, 20).videos.order(session, @orderby, @ascending).exec(), 'video')
       end
     end
   end
@@ -136,5 +105,24 @@ class SearchController < ApplicationController
       return records.order(:name)
     end
     return records.order(:created_at)
+  end
+  
+  private
+  def render_search_results_json(results, type)
+    return render json: {
+      content: render_to_string(partial: '/layouts/' + type + '_thumb_h.html.erb', collection: results.records),
+      pages: results.pages,
+      page: results.page
+    }
+  end
+  
+  def try
+    begin
+      yield
+    rescue ProjectVinyl::Search::LexerError => e
+      @derpy = e
+    rescue Exception => e
+      @derpy = @ditzy = e
+    end
   end
 end

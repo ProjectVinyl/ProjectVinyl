@@ -70,6 +70,16 @@ class Tag < ActiveRecord::Base
     return result.uniq
   end
   
+  def self.get_tags(names) 
+    if !names || (names = names.uniq).length == 0
+      return []
+    end
+    result = Tag.includes(:alias).where('name IN (?) OR short_name IN (?)', names, names).map do |t|
+      t.alias_id ? t.alias : t
+    end
+    return result.uniq
+  end
+  
   def self.get_name_mappings(names)
     if !names || names.length == 0
       return {}
