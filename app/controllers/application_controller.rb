@@ -8,7 +8,7 @@ class ApplicationController < ActionController::Base
   after_filter :store_last_location, if: :content_page?
   
   def content_page?
-    !devise_controller? && controller_name != "ajax" && request.fullpath.index('/ajax/').nil?
+    !devise_controller? && controller_name != "ajax" && controller_name != "imgs" && action_name != "download" && request.fullpath.index('/ajax/').nil?
   end
   
   protected
