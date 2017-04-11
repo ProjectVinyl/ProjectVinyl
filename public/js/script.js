@@ -91,10 +91,19 @@ $(window).ready(function () {
 });
 const ajax = (function() {
   var token = $('meta[name=csrf-token]').attr('content');
+  function xhr(params) {
+    if (params.xhr) {
+      var xhr = params.xhr;
+      params.xhr = function() {
+        return xhr($.ajaxSettings.xhr());
+      };
+    }
+    return $.ajax(params);
+  }
   function request(method, resource, callback, data, direct) {
-    $.ajax({
+    xhr({
       type: method,
-      datatype: 'text',
+      datatype: 'text/plain',
       url: resource,
       success: direct ? callback : function(xml, type, ev) {
         callback(ev.status == 204 ? {} : JSON.parse(ev.responseText), ev.status);
@@ -127,13 +136,12 @@ const ajax = (function() {
     var timeStarted = new Date();
     var timer;
     callbacks = callbacks || {};
-    $.ajax({
+    xhr({
       type: form.attr('method'),
       url: form.attr('action') + '/async',
       enctype: 'multipart/form-data',
       data: new FormData(form[0]),
-      xhr: function() {
-        var xhr = $.ajaxSettings.xhr();
+      xhr: function(xhr) {
         if (xhr.upload) {
           xhr.upload.addEventListener('progress', function(e) {
             uploadedBytes = e.loaded;
@@ -1915,9 +1923,15 @@ function lazyLoad(button) {
   });
 }
 function timeoutOn(target, func, time) {
-  return setTimeout(function() {
-    func.apply(target);
-  }, time);
+  return setTimeout(bind(target, func), time);
+}
+function intervalOn(target, func, time) {
+  return setInterval(bind(target, func), time);
+}
+function bind(target, func) {
+  return function() {
+    return func.apply(target, arguments);
+  };
 }
 function slideOut(holder) {
   holder.css('min-height', holder.find('.group.active').height());
