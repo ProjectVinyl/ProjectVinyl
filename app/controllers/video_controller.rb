@@ -44,7 +44,7 @@ class VideoController < ApplicationController
     @thread = @video.comment_thread
     @order = '1'
     @comments = Pagination.paginate(@thread.get_comments(user_signed_in? && current_user.is_contributor?), 0, 10, true)
-    @queue = @user.queue(@video.id)
+    @queue = @user.queuev2(@video.id)
     if !(@modificationsAllowed = user_signed_in? && current_user.id == @user.id)
       @video.views = @video.views + 1
       @video.computeHotness.save

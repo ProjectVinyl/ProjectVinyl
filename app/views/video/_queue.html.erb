@@ -1,0 +1,38 @@
+<section>
+	<h1>Related Videos</h1>
+	<div class="slide-holder slide-group">
+		<div class="group active" data-stage="user">
+			<h2 class="resize-target slide-nav">
+				<a>Uploader</a>
+				<a class="slide-right goto" data-to="global" title="Anyone">
+					<i class="fa fa-fw fa-chevron-right"></i>
+				</a>
+			</h2>
+			<ul class="queue">
+				<% if (@mix_string = @video.mix_string(current_user)).length > 0 %>
+				<li class="generic mix">
+					<a class="thumb" href="<%= @video.link %>?q=<%= @mix_string %>&index=0">
+						<div class="tile" style="background-image:none,url('/cover/<%= @video.id.to_s %>-small.png');">
+							<div class="details">
+								<div class="title">MIX - <%= @video.title %></div>
+							</div>
+						</div>
+					</a>
+				</li>
+				<% end %>
+				<%= render partial: '/layouts/video_thumb_v', collection: @queue[:user] %>
+			</ul>
+		</div>
+		<div class="group" data-stage="global">
+			<h2 class="resize-target slide-nav">
+				<a class="goto slide-left" data-to="user" title="Uploader">
+					<i class="fa fa-fw fa-chevron-left"></i>
+				</a>
+				<a>Anyone</a>
+			</h2>
+			<ul class="queue">
+				<%= render partial: '/layouts/video_thumb_v', collection: @queue[:global] %>
+			</ul>
+		</div>
+	</div>
+</section>

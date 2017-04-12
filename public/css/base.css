@@ -2215,6 +2215,36 @@ li.bio h2, li.genre h2 {
   height: initial;
 }
 
+.slide-holder .slide-nav {
+  padding: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  vertical-align: top;
+}
+.slide-holder .slide-nav a {
+  display: inline-block;
+  text-align: center;
+  width: 87.5%;
+  float: left;
+  padding: 5px;
+}
+.slide-holder .slide-nav .slide-left, .slide-holder .slide-nav .slide-right {
+  width: 12.5%;
+  transition: background 0.25s ease;
+  cursor: pointer;
+}
+
+.slide-holder .slide-right {
+  border-left: solid 1px rgba(0,0,0,0.1);
+}
+.slide-holder .slide-left {
+  border-right: solid 1px rgba(0,0,0,0.1);
+}
+
+.slide-holder .slide-left:hover, .slide-holder .slide-right:hover {
+  background: rgb(250,250,250);
+}
+
 form .progressor, form.uploading > :not(.uploaded-preview),
 form.uploading .uploaded-preview.preview-selective > :not(.preview-selective-selected),
 form.uploading .drop-icon, form.uploading input {

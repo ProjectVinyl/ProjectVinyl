@@ -172,52 +172,10 @@
          }
       }
     }
-    var form = me.parents('.slide-group');
-    var to = form.find('.group[data-stage=' + me.attr('data-to') + ']');
-    if (to.length) {
-      var offset = parseInt(form.attr('data-offset')) + 1;
-      form.attr('data-offset', offset);
-      var from = form.find('.active');
-      var fromH = from.height();
-      var formH = form.height();
-      from.removeClass('active');
-      from.after(to);
-      to.addClass('active');
-      setTimeout(function() {
-        form.css('min-height', formH - (fromH - to.height()));
-        form.css('max-height', formH - (fromH - to.height()));
-        form.addClass('animating');
-        form.find('.group').css('transform', 'translate(' + (-100 * offset) + '%,0)');
-        setTimeout(function() {
-          form.removeClass('animating');
-          form.css('max-height', '');
-        }, 500);
-      },1);
-    }
+    slideAcross(me, 1);
   });
   $('.form.report button.goto.left').on('click', function() {
-    var me = $(this);
-    var form = me.parents('.slide-group');
-    var to = form.find('.group[data-stage=' + me.attr('data-to') + ']');
-    if (to.length) {
-      var offset = parseInt(form.attr('data-offset')) - 1;
-      form.attr('data-offset', offset);
-      var from = form.find('.active');
-      var fromH = from.height();
-      var formH = form.height();
-      from.removeClass('active');
-      to.addClass('active');
-      setTimeout(function() {
-        form.css('min-height', formH - (fromH - to.height()));
-        form.css('max-height', formH - (fromH - to.height()));
-        form.addClass('animating');
-        form.find('.group').css('transform', 'translate(' + (-100 * offset) + '%,0)');
-        setTimeout(function() {
-          form.removeClass('animating');
-          form.css('max-height', '');
-        }, 500);
-      },1);
-    }
+		slideAcross($(this), -1);
   });
   $('.form.report form.async').on('submit', function(e) {
     var me = $(this);
