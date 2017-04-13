@@ -1,6 +1,6 @@
 <li class="generic thumb">
 	<a class="thumb" href="/view/<%= video_thumb_h.id %>-<%= video_thumb_h.safe_title %>">
-		<div class="tile" style="background-image:url('/<%= video_thumb_h.hidden || video_thumb_h.isSpoileredBy(current_user) || video_thumb_h.isHiddenBy(current_user) ? 'images/default-cover' : 'cover/' + video_thumb_h.id.to_s %>-small.png');">
+		<div class="tile" style="background-image:url('/<%= video_thumb_h.isHiddenBy(current_user) ? 'images/default-cover' : video_thumb_h.tiny_thumb(current_user) %>');">
 			<span class="tag-list duration">
 				<%= duration video_thumb_h.getDuration %>
 			</span>
