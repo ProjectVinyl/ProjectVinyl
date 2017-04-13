@@ -132,7 +132,7 @@ const ajax = (function() {
     var fill = form.find('.progressor .fill');
     var uploadedBytes = 0;
     var totalBytes = 0;
-    var secondsRemaining = 0;
+    var secondsRemaining = new Duration();
     var timeStarted = new Date();
     var timer;
     callbacks = callbacks || {};
@@ -150,34 +150,20 @@ const ajax = (function() {
               if (!message.hasClass('plain')) message.addClass('bobber');
               var percentage = Math.min((e.loaded / e.total) * 100, 100);
               if (callbacks.progress) {
-                callbacks.progress.apply(form, [e, message, fill, percentage]);
+                callbacks.progress.apply(form, [e, message, fill, percentage, secondsRemaining]);
               } else {
                 if (percentage >= 100) {
                   form.addClass('waiting');
                   message.text('Waiting for server...');
                 } else {
-                  var measure = 's';
-                  var time = secondsRemaining;
-                  if (time >= 60) {
-                    time /= 60;
-                    measure = 'm';
-                  }
-                  if (time >= 60) {
-                    time /= 60;
-                    measure = 'h';
-                  }
-                  if (time >= 24) {
-                    time /= 24;
-                    measure = 'd';
-                  }
-                  message.text((Math.floor(time*100)/100) + measure + ' remaining (' + Math.floor(percentage) + '% )');
+                  message.text(secondsRemaining + ' remaining (' + Math.floor(percentage) + '% )');
                 }
                 fill.css('width', percentage + '%');
                 message.css({
                   'left': percentage + '%'
                 });
               }
-							if (callbacks.update) callbacks.update.apply(form, [e, percentage]);
+							if (callbacks.update) callbacks.update.apply(form, [e, percentage, secondsRemaining]);
               message.css({
                 'margin-left': -message.outerWidth()/2
               });
@@ -190,7 +176,7 @@ const ajax = (function() {
         timer = setInterval(function() {
           var timeElapsed = (new Date()) - timeStarted;
           var uploadSpeed = uploadedBytes / (timeElapsed / 1000);
-          secondsRemaining = (totalBytes - uploadedBytes) / uploadSpeed;
+          secondsRemaining = new Duration((totalBytes - uploadedBytes) / uploadSpeed);
         }, 1000);
         form.addClass('uploading');
       },
@@ -1922,6 +1908,45 @@ function lazyLoad(button) {
     id: button.attr('data-id')
   });
 }
+
+function round(num, precision) {
+  precision = Math.pow(10, precision || 0);
+  return Math.round(num * precision)/precision;
+}
+function Duration(seconds) {
+  this.time = seconds || 0;
+  this.seconds = this.time;
+  this.minutes = 0;
+  this.hours = 0;
+  this.days = 0;
+  if (this.seconds >= (60 * 60 * 24)) {
+    this.days = Math.floor(this.seconds / (60 * 60 * 24));
+    this.seconds -= this.days * (60 * 60 * 24);
+  }
+  if (this.seconds >= (60 * 60)) {
+    this.hours = Math.floor(this.seconds / (60 * 60));
+    this.seconds -= this.hours * (60 * 60);
+  }
+  if (this.seconds >= 60) {
+    this.minutes = Math.floor(this.seconds / 60);
+    this.seconds -= this.minutes * 60;
+  }
+  this.seconds = round(this.seconds, 2);
+  var s 
+}
+Duration.prototype = {
+  toString: function() {
+    var s = '';
+    if (this.days > 0) s += this.days + 'd ';
+    if (this.hours > 0) s += this.hours + 'h ';
+    if (this.minutes > 0) s += this.minutes + 'm ';
+    if (s.length == 0 || this.seconds > 0) s += this.seconds + 's';
+    return s.trim();
+  },
+  valueOf: function() {
+    return this.time;
+  }
+};
 function timeoutOn(target, func, time) {
   return setTimeout(bind(target, func), time);
 }
