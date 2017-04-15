@@ -56,7 +56,7 @@ class SearchController < ApplicationController
   end
   
   def page
-    @query = params[:query]
+    @query = params[:tagquery]
     @page = params[:page].to_i
     @type = params[:type].to_i
     @ascending = params[:order] == '1'
@@ -123,6 +123,8 @@ class SearchController < ApplicationController
       @derpy = e
     rescue Exception => e
       @derpy = @ditzy = e
+      puts "Exception raised #{e}"
+      puts "Backtrace:\n\t#{e.backtrace[0..8].join("\n\t")}"
     end
   end
 end

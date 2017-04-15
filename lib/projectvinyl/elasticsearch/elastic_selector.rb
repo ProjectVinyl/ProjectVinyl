@@ -85,13 +85,6 @@ module ProjectVinyl
         return self
       end
       
-      def __exec(params)
-        if @type == 'video'
-          return Video.search(params)
-        end
-        return User.search(params)
-      end
-      
       def add_required_params(query)
         if !query.key?(:bool)
           return {term: { hidden: false }}
@@ -99,33 +92,43 @@ module ProjectVinyl
         if !query[:bool].key?(:must)
           query[:bool][:must] = []
         end
-        query[:bool][:must] << {term: {hidden: false }}
+        if !@elastic.uses(:hidden)
+          query[:bool][:must] << {term: {hidden: false }}
+        end
         return query
       end
       
-      def exec()
+      def exec
         if !@elastic
-          @elastic = ElasticBuilder.interpret_opset(@type, @opset)
+          @elastic = ElasticBuilder.interpret_opset(@type, @opset, @user)
         end
         if @page.nil?
           @page = 0;
-        end
-        if @page < 0
-          @page = (@type == 'user' ? User : Video).count / @limit
         end
         params = {
           from: @limit * @page,
           size: @limit,
           query: add_required_params(@elastic.to_hash)
         }
+        puts params
         if ordering.length > 0
           params[:sort] = ordering
         end
-        @search = __exec(params)
-        if @search.count == 0 && @search.results.total > 0 && @page > 0
-          @page = (@search.results.total / @limit).floor - 1
+        if @page < 0
+          @page = 0
+          params[:from] = 0
+          @search = table.search(params)
+          if @search.results.total <= @limit
+            return self
+          end
+          @page = (@search.results.total / @limit).floor
           params[:from] = @page * @limit
-          @search = __exec(params)
+        end
+        @search = table.search(params)
+        if @search.count == 0 && @search.results.total > 0 && @page > 0
+          @page = (@search.results.total / @limit).floor
+          params[:from] = @page * @limit
+          @search = table.search(params)
         end
         return self
       end
@@ -158,9 +161,13 @@ module ProjectVinyl
         @search.results.total
       end
       
+      def table
+        @type == 'user' ? User : Video
+      end
+      
       def tags
         if !@elastic
-          @elastic = ElasticBuilder.interpret_opset(@type, @opset)
+          @elastic = ElasticBuilder.interpret_opset(@type, @opset, @user)
         end
         return Tag.get_tags(@elastic.tags)
       end

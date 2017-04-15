@@ -1,5 +1,4 @@
 require 'projectvinyl/search/lexer_error'
-require 'projectvinyl/search/matching_group'
 
 module ProjectVinyl
   module Search
@@ -13,18 +12,37 @@ module ProjectVinyl
       GROUP_START = -7
       GROUP_END = -8
       AUDIO_ONLY = -9
-      LENGTH_GT = -10
-      LENGTH_LT = -11
-      SCORE_GT = -12
-      SCORE_LT = -13
-      VOTE_U = -14
-      VOTE_D = 15
+      HIDDEN = -10
+      LENGTH_GT = -11
+      LENGTH_LT = -12
+      SCORE_GT = -13
+      SCORE_LT = -14
+      VOTE_U = -15
+      VOTE_D = -16
+      
+      def self.is?(op)
+        return 1.is_a?(op.class) && op < 0 && op >= Op::VOTE_D
+      end
       
       def self.ranged?(op)
-        return 1.is_a?(op.class) && op < -9 && op >= -13
+        return Op.is?(op) && op <= Op::LENGTH_GT && op >= Op::SCORE_LT
+      end
+      
+      def self.primitive?(op)
+        return Op.is?(op) && (op == Op::AUDIO_ONLY || op == Op::HIDDEN)
+      end
+      
+      def self.name_of(op)
+        Op.constants.each do |c|
+          if Op.const_get(c) == op
+            return c.to_s.downcase.to_sym
+          end
+        end
+        return :unknown
       end
       
       def slurpSystemTags(slurp)
+        slurp = slurp.strip
         if slurp.index('title:') == 0
           @opset << slurp.sub(/title\:/,'')
           return Op::TITLE
@@ -51,18 +69,20 @@ module ProjectVinyl
           return Op::SCORE_GT
         elsif slurp == 'is:audio'
           return Op::AUDIO_ONLY
+        elsif slurp == 'is:hidden'
+          return Op::HIDDEN
         elsif slurp == 'is:upvoted'
           @opset << 'nil'
           return Op::VOTE_U
         elsif slurp.index('upvoted_by:') == 0
-          @opset = slurp.sub(/upvoted_by:/,'')
+          @opset << slurp.sub(/upvoted_by:/,'')
           return Op::VOTE_U
         elsif slurp == 'is:downvoted'
           @opset << 'nil'
           return Op::VOTE_D
-        elsif slurp.index('upvoted_by:') == 0
-          @opset << slurp.sub(/upvoted_by:/,'')
-          return Op::VOTE_U
+        elsif slurp.index('downvoted_by:') == 0
+          @opset << slurp.sub(/downvoted_by:/,'')
+          return Op::VOTE_D
         end
         return slurp
       end
@@ -88,7 +108,13 @@ module ProjectVinyl
       
       def peek(n)
         while @opset.length < n && @terms.length > 0
-          @opset << __shift
+          stack = @opset
+          @opset = []
+          stack << __shift
+          @opset.each do |i|
+            stack << i
+          end
+          @opset = stack
         end
         result = []
         for i in 0..(n-1)

@@ -1,4 +1,5 @@
 require 'projectvinyl/elasticsearch/range_query'
+require 'projectvinyl/elasticsearch/vote_query'
 require 'projectvinyl/search/lexer_error'
 require 'projectvinyl/search/op'
 
@@ -15,6 +16,8 @@ module ProjectVinyl
         @must_not = []
         @neg = false
         @ranges = RangeQuery.new
+        @votes = VoteQuery.new(self)
+        @votes_not = VoteQuery.new(self)
         
         @must_owner = []
         @must_not_owner = []
@@ -32,6 +35,18 @@ module ProjectVinyl
         return result
       end
       
+      def uses(sym)
+        if @data_pairs.key?(sym)
+          return true
+        end
+        @children.each do |i|
+          if i.uses(sym)
+            return true
+          end
+        end
+        return false
+      end
+      
       def root
         @parent || self
       end
@@ -41,23 +56,27 @@ module ProjectVinyl
       end
       
       def user_id_for(username)
+        if 1.is_a?(username.class)
+          return username
+        end
         if !@parent.nil?
           return self.root.user_id_for(username)
         end
+        username = username.downcase
         if @users.length > 0 && @user_ids_cache.nil?
           @user_ids_cache = {}
-          User.where('username IN ?', @users).pluck(id, username).each do |u|
-            @users_cache[u[1]] = u[0];
+          User.where('username IN (?)', @users).pluck(:id, :username).each do |u|
+            @user_ids_cache[u[1].downcase] = u[0];
           end
         end
-        if @users_cache.key?(username)
-          return @users_cache[username]
+        if @user_ids_cache.key?(username)
+          return @user_ids_cache[username]
         end
       end
       
-      def self.interpret_opset(type, opset)
+      def self.interpret_opset(type, opset, sender)
         result = ElasticBuilder.new(nil)
-        result.take_all(type, opset)
+        result.take_all(type, opset, sender)
         return result
       end
       
@@ -73,12 +92,15 @@ module ProjectVinyl
       def absorb_param_if(dest, opset, key, condition)
         if (data = opset.shift) && data.length > 0
           if condition
-            dest << {term: {key.to_sym => data.strip}}
+            data = data.strip
+            dest << {term: {key.to_sym => data}}
             @dirty = true
+            return data
           end
         else
           raise LexerError, key + " Operator requires a data parameter"
         end
+        return nil
       end
       
       def absorb(opset, name)
@@ -103,7 +125,7 @@ module ProjectVinyl
       end
       
       # reads all params and children into this group
-      def take_all(type, opset)
+      def take_all(type, opset, sender)
         while opset.length > 0
           op = opset.shift
           if op == ProjectVinyl::Search::Op::GROUP_END
@@ -123,7 +145,7 @@ module ProjectVinyl
             if neg
               child_group.negate
             end
-            child_group.take_all(type, opset)
+            child_group.take_all(type, opset, sender)
             @children << child_group
             next
           end
@@ -140,7 +162,7 @@ module ProjectVinyl
               if neg
                 child_group.negate
               end
-              child_group.take_all(type, opset)
+              child_group.take_all(type, opset, sender)
               @anded_children << child_group
             end
             next
@@ -151,12 +173,18 @@ module ProjectVinyl
           if op == ProjectVinyl::Search::Op::GROUP_END
             next
           end
-          take_param(type, op, opset)
+          take_param(type, op, opset, sender)
+        end
+      end
+      
+      def take_prim(type, op, v, sender)
+        if ((op == ProjectVinyl::Search::Op::AUDIO_ONLY && type != 'user') || (op == ProjectVinyl::Search::Op::HIDDEN && sender && sender.is_staff?))
+          self.absorb_prim(@must, ProjectVinyl::Search::Op.name_of(op), v)
         end
       end
       
       # reads all the data operators into a group
-      def take_param(type, op, opset)
+      def take_param(type, op, opset, sender)
         if op == ProjectVinyl::Search::Op::TITLE
           self.absorb_param(@must, opset, type == 'user' ? 'username' : 'title')
         elsif op == ProjectVinyl::Search::Op::UPLOADER
@@ -165,8 +193,8 @@ module ProjectVinyl
           end
         elsif op == ProjectVinyl::Search::Op::SOURCE
           self.absorb_param_if(@must, opset, 'source', type != 'user')
-        elsif op == ProjectVinyl::Search::Op::AUDIO_ONLY && type != 'user'
-          self.absorb_prim(@must, 'audio_only', true)
+        elsif ProjectVinyl::Search::Op.primitive?(op)
+          self.take_prim(type, op, true, sender)
         elsif ProjectVinyl::Search::Op.ranged?(op)
           @ranges.record(op, opset, false)
         elsif op == ProjectVinyl::Search::Op::NOT
@@ -179,13 +207,21 @@ module ProjectVinyl
               end
             elsif data == ProjectVinyl::Search::Op::SOURCE
               self.absorb_param_if(@must_not, opset, 'source', type != 'user')
-            elsif data == ProjectVinyl::Search::Op::AUDIO_ONLY && type != 'user'
-              self.absorb_prim(@must, 'audio_only', false)
+            elsif ProjectVinyl::Search::Op.primitive?(data)
+              self.take_prim(type, data, false, sender)
             elsif ProjectVinyl::Search::Op.ranged?(data)
               @ranges.record(data, opset, true)
+            elsif data == ProjectVinyl::Search::Op::VOTE_U || data == ProjectVinyl::Search::Op::VOTE_D
+              if type != 'user'
+                @votes_not.record(data, opset, sender)
+              end
             else
               @must_not << {term: {tags: data.strip}}
             end
+          end
+        elsif op == ProjectVinyl::Search::Op::VOTE_U || op == ProjectVinyl::Search::Op::VOTE_D
+          if type != 'user'
+            @votes.record(op, opset, sender)
           end
         else
           op = op.strip
@@ -199,7 +235,7 @@ module ProjectVinyl
       end
       
       def dirty
-        return @dirty || @ranges.dirty
+        return @dirty || @ranges.dirty || @votes.dirty || @votes_not.dirty
       end
       
       def negate
@@ -218,22 +254,37 @@ module ProjectVinyl
         if @ranges.dirty
           m << @ranges.to_hash
         end
+        if @votes.dirty
+          m = m | @votes.to_hash
+        end
+        @must_owner.each do |o|
+          if i = self.user_id_for(o[:term][:user_id])
+            o[:term][:user_id] = i
+            m << o
+          end
+        end
         @anded_children.each do |ac|
           m << ac.to_hash
         end
         return m
       end
       
-      def must(holder)
-        m = @neg ? @must_not : baked_inclusions
-        if @neg
-          @must_owner.each do |o|
-            if i = self.user_id_for(o[:term][:user_id])
-              o[:term][:user_id] = i
-              m << o
-            end
+      def baked_exclusions
+        m = @must_not
+        if @votes_not.dirty
+          m = m | @votes_not.to_hash
+        end
+        @must_not_owner.each do |o|
+          if i = self.user_id_for(o[:term][:user_id])
+            o[:term][:user_id] = i
+            m << o
           end
         end
+        return m
+      end
+      
+      def must(holder)
+        m = @neg ? baked_exclusions : baked_inclusions
         if m.length > 0
           holder[:must] = m;
         end
@@ -241,15 +292,7 @@ module ProjectVinyl
       end
       
       def must_not(holder)
-        m = @neg ? baked_inclusions : @must_not
-        if !@neg
-          @must_not_owner.each do |o|
-            if i = self.user_id_for(o[:term][:user_id])
-              o[:term][:user_id] = i
-              m << o
-            end
-          end
-        end
+        m = @neg ? baked_inclusions : baked_exclusions
         if m.length > 0
           holder[:must_not] = m;
         end
@@ -270,7 +313,7 @@ module ProjectVinyl
       end
       
       def must_must_not(arr)
-        if @must.length > 0 || @must_not.length > 0 || @ranges.dirty
+        if @must.length > 0 || @must_not.length > 0 || @ranges.dirty || @votes.dirty || @votes_not.dirty
           arr << bools
         end
         return arr
@@ -282,12 +325,12 @@ module ProjectVinyl
       
       def to_hash
         if @children.length == 0
-          if @must.length > 0 || @must_not.length > 0 || @ranges.dirty || @anded_children.length > 0
+          if @must.length > 0 || @must_not.length > 0 || @ranges.dirty || @votes.dirty || @votes_not.dirty || @anded_children.length > 0
             return bools
           end
           return {match_all: {}}
         end
-        return {bool: {should: should([])} }
+        return {bool: {should: should([]), minimum_should_match: 1} }
       end
       
       def self.as_should(arr, groups)
@@ -303,7 +346,7 @@ module ProjectVinyl
         if groups.length == 1
           return groups[0].to_hash
         end
-        return {bool: {should: ElasticBuilder.as_should([], groups) }}
+        return {bool: {should: ElasticBuilder.as_should([], groups), minimum_should_match: 1 } }
       end
     end
   end

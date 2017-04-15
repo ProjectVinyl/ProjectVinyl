@@ -25,8 +25,20 @@
 										<li>source:&lt;source&gt; - returns any videos with a matching source</li>
 										<li>uploader:&lt;username&gt; - returns any videos posted by the named user</li>
 										<li>is:audio - returns videos only if they are an audio file</li>
+										<li>is:upvoted - returns videos only videos that have been liked by the current user (has no affect for anonymous users)</li>
+										<li>is:downvoted - equivalent to is:upvoted but for dislikes</li>
 									</ul>
 								</p>
+								<% if user_signed_in? && current_user.is_staff? %>
+								<p>
+									Moderation tags:
+									<ul>
+										<li>upvoted_by:&lt;username&gt;</li>
+										<li>downvoted_by:&lt;username&gt;</li>
+										<li>is:hidden</li>
+									</ul>
+								</p>
+								<% end %>
 								<p>
 									Ranged tags:
 									

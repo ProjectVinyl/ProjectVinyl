@@ -13,6 +13,7 @@ class Video < ActiveRecord::Base
   has_many :albums, :through => :album_items
   has_many :video_genres, dependent: :destroy
   has_many :tags, :through => :video_genres
+  has_many :votes, dependent: :destroy
   
   scope :listable, -> { where(hidden: false, duplicate_id: 0) }
   
@@ -30,12 +31,16 @@ class Video < ActiveRecord::Base
     end
     mappings dynamic: 'false' do
       indexes :tags, type: 'keyword'
+      indexes :likes, type: 'keyword'
+      indexes :dislikes, type: 'keyword'
     end
   end
   
   def as_indexed_json(options={})
     json = as_json(only: ['title', 'user_id', 'source', 'audio_only', 'length', 'score','created_at','updated_at','hidden'])
     json["tags"] = self.tags.pluck(:name)
+    json["likes"] = self.votes.up.pluck(:user_id)
+    json["dislikes"] = self.votes.down.pluck(:user_id)
     return json
   end
   
@@ -199,6 +204,7 @@ class Video < ActiveRecord::Base
     if self.hidden != val
       self.hidden = val
       self.update_file_locations
+      self.update_index(defer: false)
     end
   end
   
@@ -472,23 +478,21 @@ class Video < ActiveRecord::Base
   
   def isUpvotedBy(user)
     if user
-      vote = user.votes.where(:video_id => self.id).first
-      return !vote.nil? && !vote.negative
+      return user.votes.where(video_id: self.id, negative: false).count > 0
     end
     return false
   end
   
   def isDownvotedBy(user)
     if user
-      vote = user.votes.where(:video_id => self.id).first
-      return !vote.nil? && vote.negative
+      return user.votes.where(video_id: self.id, negative: true).count > 0
     end
     return false
   end
   
   def isStarredBy(user)
     if user
-      return !user.album_items.where(:video_id => self.id).first.nil?
+      return user.album_items.where(video_id: self.id).count > 0
     end
     return false
   end
@@ -633,6 +637,7 @@ class Video < ActiveRecord::Base
   
   def computeScore
     self.score = self.upvotes - self.downvotes
+    self.update_index(defer: false)
     self.computeHotness.save()
   end
   
