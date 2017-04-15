@@ -1,6 +1,12 @@
 <a class="thumb<% if video_thumb_i.hidden %> thumb-hidden<% end %>" href="<%= video_thumb_i.link %>#comment_<%= comment %>">
 	<div class="tile" style="background-image:url('<%= video_thumb_i.tiny_thumb(current_user) %>');">
 		<span class="tag-list duration">
+			<% if video_thumb_i.isDownvotedBy(current_user) %>
+				<i class="fa fa-thumbs-down red"></i>
+			<% end %>
+			<% if video_thumb_i.isUpvotedBy(current_user) %>
+				<i class="fa fa-thumbs-up green"></i>
+			<% end %>
 			<%= duration video_thumb_i.getDuration %>
 		</span>
 	</div>

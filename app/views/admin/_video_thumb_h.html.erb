@@ -15,6 +15,12 @@
 			<%= since video_thumb_h.created_at %>
 		</span>
 		<span class="tag-list right">
+			<% if video_thumb_h.isDownvotedBy(current_user) %>
+				<i class="fa fa-thumbs-down red"></i>
+			<% end %>
+			<% if video_thumb_h.isUpvotedBy(current_user) %>
+				<i class="fa fa-thumbs-up green"></i>
+			<% end %>
 			<%= number_with_delimiter video_thumb_h.views %> views
 		</span>
 	</a>

@@ -12,6 +12,12 @@
 				<div class="views detail"><%= number_with_delimiter video_thumb_v.views %> views</div>
 			</div>
 			<span class="tag-list duration">
+				<% if video_thumb_v.isDownvotedBy(current_user) %>
+					<i class="fa fa-thumbs-down red"></i>
+				<% end %>
+				<% if video_thumb_v.isUpvotedBy(current_user) %>
+					<i class="fa fa-thumbs-up green"></i>
+				<% end %>
 				<%= duration video_thumb_v.getDuration %>
 			</span>
 		</div>

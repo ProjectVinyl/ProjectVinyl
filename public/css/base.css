@@ -2031,6 +2031,13 @@ img.emoticon {
   font-size: 25%;
 }
 
+i.red {
+  color: #ec4848;
+}
+i.green {
+  color: #7bb042;
+}
+
 .paginator .pagination {
   text-align: center;
 }
