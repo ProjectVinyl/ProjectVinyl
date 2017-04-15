@@ -31,7 +31,7 @@ class SearchController < ApplicationController
     elsif @type == 3
       @type_label = 'Tag'
       @results = Tag.includes(:videos, :tag_type).where('name LIKE ?', "%#{@query}%")
-      @results = Pagination.paginate(orderBy(@results, @type, @orderby), @page, 20, !@ascending)
+      @results = Pagination.paginate(orderBy(@results, @type, @orderby), @page, 100, !@ascending)
     else
       try do
         if @type == 2
@@ -67,7 +67,7 @@ class SearchController < ApplicationController
       elsif @type == 2
         return render_search_results_json(ProjectVinyl::ElasticSearch::ElasticSelector.new(current_user, @query).query(@page, 20).users.order(session, @orderby, @ascending).exec(), 'artist')
       elsif @type == 3
-        return render_search_results_json(Pagination.paginate(orderBy(Tag.includes(:videos, :tag_type).where('name LIKE ?', "%#{@query}%"), @type, @orderby), @page, 20, !@ascending), 'genre')
+        return render_search_results_json(Pagination.paginate(orderBy(Tag.includes(:videos, :tag_type).where('name LIKE ?', "%#{@query}%"), @type, @orderby), @page, 100, !@ascending), 'genre')
       else
         return render_search_results_json(ProjectVinyl::ElasticSearch::ElasticSelector.new(current_user, @query).query(@page, 20).videos.order(session, @orderby, @ascending).exec(), 'video')
       end

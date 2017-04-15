@@ -104,13 +104,13 @@
 				</div>
 				<div id="search">
 					<form action="/search" method="get">
-						<input type="search" name="tagquery" placeholder="Tag Search"></input>
+						<input type="search" name="tagquery" placeholder="Tag Search" value="<%= query %>"></input>
 						<label class="select">
 							<select name="type">
-								<option value="0">Song</option>
-								<option value="1">Album</option>
-								<option value="2">User</option>
-								<option value="3">Tag</option>
+								<option value="0" <% if search_type == 0 %>selected<% end %>>Song</option>
+								<option value="1" <% if search_type == 1 %>selected<% end %>>Album</option>
+								<option value="2" <% if search_type == 2 %>selected<% end %>>User</option>
+								<option value="3" <% if search_type == 3 %>selected<% end %>>Tag</option>
 							</select>
 						</label>
 						<button type="submit"><i class="fa fa-search" ></i></button>

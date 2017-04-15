@@ -370,6 +370,7 @@ class User < ActiveRecord::Base
     self.username = name
     self.safe_name = ApplicationHelper.url_safe(name)
     self.save
+    self.update_index(defer: false)
   end
   
   def set_description(text)

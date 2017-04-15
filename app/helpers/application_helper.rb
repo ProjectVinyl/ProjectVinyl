@@ -190,6 +190,14 @@ module ApplicationHelper
     content_for(:width) { page_width }
   end
   
+  def query
+    @query || params[:tagquery]
+  end
+  
+  def search_type
+    (params[:type] || 0).to_i || 0
+  end
+  
   def load_time
     Time.now - @start_time
   end

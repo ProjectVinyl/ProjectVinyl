@@ -1,150 +1,150 @@
 ﻿<% title @query.length > 0 ? "Searching for " + @query : "Search" %>
-		<div class="page resize-holder" style="width:100%;">
-			<section>
-				<h1 class="resize-target">
-					<a>Search</a>
-				</h1>
-				<form action="search" method="get" id="big-search">
-					<span>
-						<input title="Search by title (alias for title:{search_term})" type="text" name="query" placeholder="title" style="width:100%" value="<%= @title_query %>"></input>
-					</span>
-					<span title="Search by one or more tags" id="search_tags"<% if @type == 1 || @type == 3 %> style="display:none;"<% end %>>
-						<input type="text" name="tagquery" placeholder="tags" style="width:100%;margin-top:10px;" value="<%= @tag_query %>"></input>
-						<a class="tiny-link slider-toggle" href="#" data-target=".explanation">Search Syntax</a>
-						<div class="slideout explanation properties">
-							<div class="group active" style="padding:10px;white-space:normal;">
-								<p>ProjectVinyl's search function is designed to work similarly to that of Derpibooru. Searching for a single tag name returns all videos with that tag, a list of tags returns all videos that have all of those tags.</p>
-								<p>You can also combine results using the OR ( | ) and AND ( & ) operators. Note that they must have spacing on either side.</p>
-								<p>
-									Videos additionally have support for searching them by many of their special attributes.
-								</p>
-								<p>
-									System tags:
-									<ul>
-										<li>title:&lt;title&gt; - returns any videos with a matching name</li>
-										<li>source:&lt;source&gt; - returns any videos with a matching source</li>
-										<li>uploader:&lt;username&gt; - returns any videos posted by the named user</li>
-										<li>is:audio - returns videos only if they are an audio file</li>
-										<li>is:upvoted - returns videos only videos that have been liked by the current user (has no affect for anonymous users)</li>
-										<li>is:downvoted - equivalent to is:upvoted but for dislikes</li>
-									</ul>
-								</p>
-								<% if user_signed_in? && current_user.is_staff? %>
-								<p>
-									Moderation tags:
-									<ul>
-										<li>upvoted_by:&lt;username&gt;</li>
-										<li>downvoted_by:&lt;username&gt;</li>
-										<li>is:hidden</li>
-									</ul>
-								</p>
-								<% end %>
-								<p>
-									Ranged tags:
-									
-									<ul>
-										<li>length&lt;X - returns any videos with a length less than X where X is in the format of hh:mm:ss</li>
-										<li>score&lt;X- returns any videos with a score less than X</li>
-									</ul>
-									
-									The above tags may also be inverted by replacing the '&lt;' with a '&gt;'.
-									
-									eg length&gt;X - returns videos with a length <b>greater</b> than X.
-								</p>
-								<p>Parenthesis '(' and ')' may be used as well for additional control</p>
-							</div>
-						</div>
-					</span>
-					<span class="search-options">
-						<label>
-							<span>Type</span>
-							<div>
-								<select id="search_type" name="type" style="width:100%">
-									<option value="0"<% if @type == 0 %> selected<% end %>>Song</option>
-									<option value="1"<% if @type == 1 %> selected<% end %>>Album</option>
-									<option value="2"<% if @type == 2 %> selected<% end %>>User</option>
-									<option value="3"<% if @type == 3 %> selected<% end %>>Tag</option>
-								</select>
-								<script>
+<div class="page" style="width:100%;">
+<% if @derpy %>
+		<h1>Searching for- Uh, oh!</h1>
+		<p class="center">
+			<img class="iconic" style="max-height:200px;" src="/images/derpy.png"></img>
+			<br>
+			<% if @ditzy %>
+			That wasn't me, I swear! D:
+			<% else %>
+			You searched for <u><%= @query %></u> but I don't know what that means. :'c
+			<% end %>
+		</p>
+		<hr>
+		<p class="center">
+			<%= @derpy.message %>
+		</p>
+<% else %>
+	<h1>
+	<% if @query.length == 0 %>Showing all <%= @type_label %>s<% else %>Searching for <%= @type_label %>s matching '<%= @query %>'<% end %>
+	 found <%= number_with_delimiter @results.count %> match<% if @results.count != 1 %>es<% end %></h1>
+	<% if @tags && @tags.length > 0 %>
+		<%= render partial: '/genre/set', locals: {tags: @tags} %>
+	<% end %>
+	<% @data = URI.encode_www_form(params) %>
+	<%= render layout: '/layouts/paginated', locals: {type: 'search',paginated: @results, id: "page"} do %>
+		<section class="search-result">
+			<% if @type == 0 %>
+			<ul id="videos" class="horizontal video-list">
+				<%= render partial: 'layouts/video_thumb_h', collection: @results.records %>
+			</ul>
+			<% elsif @type == 1 %>
+			<ul id="albums" class="horizontal album-list">
+				<%= render partial: 'layouts/album_thumb_h', collection: @results.records %>
+			</ul>
+			<% elsif @type == 2 %>
+			<ul id="artists" class="horizontal artist-list">
+				<%= render partial: 'layouts/artist_thumb_h', collection: @results.records %>
+			</ul>
+			<% elsif @type == 3 %>
+			<ul id="genres" class="horizontal genre-list">
+				<%= render partial: 'layouts/genre_thumb_h', collection: @results.records %>
+			</ul>
+			<% end %>
+		</section>
+	<% end %>
+<% end %>
+</div>
+<div class="page resize-holder" style="width:100%;">
+	<section>
+		<h1 class="resize-target">
+			<a>Search</a>
+		</h1>
+		<form action="search" method="get" id="big-search">
+			<span>
+				<input title="Search by title (alias for title:{search_term})" type="text" name="query" placeholder="title" style="width:100%" value="<%= @title_query %>"></input>
+			</span>
+			<span title="Search by one or more tags" id="search_tags"<% if @type == 1 || @type == 3 %> style="display:none;"<% end %>>
+				<input type="text" name="tagquery" placeholder="tags" style="width:100%;margin-top:10px;" value="<%= @tag_query %>"></input>
+				<a class="tiny-link slider-toggle" href="#" data-target=".explanation">Search Syntax</a>
+				<div class="slideout explanation properties">
+					<div class="group active" style="padding:10px;white-space:normal;">
+						<p>ProjectVinyl's search function is designed to work similarly to that of Derpibooru. Searching for a single tag name returns all videos with that tag, a list of tags returns all videos that have all of those tags.</p>
+						<p>You can also combine results using the OR ( | ) and AND ( & ) operators. Note that they must have spacing on either side.</p>
+						<p>
+							Videos additionally have support for searching them by many of their special attributes.
+						</p>
+						<p>
+							System tags:
+							<ul>
+								<li>title:&lt;title&gt; - returns any videos with a matching name</li>
+								<li>source:&lt;source&gt; - returns any videos with a matching source</li>
+								<li>uploader:&lt;username&gt; - returns any videos posted by the named user</li>
+								<li>is:audio - returns videos only if they are an audio file</li>
+								<li>is:upvoted - returns videos only videos that have been liked by the current user (has no affect for anonymous users)</li>
+								<li>is:downvoted - equivalent to is:upvoted but for dislikes</li>
+							</ul>
+						</p>
+						<% if user_signed_in? && current_user.is_staff? %>
+						<p>
+							Moderation tags:
+							<ul>
+								<li>upvoted_by:&lt;username&gt;</li>
+								<li>downvoted_by:&lt;username&gt;</li>
+								<li>is:hidden</li>
+							</ul>
+						</p>
+						<% end %>
+						<p>
+							Ranged tags:
+							
+							<ul>
+								<li>length&lt;X - returns any videos with a length less than X where X is in the format of hh:mm:ss</li>
+								<li>score&lt;X- returns any videos with a score less than X</li>
+							</ul>
+							
+							The above tags may also be inverted by replacing the '&lt;' with a '&gt;'.
+							
+							eg length&gt;X - returns videos with a length <b>greater</b> than X.
+						</p>
+						<p>Parenthesis '(' and ')' may be used as well for additional control</p>
+					</div>
+				</div>
+			</span>
+			<span class="search-options">
+				<label>
+					<span>Type</span>
+					<div>
+						<select id="search_type" name="type" style="width:100%">
+							<option value="0"<% if @type == 0 %> selected<% end %>>Song</option>
+							<option value="1"<% if @type == 1 %> selected<% end %>>Album</option>
+							<option value="2"<% if @type == 2 %> selected<% end %>>User</option>
+							<option value="3"<% if @type == 3 %> selected<% end %>>Tag</option>
+						</select>
+						<script>
 $('#search_type').on('change', function() {
-  var val = $(this).val() ;
-  $('#search_tags').css('display', (val == '0' || val == '2') ? '' : 'none');
+var val = $(this).val() ;
+$('#search_tags').css('display', (val == '0' || val == '2') ? '' : 'none');
 });
-								</script>
-							</div>
-						</label>
-						<label>
-							<span>Order</span>
-							<div>
-								<select name="order" style="width:100%">
-									<option value="1"<% if @ascending %> selected<% end %>>Ascending</option>
-									<option value="0"<% if !@ascending %> selected<% end %>>Descending</option>
-								</select>
-							</div>
-						</label>
-						<label>
-							<span>Order By</span>
-							<div>
-								<select name="orderby" style="width:100%">
-									<option value="1"<% if @orderby == 1 %> selected<% end %>>Date</option>
-									<option value="2"<% if @orderby == 2 %> selected<% end %>>Rating</option>
-									<option value="3"<% if @orderby == 3 %> selected<% end %>>Length</option>
-									<option value="4"<% if @orderby == 4 %> selected<% end %>>Random</option>
-									<option value="5"<% if @orderby == 5 %> selected<% end %>>Relevance</option>
-								</select>
-							</div>
-						</label>
-					</span>
-					<span>
-						<button type="submit"><i class="fa fa-search"></i> Search</button>
-					</span>
-				</form>
-			</section>
-		</div>
-		<div class="page" style="width:100%;">
-		<% if @derpy %>
-				<h1>Searching for- Uh, oh!</h1>
-				<p class="center">
-					<img class="iconic" style="max-height:200px;" src="/images/derpy.png"></img>
-					<br>
-					<% if @ditzy %>
-					That wasn't me, I swear! D:
-					<% else %>
-					You searched for <u><%= @query %></u> but I don't know what that means. :'c
-					<% end %>
-				</p>
-				<hr>
-				<p class="center">
-					<%= @derpy.message %>
-				</p>
-		<% else %>
-			<h1>
-			<% if @query.length == 0 %>Showing all <%= @type_label %>s<% else %>Searching for <%= @type_label %>s matching '<%= @query %>'<% end %>
-			 found <%= number_with_delimiter @results.count %> match<% if @results.count != 1 %>es<% end %></h1>
-			<% if @tags && @tags.length > 0 %>
-				<%= render partial: '/genre/set', locals: {tags: @tags} %>
-			<% end %>
-			<% @data = URI.encode_www_form(params) %>
-			<%= render layout: '/layouts/paginated', locals: {type: 'search',paginated: @results, id: "page"} do %>
-				<section class="search-result">
-					<% if @type == 0 %>
-					<ul id="videos" class="horizontal video-list">
-						<%= render partial: 'layouts/video_thumb_h', collection: @results.records %>
-					</ul>
-					<% elsif @type == 1 %>
-					<ul id="albums" class="horizontal album-list">
-						<%= render partial: 'layouts/album_thumb_h', collection: @results.records %>
-					</ul>
-					<% elsif @type == 2 %>
-					<ul id="artists" class="horizontal artist-list">
-						<%= render partial: 'layouts/artist_thumb_h', collection: @results.records %>
-					</ul>
-					<% elsif @type == 3 %>
-					<ul id="genres" class="horizontal genre-list">
-						<%= render partial: 'layouts/genre_thumb_h', collection: @results.records %>
-					</ul>
-					<% end %>
-				</section>
-			<% end %>
-		<% end %>
-		</div>
+						</script>
+					</div>
+				</label>
+				<label>
+					<span>Order</span>
+					<div>
+						<select name="order" style="width:100%">
+							<option value="1"<% if @ascending %> selected<% end %>>Ascending</option>
+							<option value="0"<% if !@ascending %> selected<% end %>>Descending</option>
+						</select>
+					</div>
+				</label>
+				<label>
+					<span>Order By</span>
+					<div>
+						<select name="orderby" style="width:100%">
+							<option value="1"<% if @orderby == 1 %> selected<% end %>>Date</option>
+							<option value="2"<% if @orderby == 2 %> selected<% end %>>Rating</option>
+							<option value="3"<% if @orderby == 3 %> selected<% end %>>Length</option>
+							<option value="4"<% if @orderby == 4 %> selected<% end %>>Random</option>
+							<option value="5"<% if @orderby == 5 %> selected<% end %>>Relevance</option>
+						</select>
+					</div>
+				</label>
+			</span>
+			<span>
+				<button type="submit"><i class="fa fa-search"></i> Search</button>
+			</span>
+		</form>
+	</section>
+</div>

@@ -73,19 +73,22 @@ module ProjectVinyl
           end
         elsif @type == 'user'
           if ordering == 4
-            @ordering = random_order(session, ordering, [:username,:created_at,:updated_at])
+            @ordering = random_order(session, ordering, [:created_at,:updated_at])
             return self
           end
           if ordering < 4
-            @ordering = [:username, :created_at, :updated_at]
+            @ordering = [:created_at, :updated_at]
           else
-            @ordering = [:username]
+            @ordering = [:created_at, :updated_at]
           end
         end
         return self
       end
       
       def add_required_params(query)
+        if @type != 'video'
+          return query
+        end
         if !query.key?(:bool)
           return {term: { hidden: false }}
         end
