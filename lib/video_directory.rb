@@ -182,7 +182,7 @@ class VideoDirectory
     end
     @parent = path.split('/')
     @full = path
-    @path = path.sub('public/', '')
+    @path = path.sub('public/', '').sub('private/','')
     @raw_items = items.reject {|i| i.index('.') == 0 }.group_by do |i|
       i.index('.').nil?
     end
