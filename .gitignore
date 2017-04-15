@@ -1,8 +1,14 @@
 # Ignore sample data
 /public/avatar/*
+!/public/avatar/.keep
 /public/banner/*
+!/public/banner/.keep
 /public/cover/*
+!/public/cover/.keep
 /public/stream/*
+!/public/stream/.keep
+/private/stream/*
+!/private/stream/.keep
 
 # Ignore bundler config.
 /.bundle
