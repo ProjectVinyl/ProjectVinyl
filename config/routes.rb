@@ -31,6 +31,7 @@ Rails.application.routes.draw do
   put 'admin/video/merge' => 'admin#merge'
   put 'admin/video/metadata' => 'admin#populateVideo'
   put 'admin/transfer' => 'admin#transferItem'
+  put 'admin/reindex/:table' => 'admin#reindex'
   
   get 'ajax/admin/files' => 'admin#morefiles'
   get 'ajax/admin/videos/hidden' => 'admin#page_hidden'
@@ -39,6 +40,7 @@ Rails.application.routes.draw do
   post 'ajax/admin/verify' => 'admin#verify_integrity'
   post 'ajax/admin/requeue' => 'admin#rebuildQueue'
   post 'ajax/admin/hidden/drop' => 'admin#batch_dropVideos'
+  post 'ajax/admin/reindex/:table' => 'admin#reindex'
   
   post 'ajax/video/hide' => 'admin#visibility'
   post 'ajax/user/togglebadge/:badge_id' => 'admin#togglebadge'

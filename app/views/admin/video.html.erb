@@ -131,6 +131,15 @@
 					</td>
 				</tr>
 				<tr class="actions">
+					<td class="label">Reindex Video</td>
+					<td class="field">
+					<%= form_for(@video, as: "video", url: "/admin/reindex/video", html: { method: :put }) do |f| %>
+						<%= f.text_field :id, hidden: true %>
+						<%= f.submit "Reindex" %>
+					<% end %>
+					</td>
+				</tr>
+				<tr class="actions">
 					<td class="label">
 						Delete Item
 					</td>

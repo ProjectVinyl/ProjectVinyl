@@ -46,6 +46,12 @@ class AdminController < ApplicationController
         return render file: '/public/403.html', layout: false
       end
     end
+    if @location[0] != 'public' && @location[0] != 'private' && @location[0] != 'encoding'
+      if ajax
+        return render status: 403, nothing: true
+      end
+      return render file: '/public/403.html', layout: false
+    end
     begin
       @location = @location.join('/')
       @public = VideoDirectory.Entries(@location).limit(50)
@@ -55,7 +61,7 @@ class AdminController < ApplicationController
       if params[:end] && !@public.end_with(params[:end]) && ajax
         return render json: {}
       end
-      if @location == 'public'
+      if @location == 'public' || @location == 'private'
         @public.filter do |loc|
           name = loc.split('.')[0]
           loc.index('.').nil? && (name == 'stream' || name == 'cover' || name == 'avatar' || name == 'banner')
@@ -280,6 +286,33 @@ class AdminController < ApplicationController
         video.save
       end
       return render json: { :added => video.hidden }
+    end
+    render status: 401, nothing: true
+  end
+  
+  def reindex
+    if user_signed_in? && current_user.is_contributor?
+      if table = params[:table] == 'user' ? User : params[:table] == 'video' ? Video : nil
+        if params[params[:table]]
+          if table = table.where(id: params[params[:table]][:id]).first
+            table.update_index(defer: false)
+            flash[:notice] = "Success! Indexes for record #{params[:table]}.#{params[params[:table]][:id]} have been completed."
+          else
+            flash[:error] = "Error: Record #{params[:table]}.#{params[params[:table]][:id]} was not found."
+          end
+        else
+          begin
+            table.__elasticsearch__.delete_index!
+          rescue
+          end
+          table.__elasticsearch__.create_index!
+          table.import
+          flash[:notice] = "Success! Indexes for table #{params[:table]} have been completed."
+        end
+      else
+        flash[:error] = "Error: Table #{params[:table]} was not found."
+      end
+      return redirect_to action: "view"
     end
     render status: 401, nothing: true
   end
