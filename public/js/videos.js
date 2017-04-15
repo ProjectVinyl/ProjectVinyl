@@ -326,7 +326,7 @@ function Player() {}
       attachMessageListener(this);
       if (el.attr('data-autoplay')) {
         this.checkstart();
-        this.addContext('Autoplay', this.autoplay(!document.cookie.replace(/(?:(?:^|.*;\s*)autoplay\s*\=\s*([^;]*).*$)|^.*$/, "$1")), function() {
+        this.addContext('Autoplay', this.autoplay(!document.cookie.replace(/(?:(?:^|.*;\s*)autoplay\s*\=\s*([^;]*).*$)|^.*$/, "$1")), function(val) {
           val(me.__autoplay = !me.__autoplay);
           document.cookie = 'autoplay=' + (on ? ';' : '1;');
         });
@@ -381,7 +381,7 @@ function Player() {}
         me.dom.playlist.toggleClass('visible');
         me.halt(ev);
       });
-      this.addContext('Autoplay', this.autoplay(!document.cookie.replace(/(?:(?:^|.*;\s*)autoplay\s*\=\s*([^;]*).*$)|^.*$/, "$1")), function() {
+      this.addContext('Autoplay', this.autoplay(!document.cookie.replace(/(?:(?:^|.*;\s*)autoplay\s*\=\s*([^;]*).*$)|^.*$/, "$1")), function(val) {
         val(me.__autoplay = !me.__autoplay);
         document.cookie = 'autoplay=' + (on ? ';' : '1;');
       });
