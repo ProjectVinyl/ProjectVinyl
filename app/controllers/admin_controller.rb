@@ -298,23 +298,28 @@ class AdminController < ApplicationController
             table.update_index(defer: false)
             flash[:notice] = "Success! Indexes for record #{params[:table]}.#{params[params[:table]][:id]} have been completed."
           else
-            flash[:error] = "Error: Record #{params[:table]}.#{params[params[:table]][:id]} was not found."
+            flash[:notice] = "Error: Record #{params[:table]}.#{params[params[:table]][:id]} was not found."
           end
         else
-          begin
+          ans = Report.on(current_user, "Indexing for table #{params[:table]} has been completed") do |report|
             table.__elasticsearch__.delete_index!
-          rescue
+            table.__elasticsearch__.create_index!
+            table.import
+            @report.other = "Complete."
           end
-          table.__elasticsearch__.create_index!
-          table.import
-          flash[:notice] = "Success! Indexes for table #{params[:table]} have been completed."
+          if ans
+            flash[:notice] = "Success! Indexes for table #{params[:table]} have been completed."
+          else
+            flash[:notice] = "Error: You can only do that once per day."
+          end
         end
       else
-        flash[:error] = "Error: Table #{params[:table]} was not found."
+        flash[:notice] = "Error: Table #{params[:table]} was not found."
       end
-      return redirect_to action: "view"
+    else
+      flash[:notice] = "Access Denied: You do not have the required permissions."
     end
-    render status: 401, nothing: true
+    render json: { ref: url_for(action: "view") }
   end
   
   def role
@@ -384,30 +389,15 @@ class AdminController < ApplicationController
   
   def verify_integrity
     if user_signed_in? && current_user.is_admin?
-      if !(Report.where('created_at > ?', Time.zone.now.yesterday.beginning_of_day).first)
-        @report = Report.create(user_id: 0, first: "System", other: "Working...", resolved: false)
-        @report.comment_thread = CommentThread.create(user_id: 0, title: 'System Integrity Report (' + Time.zone.now.to_s + ')')
-        @report.save
-        Thread.start {
-          begin
-            user_component = User.verify_integrity
-            @report.other = ""
-            @report.other << "User avatars reset: " + user_component[0].to_s
-            @report.other << "<br>User banners reset: " + user_component[1].to_s
-            @report.save
-            Video.verify_integrity(@report)
-          rescue Exception => e
-            @report.other << "<br>Check did not complete correctly. <br>" + e.to_s
-            puts e
-            puts e.backtrace
-          ensure
-            @report.resolved = nil
-            Notification.notify_admins(@report,
-              "A system integrity report has been generated", @report.comment_thread.location)
-            @report.save
-            ActiveRecord::Base.connection.close
-          end
-        }
+      ans = Report.on(current_user, "A system integrity report has been generated") do |report|
+        user_component = User.verify_integrity
+        report.other = ""
+        report.other << "User avatars reset: " + user_component[0].to_s
+        report.other << "<br>User banners reset: " + user_component[1].to_s
+        report.save
+        Video.verify_integrity(report)
+      end
+      if ans
         flash[:notice] = "Success! An integrity check has been launched. A report will be generated upon completion."
       else
         flash[:notice] = "Access Denied: You cannot perform an integrity check more than once per day."
