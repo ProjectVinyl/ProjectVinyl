@@ -23,7 +23,8 @@ class VideoController < ApplicationController
         @album_editable = user_signed_in? && @album.ownedBy(current_user)
       end
     end
-    @time = params[:t].to_i || 0
+    @time = (params[:t] || params[:resume] || 0).to_i
+    @resume = !params[:resume].nil?
     if @video.hidden && (!user_signed_in? || @video.user_id != current_user.id)
       render 'layouts/error', locals: { title: 'Content Removed', description: "The video you are trying to access is currently not available." }
       return

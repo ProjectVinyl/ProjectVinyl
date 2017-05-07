@@ -31,8 +31,8 @@ function Player() {}
     {name: '0.25x', value: 0.25}
   ];
   Player.createVideoElement = function(player) {
-		if (!player.source || player.source == "0") return $('<video></video>');
-		if (typeof player.source === 'string' && player.source.indexOf('blob') == 0) return $('<video src="' + player.source + '"></video>');
+    if (!player.source || player.source == "0") return $('<video></video>');
+    if (typeof player.source === 'string' && player.source.indexOf('blob') == 0) return $('<video src="' + player.source + '"></video>');
     return $('\
             <video>\
              <source src="/stream/' + player.source + '.webm" type="video/webm"></source>\
@@ -55,12 +55,12 @@ function Player() {}
       default: return 'Unknown Error';
     }
   };
-	Player.errorPresent = function(video) {
+  Player.errorPresent = function(video) {
     return (video.error && video.error.code != video.error.MEDIA_ERR_ABORTED) || (video.networkState == HTMLMediaElement.NETWORK_NO_SOURCE);
-	};
-	Player.isready = function(video) {
-		return video.readyState == 4;
-	};
+  };
+  Player.isready = function(video) {
+    return video.readyState == 4;
+  };
   Player.noise = (function() {
     var canvas = null, ctx = null;
     var toggle = true;
@@ -91,34 +91,34 @@ function Player() {}
   })();
   Player.generate = function(holder) {
     holder.prepend('<div class="player" >\
-								<span class="playing"></span>\
-                <span class="error"><span class="error-message"></span></span>\
-                <span class="suspend" style="display:none"><i class="fa fa-pulse fa-spinner"></i></span>\
-								<span class="pause resize-holder">\
-									<span class="playback"></span>\
-									<h1 class="resize-target" style="display:none;"><a class="title"></a></h1>\
-								</span>\
-							</div>\
-							<div class="controls playback-controls">\
-								<ul>\
-									<li class="track">\
-										<span class="fill"></span>\
-										<div class="previewer"></div>\
-										<span class="bob"></span>\
-									</li>\
-									<li class="icon volume">\
-										<span class="indicator"><i class="fa fa-volume-up"></i></span>\
-										<div class="slider">\
-											<span class="fill"></span>\
-											<span class="bob"></span>\
-										</div>\
-									</li>\
-                  <li class="icon fullscreen">\
-                    <span class="indicator"><i class="fa fa-arrows-alt"></i></span>\
-                  </li>\
-								</ul>\
-							</div>\
-              <ul class="contextmenu"></ul>');
+    <span class="playing"></span>\
+    <span class="error"><span class="error-message"></span></span>\
+    <span class="suspend" style="display:none"><i class="fa fa-pulse fa-spinner"></i></span>\
+    <span class="pause resize-holder">\
+      <span class="playback"></span>\
+      <h1 class="resize-target" style="display:none;"><a class="title"></a></h1>\
+    </span>\
+  </div>\
+  <div class="controls playback-controls">\
+    <ul>\
+      <li class="track">\
+        <span class="fill"></span>\
+        <div class="previewer"></div>\
+        <span class="bob"></span>\
+      </li>\
+      <li class="icon volume">\
+        <span class="indicator"><i class="fa fa-volume-up"></i></span>\
+        <div class="slider">\
+          <span class="fill"></span>\
+          <span class="bob"></span>\
+        </div>\
+      </li>\
+      <li class="icon fullscreen">\
+        <span class="indicator"><i class="fa fa-arrows-alt"></i></span>\
+      </li>\
+    </ul>\
+  </div>\
+  <ul class="contextmenu"></ul>');
   };
   var fadeControl = null;
   function controlsFade() {
@@ -190,7 +190,7 @@ function Player() {}
       resize.apply(el);
       
       el.find('h1 .title').text(this.title = el.attr('data-title'));
-			if (this.artist = el.attr('data-artist')) el.find('h1 .artist').text(this.artist);
+      if (this.artist = el.attr('data-artist')) el.find('h1 .artist').text(this.artist);
       
       new TapToggler(this.dom);
       el.on('click', function(ev) {
@@ -330,6 +330,8 @@ function Player() {}
           val(me.__autoplay = !me.__autoplay);
           document.cookie = 'autoplay=' + (on ? ';' : '1;');
         });
+      } else if (el.attr('data-resume') == 'true') {
+        this.checkstart();
       }
       return this;
     },
@@ -364,6 +366,12 @@ function Player() {}
       var link = this.player.find('.pause h1 a');
       link.attr({
         target: '_blank', href: '/view/' + id + '-' + this.title
+      });
+      var me = this;
+      link.on('mouseover', function() {
+        if (me.video && me.video.currentTime > 0) {
+          link.attr('href', '/view/' + id + '-' + me.title + '?resume=' + me.video.currentTime);
+        }
       });
       link.on('click', function (ev) {
         ev.stopPropagation();
@@ -480,39 +488,39 @@ function Player() {}
       }
       this.start();
     },
-		load: function(data) {
-			this.audioOnly = false;
-			if (this.source) {
-				URL.revokeObjectURL(this.source);
-			}
-			if (data) {
-				this.source = URL.createObjectURL(data);
-				if (this.audioOnly) {
-					this.video = null;
-					this.start();
-				} else {
-					this.video.src = this.source;
-				}
-				this.video.load();
-			}
-		},
-		loadURL: function(url) {
-			this.audioOnly = false;
-			if (this.source) {
-				URL.revokeObjectURL(this.source);
-			}
-			if (url) {
-				this.source = url;
-				if (this.audioOnly) {
-					this.video = null;
-					this.start();
-				} else {
-					if (!this.video) this.start();
-					this.video.src = this.source;
-				}
-				this.video.load();
-			}
-		},
+    load: function(data) {
+      this.audioOnly = false;
+      if (this.source) {
+        URL.revokeObjectURL(this.source);
+      }
+      if (data) {
+        this.source = URL.createObjectURL(data);
+        if (this.audioOnly) {
+          this.video = null;
+          this.start();
+        } else {
+          this.video.src = this.source;
+        }
+        this.video.load();
+      }
+    },
+    loadURL: function(url) {
+      this.audioOnly = false;
+      if (this.source) {
+        URL.revokeObjectURL(this.source);
+      }
+      if (url) {
+        this.source = url;
+        if (this.audioOnly) {
+          this.video = null;
+          this.start();
+        } else {
+          if (!this.video) this.start();
+          this.video.src = this.source;
+        }
+        this.video.load();
+      }
+    },
     start: function() {
       if (!this.video) {
         var video;
@@ -523,15 +531,15 @@ function Player() {}
         }
         this.video = video[0];
         if (this.time && this.time != '0') {
-					if (Player.isready(this.video)) {
-						this.video.currentTime = parseInt(this.time);
-					} else {
-						var t = parseInt(this.time);
-						this.video.addEventListener('canplay', function set_time() {
-							this.currentTime = t;
-							this.removeEventListener('canplay', set_time);
-						});
-					}
+          if (Player.isready(this.video)) {
+            this.video.currentTime = parseInt(this.time);
+          } else {
+            var t = parseInt(this.time);
+            this.video.addEventListener('canplay', function set_time() {
+              this.currentTime = t;
+              this.removeEventListener('canplay', set_time);
+            });
+          }
         }
         this.player.find('.playing').append(this.video);
         var me = this;
@@ -622,22 +630,22 @@ function Player() {}
       this.player.addClass('paused');
       if (this.video) this.video.pause();
       this.suspend.css('display', 'none');
-			return true;
+      return true;
     },
     error: function(e) {
       this.pause();
-			if (Player.errorPresent(this.video)) {
-				var message = Player.errorMessage(this.video);
-				this.player.addClass('stopped');
-				this.player.addClass('error');
-				this.player.error.message.text(message);
-				if (!this.noise) {
-					this.noise = Player.noise();
-					this.player.error.append(this.noise);
-				}
-				console.warn(message);
-			}
-			console.log(e);
+      if (Player.errorPresent(this.video)) {
+        var message = Player.errorMessage(this.video);
+        this.player.addClass('stopped');
+        this.player.addClass('error');
+        this.player.error.message.text(message);
+        if (!this.noise) {
+          this.noise = Player.noise();
+          this.player.error.append(this.noise);
+        }
+        console.warn(message);
+      }
+      console.log(e);
     },
     toggleVideo: function() {
       if (!this.player.hasClass('playing')) {
@@ -657,8 +665,8 @@ function Player() {}
       this.suspend.css('display', 'none');
     },
     changetrack: function(progress) {
-			if (progress < 0) progress = 0;
-			if (progress > 1) progress = 1;
+      if (progress < 0) progress = 0;
+      if (progress > 1) progress = 1;
       var duration = parseFloat(this.video.duration) || 0;
       var time = duration * progress;
       this.video.currentTime = time;
@@ -773,15 +781,15 @@ function Player() {}
             var context = this.preview.getContext('2d');
             temp_vid.addEventListener('loadeddata', function load_time() {
               this.currentTime = time;
-							this.removeEventListener('loadeddata', load_time);
+              this.removeEventListener('loadeddata', load_time);
             });
             temp_vid.addEventListener('seeked', function() {
               context.drawImage(temp_vid, 0, 0, canvas.width, canvas.height);
             });
           } else {
-						if (Player.isready(this.preview.video)) {
-							this.preview.video.currentTime = time;
-						}
+            if (Player.isready(this.preview.video)) {
+              this.preview.video.currentTime = time;
+            }
           }
         }
       }
