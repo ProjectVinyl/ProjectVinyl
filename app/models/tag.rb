@@ -259,6 +259,13 @@ class Tag < ActiveRecord::Base
     return ''
   end
   
+  def identifier
+    if self.name.index(':')
+      return self.name.split(':')[1]
+    end
+    return self.name
+  end
+  
   def link
     result = '/tags/'
     if ApplicationHelper.valid_string?(self.short_name)

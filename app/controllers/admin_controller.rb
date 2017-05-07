@@ -301,14 +301,14 @@ class AdminController < ApplicationController
             flash[:notice] = "Error: Record #{params[:table]}.#{params[params[:table]][:id]} was not found."
           end
         else
-          ans = Report.on(current_user, "Indexing for table #{params[:table]} has been completed") do |report|
+          ans = Report.on(current_user, "Indexing table #{params[:table]}") do |report|
             table.__elasticsearch__.delete_index!
             table.__elasticsearch__.create_index!
             table.import
-            @report.other = "Complete."
+            report.other = "Complete."
           end
           if ans
-            flash[:notice] = "Success! Indexes for table #{params[:table]} have been completed."
+            flash[:notice] = "Success! Indexes for table #{params[:table]} has been scheduled. Check back later for a completion report."
           else
             flash[:notice] = "Error: You can only do that once per day."
           end
@@ -389,11 +389,11 @@ class AdminController < ApplicationController
   
   def verify_integrity
     if user_signed_in? && current_user.is_admin?
-      ans = Report.on(current_user, "A system integrity report has been generated") do |report|
+      ans = Report.on(current_user, "System integrity Report") do |report|
         user_component = User.verify_integrity
         report.other = ""
-        report.other << "User avatars reset: " + user_component[0].to_s
-        report.other << "<br>User banners reset: " + user_component[1].to_s
+        report.write("User avatars reset: " + user_component[0].to_s)
+        report.write("User banners reset: " + user_component[1].to_s)
         report.save
         Video.verify_integrity(report)
       end

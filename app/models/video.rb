@@ -358,6 +358,15 @@ class Video < ActiveRecord::Base
     Tag.tag_string(self.tags.where(tag_type_id: 1))
   end
   
+  def artists
+    self.tags.where(tag_type_id: 1).order(:video_count).reverse_order.limit(3).each do |tag|
+      if tag.alias_id
+        tag = tag.alias
+      end
+      yield(tag.user ? tag.user.username : tag.identifier)
+    end
+  end
+  
   def getComputedScore
     if self.score.nil?
       computeScore()
