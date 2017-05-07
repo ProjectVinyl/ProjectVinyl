@@ -117,8 +117,7 @@ class AdminController < ApplicationController
   
   def video
     if !user_signed_in? || !current_user.is_contributor?
-      render 'layouts/error', locals: { title: 'Access Denied', description: "You can't do that right now." }
-      return
+      return render 'layouts/error', locals: { title: 'Access Denied', description: "You can't do that right now." }
     end
     @modificationsAllowed = true
     @video = Video.where(id: params[:id]).first
@@ -128,8 +127,7 @@ class AdminController < ApplicationController
   
   def album
     if !user_signed_in? || !current_user.is_contributor?
-      render 'layouts/error', locals: { title: 'Access Denied', description: "You can't do that right now." }
-      return
+      return render 'layouts/error', locals: { title: 'Access Denied', description: "You can't do that right now." }
     end
     @modificationsAllowed = true
     @album = Album.find(params[:id])
@@ -147,8 +145,7 @@ class AdminController < ApplicationController
   
   def tag
     if !user_signed_in? || !current_user.is_contributor?
-      render 'layouts/error', locals: { title: 'Access Denied', description: "You can't do that right now." }
-      return
+      return render 'layouts/error', locals: { title: 'Access Denied', description: "You can't do that right now." }
     end
     @tag = Tag.find(params[:id])
     @prefix = (@tag.tag_type_id && @tag.tag_type_id > 0 ? @tag.tag_type.prefix : "[none]")
