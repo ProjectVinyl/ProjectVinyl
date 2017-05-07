@@ -7,18 +7,18 @@ class Report < ActiveRecord::Base
   def self.on(sender, msg)
     if !(Report.where('created_at > ?', Time.zone.now.yesterday.beginning_of_day).first)
       report = Report.create(user_id: sender.id, first: "System", other: "Working...", resolved: false)
-      report.comment_thread = CommentThread.create(user_id: sender.id, title: 'System Integrity Report (' + Time.zone.now.to_s + ')')
+      report.comment_thread = CommentThread.create(user_id: sender.id, title: "#{msg} (#{Time.zone.now})")
       report.save
       Thread.start {
         begin
           yield(report)
         rescue Exception => e
-          report.other << "<br>Action did not complete correctly. <br>" + e.to_s
+          report.write("Action did not complete correctly. <br>#{e}")
           puts e
           puts e.backtrace
         ensure
           report.resolved = nil
-          Notification.notify_admins(report, msg, report.comment_thread.location)
+          Notification.notify_admins(report, "Action \"#{msg}\" has been completed", report.comment_thread.location)
           report.save
           ActiveRecord::Base.connection.close
         end
@@ -34,5 +34,9 @@ class Report < ActiveRecord::Base
   
   def user=(user)
     self.direct_user = user
+  end
+  
+  def write(msg)
+    self.other << "<br>#{msg}"
   end
 end
