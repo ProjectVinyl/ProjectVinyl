@@ -4,83 +4,96 @@
 	<a href="/">Home</a> <i class="fa fa-chevron-right"></i> <a href="/admin">Admin</a> <i class="fa fa-chevron-right"></i> 
 	Control Panel
 </h1>
-<section style="width:100%" class="page">
-	<div class="actions">
-		<a class="button" href="/users"><i class="fa fa-users"></i> Users</a>
-		<a class="button" href="/videos?unlisted=1"><i class="fa fa-eye-slash"></i> Unlisted Videos</a>
-		<a class="button" href="/videos?merged=1"><i class="fa fa-compress"></i> Merged Videos</a>
-		<a class="button" href="/admin/files?p=encoding"><i class="fa fa-file-code-o"></i> Encoding Folder</a>
-		<a class="button" href="/admin/files?p=public"><i class="fa fa-file-video-o"></i> Public Storage Folder</a>
-		<a class="button" href="/admin/files?p=private"><i class="fa fa-file-video-o"></i> Private Storage Folder</a>
-	</div>
-	<% if current_user.is_admin? %>
-	<hr>
-	<div class="actions">
-		<button class="confirm-button action red" data-action="delete" data-url="admin/reindex/video" data-title="Reindex Videos" data-icon="warning" type="button">Force Index Videos</button>
-		<button class="confirm-button action red" data-action="delete" data-url="admin/reindex/user" data-title="Reindex Users" data-icon="warning" type="button">Force Index Users</button>
-			<button class="confirm-button action red" data-action="delete" data-url="admin/hidden/drop" data-title="Drop <%= @hiddenvideos.count %> Videos" data-icon="warning" type="button">Delete Unlisted Videos</button>
-	</div>
-	<% end %>
-</section>
-<section style="width:100%" class="page resize-holder">
-	<h1 class="title resize-target">Recent Activity</h1>
-	<table class="auto">
-		<thead>
-			<td>Id</td>
-			<td>Contact</td>
-			<td>Name</td>
-			<td>Created</td>
-			<td>Last Active</td>
-			<td>Votes</td>
-			<td>Sign ins</td>
-		</thead>
-		<tbody>
-		<% @users.each do |user| %>
-			<tr>
-				<td><%= user.id %></td>
-				<td><%= email_escape user.email %></td>
-				<td><a href="<%= user.link %>"><%= user.username %></a></td>
-				<td><%= since user.created_at %></td>
-				<td><%= since user.updated_at %></td>
-				<td><%= user.votes.count %></td>
-				<td><%= user.sign_in_count %></td>
-			</tr>
-		<% end %>
-		</tbody>
-	</table>
-</section>
-<section style="width:100%" class="page resize-holder">
-	<%= render partial: 'processor_status' %>
-</section>
-<section style="width:100%" class="page recent-uploads resize-holder">
-	<h1 class="title resize-target">Unprocessed Videos (<%= @unprocessed.count %>)</h1>
-	<%= render layout: '/layouts/paginated', locals: {type: "admin/videos/unprocessed", paginated: @unprocessed, id: "unprocessed"} do %>
-		<ul id="videos" class="horizontal video-list">
-			<%= render partial: '/admin/video_thumb_h', collection: @unprocessed.records %>
-		</ul>
-	<% end %>
-	<ul id="videos" class="horizontal video-list">
-		<%= render partial: '/admin/video_thumb_h', collection: @unprocessed %>
-	</ul>
-</section>
-<section style="width:100%" class="page recent-reports resize-holder">
-	<h1 class="title resize-target">Open Reports (<%= @reports_count %>)</h1>
-	<ul id="reports" class="report-list">
-		<% @reports.each do |report| %>
-		<li class="generic">
-			<a href="admin/report/view/<%= report.id %>">Report #<%= report.id %></a>
-			<% if report.video %>
-				<%= render partial: 'layouts/video_thumb_h', locals: {video_thumb_h: report.video } %>
+<div class="wrapper column-left left">
+	<section style="width:100%" class="page resize-holder">
+		<h1 class="title resize-target">Recent Activity</h1>
+		<table class="auto">
+			<thead>
+				<td>Id</td>
+				<td>Contact</td>
+				<td>Name</td>
+				<td>Created</td>
+				<td>Last Active</td>
+				<td>Votes</td>
+				<td>Sign ins</td>
+			</thead>
+			<tbody>
+			<% @users.each do |user| %>
+				<tr>
+					<td><%= user.id %></td>
+					<td><%= email_escape user.email %></td>
+					<td><a href="<%= user.link %>"><%= user.username %></a></td>
+					<td><%= since user.created_at %></td>
+					<td><%= since user.updated_at %></td>
+					<td><%= user.votes.count %></td>
+					<td><%= user.sign_in_count %></td>
+				</tr>
 			<% end %>
-		</li>
+			</tbody>
+		</table>
+	</section>
+	<section style="width:100%" class="page resize-holder">
+		<%= render partial: 'processor_status' %>
+	</section>
+</div>
+<div class="wrapper column-right right">
+	<section style="width:100%" class="page">
+		<div class="actions">
+			<a class="button" href="/users"><i class="fa fa-users"></i> Users</a>
+			<a class="button" href="/admin/files?p=encoding"><i class="fa fa-file-code-o"></i> Encoding Folder</a>
+			<a class="button" href="/admin/files?p=public"><i class="fa fa-file-video-o"></i> Public Storage Folder</a>
+			<a class="button" href="/admin/files?p=private"><i class="fa fa-file-video-o"></i> Private Storage Folder</a>
+		</div>
+		<% if current_user.is_admin? %>
+		<hr>
+		<div class="actions">
+			<button class="confirm-button action red" data-action="delete" data-url="admin/reindex/video" data-title="Reindex Videos" data-icon="warning" type="button">Force Index Videos</button>
+			<button class="confirm-button action red" data-action="delete" data-url="admin/reindex/user" data-title="Reindex Users" data-icon="warning" type="button">Force Index Users</button>
+				<button class="confirm-button action red" data-action="delete" data-url="admin/hidden/drop" data-title="Drop <%= @hiddenvideos.count %> Videos" data-icon="warning" type="button">Delete Unlisted Videos</button>
+		</div>
 		<% end %>
-	</ul>
-</section>
-<section style="width:100%" class="page recent-uploads resize-holder">
-	<h1 class="title resize-target">Hidden Videos (<%= @hiddenvideos.count %>)</h1>
-	<%= render layout: '/layouts/paginated', locals: {type: "admin/videos/hidden", paginated: @hiddenvideos, id: "hidden"} do %>
-		<ul id="videos" class="horizontal video-list">
-			<%= render partial: '/admin/video_thumb_h', collection: @hiddenvideos.records %>
+	</section>
+	<section style="width:100%" class="page resize-holder">
+		<h1>Videos & Tagging</h1>
+		<div class="actions">
+			<a class="button" href="/videos?unlisted=1"><i class="fa fa-eye-slash"></i> Unlisted Videos</a>
+			<a class="button" href="/videos?merged=1"><i class="fa fa-compress"></i> Merged Videos</a>
+			<a class="button" href="/admin/tags"><i class="fa fa-tags"></i> Tag Types</a>
+		</div>
+	</section>
+</div>
+<div class="wrapper column-span">
+	<section style="width:100%" class="page recent-uploads resize-holder">
+		<h1 class="title resize-target">Unprocessed Videos (<%= @unprocessed.count %>)</h1>
+		<% if @unprocessed.count > 0 %>
+		<%= render layout: '/layouts/paginated', locals: {type: "admin/videos/unprocessed", paginated: @unprocessed, id: "unprocessed"} do %>
+			<ul id="videos" class="horizontal video-list">
+				<%= render partial: '/admin/video_thumb_h', collection: @unprocessed.records %>
+			</ul>
+		<% end %>
+		<% end %>
+		<h1 class="title resize-target">Open Reports (<%= @reports.count %>)</h1>
+		<% if @reports.count > 0 %>
+		<%= render layout: '/layouts/paginated', locals: {type: "admin/videos/hidden", paginated: @reports, id: "hidden"} do %>
+		<ul id="reports" class="report-list">
+			<% @reports.records.each do |report| %>
+			<li class="generic">
+				<a href="admin/report/view/<%= report.id %>">Report #<%= report.id %></a>
+				<% if report.video %>
+					<%= render partial: 'layouts/video_thumb_h', locals: {video_thumb_h: report.video } %>
+				<% end %>
+			</li>
+			<% end %>
 		</ul>
-	<% end %>
-</section>
+		<% end %>
+		<% end %>
+		<h1 class="title resize-target">Hidden Videos (<%= @hiddenvideos.count %>)</h1>
+		<% if @hiddenvideos.count > 0 %>
+		<%= render layout: '/layouts/paginated', locals: {type: "admin/videos/hidden", paginated: @hiddenvideos, id: "hidden"} do %>
+			<ul id="videos" class="horizontal video-list">
+				<%= render partial: '/admin/video_thumb_h', collection: @hiddenvideos.records %>
+			</ul>
+		<% end %>
+		<% end %>
+	</section>
+</div>

@@ -1,12 +1,12 @@
 <h1 class="title resize-target">Processor Status</h1>
-<div>
-	Videos in queue: <%= VideoProcessor.queue.count.to_s %>
-</div>
-<div>
-	Total workers: <%= ProcessingWorker.all.count %>
-</div>
 <div class="listing compact">
 	<div class="items">
+		<div class="row">
+			<div>Videos in queue: <%= VideoProcessor.queue.count.to_s %> Total workers: <%= ProcessingWorker.all.count %></div>
+			<div></div>
+			<div></div>
+			<div></div>
+		</div>
 	<% ProcessingWorker.all.each do |worker| %>
 		<a class="row" href="/view/<%= worker.video_id %>">
 			<% zombie = worker.zombie? %>

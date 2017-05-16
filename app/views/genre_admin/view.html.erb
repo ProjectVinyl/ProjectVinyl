@@ -1,0 +1,35 @@
+<h1 class="title">
+	<a href="/">Home</a> <i class="fa fa-chevron-right"></i> <a href="/admin">Admin</a> <i class="fa fa-chevron-right"></i> 
+	Tag Types
+</h1>
+<section style="width:100%" class="page properties">
+	<h1>Tag Types</h1>
+	<table style="table-layout: auto">
+		<th>
+			<tr>
+				<td>Type Name</td>
+				<td>Total Tags</td>
+				<td>Implications</td>
+			</tr>
+		</th>
+		<% @types.each do |type| %>
+		<tr class="tag-<%= type.prefix %>">
+			<td>
+				<a class="button button-bub disable" href="/admin/edit/tags/<%= type.id %>">
+					<i class="fa fa-pencil"></i>
+				</a>
+				<%= type.prefix %>:
+			</td>
+			<td><%= type.tags.count %></td>
+			<td><%= render partial: "layouts/genre_thumb_h", collection: type.implications %></td>
+		</tr>
+	<% end %>
+		<tr>
+			<td colspan="3">
+				<a class="button button-bub bub disable" title="add">
+					<i class="fa fa-plus"></i> Add New
+				</a>
+			</td>
+		</tr>
+	</table>
+</section>

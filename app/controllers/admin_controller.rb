@@ -10,8 +10,7 @@ class AdminController < ApplicationController
     @unprocessed = Pagination.paginate(Video.where("(processed IS NULL or processed = ?) AND hidden = false", false), 0, 40, false)
     @users = User.where('last_sign_in_at > ? OR updated_at > ?', Time.zone.now.beginning_of_month, Time.zone.now.beginning_of_month).limit(100).order(:last_sign_in_at).reverse_order
     @processorStatus = VideoProcessor.status
-    @reports_count = Report.includes(:video).where(resolved: nil).count
-    @reports = Report.includes(:video).where(resolved: nil).limit(20)
+    @reports = Pagination.paginate(Report.includes(:video).where(resolved: nil), 0, 40, false)
   end
   
   def files

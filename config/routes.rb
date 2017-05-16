@@ -25,6 +25,7 @@ Rails.application.routes.draw do
   get 'admin/video/:id' => 'admin#video'
   get 'admin/artist/:id' => 'admin#artist'
   get 'admin/tag/:id' => 'admin#tag'
+  get 'admin/tags' => 'genre_admin#view'
   
   put 'admin/video/reprocess' => 'admin#reprocessVideo'
   put 'admin/video/resetthumb' => 'admin#extractThumbnail'
