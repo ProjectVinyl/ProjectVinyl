@@ -397,6 +397,11 @@ table {
   content: '@';
 }
 
+.actions .button, .actions button {
+  margin-left: 4px;
+  margin-bottom: 4px;
+}
+
 .hovercard.shown {
   transform: scale(1,1);
 }
@@ -856,8 +861,8 @@ div.page .positioner {
   margin-left: 0px;
 }
 .wrapper .wrapper {
-   margin-left: 10px;
-   margin-right: 10px;
+   margin-left: -5px;
+   margin-right: -5px;
 }
 .wrapper > .wrapper > .page {
    margin-left: 0;
@@ -1751,6 +1756,12 @@ blockquote {
   height: 37px;
   text-align: center;
 }
+.button.button-bub.bub {
+  border-radius: 20px/20px;
+  width: auto;
+  padding: 5px 10px;
+}
+
 .toolbar .button:hover, .toolbar .button.pop-out-shown,
 .button.button-bub:hover, .button.button-bub.pop-out-shown,
 #emoticons li:hover {
