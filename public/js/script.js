@@ -584,7 +584,7 @@ var TagEditor = (function() {
 		});
 	}
 	function createDisplayTagItem(name) {
-		norm.append('<li class="tag tag-' + namespace(name) + ' drop-down-holder popper" data-slug="' + name + '">\
+		return '<li class="tag tag-' + namespace(name) + ' drop-down-holder popper" data-slug="' + name + '">\
 			<a href="/tags/' + name + '"><span>' + name + '</span></a>\
 			<ul class="drop-down pop-out">\
 				<li class="action toggle" data-family="tag-flags" data-descriminator="hide" data-action="hide" data-target="tag" data-id="' + name + '">\
@@ -603,7 +603,7 @@ var TagEditor = (function() {
 						<span class="label">Watch</span>\
 				</li>\
 			</ul>\
-		</li>');
+		</li>';
 	}
 	function TagEditor(el) {
 		var self = this;
@@ -646,7 +646,7 @@ var TagEditor = (function() {
       } else if (e.which == KEY_BACKSPACE) {
         if (!handled_back) {
           handled_back = true;
-          var value = input.val();
+          var value = self.input.val();
           if (!value.length) {
             self.list.children('.tag').last().find('.remove').click();
           }
@@ -666,7 +666,6 @@ var TagEditor = (function() {
       e.stopPropagation();
     });
     var autocomplete = null;
-    var me = this;
     this.input.on('focus', function(e) {
       if (!autocomplete) autocomplete = setInterval(function() {
         var value = self.input.val();
@@ -675,12 +674,12 @@ var TagEditor = (function() {
           self.doSearch(value.trim().split(/,|;/).reverse()[0]);
         }
       }, 1000);
-      me.dom.addClass('focus');
+      self.dom.addClass('focus');
     });
     this.input.on('blur', function() {
       clearInterval(autocomplete);
       autocomplete = null;
-      me.dom.removeClass('focus');
+      self.dom.removeClass('focus');
     });
     el.on('mouseup', function(e) {
       self.input.focus();
@@ -752,7 +751,7 @@ var TagEditor = (function() {
 			if (this.norm) {
 				this.norm.html('');
 				for (var i = 0; i < this.tags.length; i++) {
-					createDisplayTagItem(this.tags[i]);
+					this.norm.append(createDisplayTagItem(this.tags[i]));
 				}
 			}
       if (this.target && this.id) {
