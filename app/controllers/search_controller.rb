@@ -61,7 +61,7 @@ class SearchController < ApplicationController
     @type = params[:type].to_i
     @ascending = params[:order] == '1'
     @orderby = params[:orderby].to_i
-    if params[:query]
+    if @query
       if @type == 1
         return render_search_results_json(Pagination.paginate(orderBy(Album.where('title LIKE ?', "%#{@query}%"), @type, @orderby), @page, 20, !@ascending), 'album')
       elsif @type == 2
