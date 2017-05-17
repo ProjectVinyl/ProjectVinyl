@@ -24,6 +24,13 @@ class SearchController < ApplicationController
       @query = @title_query = params[:query] || ""
     end
     
+    @data = URI.encode_www_form({
+      type: @type,
+      order: @ascending ? '1' : '0',
+      orderby: @orderby,
+      query: @query
+    })
+    
     if @type == 1
       @type_label= 'Album'
       @results = Album.where('title LIKE ?', "%#{@query}%")
@@ -56,7 +63,7 @@ class SearchController < ApplicationController
   end
   
   def page
-    @query = params[:tagquery]
+    @query = params[:query]
     @page = params[:page].to_i
     @type = params[:type].to_i
     @ascending = params[:order] == '1'

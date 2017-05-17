@@ -22,7 +22,6 @@
 	<% if @tags && @tags.length > 0 %>
 		<%= render partial: '/genre/set', locals: {tags: @tags} %>
 	<% end %>
-	<% @data = URI.encode_www_form(params) %>
 	<%= render layout: '/layouts/paginated', locals: {type: 'search',paginated: @results, id: "page"} do %>
 		<section class="search-result">
 			<% if @type == 0 %>
