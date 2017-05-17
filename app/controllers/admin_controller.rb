@@ -293,8 +293,10 @@ class AdminController < ApplicationController
           if table = table.where(id: params[params[:table]][:id]).first
             table.update_index(defer: false)
             flash[:notice] = "Success! Indexes for record #{params[:table]}.#{params[params[:table]][:id]} have been completed."
+            return redirect_to action: params[:table], id: params[params[:table]][:id]
           else
             flash[:notice] = "Error: Record #{params[:table]}.#{params[params[:table]][:id]} was not found."
+            return render status: 404, json: { ref: url_for(action: "view") }
           end
         else
           ans = Report.on(current_user, "Indexing table #{params[:table]}") do |report|
