@@ -1,4 +1,4 @@
-<li class="comment<% if comment.hidden %> deleted<% end %>" id="comment_<%= comment.get_open_id %>">
+<li class="comment<% if comment.hidden %> deleted<% end %>" id="comment_<%= comment.get_open_id %>" data-user="<%= comment.user.username %>">
 <% if comment.hidden %>
 	<div class="content">
 		Comment Hidden

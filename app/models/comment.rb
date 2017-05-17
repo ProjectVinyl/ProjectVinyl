@@ -93,10 +93,7 @@ class Comment < ActiveRecord::Base
   end
   
   def isUpvotedBy(user)
-    if user
-      return self.likes.where(user_id: user.id).limit(1).length > 0
-    end
-    return false
+    return user && self.likes.where(user_id: user.id).count > 0
   end
   
   def upvote(user, incr)
