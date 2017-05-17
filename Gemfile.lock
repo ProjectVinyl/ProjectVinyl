@@ -135,9 +135,6 @@ GEM
       sprockets (>= 3.0.0)
     thor (0.19.4)
     thread_safe (0.3.5)
-    turbolinks (5.0.1)
-      turbolinks-source (~> 5)
-    turbolinks-source (5.0.0)
     tzinfo (1.2.2)
       thread_safe (~> 0.1)
     tzinfo-data (1.2016.10)
@@ -166,7 +163,6 @@ DEPENDENCIES
   rails (= 4.2.7.1)
   rails-html-sanitizer
   sdoc (~> 0.4.0)
-  turbolinks
   tzinfo-data
   unicorn
   web-console (~> 2.0)
