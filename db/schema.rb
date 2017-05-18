@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170323081214) do
+ActiveRecord::Schema.define(version: 20170518065554) do
 
   create_table "album_items", force: :cascade do |t|
     t.integer  "album_id",   limit: 4
@@ -26,18 +26,18 @@ ActiveRecord::Schema.define(version: 20170323081214) do
   add_index "album_items", ["video_id"], name: "index_album_items_on_video_id", using: :btree
 
   create_table "albums", force: :cascade do |t|
-    t.string   "title",            limit: 765
-    t.text     "description",      limit: 16777215
-    t.datetime "created_at",                                        null: false
-    t.datetime "updated_at",                                        null: false
+    t.string   "title",            limit: 340
+    t.text     "description",      limit: 65535
+    t.datetime "created_at",                                     null: false
+    t.datetime "updated_at",                                     null: false
     t.integer  "user_id",          limit: 4
-    t.integer  "featured",         limit: 4
-    t.boolean  "hidden"
-    t.string   "safe_title",       limit: 765
-    t.text     "html_description", limit: 16777215
-    t.boolean  "reverse_ordering",                  default: false
-    t.integer  "ordering",         limit: 4,        default: 0
-    t.integer  "listing",          limit: 4,        default: 0
+    t.integer  "featured",         limit: 4,     default: 0
+    t.boolean  "hidden",                         default: false
+    t.string   "safe_title",       limit: 340
+    t.text     "html_description", limit: 65535
+    t.boolean  "reverse_ordering",               default: false
+    t.integer  "ordering",         limit: 4,     default: 0
+    t.integer  "listing",          limit: 4,     default: 0
   end
 
   add_index "albums", ["user_id"], name: "index_albums_on_user_id", using: :btree
@@ -72,19 +72,19 @@ ActiveRecord::Schema.define(version: 20170323081214) do
   end
 
   create_table "comment_threads", force: :cascade do |t|
-    t.string   "title",          limit: 765
+    t.string   "title",          limit: 340
     t.integer  "user_id",        limit: 4
-    t.integer  "owner_id",       limit: 4
-    t.string   "owner_type",     limit: 765
     t.datetime "created_at",                                 null: false
     t.datetime "updated_at",                                 null: false
+    t.integer  "owner_id",       limit: 4
+    t.string   "owner_type",     limit: 255
     t.boolean  "locked",                     default: false
     t.boolean  "pinned",                     default: false
     t.integer  "total_comments", limit: 4,   default: 0
-    t.string   "safe_title",     limit: 255
+    t.string   "safe_title",     limit: 340
   end
 
-  add_index "comment_threads", ["owner_type", "owner_id"], name: "index_comment_threads_on_owner_type_and_owner_id", length: {"owner_type"=>255, "owner_id"=>nil}, using: :btree
+  add_index "comment_threads", ["owner_type", "owner_id"], name: "index_comment_threads_on_owner_type_and_owner_id", using: :btree
 
   create_table "comment_votes", force: :cascade do |t|
     t.integer  "user_id",    limit: 4
@@ -96,23 +96,23 @@ ActiveRecord::Schema.define(version: 20170323081214) do
   create_table "comments", force: :cascade do |t|
     t.integer  "user_id",             limit: 4
     t.integer  "comment_thread_id",   limit: 4
-    t.text     "html_content",        limit: 16777215
-    t.text     "bbc_content",         limit: 16777215
-    t.datetime "created_at",                                           null: false
-    t.datetime "updated_at",                                           null: false
-    t.boolean  "hidden",                               default: false
-    t.integer  "o_comment_thread_id", limit: 4,        default: 0
+    t.text     "html_content",        limit: 65535
+    t.text     "bbc_content",         limit: 65535
+    t.datetime "created_at",                                        null: false
+    t.datetime "updated_at",                                        null: false
+    t.boolean  "hidden",                            default: false
+    t.integer  "o_comment_thread_id", limit: 4,     default: 0
     t.integer  "score",               limit: 4
   end
 
   create_table "notifications", force: :cascade do |t|
-    t.string   "message",    limit: 765
-    t.string   "source",     limit: 765
+    t.string   "message",    limit: 340
+    t.string   "source",     limit: 255
     t.integer  "user_id",    limit: 4
-    t.string   "sender",     limit: 765
+    t.string   "sender",     limit: 255
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.boolean  "unread"
+    t.boolean  "unread",                 default: true
   end
 
   create_table "pms", force: :cascade do |t|
@@ -126,8 +126,8 @@ ActiveRecord::Schema.define(version: 20170323081214) do
   end
 
   create_table "processing_workers", force: :cascade do |t|
-    t.boolean  "running"
-    t.string   "status",     limit: 765
+    t.boolean  "running",                     default: true
+    t.string   "status",     limit: 255,      default: ""
     t.text     "message",    limit: 16777215
     t.integer  "video_id",   limit: 4
     t.datetime "created_at"
@@ -138,16 +138,16 @@ ActiveRecord::Schema.define(version: 20170323081214) do
     t.integer  "video_id",                limit: 4
     t.integer  "user_id",                 limit: 4
     t.boolean  "resolved"
-    t.string   "first",                   limit: 765
-    t.string   "source",                  limit: 765
+    t.string   "first",                   limit: 340
+    t.string   "source",                  limit: 340
     t.boolean  "content_type_unrelated"
     t.boolean  "content_type_offensive"
     t.boolean  "content_type_disturbing"
     t.boolean  "content_type_explicit"
-    t.string   "copyright_holder",        limit: 765
-    t.text     "copyright_usage",         limit: 16777215
+    t.string   "copyright_holder",        limit: 340
+    t.text     "copyright_usage",         limit: 65535
     t.boolean  "copyright_accept"
-    t.string   "subject",                 limit: 765
+    t.string   "subject",                 limit: 340
     t.text     "other",                   limit: 16777215
     t.text     "name",                    limit: 16777215
     t.text     "contact",                 limit: 16777215
@@ -160,9 +160,9 @@ ActiveRecord::Schema.define(version: 20170323081214) do
     t.integer  "tag_id",     limit: 4
     t.integer  "user_id",    limit: 4
     t.boolean  "added"
-    t.string   "value",      limit: 255
     t.datetime "created_at",             null: false
     t.datetime "updated_at",             null: false
+    t.string   "value",      limit: 255
   end
 
   create_table "tag_implications", force: :cascade do |t|
@@ -186,16 +186,16 @@ ActiveRecord::Schema.define(version: 20170323081214) do
   end
 
   create_table "tag_types", force: :cascade do |t|
-    t.string "prefix", limit: 765
+    t.string "prefix", limit: 255
   end
 
   create_table "tags", force: :cascade do |t|
-    t.string  "name",        limit: 255
-    t.string  "short_name",  limit: 765
+    t.string  "name",        limit: 255,      default: ""
     t.text    "description", limit: 16777215
     t.integer "tag_type_id", limit: 4
-    t.integer "video_count", limit: 4
-    t.integer "user_count",  limit: 4
+    t.string  "short_name",  limit: 255,      default: ""
+    t.integer "video_count", limit: 4,        default: 1
+    t.integer "user_count",  limit: 4,        default: 1
     t.integer "alias_id",    limit: 4
   end
 
@@ -217,31 +217,31 @@ ActiveRecord::Schema.define(version: 20170323081214) do
   end
 
   create_table "users", force: :cascade do |t|
-    t.string   "email",                  limit: 255,                      null: false
-    t.string   "encrypted_password",     limit: 255,                      null: false
+    t.string   "email",                  limit: 255,   default: "",    null: false
+    t.string   "encrypted_password",     limit: 255,   default: "",    null: false
     t.string   "reset_password_token",   limit: 255
     t.datetime "reset_password_sent_at"
     t.datetime "remember_created_at"
-    t.integer  "sign_in_count",          limit: 4,        default: 0,     null: false
+    t.integer  "sign_in_count",          limit: 4,     default: 0,     null: false
     t.datetime "current_sign_in_at"
     t.datetime "last_sign_in_at"
     t.string   "current_sign_in_ip",     limit: 255
     t.string   "last_sign_in_ip",        limit: 255
-    t.datetime "created_at",                                              null: false
-    t.datetime "updated_at"
-    t.integer  "notification_count",     limit: 4,        default: 0
-    t.string   "username",               limit: 255
-    t.string   "safe_name",              limit: 255
-    t.text     "description",            limit: 16777215
-    t.text     "bio",                    limit: 16777215
+    t.datetime "created_at",                                           null: false
+    t.datetime "updated_at",                                           null: false
+    t.integer  "notification_count",     limit: 4,     default: 0
+    t.string   "username",               limit: 340
+    t.string   "safe_name",              limit: 340
+    t.text     "description",            limit: 65535
+    t.text     "bio",                    limit: 65535
     t.string   "mime",                   limit: 255
-    t.boolean  "banner_set",                              default: false, null: false
+    t.boolean  "banner_set",                           default: false, null: false
     t.integer  "tag_id",                 limit: 4
     t.integer  "star_id",                limit: 4
-    t.text     "html_description",       limit: 16777215
-    t.text     "html_bio",               limit: 16777215
-    t.integer  "feed_count",             limit: 4,        default: 0,     null: false
-    t.integer  "role",                   limit: 4,        default: 0,     null: false
+    t.text     "html_description",       limit: 65535
+    t.text     "html_bio",               limit: 65535
+    t.integer  "feed_count",             limit: 4,     default: 0,     null: false
+    t.integer  "role",                   limit: 4,     default: 0,     null: false
     t.string   "preferences",            limit: 255
     t.string   "confirmation_token",     limit: 255
     t.datetime "confirmed_at"
@@ -265,29 +265,29 @@ ActiveRecord::Schema.define(version: 20170323081214) do
   add_index "video_genres", ["video_id"], name: "index_video_genres_on_video_id", using: :btree
 
   create_table "videos", force: :cascade do |t|
-    t.string   "title",             limit: 765
-    t.text     "description",       limit: 16777215
+    t.string   "title",             limit: 340
+    t.text     "description",       limit: 65535
     t.boolean  "audio_only"
-    t.string   "mime",              limit: 765
-    t.string   "file",              limit: 765
+    t.string   "mime",              limit: 255
+    t.string   "file",              limit: 255
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "upvotes",           limit: 4
     t.integer  "downvotes",         limit: 4
     t.integer  "length",            limit: 4
-    t.integer  "score",             limit: 4
-    t.boolean  "hidden"
-    t.integer  "views",             limit: 4
+    t.integer  "score",             limit: 4,     default: 0
+    t.boolean  "hidden",                          default: false
+    t.integer  "views",             limit: 4,     default: 0
     t.boolean  "processed"
-    t.string   "source",            limit: 765
+    t.string   "source",            limit: 340
     t.integer  "user_id",           limit: 4
-    t.string   "safe_title",        limit: 765
+    t.string   "safe_title",        limit: 340
     t.integer  "comment_thread_id", limit: 4
-    t.text     "html_description",  limit: 16777215
-    t.boolean  "featured",                           default: false
+    t.text     "html_description",  limit: 65535
+    t.boolean  "featured",                        default: false
     t.string   "checksum",          limit: 32
     t.integer  "heat",              limit: 4
-    t.integer  "duplicate_id",      limit: 4,        default: 0
+    t.integer  "duplicate_id",      limit: 4,     default: 0
     t.datetime "cached_at"
   end
 
