@@ -47,6 +47,11 @@ Rails.application.routes.draw do
   post 'ajax/user/togglebadge/:badge_id' => 'admin#togglebadge'
   post 'ajax/user/role/:role' => 'admin#role'
   
+  post 'ajax/tagtype/update' => 'genre_admin#update'
+  post 'ajax/tagtype/create' => 'genre_admin#create'
+  post 'ajax/tagtype/delete/:id' => 'genre_admin#delete'
+  get 'ajax/tagtype/new' => 'genre_admin#new'
+  
   # Filters #
   get 'filters' => 'feed#edit'
   patch 'filters' => 'feed#update'

@@ -1,0 +1,44 @@
+<%= form_for(item, as: 'tag_type', url: '/ajax/tagtype/update', method: 'post', html: {class: "row row-group removeable state-binary tag-#{item.prefix}"}) do |f| %>
+	<%= f.text_field :id, hidden: true %>
+	<div class="row">
+		<div style="width:30px">
+		<a class="button button-bub state-toggle" data-state="editing" data-parent="form">
+			<i class="fa fa-pencil"></i>
+		</a>
+		</div>
+		<div>
+			<%= item.prefix %>:
+		</div>
+		<div><%= number_with_delimiter item.referrers.count %></div>
+		<div>
+			<ul class="tags">
+				<%= render partial: "layouts/genre_thumb_h", collection: item.tags %>
+			</ul>
+		</div>
+	</div>
+	<div class="editing row row-spanned">
+		<div class="content properties">
+			<table>
+				<tr>
+					<td class="label"><%= f.label :prefix %></td>
+					<td class="field"><%= f.text_field :prefix %></td>
+				</tr>
+				<tr>
+					<td class="label">Implications</td>
+					<td class="field">
+						<%= render layout: 'layouts/tageditor', locals: { tags: item.tags } do %>
+							<%= f.text_area :tag_string %>
+						<% end %>
+					</td>
+				</tr>
+				<tr class="actions">
+					<td class="label">
+					<td class="label">
+						<button type="button" class="confirm-button red action right" data-action="remove" data-url="tagtype/delete/<%= item.id %>" data-title="Delete Tag Type" data-msg="You are about to delete a sag type. Any related tags will lose their typing information and may have to be reassigned should you want to undo this." data-icon="warning"><i class="fa fa-trash"></i> Delete</button>
+						<button class="green left"><i class="fa fa-save"></i> Save</button>
+					</td>
+				</tr>
+			</table>
+		</div>
+	</div>
+<% end %>

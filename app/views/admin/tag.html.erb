@@ -9,9 +9,19 @@
 	<table>
 		<tr>
 			<td class="label">Domain</td>
+			<% if @prefix == 'artist' && @user %>
 			<td class="field" title="this cannot be changed">
 				<%= @prefix %>
 			</td>
+			<% else %>
+			<td class="field">
+				<span class="search-options">
+					<label>
+						<%= f.select :tag_type_id, TagType.all.pluck(:prefix, :id), include_blank: '[none]' %>
+					</label>
+				</span>
+			</td>
+			<% end %>
 		</tr>
 		<tr>
 			<td class="label"><%= f.label :name %></td>

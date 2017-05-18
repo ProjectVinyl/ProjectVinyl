@@ -1,0 +1,24 @@
+<%= form_for(@tagtype, as: 'tag_type', url: '/ajax/tagtype/create', method: 'post') do |f| %>
+	<div class="message_content">
+		<div class="properties">
+			<table>
+				<tr>
+					<td class="label"><%= f.label :prefix %></td>
+					<td class="field"><%= f.text_field :prefix %></td>
+				</tr>
+				<tr>
+					<td class="label">Implications</td>
+					<td class="field">
+						<%= render layout: 'layouts/tageditor', locals: { tags: nil } do %>
+							<%= f.text_area :tag_string %>
+						<% end %>
+					</td>
+				</tr>
+			</table>
+		</div>
+	</div>
+	<div class="foot">
+		<%= f.submit "Save", class: "green" %>
+		<button class="right cancel" type="button">Cancel</button>
+	</div>
+<% end %>

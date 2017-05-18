@@ -64,7 +64,7 @@
 </div>
 <div class="wrapper column-span">
 	<section style="width:100%" class="page recent-uploads resize-holder">
-		<h1 class="title resize-target">Unprocessed Videos (<%= @unprocessed.count %>)</h1>
+		<h1 class="title resize-target">Unprocessed Videos (<%= number_with_delimiter @unprocessed.count %>)</h1>
 		<% if @unprocessed.count > 0 %>
 		<%= render layout: '/layouts/paginated', locals: {type: "admin/videos/unprocessed", paginated: @unprocessed, id: "unprocessed"} do %>
 			<ul id="videos" class="horizontal video-list">
@@ -72,7 +72,7 @@
 			</ul>
 		<% end %>
 		<% end %>
-		<h1 class="title resize-target">Open Reports (<%= @reports.count %>)</h1>
+		<h1 class="title resize-target">Open Reports (<%= number_with_delimiter @reports.count %>)</h1>
 		<% if @reports.count > 0 %>
 		<%= render layout: '/layouts/paginated', locals: {type: "admin/videos/hidden", paginated: @reports, id: "hidden"} do %>
 		<ul id="reports" class="report-list">
@@ -87,7 +87,7 @@
 		</ul>
 		<% end %>
 		<% end %>
-		<h1 class="title resize-target">Hidden Videos (<%= @hiddenvideos.count %>)</h1>
+		<h1 class="title resize-target">Hidden Videos (<%= number_with_delimiter @hiddenvideos.count %>)</h1>
 		<% if @hiddenvideos.count > 0 %>
 		<%= render layout: '/layouts/paginated', locals: {type: "admin/videos/hidden", paginated: @hiddenvideos, id: "hidden"} do %>
 			<ul id="videos" class="horizontal video-list">

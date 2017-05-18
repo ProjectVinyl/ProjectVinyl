@@ -163,10 +163,13 @@ class Tag < ActiveRecord::Base
   
   def self.send_pickup_event(reciever, tags)
     tags = tags.uniq
-    map = tags.map do |o|
-      {tag_id: o, o_tag_id: o}
+    reciever = reciever.pick_up_tags(tags)
+    if !reciever.nil?
+      map = tags.map do |o|
+        {tag_id: o, o_tag_id: o}
+      end
+      reciever.create(map)
     end
-    reciever.pick_up_tags(tags).create(map)
   end
   
   def self.addTag(tag_name, sender)

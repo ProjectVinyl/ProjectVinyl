@@ -579,8 +579,9 @@ var TagEditor = (function() {
 		var space = namespace(name);
 		var item = $('<li class="tag tag-' + space + '" data-slug="' + name.replace(space + ':', '') + '"><i title="Remove Tag" data-name="' + name + '" class="fa fa-times remove"></i><a href="/tags/' + name + '">' + name + '</a></li>');
 		ed.list.append(item);
-		item.find('.remove').on('click', function() {
+		item.find('.remove').on('click', function(e) {
 			ed.removeTag(item, name);
+      e.stopPropagation();
 		});
 	}
 	function createDisplayTagItem(name) {
@@ -1221,18 +1222,35 @@ var shares = {
     var callback = me.attr('data-callback');
     var max_width = me.attr('data-max-width');
     var popup;
-    if (action == 'delete') {
+    if (action == 'delete' || action == 'remove') {
       if (!popup) {
         popup = new Popup(me.attr('data-title'), me.attr('data-icon'), function() {
-          this.content.append('<div class="message_content">Are you sure?</div><div class="foot"></div>');
+          this.content.append('<div class="message_content"></div><div class="foot"></div>');
+          this.content.message_content = this.content.find('.message_content');
+          var msg = me.attr('data-msg');
+          if (msg) {
+            this.content.message_content.text(msg);
+            this.content.message_content.append('<br/><br/>');
+          }
+          this.content.message_content.append('Are you sure you want to continue?');
+          
           var ok = $('<button class="button-fw green">Yes</button>');
           var cancel = $('<button class="cancel button-fw blue" style="margin-left:20px;" type="button">No</button>');
           ok.on('click', function() {
             ajax.post(url, function(json) {
-              if (json.ref) {
-                document.location.replace(json.ref);
-              } else if (callback) {
-                window[callback](id, json);
+              if (action == 'remove') {
+                var removeable = me.parents('.removeable');
+                if (removeable.hasClass('repaintable')) {
+                  paginator.repaint(removeable.closest('.paginator'), json);
+                } else {
+                  removeable.remove();
+                }
+              } else {
+                if (json.ref) {
+                  document.location.replace(json.ref);
+                } else if (callback) {
+                  window[callback](id, json);
+                }
               }
             });
             popup.close();
@@ -1245,6 +1263,7 @@ var shares = {
           this.content.foot.append(ok);
           this.content.foot.append(cancel);
           this.setPersistent();
+          this.setWidth(400);
           this.show();
         });
       } else {
@@ -1338,15 +1357,19 @@ var shares = {
     });
   });
   $(document).on('click', '.removeable .remove', function(e) {
-    var me = $(this).parent();
+    var me = $(this).parents('.removeable');
     if (me.hasClass('repaintable')) {
       ajax.post('delete/' + me.attr('data-target'), function(json) {
         paginator.repaint(me.closest('.paginator'), json);
       }, false, { id: me.attr('data-id') });
     } else {
-      ajax.post('delete/' + me.attr('data-target'), function() {
+      if (me.attr('data-target')) {
+        ajax.post('delete/' + me.attr('data-target'), function() {
+          me.remove();
+        }, true, { id: me.attr('data-id') });
+      } else {
         me.remove();
-      }, true, { id: me.attr('data-id') });
+      }
     }
     e.preventDefault();
     e.stopPropagation();
@@ -1571,6 +1594,10 @@ var Popup = (function() {
       this.fixed = true;
       this.container.css('position', 'fixed');
       return this;
+    },
+    setWidth: function(width) {
+      this.content.css('max-width', width);
+      return this;
     }
   };
   return Popup;
@@ -1732,6 +1759,7 @@ function error(message) {
       me.close();
     });
     this.content.find('.foot').append(ok);
+    this.setWidth(400);
     this.show();
   });
 }
@@ -2099,8 +2127,11 @@ $(document).on('click', '.state-toggle', function(ev) {
   ev.preventDefault();
   var me = $(this);
   var state = me.attr('data-state');
-  me.parent().toggleClass(state);
-  me.text(me.attr('data-' + me.parent().hasClass(state)));
+  var parent = me.attr('data-parent');
+  parent = parent ? me.closest(parent) : me.parent();
+  parent.toggleClass(state);
+  me.text(me.attr('data-' + parent.hasClass(state)));
+  me.trigger('toggle');
 });
 $(document).on('click', '.reply-comment', function() {
   replyTo(this);
@@ -2223,5 +2254,18 @@ $('#search select').on('change', function() {
 		$('#search input').attr({name: 'query', placeholder: 'Search'});
 	}
 });
-
+(function() {
+  function sizeSpannedBlocks() {
+    $('.row.row-spanned > .content').each(function() {
+      var me = $(this);
+      me.parent().css('height', me.children().height());
+    });
+  }
+  if ($('.row.row-spanned').length) {
+    $('.state-toggle').on('toggle', sizeSpannedBlocks);
+    $('.row.row-spanned input, .row.row-spanned textarea').on('keyup', sizeSpannedBlocks);
+    $(window).on('resize', sizeSpannedBlocks);
+    $('.row.row-spanned .tag-editor').on('tagschange', sizeSpannedBlocks);
+  }
+})();
 $(document).trigger('envload');
