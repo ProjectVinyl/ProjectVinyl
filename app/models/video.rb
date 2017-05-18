@@ -55,7 +55,7 @@ class Video < ActiveRecord::Base
   def self.randomVideos(selection, limit)
     selection = selection.pluck(:id)
     if !selection || selection.length == 0
-      return []
+      return {ids: [], videos: []}
     end
     if selection.length < limit
       selected = selection
