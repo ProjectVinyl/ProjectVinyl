@@ -206,8 +206,8 @@ module ApplicationHelper
     s && s.length > 0
   end
   
-  def valid_string(s)
-    ApplicationHelper.valid_string(s)
+  def valid_string?(s)
+    ApplicationHelper.valid_string?(s)
   end
   
   def safe_to_display(num, max)
