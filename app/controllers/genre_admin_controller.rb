@@ -15,7 +15,7 @@ class GenreAdminController < ApplicationController
     end
     
     if tagtype = TagType.where(id: params[:tag_type][:id]).first
-      if error = tagtype.set_prefix(params[:tag_type][:prefix])
+      if error = tagtype.set_metadata(params[:tag_type][:prefix], params[:tag_type][:hidden] == '1')
         flash[:error] = error
       end
       Tag.loadTags(params[:tag_type][:tag_string], tagtype)
@@ -30,6 +30,7 @@ class GenreAdminController < ApplicationController
     if !user_signed_in? || !current_user.is_contributor?
       return render status: 403, nothing: true
     end
+    
     @tagtype = TagType.new
     render partial: 'new'
   end
@@ -38,6 +39,21 @@ class GenreAdminController < ApplicationController
     if !user_signed_in? || !current_user.is_contributor?
       return render status: 403, nothing: true
     end
+    prefix = Tag.sanitize_name(params[:tag_type][:prefix])
+    if !ApplicationHelper.valid_string?(prefix)
+      flash[:error] = "Error: Prefix cannot be blank/null"
+    else
+      if TagType.where(prefix: prefix).count > 0
+        flash[:error] = "Error: A tagtype with that prefix already exists"
+      else
+        tagtype = TagType.create({
+          prefix: prefix, hidden: params[:tag_type][:hidden] == '1'
+        })
+        Tag.loadTags(params[:tag_type][:tag_string], tagtype)
+        tagtype.find_and_assign
+      end
+    end
+    redirect_to 'view'
   end
   
   def delete

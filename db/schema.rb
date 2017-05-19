@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170518065554) do
+ActiveRecord::Schema.define(version: 20170519080059) do
 
   create_table "album_items", force: :cascade do |t|
     t.integer  "album_id",   limit: 4
@@ -186,7 +186,8 @@ ActiveRecord::Schema.define(version: 20170518065554) do
   end
 
   create_table "tag_types", force: :cascade do |t|
-    t.string "prefix", limit: 255
+    t.string  "prefix", limit: 255
+    t.boolean "hidden",             default: true
   end
 
   create_table "tags", force: :cascade do |t|

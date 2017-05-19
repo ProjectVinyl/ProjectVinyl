@@ -256,8 +256,8 @@ class Tag < ActiveRecord::Base
   end
   
   def namespace
-    if self.name.index(':')
-      return self.name.split(':')[0]
+    if self.has_type
+      return self.tag_type.prefix
     end
     return ''
   end
@@ -284,11 +284,15 @@ class Tag < ActiveRecord::Base
   def set_name(name)
     name = Tag.sanitize_name(name)
     if self.has_type
-      name = self.tag_type.prefix + ":" + name.sub(self.tag_type.prefix + ':', '').gsub(':','')
+      if self.tag_type.hidden
+        name = name.sub(self.tag_type.prefix + ':', '').gsub(':','')
+      else
+        name = self.tag_type.prefix + ":" + name.sub(self.tag_type.prefix + ':', '').gsub(':','')
+      end
     else
       name = name.gsub(':','')
     end
-    if Tag.where('name = ? AND id != ?', name, self.id).count > 0
+    if Tag.where('name = ? AND NOT id = ?', name, self.id).count > 0
       return false
     end
     self.short_name = ApplicationHelper.url_safe_for_tags(name)

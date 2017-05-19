@@ -4,26 +4,31 @@ class TagType < ActiveRecord::Base
   
   has_many :referrers, class_name: "Tag"
   
-  def set_prefix(s)
+  def set_metadata(s, h)
     s = Tag.sanitize_name(s)
     if !ApplicationHelper.valid_string?(s)
       return "Error: Prefix cannot be blank/null"
+    end
+    if self.hidden != h
+      self.hidden = h
     end
     if self.prefix != s
       if TagType.where(prefix: s).count > 0
         return "Duplicate error: A tag type with that prefix already exists."
       end
       self.prefix = s
-      self.save
-      self.find_and_assign
     end
+    self.save
+    self.find_and_assign
     return false
   end
   
   def find_and_assign
-    Tag.where('name LIKE ?', self.prefix + ':%').update_all(tag_type_id: self.id)
-    Tag.where(tag_type_id: self.id).each do |tag|
-      tag.set_name(tag.name)
+    Tag.transaction do
+      Tag.where('name LIKE ?', self.prefix + ':%').update_all(tag_type_id: self.id)
+      Tag.where(tag_type_id: self.id).each do |tag|
+        tag.set_name(tag.name)
+      end
     end
   end
   

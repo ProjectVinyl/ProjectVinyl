@@ -3058,6 +3058,13 @@ span.active-icon {
 .tag-spoiler a, .tag-spoiler span {
   color: #e97136;
 }
+.tag-character {
+    background: #e6eeef;
+    border-color: #46a0b4;
+}
+.tag-character a, .tag-character span {
+    color: #46a0b4;
+}
 
 .tag[data-slug="artist needed"], .tag[data-slug="source needed"] {
   background: #f99;

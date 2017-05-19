@@ -7,6 +7,16 @@
 					<td class="field"><%= f.text_field :prefix %></td>
 				</tr>
 				<tr>
+					<td class="label"><%= f.label :hidden %></td>
+					<td class="field">
+						<label class="button blue">
+							<%= f.check_box :hidden %>
+								<i class="fa fa-check"></i>
+								Hide prefix in tag name
+						</label>
+					</td>
+				</tr>
+				<tr>
 					<td class="label">Implications</td>
 					<td class="field">
 						<%= render layout: 'layouts/tageditor', locals: { tags: nil } do %>
