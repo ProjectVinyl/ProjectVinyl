@@ -287,7 +287,7 @@ class User < ActiveRecord::Base
   def stars
     if self.album.nil?
       self.album = self.create_album(
-        owner_id: self.id,
+        user_id: self.id,
         title: 'Starred Videos',
         safe_title: 'Starred-Videos',
         description: 'My Favourites',
