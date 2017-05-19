@@ -1,7 +1,7 @@
 class Comment < ActiveRecord::Base
   REPLY_MATCHER = /(?<=\>\>|&gt;&gt;)[1234567890abcdefghijklmnopqrstuvwxyz]+(?= |\s|\n|$)/
   MENTION_MATCHER = /(?<=@)[^\s\[\<]+(?= |\s|\s|$)/
-  QUOTED_TEXT = /\[q\][^\]]*\[\/q\]/
+  QUOTED_TEXT = /\[q\].*\[\/q\]?/m
   
   belongs_to :comment_thread
   belongs_to :direct_user, class_name: "User", foreign_key: "user_id"
@@ -54,7 +54,7 @@ class Comment < ActiveRecord::Base
   
   def self.extract_mentions(bbc, sender, title, location)
     recievers = []
-    bbc.gsub(QUOTED_TEXT, '').scan(MENTION_MATCHER) do |match|
+    bbc.scan(MENTION_MATCHER) do |match|
       match_two = ApplicationHelper.url_safe(match)
       match_four = ApplicationHelper.url_safe(match.underscore)
       if sender.private_message?
