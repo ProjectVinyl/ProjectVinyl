@@ -1376,6 +1376,11 @@ var shares = {
   });
 })();
 var Popup = (function() {
+  var INSTANCES = [];
+  var win = $(window);
+  win.on('resize', function() {
+    for (var i = INSTANCES.length; i--;) INSTANCES[i].resize();
+  });
   function Popup(title, icon, construct) {
     this.container = $('<div class="popup-container"></div>');
     this.dom = $('<div class="popup"><h1>' + title + '<a class="close" /></h1>');
@@ -1408,12 +1413,15 @@ var Popup = (function() {
       ev.stopPropagation();
 		});
     if (construct) construct.apply(this);
+    this.id = INSTANCES.length;
+    INSTANCES.push(this);
     return this;
   }
   Popup.ScriptedEvents = { };
   Popup.fetch = function(resource, title, icon, thin, loaded_func) {
     return (new Popup(title, icon, function() {
       this.content.html('<div class="loader"><i class="fa fa-pulse fa-spinner" /></div>');
+      this.thin = thin;
       if (thin) this.container.addClass('thin');
       var me = this;
       ajax(resource, function(xml, type, ev) {
@@ -1482,8 +1490,8 @@ var Popup = (function() {
       }
     },
     center: function() {
-      this.x = ($(window).width() - this.container.width())/2 + $(window).scrollLeft();
-      this.y = ($(window).height() - this.container.height())/2 + $(window).scrollTop();
+      this.x = (win.width() - this.container.width())/2 + win.scrollLeft();
+      this.y = (win.height() - this.container.height())/2 + win.scrollTop();
       this.move(this.x, this.y);
     },
     bob: function(reverse, callback) {
@@ -1526,6 +1534,7 @@ var Popup = (function() {
       this.bob(1, function(me) {
         if (!me.persistent) {
           me.container.remove();
+          INSTANCES.splice(this.id, 1);
         } else {
           me.container.css('display', 'none');
         }
@@ -1575,17 +1584,24 @@ var Popup = (function() {
         this.dragging = null;
       }
     },
+    resize: function() {
+      if (this.thin) {
+        this.center();
+      } else {
+        this.move(this.x, this.y);
+      }
+    },
     move: function(x, y) {
-      var scrollX = $(window).scrollLeft();
-      var scrollY = $(window).scrollTop();
+      var scrollX = win.scrollLeft();
+      var scrollY = win.scrollTop();
       if (this.fixed) {
         x -= scrollX;
         y -= scrollY;
         scrollX = 0;
         scrollY = 0;
       }
-      if (x > $(window).width() - this.container.width() + scrollX) x = $(window).width() - this.container.width() + scrollX;
-      if (y > $(window).height() - this.container.height() + scrollY) y = $(window).height() - this.container.height() + scrollY;
+      if (x > win.width() - this.container.width() + scrollX) x = win.width() - this.container.width() + scrollX;
+      if (y > win.height() - this.container.height() + scrollY) y = win.height() - this.container.height() + scrollY;
       if (y < 0) y = 0;
       if (x < 0) x = 0;
       this.container.css({top: this.y = y, left: this.x = x});
