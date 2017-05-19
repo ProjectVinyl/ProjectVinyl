@@ -39,26 +39,26 @@
 <div class="wrapper column-right right">
 	<section style="width:100%" class="page">
 		<div class="actions">
-			<a class="button" href="/users"><i class="fa fa-users"></i> Users</a>
-			<a class="button" href="/admin/files?p=encoding"><i class="fa fa-file-code-o"></i> Encoding Folder</a>
-			<a class="button" href="/admin/files?p=public"><i class="fa fa-file-video-o"></i> Public Storage Folder</a>
-			<a class="button" href="/admin/files?p=private"><i class="fa fa-file-video-o"></i> Private Storage Folder</a>
+			<a class="button" href="/users"><i class="fa fa-users"></i> Users</a
+			><a class="button" href="/admin/files?p=encoding"><i class="fa fa-file-code-o"></i> Encoding Folder</a
+			><a class="button" href="/admin/files?p=public"><i class="fa fa-file-video-o"></i> Public Storage Folder</a
+			><a class="button" href="/admin/files?p=private"><i class="fa fa-file-video-o"></i> Private Storage Folder</a>
 		</div>
 		<% if current_user.is_admin? %>
 		<hr>
 		<div class="actions">
-			<button class="confirm-button action red" data-action="delete" data-url="admin/reindex/video" data-title="Reindex Videos" data-icon="warning" type="button">Force Index Videos</button>
-			<button class="confirm-button action red" data-action="delete" data-url="admin/reindex/user" data-title="Reindex Users" data-icon="warning" type="button">Force Index Users</button>
-				<button class="confirm-button action red" data-action="delete" data-url="admin/hidden/drop" data-title="Drop <%= @hiddenvideos.count %> Videos" data-icon="warning" type="button">Delete Unlisted Videos</button>
+			<button class="confirm-button action red" data-action="delete" data-url="admin/reindex/video" data-title="Reindex Videos" data-icon="warning" type="button">Force Index Videos</button
+			><button class="confirm-button action red" data-action="delete" data-url="admin/reindex/user" data-title="Reindex Users" data-icon="warning" type="button">Force Index Users</button
+			><button class="confirm-button action red" data-action="delete" data-url="admin/hidden/drop" data-title="Drop <%= @hiddenvideos.count %> Videos" data-icon="warning" type="button">Delete Unlisted Videos</button>
 		</div>
 		<% end %>
 	</section>
 	<section style="width:100%" class="page resize-holder">
 		<h1>Videos & Tagging</h1>
 		<div class="actions">
-			<a class="button" href="/videos?unlisted=1"><i class="fa fa-eye-slash"></i> Unlisted Videos</a>
-			<a class="button" href="/videos?merged=1"><i class="fa fa-compress"></i> Merged Videos</a>
-			<a class="button" href="/admin/tags"><i class="fa fa-tags"></i> Tag Types</a>
+			<a class="button" href="/videos?unlisted=1"><i class="fa fa-eye-slash"></i> Unlisted Videos</a
+			><a class="button" href="/videos?merged=1"><i class="fa fa-compress"></i> Merged Videos</a
+			><a class="button" href="/admin/tags"><i class="fa fa-tags"></i> Tag Types</a>
 		</div>
 	</section>
 </div>

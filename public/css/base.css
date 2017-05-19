@@ -397,9 +397,12 @@ table {
   content: '@';
 }
 
-.actions .button, .actions button {
-  margin-left: 4px;
-  margin-bottom: 4px;
+.actions > .button, .actions > button, .actions > .split-button {
+  margin-right: 4px;
+  margin-top: 4px;
+}
+.actions > .button:last-child, .actions > button:last-child, .actions > .split-button:last-child {
+  margin-right: 0px;
 }
 
 .hovercard.shown {
