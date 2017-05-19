@@ -1520,7 +1520,7 @@ var Popup = (function() {
       });
       this.container.css('display', '');
       $('body').append(this.container);
-      if (this.x <= 0 || this.y <= 0) {
+      if (this.thin || this.x <= 0 || this.y <= 0) {
         this.center();
       }
       this.fade = $('<div style="opacity:0" />');
