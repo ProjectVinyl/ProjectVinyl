@@ -1518,6 +1518,11 @@ blockquote {
   border: dotted 1px #eee;
 }
 
+.img img {
+  max-width: 100%;
+  vertical-align: bottom;
+}
+
 .spoiler {
   padding: 1px;
   display: inline-block;

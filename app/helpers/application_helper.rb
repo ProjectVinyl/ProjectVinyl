@@ -80,7 +80,7 @@ module ApplicationHelper
   end
   
   def assets_version
-    6
+    7
   end
   
   def self.emotify(text)

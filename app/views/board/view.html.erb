@@ -1,38 +1,35 @@
 <% title @board.title.to_s + " Forums" %>
 <% if @modificationsAllowed %>
-<h1>
+<h1 class="title">
 	<a href="/">Home</a> <i class="fa fa-chevron-right"></i> <a href="/forum">Forum</a> <i class="fa fa-chevron-right"></i> 
 	<span class="editable short inline title" data-target="board" data-member="title" data-id="<%= @board.id %>">
 		<span class="content"><%= @board.title %></span>
 		<span class="edit"><i class="fa fa-pencil"></i></span>
 	</span>
 </h1>
+<% else %>
+<h1 class="title">
+	<a href="/">Home</a> <i class="fa fa-chevron-right"></i> <a href="/forum">Forum</a> <i class="fa fa-chevron-right"></i> <%= @board.title %>
+</h1>
+<% end %>
 <div class="actions space-fix">
+<% if user_signed_in? %>
 	<% if current_user.is_contributor? %>
-	<button class="confirm-button action mobile-friendly red" data-action="delete" data-url="delete/board/<%= @board.id %>" data-title="Delete Board" data-icon="warning" type="button">
+	<button class="confirm-button action mobile-friendly red" data-action="delete" data-url="delete/board/<%= @board.id %>" data-msg="Any threads inside this board will be lost." data-title="Delete Board" data-icon="warning" type="button">
 		<i class="fa fa-trash"></i>
 		<span> Delete Board</span>
 	</button>
 	<% end %>
-	<% if user_signed_in? %>
-		<button class="confirm-button action mobile-friendly green" data-action="create" data-url="thread/new?board=<%= @board.id %>" data-title="New Thread" data-icon="pencil" type="button">
-			<i class="fa fa-plus"></i>
-			<span> New Thread</span>
-		</button>
-	<% end %>
+	<button class="confirm-button action mobile-friendly green" data-action="create" data-url="thread/new?board=<%= @board.id %>" data-title="New Thread" data-icon="pencil" type="button">
+		<i class="fa fa-plus"></i>
+		<span> New Thread</span>
+	</button>
+<% end %>
 	<a class="button blue mobile-friendly right" href="/forum/search?category=<%= @board.id %>">
 		<i class="fa fa-search"></i>
 		<span> Find Post</span>
 	</a>
 </div>
-<% else %>
-<h1 class="title">
-	<a href="/">Home</a> <i class="fa fa-chevron-right"></i> <a href="/forum">Forum</a> <i class="fa fa-chevron-right"></i> <%= @board.title %>
-</h1>
-<div class="actions space-fix">
-	<a class="button blue right" href="/forum/search?category=<%= @board.id %>"><i class="fa fa-search"></i> Find Post</a>
-</div>
-<% end %>
 <hr>
 <section class="page" style="width: 100%">
 	<h1>Topics (<%= number_with_delimiter @threads.count %>)</h1>
