@@ -1161,7 +1161,6 @@ label[disabled] span::after {
 .search-result {
   min-height: 500px;
   margin: 10px 0;
-  overflow: hidden;
 }
 
 button, .button, .foobar, input[type=submit] {
@@ -1589,9 +1588,6 @@ blockquote {
 }
 .comment.basic > .content {
   margin-left: 0;
-}
-.comment.highlight > .content blockquote {
-  background: rgba(0,250,250, 1.3);
 }
 .comment.highlight > .content {
   border-color: rgb(204,204,255);
