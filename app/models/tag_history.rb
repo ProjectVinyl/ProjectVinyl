@@ -11,7 +11,7 @@ class TagHistory < ActiveRecord::Base
     video = video.id
     entries = []
     added_tags.each do |i|
-      entires << {tag_id: i, video_id: video, user_id: 0, added: true}
+      entries << {tag_id: i, video_id: video, user_id: 0, added: true}
     end
     removed_tags.each do |i|
       entries << {tag_id: i, video_id: video, user_id: 0, added: false}
@@ -24,7 +24,7 @@ class TagHistory < ActiveRecord::Base
     video = video.id
     entries = []
     added_tags.each do |i|
-      entires << {tag_id: i, video_id: video, user_id: user, added: true}
+      entries << {tag_id: i, video_id: video, user_id: user, added: true}
     end
     removed_tags.each do |i|
       entries << {tag_id: i, video_id: video, user_id: user, added: false}

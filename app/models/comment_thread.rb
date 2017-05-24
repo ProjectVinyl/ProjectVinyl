@@ -70,7 +70,7 @@ class CommentThread < ActiveRecord::Base
   end
   
   def subscribed?(user)
-    return user && (self.thread_subscriptions.where(user_id: user.id).length > 0)
+    return user && (self.thread_subscriptions.where(user_id: user.id).count > 0)
   end
   
   def subscribe(user)

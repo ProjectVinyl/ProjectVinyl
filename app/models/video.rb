@@ -135,12 +135,10 @@ class Video < ActiveRecord::Base
     Video.reset_hidden_flags
     
   #  damaged = []
-  #  Video.where('id IN (?)', webms).find_in_batches do |batch|
-  #    batch.each do |video|
-  #      if Ffmpeg.getVideoLength(video.webm_path) != Ffmpeg.getVideoLength(video.video_path)
-  #        damaged << video.id
-  #        File.rename(video.webm_path, location.join('damaged', video.id.to_s + ".webm"))
-  #      end
+  #  Video.where('id IN (?)', webms).find_each do |video|
+  #    if Ffmpeg.getVideoLength(video.webm_path) != Ffmpeg.getVideoLength(video.video_path)
+  #      damaged << video.id
+  #      File.rename(video.webm_path, location.join('damaged', video.id.to_s + ".webm"))
   #    end
   #  end
   #  if damaged.length > 0
