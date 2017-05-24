@@ -575,18 +575,17 @@ var TagEditor = (function() {
 		}
 		return '';
 	}
-	function createTagItem(ed, name) {
-		var space = namespace(name);
-		var item = $('<li class="tag tag-' + space + '" data-slug="' + name.replace(space + ':', '') + '"><i title="Remove Tag" data-name="' + name + '" class="fa fa-times remove"></i><a href="/tags/' + name + '">' + name + '</a></li>');
+	function createTagItem(ed, tag) {
+		var item = $('<li class="tag tag-' + tag.namespace + '" data-slug="' + tag.slug + '"><i title="Remove Tag" data-name="' + tag.name + '" class="fa fa-times remove"></i><a href="/tags/' + tag.link + '">' + tag.name + '</a></li>');
 		ed.list.append(item);
 		item.find('.remove').on('click', function(e) {
-			ed.removeTag(item, name);
+			ed.removeTag(item, tag);
       e.stopPropagation();
 		});
 	}
-	function createDisplayTagItem(name) {
-		return '<li class="tag tag-' + namespace(name) + ' drop-down-holder popper" data-slug="' + name + '">\
-			<a href="/tags/' + name + '"><span>' + name + '</span></a>\
+	function createDisplayTagItem(tag) {
+		return '<li class="tag tag-' + tag.namespace + ' drop-down-holder popper" data-slug="' + tag.slug + '">\
+			<a href="/tags/' + tag.link + '"><span>' + tag.name + '</span>' + (tag.members > -1 ? ' (' + tag.members + ')' : '') + '</a>\
 			<ul class="drop-down pop-out">\
 				<li class="action toggle" data-family="tag-flags" data-descriminator="hide" data-action="hide" data-target="tag" data-id="' + name + '">\
 					<span class="icon">\
@@ -606,6 +605,40 @@ var TagEditor = (function() {
 			</ul>\
 		</li>';
 	}
+  function BakedArray(arr) {
+    if (arr && arr.baked) return arr;
+    arr = arr || [];
+    arr.baked = function() {
+      var result = [];
+      for (var i = this.length; i--; ) result.unshift(this[i].toString());
+      return result;
+    };
+    arr.join = function (splitter) {
+      return Array.prototype.join.apply(this.baked(), arguments);
+    };
+    arr.indexOf = function() {
+      var result = Array.prototype.indexOf.apply(this, arguments);
+      return result > -1 ? result : Array.prototype.indexOf.apply(this.baked(), arguments);
+    };
+    return arr;
+  }
+
+  function Tag(name) {
+    var ans = name.name ? name : {
+      namespace: namespace(name),
+      name: name,
+      members: -1,
+      link: name
+    };
+    ans.slug = ans.name.replace(ans.namespace+ ':', '');
+    ans.toString = function() {
+      return this.name;
+    };
+    ans.valueOf = function() {
+      return this.toString().valueOf();
+    };
+    return ans;
+  }
 	function TagEditor(el) {
 		var self = this;
 		this.history = [];
@@ -699,39 +732,58 @@ var TagEditor = (function() {
 		loadTags: function(tags) {
 			if (tags.length) {
 				this.tags = tags.split ? tags.split(',') : tags;
+        for (var i = 0; i < this.tags.length; i++) {
+          this.tags[i] = Tag(this.tags[i]);
+        }
 			} else {
 				this.tags = [];
 			}
-			this.list.empty();
-			for (var i = 0; i < this.tags.length; i++) {
-				createTagItem(this, this.tags[i]);
+      BakedArray(this.tags);
+      var me = this;
+      var unloaded_slugs = BakedArray();
+      unloaded_slugs.push.apply(unloaded_slugs, this.tags);
+      this.list.find('li i.remove').each(function() {
+        var li = $(this);
+        var name = li.attr('data-name');
+        var index = unloaded_slugs.indexOf(name);
+        if (index < 0) {
+          li.parent().remove();
+        } else {
+          var item = unloaded_slugs.splice(index, 1)[0];
+          li.on('click', function(e) {
+            me.removeTag(li.parent(), item);
+            e.stopPropagation();
+          });
+          item.namespace = li.parent().attr('data-namespace');
+        }
+      });
+			for (var i = 0; i < unloaded_slugs.length; i++) {
+				createTagItem(this, unloaded_slugs[i]);
 			}
 			this.value.val(this.tags.join(','));
-			var self = this;
-			this.list.find('.remove').on('click', function() {
-				self.removeTag($(this).parent(), $(this).attr('data-name'));
-			});
 		},
-		appendTag: function(name) {
-      name = name.trim().toLowerCase().replace(/[^ a-z0-9\/&\-:]/g, '');
-      if (name.length && name.indexOf('uploader:') != 0 && name.indexOf('title:') != 0) {
-        if (this.tags.indexOf(name) == -1) {
-          this.pickupTag(name);
-          this.history.unshift({type: 1, tag: name});
+		appendTag: function(tag) {
+      tag = Tag(tag);
+      if (tag.name.length && tag.name.indexOf('uploader:') != 0 && tag.name.indexOf('title:') != 0) {
+        if (this.tags.indexOf(tag) == -1) {
+          this.pickupTag(tag);
+          this.history.unshift({type: 1, tag: tag});
         }
       }
     },
-		pickupTag: function(name) {
-      this.tags.push(name);
+		pickupTag: function(tag) {
+      tag = Tag(tag);
+      this.tags.push(tag);
       this.value.val(this.tags.join(','));
-      createTagItem(this, name);
+      createTagItem(this, tag);
     },
-		removeTag: function(self, name) {
-      this.dropTag(self, name);
-      this.history.unshift({type: -1, tag: name});
+		removeTag: function(self, tag) {
+      tag = Tag(tag);
+      this.dropTag(self, tag);
+      this.history.unshift({type: -1, tag: tag});
     },
-    dropTag: function(self, name) {
-      this.tags.splice(this.tags.indexOf(name), 1);
+    dropTag: function(self, tag) {
+      this.tags.splice(this.tags.indexOf(tag), 1);
       self.remove();
       this.value.val(this.tags.join(','));
       this.save();
@@ -740,27 +792,42 @@ var TagEditor = (function() {
       if (this.history.length) {
         var item = this.history.shift();
         if (item.type > 0) {
-          this.dropTag(this.list.find('[data-name="' + item.tag + '"]'), item.tag);
+          this.dropTag(this.list.find('[data-name="' + item.tag.name + '"]'), item.tag);
         } else {
           this.pickupTag(item.tag);
           this.save();
         }
       }
     },
+    reload: function(tags) {
+      this.tags.length = 0;
+      this.list.empty();
+      if (this.norm) this.norm.html('');
+      for (var i = tags.length; i--;) {
+        this.tags.shift(tags[i].name);
+        createTagItem(this, tags[i]);
+        if (this.norm) {
+          this.norm.append(createDisplayTagItem(tags[i]));
+        }
+      }
+      this.value.val(this.tags.join(','));
+    },
 		save: function() {
       this.dom.trigger('tagschange');
-			if (this.norm) {
-				this.norm.html('');
-				for (var i = 0; i < this.tags.length; i++) {
-					this.norm.append(createDisplayTagItem(this.tags[i]));
-				}
-			}
       if (this.target && this.id) {
-        ajax.post('update/' + this.target, function(response) {}, true, {
+        var me = this;
+        ajax.post('update/' + this.target, function(json) {
+          me.reload(json.results);
+        }, false, {
           id: id,
           field: 'tags',
           value: this.value.val()
         });
+      } else if (this.norm) {
+        this.norm.html('');
+        for (var i = 0; i < this.tags.length; i++) {
+          this.norm.append(createDisplayTagItem(this.tags[i]));
+        }
       }
     },
 		doSearch: function(name) {
@@ -769,14 +836,16 @@ var TagEditor = (function() {
       if (name.length > 0) ajax.get('find/tags', function(json) {
         me.searchResults.empty();
         for (var i = json.results.length; i--; ) {
-          var item = $('<li class="tag-' + namespace(json.results[i].name) + '"><span>' + json.results[i].name + '</span> (' + json.results[i].members + ')' + '</li>');
+          var item = $('<li class="tag-' + json.results[i].namespace + '"><span>' + json.results[i].name.replace(name, '<b>' + name + '</b>') + '</span> (' + json.results[i].members + ')' + '</li>');
+          item[i].tag = json.results[i];
           item.on('click', function() {
             me.searchResults.removeClass('shown');
             var text = me.input.val().trim().split(/,|;/);
-            text[text.length - 1] = $(this).find('span').text()
+            text.pop();
             for (var i = 0; i < text.length; i++) {
               me.appendTag(text[i]);
             }
+            me.appendTag(this.tag);
             me.input.val('');
             me.save();
           });
@@ -2090,6 +2159,18 @@ function focusTab(me) {
     $('div[data-tab="' + other.attr('data-target') + '"]').removeClass('selected').trigger('tabblur');
     $('div[data-tab="' + me.attr('data-target') + '"]').addClass('selected').trigger('tabfocus')
   }
+}
+function nthNested(els, selector, func) {
+  els = $(els);
+  var level = 0;
+  var childs = els;
+  while ((childs = childs.children(selector)).length) {
+    level++;
+    childs.each(function() {
+      func.call(this, level);
+    });
+  }
+  return els;
 }
 
 $(document).on('mousedown', function() {

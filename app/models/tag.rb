@@ -24,6 +24,12 @@ class Tag < ActiveRecord::Base
     return ApplicationHelper.check_and_trunk(name, "").downcase.strip.gsub(/[;,]/,'')
   end
   
+  def self.tag_json(tags)
+    return tags.map do |i|
+      (i.alias || i).to_json
+    end
+  end
+  
   def self.tag_string(tags)
     result = ''
     tags.each do |i|
@@ -36,17 +42,17 @@ class Tag < ActiveRecord::Base
   end
   
   def self.by_name_or_id(name)
-    return !name || name.length == 0 ? [] : Tag.where('name = ? OR id = ? OR short_name = ?', name, name, name)
+    return !name || name.length == 0 ? [] : Tag.order(:video_count, :user_count).reverse_order.where('name = ? OR id = ? OR short_name = ?', name, name, name)
   end
   
   def self.find_matching_tags(name)
     name = name.downcase
-    tags = Tag.includes(:tag_type, :alias).where('name LIKE ? OR short_name LIKE ?', "%" + name + "%", "%" + ApplicationHelper.url_safe_for_tags(name) + "%").limit(10)
+    tags = Tag.includes(:tag_type, :alias).where('name LIKE ? OR short_name LIKE ?', name + "%", ApplicationHelper.url_safe_for_tags(name) + "%").order(:video_count, :user_count).limit(10)
     tags = tags.map do |tag|
       tag.alias || tag
     end
     return tags.uniq.map do |tag|
-      { name: tag.name, link: tag.short_name, members: tag.members }
+      tag.to_json
     end
   end
   
@@ -230,7 +236,7 @@ class Tag < ActiveRecord::Base
   end
   
   def members
-    return self.video_count + self.user_count
+    return self.video_count
   end
   
   def get_as_string
@@ -354,5 +360,14 @@ class Tag < ActiveRecord::Base
   def recount
     self.video_count = VideoGenre.where(tag_id: self.id).count
     self.user_count = ArtistGenre.where(tag_id: self.id).count
+  end
+  
+  def to_json
+    {
+      name: self.get_as_string,
+      namespace: self.namespace,
+      members: self.members,
+      link: self.short_name
+    }
   end
 end

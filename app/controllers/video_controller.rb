@@ -225,6 +225,10 @@ class VideoController < ApplicationController
           if changes = Tag.loadTags(params[:tags], @video)
             TagHistory.record_changes(current_user, @video, changes[0], changes[1])
           end
+          @video.save
+          return render json: {
+            results: Tag.tag_json(@video.tags)
+          }
         end
         if params[:source] && (@video.source != params[:source])
           @video.source = params[:source]

@@ -196,33 +196,31 @@ class User < ActiveRecord::Base
   
   def self.verify_integrity
     result = [0,0]
-    User.all.find_in_batches do |o|
-      o.each do |u|
-        if File.exist?(Rails.root.join('public', 'avatar', u.id.to_s))
-          if !u.mime
-            u.mime = 'png'
-            u.save
-            result[0] += 1
-          end
-        else
-          if u.mime
-            u.mime = nil
-            u.save
-            result[0] += 1
-          end
+    User.all.find_each do |u|
+      if File.exist?(Rails.root.join('public', 'avatar', u.id.to_s))
+        if !u.mime
+          u.mime = 'png'
+          u.save
+          result[0] += 1
         end
-        if File.exist?(Rails.root.join('public', 'banner', u.id.to_s + '.png'))
-          if !u.banner_set
-            u.banner_set = true
-            u.save
-            result[1] += 1
-          end
-        else
-          if u.banner_set
-            u.setBanner(false)
-            u.save
-            result[1] += 1
-          end
+      else
+        if u.mime
+          u.mime = nil
+          u.save
+          result[0] += 1
+        end
+      end
+      if File.exist?(Rails.root.join('public', 'banner', u.id.to_s + '.png'))
+        if !u.banner_set
+          u.banner_set = true
+          u.save
+          result[1] += 1
+        end
+      else
+        if u.banner_set
+          u.setBanner(false)
+          u.save
+          result[1] += 1
         end
       end
     end

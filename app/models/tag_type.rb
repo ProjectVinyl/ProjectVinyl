@@ -26,7 +26,7 @@ class TagType < ActiveRecord::Base
   def find_and_assign
     Tag.transaction do
       Tag.where('name LIKE ?', self.prefix + ':%').update_all(tag_type_id: self.id)
-      Tag.where(tag_type_id: self.id).each do |tag|
+      Tag.where(tag_type_id: self.id).find_each do |tag|
         tag.set_name(tag.name)
       end
     end
