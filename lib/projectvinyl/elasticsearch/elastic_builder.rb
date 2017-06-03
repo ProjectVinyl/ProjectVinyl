@@ -313,7 +313,7 @@ module ProjectVinyl
       end
       
       def must_must_not(arr)
-        if @must.length > 0 || @must_not.length > 0 || @ranges.dirty || @votes.dirty || @votes_not.dirty
+        if @must.length > 0 || @must_not.length > 0 || @must_owner.length > 0 || @must_not_owner.length > 0 || @ranges.dirty || @votes.dirty || @votes_not.dirty
           arr << bools
         end
         return arr
@@ -325,7 +325,7 @@ module ProjectVinyl
       
       def to_hash
         if @children.length == 0
-          if @must.length > 0 || @must_not.length > 0 || @ranges.dirty || @votes.dirty || @votes_not.dirty || @anded_children.length > 0
+          if @must.length > 0 || @must_not.length > 0 || @ranges.dirty || @votes.dirty || @votes_not.dirty || @anded_children.length > 0 || @must_owner.length > 0 || @must_not_owner.length > 0
             return bools
           end
           return {match_all: {}}
