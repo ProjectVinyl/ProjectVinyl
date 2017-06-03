@@ -135,6 +135,8 @@ const ajax = (function() {
     var secondsRemaining = new Duration();
     var timeStarted = new Date();
     var timer;
+    var callback_func = form.attr('data-callback');
+    
     callbacks = callbacks || {};
     xhr({
       type: form.attr('method'),
@@ -156,7 +158,7 @@ const ajax = (function() {
                   form.addClass('waiting');
                   message.text('Waiting for server...');
                 } else {
-                  message.text(secondsRemaining + ' remaining (' + Math.floor(percentage) + '% )');
+                  message.text(secondsRemaining.toString() + ' remaining (' + Math.floor(percentage) + '% )');
                 }
                 fill.css('width', percentage + '%');
                 message.css({
@@ -186,9 +188,12 @@ const ajax = (function() {
 					form.removeClass('waiting');
 					return callbacks.success.apply(this, arguments);
 				}
-        if (data.ref) {
+        if (callback_func && typeof window[callback_func] === 'function') {
+          window[callback_func](form, data);
+        } else if (data.ref) {
           document.location.href = data.ref;
         }
+        
       },
       error: function(e, err, msg) {
         if (timer) clearInterval(timer);
@@ -803,11 +808,12 @@ var TagEditor = (function() {
       this.tags.length = 0;
       this.list.empty();
       if (this.norm) this.norm.html('');
-      for (var i = tags.length; i--;) {
-        this.tags.shift(tags[i].name);
-        createTagItem(this, tags[i]);
+      for (var i = 0; i < tags.length; i++) {
+        var tag = Tag(tags[i]);
+        this.tags.unshift(tag);
+        createTagItem(this, tag);
         if (this.norm) {
-          this.norm.append(createDisplayTagItem(tags[i]));
+          this.norm.append(createDisplayTagItem(tag));
         }
       }
       this.value.val(this.tags.join(','));
@@ -837,7 +843,7 @@ var TagEditor = (function() {
         me.searchResults.empty();
         for (var i = json.results.length; i--; ) {
           var item = $('<li class="tag-' + json.results[i].namespace + '"><span>' + json.results[i].name.replace(name, '<b>' + name + '</b>') + '</span> (' + json.results[i].members + ')' + '</li>');
-          item[i].tag = json.results[i];
+          item[0].tag = json.results[i];
           item.on('click', function() {
             me.searchResults.removeClass('shown');
             var text = me.input.val().trim().split(/,|;/);
@@ -1486,7 +1492,6 @@ var Popup = (function() {
     INSTANCES.push(this);
     return this;
   }
-  Popup.ScriptedEvents = { };
   Popup.fetch = function(resource, title, icon, thin, loaded_func) {
     return (new Popup(title, icon, function() {
       this.content.html('<div class="loader"><i class="fa fa-pulse fa-spinner" /></div>');
@@ -1499,8 +1504,8 @@ var Popup = (function() {
           me.close();
         });
         me.center();
-        if (loaded_func && (loaded_func = Popup.ScriptedEvents[loaded_func])) {
-          loaded_func();
+        if (loaded_func && typeof window[loaded_func] === 'function') {
+          window[loaded_func](me.content);
         }
       }, 1);
       this.show();
@@ -1687,25 +1692,6 @@ var Popup = (function() {
   };
   return Popup;
 })();
-(function() {
-  Popup.ScriptedEvents.loadBannerSelector = function() {
-    var me = $('#banner-upload');
-    var base_path = me.attr('data-base-path');
-    initFileSelect(me).on('accept', function(e, file) {
-      var form = $(this).closest('form');
-      ajax.form(form, e, {
-        'success': function() {
-          form.removeClass('uploading');
-          var av = $('#banner');
-          av.css({
-            'background-size': 'cover',
-            'background-image': 'url(' + base_path + '?' + new Date().getTime() + ')'
-          });
-        }
-      });
-    });
-  };
-})();
 var paginator = (function() {
   function requestPage(context, page) {
     if (page == context.attr('data-page')) return;
@@ -1891,6 +1877,28 @@ function postChat(sender, thread_id, order, report_state) {
     input.val('').change();
   }, 0, data);
 }
+function loadBannerSelector() {
+  var me = $('#banner-upload');
+  var base_path = me.attr('data-base-path');
+  initFileSelect(me).on('accept', function(e, file) {
+    var form = $(this).closest('form');
+    ajax.form(form, e, {
+      'success': function() {
+        form.removeClass('uploading');
+        var av = $('#banner');
+        av.css({
+          'background-size': 'cover',
+          'background-image': 'url(' + base_path + '?' + new Date().getTime() + ')'
+        });
+      }
+    });
+  });
+};
+function editVideo(sender, data) {
+  console.log('huh?');
+  sender.find('.tag-editor')[0].getTagEditorObj().reload(data.results);
+  sender.parent().find('.normal.tiny-link a').attr('href', data.source).text(data.source);
+}
 function editComment(sender) {
   sender = $(sender).parent();
   ajax.post('comments/edit', function(html) {
@@ -2044,7 +2052,6 @@ function Duration(seconds) {
     this.seconds -= this.minutes * 60;
   }
   this.seconds = round(this.seconds, 2);
-  var s 
 }
 Duration.prototype = {
   toString: function() {
