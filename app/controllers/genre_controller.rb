@@ -33,9 +33,7 @@ class GenreController < ApplicationController
         else
           @tag.unset_alias
         end
-        if @tagtype = TagType.where(id: params[:tag][:tag_type_id]).first
-          @tag.tag_type = @tagtype
-        end
+        @tag.tag_type = TagType.where(id: params[:tag][:tag_type_id]).first
         if !@tag.set_name(params[:tag][:suffex])
           flash[:alert] = "Duplicate Error: A Tag named '" + params[:tag][:suffex] + "' already exists"
           @tag.save

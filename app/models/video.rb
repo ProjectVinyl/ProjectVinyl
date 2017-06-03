@@ -68,6 +68,16 @@ class Video < ActiveRecord::Base
     }
   end
   
+  def self.clean_url(s)
+    if s.nil? || s.length == 0
+      return ''
+    end
+    if s.index('http:') != 0 && s.index('https:') != 0
+      return 'https:' + s
+    end
+    return s
+  end
+  
   def self.ensure_uniq(data)
     if data
       hash = Ffmpeg.compute_checksum(data)
@@ -163,6 +173,7 @@ class Video < ActiveRecord::Base
   def transferTo(user)
     self.user = user
     self.save
+    self.update_index(defer: false)
   end
   
   def removeSelf
@@ -443,17 +454,14 @@ class Video < ActiveRecord::Base
           end
         end
       end
-      self.source = src
+      self.set_source(src)
       TagHistory.record_source_change_auto(self, src)
       self.save
     end
   end
   
-  def get_source
-    if self.source && self.source.index('http:') != 0 && self.source.index('https:') != 0
-      return 'https:' + self.source
-    end
-    return self.source
+  def set_source(s)
+    self.source = Video.clean_url(s)
   end
   
   def json

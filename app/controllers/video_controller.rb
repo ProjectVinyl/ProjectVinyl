@@ -26,8 +26,7 @@ class VideoController < ApplicationController
     @time = (params[:t] || params[:resume] || 0).to_i
     @resume = !params[:resume].nil?
     if @video.hidden && (!user_signed_in? || @video.user_id != current_user.id)
-      render 'layouts/error', locals: { title: 'Content Removed', description: "The video you are trying to access is currently not available." }
-      return
+      return render 'layouts/error', locals: { title: 'Content Removed', description: "The video you are trying to access is currently not available." }
     end
     @tags = @video.tags
     @metadata = {
@@ -47,7 +46,7 @@ class VideoController < ApplicationController
     @comments = Pagination.paginate(@thread.get_comments(user_signed_in? && current_user.is_contributor?), 0, 10, true)
     @queue = @user.queuev2(@video.id)
     if !(@modificationsAllowed = user_signed_in? && current_user.id == @user.id)
-      @video.views = @video.views + 1
+      @video.views += 1
       @video.computeHotness.save
     end
     if !@video.processed
@@ -148,7 +147,7 @@ class VideoController < ApplicationController
             @video = user.videos.create(
                     title: title, safe_title: ApplicationHelper.url_safe(title),
                     description: text, html_description: ApplicationHelper.emotify(text),
-                    source: video[:source],
+                    source: Video.clean_url(video[:source]),
                     audio_only: file.content_type.include?('audio/'),
                     file: ext,
                     mime: file.content_type,
@@ -225,13 +224,9 @@ class VideoController < ApplicationController
           if changes = Tag.loadTags(params[:tags], @video)
             TagHistory.record_changes(current_user, @video, changes[0], changes[1])
           end
-          @video.save
-          return render json: {
-            results: Tag.tag_json(@video.tags)
-          }
         end
         if params[:source] && (@video.source != params[:source])
-          @video.source = params[:source]
+          @video.set_source(params[:source])
           TagHistory.record_source_change(current_user, @video, @video.source)
         end
         if params[:description]
@@ -241,7 +236,10 @@ class VideoController < ApplicationController
           @video.set_title(params[:title])
         end
         @video.save
-        return render status: 200, nothing: true
+        return render json: {
+          results: Tag.tag_json(@video.tags),
+          source: @video.source
+        }
       end
     end
     render satus: 401, nothing: true
@@ -258,7 +256,7 @@ class VideoController < ApplicationController
         return
       elsif params[:field] == 'source'
         if video.source != params[:value]
-          video.source = params[:value]
+          video.set_source(params[:value])
           video.save
           TagHistory.record_source_change(current_user, video, video.source)
         end
