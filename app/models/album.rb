@@ -74,6 +74,10 @@ class Album < ActiveRecord::Base
     return "custom"
   end
   
+  def ordering_direction
+    return self.reverse_order ? "descending" : "ascending"
+  end
+  
   def ordered(items)
     if self.ordering == SCORE
       items = items.joins(:video).order('`videos`.score')
@@ -82,11 +86,7 @@ class Album < ActiveRecord::Base
       end
       return self.recalculate_ordering(items)
     end
-    items = items.order(:index)
-    if self.reverse_ordering
-      items = items.reverse_order
-    end
-    return items
+    return items.order(:index)
   end
   
   def repaint_ordering(items)
