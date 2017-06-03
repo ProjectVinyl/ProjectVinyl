@@ -121,6 +121,10 @@ class HTMNode
     return result
   end
   
+  def self.extract_uri_parameter(url, parameter)
+    return URI.unescape(url.split("#{parameter}=").last.split('&').first)
+  end
+  
   def initialize()
     @attributes = {}
     @children = []

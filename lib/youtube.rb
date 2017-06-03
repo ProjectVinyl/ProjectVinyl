@@ -2,12 +2,16 @@ class Youtube
   def self.get(url, wanted_data = {})
     if Youtube.flag_set(wanted_data, :title) || Youtube.flag_set(wanted_data, :artist)
       Ajax.get('https://www.youtube.com/oembed', url: 'http:' + url.sub(/http?(s):/, ''), format: 'json') do |body|
-        body = JSON.parse(body)
-        if Youtube.flag_set(wanted_data, :title)
-          wanted_data[:title] = body['title']
-        end
-        if Youtube.flag_set(wanted_data, :artist)
-          wanted_data[:artist] = body['author_name']
+        begin
+          body = JSON.parse(body)
+          if Youtube.flag_set(wanted_data, :title)
+            wanted_data[:title] = body['title']
+          end
+          if Youtube.flag_set(wanted_data, :artist)
+            wanted_data[:artist] = body['author_name']
+          end
+        rescue e
+          
         end
       end
     end
@@ -16,6 +20,9 @@ class Youtube
         if desk = Youtube.description_from_html(body)
           desc_node = HTMNode.Parse("<div>" + desk + "</div>")
           desc_node.getElementsByTagName('a').each do |a|
+            if a.attributes['href'].index('//www.youtube.com/redirect?')
+              a.attributes['href'] = HTMNode.extract_uri_parameter(a.attributes['href'], 'q')
+            end
             a.innerText = a.attributes['href']
           end
           wanted_data[:description] = {
