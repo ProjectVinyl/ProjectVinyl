@@ -1951,7 +1951,6 @@ img.emoticon {
 .popup-container .popup .content {
   background: #fff;
   min-height: 100px;
-  min-width: 400px;
   border-radius: 0 0 5px 5px;
 }
 .popup-container .popup .content {
@@ -2364,6 +2363,7 @@ form.uploading .progressor + div {
   left: 50%;
   margin-left: -54px;
   z-index: 20;
+  white-space: nowrap;
 }
 .bobber::after {
   position: absolute;
