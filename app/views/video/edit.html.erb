@@ -1,47 +1,46 @@
-<% if @video %>
-		<section class="page column-left<% if !@video.audio_only %> tab-set<% end %>">
-			<% if !@video.audio_only %>
-			<ul class="tab-set tabs">
-				<li data-target="thumbupload" class="button selected">Upload Image</li>
-				<li data-target="thumbpick" class="button">Pick Time</li>
-			</ul>
-			<% end %>
-			<%= form_for(@video, as: "video", url: "/ajax/update/video", html: {class: "edit_video async"}) do |f| %>
-			<%= f.text_field :id, hidden: true %>
-			<div class="progressor">
-				<div class="cover-block">
-					<div class="message">
-						Uploading...
-					</div>
-					<div class="progress">
-						<div class="fill"></div>
-					</div>
-				</div>
+<section class="page column-left<% if !@video.audio_only %> tab-set<% end %>">
+	<% if !@video.audio_only %>
+	<ul class="tab-set tabs">
+		<li data-target="thumbupload" class="button selected">Upload Image</li>
+		<li data-target="thumbpick" class="button">Pick Time</li>
+	</ul>
+	<% end %>
+	<%= form_for(@video, as: "video", url: "/ajax/update/video", html: {class: "edit_video async"}) do |f| %>
+	<%= f.text_field :id, hidden: true %>
+	<div class="progressor">
+		<div class="cover-block">
+			<div class="message">
+				Uploading...
 			</div>
-			<div id="upload">
-				<% if !@video.audio_only %>
-					<div data-tab="thumbpick" id="video" class="tab video" style="background-image: url('/cover/<%= @video.id %>.png');" data-title="<%= @video.getTitle %>" data-artist="<%= @user.username %>" data-pending="1" data-video="<%= @video.id %>" data-mime="<%= @video.file %>|<%= @video.mime %>">
-						<input class="playlist" id="time" type="text" name="video[time]" value="-1">-1</input>
-					</div>
-				<% end %>
-				<div data-tab="thumbupload" id="cover-upload" class="cover-block selected tab file-select image-selector" data-type="image">
-					<span class="preview" style="background-image:url('/cover/<%= @video.id %>.png');"></span>
-					<span class="drop-icon">
-						<i class="fa fa-picture-o"></i>
-						<div>Select Cover Art</div>
-					</span>
-					<%= f.file_field :cover %>
-				</div>
-				<% if current_user.is_staff? %>
-				<div id="video-upload" class="hidden cover-block file-select video-drop" data-type="a/v">
-					<span class="drop-icon">
-						<i class="fa fa-upload"></i>
-						<div>Select an Audio/Video file to upload</div>
-					</span>
-					<%= f.file_field :file %>
-				</div>
-				<% end %>
-				<script>
+			<div class="progress">
+				<div class="fill"></div>
+			</div>
+		</div>
+	</div>
+	<div id="upload">
+		<% if !@video.audio_only %>
+			<div data-tab="thumbpick" id="video" class="tab video" style="background-image: url('/cover/<%= @video.id %>.png');" data-title="<%= @video.getTitle %>" data-artist="<%= @user.username %>" data-pending="1" data-video="<%= @video.id %>" data-mime="<%= @video.file %>|<%= @video.mime %>">
+				<input class="playlist" id="time" type="text" name="video[time]" value="-1">-1</input>
+			</div>
+		<% end %>
+		<div data-tab="thumbupload" id="cover-upload" class="cover-block selected tab file-select image-selector" data-type="image">
+			<span class="preview" style="background-image:url('/cover/<%= @video.id %>.png');"></span>
+			<span class="drop-icon">
+				<i class="fa fa-picture-o"></i>
+				<div>Select Cover Art</div>
+			</span>
+			<%= f.file_field :cover %>
+		</div>
+		<% if current_user.is_staff? %>
+		<div id="video-upload" class="hidden cover-block file-select video-drop" data-type="a/v">
+			<span class="drop-icon">
+				<i class="fa fa-upload"></i>
+				<div>Select an Audio/Video file to upload</div>
+			</span>
+			<%= f.file_field :file %>
+		</div>
+		<% end %>
+		<script>
 var player = null;
 <% if !@video.audio_only %>
 $(document).on('envload', function() {
@@ -85,64 +84,59 @@ $(document).on('envload', function() {
     $('.notify').removeClass('shown');
   }
 })();
-				</script>
-			</div>
-			<div class="post description resize-holder">
-				<div class="actions">
-					<label class="button">
-						<input name="erase" type="checkbox"></input>
-						<i class="fa fa-check"></i>
-						Remove current Image
-					</label>
-					<% if current_user.is_staff? %>
-					<button id="change_video" class="action" type="button" onclick="$('#video_file').trigger('click');">Change Main File</button>
-					<% end %>
-					<span class="notify bob-holder">
-						<div class="bobber bob-left">
-							Cover art is required to upload audio files
-						</div>
-						<%= f.submit "Save", class: "action right green" %>
-					</span>
-				</div>
-				<div class="actions">
-					<a class="foobar action options"><i class="fa fa-gear"></i> Options</a>
-					<a class="foobar action share"><i class="fa fa-share"></i> Share</a>
-					<a class="foobar action star"><i class="fa fa-star"></i></a>
-					<a class="foobar action like">
-						<i class="fa fa-thumbs-up"></i>
-					</a>
-					<a class="foobar action dislike">
-						<i class="fa fa-thumbs-down"></i>
-					</a>
-					<a class="foobar action report right"><i class="fa fa-flag"></i> Report</a>
-				</div>
-				<div class="form report" data-offset="0"></div>
-			</div>
+		</script>
+	</div>
+	<div class="post description resize-holder">
+		<div class="actions">
+			<label class="button">
+				<input name="erase" type="checkbox"></input>
+				<i class="fa fa-check"></i>
+				Remove current Image
+			</label>
+			<% if current_user.is_staff? %>
+			<button id="change_video" class="action" type="button" onclick="$('#video_file').trigger('click');">Change Main File</button>
 			<% end %>
-		</section>
-		<div class="page resize-holder column-right right center">
-			<section class="artist-bio bio">
-				<a href="<%= @user.link %>">
-					<span class="avatar">
-						<span style="background-image:url('<%= @user.avatar %>');"></span>
-					</span>
-					<h1 class="name resize-target"><%= @user.username %></h1>
-				</a>
-				<div class="bio short"><%= raw @user.html_bio %></div>
-			</section>
-			<section>
-				<h1 class="resize-target">
-					<a>Discovery Queue</a>
-				</h1>
-				<ul class="queue">
-				</ul>
-			</section>
+			<span class="notify bob-holder">
+				<div class="bobber bob-left">
+					Cover art is required to upload audio files
+				</div>
+				<%= f.submit "Save", class: "action right green" %>
+			</span>
 		</div>
-		<section class="page column-left">
-			<div class="comments"></div>
-		</section>
-<% else %>
-<%= render layout: '/layouts/error', locals: { title: 'Access Denied' } do %>
-You can't do that right now.
-<% end %>
-<% end %>
+		<div class="actions">
+			<a class="foobar action options"><i class="fa fa-gear"></i> Options</a>
+			<a class="foobar action share"><i class="fa fa-share"></i> Share</a>
+			<a class="foobar action star"><i class="fa fa-star"></i></a>
+			<a class="foobar action like">
+				<i class="fa fa-thumbs-up"></i>
+			</a>
+			<a class="foobar action dislike">
+				<i class="fa fa-thumbs-down"></i>
+			</a>
+			<a class="foobar action report right"><i class="fa fa-flag"></i> Report</a>
+		</div>
+		<div class="form report" data-offset="0"></div>
+	</div>
+	<% end %>
+</section>
+<div class="page resize-holder column-right right center">
+	<section class="artist-bio bio">
+		<a href="<%= @user.link %>">
+			<span class="avatar">
+				<span style="background-image:url('<%= @user.avatar %>');"></span>
+			</span>
+			<h1 class="name resize-target"><%= @user.username %></h1>
+		</a>
+		<div class="bio short"><%= raw @user.html_bio %></div>
+	</section>
+	<section>
+		<h1 class="resize-target">
+			<a>Discovery Queue</a>
+		</h1>
+		<ul class="queue">
+		</ul>
+	</section>
+</div>
+<section class="page column-left">
+	<div class="comments"></div>
+</section>

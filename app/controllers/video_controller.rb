@@ -85,22 +85,14 @@ class VideoController < ApplicationController
   end
   
   def upload
-    if user_signed_in?
-      if ApplicationHelper.read_only && !current_user.is_contributor?
-        render 'layouts/error', locals: { title: 'Access Denied', description: "That feature is currently disabled. Please wait whilst we fix our servers." }
-        return
-      end
-      if current_user.is_contributor? && params[:user]
-        @user = User.where(id: params[:user]).first
-      else
-        @user = User.where(id: current_user.id).first
-      end
-      if @user
-        @video = Video.new
-        return
-      end
+    if !user_signed_in?
+      return render 'layouts/error', locals: { title: 'Access Denied', description: "You can't do that right now." }
     end
-    render 'layouts/error', locals: { title: 'Access Denied', description: "You can't do that right now." }
+    if ApplicationHelper.read_only && !current_user.is_contributor?
+      return render 'layouts/error', locals: { title: 'Access Denied', description: "That feature is currently disabled. Please wait whilst we fix our servers." }
+    end
+    @user = current_user
+    @video = Video.new
   end
     
   def create
@@ -184,14 +176,11 @@ class VideoController < ApplicationController
           Tag.loadTags(params[:video][:tag_string], @video)
           @video.save
           if params[:async]
-            render json: { result: "success", ref: "/view/" + @video.id.to_s }
-          else
-            redirect_to action: "view", id: @video.id
+            return render json: { result: "success", ref: "/view/" + @video.id.to_s }
           end
-          return
+          return redirect_to action: "view", id: @video.id
         else
-          error(params[:async], "Error", "Cover art is required for audio files.")
-          return
+          return error(params[:async], "Error", "Cover art is required for audio files.")
         end
       end
     end
@@ -207,13 +196,10 @@ class VideoController < ApplicationController
   end
   
   def video_details
-    if @video = Video.where(id: params[:id]).first
-      if !@video.hidden || (user_signed_in? && current_user.is_contributor?)
-        render json: @video.json
-      end
-    else
-      render status: 404, nothing: true
+    if @video = Video.where(id: params[:id]).first && (!@video.hidden || (user_signed_in? && current_user.is_contributor?))
+      return render json: @video.json
     end
+    render status: 404, nothing: true
   end
   
   def video_update
@@ -252,16 +238,14 @@ class VideoController < ApplicationController
           TagHistory.record_changes(current_user, video, changes[0], changes[1])
         end
         video.save
-        render status: 200, nothing: true
-        return
+        return render status: 200, nothing: true
       elsif params[:field] == 'source'
         if video.source != params[:value]
           video.set_source(params[:value])
           video.save
           TagHistory.record_source_change(current_user, video, video.source)
         end
-        render status: 200, nothing: true
-        return
+        return render status: 200, nothing: true
       end
       if video.user_id == current_user.id || current_user.is_contributor?
         value = ApplicationHelper.demotify(params[:value])
@@ -272,21 +256,17 @@ class VideoController < ApplicationController
           video.set_title(value)
           video.save
         end
-        render status: 200, nothing: true
-        return
+        return render status: 200, nothing: true
       end
     end
     render status: 401, nothing: true
   end
   
   def edit
-    if user_signed_in?
-      video = Video.where(id: params[:id]).first
-      if video.user_id == current_user.id || current_user.is_contributor?
-        @video = video
-        @user = video.user
-      end
+    if !user_signed_in? || !(@video = Video.where(id: params[:id]).first) || (@video.user_id != current_user.id && !current_user.is_contributor?)
+      return render 'layouts/error', locals: { title: 'Access Denied', description: "You can't do that right now." }
     end
+    @user = @video.user
   end
   
   def updateCover
@@ -305,13 +285,11 @@ class VideoController < ApplicationController
         elsif params[:erase] || file
           video.setThumbnail(false)
         end
+        flash[:notice] = "Changes saved successfully. You may need to refresh the page."
         if params[:async]
-          flash[:notice] = "Changes saved successfully. You may need to reload the page."
-          render json: { result: "success", ref: "/view/" + video.id.to_s }
-        else
-          redirect_to action: "view", id: video.id
+          return render json: { result: "success", ref: "/view/" + video.id.to_s }
         end
-        return
+        return redirect_to action: "view", id: video.id
       end
     end
     error(params[:async], "Access Denied", "You can't do that right now.")
@@ -324,12 +302,12 @@ class VideoController < ApplicationController
     if @video.duplicate_id > 0
       @video = Video.where(id: @video.duplicate_id).first
     end
-    if @video.hidden && (!user_signed_in? || current_user.id != @video.user_id || !current_user.is_contributor?)
-      return render :file => 'public/502.html', :status => 502, :layout => false
+    if @video.hidden && (!user_signed_in? || (current_user.id != @video.user_id && !current_user.is_contributor?))
+      return render :file => 'public/401.html', :status => 401, :layout => false
     end
     file = @video.video_path.to_s
     if !File.exist?(file)
-      return render :file => 'public/404.html', :status => :not_found, :layout => false
+      return render :file => 'public/404.html', :status => 404, :layout => false
     end
     response.headers['Content-Length'] = File.size(file).to_s
     send_file(file,
