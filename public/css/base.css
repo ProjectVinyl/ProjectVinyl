@@ -2904,13 +2904,27 @@ span.active-icon {
 }
 .listing.compact .items .title {
   padding: 0 0 0 30px;
+  position: relative;
+}
+.listing.compact .items .title div {
+  display: inline-block;
+  position: absolute;
+  left: 20px;
+  right: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.listing.compact .items .author  {
+  width: 0;
 }
 .listing.compact .items .duration {
   text-align: center;
+  width: 90px;
 }
 .listing.compact .items .remove {
   text-align: center;
-  width: 50px;
+  width: 40px;
 }
 .listing.compact .items .hidden-item div {
   font-weight: initial;
@@ -2926,15 +2940,18 @@ span.active-icon {
   vertical-align: middle;
   display: inline-block;
   white-space: nowrap;
-  overflow: visible;
 }
 .listing.compact.playlist .items .row span,
-.listing.compact.limit-overflow .items .row > div div,
-.listing.compact.playlist .items .row > div div {
+.listing.compact.limit-overflow .items .row > div div {
   width: 0;
 }
 .listing.compact.playlist .items .row .title {
   padding-left: 20px;
+}
+.listing.compact.playlist .items .row .title div {
+  position: static;
+  width: 0;
+  overflow: visible;
 }
 .listing.compact.playlist .items .row .title .author {
   display: table-row;

@@ -1,7 +1,7 @@
 <section style="width:100%" class="page listing compact">
 	<% if @album.ordering && @album.ordering > 0 %>
 		<span class="album-notice">
-			<i class="fa fa-random -<% if @album.reverse_ordering %>asc<% else %>desc<% end %>"></i>
+			<i class="fa fa-sort-amount-<%= @album.ordering_direction %>"></i>
 			This playlist is automatically sorted by <%= @album.ordering_text %>.
 		</span>
 	<% end %>

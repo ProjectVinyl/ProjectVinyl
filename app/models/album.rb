@@ -75,7 +75,7 @@ class Album < ActiveRecord::Base
   end
   
   def ordering_direction
-    return self.reverse_order ? "descending" : "ascending"
+    return self.reverse_ordering ? "desc" : "asc"
   end
   
   def ordered(items)

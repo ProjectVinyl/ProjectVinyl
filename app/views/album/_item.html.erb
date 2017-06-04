@@ -1,9 +1,9 @@
 <% if !item.video.isHiddenBy(current_user) %>
-	<a class="row removeable" <% if !item.video.hidden && !item.video.isSpoileredBy(current_user) %>href="<%= item.link %>"<% else %>class="hidden-item"<% end %> data-id="<%= item.id %>" data-index="<%= item.index %>">
+	<a class="row removeable" <% if !item.video.hidden && !item.video.isSpoileredBy(current_user) %>href="<%= item.link %>"<% else %>class="hidden-item"<% end %> data-target="albumitem" data-id="<%= item.id %>" data-index="<%= item.index %>">
 	<% if @modificationsAllowed %>
 		<div class="handle"><i class="fa fa-ellipsis-v"></i></div>
 	<% end %>
-		<div class="title">
+		<div class="title" title="<%= item.video.getTitle %>">
 			<div><%= item.video.hidden ? "hidden" : item.video.getTitle %></div>
 		</div>
 		<div class="duration">
