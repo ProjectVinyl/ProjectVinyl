@@ -1,0 +1,34 @@
+<%= form_for(item, as: 'badge', url: '/ajax/badge/update', method: 'post', html: {class: "row row-group removeable state-binary"}) do |f| %>
+	<%= f.text_field :id, hidden: true %>
+	<div class="row">
+		<div style="width:30px">
+			<a class="button button-bub state-toggle" data-state="editing" data-parent="form">
+				<i class="fa fa-pencil"></i>
+			</a>
+		</div>
+		<div style="color:<%= item.colour %>">
+			<i class="fa fa-4x fa-<%= item.icon %>"></i>
+		</div>
+		<div>
+			<%= item.title %>
+		</div>
+		<div class="center">
+			<i title="<%= item.hidden %>" class="fa fa-<%= item.hidden ? "check" : "times" %>"></i>
+		</div>
+		<div>
+		</div>
+	</div>
+	<div class="editing row row-spanned">
+		<div class="content properties">
+			<table>
+				<tr class="actions">
+					<td class="label">
+					<td class="label">
+						<button type="button" class="confirm-button red action right" data-action="remove" data-url="badge/delete/<%= item.id %>" data-title="Delete Badge" data-msg="You are about to delete a badge." data-icon="warning"><i class="fa fa-trash"></i> Delete</button>
+						<button class="green left"><i class="fa fa-save"></i> Save</button>
+					</td>
+				</tr>
+			</table>
+		</div>
+	</div>
+<% end %>

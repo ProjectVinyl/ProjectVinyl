@@ -1,0 +1,39 @@
+<h1 class="title">
+	<a href="/">Home</a> <i class="fa fa-chevron-right"></i> <a href="/admin">Admin</a> <i class="fa fa-chevron-right"></i> 
+	Badges
+</h1>
+<% if @allowModifications %>
+<section style="width:100%" class="page listing compact">
+	<p>
+		Badges are a fun little feature that lets you add custom, sometimes humerous, notes a specific user.
+		Other than appearing in strategic places next to their names, badges have no semantic meaning.
+	</p>
+	<div class="items">
+		<span class="row heads">
+			<div></div>
+			<div class="center" style="width:4em">Glyph</div>
+			<div>Name</div>
+			<div class="center" style="width:0">Hidden</div>
+			<div>Moderation notes</div>
+		</span>
+		<%= render partial: 'static_item', collection: Badge.static_badges %>
+		<%= render partial: 'item', collection: @badges %>
+	</div>
+	<span class="row foot">
+		<a class="button confirm-button button-bub bub" title="add" data-title="Add Badge" data-url="badge/new">
+			<i class="fa fa-plus"></i> Add New
+		</a>
+	</span>
+</section>
+<% else %>
+<section style="width:100%" class="page">
+	<p>
+		Badges are a fun little feature that lets you add custom, sometimes humerous, notes a specific user.
+		Other than appearing in strategic places next to their names, badges have no semantic meaning.
+	</p>
+	<ul id="albums" class="horizontal album-list">
+		<%= render partial: 'simple_item', collection: Badge.static_badges %>
+		<%= render partial: 'simple_item', collection: @badges %>
+	</ul>
+</section>
+<% end %>

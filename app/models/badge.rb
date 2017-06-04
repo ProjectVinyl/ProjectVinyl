@@ -4,12 +4,17 @@ class BadgeInstance
     @icon = icon
     @colour = colour
     @block = block
+    @adv_title = false
   end
   
-  def title(user)
+  def get_title(user)
     if @adv_title
-      return @title.call(user)
+      return @adv_title.call(user)
     end
+    title
+  end
+  
+  def title
     @title
   end
   
@@ -22,8 +27,7 @@ class BadgeInstance
   end
   
   def adv_title(&block)
-    @adv_title = true
-    @title = block
+    @adv_title = block
     self
   end
   
@@ -38,6 +42,18 @@ class Badge < ActiveRecord::Base
     BadgeInstance.new('Moderator', 'gavel', 'orange'){|user| user.contributor?},
     (BadgeInstance.new('Artist', 'paint-brush', 'green'){|user| !user.tag_id.nil?}).adv_title{|user| 'Artist - ' + user.tag.name.split(':')[1]}
   ]
+  
+  def self.static_badges
+    return Types
+  end
+  
+  def hidden
+    false
+  end
+  
+  def get_title(user)
+    title
+  end
   
   def self.all_badges(user)
     if !user || user.isDummy

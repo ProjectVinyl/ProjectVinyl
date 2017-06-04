@@ -8,7 +8,7 @@
 		</h2>
 		<span class="tag-list">
 			<% Badge.all_badges(artist_thumb_h) do |badge| %>
-			<i style="color:<%= badge.colour %>" onmouseover="(arguments[0] || window.event).stopPropagation();" class="fa fa-<%= badge.icon %> icon" title="<%= badge.title(artist_thumb_h) %>"></i>
+			<i style="color:<%= badge.colour %>" onmouseover="(arguments[0] || window.event).stopPropagation();" class="fa fa-<%= badge.icon %> icon" title="<%= badge.get_title(artist_thumb_h) %>"></i>
 			<% end %>
 		</span>
 	</a>

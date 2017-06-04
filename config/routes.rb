@@ -12,6 +12,7 @@ Rails.application.routes.draw do
   get 'fairuse' => 'staff#copyright'
   get 'policy' => 'staff#policy'
   get 'terms' => 'staff#policy'
+  get 'badges' => 'badge#index'
   
   get 'ajax/donate' => 'ajax#donate'
   get 'donate' => 'staff#donate'

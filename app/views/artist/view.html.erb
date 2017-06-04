@@ -19,7 +19,7 @@ div#banner {
 				<a class="name<% if @user.banned? %> banned<% end %>" href="<%= @user.link %>">
 					<%= @user.username %>
 					<% Badge.all_badges(@user) do |badge| %>
-						<i style="color:<%= badge.colour %>" onmouseover="e.stopPropagation();" class="fa fa-<%= badge.icon %> icon" title="<%= badge.title(@user) %>"></i>
+						<i style="color:<%= badge.colour %>" onmouseover="e.stopPropagation();" class="fa fa-<%= badge.icon %> icon" title="<%= badge.get_title(@user) %>"></i>
 					<% end %>
 				</a>
 			</h1>
