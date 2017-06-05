@@ -1808,6 +1808,9 @@ blockquote {
   right: auto;
 }
 
+.search-results.pop-out li {
+  cursor: default;
+}
 
 .pop-out-shown::before,
 .pop-out-shown::after {
@@ -2622,7 +2625,7 @@ span.active-icon {
 .listing.compact .row {
   display: table-row;
   padding: 5px 30px;
-  transition: background 0.25s ease;
+  transition: background 0.25s ease, transition border-color 0.25s ease;
 }
 .listing.compact .items .row:target {
   outline: solid 5px rgba(170,170,255,0.6);
@@ -2989,10 +2992,8 @@ span.active-icon {
   display: none !important;
 }
 .tag-editor .tag.input {
-  display: inline;
-  min-width: 50%;
-  max-width: 80%;
-  width: initial !important;
+  min-width: 100px;
+  max-width: 100%;
   border: none;
   background: none;
 }

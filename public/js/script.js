@@ -1,5 +1,6 @@
 if (navigator.userAgent.indexOf("OPR") !== -1) $('html').addClass('opera');
 var window_focused = false;
+var KEY_ENTER = 13, KEY_ESC = 27, KEY_COMMA = 188, KEY_BACKSPACE = 8, KEY_Z = 90, KEY_Y = 89;
 $(window).on('focus', function() {
   window_focused = true;
 }).on('blur', function () {
@@ -573,7 +574,6 @@ const initFileSelect = (function() {
   return initFileSelect;
 })();
 var TagEditor = (function() {
-  var KEY_ENTER = 13, KEY_COMMA = 188, KEY_BACKSPACE = 8;
 	function namespace(name) {
 		if (name.indexOf(':') != -1) {
 			return name.split(':')[0];
@@ -621,9 +621,9 @@ var TagEditor = (function() {
     arr.join = function (splitter) {
       return Array.prototype.join.apply(this.baked(), arguments);
     };
-    arr.indexOf = function() {
+    arr.indexOf = function(e, i) {
       var result = Array.prototype.indexOf.apply(this, arguments);
-      return result > -1 ? result : Array.prototype.indexOf.apply(this.baked(), arguments);
+      return result > -1 ? result : Array.prototype.indexOf.call(this.baked(), e.toString(), i);
     };
     return arr;
   }
@@ -647,6 +647,7 @@ var TagEditor = (function() {
 	function TagEditor(el) {
 		var self = this;
 		this.history = [];
+    this.future = [];
 		el = $(el);
     el.find('.values').remove();
     el[0].getActiveTagsArray = function() {
@@ -690,16 +691,24 @@ var TagEditor = (function() {
             self.list.children('.tag').last().find('.remove').click();
           }
         }
-      } else if (e.ctrlKey && e.which == 90) {
-        self.undo();
-        e.preventDefault();
-        e.stopPropagation();
+      } else if (e.ctrlKey) {
+        if (e.which == KEY_Z) {
+          self.undo();
+          e.preventDefault();
+          e.stopPropagation();
+        } else if (e.which == KEY_Y) {
+          self.redo();
+          e.preventDefault();
+          e.stopPropagation();
+        }
         handled_back = false;
       } else {
         handled_back = false;
       }
+      self.sizeInput();
     });
     this.input.on('keyup', function() {
+      self.sizeInput();
       handled_back = false;
     }).on('mousedown', function(e) {
       e.stopPropagation();
@@ -773,6 +782,7 @@ var TagEditor = (function() {
         if (this.tags.indexOf(tag) == -1) {
           this.pickupTag(tag);
           this.history.unshift({type: 1, tag: tag});
+          this.future.length = 0;
         }
       }
     },
@@ -786,6 +796,7 @@ var TagEditor = (function() {
       tag = Tag(tag);
       this.dropTag(self, tag);
       this.history.unshift({type: -1, tag: tag});
+      this.future.length = 0;
     },
     dropTag: function(self, tag) {
       this.tags.splice(this.tags.indexOf(tag), 1);
@@ -796,11 +807,24 @@ var TagEditor = (function() {
 		undo: function() {
       if (this.history.length) {
         var item = this.history.shift();
+        this.future.unshift(item);
         if (item.type > 0) {
-          this.dropTag(this.list.find('[data-name="' + item.tag.name + '"]'), item.tag);
+          this.dropTag(this.list.find('[data-name="' + item.tag.name + '"]').parent(), item.tag);
         } else {
           this.pickupTag(item.tag);
           this.save();
+        }
+      }
+    },
+    redo: function() {
+      if (this.future.length) {
+        var item = this.future.shift();
+        this.history.unshift(item);
+        if (item.type) {
+          this.pickupTag(item.tag);
+          this.save();
+        } else {
+          this.dropTag(this.list.find('[data-name="' + item.tag.name + '"]').parent(), item.tag);
         }
       }
     },
@@ -836,16 +860,27 @@ var TagEditor = (function() {
         }
       }
     },
+    sizeInput: function() {
+      var width = this.input.width();
+      this.input.css('width', 0);
+      this.input.css('margin-left', width);
+      this.input.css('width', this.input[0].scrollWidth + 20);
+      this.input.css('margin-left', '');
+    },
 		doSearch: function(name) {
 			var me = this;
       name = name.toLowerCase();
-      if (name.length > 0) ajax.get('find/tags', function(json) {
+      if (name.length <= 0) {
+        me.dom.removeClass('pop-out-shown');
+        return;
+      }
+      ajax.get('find/tags', function(json) {
         me.searchResults.empty();
         for (var i = json.results.length; i--; ) {
           var item = $('<li class="tag-' + json.results[i].namespace + '"><span>' + json.results[i].name.replace(name, '<b>' + name + '</b>') + '</span> (' + json.results[i].members + ')' + '</li>');
           item[0].tag = json.results[i];
           item.on('click', function() {
-            me.searchResults.removeClass('shown');
+            me.dom.removeClass('pop-out-shown');
             var text = me.input.val().trim().split(/,|;/);
             text.pop();
             for (var i = 0; i < text.length; i++) {
@@ -853,6 +888,7 @@ var TagEditor = (function() {
             }
             me.appendTag(this.tag);
             me.input.val('');
+            me.sizeInput();
             me.save();
           });
           me.searchResults.append(item);
@@ -1309,7 +1345,7 @@ var shares = {
           }
           this.content.message_content.append('Are you sure you want to continue?');
           
-          var ok = $('<button class="button-fw green">Yes</button>');
+          var ok = $('<button class="button-fw green confirm">Yes</button>');
           var cancel = $('<button class="cancel button-fw blue" style="margin-left:20px;" type="button">No</button>');
           ok.on('click', function() {
             ajax.post(url, function(json) {
@@ -1456,8 +1492,15 @@ var Popup = (function() {
   win.on('resize', function() {
     for (var i = INSTANCES.length; i--;) INSTANCES[i].resize();
   });
+  win.on('keydown', function(e) {
+    if (INSTANCES.length > 0) {
+      var c = $('.popup-container.focus');
+      if (c.length && !$('input::focuse, textarea::focus, button::focus, .button.focus')) c[0].instance.handleShortcut(e);
+    }
+  });
   function Popup(title, icon, construct) {
     this.container = $('<div class="popup-container"></div>');
+    this.container[0].instance = this;
     this.dom = $('<div class="popup"><h1>' + title + '<a class="close" /></h1>');
     this.container.append(this.dom);
     this.content = $('<div class="content" />');
@@ -1585,6 +1628,18 @@ var Popup = (function() {
       timeoutOn(this, function() {
         if (callback) callback(this);
       }, 500);
+    },
+    handleShortcut: function(e) {
+      if (e.which == KEY_ENTER) {
+        this.dom.find('.confirm').click();
+        this.close();
+        e.preventDefault();
+        e.stopPropagation();
+      } else if (e.which == KEY_ESC) {
+        this.close();
+        e.preventDefault();
+        e.stopPropagation();
+      }
     },
     show: function() {
       $('.popup-container.focus').removeClass('focus');

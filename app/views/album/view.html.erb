@@ -1,4 +1,9 @@
 <% title @album.title %>
+<% if @metadata %>
+	<% content_for :metadata do %>
+		<%= render partial: "view/meta", locals: @metadata %>
+	<% end %>
+<% end %>
 <section style="width:100%" class="page resize-holder">
 	<%= render partial: 'album' %>
 </section>
