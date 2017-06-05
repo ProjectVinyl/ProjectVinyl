@@ -26,14 +26,24 @@ class EmbedController < ActionController::Base
   def oembed
     if url = params[:url]
       url = url.split('?')
-      url[0] = url[0].split('/').last.split('-')[0].to_i
+      url[0] = url[0].split('/')
+      is_album = url[0][url[0].length - 2] == 'album'
+      url[0] = url[0].last.split('-')[0].to_i
       puts url[0]
       if (url.length > 1)
         extra = '?' + url[1]
       else
         extra = ''
       end
-      @video = Video.where(id: url[0]).first
+      
+      if is_album
+        @album = Album.where(id: url[0]).first
+        if @album && @item = @album.album_items.first
+          @video = @item.video
+        end
+      else
+        @video = Video.where(id: url[0]).first
+      end
       if @video && @video.duplicate_id > 0
         @video = Video.where(id: @video.duplicate_id).first
       end

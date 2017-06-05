@@ -12,6 +12,17 @@ class AlbumController < ApplicationController
     @user = @album.user
     @items = Pagination.paginate(@album.ordered(@album.album_items.includes(:direct_user)), 0, 50, false)
     @modificationsAllowed = user_signed_in? && @album.ownedBy(current_user)
+    
+    @metadata = {
+      type: "album",
+      title: @album.title,
+      description: @album.description,
+      tags: [],
+      url: url_for(action: "view", controller: "album", id: @album.id, only_path: false) + "-" + @album.safe_title,
+      embed_url: url_for(action: "view", controller: "embed", only_path: false, id: @items.records.first.video_id, list: @album.id, index: 0),
+      cover: Video.thumb_for(@items.records.first, current_user),
+      oembed: {list: @album.id, index: 0}
+    }
   end
   
   def starred
