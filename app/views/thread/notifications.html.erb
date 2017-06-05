@@ -10,7 +10,6 @@
 				<%= render partial: "thread/notification", collection: n %>
 			</p>
 		<% end %>
-		<% current_user.notifications.where(unread: true).update_all(unread: false) %>
 	<% else %>
 		<div class="center">You have no unread notifications</div>
 	<% end %>

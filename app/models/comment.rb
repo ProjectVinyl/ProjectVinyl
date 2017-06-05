@@ -37,12 +37,14 @@ class Comment < ActiveRecord::Base
     bbc.gsub(QUOTED_TEXT,'').scan(REPLY_MATCHER) do |match|
       items << Comment.decode_open_id(match)
     end
+    items = items.uniq
     if items.length > 0
       recievers = []
       replied_to = (Comment.where('id IN (?) AND comment_thread_id = ?', items, self.comment_thread_id).map { |i|
         recievers << i.user_id
         '(' + i.id.to_s + ',' + self.id.to_s + ')'
       }).join(', ')
+      recievers = recievers.uniq - [self.user_id]
       if replied_to.length > 0
         Notification.notify_recievers(recievers, self,
              self.user.username + " has <b>replied</b> to your comment on <b>" + self.comment_thread.get_title + "</b>",
@@ -71,6 +73,7 @@ class Comment < ActiveRecord::Base
         end
       end
     end
+    recievers = recievers.uniq - [sender.user_id]
     Notification.notify_recievers(recievers, sender, "You have been <b>mentioned</b> on <b>" + title + "</b>", location)
     return bbc
   end

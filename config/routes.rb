@@ -200,6 +200,7 @@ Rails.application.routes.draw do
   # Notifications #
   get 'notifications' => 'thread#notifications'
   get 'ajax/notifications' => 'ajax#notifications'
+  get 'review' => 'thread#mark_read'
   post 'ajax/delete/notification' => 'thread#delete_notification'
   
   # API #
