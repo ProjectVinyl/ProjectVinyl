@@ -1,5 +1,5 @@
 require 'rails-html-sanitizer'
-# User-generated markup, you’re on notice: this sanitizer will take its shirt off and use it to kick your ass.
+# User-generated markup, you're on notice: this sanitizer will take its shirt off and use it to kick your ass.
 # Source: https://gist.github.com/vigetlabs/241114
 # https://www.viget.com/articles/html-sanitization-in-rails-that-actually-works
 class StathamSanitizer < Rails::Html::WhiteListSanitizer
