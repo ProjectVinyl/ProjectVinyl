@@ -7,15 +7,15 @@ class ArtistController < ApplicationController
         @art_count = @art.count
         @art = Pagination.paginate(@art, 0, 8, true)
       end
-      @modificationsAllowed = user_signed_in? && (current_user.id == @user.id || current_user.is_staff?)
-      @videos = @modificationsAllowed ? @user.videos.includes(:tags).where(duplicate_id: 0) : @user.videos.listable
+      @modifications_allowed = user_signed_in? && (current_user.id == @user.id || current_user.is_staff?)
+      @videos = @modifications_allowed ? @user.videos.includes(:tags).where(duplicate_id: 0) : @user.videos.listable
       @videos = Pagination.paginate(@videos, 0, 8, true)
-      @albums = @modificationsAllowed ? @user.albums : @user.albums.where('`albums`.hidden = false AND `albums`.listing = 0')
+      @albums = @modifications_allowed ? @user.albums : @user.albums.where('`albums`.hidden = false AND `albums`.listing = 0')
       @albums = Pagination.paginate(@albums, 0, 8, true)
-      @comments = Comment.Finder.joins(:comment_thread).select('`comments`.*').where("`comments`.user_id = ? AND `comment_threads`.id = comment_thread_id AND NOT `comment_threads`.owner_type = 'Report' AND NOT `comment_threads`.owner_type = 'Pm'", @user.id).order(:created_at).reverse_order.limit(3)
+      @comments = Comment.finder.joins(:comment_thread).select('`comments`.*').where("`comments`.user_id = ? AND `comment_threads`.id = comment_thread_id AND NOT `comment_threads`.owner_type = 'Report' AND NOT `comment_threads`.owner_type = 'Pm'", @user.id).order(:created_at).reverse_order.limit(3)
     end
   end
-  
+
   def update
     input = params[:user]
     if user_signed_in?
@@ -31,8 +31,8 @@ class ArtistController < ApplicationController
         user.set_name(input[:username])
         user.set_description(input[:description])
         user.set_bio(input[:bio])
-        user.setTags(input[:tag_string])
-        
+        user.set_tags(input[:tag_string])
+
         user.save
         if current_user.is_staff? && params[:user_id]
           redirect_to action: "view", id: user.id
@@ -44,14 +44,12 @@ class ArtistController < ApplicationController
     end
     render 'layouts/error', locals: { title: 'Access Denied', description: "You can't do that right now." }
   end
-  
+
   def update_prefs
-    if user_signed_in?
-      current_user.prefs_cache.save(params[:settings])
-    end
+    current_user.prefs_cache.save(params[:settings]) if user_signed_in?
     redirect_to action: "edit", controller: "devise/registrations"
   end
-  
+
   def setbanner
     if user_signed_in? && (current_user.is_staff? || current_user.id == params[:id])
       if current_user.id == params[:id]
@@ -60,7 +58,7 @@ class ArtistController < ApplicationController
         user = User.where(id: params[:id]).first
       end
       if user
-        user.setBanner(params[:erase] ? false : params[:user][:banner])
+        user.set_banner(params[:erase] ? false : params[:user][:banner])
         user.save
         if params[:async]
           render json: { result: "success" }
@@ -72,7 +70,7 @@ class ArtistController < ApplicationController
     end
     render status: 401, nothing: true
   end
-  
+
   def setavatar
     input = params[:user]
     if user_signed_in?
@@ -82,7 +80,7 @@ class ArtistController < ApplicationController
         user = current_user
       end
       if user
-        user.setAvatar(params[:erase] ? false : input[:avatar])
+        user.set_avatar(params[:erase] ? false : input[:avatar])
         user.save
         if params[:async]
           render json: { result: "success" }
@@ -94,15 +92,15 @@ class ArtistController < ApplicationController
     end
     render 'layouts/error', locals: { title: 'Access Denied', description: "You can't do that right now." }
   end
-  
+
   def card
     if user = User.with_badges.where(id: params[:id]).first
-      render partial: '/layouts/artist_thumb_h', locals: {artist_thumb_h: user}
+      render partial: '/layouts/artist_thumb_h', locals: { artist_thumb_h: user }
       return
     end
     render status: 404, nothing: true
   end
-  
+
   def banner
     if current_user.is_staff? || current_user.id == params[:id]
       if current_user.id == params[:id]
@@ -115,13 +113,13 @@ class ArtistController < ApplicationController
     end
     render status: 404, nothing: true
   end
-  
+
   def list
     @page = params[:page].to_i
     @results = Pagination.paginate(User.all.order(:created_at), @page, 50, true)
-    render template: '/view/listing', locals: {type_id: 2, type: 'users', type_label: 'User', items: @results}
+    render template: '/view/listing', locals: { type_id: 2, type: 'users', type_label: 'User', items: @results }
   end
-  
+
   def page
     @page = params[:page].to_i
     @results = Pagination.paginate(User.all.order(:created_at), @page, 50, true)

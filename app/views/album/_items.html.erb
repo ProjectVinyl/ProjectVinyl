@@ -5,7 +5,7 @@
 			This playlist is automatically sorted by <%= @album.ordering_text %>.
 		</span>
 	<% end %>
-	<div id="items" class="items<% if @modificationsAllowed %> reorderable<% end %>" data-target="albumitem">
+	<div id="items" class="items<% if @modifications_allowed %> reorderable<% end %>" data-target="albumitem">
 		<span class="bump" data-index="-1"></span>
 		<%= render partial: 'album/item', collection: @items.records %>
 	</div>

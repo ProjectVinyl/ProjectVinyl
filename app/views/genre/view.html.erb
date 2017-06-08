@@ -10,7 +10,7 @@
 				<a class="name" href="<%= @tag.link %>"><%= @tag.name %></a>
 			</h2>
 			<div class="tag-list subheading">
-				<span>Used by <%= @totalVideos %> videos and <%= @totalUsers %> users</span>
+				<span>Used by <%= @total_videos %> videos and <%= @total_users %> users</span>
 				<% if @user %>
 				<span class="right">
 					Associated User:
@@ -47,7 +47,7 @@
 		</div>
 		<% end %>
 		<div class="actions">
-			<% if @modificationsAllowed %>
+			<% if @modifications_allowed %>
 			<div class="split-button popper">
 				<button class="action options pop-out-toggle"><i class="fa fa-gear"></i> Options</button>
 				<ul class="pop-out">

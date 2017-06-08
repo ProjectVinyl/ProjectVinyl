@@ -19,7 +19,7 @@
 	</div>
 	<div id="upload">
 		<% if !@video.audio_only %>
-			<div data-tab="thumbpick" id="video" class="tab video" style="background-image: url('/cover/<%= @video.id %>.png');" data-title="<%= @video.getTitle %>" data-artist="<%= @user.username %>" data-pending="1" data-video="<%= @video.id %>" data-mime="<%= @video.file %>|<%= @video.mime %>">
+			<div data-tab="thumbpick" id="video" class="tab video" style="background-image: url('/cover/<%= @video.id %>.png');" data-title="<%= @video.get_title %>" data-artist="<%= @user.username %>" data-pending="1" data-video="<%= @video.id %>" data-mime="<%= @video.file %>|<%= @video.mime %>">
 				<input class="playlist" id="time" type="text" name="video[time]" value="-1">-1</input>
 			</div>
 		<% end %>

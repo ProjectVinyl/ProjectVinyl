@@ -11,31 +11,31 @@ module Roleable
     end
     0
   end
-  
+
   def admin?
     self.is_admin?
   end
-  
+
   def contributor?
     self.role == 2
   end
-  
+
   def staff?
     self.role == 1
   end
-  
+
   def banned?
     self.role < 0
   end
-  
+
   def is_admin?
     self.role > 2
   end
-  
+
   def is_contributor?
     self.role > 1
   end
-  
+
   def is_staff?
     self.role > 0
   end

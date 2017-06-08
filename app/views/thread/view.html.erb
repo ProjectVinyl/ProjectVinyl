@@ -1,5 +1,5 @@
 <% title @thread.get_title + " - Forum" %>
-<% if @modificationsAllowed %>
+<% if @modifications_allowed %>
 <h1>
 	<a href="/">Home</a> <i class="fa fa-chevron-right"></i> <a href="/forum">Forum</a> <i class="fa fa-chevron-right"></i> <a href="<%= @thread.owner.link %>"><%= @thread.owner.title %></a> <i class="fa fa-chevron-right"></i> 
 	<% if @thread.locked %>
@@ -48,7 +48,7 @@
 			<span>Move Thread</span>
 		</button>
 		<ul class="pop-out">
-		<% Board.Listables.each do |b| %>
+		<% Board.listables.each do |b| %>
 			<li class="action toggle" data-family="categories"  data-descriminator="<%= b[0] %>" data-action="move" data-descriminator="<%= b[0] %>" data-target="thread" data-id="<%= @thread.id %>" data-item="<%= b[0] %>">
 				<span class="icon">
 				<% if b[0] == @thread.owner_id %>

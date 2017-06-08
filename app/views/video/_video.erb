@@ -4,7 +4,7 @@
 	<% end %>
 <% end %>
 <section class="page column-left">
-	<div id="video" style="background-image: url('<%= @video.thumb %>');" data-time="<%= @time %>" data-resume="<%= @resume %>" data-title="<%= @video.getTitle %>" data-artist="<%= @user.username %>" data-<% if @video.audio_only %>audio<% else %>video<% end %>="<%= @video.id %>" data-mime="<%= @video.file %>|<%= @video.mime %>" <%if @album %>data-autoplay="true"<% end %> class="video"></div>
+	<div id="video" style="background-image: url('<%= @video.thumb %>');" data-time="<%= @time %>" data-resume="<%= @resume %>" data-title="<%= @video.get_title %>" data-artist="<%= @user.username %>" data-<% if @video.audio_only %>audio<% else %>video<% end %>="<%= @video.id %>" data-mime="<%= @video.file %>|<%= @video.mime %>" <%if @album %>data-autoplay="true"<% end %> class="video"></div>
 	<span class="notices">
 	<% if !@video.processed %>
 		<div class="notice pending">This video is still being processed by our background ponies. If it does not play correctly try again later.</div>
@@ -14,7 +14,7 @@
 	<% end %>
 	</span>
 	<div class="post description resize-holder">
-	<% if @modificationsAllowed %>
+	<% if @modifications_allowed %>
 		<h2 class="title editable post-title resize-target short" data-target="video" data-member="title" data-id="<%= @video.id %>">
 			<span class="content "><%= @video.title %></span>
 			<span class="edit"><i class="fa fa-pencil"></i></span>
@@ -29,7 +29,7 @@
 			<span class="uploaded">Uploaded on <%= @video.created_at.to_time.strftime('%e %B %Y') %> by <%= @user.username %></span>
 			<span class="views right"><%= number_with_delimiter @video.views %> views</span>
 		</div>
-	<% if @modificationsAllowed %>
+	<% if @modifications_allowed %>
 		<span class="editable post-content" data-target="video" data-member="description" data-id="<%= @video.id %>">
 			<span class="content"><%= raw @video.html_description %></span>
 			<span class="edit"><i class="fa fa-pencil" ></i></span>
@@ -87,7 +87,7 @@
 						</a>
 					</li>
 				<% end %>
-				<% if @modificationsAllowed %>
+				<% if @modifications_allowed %>
 					<li class="action">
 						<a href="/video/edit/<%= @video.id %>">
 							<span class="icon"><i class="fa fa-pencil"></i></span>
@@ -116,7 +116,7 @@
 			><button class="action share mobile-friendly slider-toggle" data-target=".slideout.share"><i class="fa fa-share"></i><span> Share</span></button
 		<% if user_signed_in? %>
 			><div class="split-button popper">
-				<button class="action star split-icon<% if @video.isStarredBy(current_user) %> starred<% end %>" data-action="star" data-id="<%= @video.id %>">
+				<button class="action star split-icon<% if @video.is_starred_by(current_user) %> starred<% end %>" data-action="star" data-id="<%= @video.id %>">
 					<i class="fa fa-star"></i>
 				</button>
 				<a class="button action addto split-action pop-out-toggle">Add To</a>
@@ -143,7 +143,7 @@
 					<% end %>
 				</ul>
 			</div
-			><button class="action like<% if @video.isUpvotedBy(current_user) %> liked<% end %>" data-count="<%= @video.upvotes %>" data-action="like" data-id="<%= @video.id %>">
+			><button class="action like<% if @video.is_upvoted_by(current_user) %> liked<% end %>" data-count="<%= @video.upvotes %>" data-action="like" data-id="<%= @video.id %>">
 				<i class="fa fa-thumbs-up"></i>
 				<span>
 					<% if @video.upvotes && @video.upvotes > 0 %>
@@ -151,7 +151,7 @@
 					<% end %>
 				</span>
 			</button
-			><button class="action dislike<% if @video.isDownvotedBy(current_user) %> liked<% end %>" data-count="<%= @video.downvotes %>" data-action="dislike" data-id="<%= @video.id %>">
+			><button class="action dislike<% if @video.is_downvoted_by(current_user) %> liked<% end %>" data-count="<%= @video.downvotes %>" data-action="dislike" data-id="<%= @video.id %>">
 				<i class="fa fa-thumbs-down"></i>
 				<span>
 					<% if @video.downvotes && @video.downvotes > 0 %>

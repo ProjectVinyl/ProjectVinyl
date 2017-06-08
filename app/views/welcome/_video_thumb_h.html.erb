@@ -1,21 +1,21 @@
 <li class="generic thumb">
 	<a class="thumb" href="/view/<%= video_thumb_h.id %>-<%= video_thumb_h.safe_title %>">
-		<div class="tile" style="background-image:url('<%= video_thumb_h.isHiddenBy(current_user) ? 'images/default-cover' : video_thumb_h.tiny_thumb(current_user) %>');">
+		<div class="tile" style="background-image:url('<%= video_thumb_h.is_hidden_by(current_user) ? 'images/default-cover' : video_thumb_h.tiny_thumb(current_user) %>');">
 			<span class="tag-list duration">
-				<%= duration video_thumb_h.getDuration %>
+				<%= duration video_thumb_h.get_duration %>
 			</span>
 		</div>
 		<div class="title">
-			<%= video_thumb_h.isSpoileredBy(current_user) || video_thumb_h.isHiddenBy(current_user) ? "Spoilered" : video_thumb_h.getTitle %>
+			<%= video_thumb_h.is_spoilered_by(current_user) || video_thumb_h.is_hidden_by(current_user) ? "Spoilered" : video_thumb_h.get_title %>
 		</div>
 		<span class="date" title="<%= video_thumb_h.created_at %>">
 			<%= since video_thumb_h.created_at %>
 		</span>
 		<span class="tag-list right">
-			<% if video_thumb_h.isDownvotedBy(current_user) %>
+			<% if video_thumb_h.is_downvoted_by(current_user) %>
 				<i class="fa fa-thumbs-down red"></i>
 			<% end %>
-			<% if video_thumb_h.isUpvotedBy(current_user) %>
+			<% if video_thumb_h.is_upvoted_by(current_user) %>
 				<i class="fa fa-thumbs-up green"></i>
 			<% end %>
 			<%= number_with_delimiter video_thumb_h.views %> views

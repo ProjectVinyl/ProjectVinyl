@@ -1,6 +1,6 @@
 class VideoProcessor
   @@required_worker_count = 2
-  
+
   def self.status
     workers = ProcessingWorker.all
     result = "<div>Videos in queue: " + VideoProcessor.queue.count.to_s + "</div>"
@@ -8,20 +8,20 @@ class VideoProcessor
     workers.each do |worker|
       result << '<div>Thread #' + worker.id.to_s + ", status: " + worker.status + ", message: " + worker.message + '</div>'
     end
-    return result
+    result
   end
-  
+
   def self.enqueue(video)
-    if !video.checkIndex
+    if !video.check_index
       puts "[Processing Manager] Enqueued video #" + video.id.to_s
-      VideoProcessor.startManager
+      VideoProcessor.start_manager
     end
   end
-  
+
   def self.queue
-    return Video.where(processed: nil, hidden: false).order(:id)
+    Video.where(processed: nil, hidden: false).order(:id)
   end
-  
+
   def self.dequeue
     result = nil
     begin
@@ -33,31 +33,29 @@ class VideoProcessor
     ensure
       ActiveRecord::Base.connection.execute('SELECT RELEASE_LOCK("processor");')
     end
-    return result
+    result
   end
-  
+
   def self.processor(db_object)
-    if db_object && db_object.running
-      return
-    end
+    return if db_object && db_object.running
     if db_object
       db_object.update_status("running", "Ready")
     else
       db_object = ProcessingWorker.create(running: true, status: "running", message: "Ready")
     end
-    Thread.start {
+    Thread.start do
       begin
-        db_object.start()
+        db_object.start
       rescue Exception => e
         db_object.exception = e
       ensure
-        db_object.stop()
+        db_object.stop
         ActiveRecord::Base.connection.close
       end
-    }
+    end
   end
-  
-  def self.startManager
+
+  def self.start_manager
     started = 0
     result = 0
     count = ProcessingWorker.all.count
@@ -68,22 +66,19 @@ class VideoProcessor
       result += 1
     end
     ProcessingWorker.where('running = true AND updated_at < ?', DateTime.now - 5.minutes).each do |i|
-      if i.zombie?
-        i.running = false
-        Video.where(id: i.video_id).update_all(processed: true)
-        VideoProcessor.processor(i)
-        result += 1
-        started += 1
-      end
-    end
-    ProcessingWorker.where(running: false).each do |i|
-      if result >= @@required_worker_count
-        break
-      end
+      next unless i.zombie?
+      i.running = false
+      Video.where(id: i.video_id).update_all(processed: true)
       VideoProcessor.processor(i)
       result += 1
       started += 1
     end
-    return started
+    ProcessingWorker.where(running: false).each do |i|
+      break if result >= @@required_worker_count
+      VideoProcessor.processor(i)
+      result += 1
+      started += 1
+    end
+    started
   end
 end

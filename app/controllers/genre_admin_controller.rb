@@ -5,36 +5,34 @@ class GenreAdminController < ApplicationController
     end
     @types = TagType.includes(:tag_type_implications).all
   end
-  
+
   def update
     if !user_signed_in? || !current_user.is_contributor?
-      if params[:ajax]
-        return render status: 403, nothing: true
-      end
+      return render status: 403, nothing: true if params[:ajax]
       return render file: '/public/403.html', layout: false
     end
-    
+
     if tagtype = TagType.where(id: params[:tag_type][:id]).first
       if error = tagtype.set_metadata(params[:tag_type][:prefix], params[:tag_type][:hidden] == '1')
         flash[:error] = error
       end
-      Tag.loadTags(params[:tag_type][:tag_string], tagtype)
+      Tag.load_tags(params[:tag_type][:tag_string], tagtype)
     else
       flash[:error] = "Error: Record not be found."
     end
-    
+
     redirect_to action: 'view'
   end
-  
+
   def new
     if !user_signed_in? || !current_user.is_contributor?
       return render status: 403, nothing: true
     end
-    
+
     @tagtype = TagType.new
     render partial: 'new'
   end
-  
+
   def create
     if !user_signed_in? || !current_user.is_contributor?
       return render status: 403, nothing: true
@@ -46,16 +44,14 @@ class GenreAdminController < ApplicationController
       if TagType.where(prefix: prefix).count > 0
         flash[:error] = "Error: A tagtype with that prefix already exists"
       else
-        tagtype = TagType.create({
-          prefix: prefix, hidden: params[:tag_type][:hidden] == '1'
-        })
-        Tag.loadTags(params[:tag_type][:tag_string], tagtype)
+        tagtype = TagType.create(prefix: prefix, hidden: params[:tag_type][:hidden] == '1')
+        Tag.load_tags(params[:tag_type][:tag_string], tagtype)
         tagtype.find_and_assign
       end
     end
     redirect_to 'view'
   end
-  
+
   def delete
     if !user_signed_in? || !current_user.is_contributor?
       return render status: 403, nothing: true

@@ -2,10 +2,10 @@ module Prefable
   def prefs_cache
     @prefs_cache || (@prefs_cache = Preferences.new(self))
   end
-  
+
   def options
     result = self.public_send(options_source)
-    if !result || result.empty?
+    if result.blank?
       self.update_prefs_column(default_options).save
       return self.public_send(options_source)
     end
@@ -16,23 +16,21 @@ module Prefable
         dirty = true
       end
     end
-    if dirty
-      self.update_prefs_column(result).save
-    end
-    return result
+    self.update_prefs_column(result).save if dirty
+    result
   end
-  
+
   def option(key)
     if default_options.key?(key)
       if (opts = options) && opts.key?(key)
         return opts[key]
       end
-      return default_options[key]
+      default_options[key]
     end
   end
-  
+
   def set_option(key, val)
-    puts 'Called @owner.set_option with ' + { :ket => key, :value => val }.to_s
+    puts 'Called @owner.set_option with ' + { ket: key, value: val }.to_s
     key = key.to_sym
     if default_options.key?(key)
       ops = options
@@ -53,7 +51,7 @@ module Prefable
       self.update_prefs_column(ops)
     end
   end
-  
+
   class Preferences
     def initialize(owner)
       @owner = owner
@@ -66,14 +64,14 @@ module Prefable
         end
       end
     end
-    
+
     def each
       options = @owner.options
       options.keys.each do |key|
         yield(key, options[key])
       end
     end
-    
+
     def save(hash)
       puts 'Called Preferences.save with ' + hash.to_s
       hash.keys.each do |key|
@@ -82,10 +80,10 @@ module Prefable
       @owner.save
     end
   end
-  
+
   def update_prefs_column(hash)
     self.public_send((options_source.to_s + '=').to_sym, hash)
-    return self
+    self
   end
 end
 
@@ -96,7 +94,7 @@ module ActiveRecord
       @@default_options = hash
       @@options_source = as
       serialize @@options_source.to_sym, Hash
-      
+
       define_method :default_options do
         return @@default_options
       end

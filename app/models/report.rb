@@ -1,15 +1,15 @@
 class Report < ActiveRecord::Base
   belongs_to :direct_user, class_name: "User", foreign_key: "user_id"
   belongs_to :video
-  
+
   has_one :comment_thread, as: :owner, dependent: :destroy
-  
+
   def self.on(sender, msg)
-    if true || !(Report.where('created_at > ?', Time.zone.now.yesterday.beginning_of_day).first)
+    if true || !Report.where('created_at > ?', Time.zone.now.yesterday.beginning_of_day).first
       report = Report.create(user_id: sender.id, first: "System", other: "Working...", resolved: false)
       report.comment_thread = CommentThread.create(user_id: sender.id, title: "#{msg} (#{Time.zone.now})")
       report.save
-      Thread.start {
+      Thread.start do
         begin
           yield(report)
         rescue Exception => e
@@ -22,20 +22,20 @@ class Report < ActiveRecord::Base
           report.save
           ActiveRecord::Base.connection.close
         end
-      }
+      end
       return true
     end
-    return false
+    false
   end
-  
+
   def user
-    return self.direct_user || @dummy || (@dummy = User.dummy(self.user_id))
+    self.direct_user || @dummy || (@dummy = User.dummy(self.user_id))
   end
-  
+
   def user=(user)
     self.direct_user = user
   end
-  
+
   def write(msg)
     self.other << "<br>#{msg}"
   end

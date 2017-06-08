@@ -1,7 +1,7 @@
-<% if !album_item.video.isHiddenBy(current_user) %>
-<a <% if !album_item.video.hidden && !album_item.video.isSpoileredBy(current_user) %>href="<%= album_item.link %>"<% end %> class="row <% if album_item.video.hidden %>hidden-item<% end %><% if @index == album_item.index %> selected<% end %>" data-id="<%= album_item.id %>" data-index="<%= album_item.index %>">
-	<div class="title" title="<%= album_item.video.getTitle %>&#010; - <%= album_item.video.user.username %>">
-		<div><%= album_item.video.getTitle %></div>
+<% if !album_item.video.is_hidden_by(current_user) %>
+<a <% if !album_item.video.hidden && !album_item.video.is_spoilered_by(current_user) %>href="<%= album_item.link %>"<% end %> class="row <% if album_item.video.hidden %>hidden-item<% end %><% if @index == album_item.index %> selected<% end %>" data-id="<%= album_item.id %>" data-index="<%= album_item.index %>">
+	<div class="title" title="<%= album_item.video.get_title %>&#010; - <%= album_item.video.user.username %>">
+		<div><%= album_item.video.get_title %></div>
 		<div class="author">
 			<span><%= album_item.video.user.username %></span>
 		</div>

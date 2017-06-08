@@ -16,11 +16,9 @@ class VideoController < ApplicationController
       if @album
         @items = @album.all_items
         @index = params[:index].to_i || (@items.first ? @items.first.index : 0)
-        if @index > 0
-          @prev_video = @album.get_prev(current_user, @index)
-        end
+        @prev_video = @album.get_prev(current_user, @index) if @index > 0
         @next_video = @album.get_next(current_user, @index)
-        @album_editable = user_signed_in? && @album.ownedBy(current_user)
+        @album_editable = user_signed_in? && @album.owned_by(current_user)
       end
     end
     @time = (params[:t] || params[:resume] || 0).to_i
@@ -38,22 +36,20 @@ class VideoController < ApplicationController
       embed_url: url_for(action: "view", controller: "embed", only_path: false, id: @video.id),
       cover: url_for(action: "cover", controller: "imgs", only_path: false, id: @video.id) + ".png",
       tags: @tags,
-      oembed: @album ? {list: @album.id, index: @index} : {}
+      oembed: @album ? { list: @album.id, index: @index } : {}
     }
     @user = @video.user
     @thread = @video.comment_thread
     @order = '1'
     @comments = Pagination.paginate(@thread.get_comments(user_signed_in? && current_user.is_contributor?), 0, 10, true)
     @queue = @user.queuev2(@video.id)
-    if !(@modificationsAllowed = user_signed_in? && current_user.id == @user.id)
+    if !(@modifications_allowed = user_signed_in? && current_user.id == @user.id)
       @video.views += 1
-      @video.computeHotness.save
+      @video.compute_hotness.save
     end
-    if !@video.processed
-      VideoProcessor.startManager
-    end
+    VideoProcessor.start_manager if !@video.processed
   end
-  
+
   def go_next
     if @video = Video.where(id: params[:id].split(/-/)[0]).first
       if @video.duplicate_id > 0
@@ -63,9 +59,7 @@ class VideoController < ApplicationController
         if @album = Album.where(id: params[:list]).first
           @items = @album.album_items.order(:index)
           @index = params[:index].to_i || (@items.first ? @items.first.index : 0)
-          if @index > 0
-            @prev_video = @album.get_prev(current_user, @index)
-          end
+          @prev_video = @album.get_prev(current_user, @index) if @index > 0
           @next_video = @album.get_next(current_user, @index)
           render json: {
             id: @album.album_items.where(index: @index).first.id,
@@ -75,7 +69,7 @@ class VideoController < ApplicationController
             artist: @video.user.username,
             audioOnly: @video.audio_only,
             source: @video.id,
-            mime: [ @video.file, @video.mime ]
+            mime: [@video.file, @video.mime]
           }
           return
         end
@@ -83,7 +77,7 @@ class VideoController < ApplicationController
     end
     render status: 404, nothing: true
   end
-  
+
   def upload
     if !user_signed_in?
       return render 'layouts/error', locals: { title: 'Access Denied', description: "You can't do that right now." }
@@ -94,7 +88,7 @@ class VideoController < ApplicationController
     @user = current_user
     @video = Video.new
   end
-    
+
   def create
     if user_signed_in?
       if ApplicationHelper.read_only && !current_user.is_contributor?
@@ -103,25 +97,23 @@ class VideoController < ApplicationController
       if current_user.is_contributor? && params[:video][:user_id]
         user = User.by_name_or_id(params[:video][:user_id])
       end
-      if !user
-        user = current_user
-      end
+      user = current_user if !user
       file = params[:video][:file]
       cover = params[:video][:cover]
-      if checkError(params[:async], file && file.size == 0, "Error", "File is empty")
+      if check_error(params[:async], file && file.empty?, "Error", "File is empty")
         return
       end
-      if checkError(params[:async], cover && cover.content_type.include?('image/') && cover.size == 0, "Error", "Cover file is empty")
+      if check_error(params[:async], cover && cover.content_type.include?('image/') && cover.empty?, "Error", "Cover file is empty")
         return
       end
-      
+
       if file && (file.content_type.include?('video/') || file.content_type.include?('audio/'))
         if file.content_type.include?('video/') || (cover && cover.content_type.include?('image/'))
           video = params[:video]
           if !video[:tag_string]
             return error(params[:async], "Error", "You need at least one tag.")
           end
-          if !video[:title] || video[:title].strip.length == 0
+          if !video[:title] || video[:title].strip.empty?
             return error(params[:async], "Error", "You need to specify a title.")
           end
           data = file.read
@@ -129,27 +121,25 @@ class VideoController < ApplicationController
             return error(params[:async], "Duplication Error", "The uploaded video already exists.")
           end
           ext = File.extname(file.original_filename)
-          if ext == ''
-            ext = Mimes.ext(file.content_type)
-          end
+          ext = Mimes.ext(file.content_type) if ext == ''
           title = ApplicationHelper.check_and_trunk(video[:title], "Untitled Video")
           title = ApplicationHelper.demotify(title)
           text = ApplicationHelper.demotify(video[:description])
           Video.transaction do
             @video = user.videos.create(
-                    title: title, safe_title: ApplicationHelper.url_safe(title),
-                    description: text, html_description: ApplicationHelper.emotify(text),
-                    source: Video.clean_url(video[:source]),
-                    audio_only: file.content_type.include?('audio/'),
-                    file: ext,
-                    mime: file.content_type,
-                    upvotes: 0,
-                    downvotes: 0,
-                    views: 0,
-                    hidden: false,
-                    processed: false,
-                    checksum: checksum[:value],
-                    duplicate_id: 0
+              title: title, safe_title: ApplicationHelper.url_safe(title),
+              description: text, html_description: ApplicationHelper.emotify(text),
+              source: Video.clean_url(video[:source]),
+              audio_only: file.content_type.include?('audio/'),
+              file: ext,
+              mime: file.content_type,
+              upvotes: 0,
+              downvotes: 0,
+              views: 0,
+              hidden: false,
+              processed: false,
+              checksum: checksum[:value],
+              duplicate_id: 0
             )
             if @video.source && @video.source.strip != ''
               TagHistory.record_source_change(current_user, @video, @video.source)
@@ -169,11 +159,11 @@ class VideoController < ApplicationController
           end
           @video.save_file(data)
           if params[:video][:time] && (time = params[:video][:time].to_f) >= 0
-            @video.setThumbnailTime(time)
+            @video.set_thumbnail_time(time)
           else
-            @video.setThumbnail(cover)
+            @video.set_thumbnail(cover)
           end
-          Tag.loadTags(params[:video][:tag_string], @video)
+          Tag.load_tags(params[:video][:tag_string], @video)
           @video.save
           if params[:async]
             return render json: { result: "success", ref: "/view/" + @video.id.to_s }
@@ -186,28 +176,26 @@ class VideoController < ApplicationController
     end
     error(params[:async], "Access Denied", "You can't do that right now.")
   end
-  
+
   def matching_videos
     @videos = Video.where('title LIKE ?', '%' + params[:q] + '%').limit(10)
-    @videos = @videos.map do |v|
-      v.json
-    end
+    @videos = @videos.map(&:json)
     render json: @videos
   end
-  
+
   def video_details
     if @video = Video.where(id: params[:id]).first && (!@video.hidden || (user_signed_in? && current_user.is_contributor?))
       return render json: @video.json
     end
     render status: 404, nothing: true
   end
-  
+
   def video_update
     id = params[:id] || (params[:video] ? params[:video][:id] : nil)
     if user_signed_in? && @video = Video.where(id: id).first
       if @video.user_id == current_user.id || current_user.is_contributor?
         if params[:tags]
-          if changes = Tag.loadTags(params[:tags], @video)
+          if changes = Tag.load_tags(params[:tags], @video)
             TagHistory.record_changes(current_user, @video, changes[0], changes[1])
           end
         end
@@ -215,12 +203,8 @@ class VideoController < ApplicationController
           @video.set_source(params[:source])
           TagHistory.record_source_change(current_user, @video, @video.source)
         end
-        if params[:description]
-          @video.set_description(params[:description])
-        end
-        if params[:title]
-          @video.set_title(params[:title])
-        end
+        @video.set_description(params[:description]) if params[:description]
+        @video.set_title(params[:title]) if params[:title]
         @video.save
         return render json: {
           results: Tag.tag_json(@video.tags),
@@ -230,11 +214,11 @@ class VideoController < ApplicationController
     end
     render satus: 401, nothing: true
   end
-  
+
   def update
     if user_signed_in? && video = Video.where(id: params[:id]).first
       if params[:field] == 'tags'
-        if changes = Tag.loadTags(params[:value], video)
+        if changes = Tag.load_tags(params[:value], video)
           TagHistory.record_changes(current_user, video, changes[0], changes[1])
         end
         video.save
@@ -261,29 +245,27 @@ class VideoController < ApplicationController
     end
     render status: 401, nothing: true
   end
-  
+
   def edit
     if !user_signed_in? || !(@video = Video.where(id: params[:id]).first) || (@video.user_id != current_user.id && !current_user.is_contributor?)
       return render 'layouts/error', locals: { title: 'Access Denied', description: "You can't do that right now." }
     end
     @user = @video.user
   end
-  
-  def updateCover
+
+  def update_cover
     if user_signed_in? && video = Video.where(id: params[:video][:id]).first
       if video.user_id == current_user.id || current_user.is_contributor?
         if current_user.is_staff? && (file = params[:video][:file])
-          video.setFile(file)
+          video.set_file(file)
           video.save
         end
         if cover = params[:video][:cover]
-          if cover.content_type.include?('image/')
-            video.setThumbnail(cover)
-          end
+          video.set_thumbnail(cover) if cover.content_type.include?('image/')
         elsif (time = params[:video][:time].to_f) >= 0
-          video.setThumbnailTime(time)
+          video.set_thumbnail_time(time)
         elsif params[:erase] || file
-          video.setThumbnail(false)
+          video.set_thumbnail(false)
         end
         flash[:notice] = "Changes saved successfully. You may need to refresh the page."
         if params[:async]
@@ -294,28 +276,27 @@ class VideoController < ApplicationController
     end
     error(params[:async], "Access Denied", "You can't do that right now.")
   end
-  
+
   def download
     if !(@video = Video.where(id: params[:id].split(/-/)[0]).first)
-      return render :file => 'public/404.html', :status => :not_found, :layout => false
+      return render file: 'public/404.html', status: :not_found, layout: false
     end
     if @video.duplicate_id > 0
       @video = Video.where(id: @video.duplicate_id).first
     end
     if @video.hidden && (!user_signed_in? || (current_user.id != @video.user_id && !current_user.is_contributor?))
-      return render :file => 'public/401.html', :status => 401, :layout => false
+      return render file: 'public/401.html', status: 401, layout: false
     end
     file = @video.video_path.to_s
     if !File.exist?(file)
-      return render :file => 'public/404.html', :status => 404, :layout => false
+      return render file: 'public/404.html', status: 404, layout: false
     end
     response.headers['Content-Length'] = File.size(file).to_s
     send_file(file,
-        :filename => "#{@video.id}_#{@video.title}_by_#{@video.artists_string}#{@video.file}",
-        :type => @video.mime
-    )
+              filename: "#{@video.id}_#{@video.title}_by_#{@video.artists_string}#{@video.file}",
+              type: @video.mime)
   end
-  
+
   def list
     @page = params[:page].to_i
     type = 0
@@ -328,12 +309,12 @@ class VideoController < ApplicationController
       @data = 'unlisted=1'
       type = -1
     else
-      @results = Video.Finder
+      @results = Video.finder
     end
     @results = Pagination.paginate(@results.order(:created_at), @page, 50, true)
-    render template: '/view/listing', locals: {type_id: type, type: 'videos', type_label: 'Video', items: @results}
+    render template: '/view/listing', locals: { type_id: type, type: 'videos', type_label: 'Video', items: @results }
   end
-  
+
   def page
     @page = params[:page].to_i
     if @user = params[:id]
@@ -350,9 +331,9 @@ class VideoController < ApplicationController
       elsif merged = (params[:unlisted] && user_signed_in? && current_user.is_contributor?)
         @results = Video.where(hidden: true)
       else
-        @results = Video.Finder
+        @results = Video.finder
       end
-      @results = Pagination.paginate(@results.order(:created_at), @page, 50, true)  
+      @results = Pagination.paginate(@results.order(:created_at), @page, 50, true)
     end
     render json: {
       content: render_to_string(partial: merged ? '/admin/video_thumb_h.html' : '/layouts/video_thumb_h.html.erb', collection: @results.records),
@@ -360,19 +341,16 @@ class VideoController < ApplicationController
       page: @results.page
     }
   end
-  
+
   private
+
   def nonil(s, defaul)
-    if !s
-      return defaul
-    end
+    return defaul if !s
     s = s.strip
-    if s == ''
-      return defaul
-    end
-    return s
+    return defaul if s == ''
+    s
   end
-  
+
   def error(async, title, message)
     if async
       render plain: title + ":" + message, status: 401
@@ -380,11 +358,9 @@ class VideoController < ApplicationController
       render 'layouts/error', locals: { title: title, description: message }
     end
   end
-  
-  def checkError(async, condition, title, message)
-    if condition
-      error(async, title, message)
-    end
-    return condition
+
+  def check_error(async, condition, title, message)
+    error(async, title, message) if condition
+    condition
   end
 end

@@ -8,7 +8,7 @@ module ProjectVinyl
     class ElasticBuilder
       def initialize(parent)
         @data_pairs = {}
-        
+
         @parent = parent
         @children = []
         @anded_children = []
@@ -18,91 +18,81 @@ module ProjectVinyl
         @ranges = RangeQuery.new
         @votes = VoteQuery.new(self)
         @votes_not = VoteQuery.new(self)
-        
+
         @must_owner = []
         @must_not_owner = []
-        
+
         @users = []
         @tags = []
       end
-      
+
       def tags
         result = []
         result |= @tags
         @children.each do |i|
           result |= i.tags
         end
-        return result
+        result
       end
-      
+
       def uses(sym)
-        if @data_pairs.key?(sym)
-          return true
-        end
+        return true if @data_pairs.key?(sym)
         @children.each do |i|
-          if i.uses(sym)
-            return true
-          end
+          return true if i.uses(sym)
         end
-        return false
+        false
       end
-      
+
       def root
         @parent || self
       end
-      
+
       def cache_user(user)
-        @users << user;
+        @users << user
       end
-      
+
       def user_id_for(username)
-        if 1.is_a?(username.class)
-          return username
-        end
-        if !@parent.nil?
-          return self.root.user_id_for(username)
-        end
+        return username if 1.is_a?(username.class)
+        return self.root.user_id_for(username) if !@parent.nil?
         username = username.downcase
-        if @users.length > 0 && @user_ids_cache.nil?
+        if !@users.empty? && @user_ids_cache.nil?
           @user_ids_cache = {}
           User.where('username IN (?)', @users).pluck(:id, :username).each do |u|
-            @user_ids_cache[u[1].downcase] = u[0];
+            @user_ids_cache[u[1].downcase] = u[0]
           end
         end
-        if @user_ids_cache.key?(username)
-          return @user_ids_cache[username]
-        end
+        return @user_ids_cache[username] if @user_ids_cache.key?(username)
       end
-      
+
       def self.interpret_opset(type, opset, sender)
         result = ElasticBuilder.new(nil)
         result.take_all(type, opset, sender)
-        return result
+        result
       end
-      
+
       def absorb_param(dest, opset, key)
-        if (data = opset.shift) && data.length > 0
-          dest << {term: {key.to_sym => data.strip}}
+        if (data = opset.shift) && !data.empty?
+          dest << { term: { key.to_sym => data.strip } }
           @dirty = true
         else
           raise LexerError, key + " Operator requires a data parameter"
         end
       end
-      
+
       def absorb_param_if(dest, opset, key, condition)
-        if (data = opset.shift) && data.length > 0
+        if (data = opset.shift) && !data.empty?
           if condition
             data = data.strip
-            dest << {term: {key.to_sym => data}}
+            dest << { term: { key.to_sym => data } }
             @dirty = true
             return data
           end
         else
           raise LexerError, key + " Operator requires a data parameter"
         end
-        return nil
+        nil
       end
-      
+
       def absorb(opset, name)
         if !(data = opset.shift).nil?
           yield(data)
@@ -111,26 +101,24 @@ module ProjectVinyl
           raise LexerError, name + " Operator requires a data parameter"
         end
       end
-      
+
       def absorb_prim(dest, key, value)
         key = key.to_sym
         if @data_pairs.key?(key)
           @data_pairs[key][key] = value
           return
         end
-        pair = {key => value}
+        pair = { key => value }
         @data_pairs[key] = pair
-        dest << {term: pair}
+        dest << { term: pair }
         @dirty = true
       end
-      
+
       # reads all params and children into this group
       def take_all(type, opset, sender)
-        while opset.length > 0
+        until opset.empty?
           op = opset.shift
-          if op == ProjectVinyl::Search::Op::GROUP_END
-            return
-          end
+          return if op == ProjectVinyl::Search::Op::GROUP_END
           if op == ProjectVinyl::Search::Op::OR
             op_n = opset.peek(2)
             neg = false
@@ -138,13 +126,9 @@ module ProjectVinyl
               neg = true
               op_n.shift
             end
-            if op_n[0] == ProjectVinyl::Search::Op::GROUP_START
-              opset.shift
-            end
+            opset.shift if op_n[0] == ProjectVinyl::Search::Op::GROUP_START
             child_group = ElasticBuilder.new(self)
-            if neg
-              child_group.negate
-            end
+            child_group.negate if neg
             child_group.take_all(type, opset, sender)
             @children << child_group
             next
@@ -159,30 +143,24 @@ module ProjectVinyl
             if op_n[0] == ProjectVinyl::Search::Op::GROUP_START
               opset.shift
               child_group = ElasticBuilder.new(self)
-              if neg
-                child_group.negate
-              end
+              child_group.negate if neg
               child_group.take_all(type, opset, sender)
               @anded_children << child_group
             end
             next
           end
-          if op == ProjectVinyl::Search::Op::GROUP_START
-            next
-          end
-          if op == ProjectVinyl::Search::Op::GROUP_END
-            next
-          end
+          next if op == ProjectVinyl::Search::Op::GROUP_START
+          next if op == ProjectVinyl::Search::Op::GROUP_END
           take_param(type, op, opset, sender)
         end
       end
-      
+
       def take_prim(type, op, v, sender)
-        if ((op == ProjectVinyl::Search::Op::AUDIO_ONLY && type != 'user') || (op == ProjectVinyl::Search::Op::HIDDEN && sender && sender.is_staff?))
+        if (op == ProjectVinyl::Search::Op::AUDIO_ONLY && type != 'user') || (op == ProjectVinyl::Search::Op::HIDDEN && sender && sender.is_staff?)
           self.absorb_prim(@must, ProjectVinyl::Search::Op.name_of(op), v)
         end
       end
-      
+
       # reads all the data operators into a group
       def take_param(type, op, opset, sender)
         if op == ProjectVinyl::Search::Op::TITLE
@@ -212,51 +190,41 @@ module ProjectVinyl
             elsif ProjectVinyl::Search::Op.ranged?(data)
               @ranges.record(data, opset, true)
             elsif data == ProjectVinyl::Search::Op::VOTE_U || data == ProjectVinyl::Search::Op::VOTE_D
-              if type != 'user'
-                @votes_not.record(data, opset, sender)
-              end
+              @votes_not.record(data, opset, sender) if type != 'user'
             else
-              @must_not << {term: {tags: data.strip}}
+              @must_not << { term: { tags: data.strip } }
             end
           end
         elsif op == ProjectVinyl::Search::Op::VOTE_U || op == ProjectVinyl::Search::Op::VOTE_D
-          if type != 'user'
-            @votes.record(op, opset, sender)
-          end
+          @votes.record(op, opset, sender) if type != 'user'
         else
           op = op.strip
-          if op.length > 0
+          if !op.empty?
             @tags << op
-            @must << {term: {tags: op}}
+            @must << { term: { tags: op } }
             @dirty = true
           end
         end
-        return opset
+        opset
       end
-      
+
       def dirty
-        return @dirty || @ranges.dirty || @votes.dirty || @votes_not.dirty
+        @dirty || @ranges.dirty || @votes.dirty || @votes_not.dirty
       end
-      
+
       def negate
         @neg = !@neg
       end
-      
+
       def self.__get(hash, key)
-        if !hash.key?(key)
-          hash[key] = []
-        end
-        return hash[key]
+        hash[key] = [] if !hash.key?(key)
+        hash[key]
       end
-      
+
       def baked_inclusions
         m = @must
-        if @ranges.dirty
-          m << @ranges.to_hash
-        end
-        if @votes.dirty
-          m = m | @votes.to_hash
-        end
+        m << @ranges.to_hash if @ranges.dirty
+        m |= @votes.to_hash if @votes.dirty
         @must_owner.each do |o|
           if i = self.user_id_for(o[:term][:user_id])
             o[:term][:user_id] = i
@@ -266,87 +234,79 @@ module ProjectVinyl
         @anded_children.each do |ac|
           m << ac.to_hash
         end
-        return m
+        m
       end
-      
+
       def baked_exclusions
         m = @must_not
-        if @votes_not.dirty
-          m = m | @votes_not.to_hash
-        end
+        m |= @votes_not.to_hash if @votes_not.dirty
         @must_not_owner.each do |o|
           if i = self.user_id_for(o[:term][:user_id])
             o[:term][:user_id] = i
             m << o
           end
         end
-        return m
+        m
       end
-      
+
       def must(holder)
         m = @neg ? baked_exclusions : baked_inclusions
-        if m.length > 0
-          holder[:must] = m;
-        end
-        return holder
+        holder[:must] = m if !m.empty?
+        holder
       end
-      
+
       def must_not(holder)
         m = @neg ? baked_inclusions : baked_exclusions
-        if m.length > 0
-          holder[:must_not] = m;
-        end
-        return holder
+        holder[:must_not] = m if !m.empty?
+        holder
       end
-      
+
       def to_hash
         hash = {
           bool: {}
         }
         must hash[:bool]
         must_not hash[:bool]
-        return hash
+        hash
       end
-      
+
       def bools
         { bool: must_not(must({})) }
       end
-      
+
       def must_must_not(arr)
-        if @must.length > 0 || @must_not.length > 0 || @must_owner.length > 0 || @must_not_owner.length > 0 || @ranges.dirty || @votes.dirty || @votes_not.dirty
+        if !@must.empty? || !@must_not.empty? || !@must_owner.empty? || !@must_not_owner.empty? || @ranges.dirty || @votes.dirty || @votes_not.dirty
           arr << bools
         end
-        return arr
+        arr
       end
-      
+
       def should(arr)
-        return ElasticBuilder.as_should(must_must_not(arr), @children)
+        ElasticBuilder.as_should(must_must_not(arr), @children)
       end
-      
+
       def to_hash
-        if @children.length == 0
-          if @must.length > 0 || @must_not.length > 0 || @ranges.dirty || @votes.dirty || @votes_not.dirty || @anded_children.length > 0 || @must_owner.length > 0 || @must_not_owner.length > 0
+        if @children.empty?
+          if !@must.empty? || !@must_not.empty? || @ranges.dirty || @votes.dirty || @votes_not.dirty || !@anded_children.empty? || !@must_owner.empty? || !@must_not_owner.empty?
             return bools
           end
-          return {match_all: {}}
+          return { match_all: {} }
         end
-        return {bool: {should: should([]), minimum_should_match: 1} }
+        { bool: { should: should([]), minimum_should_match: 1 } }
       end
-      
+
       def self.as_should(arr, groups)
-        if groups.length > 0
+        if !groups.empty?
           groups.each do |c|
             c.should(arr)
           end
         end
-        return arr
+        arr
       end
-      
+
       def self.as_hash(groups)
-        if groups.length == 1
-          return groups[0].to_hash
-        end
-        return {bool: {should: ElasticBuilder.as_should([], groups), minimum_should_match: 1 } }
+        return groups[0].to_hash if groups.length == 1
+        { bool: { should: ElasticBuilder.as_should([], groups), minimum_should_match: 1 } }
       end
     end
   end

@@ -2,17 +2,17 @@ require 'net/http'
 
 class Ajax
   def self.get(url, params = {})
-    return Ajax.new(url).get(params) do |body|
+    Ajax.new(url).get(params) do |body|
       yield(body)
     end
   end
-  
+
   def self.post(url, params = {})
-    return Ajax.new(url).post(params) do |body|
+    Ajax.new(url).post(params) do |body|
       yield(body)
     end
   end
-  
+
   def initialize(url)
     @url = URI.parse(url)
     @params = {}
@@ -23,89 +23,85 @@ class Ajax
       end
     end
   end
-  
-  def request()
+
+  def request
     res = Net::HTTP.start(@url.host, @url.port,
-      :use_ssl => @url.scheme == 'https',
-      :verify_mode => OpenSSL::SSL::VERIFY_NONE) {|connection|
+                          use_ssl: @url.scheme == 'https',
+                          verify_mode: OpenSSL::SSL::VERIFY_NONE) do |connection|
       connection.request(@req)
-    }
+    end
     if res.code == '200'
       yield(res.body)
       return true
     end
-    return false
+    false
   end
-  
+
   def get(params = {})
     @url.query = URI.encode_www_form(@params.merge(params))
     @req = Net::HTTP::Get.new(@url)
-    return self.request() do |body|
+    self.request do |body|
       yield(body)
     end
   end
-  
+
   def post(params = {})
     @req = Net::HTTP::Post.new(@url)
     @req.set_form_data(@params.merge(params))
-    return self.request() do |body|
+    self.request do |body|
       yield(body)
     end
   end
 end
-Ajax.get('https://www.fimfiction.net/user/Sollace') {|body| @body = body }
-
-
+Ajax.get('https://www.fimfiction.net/user/Sollace') { |body| @body = body }
 
 class TextNode
   def initialize(text)
     @innerHTML = text
   end
-  
-  def innerHTML
-    @innerHTML
-  end
-  
+
+  attr_reader :innerHTML
+
   def innerText
     @innerHTML
   end
-  
+
   def innerText=(text)
     @innerHTML = text
   end
-  
+
   def id
     ""
   end
-  
+
   def classes
     []
   end
-  
+
   def attributes
     {}
   end
-  
+
   def children
     classes
   end
-  
-  def getElementById(d)
+
+  def getElementById(_d)
     nil
   end
-  
-  def getElementsByTagName(tagName)
+
+  def getElementsByTagName(_tagName)
     []
   end
-  
-  def getElementsByClassName(className)
+
+  def getElementsByClassName(_className)
     []
   end
-  
+
   def to_s
     @innerHTML
   end
-  
+
   def to_bbc
     @innerHTML
   end
@@ -115,108 +111,90 @@ class HTMNode
   def self.Parse(content)
     result = HTMNode.new
     content = result.parse(content)
-    if content && content.length > 0
-      result.children << TextNode.new(content)
-    end
-    return result
+    result.children << TextNode.new(content) if content.present?
+    result
   end
-  
+
   def self.extract_uri_parameter(url, parameter)
-    return URI.unescape(url.split("#{parameter}=").last.split('&').first)
+    URI.unescape(url.split("#{parameter}=").last.split('&').first)
   end
-  
-  def initialize()
+
+  def initialize
     @attributes = {}
     @children = []
   end
-  
-  def tagName
-    @tagName
-  end
-  
+
+  attr_reader :tagName
+
   def id
     @attributes[:id] || ""
-  end  
-  
+  end
+
   def classes
     (@attributes[:class] || "").split(' ')
   end
-  
-  def children
-    @children
-  end
-  
-  def attributes
-    @attributes
-  end
-  
+
+  attr_reader :children
+
+  attr_reader :attributes
+
   def innerHTML
     result = ''
     @children.each do |i|
       result << i.to_s
     end
-    return result
+    result
   end
-  
+
   def innerBBC
     result = ''
     @children.each do |i|
       result << i.to_bbc
     end
-    return result
+    result
   end
-  
+
   def innerText
-    if @tagName == 'br'
-      return '\n'
-    end
+    return '\n' if @tagName == 'br'
     result = ''
     @children.each do |i|
       result << i.innerText
     end
-    return result
+    result
   end
-  
+
   def innerText=(text)
     @children = []
     @children << TextNode.new(text)
   end
-  
+
   def getElementById(d)
-    if self.id == d
-      return self
-    end
+    return self if self.id == d
     @children.each do |i|
       result = i.getElementById(d)
-      if result
-        return result
-      end
+      return result if result
     end
-    return nil
+    nil
   end
-  
+
   def getElementsByTagName(tagName)
     results = []
-    if tagName == @tagName
-      results << self
-    end
+    results << self if tagName == @tagName
     @children.each do |i|
-      results = results + i.getElementsByTagName(tagName)
+      results += i.getElementsByTagName(tagName)
     end
-    return results
+    results
   end
-  
+
   def getElementsByClassName(className)
     result = []
-    if classes.index(className)
-      result << self
-    end
+    result << self if classes.index(className)
     @children.each do |i|
-      result = result + i.getElementsByClassName(className)
+      result += i.getElementsByClassName(className)
     end
-    return result
+    result
   end
-  
+
   def loadAttr(content)
     index = -1
     quote = nil
@@ -225,15 +203,13 @@ class HTMNode
     inValue = false
     while index < content.length - 1
       index += 1
-      if !inValue || quote == nil
+      if !inValue || quote.nil?
         if content[index] == '/' && index < content.length - 1 && content[index + 1] == '>'
           return content[index..content.length]
         end
         if content[index] == '>'
-          if name.length > 0
-            @attributes[name.strip] = value
-          end
-          return content[(index+1)..content.length]
+          @attributes[name.strip] = value if !name.empty?
+          return content[(index + 1)..content.length]
         end
       end
       if !inValue
@@ -243,7 +219,7 @@ class HTMNode
         end
         name += content[index]
       else
-        if quote == nil
+        if quote.nil?
           if content[index] == '"' || content[index] == "'"
             quote = content[index]
             next
@@ -267,9 +243,9 @@ class HTMNode
         value += content[index]
       end
     end
-    return content[(index+1)..content.length]
+    content[(index + 1)..content.length]
   end
-  
+
   def parse(content)
     index = -1
     inNode = false
@@ -280,25 +256,17 @@ class HTMNode
       index += 1
       if inContent
         if @tagName == 'br' || @tagName == 'img'
-          if content[index] == '/'
-            index += 1
-          end
-          if content[index] == '>'
-            index += 1
-          end
+          index += 1 if content[index] == '/'
+          index += 1 if content[index] == '>'
           return content[index..content.length]
         end
-        if content.index('/>') == 0
-          return content[3..content.length]
-        end
+        return content[3..content.length] if content.index('/>') == 0
         if content.index('</' + @tagName + '>') == index
-          if text.length > 0
-            @children << TextNode.new(text)
-          end
+          @children << TextNode.new(text) if !text.empty?
           return content[(index + ('</' + @tagName + '>').length)..content.length]
         end
         if content.index('<') == index
-          if text.length > 0
+          if !text.empty?
             @children << TextNode.new(text)
             text = ''
           end
@@ -319,9 +287,7 @@ class HTMNode
           inContent = true
           next
         elsif content[index] == '>' || content[index] == '/'
-          if tagName.length == 0
-            next
-          end
+          next if tagName.empty?
           @tagName = tagName
           inContent = true
           inNode = false
@@ -338,30 +304,22 @@ class HTMNode
         next
       end
     end
-    if text.length > 0
-      @children << TextNode.new(text)
-    end
-    return content[(index+1)..content.length]
+    @children << TextNode.new(text) if !text.empty?
+    content[(index + 1)..content.length]
   end
-  
+
   def to_s
     "<" + @tagName + " " + @attributes.to_s + ">" + self.innerHTML + "</" + @tagName + ">"
   end
-  
+
   def to_bbc
-    if @tagName == 'br'
-      return "\n"
-    end
+    return "\n" if @tagName == 'br'
     if @tagName == 'a'
       return "[url=" + @attributes['href'] + "]" + self.innerBBC + "[/url]"
     end
-    if @tagName == 'img'
-      return "[img]" + @attributes['src'] + "[/img]"
-    end
+    return "[img]" + @attributes['src'] + "[/img]" if @tagName == 'img'
     tagName = @tagName
-    if tagName == 'blockquote'
-      tagName = 'q'
-    end
-    return "[" + tagName + "]" + self.innerBBC + "[/" + tagName + "]"
+    tagName = 'q' if tagName == 'blockquote'
+    "[" + tagName + "]" + self.innerBBC + "[/" + tagName + "]"
   end
 end
