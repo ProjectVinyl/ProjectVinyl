@@ -7,7 +7,7 @@ class ThreadController < ApplicationController
     @modificationsAllowed = user_signed_in? && (current_user.id == @thread.user_id || current_user.is_contributor?)
     @comments = Pagination.paginate(@thread.get_comments(user_signed_in? && current_user.is_contributor?), (params[:page] || -1).to_i, 10, false)
   end
-  
+
   def new
     @thread = CommentThread.new
     if params[:user] && @user = User.where(id: params[:user]).first
@@ -16,7 +16,7 @@ class ThreadController < ApplicationController
     @thread.owner_id = (params[:board] || 0).to_i
     render partial: 'new'
   end
-  
+
   def create
     if user_signed_in?
       thread = CommentThread.create(user_id: current_user.id, total_comments: 1, owner_type: 'Board', owner_id: params[:thread][:owner_id])
@@ -24,15 +24,13 @@ class ThreadController < ApplicationController
       thread.save
       comment = thread.comments.create(user_id: current_user.id)
       comment.update_comment(params[:thread][:description])
-      if current_user.subscribe_on_thread?
-        thread.subscribe(current_user)
-      end
+      thread.subscribe(current_user) if current_user.subscribe_on_thread?
       redirect_to action: 'view', id: thread.id
       return
     end
     redirect_to action: "index", controller: "welcome"
   end
-  
+
   def update
     if user_signed_in? && thread = CommentThread.where(id: params[:id]).first
       if thread.user_id == current_user.id || current_user.is_contributor?
@@ -46,7 +44,7 @@ class ThreadController < ApplicationController
     end
     render status: 401, nothing: true
   end
-  
+
   def move
     if user_signed_in? && current_user.is_contributor? && thread = CommentThread.where(owner_type: 'Board', id: params[:id]).first
       if board = Board.where(id: params[:item]).first
@@ -59,7 +57,7 @@ class ThreadController < ApplicationController
     end
     render status: 401, nothing: true
   end
-  
+
   def search
     @page = params[:page].to_i
     @title_query = params[:title_query]
@@ -75,27 +73,23 @@ class ThreadController < ApplicationController
     if @poster_query
       @q = @q.joins(:direct_user).where('`users`.username LIKE ?', '%' + @poster_query + '%')
     end
-    if @text_query
-      @q = @q.where('bbc_content LIKE ?', '%' + @text_query + '%')
-    end
-    if @category > 0
-      @q = @q.where('`comment_threads`.owner_id = ?', @category)
-    end
+    @q = @q.where('bbc_content LIKE ?', '%' + @text_query + '%') if @text_query
+    @q = @q.where('`comment_threads`.owner_id = ?', @category) if @category > 0
     if @title_query || @poster_query || @text_query || (@category > 0)
       @results = @q
     end
     @results = Pagination.paginate(@results, @page, 20, !@ascending)
   end
-  
+
   def page_search
     search
     render json: {
-      content: render_to_string(partial: '/thread/comment_set', locals: {thread: @results.records, indirect: true}),
+      content: render_to_string(partial: '/thread/comment_set', locals: { thread: @results.records, indirect: true }),
       pages: @results.pages,
       page: @results.page
     }
   end
-  
+
   def post_comment
     if user_signed_in?
       if (@thread = CommentThread.where(id: params[:thread]).first) && !@thread.locked
@@ -103,11 +97,9 @@ class ThreadController < ApplicationController
         @thread.total_comments = @thread.comments.count
         @thread.save
         comment.update_comment(params[:comment])
-        
-        if @thread.owner_type == 'Video'
-          @thread.owner.computeHotness.save
-        end
-        
+
+        @thread.owner.computeHotness.save if @thread.owner_type == 'Video'
+
         @results = Pagination.paginate(@thread.get_comments(current_user.is_contributor?), params[:order] == '1' ? 0 : -1, 10, params[:order] == '1')
         render json: {
           content: render_to_string(partial: '/thread/comment_set.html.erb', locals: { thread: @results.records, indirect: false }),
@@ -120,7 +112,7 @@ class ThreadController < ApplicationController
     end
     render status: 401, nothing: true
   end
-  
+
   def edit_comment
     if user_signed_in? && (comment = Comment.where(id: params[:id]).first)
       comment.update_comment(params[:comment])
@@ -129,7 +121,7 @@ class ThreadController < ApplicationController
     end
     render status: 401, nothing: true
   end
-  
+
   def get_comment
     if comment = Comment.where(id: params[:id]).first
       render partial: '/thread/comment', locals: { comment: comment, indirect: false }
@@ -137,7 +129,7 @@ class ThreadController < ApplicationController
     end
     render status: 404, nothing: true
   end
-  
+
   def remove_comment
     if user_signed_in? && comment = Comment.where(id: params[:id]).first
       if current_user.is_contributor? || current_user.id == comment.user_id
@@ -147,7 +139,7 @@ class ThreadController < ApplicationController
           comment.save
           render json: {
             message: "success",
-            content: render_to_string(partial: '/thread/comment.html.erb', locals: { comment: comment, indirect: !params[:indirect].nil? }),
+            content: render_to_string(partial: '/thread/comment.html.erb', locals: { comment: comment, indirect: !params[:indirect].nil? })
           }
         else
           comment.hidden = true
@@ -156,7 +148,7 @@ class ThreadController < ApplicationController
           if current_user.is_contributor?
             render json: {
               message: "success",
-              content: render_to_string(partial: '/thread/comment.html.erb', locals: { comment: comment, indirect: !params[:indirect].nil? }),
+              content: render_to_string(partial: '/thread/comment.html.erb', locals: { comment: comment, indirect: !params[:indirect].nil? })
             }
           else
             render json: {
@@ -169,7 +161,7 @@ class ThreadController < ApplicationController
     end
     render status: 401, nothing: true
   end
-  
+
   def page
     @thread = CommentThread.where(id: params[:thread_id]).first
     if params[:comment] && (@comment = Comment.where(comment_thread_id: @thread.id, id: Comment.decode_open_id(params[:comment])).first)
@@ -184,7 +176,7 @@ class ThreadController < ApplicationController
       page: @results.page
     }
   end
-  
+
   def notifications
     if user_signed_in?
       @all = current_user.notifications.order(:created_at).reverse_order.preload_comment_threads
@@ -196,7 +188,7 @@ class ThreadController < ApplicationController
       redirect_to action: "index", controller: "welcome"
     end
   end
-  
+
   def mark_read
     if user_signed_in?
       if notification = current_user.notifications.where(id: params[:n]).first
@@ -209,7 +201,7 @@ class ThreadController < ApplicationController
     end
     redirect_to action: "index", controller: "welcome"
   end
-  
+
   def delete_notification
     if user_signed_in?
       if item = Notification.where(id: params[:id], user_id: current_user.id).first

@@ -19,14 +19,13 @@ class AjaxController < ApplicationController
         end
         CommentThread.where('id IN (?)', ids.uniq).each do |thread|
           last = thread.comments.last.id
-          if last != values[thread.id]
-            c = thread.comments.includes(:direct_user).order(:created_at).reverse_order.limit(50).reverse()
-            result[:chats] << {
-              id: thread.id,
-              content: render_to_string(partial: 'thread/chat_message_set', locals: { thread: c }),
-              last: last
-            }
-          end
+          next unless last != values[thread.id]
+          c = thread.comments.includes(:direct_user).order(:created_at).reverse_order.limit(50).reverse
+          result[:chats] << {
+            id: thread.id,
+            content: render_to_string(partial: 'thread/chat_message_set', locals: { thread: c }),
+            last: last
+          }
         end
         return render json: result
       end
@@ -42,120 +41,118 @@ class AjaxController < ApplicationController
     end
     render status: 401, nothing: true
   end
-  
+
   def upvote
     if user_signed_in?
       if video = Video.where(id: params[:id]).first
-        return render json: { :count => video.upvote(current_user, params[:incr]) }
+        return render json: { count: video.upvote(current_user, params[:incr]) }
       end
     end
     render status: 401, nothing: true
   end
-  
+
   def downvote
     if user_signed_in?
       if video = Video.where(id: params[:id]).first
-        return render json: { :count => video.downvote(current_user, params[:incr]) }
+        return render json: { count: video.downvote(current_user, params[:incr]) }
       end
     end
     render status: 401, nothing: true
   end
-  
+
   def star
     if user_signed_in?
       if video = Video.where(id: params[:id]).first
-        return render json: { :added => video.star(current_user) }
+        return render json: { added: video.star(current_user) }
       end
     end
     render status: 401, nothing: true
   end
-  
+
   def like
     if user_signed_in?
       if comment = Comment.where(id: params[:id]).first
-        return render json: { :added => comment.upvote(current_user, params[:incr]) }
+        return render json: { added: comment.upvote(current_user, params[:incr]) }
       end
     end
     render status: 401, nothing: true
   end
-  
+
   def toggleAlbum
     if user_signed_in?
       if (album = Album.where(id: params[:item]).first) && album.ownedBy(current_user)
         if video = Video.where(id: params[:id]).first
-          return render json: { :added => album.toggle(video) }
+          return render json: { added: album.toggle(video) }
         end
       end
     end
     render status: 401, nothing: true
   end
-  
+
   def toggleSubscribe
     if user_signed_in?
       if thread = CommentThread.where(id: params[:id]).first
-        return render json: { :added => thread.toggleSubscribe(current_user)}
+        return render json: { added: thread.toggleSubscribe(current_user) }
       end
     end
     render status: 401, nothing: true
   end
-  
+
   def togglePin
     if user_signed_in? && current_user.is_staff?
       if thread = CommentThread.where(id: params[:id]).first
         thread.pinned = !thread.pinned
         thread.save
-        render json: { :added => thread.pinned }
+        render json: { added: thread.pinned }
         return
       end
     end
     render status: 401, nothing: true
   end
-  
+
   def toggleLock
     if user_signed_in? && current_user.is_contributor?
       if thread = CommentThread.where(id: params[:id]).first
         thread.locked = !thread.locked
         thread.save
-        render json: { :added => thread.locked }
+        render json: { added: thread.locked }
         return
       end
     end
     render status: 401, nothing: true
   end
-  
+
   def toggleFeature
     if user_signed_in? && current_user.is_staff?
       if video = Video.where(id: params[:id]).first
         Video.where(featured: true).update_all(featured: false)
         video.featured = !video.featured
-        if video.featured
-          Tag.addTag('featured video', video)
-        end
+        Tag.addTag('featured video', video) if video.featured
         video.save
-        render json: { :added => video.featured }
+        render json: { added: video.featured }
         return
       end
     end
     render status: 401, nothing: true
   end
-  
+
   def toggleAlbumFeature
     if user_signed_in? && current_user.is_staff?
       if album = Album.where(id: params[:id]).first
         Album.where('featured > 0').update_all(featured: 0)
         album.featured = album.featured > 0 ? 0 : 1
         album.save
-        render json: { :added => album.featured > 0 }
+        render json: { added: album.featured > 0 }
         return
       end
     end
     render status: 401, nothing: true
   end
-  
+
   def donate
     render partial: "staff/donate"
   end
-  
+
   def login
     render partial: "devise/sessions/new"
   end

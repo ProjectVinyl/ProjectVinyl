@@ -3,14 +3,13 @@ require 'projectvinyl/search/op'
 module ProjectVinyl
   module ElasticSearch
     class VoteQuery
-      
       def initialize(owner)
         @owner = owner
         @likes = []
         @dislikes = []
         @dirty = false
       end
-      
+
       def record(op, opset, sender)
         user = opset.shift
         if sender
@@ -19,12 +18,10 @@ module ProjectVinyl
           elsif ProjectVinyl::Search::Op.is?(user)
             user = sender.id
           else
-            if !sender.is_staff?
-              return
-            end
+            return if !sender.is_staff?
             @owner.root.cache_user(user)
           end
-          
+
           if op == ProjectVinyl::Search::Op::VOTE_U
             @likes << user
           else
@@ -33,24 +30,22 @@ module ProjectVinyl
           @dirty = true
         end
       end
-      
-      def dirty
-        @dirty
-      end
-      
+
+      attr_reader :dirty
+
       def to_hash
         result = []
         @likes.each do |like|
           if s = @owner.user_id_for(like)
-            result << { term: {likes: s } }
+            result << { term: { likes: s } }
           end
         end
         @dislikes.each do |dislike|
           if s = @owner.user_id_for(dislike)
-            result << { term: {dislikes: s } }
+            result << { term: { dislikes: s } }
           end
         end
-        return result
+        result
       end
     end
   end

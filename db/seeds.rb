@@ -46,13 +46,13 @@ artist.videos.create([
 ])
 
 album = artist.albums.create([
-  { title: 'Sample\' Samples', description: 'No description'}
+  { title: 'Sample\' Samples', description: 'No description' }
 ]).first
 album.album_items.create([
-  { index: 1, video_id: 1}
+  { index: 1, video_id: 1 }
 ])
 album.album_items.create([
-  { index: 2, video_id: 2}
+  { index: 2, video_id: 2 }
 ])
 
 artist.artist_genres.create([

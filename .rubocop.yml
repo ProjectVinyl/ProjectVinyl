@@ -1,0 +1,87 @@
+inherit_from: .rubocop_todo.yml
+
+AllCops:
+  Exclude:
+    - db/migrate/*.rb
+    - db/schema.rb
+  TargetRubyVersion: 2.4
+
+Bundler/OrderedGems:
+  Enabled: false
+
+Lint/AmbiguousRegexpLiteral:
+  Enabled: false
+
+Lint/EndAlignment:
+  EnforcedStyleAlignWith: variable
+  AutoCorrect: true
+
+Metrics/LineLength:
+  Max: 300
+
+Rails:
+  Enabled: true
+
+Rails/Date:
+  EnforcedStyle: strict
+
+Rails/Output:
+  Exclude:
+    - db/seeds.rb
+
+Rails/TimeZone:
+  EnforcedStyle: strict
+
+Style/CaseIndentation:
+  EnforcedStyle: end
+
+Style/ConditionalAssignment:
+  Enabled: false
+#  EnforcedStyle: assign_inside_condition
+
+Style/EmptyMethod:
+  EnforcedStyle: expanded
+
+Style/FrozenStringLiteralComment:
+  Enabled: false
+
+Style/IndentArray:
+  EnforcedStyle: consistent
+
+Style/IndentHash:
+  EnforcedStyle: consistent
+
+Style/Lambda:
+  EnforcedStyle: literal
+
+Style/ModuleFunction:
+  EnforcedStyle: extend_self
+
+Style/NegatedIf:
+  Enabled: false
+
+Style/NumericPredicate:
+  AutoCorrect: true
+  EnforcedStyle: comparison
+
+Style/RedundantSelf:
+  Enabled: false
+
+Style/RegexpLiteral:
+  AllowInnerSlashes: true
+  EnforcedStyle: slashes
+
+Style/RescueModifier:
+  Enabled: false
+
+Style/SafeNavigation:
+  Enabled: false
+
+#Style/Semicolon:
+#  Enabled: false
+
+Style/StringLiterals:
+  Enabled: false
+
+Style/VariableNumber:
+  Enabled: false

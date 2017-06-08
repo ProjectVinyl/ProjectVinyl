@@ -19,53 +19,51 @@ module ProjectVinyl
       SCORE_LT = -14
       VOTE_U = -15
       VOTE_D = -16
-      
+
       def self.is?(op)
-        return 1.is_a?(op.class) && op < 0 && op >= Op::VOTE_D
+        1.is_a?(op.class) && op < 0 && op >= Op::VOTE_D
       end
-      
+
       def self.ranged?(op)
-        return Op.is?(op) && op <= Op::LENGTH_GT && op >= Op::SCORE_LT
+        Op.is?(op) && op <= Op::LENGTH_GT && op >= Op::SCORE_LT
       end
-      
+
       def self.primitive?(op)
-        return Op.is?(op) && (op == Op::AUDIO_ONLY || op == Op::HIDDEN)
+        Op.is?(op) && (op == Op::AUDIO_ONLY || op == Op::HIDDEN)
       end
-      
+
       def self.name_of(op)
         Op.constants.each do |c|
-          if Op.const_get(c) == op
-            return c.to_s.downcase.to_sym
-          end
+          return c.to_s.downcase.to_sym if Op.const_get(c) == op
         end
-        return :unknown
+        :unknown
       end
-      
+
       def slurpSystemTags(slurp)
         slurp = slurp.strip
         if slurp.index('title:') == 0
-          @opset << slurp.sub(/title\:/,'')
+          @opset << slurp.sub(/title\:/, '')
           return Op::TITLE
         elsif slurp.index('name:') == 0
-          @opset << slurp.sub(/name\:/,'')
+          @opset << slurp.sub(/name\:/, '')
           return Op::TITLE
         elsif slurp.index('uploader:') == 0
-          @opset << slurp.sub(/uploader\:/,'')
+          @opset << slurp.sub(/uploader\:/, '')
           return Op::UPLOADER
         elsif slurp.index('source:') == 0
-          @opset << slurp.sub(/source\:/,'')
+          @opset << slurp.sub(/source\:/, '')
           return Op::SOURCE
         elsif slurp.index('length<') == 0
-          @opset << slurp.sub(/length</,'')
+          @opset << slurp.sub(/length</, '')
           return Op::LENGTH_LT
         elsif slurp.index('length>') == 0
-          @opset << slurp.sub(/length>/,'')
+          @opset << slurp.sub(/length>/, '')
           return Op::LENGTH_GT
         elsif slurp.index('score<') == 0
-          @opset << slurp.sub(/score</,'')
+          @opset << slurp.sub(/score</, '')
           return Op::SCORE_LT
         elsif slurp.index('score>') == 0
-          @opset << slurp.sub(/score>/,'')
+          @opset << slurp.sub(/score>/, '')
           return Op::SCORE_GT
         elsif slurp == 'is:audio'
           return Op::AUDIO_ONLY
@@ -75,39 +73,39 @@ module ProjectVinyl
           @opset << 'nil'
           return Op::VOTE_U
         elsif slurp.index('upvoted_by:') == 0
-          @opset << slurp.sub(/upvoted_by:/,'')
+          @opset << slurp.sub(/upvoted_by:/, '')
           return Op::VOTE_U
         elsif slurp == 'is:downvoted'
           @opset << 'nil'
           return Op::VOTE_D
         elsif slurp.index('downvoted_by:') == 0
-          @opset << slurp.sub(/downvoted_by:/,'')
+          @opset << slurp.sub(/downvoted_by:/, '')
           return Op::VOTE_D
         end
-        return slurp
+        slurp
       end
-      
+
       def self.loadOPS(search_terms)
-        return Op.new(search_terms)
+        Op.new(search_terms)
       end
-      
+
       def initialize(search_terms)
         @opset = []
-        @open_count = 0;
+        @open_count = 0
         @old = []
-        if !search_terms || (search_terms = search_terms.strip).length == 0
+        if !search_terms || (search_terms = search_terms.strip).empty?
           @terms = []
         else
           @terms = search_terms.split('')
         end
       end
-      
+
       def length
         @terms.length + @opset.length
       end
-      
+
       def peek(n)
-        while @opset.length < n && @terms.length > 0
+        while @opset.length < n && !@terms.empty?
           stack = @opset
           @opset = []
           stack << __shift
@@ -117,27 +115,25 @@ module ProjectVinyl
           @opset = stack
         end
         result = []
-        for i in 0..(n-1)
+        for i in 0..(n - 1)
           if i < @opset.length
             result << @opset[i]
           else
             result << ""
           end
         end
-        return result
+        result
       end
-      
+
       def shift
-        if @opset.length > 0
-          return @opset.shift
-        end
-        return __shift
+        return @opset.shift if !@opset.empty?
+        __shift
       end
-      
+
       def __shift
         slurp = ""
-        prev = @old.length > 0 ? @old.last : ''
-        while @terms.length > 0
+        prev = !@old.empty? ? @old.last : ''
+        until @terms.empty?
           i = @terms.shift
           @old << i
           if i == ' '
@@ -146,7 +142,7 @@ module ProjectVinyl
               next
             end
           end
-          if slurp.length > 0
+          if !slurp.empty?
             if i == ',' || (prev == ' ' && i == '&')
               o = slurpSystemTags(slurp)
               @opset << Op::AND
@@ -186,9 +182,7 @@ module ProjectVinyl
           end
           prev = i
         end
-        if slurp.length > 0
-          return slurpSystemTags(slurp)
-        end
+        return slurpSystemTags(slurp) if !slurp.empty?
         if @open_count != 0
           raise LexerError, "Unmatched '(' for + '" + @old + "|" + @terms.join('') + "'!"
         end

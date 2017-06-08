@@ -6,31 +6,23 @@ class BadgeInstance
     @block = block
     @adv_title = false
   end
-  
+
   def get_title(user)
-    if @adv_title
-      return @adv_title.call(user)
-    end
+    return @adv_title.call(user) if @adv_title
     title
   end
-  
-  def title
-    @title
-  end
-  
-  def icon
-    @icon
-  end
-  
-  def colour
-    @colour
-  end
-  
+
+  attr_reader :title
+
+  attr_reader :icon
+
+  attr_reader :colour
+
   def adv_title(&block)
     @adv_title = block
     self
   end
-  
+
   def matches(user)
     (user && !user.isDummy && @block.call(user))
   end
@@ -38,31 +30,27 @@ end
 
 class Badge < ActiveRecord::Base
   Types = [
-    BadgeInstance.new('Admin', 'star', 'orange'){|user| user.admin?},
-    BadgeInstance.new('Moderator', 'gavel', 'orange'){|user| user.contributor?},
-    (BadgeInstance.new('Artist', 'paint-brush', 'green'){|user| !user.tag_id.nil?}).adv_title{|user| 'Artist - ' + user.tag.name.split(':')[1]}
-  ]
-  
+    BadgeInstance.new('Admin', 'star', 'orange', &:admin?),
+    BadgeInstance.new('Moderator', 'gavel', 'orange', &:contributor?),
+    (BadgeInstance.new('Artist', 'paint-brush', 'green') { |user| !user.tag_id.nil? }).adv_title { |user| 'Artist - ' + user.tag.name.split(':')[1] }
+  ].freeze
+
   def self.static_badges
-    return Types
+    Types
   end
-  
+
   def hidden
     false
   end
-  
-  def get_title(user)
+
+  def get_title(_user)
     title
   end
-  
+
   def self.all_badges(user)
-    if !user || user.isDummy
-      return
-    end
+    return if !user || user.isDummy
     Types.each do |o|
-      if o.matches(user)
-        yield(o)
-      end
+      yield(o) if o.matches(user)
     end
     user.user_badges.each do |o|
       yield(o)

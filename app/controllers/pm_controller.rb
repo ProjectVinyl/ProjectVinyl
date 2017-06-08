@@ -11,12 +11,12 @@ class PmController < ApplicationController
       @pm.save
     end
   end
-  
+
   def new
     @thread = CommentThread.new
     render partial: 'new'
   end
-  
+
   def create
     if user_signed_in?
       if user = User.where(username: params[:thread][:recipient]).first
@@ -25,7 +25,7 @@ class PmController < ApplicationController
     end
     redirect_to action: "index", controller: "welcome"
   end
-  
+
   def list
     @page = params[:page].to_i
     @type = params[:type] || 'new'
@@ -36,11 +36,11 @@ class PmController < ApplicationController
       @new = page_for_type('new').count
     end
   end
-  
+
   def page_for_type(type)
     Pm.find_for_tab(type, current_user)
   end
-  
+
   def page_threads
     @page = params[:page].to_i
     @results = Pagination.paginate(page_for_type(params[:type]), @page, 50, false)
@@ -55,7 +55,7 @@ class PmController < ApplicationController
       page: @results.page
     }
   end
-  
+
   def page
     @thread = CommentThread.where(id: params[:thread_id]).first
     if params[:comment] && (@comment = Comment.where(comment_thread_id: @thread.id, id: Comment.decode_open_id(params[:comment])).first)
@@ -70,15 +70,15 @@ class PmController < ApplicationController
       page: @results.page
     }
   end
-  
+
   def tab
     @type = params[:type]
     @results = Pagination.paginate(page_for_type(@type), params[:page], 50, false)
-    return render json: {
-      content: render_to_string(partial: '/pm/list_group.html.erb', locals: {type: @type, paginated: @results, selected: true}),
+    render json: {
+      content: render_to_string(partial: '/pm/list_group.html.erb', locals: { type: @type, paginated: @results, selected: true })
     }
   end
-  
+
   def delete_pm
     if user_signed_in? && (pm = Pm.find_for_user(params[:id], current_user))
       pm.toggle_deleted
@@ -98,7 +98,7 @@ class PmController < ApplicationController
     end
     render status: 402, nothing: true
   end
-  
+
   def mark_read
     if user_signed_in? && (pm = Pm.find_for_user(params[:id], current_user))
       pm.unread = !pm.unread

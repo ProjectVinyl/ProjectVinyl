@@ -1,60 +1,40 @@
 class Pagination
   def self.paginate(records, pageNumber, pageSize, reverse)
     count = records.count
-    if count == 0
-      return Pagination.new(records, pageSize, 0, 0, false, count)
-    end
-    if pageNumber.nil?
-      pageNumber = 0
-    end
+    return Pagination.new(records, pageSize, 0, 0, false, count) if count == 0
+    pageNumber = 0 if pageNumber.nil?
     if count <= pageSize
       return Pagination.new(records, pageSize, 0, 0, reverse, count)
     end
     pages = count / pageSize
-    if (pages * pageSize) == count
-      pages -= 1
-    end
-    if count <= pageNumber * pageSize || pageNumber < 0
-      pageNumber = pages
-    end
-    if pageNumber < 0
-      pageNumber = 0
-    end
-    return Pagination.new(records.offset(pageNumber * pageSize).limit(pageSize), pageSize, pages, pageNumber, reverse, count)
+    pages -= 1 if (pages * pageSize) == count
+    pageNumber = pages if count <= pageNumber * pageSize || pageNumber < 0
+    pageNumber = 0 if pageNumber < 0
+    Pagination.new(records.offset(pageNumber * pageSize).limit(pageSize), pageSize, pages, pageNumber, reverse, count)
   end
-  
+
   def initialize(records, limit, pages, page, reverse, count)
     @size = limit
     @count = count
-    @records = reverse ? records.reverse_order() : records
+    @records = reverse ? records.reverse_order : records
     @page = page
     @pages = pages
   end
-  
-  def records
-    @records
-  end
-  
-  def records=(inputter)
-    @records = inputter
-  end
-  
-  def page
-    @page
-  end
-  
+
+  attr_reader :records
+
+  attr_writer :records
+
+  attr_reader :page
+
   def page_size
     @size
   end
-  
-  def pages
-    @pages
-  end
-  
-  def count
-    @count
-  end
-  
+
+  attr_reader :pages
+
+  attr_reader :count
+
   def length
     @count
   end

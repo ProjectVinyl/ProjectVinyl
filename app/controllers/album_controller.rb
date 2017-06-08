@@ -12,7 +12,7 @@ class AlbumController < ApplicationController
     @user = @album.user
     @items = Pagination.paginate(@album.ordered(@album.album_items.includes(:direct_user)), 0, 50, false)
     @modificationsAllowed = user_signed_in? && @album.ownedBy(current_user)
-    
+
     @metadata = {
       type: "album",
       title: @album.title,
@@ -21,10 +21,10 @@ class AlbumController < ApplicationController
       url: url_for(action: "view", controller: "album", id: @album.id, only_path: false) + "-" + @album.safe_title,
       embed_url: url_for(action: "view", controller: "embed", only_path: false, id: @items.records.first.video_id, list: @album.id, index: 0),
       cover: Video.thumb_for(@items.records.first, current_user),
-      oembed: {list: @album.id, index: 0}
+      oembed: { list: @album.id, index: 0 }
     }
   end
-  
+
   def starred
     if user_signed_in?
       @user = current_user
@@ -35,29 +35,25 @@ class AlbumController < ApplicationController
     end
     render template: '/album/view'
   end
-  
+
   def new
     @album = Album.new
-    if params[:initial]
-      @initial = params[:initial]
-    end
+    @initial = params[:initial] if params[:initial]
     render partial: 'new'
   end
-  
+
   def edit
     if user_signed_in? && @album = Album.where(id: params[:id]).first
-      if @album.ownedBy(current_user)
-        return render partial: 'edit'
-      end
+      return render partial: 'edit' if @album.ownedBy(current_user)
     end
     render status: 401, nothing: true
   end
-  
+
   def create
     if user_signed_in?
       album = params[:album]
       initial = album[:initial]
-      album = current_user.albums.create()
+      album = current_user.albums.create
       album.set_description(album[:description])
       album.set_title(params[:album][:title])
       if initial
@@ -72,7 +68,7 @@ class AlbumController < ApplicationController
     end
     redirect_to action: "index", controller: "welcome"
   end
-  
+
   def update_ordering
     if user_signed_in? && @album = Album.where(id: params[:id]).first
       if @album.ownedBy(current_user)
@@ -85,7 +81,7 @@ class AlbumController < ApplicationController
     end
     render status: 401, nothing: true
   end
-  
+
   def update
     if user_signed_in? && album = Album.where(id: params[:id]).first
       if album.ownedBy(current_user)
@@ -102,7 +98,7 @@ class AlbumController < ApplicationController
     end
     render status: 401, nothing: true
   end
-  
+
   def delete
     if user_signed_in? && album = Album.where(id: params[:id]).first
       if !album.hidden && (current_user.is_staff? || album.user_id == current_user.id)
@@ -115,7 +111,7 @@ class AlbumController < ApplicationController
     end
     render status: 401, nothing: true
   end
-  
+
   def arrange
     if user_signed_in?
       if item = AlbumItem.where(id: params[:id]).first
@@ -128,7 +124,7 @@ class AlbumController < ApplicationController
     end
     render status: 401, nothing: true
   end
-  
+
   def arrangeStar
     if user_signed_in?
       if item = current_user.album_items.where(id: params[:id]).first
@@ -139,12 +135,12 @@ class AlbumController < ApplicationController
     end
     render status: 401, nothing: true
   end
-  
+
   def removeItem
     if user_signed_in?
       if item = AlbumItem.where(id: params[:id]).first
         if item.album.ownedBy(current_user)
-          item.removeSelf()
+          item.removeSelf
           render status: 200, nothing: true
           return
         end
@@ -152,18 +148,18 @@ class AlbumController < ApplicationController
     end
     render status: 401, nothing: true
   end
-  
+
   def removeStar
     if user_signed_in?
       if item = current_user.album_items.where(id: params[:id]).first
-        item.removeSelf()
+        item.removeSelf
         render status: 200, nothing: true
         return
       end
     end
     render status: 401, nothing: true
   end
-  
+
   def addItem
     if user_signed_in?
       if album = Album.where(id: params[:id]).first
@@ -178,13 +174,13 @@ class AlbumController < ApplicationController
     end
     render status: 401, nothing: true
   end
-  
+
   def list
     @page = params[:page].to_i
     @results = Pagination.paginate(Album.where('hidden = false AND listing = 0').order(:created_at), @page, 50, true)
-    render template: '/view/listing', locals: {type_id: 1, type: 'albums', type_label: 'Album', items: @results}
+    render template: '/view/listing', locals: { type_id: 1, type: 'albums', type_label: 'Album', items: @results }
   end
-  
+
   def page
     @page = params[:page].to_i
     @user = params[:user]
@@ -192,9 +188,7 @@ class AlbumController < ApplicationController
       @results = Pagination.paginate(Album.where('hidden = false AND listing = 0').order(:created_at), @page, 50, true)
     else
       @results = User.find(@user.to_i).albums
-      if @user.to_i != current_user.id
-        @results = @results.where('listing = 0')
-      end
+      @results = @results.where('listing = 0') if @user.to_i != current_user.id
       @results = Pagination.paginate(@results.order(:created_at), @page, 8, true)
     end
     render json: {
@@ -203,7 +197,7 @@ class AlbumController < ApplicationController
       page: @results.page
     }
   end
-  
+
   def items
     if @album = Album.where(id: params[:id]).first
       @page = params[:page].to_i

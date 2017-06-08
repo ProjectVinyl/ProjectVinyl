@@ -1,10 +1,10 @@
 class ProcessingWorker < ActiveRecord::Base
   belongs_to :video
-  
+
   def initialize
     @e = nil
   end
-  
+
   def update_status(s, m)
     if !self.running || self.status != s || self.message != m
       self.running = true
@@ -13,7 +13,7 @@ class ProcessingWorker < ActiveRecord::Base
       self.save
     end
   end
-  
+
   def stop
     if self.running
       if self.video_id && self.video_id > 0
@@ -31,14 +31,14 @@ class ProcessingWorker < ActiveRecord::Base
     self.status = "stopped"
     self.save
   end
-  
+
   def zombie?
-    return self.running && !self.video.nil? && !File.exist?(Rails.root.join('encoding', self.video_id.to_s + '.webm')) && File.exist?(Rails.root.join('public', 'stream', self.video_id.to_s + '.webm'))
+    self.running && !self.video.nil? && !File.exist?(Rails.root.join('encoding', self.video_id.to_s + '.webm')) && File.exist?(Rails.root.join('public', 'stream', self.video_id.to_s + '.webm'))
   end
-  
+
   def start
     puts "[Processing Manager] Spinning thread #" + self.id.to_s
-    while (video = VideoProcessor.dequeue())
+    while (video = VideoProcessor.dequeue)
       self.video_id = video.id
       self.update_status("running", "Current video id:" + video.id.to_s + " (working)")
       video.generateWebM_sync
@@ -46,7 +46,7 @@ class ProcessingWorker < ActiveRecord::Base
     end
     self.video_id = 0
   end
-  
+
   def exception=(e)
     @e = e
     puts "[Processing Manager] Thread died #(" + self.id.to_s + ")"
