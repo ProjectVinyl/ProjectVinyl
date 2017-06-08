@@ -85,3 +85,6 @@ Style/StringLiterals:
 
 Style/VariableNumber:
   Enabled: false
+
+Style/IfUnlessModifier:
+  Enabled: false
