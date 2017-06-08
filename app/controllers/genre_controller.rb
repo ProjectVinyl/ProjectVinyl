@@ -1,25 +1,30 @@
 class GenreController < ApplicationController
   def view
     name = params[:name].downcase
-    if @tag = Tag.where("short_name = ? OR name = ? OR id = ?", name, name, name).first
-      if @tag.alias_id
-        flash[:notice] = "The tag '" + @tag.name + "' has been aliased to '" + @tag.alias.name + "'"
-        if !user_signed_in? || !current_user.is_staff?
-          return redirect_to action: "view", name: @tag.alias.short_name
-        end
-      end
-      @modifications_allowed = user_signed_in? && current_user.is_contributor?
-      @total_videos = @tag.videos.length
-      @total_users = @tag.users.length
-      @videos = @tag.videos.where(hidden: false).order(:created_at)
-      @videos = Pagination.paginate(@videos, 0, 8, true)
-      @users = @tag.users.order(:updated_at)
-      @users = Pagination.paginate(@users, 0, 8, true)
-      @user = User.where(tag_id: @tag.id).first if @tag.tag_type_id == 1
-      @implies = @tag.implications
-      @implied = @tag.implicators
-      @aliases = @tag.aliases
+    if !(@tag = Tag.where("short_name = ? OR name = ? OR id = ?", name, name, name).first)
+      return render '/layouts/error', locals: { title: 'Nothing to see here but us Fish!', description: 'This This tag does not exist.' }
     end
+    
+    if @tag.alias_id
+      flash[:notice] = "The tag '" + @tag.name + "' has been aliased to '" + @tag.alias.name + "'"
+      if !user_signed_in? || !current_user.is_staff?
+        return redirect_to action: "view", name: @tag.alias.short_name
+      end
+    end
+    
+    @modifications_allowed = user_signed_in? && current_user.is_contributor?
+    
+    @total_videos = @tag.videos.length
+    @total_users = @tag.users.length
+    
+    @videos = Pagination.paginate(@tag.videos.where(hidden: false).order(:created_at), 0, 8, true)
+    @users = Pagination.paginate(@tag.users.order(:updated_at), 0, 8, true)
+    
+    @user = User.where(tag_id: @tag.id).first if @tag.tag_type_id == 1
+    
+    @implies = @tag.implications
+    @implied = @tag.implicators
+    @aliases = @tag.aliases
   end
 
   def update
