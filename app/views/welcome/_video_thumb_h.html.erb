@@ -5,9 +5,7 @@
 				<%= duration video_thumb_h.get_duration %>
 			</span>
 		</div>
-		<div class="title">
-			<%= video_thumb_h.is_spoilered_by(current_user) || video_thumb_h.is_hidden_by(current_user) ? "Spoilered" : video_thumb_h.get_title %>
-		</div>
+		<div class="title"><%= video_thumb_h.is_spoilered_by(current_user) || video_thumb_h.is_hidden_by(current_user) ? "Spoilered" : video_thumb_h.get_title %></div>
 		<span class="date" title="<%= video_thumb_h.created_at %>">
 			<%= since video_thumb_h.created_at %>
 		</span>
