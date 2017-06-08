@@ -373,7 +373,7 @@ class Video < ActiveRecord::Base
         vote.save
       end
     end
-    self.upvotes = computeCount(incr, self.upvotes)
+    self.upvotes = compute_count(incr, self.upvotes)
     compute_score
     self.upvotes
   end
@@ -392,7 +392,7 @@ class Video < ActiveRecord::Base
         vote.save
       end
     end
-    self.downvotes = computeCount(incr, self.downvotes)
+    self.downvotes = compute_count(incr, self.downvotes)
     compute_score
     self.downvotes
   end
@@ -492,7 +492,7 @@ class Video < ActiveRecord::Base
   def set_description(text)
     text = ApplicationHelper.demotify(text)
     self.description = text
-    text = Comment.extract_mentions(text, self.comment_thread, self.getTitle, '/view/' + self.id.to_s)
+    text = Comment.extract_mentions(text, self.comment_thread, self.get_title, '/view/' + self.id.to_s)
     self.html_description = ApplicationHelper.emotify(text)
     self
   end
