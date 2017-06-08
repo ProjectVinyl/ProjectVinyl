@@ -78,9 +78,9 @@ class AjaxController < ApplicationController
     render status: 401, nothing: true
   end
 
-  def toggleAlbum
+  def toggle_album
     if user_signed_in?
-      if (album = Album.where(id: params[:item]).first) && album.ownedBy(current_user)
+      if (album = Album.where(id: params[:item]).first) && album.owned_by(current_user)
         if video = Video.where(id: params[:id]).first
           return render json: { added: album.toggle(video) }
         end
@@ -89,16 +89,16 @@ class AjaxController < ApplicationController
     render status: 401, nothing: true
   end
 
-  def toggleSubscribe
+  def toggle_subscribe
     if user_signed_in?
       if thread = CommentThread.where(id: params[:id]).first
-        return render json: { added: thread.toggleSubscribe(current_user) }
+        return render json: { added: thread.toggle_subscribe(current_user) }
       end
     end
     render status: 401, nothing: true
   end
 
-  def togglePin
+  def toggle_pin
     if user_signed_in? && current_user.is_staff?
       if thread = CommentThread.where(id: params[:id]).first
         thread.pinned = !thread.pinned
@@ -110,7 +110,7 @@ class AjaxController < ApplicationController
     render status: 401, nothing: true
   end
 
-  def toggleLock
+  def toggle_lock
     if user_signed_in? && current_user.is_contributor?
       if thread = CommentThread.where(id: params[:id]).first
         thread.locked = !thread.locked
@@ -122,12 +122,12 @@ class AjaxController < ApplicationController
     render status: 401, nothing: true
   end
 
-  def toggleFeature
+  def toggle_feature
     if user_signed_in? && current_user.is_staff?
       if video = Video.where(id: params[:id]).first
         Video.where(featured: true).update_all(featured: false)
         video.featured = !video.featured
-        Tag.addTag('featured video', video) if video.featured
+        Tag.add_tag('featured video', video) if video.featured
         video.save
         render json: { added: video.featured }
         return
@@ -136,7 +136,7 @@ class AjaxController < ApplicationController
     render status: 401, nothing: true
   end
 
-  def toggleAlbumFeature
+  def toggle_album_feature
     if user_signed_in? && current_user.is_staff?
       if album = Album.where(id: params[:id]).first
         Album.where('featured > 0').update_all(featured: 0)

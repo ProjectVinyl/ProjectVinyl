@@ -1,7 +1,7 @@
 class Board < ActiveRecord::Base
   has_many :comment_threads, as: :owner, dependent: :destroy
 
-  def self.Listables
+  def self.listables
     Board.all.order(:title).pluck(:id, :title)
   end
 

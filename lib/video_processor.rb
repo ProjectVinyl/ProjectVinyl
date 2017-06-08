@@ -12,9 +12,9 @@ class VideoProcessor
   end
 
   def self.enqueue(video)
-    if !video.checkIndex
+    if !video.check_index
       puts "[Processing Manager] Enqueued video #" + video.id.to_s
-      VideoProcessor.startManager
+      VideoProcessor.start_manager
     end
   end
 
@@ -55,7 +55,7 @@ class VideoProcessor
     end
   end
 
-  def self.startManager
+  def self.start_manager
     started = 0
     result = 0
     count = ProcessingWorker.all.count

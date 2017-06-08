@@ -39,7 +39,7 @@ div#banner {
 		</div>
 		<% end %>
 		<div class="actions">
-		<% if @modificationsAllowed %>
+		<% if @modifications_allowed %>
 			<div class="split-button popper">
 				<button class="action options pop-out-toggle"><i class="fa fa-gear"></i> Options</button>
 				<ul class="pop-out">
@@ -79,7 +79,7 @@ div#banner {
 <% end %>
 <section style="width:100%" class="page recent-uploads resize-holder">
 	<h1 class="title resize-target">Recent Uploads<span> (<span class="count"><%= number_with_delimiter @videos.count %></span>)</span></h1>
-	<% if @modificationsAllowed %><a class="button" href="/upload"><i class="fa fa-plus"></i> New</a><% end %>
+	<% if @modifications_allowed %><a class="button" href="/upload"><i class="fa fa-plus"></i> New</a><% end %>
 	<ul id="uploads" class="horizontal video-list">
 		<%= render partial: '/layouts/video_thumb_h', collection: @videos.records %>
 	</ul>
@@ -91,7 +91,7 @@ div#banner {
 </section>
 <section style="width:100%" class="page recent-uploads resize-holder">
 	<h1 class="title resize-target">Recent Albums<span> (<span class="count"><%= number_with_delimiter @albums.count %></span>)</span></h1>
-	<% if @modificationsAllowed %><button class="confirm-button" data-url="album/create" data-title="New Album" data-icon=""><i class="fa fa-plus"></i> New</button><% end %>
+	<% if @modifications_allowed %><button class="confirm-button" data-url="album/create" data-title="New Album" data-icon=""><i class="fa fa-plus"></i> New</button><% end %>
 	<ul id="albums" class="album-list horizontal">
 		<%= render partial: '/layouts/album_thumb_h', collection: @albums.records %>
 	</ul>

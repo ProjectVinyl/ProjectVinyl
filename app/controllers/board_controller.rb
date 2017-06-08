@@ -3,7 +3,7 @@ class BoardController < ApplicationController
     if !(@board = Board.find_board(params[:id]))
       return render '/layouts/error', locals: { title: 'Nothing to see here!', description: 'That forum does not exist.' }
     end
-    @modificationsAllowed = user_signed_in? && current_user.is_contributor?
+    @modifications_allowed = user_signed_in? && current_user.is_contributor?
     @page = params[:page].to_i
     @threads = Pagination.paginate(@board.threads, @page, 50, false)
   end

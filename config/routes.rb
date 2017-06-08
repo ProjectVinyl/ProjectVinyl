@@ -28,20 +28,20 @@ Rails.application.routes.draw do
   get 'admin/tag/:id' => 'admin#tag'
   get 'admin/tags' => 'genre_admin#view'
 
-  put 'admin/video/reprocess' => 'admin#reprocessVideo'
-  put 'admin/video/resetthumb' => 'admin#extractThumbnail'
+  put 'admin/video/reprocess' => 'admin#reprocess_video'
+  put 'admin/video/resetthumb' => 'admin#extract_thumbnail'
   put 'admin/video/merge' => 'admin#merge'
-  put 'admin/video/metadata' => 'admin#populateVideo'
-  put 'admin/transfer' => 'admin#transferItem'
+  put 'admin/video/metadata' => 'admin#populate_video'
+  put 'admin/transfer' => 'admin#transfer_item'
   put 'admin/reindex/:table' => 'admin#reindex'
 
   get 'ajax/admin/files' => 'admin#morefiles'
   get 'ajax/admin/videos/hidden' => 'admin#page_hidden'
   get 'ajax/admin/videos/unprocessed' => 'admin#page_unprocessed'
-  post 'ajax/admin/process/all' => 'admin#batch_preprocessVideos'
+  post 'ajax/admin/process/all' => 'admin#batch_preprocess_videos'
   post 'ajax/admin/verify' => 'admin#verify_integrity'
-  post 'ajax/admin/requeue' => 'admin#rebuildQueue'
-  post 'ajax/admin/hidden/drop' => 'admin#batch_dropVideos'
+  post 'ajax/admin/requeue' => 'admin#rebuild_queue'
+  post 'ajax/admin/hidden/drop' => 'admin#batch_drop_videos'
   post 'ajax/admin/reindex/:table' => 'admin#reindex'
 
   post 'ajax/video/hide' => 'admin#visibility'
@@ -81,16 +81,16 @@ Rails.application.routes.draw do
   post 'ajax/upload' => 'video#create'
   post 'ajax/like/:id(/:incr)' => 'ajax#upvote'
   post 'ajax/dislike/:id(/:incr)' => 'ajax#downvote'
-  post 'ajax/video/togglealbum' => 'ajax#toggleAlbum'
-  post 'ajax/video/feature' => 'ajax#toggleFeature'
+  post 'ajax/video/togglealbum' => 'ajax#toggle_album'
+  post 'ajax/video/feature' => 'ajax#toggle_feature'
   post 'ajax/star/:id' => 'ajax#star'
   post 'ajax/report/:id' => 'ajax#report'
 
   post 'ajax/create/video' => 'video#create'
-  patch 'ajax/update/video/:async' => 'video#updateCover'
-  patch 'ajax/update/video' => 'video#updateCover'
+  patch 'ajax/update/video/:async' => 'video#update_cover'
+  patch 'ajax/update/video' => 'video#update_cover'
   post 'ajax/update/video' => 'video#update'
-  post 'ajax/delete/video/:id' => 'admin#deleteVideo'
+  post 'ajax/delete/video/:id' => 'admin#delete_video'
 
   # Reporting #
   get 'ajax/reporter/:id' => 'admin#reporter'
@@ -106,7 +106,7 @@ Rails.application.routes.draw do
   get 'profile/:id' => 'artist#view', constraints: { id: /([0-9]+).*/ }
   get 'ajax/artist/hovercard' => 'artist#card'
   get 'ajax/artist/update/banner/:id' => 'artist#banner'
-  post 'ajax/artist/lookup' => 'search#autofillArtist'
+  post 'ajax/artist/lookup' => 'search#autofill_artist'
   patch 'ajax/update/artist' => 'artist#update'
   patch 'ajax/avatar/upload/:async' => 'artist#setavatar'
   patch 'ajax/avatar/upload' => 'artist#setavatar'
@@ -129,20 +129,20 @@ Rails.application.routes.draw do
   get 'ajax/album/create' => 'album#new'
   get 'ajax/album/update/:id' => 'album#edit'
 
-  post 'ajax/album/feature' => 'ajax#toggleAlbumFeature'
+  post 'ajax/album/feature' => 'ajax#toggle_album_feature'
   post 'ajax/create/album' => 'album#create'
   post 'ajax/update/album' => 'album#update'
   post 'ajax/delete/album/:id' => 'album#delete'
   patch 'ajax/edit/album/:id' => 'album#update_ordering'
 
-  post 'ajax/create/albumitem' => 'album#addItem'
+  post 'ajax/create/albumitem' => 'album#add_item'
   post 'ajax/update/albumitem' => 'album#arrange'
   post 'ajax/delete/albumitem' => 'album#removeItem'
 
   # Stars #
 
-  post 'ajax/update/star' => 'album#arrangeStar'
-  post 'ajax/delete/star' => 'album#removeStar'
+  post 'ajax/update/star' => 'album#arrange_star'
+  post 'ajax/delete/star' => 'album#remove_star'
 
   # Tags #
   get 'tags' => 'genre#list'
@@ -176,10 +176,10 @@ Rails.application.routes.draw do
   post 'ajax/create/thread' => 'thread#create'
   post 'ajax/create/message' => 'pm#create'
   post 'ajax/update/thread' => 'thread#update'
-  post 'ajax/thread/pin' => 'ajax#togglePin'
-  post 'ajax/thread/lock' => 'ajax#toggleLock'
+  post 'ajax/thread/pin' => 'ajax#toggle_pin'
+  post 'ajax/thread/lock' => 'ajax#toggle_lock'
   post 'ajax/thread/move' => 'thread#move'
-  post 'ajax/thread/subscribe' => 'ajax#toggleSubscribe'
+  post 'ajax/thread/subscribe' => 'ajax#toggle_subscribe'
   post 'ajax/comments/new' => 'thread#post_comment'
   post 'ajax/comments/delete/:id' => 'thread#remove_comment'
   post 'ajax/comments/edit' => 'thread#edit_comment'

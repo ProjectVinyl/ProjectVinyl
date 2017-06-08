@@ -17,19 +17,19 @@ class Album < ActiveRecord::Base
     self.save
   end
 
-  def ownedBy(user)
+  def owned_by(user)
     user && (self.user_id == user.id || (self.hidden == false && user.is_staff?))
   end
 
-  def transferTo(user)
+  def transfer_to(user)
     self.user = user
     self.save
     self.videos.each do |video|
-      video.transferTo(user)
+      video.transfer_to(user)
     end
   end
 
-  def addItem(video)
+  def add_item(video)
     index = self.album_items.length
     self.album_items.create(video_id: video.id, index: index, o_video_id: video.id)
     self.repaint_ordering(self.album_items)
@@ -37,10 +37,10 @@ class Album < ActiveRecord::Base
 
   def toggle(video)
     if item = self.album_items.where(video_id: video.id).first
-      item.removeSelf
+      item.remove_self
       false
     else
-      self.addItem(video)
+      self.add_item(video)
       true
     end
   end
@@ -113,14 +113,14 @@ class Album < ActiveRecord::Base
 
   def get_next(user, current)
     potentials = discriminate(self.all_items, '>', current).reject do |i|
-      (i.video.isHiddenBy(user) || i.video.hidden)
+      (i.video.is_hidden_by(user) || i.video.hidden)
     end
     potentials.first
   end
 
   def get_prev(user, current)
     potentials = discriminate(self.all_items, '<', current).reject do |i|
-      (i.video.isHiddenBy(user) || i.video.hidden)
+      (i.video.is_hidden_by(user) || i.video.hidden)
     end
     potentials.last
   end

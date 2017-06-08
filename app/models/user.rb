@@ -45,7 +45,7 @@ class UserDummy
     -1
   end
 
-  def isDummy
+  def is_dummy
     true
   end
 end
@@ -209,7 +209,7 @@ class User < ActiveRecord::Base
         end
       else
         if u.banner_set
-          u.setBanner(false)
+          u.set_banner(false)
           u.save
           result[1] += 1
         end
@@ -248,8 +248,8 @@ class User < ActiveRecord::Base
     self.update_index(defer: false)
   end
 
-  def removeSelf
-    self.all_albums.each(&:removeSelf)
+  def remove_self
+    self.all_albums.each(&:remove_self)
     self.destroy
   end
 
@@ -309,14 +309,14 @@ class User < ActiveRecord::Base
     !([tag.id] & @watched_tag_ids).empty?
   end
 
-  def setTags(tags)
-    Tag.loadTags(tags, self) if tags
+  def set_tags(tags)
+    Tag.load_tags(tags, self) if tags
   end
 
-  def setAvatar(avatar)
+  def set_avatar(avatar)
     self.uncache
-    delFile(avatar_path.to_s + '-small' + self.mime.to_s)
-    delFile(avatar_path.to_s + self.mime.to_s)
+    del_file(avatar_path.to_s + '-small' + self.mime.to_s)
+    del_file(avatar_path.to_s + self.mime.to_s)
     if avatar && avatar.content_type.include?('image/')
       ext = File.extname(avatar.original_filename)
       ext = Mimes.ext(avatar.content_type) if ext == ''
@@ -334,10 +334,10 @@ class User < ActiveRecord::Base
     end
   end
 
-  def setBanner(banner)
+  def set_banner(banner)
     self.uncache
     if !banner || banner.content_type.include?('image/')
-      delFile(banner_path.to_s + '.png')
+      del_file(banner_path.to_s + '.png')
       self.banner_set = img(banner_path.to_s + '.png', banner)
     end
   end
@@ -395,7 +395,7 @@ class User < ActiveRecord::Base
     '/profile/' + self.id.to_s + '-' + (self.safe_name || ('Background Pony #' + self.id.to_s(32)))
   end
 
-  def isDummy
+  def is_dummy
     false
   end
 
@@ -424,22 +424,22 @@ class User < ActiveRecord::Base
   protected
 
   def remove_assets
-    delFile(banner_path.to_s + '.png')
-    delFile(avatar_path.to_s + self.mime.to_s)
-    delFile(avatar_path.to_s + '-small' + self.mime.to_s)
+    del_file(banner_path.to_s + '.png')
+    del_file(avatar_path.to_s + self.mime.to_s)
+    del_file(avatar_path.to_s + '-small' + self.mime.to_s)
   end
 
   def init_name
     self.set_name(self.username)
   end
 
-  def delFile(path)
+  def del_file(path)
     File.delete(path) if File.exist?(path)
   end
 
   private
 
-  def renameFile(from, to)
+  def rename_file(from, to)
     File.rename(from, to) if File.exist?(from)
   end
 

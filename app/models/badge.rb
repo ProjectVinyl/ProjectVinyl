@@ -24,7 +24,7 @@ class BadgeInstance
   end
 
   def matches(user)
-    (user && !user.isDummy && @block.call(user))
+    (user && !user.is_dummy && @block.call(user))
   end
 end
 
@@ -48,7 +48,7 @@ class Badge < ActiveRecord::Base
   end
 
   def self.all_badges(user)
-    return if !user || user.isDummy
+    return if !user || user.is_dummy
     Types.each do |o|
       yield(o) if o.matches(user)
     end

@@ -4,7 +4,7 @@ class ThreadController < ApplicationController
       return render '/layouts/error', locals: { title: 'Nothing to see here!', description: "Either the thread does not exist or you don't have the neccessary permissions to see it." }
     end
     @order = '0'
-    @modificationsAllowed = user_signed_in? && (current_user.id == @thread.user_id || current_user.is_contributor?)
+    @modifications_allowed = user_signed_in? && (current_user.id == @thread.user_id || current_user.is_contributor?)
     @comments = Pagination.paginate(@thread.get_comments(user_signed_in? && current_user.is_contributor?), (params[:page] || -1).to_i, 10, false)
   end
 
@@ -66,7 +66,7 @@ class ThreadController < ApplicationController
     @ascending = params[:order] == '1'
     @category = (params[:category] || 0).to_i
     @results = []
-    @q = Comment.Searchable.where('`comment_threads`.owner_type = "Board"').order(:updated_at, :created_at)
+    @q = Comment.searchable.where('`comment_threads`.owner_type = "Board"').order(:updated_at, :created_at)
     if @title_query
       @q = @q.where('`comment_threads`.title LIKE ?', '%' + @title_query + '%')
     end
@@ -98,7 +98,7 @@ class ThreadController < ApplicationController
         @thread.save
         comment.update_comment(params[:comment])
 
-        @thread.owner.computeHotness.save if @thread.owner_type == 'Video'
+        @thread.owner.compute_hotness.save if @thread.owner_type == 'Video'
 
         @results = Pagination.paginate(@thread.get_comments(current_user.is_contributor?), params[:order] == '1' ? 0 : -1, 10, params[:order] == '1')
         render json: {

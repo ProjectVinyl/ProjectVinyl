@@ -11,9 +11,7 @@ class VirtualAlbumItem < AlbumItem
     0
   end
 
-  attr_reader :album
-
-  attr_reader :video
+  attr_reader :album, :video, :index
 
   def video_id
     @video.id
@@ -26,8 +24,6 @@ class VirtualAlbumItem < AlbumItem
   def user
     @album.user
   end
-
-  attr_reader :index
 
   def ref
     'q=' + self.album.query + '&index=' + self.index.to_s
@@ -55,14 +51,14 @@ class VirtualAlbum < Album
   end
 
   def user
-    User.Dummy(0)
+    User.dummy(0)
   end
 
   def id
     0
   end
 
-  attr_reader :query
+  attr_reader :query, :videos
 
   def title
     "Mix - " + @query
@@ -94,20 +90,18 @@ class VirtualAlbum < Album
     @items
   end
 
-  attr_reader :videos
-
   def current(defau)
     @current || (@videos.length ? @videos.first : defau)
   end
 
-  def ownedBy(_user)
+  def owned_by(_user)
     false
   end
 
-  def transferTo(user)
+  def transfer_to(user)
   end
 
-  def addItem(video)
+  def add_item(video)
   end
 
   def toggle(_video)
@@ -122,7 +116,7 @@ class VirtualAlbum < Album
     ProjectVinyl::ElasticSearch::ElasticSelector.new(nil, @query).query(0, @index - @offset + 5).videos.offset(@offset).exec.records
   end
 
-  def addItem(_video)
+  def add_item(_video)
     item = AlbumItem.new
     @videos << item
   end

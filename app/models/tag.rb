@@ -165,14 +165,14 @@ class Tag < ActiveRecord::Base
     end
   end
 
-  def self.addTag(tag_name, sender)
+  def self.add_tag(tag_name, sender)
     existing = get_updated_tag_set(sender)
     loaded = Tag.get_tag_ids_with_create([tag_name]) - existing
     return Tag.load_dif(loaded, [], existing, sender) if !loaded.empty?
     nil
   end
 
-  def self.loadTags(tag_string, sender)
+  def self.load_tags(tag_string, sender)
     existing = get_updated_tag_set(sender)
     loaded = Tag.get_tag_ids_with_create(Tag.split_tag_string(tag_string))
     common = existing & loaded

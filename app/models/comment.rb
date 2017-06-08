@@ -10,11 +10,11 @@ class Comment < ActiveRecord::Base
   has_many :mentions, class_name: "CommentReply", foreign_key: "comment_id"
   has_many :likes, class_name: "CommentVote", foreign_key: "comment_id"
 
-  def self.Searchable
+  def self.searchable
     Comment.joins(:comment_thread).where('`comments`.hidden = false AND (`comment_threads`.owner_type != "Report" AND `comment_threads`.owner_type != "Pm")')
   end
 
-  def self.Finder
+  def self.finder
     Comment.where(hidden: false).includes(:direct_user, :mentions)
   end
 
@@ -93,7 +93,7 @@ class Comment < ActiveRecord::Base
     s.to_i(36)
   end
 
-  def isUpvotedBy(user)
+  def is_upvoted_by(user)
     user && self.likes.where(user_id: user.id).count > 0
   end
 

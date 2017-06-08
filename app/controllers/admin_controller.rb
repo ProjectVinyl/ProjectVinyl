@@ -8,7 +8,7 @@ class AdminController < ApplicationController
     @hiddenvideos = Pagination.paginate(Video.where(hidden: true), 0, 40, true)
     @unprocessed = Pagination.paginate(Video.where("(processed IS NULL or processed = ?) AND hidden = false", false), 0, 40, false)
     @users = User.where('last_sign_in_at > ? OR updated_at > ?', Time.zone.now.beginning_of_month, Time.zone.now.beginning_of_month).limit(100).order(:last_sign_in_at).reverse_order
-    @processorStatus = VideoProcessor.status
+    @processor_status = VideoProcessor.status
     @reports = Pagination.paginate(Report.includes(:video).where(resolved: nil), 0, 40, false)
   end
 
@@ -46,7 +46,7 @@ class AdminController < ApplicationController
     end
     begin
       @location = @location.join('/')
-      @public = VideoDirectory.Entries(@location).limit(50)
+      @public = VideoDirectory.entries(@location).limit(50)
       if params[:start] && !@public.start_from(params[:start], params[:offset]) && ajax
         return render json: {}
       end
@@ -109,7 +109,7 @@ class AdminController < ApplicationController
     if !user_signed_in? || !current_user.is_contributor?
       return render 'layouts/error', locals: { title: 'Access Denied', description: "You can't do that right now." }
     end
-    @modificationsAllowed = true
+    @modifications_allowed = true
     @video = Video.where(id: params[:id]).first
     @user = @video.user
     @tags = @video.tags
@@ -119,7 +119,7 @@ class AdminController < ApplicationController
     if !user_signed_in? || !current_user.is_contributor?
       return render 'layouts/error', locals: { title: 'Access Denied', description: "You can't do that right now." }
     end
-    @modificationsAllowed = true
+    @modifications_allowed = true
     @album = Album.find(params[:id])
     @items = Pagination.paginate(@album.ordered(@album.album_items.includes(:direct_user)), 0, 50, false)
     @user = @album.user
@@ -156,7 +156,7 @@ class AdminController < ApplicationController
     render 'layouts/error', locals: { title: 'Access Denied', description: "You can't do that right now." }
   end
 
-  def transferItem
+  def transfer_item
     if user_signed_in? && current_user.is_contributor?
       if (user = User.by_name_or_id(params[:item][:user_id]))
         if params[:type] == 'video'
@@ -165,7 +165,7 @@ class AdminController < ApplicationController
           item = Album.where(id: params[:item][:id]).first
         end
         if item
-          item.transferTo(user)
+          item.transfer_to(user)
           return redirect_to action: params[:type], id: params[:item][:id]
         end
       else
@@ -176,10 +176,10 @@ class AdminController < ApplicationController
     render status: 401, nothing: true
   end
 
-  def deleteVideo
+  def delete_video
     if user_signed_in? && current_user.is_contributor?
       if video = Video.where(id: params[:id]).first
-        video.removeSelf
+        video.remove_self
         flash[:notice] = "1 Item(s) deleted successfully"
       else
         flash[:error] = "Item could not be found"
@@ -190,7 +190,7 @@ class AdminController < ApplicationController
     render json: { ref: url_for(action: "view") }
   end
 
-  def deleteAlbum
+  def delete_album
     if user_signed_in? && current_user.is_contributor?
       if album = Album.where(id: params[:id]).first
         album.destroy
@@ -204,16 +204,16 @@ class AdminController < ApplicationController
     render json: { ref: url_for(action: "view") }
   end
 
-  def reprocessVideo
+  def reprocess_video
     if user_signed_in? && current_user.is_contributor?
       if video = Video.where(id: params[:video][:id]).first
-        flash[:notice] = "Processing Video: " + video.generateWebM
+        flash[:notice] = "Processing Video: " + video.generate_webm
       end
     end
     redirect_to action: "video", id: params[:video][:id]
   end
 
-  def rebuildQueue
+  def rebuild_queue
     if user_signed_in? && current_user.is_contributor?
       flash[:notice] = Video.rebuild_queue.to_s + " videos in queue."
     else
@@ -222,7 +222,7 @@ class AdminController < ApplicationController
     render json: { ref: url_for(action: "view") }
   end
 
-  def populateVideo
+  def populate_video
     if user_signed_in? && current_user.is_contributor?
       if @video = Video.where(id: params[:video][:id]).first
         @video.pull_meta(params[:source], params[:title], params[:description], params[:tags])
@@ -231,9 +231,9 @@ class AdminController < ApplicationController
     redirect_to action: "video", id: params[:video][:id]
   end
 
-  def batch_preprocessVideos
+  def batch_preprocess_videos
     if user_signed_in? && current_user.is_contributor?
-      if VideoProcessor.startManager
+      if VideoProcessor.start_manager
         flash[:notice] = "Processing Manager restarted. " + VideoProcessor.queue.length.to_s + " videos in queue."
       else
         flash[:notice] = "Processing Manager already active. " + VideoProcessor.queue.length.to_s + " videos in queue."
@@ -242,10 +242,10 @@ class AdminController < ApplicationController
     render json: { ref: url_for(action: "view") }
   end
 
-  def batch_dropVideos
+  def batch_drop_videos
     if user_signed_in? && current_user.is_admin?
       videos = Video.where(hidden: true)
-      videos.each(&:removeSelf)
+      videos.each(&:remove_self)
       flash[:notice] = videos.length.to_s + " Item(s) deleted successfully."
     else
       flash[:error] = "Access Denied: You can't do that right now."
@@ -253,10 +253,10 @@ class AdminController < ApplicationController
     render json: { ref: url_for(action: "view") }
   end
 
-  def extractThumbnail
+  def extract_thumbnail
     if user_signed_in? && current_user.is_contributor?
       if video = Video.where(id: params[:video][:id]).first
-        video.setThumbnail(false)
+        video.set_thumbnail(false)
         flash[:notice] = "Thumbnail Reset."
       end
     end

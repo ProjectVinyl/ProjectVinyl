@@ -21,7 +21,7 @@
 		</div>
 	<% end %>
 	<div class="artist-bio bio">
-		<a <% if !@report.user.isDummy %>class="user-link" data-id="<%= @report.user_id %>" href="<%= @report.user.link %>"<% end %>>
+		<a <% if !@report.user.is_dummy %>class="user-link" data-id="<%= @report.user_id %>" href="<%= @report.user.link %>"<% end %>>
 			<span class="avatar medium">
 				<span style="background-image:url('<%= @report.user.avatar %>');"></span>
 			</span>
@@ -29,7 +29,7 @@
 	</div>
 	<div class="content">
 		<div class="name">
-			<a <% if !@report.user.isDummy %>class="user-link" data-id="<%= @report.user_id %>" href="<%= @report.user.link %>"<% end %>><%= @report.user.username %></a>
+			<a <% if !@report.user.is_dummy %>class="user-link" data-id="<%= @report.user_id %>" href="<%= @report.user.link %>"<% end %>><%= @report.user.username %></a>
 		</div>
 		<div class="date right"><%= since @report.created_at %></div>
 		<table style="table-layout:auto" class="properties comment-content preview">

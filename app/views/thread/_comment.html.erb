@@ -20,7 +20,7 @@
 	</div>
 		<% end %>
 	<div class="artist-bio bio">
-		<a <% if !comment.user.isDummy %>class="user-link" data-id="<%= comment.user_id %>" href="<%= comment.user.link %>"<% end %>>
+		<a <% if !comment.user.is_dummy %>class="user-link" data-id="<%= comment.user_id %>" href="<%= comment.user.link %>"<% end %>>
 			<span class="avatar medium">
 				<span style="background-image:url('<%= comment.user.avatar %>');"></span>
 			</span>
@@ -38,7 +38,7 @@
 		<% if !indirect %>
 		<a title="Reply" class="reply-comment" ><i class="fa fa-reply"></i></a>
 		<% end %>
-		<button title="Like" class="action like<% if comment.isUpvotedBy(current_user) %> liked<% end %>" data-count="<%= comment.score %>" data-action="comments/like" data-id="<%= comment.id %>">
+		<button title="Like" class="action like<% if comment.is_upvoted_by(current_user) %> liked<% end %>" data-count="<%= comment.score %>" data-action="comments/like" data-id="<%= comment.id %>">
 			<span>
 			<% if comment.score && comment.score > 0 %>
 				<span class="count"><%= comment.score %></span>
@@ -48,7 +48,7 @@
 		</button>
 	<% end %>
 		<div class="name<% if comment.user.banned? %> banned<% end %>">
-			<a <% if !comment.user.isDummy %>class="user-link" data-id="<%= comment.user_id %>" href="<%= comment.user.link %>"<% end %>>
+			<a <% if !comment.user.is_dummy %>class="user-link" data-id="<%= comment.user_id %>" href="<%= comment.user.link %>"<% end %>>
 				<%= comment.user.username %>
 			</a>
 			<% Badge.all_badges(comment.user) do |badge| %>

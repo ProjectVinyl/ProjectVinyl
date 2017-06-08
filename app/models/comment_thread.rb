@@ -75,7 +75,7 @@ class CommentThread < ActiveRecord::Base
     self.thread_subscriptions.where('user_id = ?', user.id).destroy_all
   end
 
-  def toggleSubscribe(user)
+  def toggle_subscribe(user)
     return false if !user
     if self.subscribed?(user)
       self.unsubscribe(user)

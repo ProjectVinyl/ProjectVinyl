@@ -6,7 +6,7 @@ module ProjectVinyl
     class ElasticSelector
       def initialize(sender, search_terms)
         @user = sender
-        @opset = ProjectVinyl::Search::Op.loadOPS(search_terms.downcase)
+        @opset = ProjectVinyl::Search::Op.load_ops(search_terms.downcase)
         @elastic = nil
         @type = "unknown"
         @ordering = []

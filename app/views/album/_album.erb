@@ -4,7 +4,7 @@
 				<span style="background-image:url('<%= Video.thumb_for(@items.records.first, current_user) %>');" class="stack-item item-2"></span>
 			</span>
 		</div>
-		<% if @modificationsAllowed %>
+		<% if @modifications_allowed %>
 			<h1 class="editable short title" data-target="album" data-member="title" data-id="<%= @album.id %>">
 			<% if (@album.hidden || @album.listing == 2) && @album.user_id == current_user.id %>
 				<span title="Private - Only you can see this album" class="icon"><i class="fa fa-lock"></i></span>
@@ -45,7 +45,7 @@
 							</a>
 						</li>
 					<% end %>
-					<% if @modificationsAllowed && !@album.hidden %>
+					<% if @modifications_allowed && !@album.hidden %>
 						<li class="action">
 							<a id="delete_album" data-title="Delete Album" data-icon="warning" data-action="delete" data-url="delete/album/<%= @album.id %>" class="confirm-button">
 								<span class="icon"><i class="fa fa-trash"></i></span>
@@ -53,7 +53,7 @@
 							</a>
 						</li>
 					<% end %>
-					<% if @modificationsAllowed %>
+					<% if @modifications_allowed %>
 						<li class="action">
 							<a class="confirm-button" data-title="Album Settings" data-icon="cog" data-url="album/update/<%= @album.id %>">
 								<span class="icon"><i class="fa fa-cog"></i></span>

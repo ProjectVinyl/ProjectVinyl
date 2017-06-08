@@ -44,15 +44,15 @@ class Video < ActiveRecord::Base
     json
   end
 
-  def self.Finder
+  def self.finder
     Video.includes(:tags).listable
   end
 
-  def self.Popular
-    Video.Finder.order(:heat).reverse_order.limit(4)
+  def self.popular
+    Video.finder.order(:heat).reverse_order.limit(4)
   end
 
-  def self.randomVideos(selection, limit)
+  def self.random_videos(selection, limit)
     selection = selection.pluck(:id)
     return { ids: [], videos: [] } if selection.blank?
     if selection.length < limit
@@ -62,7 +62,7 @@ class Video < ActiveRecord::Base
     end
     {
       ids: selected,
-      videos: Video.Finder.where('id IN (?)', selected)
+      videos: Video.finder.where('id IN (?)', selected)
     }
   end
 
@@ -134,7 +134,7 @@ class Video < ActiveRecord::Base
 
     #  damaged = []
     #  Video.where('id IN (?)', webms).find_each do |video|
-    #    if Ffmpeg.getVideoLength(video.webm_path) != Ffmpeg.getVideoLength(video.video_path)
+    #    if Ffmpeg.get_video_length(video.webm_path) != Ffmpeg.get_video_length(video.video_path)
     #      damaged << video.id
     #      File.rename(video.webm_path, location.join('damaged', video.id.to_s + ".webm"))
     #    end
@@ -158,17 +158,17 @@ class Video < ActiveRecord::Base
     self.direct_user = user
   end
 
-  def transferTo(user)
+  def transfer_to(user)
     self.user = user
     self.save
     self.update_index(defer: false)
   end
 
-  def removeSelf
-    delFile(self.video_path)
-    delFile(self.webm_path)
-    delFile(self.cover_path.to_s + ".png")
-    delFile(self.cover_path.to_s + "-small.png")
+  def remove_self
+    del_file(self.video_path)
+    del_file(self.webm_path)
+    del_file(self.cover_path.to_s + ".png")
+    del_file(self.cover_path.to_s + "-small.png")
     Tag.where('id IN (?) AND video_count > 0', self.tags.pluck(:id)).update_all('video_count = video_count - 1')
     TagHistory.destroy_for(self)
     self.destroy
@@ -215,10 +215,10 @@ class Video < ActiveRecord::Base
     Rails.root.join('public', 'cover', self.id.to_s)
   end
 
-  def setFile(media)
+  def set_file(media)
     if self.file
-      delFile(self.video_path.to_s)
-      delFile(self.webm_path.to_s)
+      del_file(self.video_path.to_s)
+      del_file(self.webm_path.to_s)
     end
     ext = File.extname(media.original_filename)
     ext = Mimes.ext(media.content_type) if ext == ''
@@ -235,10 +235,10 @@ class Video < ActiveRecord::Base
       file.write(data)
       file.flush
     end
-    self.generateWebM
+    self.generate_webm
   end
 
-  def generateWebM
+  def generate_webm
     if !self.audio_only
       if !self.processed.nil?
         self.processed = nil
@@ -255,11 +255,11 @@ class Video < ActiveRecord::Base
     end
   end
 
-  def generateWebM_sync
+  def generate_webm_sync
     if !self.audio_only
       self.processed = false
       self.save
-      Ffmpeg.produceWebM(self.video_path) do ||
+      Ffmpeg.produce_webm(self.video_path) do ||
         self.processed = true
         self.save
       end
@@ -270,7 +270,7 @@ class Video < ActiveRecord::Base
     end
   end
 
-  def checkIndex
+  def check_index
     if Ffmpeg.try_unlock?(self.video_path)
       self.processed = true
       self.save
@@ -283,26 +283,26 @@ class Video < ActiveRecord::Base
     Ffmpeg.locked?(self.video_path)
   end
 
-  def setThumbnail(cover)
+  def set_thumbnail(cover)
     self.uncache
     if cover && cover.content_type.include?('image/')
-      delFile(self.cover_path.to_s + ".png")
-      delFile(self.cover_path.to_s + "-small.png")
+      del_file(self.cover_path.to_s + ".png")
+      del_file(self.cover_path.to_s + "-small.png")
       File.open(self.cover_path.to_s + '.png', 'wb') do |file|
         file.write(cover.read)
         file.flush
       end
-      Ffmpeg.extractTinyThumbFromExisting(self.cover_path)
+      Ffmpeg.extract_tiny_thumb_from_existing(self.cover_path)
     elsif !self.audio_only
-      Ffmpeg.extractThumbnail(self.video_path, self.cover_path, self.getDuration.to_f / 2)
+      Ffmpeg.extract_thumbnail(self.video_path, self.cover_path, self.get_duration.to_f / 2)
     end
   end
 
-  def setThumbnailTime(time)
+  def set_thumbnail_time(time)
     self.uncache
-    delFile(self.cover_path.to_s + ".png")
-    delFile(self.cover_path.to_s + "-small.png")
-    Ffmpeg.extractThumbnail(self.video_path, self.cover_path, time)
+    del_file(self.cover_path.to_s + ".png")
+    del_file(self.cover_path.to_s + "-small.png")
+    Ffmpeg.extract_thumbnail(self.video_path, self.cover_path, time)
   end
 
   def self.thumb_for(video, user)
@@ -315,7 +315,7 @@ class Video < ActiveRecord::Base
   end
 
   def tiny_thumb(user)
-    if (self.hidden && (!user || self.user_id != user.id)) || self.isSpoileredBy(user)
+    if (self.hidden && (!user || self.user_id != user.id)) || self.is_spoilered_by(user)
       return '/images/default-cover-small.png'
     end
     self.cache_bust('/cover/' + self.id.to_s + '-small.png')
@@ -354,8 +354,8 @@ class Video < ActiveRecord::Base
     end
   end
 
-  def getComputedScore
-    computeScore if self.score.nil?
+  def get_computed_score
+    compute_score if self.score.nil?
     self.score
   end
 
@@ -374,7 +374,7 @@ class Video < ActiveRecord::Base
       end
     end
     self.upvotes = computeCount(incr, self.upvotes)
-    computeScore
+    compute_score
     self.upvotes
   end
 
@@ -393,7 +393,7 @@ class Video < ActiveRecord::Base
       end
     end
     self.downvotes = computeCount(incr, self.downvotes)
-    computeScore
+    compute_score
     self.downvotes
   end
 
@@ -418,7 +418,7 @@ class Video < ActiveRecord::Base
       end
       if tgs && meta[:artist]
         if (artist_tag = Tag.sanitize_name(meta[:artist])) && !artist_tag.empty?
-          artist_tag = Tag.addTag('artist:' + artist_tag, self)
+          artist_tag = Tag.add_tag('artist:' + artist_tag, self)
           if !artist_tag.nil?
             TagHistory.record_changes_auto(self, artist_tag[0], artist_tag[1])
           end
@@ -447,34 +447,34 @@ class Video < ActiveRecord::Base
     }
   end
 
-  def isHiddenBy(user)
+  def is_hidden_by(user)
     return user.hides(@tag_ids || (@tag_ids = self.tags.map(&:id))) if user
     false
   end
 
-  def isSpoileredBy(user)
+  def is_spoilered_by(user)
     return user.spoilers(@tag_ids || (@tag_ids = self.tags.map(&:id))) if user
     false
   end
 
-  def isUpvotedBy(user)
+  def is_upvoted_by(user)
     if user
       return user.votes.where(video_id: self.id, negative: false).count > 0
     end
     false
   end
 
-  def isDownvotedBy(user)
+  def is_downvoted_by(user)
     return user.votes.where(video_id: self.id, negative: true).count > 0 if user
     false
   end
 
-  def isStarredBy(user)
+  def is_starred_by(user)
     return user.album_items.where(video_id: self.id).count > 0 if user
     false
   end
 
-  def getTitle
+  def get_title
     self.title || "Untitled Video"
   end
 
@@ -497,9 +497,9 @@ class Video < ActiveRecord::Base
     self
   end
 
-  def getDuration
+  def get_duration
     return 0 if self.hidden
-    return computeLength if self.length.nil? || self.empty?
+    return compute_length if self.length.nil? || self.empty?
     self.length
   end
 
@@ -523,7 +523,7 @@ class Video < ActiveRecord::Base
     self.created_at.strftime('%B %Y')
   end
 
-  def computeHotness
+  def compute_hotness
     x = self.views || 0
     x += 2 * (self.upvotes || 0)
     x += 2 * (self.downvotes || 0)
@@ -579,37 +579,37 @@ class Video < ActiveRecord::Base
     false
   end
 
-  def delFile(path)
+  def del_file(path)
     File.delete(path) if File.exist?(path)
   end
 
   private
 
   def move_files(from, to)
-    renameFile(Video.video_file_path(from, self), Video.video_file_path(to, self))
-    renameFile(Video.webm_file_path(from, self), Video.webm_file_path(to, self))
+    rename_file(Video.video_file_path(from, self), Video.video_file_path(to, self))
+    rename_file(Video.webm_file_path(from, self), Video.webm_file_path(to, self))
   end
 
-  def renameFile(from, to)
+  def rename_file(from, to)
     File.rename(from, to) if File.exist?(from)
   end
 
-  def computeLength
+  def compute_length
     if self.file
-      self.length = Ffmpeg.getVideoLength(self.video_path)
+      self.length = Ffmpeg.get_video_length(self.video_path)
       save
       return self.length
     end
     0
   end
 
-  def computeScore
+  def compute_score
     self.score = self.upvotes - self.downvotes
     self.update_index(defer: false)
-    self.computeHotness.save
+    self.compute_hotness.save
   end
 
-  def computeCount(incr, count)
+  def compute_count(incr, count)
     count = 0 if count.nil? || count.nil?
     return count - 1 if incr < 0 && count > 0
     return count + 1 if incr > 0

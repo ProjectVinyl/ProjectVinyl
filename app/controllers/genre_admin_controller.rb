@@ -16,7 +16,7 @@ class GenreAdminController < ApplicationController
       if error = tagtype.set_metadata(params[:tag_type][:prefix], params[:tag_type][:hidden] == '1')
         flash[:error] = error
       end
-      Tag.loadTags(params[:tag_type][:tag_string], tagtype)
+      Tag.load_tags(params[:tag_type][:tag_string], tagtype)
     else
       flash[:error] = "Error: Record not be found."
     end
@@ -45,7 +45,7 @@ class GenreAdminController < ApplicationController
         flash[:error] = "Error: A tagtype with that prefix already exists"
       else
         tagtype = TagType.create(prefix: prefix, hidden: params[:tag_type][:hidden] == '1')
-        Tag.loadTags(params[:tag_type][:tag_string], tagtype)
+        Tag.load_tags(params[:tag_type][:tag_string], tagtype)
         tagtype.find_and_assign
       end
     end

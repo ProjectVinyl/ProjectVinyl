@@ -17,7 +17,7 @@ class Ffmpeg
     Digest::MD5.hexdigest(data)
   end
 
-  def self.getVideoLength(file)
+  def self.get_video_length(file)
     output = `ffprobe -v error -show_entries stream=duration -of default=noprint_wrappers=1:nokey=1 "#{file}"`
     output = output.to_i
     if output == 0
@@ -47,7 +47,7 @@ class Ffmpeg
     false
   end
 
-  def self.produceWebM(file)
+  def self.produce_webm(file)
     webm = file.to_s.split('.')[0] + ".webm"
     temp = Rails.root.join('encoding', File.basename(webm).to_s).to_s
     if File.exist?(webm)
@@ -107,7 +107,7 @@ class Ffmpeg
     (hms[0] * 3600) + (hms[1] * 60) + hms[2]
   end
 
-  def self.extractThumbnail(source, destination, time)
+  def self.extract_thumbnail(source, destination, time)
     time = Ffmpeg.to_h_m_s(time)
     `ffmpeg #{Ffmpeg::HEADER} -i "#{source}" -ss #{time} -vframes 1 "#{destination}.png" -ss #{time} -vframes 1 -vf scale=-1:130 "#{destination}-small.png"`
   end
@@ -125,7 +125,7 @@ class Ffmpeg
     `ffmpeg #{Ffmpeg::HEADER} -i "#{source}" -vf scale=#{args[0]}:#{args[1]} "#{destination}"`
   end
 
-  def self.extractTinyThumbFromExisting(png)
+  def self.extract_tiny_thumb_from_existing(png)
     IO.popen("ffmpeg -hide_banner -nostats -loglevel panic -i \"#{png}.png\" -vf scale=-1:130 \"#{png}-small.png\"")
   end
 end

@@ -39,7 +39,7 @@ module ProjectVinyl
         :unknown
       end
 
-      def slurpSystemTags(slurp)
+      def slurp_system_tags(slurp)
         slurp = slurp.strip
         if slurp.index('title:') == 0
           @opset << slurp.sub(/title\:/, '')
@@ -85,7 +85,7 @@ module ProjectVinyl
         slurp
       end
 
-      def self.loadOPS(search_terms)
+      def self.load_ops(search_terms)
         Op.new(search_terms)
       end
 
@@ -144,17 +144,17 @@ module ProjectVinyl
           end
           if !slurp.empty?
             if i == ',' || (prev == ' ' && i == '&')
-              o = slurpSystemTags(slurp)
+              o = slurp_system_tags(slurp)
               @opset << Op::AND
               return o
             elsif prev == ' ' && i == '|'
-              o = slurpSystemTags(slurp)
+              o = slurp_system_tags(slurp)
               @opset << Op::OR
               return o
             elsif i == ')' && prev != '\\'
               if @open_count > 0
                 @open_count -= 1
-                o = slurpSystemTags(slurp)
+                o = slurp_system_tags(slurp)
                 @opset << Op::GROUP_END
                 return o
               else
@@ -182,7 +182,7 @@ module ProjectVinyl
           end
           prev = i
         end
-        return slurpSystemTags(slurp) if !slurp.empty?
+        return slurp_system_tags(slurp) if !slurp.empty?
         if @open_count != 0
           raise LexerError, "Unmatched '(' for + '" + @old + "|" + @terms.join('') + "'!"
         end

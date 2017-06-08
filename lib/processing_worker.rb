@@ -41,7 +41,7 @@ class ProcessingWorker < ActiveRecord::Base
     while (video = VideoProcessor.dequeue)
       self.video_id = video.id
       self.update_status("running", "Current video id:" + video.id.to_s + " (working)")
-      video.generateWebM_sync
+      video.generate_webm_sync
       self.update_status("running", "Waiting")
     end
     self.video_id = 0

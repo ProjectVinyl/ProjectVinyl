@@ -23,7 +23,7 @@
 							<div>
 								<select name="board" style="width:100%">
 									<option value="0"<% if @category == 0 %> selected<% end %>>Everywhere</option>
-								<% Board.Listables.each do |d| %>
+								<% Board.listables.each do |d| %>
 									<option value="<%= d[0] %>"<% if @category == d[0] %> selected<% end %>><%= d[1] %></option>
 								<% end %>
 								</select>

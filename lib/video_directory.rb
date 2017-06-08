@@ -148,7 +148,7 @@ class VideoFile
 end
 
 class VideoDirectory
-  def self.Entries(path)
+  def self.entries(path)
     VideoDirectory.new(path, Dir.entries(Rails.root.join(path).to_s))
   end
 

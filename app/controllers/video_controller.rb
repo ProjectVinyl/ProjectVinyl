@@ -18,7 +18,7 @@ class VideoController < ApplicationController
         @index = params[:index].to_i || (@items.first ? @items.first.index : 0)
         @prev_video = @album.get_prev(current_user, @index) if @index > 0
         @next_video = @album.get_next(current_user, @index)
-        @album_editable = user_signed_in? && @album.ownedBy(current_user)
+        @album_editable = user_signed_in? && @album.owned_by(current_user)
       end
     end
     @time = (params[:t] || params[:resume] || 0).to_i
@@ -43,11 +43,11 @@ class VideoController < ApplicationController
     @order = '1'
     @comments = Pagination.paginate(@thread.get_comments(user_signed_in? && current_user.is_contributor?), 0, 10, true)
     @queue = @user.queuev2(@video.id)
-    if !(@modificationsAllowed = user_signed_in? && current_user.id == @user.id)
+    if !(@modifications_allowed = user_signed_in? && current_user.id == @user.id)
       @video.views += 1
-      @video.computeHotness.save
+      @video.compute_hotness.save
     end
-    VideoProcessor.startManager if !@video.processed
+    VideoProcessor.start_manager if !@video.processed
   end
 
   def go_next
@@ -100,10 +100,10 @@ class VideoController < ApplicationController
       user = current_user if !user
       file = params[:video][:file]
       cover = params[:video][:cover]
-      if checkError(params[:async], file && file.empty?, "Error", "File is empty")
+      if check_error(params[:async], file && file.empty?, "Error", "File is empty")
         return
       end
-      if checkError(params[:async], cover && cover.content_type.include?('image/') && cover.empty?, "Error", "Cover file is empty")
+      if check_error(params[:async], cover && cover.content_type.include?('image/') && cover.empty?, "Error", "Cover file is empty")
         return
       end
 
@@ -159,11 +159,11 @@ class VideoController < ApplicationController
           end
           @video.save_file(data)
           if params[:video][:time] && (time = params[:video][:time].to_f) >= 0
-            @video.setThumbnailTime(time)
+            @video.set_thumbnail_time(time)
           else
-            @video.setThumbnail(cover)
+            @video.set_thumbnail(cover)
           end
-          Tag.loadTags(params[:video][:tag_string], @video)
+          Tag.load_tags(params[:video][:tag_string], @video)
           @video.save
           if params[:async]
             return render json: { result: "success", ref: "/view/" + @video.id.to_s }
@@ -195,7 +195,7 @@ class VideoController < ApplicationController
     if user_signed_in? && @video = Video.where(id: id).first
       if @video.user_id == current_user.id || current_user.is_contributor?
         if params[:tags]
-          if changes = Tag.loadTags(params[:tags], @video)
+          if changes = Tag.load_tags(params[:tags], @video)
             TagHistory.record_changes(current_user, @video, changes[0], changes[1])
           end
         end
@@ -218,7 +218,7 @@ class VideoController < ApplicationController
   def update
     if user_signed_in? && video = Video.where(id: params[:id]).first
       if params[:field] == 'tags'
-        if changes = Tag.loadTags(params[:value], video)
+        if changes = Tag.load_tags(params[:value], video)
           TagHistory.record_changes(current_user, video, changes[0], changes[1])
         end
         video.save
@@ -253,19 +253,19 @@ class VideoController < ApplicationController
     @user = @video.user
   end
 
-  def updateCover
+  def update_cover
     if user_signed_in? && video = Video.where(id: params[:video][:id]).first
       if video.user_id == current_user.id || current_user.is_contributor?
         if current_user.is_staff? && (file = params[:video][:file])
-          video.setFile(file)
+          video.set_file(file)
           video.save
         end
         if cover = params[:video][:cover]
-          video.setThumbnail(cover) if cover.content_type.include?('image/')
+          video.set_thumbnail(cover) if cover.content_type.include?('image/')
         elsif (time = params[:video][:time].to_f) >= 0
-          video.setThumbnailTime(time)
+          video.set_thumbnail_time(time)
         elsif params[:erase] || file
-          video.setThumbnail(false)
+          video.set_thumbnail(false)
         end
         flash[:notice] = "Changes saved successfully. You may need to refresh the page."
         if params[:async]
@@ -309,7 +309,7 @@ class VideoController < ApplicationController
       @data = 'unlisted=1'
       type = -1
     else
-      @results = Video.Finder
+      @results = Video.finder
     end
     @results = Pagination.paginate(@results.order(:created_at), @page, 50, true)
     render template: '/view/listing', locals: { type_id: type, type: 'videos', type_label: 'Video', items: @results }
@@ -331,7 +331,7 @@ class VideoController < ApplicationController
       elsif merged = (params[:unlisted] && user_signed_in? && current_user.is_contributor?)
         @results = Video.where(hidden: true)
       else
-        @results = Video.Finder
+        @results = Video.finder
       end
       @results = Pagination.paginate(@results.order(:created_at), @page, 50, true)
     end
@@ -359,7 +359,7 @@ class VideoController < ApplicationController
     end
   end
 
-  def checkError(async, condition, title, message)
+  def check_error(async, condition, title, message)
     error(async, title, message) if condition
     condition
   end

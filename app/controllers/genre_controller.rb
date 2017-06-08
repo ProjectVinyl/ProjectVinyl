@@ -8,9 +8,9 @@ class GenreController < ApplicationController
           return redirect_to action: "view", name: @tag.alias.short_name
         end
       end
-      @modificationsAllowed = user_signed_in? && current_user.is_contributor?
-      @totalVideos = @tag.videos.length
-      @totalUsers = @tag.users.length
+      @modifications_allowed = user_signed_in? && current_user.is_contributor?
+      @total_videos = @tag.videos.length
+      @total_users = @tag.users.length
       @videos = @tag.videos.where(hidden: false).order(:created_at)
       @videos = Pagination.paginate(@videos, 0, 8, true)
       @users = @tag.users.order(:updated_at)

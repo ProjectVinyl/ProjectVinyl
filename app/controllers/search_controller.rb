@@ -73,7 +73,7 @@ class SearchController < ApplicationController
     end
   end
 
-  def autofillArtist
+  def autofill_artist
     @query = params[:query]
     reject = params[:validate] == '1' && user_signed_in? ? !current_user.validate_name(@query) : false
     if !@query || @query == ''
@@ -91,7 +91,7 @@ class SearchController < ApplicationController
     end
   end
 
-  def orderBy(records, type, ordering)
+  def order_by(records, type, ordering)
     if type == 0
       if ordering == 1
         return records.order(:created_at, :updated_at)
