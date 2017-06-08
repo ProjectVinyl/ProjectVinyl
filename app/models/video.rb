@@ -499,7 +499,7 @@ class Video < ActiveRecord::Base
 
   def get_duration
     return 0 if self.hidden
-    return compute_length if self.length.nil? || self.empty?
+    return compute_length if self.length.nil? || self.length == 0
     self.length
   end
 
