@@ -20,5 +20,10 @@ test:
   database: db/test.db
 
 production:
-  <<: *default
-  database: db/production.db
+  adapter: mysql2
+  encoding: utf8mb4
+  pool: 10
+  timeout: 5000
+  username: vinyl
+  password: <%= File.read("/home/vinylscratch/.mysqlpwd") rescue nil %>
+  database: projectvinyl
