@@ -1,5 +1,0 @@
-== Project Vinyl: Premium Pony Tunes
-
-Built using Ruby on Rails and MySQL.
-
-TODO: Write more readme

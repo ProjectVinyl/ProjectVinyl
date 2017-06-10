@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+
+# Just in case
+test -s /usr/local/share/chruby/chruby.sh && source /usr/local/share/chruby/chruby.sh
+test -s /usr/local/share/chruby/auto.sh && source /usr/local/share/chruby/auto.sh
+
+# Set ruby version dynamically, proofs for runtime upgrades.
+RUBY_VERSION=`git cat-file blob HEAD:.ruby-version`
+chruby $RUBY_VERSION
+
+# Set rails environment
+export RAILS_ENV=production
+
+read oldrev newrev ref
+echo "Updating $oldrev -> $newrev ($ref)"
+
+if git diff --name-only $oldrev $newrev | grep "^Gemfile"; then
+  echo "Running bundler"
+  bundle install --quiet --without development test
+fi
+
+# Run migrations
+if git diff --name-only $oldrev $newrev | grep "^db/"; then
+  echo "Running database migrations"
+  bundle exec rake db:migrate
+fi
+
+# Reset assets
+if git diff --name-only $oldrev $newrev | grep "^app/assets/"; then
+  echo "Compiling assets"
+  bundle exec rake assets:precompile
+fi
+
+# Restart unicorn
+echo "Restarting webserver"
+kill -USR2 `cat ~/ProjectVinyl/tmp/pids/unicorn.pid`
