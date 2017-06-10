@@ -8,6 +8,8 @@ gem 'rails-html-sanitizer'
 
 gem 'sdoc', '~> 0.4.0', group: :doc
 gem 'jquery-rails'
+gem 'uglifier'
+gem 'yui-compressor'
 
 platforms :ruby do
   gem 'unicorn'
