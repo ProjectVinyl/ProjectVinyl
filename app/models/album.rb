@@ -84,7 +84,7 @@ class Album < ActiveRecord::Base
       items = items.reverse_order if self.reverse_ordering
       return self.recalculate_ordering(items)
     end
-    items.order(:index)
+    items.order('album_items.index')
   end
 
   def repaint_ordering(items)
