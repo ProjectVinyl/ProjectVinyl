@@ -33,7 +33,7 @@ $(window).ready(function () {
   if (window['current_user'] && window.SharedWorker && (window['force_notifications'] || !!localStorage['give_me_notifications'])) {
     var doc_title = $('#document_title');
     var title = doc_title.text();
-    worker = new SharedWorker('/js/notifications.js?1');
+    worker = new SharedWorker('<%= asset_path("notifications.js") %>');
     worker.port.addEventListener('message', function(e) {
       if (e.data.command == 'feeds') {
         if (e.data.count > 0) {

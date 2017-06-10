@@ -5,8 +5,8 @@
 	<title id="document_title"><%= content_for?(:title) ? content_for(:title) + " - Project Vinyl" : "Project Vinyl - Premium Pony Tunes" %></title>
 	<link type="text/css" href="/css/font-awesome.min.css" rel="stylesheet" />
 	<link type="text/css" href="/css/base.css?<%= assets_version %>" rel="stylesheet" />
-	<script src="<% if Rails.env.development? %>/js<% else %>https://code.jquery.com<% end %>/jquery-1.8.3.min.js" id="jquery"></script>
 	<script>var emoticons = <%= raw emoticons %><% if user_signed_in? %>,current_user = {id:<%= current_user.id %>}<% end %>;</script>
+  <%= javascript_include_tag "application" %>
 	<%= csrf_meta_tags %>
 	<meta name="theme-color" content="#a66ebe">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
@@ -165,7 +165,5 @@
 		<div class="date"><span>Powered by Muffins</span></div>
 	</footer>
 	<div class="fades"></div>
-	<script src="/js/videos.js?<%= assets_version %>" ></script>
-	<script src="/js/script.js?<%= assets_version %>" ></script>
 </body>
 </html>

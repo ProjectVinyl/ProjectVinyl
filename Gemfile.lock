@@ -71,6 +71,10 @@ GEM
       activesupport (>= 4.2.0)
     hashie (3.5.5)
     i18n (0.8.4)
+    jquery-rails (4.3.1)
+      rails-dom-testing (>= 1, < 3)
+      railties (>= 4.2.0)
+      thor (>= 0.14, < 2.0)
     json (1.8.6)
     kgio (2.11.0)
     loofah (2.0.3)
@@ -172,6 +176,7 @@ DEPENDENCIES
   devise
   elasticsearch-model
   elasticsearch-rails
+  jquery-rails
   mysql2
   rails (= 4.2.8)
   rails-html-sanitizer

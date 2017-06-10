@@ -43,7 +43,7 @@
 		<script>
 var player = null;
 <% if !@video.audio_only %>
-$(document).on('envload', function() {
+$(document).on('ready', function() {
 	player = new ThumbPicker();
 	player.constructor($('.video'));
 	player.start();

@@ -11,6 +11,7 @@
 !/private/stream/.keep
 /encoding
 !/encoding/.keep
+/public/assets
 
 # Ignore bundler config.
 /.bundle

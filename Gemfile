@@ -7,6 +7,7 @@ gem 'mysql2'
 gem 'rails-html-sanitizer'
 
 gem 'sdoc', '~> 0.4.0', group: :doc
+gem 'jquery-rails'
 
 platforms :ruby do
   gem 'unicorn'
