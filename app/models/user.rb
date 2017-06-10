@@ -375,14 +375,14 @@ class User < ActiveRecord::Base
 
   def avatar
     if !self.mime
-      return Gravatar.avatar_for(self.email, s: 240, d: 'http://www.projectvinyl.net/images/default-avatar.png', r: 'pg')
+      return Gravatar.avatar_for(self.email, s: 240, d: 'https://www.projectvinyl.net/images/default-avatar.png', r: 'pg')
     end
     self.cache_bust('/avatar/' + self.id.to_s + self.mime)
   end
 
   def small_avatar
     if !self.mime
-      return Gravatar.avatar_for(self.email, s: 30, d: 'http://www.projectvinyl.net/images/default-avatar.png', r: 'pg')
+      return Gravatar.avatar_for(self.email, s: 30, d: 'https://www.projectvinyl.net/images/default-avatar.png', r: 'pg')
     end
     self.cache_bust('/avatar/' + self.id.to_s + '-small' + self.mime)
   end
