@@ -3,8 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<title id="document_title"><%= content_for?(:title) ? content_for(:title) + " - Project Vinyl" : "Project Vinyl - Premium Pony Tunes" %></title>
-	<link type="text/css" href="/css/font-awesome.min.css" rel="stylesheet" />
-	<link type="text/css" href="/css/base.css?<%= assets_version %>" rel="stylesheet" />
+  <%= stylesheet_link_tag "application" %>
 	<script>var emoticons = <%= raw emoticons %><% if user_signed_in? %>,current_user = {id:<%= current_user.id %>}<% end %>;</script>
   <%= javascript_include_tag "application" %>
 	<%= csrf_meta_tags %>
