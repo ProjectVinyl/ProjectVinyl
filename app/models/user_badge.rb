@@ -2,6 +2,10 @@ class UserBadge < ActiveRecord::Base
   belongs_to :badge
   belongs_to :user
 
+  def get_title(user)
+    title(user)
+  end
+
   def title(_user)
     type = badge.badge_type
     if type == 1 && self.custom_title
