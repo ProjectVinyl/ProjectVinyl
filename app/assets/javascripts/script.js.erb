@@ -1144,7 +1144,7 @@ var Uploader = (function() {
 			if (!src || src == '') {
 				this.src_needed = false;
 				for (var i = 0; i < tags.length; i++) {
-					if (tags[i].trim().toLowerCase() == 'source needed') this.src_needed = true;
+					if (tags[i].name.trim().toLowerCase() == 'source needed') this.src_needed = true;
 				}
 				if (!this.src_needed) {
 					this.info("You have not provided a source. If you know what it is add it to the source field, otherwise consider tagging this video as 'source needed' so others know to search for one.");
@@ -1155,7 +1155,7 @@ var Uploader = (function() {
 				this.el.info.css('display', 'none');
 			}
 			if (tags.length == 0) return this.notify('You need at least one tag.');
-			if (tags.length == 1 && tags[0].trim().toLowerCase() == 'music') return this.notify("'music' is implied. Tags should be more specific than that. Do you perhaps know who the artist is?");
+			if (tags.length == 1 && tags[0].name.trim().toLowerCase() == 'music') return this.notify("'music' is implied. Tags should be more specific than that. Do you perhaps know who the artist is?");
 			this.is_ready = true;
 			this.el.notify.removeClass('shown');
 		},
