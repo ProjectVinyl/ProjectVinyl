@@ -1,7 +1,8 @@
 class ProcessingWorker < ActiveRecord::Base
   belongs_to :video
 
-  def initialize
+  def initialize(*args)
+    super(*args)
     @e = nil
   end
 

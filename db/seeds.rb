@@ -22,7 +22,6 @@ Tag.create([
     short_name: 'genre:electro-pop',
     video_count: 0,
     user_count: 0,
-    alias_id: 0
   },
   {
     id: 2,
@@ -32,7 +31,6 @@ Tag.create([
     short_name: 'genre:substep',
     video_count: 0,
     user_count: 0,
-    alias_id: 0
   },
   {
     id: 3,
@@ -42,7 +40,6 @@ Tag.create([
     short_name: 'genre:fusion',
     video_count: 0,
     user_count: 0,
-    alias_id: 0
   },
   {
     id: 4,
@@ -52,7 +49,6 @@ Tag.create([
     short_name: 'genre:world',
     video_count: 0,
     user_count: 0,
-    alias_id: 0
   },
   {
     id: 5,
@@ -62,7 +58,6 @@ Tag.create([
     short_name: 'genre:blues',
     video_count: 0,
     user_count: 0,
-    alias_id: 0
   },
   {
     id: 6,
@@ -72,7 +67,6 @@ Tag.create([
     short_name: 'genre:classical',
     video_count: 0,
     user_count: 0,
-    alias_id: 0
   },
   {
     id: 7,
@@ -82,7 +76,6 @@ Tag.create([
     short_name: 'genre:country',
     video_count: 0,
     user_count: 0,
-    alias_id: 0
   },
   {
     id: 8,
@@ -92,7 +85,6 @@ Tag.create([
     short_name: 'genre:electroswing',
     video_count: 0,
     user_count: 0,
-    alias_id: 0
   },
   {
     id: 9,
@@ -102,7 +94,6 @@ Tag.create([
     short_name: 'genre:techno',
     video_count: 0,
     user_count: 0,
-    alias_id: 0
   },
   {
     id: 10,
@@ -112,7 +103,6 @@ Tag.create([
     short_name: 'genre:easy listening',
     video_count: 0,
     user_count: 1,
-    alias_id: 0
   },
   {
     id: 11,
@@ -122,7 +112,6 @@ Tag.create([
     short_name: 'genre:chiptune',
     video_count: 0,
     user_count: 0,
-    alias_id: 0
   },
   {
     id: 12,
@@ -132,7 +121,6 @@ Tag.create([
     short_name: 'genre:industrial',
     video_count: 0,
     user_count: 0,
-    alias_id: 0
   },
   {
     id: 13,
@@ -142,7 +130,6 @@ Tag.create([
     short_name: 'genre:idm/experimental',
     video_count: 0,
     user_count: 0,
-    alias_id: 0
   },
   {
     id: 14,
@@ -152,7 +139,6 @@ Tag.create([
     short_name: 'genre:hip-hop',
     video_count: 0,
     user_count: 0,
-    alias_id: 0
   },
   {
     id: 15,
@@ -162,7 +148,6 @@ Tag.create([
     short_name: 'genre:rap',
     video_count: 0,
     user_count: 0,
-    alias_id: 0
   },
   {
     id: 16,
@@ -172,7 +157,6 @@ Tag.create([
     short_name: 'genre:holiday',
     video_count: 0,
     user_count: 0,
-    alias_id: 0
   },
   {
     id: 17,
@@ -182,7 +166,6 @@ Tag.create([
     short_name: 'genre:gospel',
     video_count: 0,
     user_count: 0,
-    alias_id: 0
   },
   {
     id: 18,
@@ -192,7 +175,6 @@ Tag.create([
     short_name: 'genre:instrumental',
     video_count: 0,
     user_count: 0,
-    alias_id: 0
   },
   {
     id: 19,
@@ -202,7 +184,6 @@ Tag.create([
     short_name: 'genre:pop',
     video_count: 0,
     user_count: 0,
-    alias_id: 0
   },
   {
     id: 20,
@@ -212,7 +193,6 @@ Tag.create([
     short_name: 'genre:jazz',
     video_count: 0,
     user_count: 0,
-    alias_id: 0
   },
   {
     id: 21,
@@ -222,7 +202,6 @@ Tag.create([
     short_name: 'genre:gypsy',
     video_count: 0,
     user_count: 0,
-    alias_id: 0
   },
   {
     id: 22,
@@ -232,7 +211,6 @@ Tag.create([
     short_name: 'genre:rock',
     video_count: 0,
     user_count: 0,
-    alias_id: 0
   },
   {
     id: 23,
@@ -242,7 +220,6 @@ Tag.create([
     short_name: 'genre:r-b/soul',
     video_count: 0,
     user_count: 0,
-    alias_id: 0
   },
   {
     id: 24,
@@ -252,7 +229,6 @@ Tag.create([
     short_name: 'genre:reggae',
     video_count: 0,
     user_count: 0,
-    alias_id: 0
   },
   {
     id: 25,
@@ -262,7 +238,6 @@ Tag.create([
     short_name: 'genre:folk',
     video_count: 0,
     user_count: 0,
-    alias_id: 0
   },
   {
     id: 26,
@@ -272,7 +247,6 @@ Tag.create([
     short_name: 'genre:soundtrack',
     video_count: 0,
     user_count: 0,
-    alias_id: 0
   },
   {
     id: 27,
@@ -282,7 +256,6 @@ Tag.create([
     short_name: 'genre:showtunes',
     video_count: 0,
     user_count: 0,
-    alias_id: 0
   },
   {
     id: 28,
@@ -292,7 +265,6 @@ Tag.create([
     short_name: 'genre:remix',
     video_count: 0,
     user_count: 0,
-    alias_id: 0
   },
   {
     id: 30,
@@ -302,7 +274,6 @@ Tag.create([
     short_name: 'artist:sollace',
     video_count: 0,
     user_count: 0,
-    alias_id: 0
   },
   {
     id: 31,
@@ -312,7 +283,6 @@ Tag.create([
     short_name: 'twilight sparkle',
     video_count: 0,
     user_count: 0,
-    alias_id: 0
   },
   {
     id: 32,
@@ -322,7 +292,6 @@ Tag.create([
     short_name: 'pinkie pie',
     video_count: 0,
     user_count: 0,
-    alias_id: 0
   },
   {
     id: 33,
@@ -332,7 +301,6 @@ Tag.create([
     short_name: 'artist:bob',
     video_count: 0,
     user_count: 0,
-    alias_id: 0
   },
   {
     id: 34,
@@ -342,7 +310,6 @@ Tag.create([
     short_name: 'smile',
     video_count: 0,
     user_count: 0,
-    alias_id: 0
   },
   {
     id: 35,
@@ -352,7 +319,6 @@ Tag.create([
     short_name: 'remix',
     video_count: 0,
     user_count: 0,
-    alias_id: 0
   },
   {
     id: 36,
@@ -362,7 +328,6 @@ Tag.create([
     short_name: 'artist:the living tombstone',
     video_count: 0,
     user_count: 0,
-    alias_id: 0
   },
   {
     id: 37,
@@ -372,7 +337,6 @@ Tag.create([
     short_name: 'wibbly',
     video_count: 0,
     user_count: 0,
-    alias_id: 0
   },
   {
     id: 38,
@@ -382,7 +346,6 @@ Tag.create([
     short_name: 'this will give you diabetees',
     video_count: 0,
     user_count: 0,
-    alias_id: 0
   },
   {
     id: 39,
@@ -392,7 +355,6 @@ Tag.create([
     short_name: 'gibberish in the comments',
     video_count: 0,
     user_count: 0,
-    alias_id: 0
   },
   {
     id: 40,
@@ -402,7 +364,6 @@ Tag.create([
     short_name: 'smile song',
     video_count: 0,
     user_count: 0,
-    alias_id: 0
   },
   {
     id: 41,
@@ -412,7 +373,6 @@ Tag.create([
     short_name: 'smile hd',
     video_count: 0,
     user_count: 0,
-    alias_id: 0
   },
   {
     id: 42,
@@ -422,7 +382,6 @@ Tag.create([
     short_name: 'c:',
     video_count: 0,
     user_count: 0,
-    alias_id: 0
   },
   {
     id: 43,
@@ -432,7 +391,6 @@ Tag.create([
     short_name: 'safe',
     video_count: 0,
     user_count: 0,
-    alias_id: 0
   },
   {
     id: 44,
@@ -442,7 +400,6 @@ Tag.create([
     short_name: 'cute',
     video_count: 0,
     user_count: 0,
-    alias_id: 0
   },
   {
     id: 45,
@@ -452,7 +409,6 @@ Tag.create([
     short_name: 'a friend in deed',
     video_count: 0,
     user_count: 0,
-    alias_id: 0
   },
   {
     id: 46,
@@ -462,7 +418,6 @@ Tag.create([
     short_name: 'wobbly',
     video_count: 0,
     user_count: 0,
-    alias_id: 0
   },
   {
     id: 47,
@@ -472,7 +427,6 @@ Tag.create([
     short_name: 'timey',
     video_count: 0,
     user_count: 0,
-    alias_id: 0
   },
   {
     id: 48,
@@ -482,7 +436,6 @@ Tag.create([
     short_name: 'oc:lannie lona',
     video_count: 0,
     user_count: 0,
-    alias_id: 0
   },
   {
     id: 49,
@@ -492,7 +445,6 @@ Tag.create([
     short_name: 'rainbow dash',
     video_count: 0,
     user_count: 0,
-    alias_id: 0
   },
   {
     id: 51,
@@ -502,7 +454,6 @@ Tag.create([
     short_name: 'fluttershy',
     video_count: 0,
     user_count: 0,
-    alias_id: 61
   },
   {
     id: 52,
@@ -512,7 +463,6 @@ Tag.create([
     short_name: 'oc:bob',
     video_count: 0,
     user_count: 0,
-    alias_id: 0
   },
   {
     id: 53,
@@ -522,7 +472,6 @@ Tag.create([
     short_name: 'oc',
     video_count: 0,
     user_count: 0,
-    alias_id: 0
   },
   {
     id: 54,
@@ -532,7 +481,6 @@ Tag.create([
     short_name: 'wimey',
     video_count: 0,
     user_count: 0,
-    alias_id: 0
   },
   {
     id: 55,
@@ -542,7 +490,6 @@ Tag.create([
     short_name: 'artist:dr sample blank',
     video_count: 0,
     user_count: 0,
-    alias_id: 30
   },
   {
     id: 56,
@@ -552,7 +499,6 @@ Tag.create([
     short_name: 'oc:nom',
     video_count: 0,
     user_count: 0,
-    alias_id: 0
   },
   {
     id: 57,
@@ -562,7 +508,6 @@ Tag.create([
     short_name: 'blop',
     video_count: 0,
     user_count: 0,
-    alias_id: 45
   },
   {
     id: 58,
@@ -572,7 +517,6 @@ Tag.create([
     short_name: 'boop',
     video_count: 0,
     user_count: 0,
-    alias_id: 0
   },
   {
     id: 59,
@@ -582,7 +526,6 @@ Tag.create([
     short_name: 'tag',
     video_count: 0,
     user_count: 0,
-    alias_id: 64
   },
   {
     id: 60,
@@ -592,7 +535,6 @@ Tag.create([
     short_name: 'hy',
     video_count: 0,
     user_count: 0,
-    alias_id: 0
   },
   {
     id: 61,
@@ -602,7 +544,6 @@ Tag.create([
     short_name: 'gj',
     video_count: 0,
     user_count: 0,
-    alias_id: 0
   },
   {
     id: 62,
@@ -612,7 +553,6 @@ Tag.create([
     short_name: 'sjnkl',
     video_count: 0,
     user_count: 0,
-    alias_id: 34
   },
   {
     id: 63,
@@ -622,7 +562,6 @@ Tag.create([
     short_name: 'dafsd',
     video_count: 0,
     user_count: 0,
-    alias_id: 0
   },
   {
     id: 64,
@@ -632,7 +571,6 @@ Tag.create([
     short_name: 'test',
     video_count: 0,
     user_count: 0,
-    alias_id: 0
   },
   {
     id: 65,
@@ -642,7 +580,6 @@ Tag.create([
     short_name: 'dkmls',
     video_count: 0,
     user_count: 0,
-    alias_id: 0
   },
   {
     id: 66,
@@ -652,7 +589,6 @@ Tag.create([
     short_name: 'c',
     video_count: 0,
     user_count: 0,
-    alias_id: 0
   },
   {
     id: 67,
@@ -662,7 +598,6 @@ Tag.create([
     short_name: 'artist:dr sample',
     video_count: 0,
     user_count: 0,
-    alias_id: 30
   },
   {
     id: 68,
@@ -672,7 +607,6 @@ Tag.create([
     short_name: 'oc:somenewoc',
     video_count: 0,
     user_count: 0,
-    alias_id: 0
   },
   {
     id: 69,
@@ -682,7 +616,6 @@ Tag.create([
     short_name: 'bob',
     video_count: 0,
     user_count: 0,
-    alias_id: 0
   },
   {
     id: 70,
@@ -692,7 +625,6 @@ Tag.create([
     short_name: 'cheerilee',
     video_count: 0,
     user_count: 0,
-    alias_id: 0
   },
   {
     id: 72,
@@ -702,7 +634,6 @@ Tag.create([
     short_name: 'ghost busters',
     video_count: 0,
     user_count: 0,
-    alias_id: 0
   },
   {
     id: 73,
@@ -712,7 +643,6 @@ Tag.create([
     short_name: 'ghast',
     video_count: 0,
     user_count: 0,
-    alias_id: 0
   },
   {
     id: 74,
@@ -722,7 +652,6 @@ Tag.create([
     short_name: 'pompus',
     video_count: 0,
     user_count: 0,
-    alias_id: 0
   },
   {
     id: 75,
@@ -732,7 +661,6 @@ Tag.create([
     short_name: 'pompups',
     video_count: 0,
     user_count: 0,
-    alias_id: 0
   },
   {
     id: 77,
@@ -742,7 +670,6 @@ Tag.create([
     short_name: 'dr white',
     video_count: 0,
     user_count: 0,
-    alias_id: 0
   },
   {
     id: 78,
@@ -752,7 +679,6 @@ Tag.create([
     short_name: 'dr black',
     video_count: 0,
     user_count: 0,
-    alias_id: 0
   },
   {
     id: 79,
@@ -762,7 +688,6 @@ Tag.create([
     short_name: 'derpy',
     video_count: 0,
     user_count: 0,
-    alias_id: 0
   },
   {
     id: 80,
@@ -772,7 +697,6 @@ Tag.create([
     short_name: 'artist:blackgyph',
     video_count: 0,
     user_count: 0,
-    alias_id: 0
   },
   {
     id: 81,
@@ -782,7 +706,6 @@ Tag.create([
     short_name: 'artist:markimoo',
     video_count: 0,
     user_count: 0,
-    alias_id: 0
   },
   {
     id: 82,
@@ -792,7 +715,6 @@ Tag.create([
     short_name: 'artist:artistmarkiplier',
     video_count: 0,
     user_count: 0,
-    alias_id: 83
   },
   {
     id: 83,
@@ -802,7 +724,6 @@ Tag.create([
     short_name: 'artist:markiplier',
     video_count: 0,
     user_count: 0,
-    alias_id: 0
   },
   {
     id: 84,
@@ -812,7 +733,6 @@ Tag.create([
     short_name: 'artist:jontronshow',
     video_count: 0,
     user_count: 0,
-    alias_id: 0
   },
   {
     id: 85,
@@ -822,7 +742,6 @@ Tag.create([
     short_name: 'artist needed',
     video_count: 0,
     user_count: 0,
-    alias_id: 0
   },
   {
     id: 86,
@@ -832,7 +751,6 @@ Tag.create([
     short_name: 'source needed',
     video_count: 0,
     user_count: 0,
-    alias_id: 0
   },
   {
     id: 87,
@@ -842,7 +760,6 @@ Tag.create([
     short_name: 'spoiler:bob',
     video_count: 0,
     user_count: 0,
-    alias_id: 0
   },
   {
     id: 88,
@@ -852,7 +769,6 @@ Tag.create([
     short_name: 'featured video',
     video_count: 0,
     user_count: 0,
-    alias_id: 0
   },
   {
     id: 89,
@@ -862,7 +778,6 @@ Tag.create([
     short_name: 'artist:dj-pon3',
     video_count: 0,
     user_count: 0,
-    alias_id: 0
   },
   {
     id: 90,
@@ -872,7 +787,6 @@ Tag.create([
     short_name: 'farmer john',
     video_count: 0,
     user_count: 0,
-    alias_id: 0
   },
   {
     id: 91,
@@ -882,7 +796,6 @@ Tag.create([
     short_name: 'rainbow licious',
     video_count: 0,
     user_count: 0,
-    alias_id: 0
   },
   {
     id: 92,
@@ -892,7 +805,6 @@ Tag.create([
     short_name: 'sosso',
     video_count: 0,
     user_count: 0,
-    alias_id: 0
   },
   {
     id: 93,
@@ -902,7 +814,6 @@ Tag.create([
     short_name: 'lyra',
     video_count: 0,
     user_count: 0,
-    alias_id: 0
   },
   {
     id: 94,
@@ -912,7 +823,6 @@ Tag.create([
     short_name: 'artist:blast beat',
     video_count: 0,
     user_count: 0,
-    alias_id: 0
   },
   {
     id: 95,
@@ -922,7 +832,6 @@ Tag.create([
     short_name: 'object object',
     video_count: 0,
     user_count: 0,
-    alias_id: 0
   },
   {
     id: 96,
@@ -932,7 +841,6 @@ Tag.create([
     short_name: 'rainbow bob',
     video_count: 0,
     user_count: 0,
-    alias_id: 0
   },
   {
     id: 97,
@@ -942,7 +850,6 @@ Tag.create([
     short_name: 'rarity',
     video_count: 0,
     user_count: 0,
-    alias_id: 0
   }
 ])
 TagImplication.create([

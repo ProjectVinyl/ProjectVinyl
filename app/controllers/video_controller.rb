@@ -100,20 +100,20 @@ class VideoController < ApplicationController
       user = current_user if !user
       file = params[:video][:file]
       cover = params[:video][:cover]
-      if check_error(params[:async], file && file.empty?, "Error", "File is empty")
+      if check_error(params[:async], file && file.size == 0, "Error", "File is empty")
         return
       end
-      if check_error(params[:async], cover && cover.content_type.include?('image/') && cover.empty?, "Error", "Cover file is empty")
+      if check_error(params[:async], cover && cover.content_type.include?('image/') && cover.size == 0, "Error", "Cover file is empty")
         return
       end
 
       if file && (file.content_type.include?('video/') || file.content_type.include?('audio/'))
         if file.content_type.include?('video/') || (cover && cover.content_type.include?('image/'))
           video = params[:video]
-          if !video[:tag_string]
+          if video[:tag_string].blank?
             return error(params[:async], "Error", "You need at least one tag.")
           end
-          if !video[:title] || video[:title].strip.empty?
+          if video[:title].blank?
             return error(params[:async], "Error", "You need to specify a title.")
           end
           data = file.read

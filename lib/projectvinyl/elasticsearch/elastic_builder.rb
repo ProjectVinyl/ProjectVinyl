@@ -116,7 +116,7 @@ module ProjectVinyl
 
       # reads all params and children into this group
       def take_all(type, opset, sender)
-        until opset.empty?
+        until opset.length == 0
           op = opset.shift
           return if op == ProjectVinyl::Search::Op::GROUP_END
           if op == ProjectVinyl::Search::Op::OR
