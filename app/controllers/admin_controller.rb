@@ -8,7 +8,6 @@ class AdminController < ApplicationController
     @hiddenvideos = Pagination.paginate(Video.where(hidden: true), 0, 40, true)
     @unprocessed = Pagination.paginate(Video.where("(processed IS NULL or processed = ?) AND hidden = false", false), 0, 40, false)
     @users = User.where('last_sign_in_at > ? OR updated_at > ?', Time.zone.now.beginning_of_month, Time.zone.now.beginning_of_month).limit(100).order(:last_sign_in_at).reverse_order
-    @processor_status = VideoProcessor.status
     @reports = Pagination.paginate(Report.includes(:video).where(resolved: nil), 0, 40, false)
   end
 
@@ -231,17 +230,6 @@ class AdminController < ApplicationController
     redirect_to action: "video", id: params[:video][:id]
   end
 
-  def batch_preprocess_videos
-    if user_signed_in? && current_user.is_contributor?
-      if VideoProcessor.start_manager
-        flash[:notice] = "Processing Manager restarted. " + VideoProcessor.queue.length.to_s + " videos in queue."
-      else
-        flash[:notice] = "Processing Manager already active. " + VideoProcessor.queue.length.to_s + " videos in queue."
-      end
-    end
-    render json: { ref: url_for(action: "view") }
-  end
-
   def batch_drop_videos
     if user_signed_in? && current_user.is_admin?
       videos = Video.where(hidden: true)
@@ -287,17 +275,8 @@ class AdminController < ApplicationController
             return render status: 404, json: { ref: url_for(action: "view") }
           end
         else
-          ans = Report.on(current_user, "Indexing table #{params[:table]}") do |report|
-            table.__elasticsearch__.delete_index!
-            table.__elasticsearch__.create_index!
-            table.import
-            report.other = "Complete."
-          end
-          if ans
-            flash[:notice] = "Success! Indexes for table #{params[:table]} has been scheduled. Check back later for a completion report."
-          else
-            flash[:notice] = "Error: You can only do that once per day."
-          end
+          RecreateIndexJob.perform_later(current_user.id, table.to_s)
+          flash[:notice] = "Success! Indexes for table #{params[:table]} has been scheduled. Check back later for a completion report."
         end
       else
         flash[:notice] = "Error: Table #{params[:table]} was not found."
@@ -375,19 +354,8 @@ class AdminController < ApplicationController
 
   def verify_integrity
     if user_signed_in? && current_user.is_admin?
-      ans = Report.on(current_user, "System integrity Report") do |report|
-        user_component = User.verify_integrity
-        report.other = ""
-        report.write("User avatars reset: " + user_component[0].to_s)
-        report.write("User banners reset: " + user_component[1].to_s)
-        report.save
-        Video.verify_integrity(report)
-      end
-      if ans
-        flash[:notice] = "Success! An integrity check has been launched. A report will be generated upon completion."
-      else
-        flash[:notice] = "Access Denied: You cannot perform an integrity check more than once per day."
-      end
+      VerificationJob.perform_later(current_user.id)
+      flash[:notice] = "Success! An integrity check has been launched. A report will be generated upon completion."
     else
       flash[:notice] = "Access Denied: You do not have the required permissions."
     end

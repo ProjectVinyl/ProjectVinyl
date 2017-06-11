@@ -47,7 +47,6 @@ class VideoController < ApplicationController
       @video.views += 1
       @video.compute_hotness.save
     end
-    VideoProcessor.start_manager if !@video.processed
   end
 
   def go_next

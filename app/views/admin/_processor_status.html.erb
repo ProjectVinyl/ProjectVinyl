@@ -2,26 +2,24 @@
 <div class="listing compact">
 	<div class="items">
 		<div class="row">
-			<div>Videos in queue: <%= VideoProcessor.queue.count.to_s %> Total workers: <%= ProcessingWorker.all.count %></div>
+			<div>Jobs in queue: <%= Resque.info[:pending] %> Total workers: <%= Resque.info[:workers] %></div>
 			<div></div>
 			<div></div>
 			<div></div>
 		</div>
-	<% ProcessingWorker.all.each do |worker| %>
-		<a class="row" href="/view/<%= worker.video_id %>">
-			<% zombie = worker.zombie? %>
+	<% Resque.workers.each_with_index do |worker, i| %>
+    <% payload = worker.job.dig("payload", "args") %>
+    <% payload = "#{payload[0]["job_class"]}: #{payload[0]["arguments"]}" if payload %>
+		<a class="row" href="/admin/resque">
 			<div>
-				<span class="active-icon<% if worker.running || zombie %> active<% end %>" ></span>
-				#<%= worker.id %>
+				<span class="active-icon<% if worker.working? %> active<% end %>" ></span>
+				#<%= i+1 %>
 			</div>
-			<div><% if worker.video %><%= worker.video.title %><% else %>unset<% end %> ( <%= worker.video_id %> )</div>
-			<div><span><%= zombie ? "zombie" : worker.status %></span></div>
-			<div><span><%= worker.message %></span></div>
+			<div><% if payload %><%= payload %><% else %>No task<% end %></div>
 		</a>
 	<% end %>
 	</div>
 </div>
 <hr>
-<button class="confirm-button action red" data-action="delete" data-url="admin/process/all" data-title="Process <%= @unprocessed_count %> Videos" data-icon="warning" type="button">Poke Processor</button>
 <button class="confirm-button action blue" data-action="delete" data-url="admin/verify" data-title="Verify System Integrity" data-icon="warning" type="button">Verify System Integrity</button>
 <button class="confirm-button action blue" data-action="delete" data-url="admin/requeue" data-title="Rebuild Processing Queue" data-icon="" type=Button">Rebuild Processing Queue</button>
