@@ -16,9 +16,10 @@ Eye.application 'ProjectVinyl' do
     chain grace: 2.seconds
     (1..resque_count).each do |i|
       process "resque-#{i}" do
+        env 'QUEUE' => '*'
         pid_file "tmp/pids/resque-#{i}.pid"
         daemonize true
-        start_command "QUEUE=* rake environment resque:work"
+        start_command "rake environment resque:work"
         stop_signals [:QUIT, 30.seconds, :TERM, 10.seconds, :KILL]
         stdall "log/resque-#{i}.log"
         check :memory, every: 20.seconds, below: 350.megabytes, times: 3
