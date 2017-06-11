@@ -1,3 +1,5 @@
+require 'resque/server'
+
 Rails.application.routes.draw do
   devise_for :users
   put 'users/prefs' => 'artist#update_prefs'
@@ -38,7 +40,6 @@ Rails.application.routes.draw do
   get 'ajax/admin/files' => 'admin#morefiles'
   get 'ajax/admin/videos/hidden' => 'admin#page_hidden'
   get 'ajax/admin/videos/unprocessed' => 'admin#page_unprocessed'
-  post 'ajax/admin/process/all' => 'admin#batch_preprocess_videos'
   post 'ajax/admin/verify' => 'admin#verify_integrity'
   post 'ajax/admin/requeue' => 'admin#rebuild_queue'
   post 'ajax/admin/hidden/drop' => 'admin#batch_drop_videos'
@@ -52,6 +53,10 @@ Rails.application.routes.draw do
   post 'ajax/tagtype/create' => 'genre_admin#create'
   post 'ajax/tagtype/delete/:id' => 'genre_admin#delete'
   get 'ajax/tagtype/new' => 'genre_admin#new'
+
+  constraints CanAccessJobs do
+    mount Resque::Server.new, at: "/admin/resque"
+  end
 
   # Filters #
   get 'filters' => 'feed#edit'

@@ -105,7 +105,7 @@ class Video < ActiveRecord::Base
     end
     Video.where('id NOT IN (?) AND audio_only = false', webms).update_all(processed: nil)
     Video.where('id IN (?)', workings).update_all(processed: false)
-    VideoProcessor.queue.count
+    Video.where(processed: nil, hidden: false).count # return count
   end
 
   def self.verify_integrity(report)
@@ -191,8 +191,8 @@ class Video < ActiveRecord::Base
   end
 
   def self.reset_hidden_flags
-    items = Video.where(hidden: true).find_each(&:update_file_locations)
-    items.length
+    Video.where(hidden: true).find_each(&:update_file_locations)
+    Video.where(hidden: true).count # return count
   end
 
   def set_hidden(val)
@@ -244,7 +244,7 @@ class Video < ActiveRecord::Base
         self.processed = nil
         self.save
       end
-      VideoProcessor.enqueue(self)
+      ProcessVideoJob.perform_later(self.id)
       "Processing Scheduled"
     else
       if !self.processed

@@ -2,6 +2,15 @@
 
 Built using Ruby on Rails and MySQL.
 
+## Setup
+
+* git clone git@github.com:ProjectVinyl/ProjectVinyl.git
+* cd ProjectVinyl
+* bundle install
+* ???
+* rake db:seed
+* foreman start
+
 ## Deployment
 
 You need a key installed on the server you target, and the git remote added to your configuration.

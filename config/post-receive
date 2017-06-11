@@ -34,3 +34,7 @@ fi
 # Restart unicorn
 echo "Restarting webserver"
 kill -USR2 `cat ~/ProjectVinyl/tmp/pids/unicorn.pid`
+
+# Restart background workers
+bundle exec eye quit --stop_all
+bundle exec eye load /home/vinylscratch/ProjectVinyl/config/projectvinyl.eye
