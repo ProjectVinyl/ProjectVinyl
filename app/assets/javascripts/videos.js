@@ -835,9 +835,8 @@ function Player() {}
       }
     };
   }
-
-
-  $(document).on('ready', function() {
+  
+  $doc.on('ready', function() {
     $('.video').each(function() {
       var el = $(this);
       if (!el.attr('data-pending') && !el.hasClass('unplayable')) (new Player()).constructor(el);
@@ -849,7 +848,7 @@ function Player() {}
   $(window).on('resize blur', function() {
     $('.player').each(removeContext);
   });
-  $(document).on('mousemove', function() {
+  $doc.on('mousemove', function() {
     fadeTimer = 2;
     if (Player.fullscreenPlayer) {
       Player.fullscreenPlayer.controls.css('opacity', 1);
