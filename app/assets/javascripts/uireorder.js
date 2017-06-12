@@ -51,21 +51,24 @@
     });
   }
   
-  $('.reorderable').each(function() {
-    var orderable = $(this);
-    var target = orderable.attr('data-target');
-    orderable.find('.handle').on('mousedown', function(e) {
-      var me = $(this).parent();
-      grabber = function() {
-        grab(target, orderable, me);
-      };
-      $(document).one('mousemove', grabber);
-      e.preventDefault();
-      e.stopPropagation();
-    }).on('mouseup', '.reorderable .handle', function(e) {
-      $(document).off('mousemove', grabber);
+  $(function() {
+    $('.reorderable').each(function() {
+      var orderable = $(this);
+      var target = orderable.attr('data-target');
+      orderable.find('.handle').on('mousedown', function(e) {
+        var me = $(this).parent();
+        grabber = function() {
+          grab(target, orderable, me);
+        };
+        $(document).one('mousemove', grabber);
+        e.preventDefault();
+        e.stopPropagation();
+      }).on('mouseup', '.reorderable .handle', function(e) {
+        $(document).off('mousemove', grabber);
+      });
     });
   });
+  
   
   $doc.on('click', '.removeable .remove', function(e) {
     var me = $(this).parents('.removeable');

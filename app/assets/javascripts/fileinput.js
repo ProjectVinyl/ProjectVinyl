@@ -30,7 +30,7 @@ const initFileSelect = (function() {
     }
   }
   
-  function initFileSelect(me) {
+  return function(me) {
     var type = me.attr('data-type');
     var allowMulti = toBool(me.attr('allow-multi'));
     var input = me.find('input').first();
@@ -60,11 +60,11 @@ const initFileSelect = (function() {
       });
     }
     return me;
-  }
-  
-  return initFileSelect;
+  };
 })();
 
-$('.file-select').each(function() {
-  initFileSelect($(this));
+$(function() {
+  $('.file-select').each(function() {
+    initFileSelect($(this));
+  });
 });

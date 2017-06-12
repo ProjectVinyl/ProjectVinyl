@@ -1,4 +1,4 @@
-(function() {
+$(function() {
   function sizeSpannedBlocks() {
     $('.row.row-spanned > .content').each(function() {
       var me = $(this);
@@ -11,4 +11,4 @@
     $(window).on('resize', sizeSpannedBlocks);
     $('.row.row-spanned .tag-editor').on('tagschange', sizeSpannedBlocks);
   }
-})();
+});

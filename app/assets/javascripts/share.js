@@ -5,7 +5,7 @@ var shares = {
   'tumblr': 'https://www.tumblr.com/widgets/share/tool?canonicalUrl={url}&posttype=video&title={title}&content={url}'
 };
 
-$('.share-buttons button').on('click', function() {
+$doc.on('click', '.share-buttons button', function() {
   var ref = shares[$(this).attr('data-type')];
   if (ref) {
     ref = ref.replace(/{url}/g, encodeURIComponent(document.location.href));

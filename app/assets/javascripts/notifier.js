@@ -1,6 +1,6 @@
 (function() {
   var worker;
-  $(window).ready(function () {
+  $(function () {
     if (document.location.hash.indexOf('#comment_') == 0) {
       lookupComment(document.location.hash.split('_')[1]);
     }
@@ -45,11 +45,6 @@
           } else {
             $('.notices-bell.notices span.invert').remove();
           }
-        } else if (e.data.command == 'chat') {
-          var chat = $('#chat');
-          chat.html(e.data.content);
-          chat = chat.parent();
-          chat.scrollTop(chat.height());
         }
         if (e.data.command == 'notices' || e.data.command == 'feeds' || e.data.command == 'mail') {
           if (!window_focused && e.data.count) {

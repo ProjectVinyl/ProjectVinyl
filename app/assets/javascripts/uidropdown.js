@@ -5,6 +5,7 @@ $doc.on('mousedown', function() {
 $doc.on('focus', 'label input, label select', function() {
   $(this).closest('label').addClass('focus');
 });
+
 $doc.on('blur', 'label input, label select', function() {
   $(this).closest('label').removeClass('focus');
 });

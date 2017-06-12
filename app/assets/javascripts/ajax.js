@@ -92,11 +92,11 @@ const ajax = (function() {
         form.addClass('uploading');
       },
       success: function (data) {
-				if (timer) clearInterval(timer);
-				if (callbacks.success) {
-					form.removeClass('waiting');
-					return callbacks.success.apply(this, arguments);
-				}
+        if (timer) clearInterval(timer);
+        if (callbacks.success) {
+          form.removeClass('waiting');
+          return callbacks.success.apply(this, arguments);
+        }
         if (callback_func && typeof window[callback_func] === 'function') {
           window[callback_func](form, data);
         } else if (data.ref) {
@@ -134,5 +134,5 @@ const ajax = (function() {
 		while (resource.indexOf('/') == 0) resource = resource.substring(1, resource.length);
     request('GET', '/ajax/' + resource, callback, data, direct);
   };
-  return Object.freeze ? Object.freeze(result) : result;
+  return Object.freeze(result);
 })();

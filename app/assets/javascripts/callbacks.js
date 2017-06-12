@@ -26,5 +26,9 @@ function editVideo(sender, data) {
   sender.parent().find('.normal.tiny-link a').attr('href', data.source).text(data.source);
 }
 
-/* Everything's ready, load latecomers */
-$doc.trigger('envload');
+$(function() {
+  /* Everything's ready, load latecomers
+   * TODO: Remove this when there's no more envload stuff
+   */
+  $doc.trigger('envload');
+});

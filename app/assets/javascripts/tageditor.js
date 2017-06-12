@@ -332,6 +332,8 @@ var TagEditor = (function() {
   return TagEditor;
 })();
 
-$('.tag-editor').each(function() {
-  new TagEditor(this);
+$(function() {
+  $('.tag-editor').each(function() {
+    new TagEditor(this);
+  });
 });

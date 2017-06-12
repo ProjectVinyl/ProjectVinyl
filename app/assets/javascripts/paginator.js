@@ -43,10 +43,6 @@ var paginator = (function() {
     document.location.hash = '/' + id + '/' + (page + 1);
   }
   
-  $doc.on('click', '.pagination .pages .button, .pagination .button.left, .pagination .button.right', function() {
-    paginator.goto($(this));
-  });
-  
   var hash = document.location.hash;
   var page = -2;
   var match;
@@ -86,3 +82,7 @@ var paginator = (function() {
     }
   }
 })();
+
+$doc.on('click', '.pagination .pages .button, .pagination .button.left, .pagination .button.right', function() {
+  paginator.goto($(this));
+});

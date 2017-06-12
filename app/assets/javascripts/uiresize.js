@@ -33,6 +33,6 @@ var resizeFont = (function() {
   }
   
   $(window).on('resize', fixFonts);
-  fixFonts();
+  $(fixFonts);
   return resizeFont;
 })();

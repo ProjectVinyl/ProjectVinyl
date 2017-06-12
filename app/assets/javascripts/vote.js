@@ -23,6 +23,7 @@
     });
     return me;
   }
+  
   function like() {
     var me = $(this);
     if (me.hasClass('liked')) {
@@ -35,6 +36,7 @@
       count(me, 1).addClass('liked');
     }
   }
+  
   function fave() {
     var me = $(this);
     me.toggleClass('starred');
@@ -46,6 +48,7 @@
       }
     });
   }
+  
   $doc.on('click', 'button.action.like, button.action.dislike', like);
   $doc.on('click', 'button.action.star', fave);
 })();

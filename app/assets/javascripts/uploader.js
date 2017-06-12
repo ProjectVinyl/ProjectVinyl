@@ -240,9 +240,11 @@ var Uploader = (function() {
 		}
 	}
   
-	$('#new_tab_button').on('click', function() {
-		new Uploader();
-	});
+  $(function() {
+    $('#new_tab_button').on('click', function() {
+      new Uploader();
+    });
+  });
 	
   return Uploader;
 })();

@@ -179,9 +179,6 @@ const BBC = (function() {
       ev.stopPropagation();
     });
 	}
-  $('.editable').each(function() {
-    setupEditable(this);
-  });
   
   $doc.on('click', function() {
     if (active && !active.closest('.editable').is(':hover')) deactivate(active);
@@ -241,8 +238,16 @@ const BBC = (function() {
     $(this).select();
   });
   
-  $('.post-box textarea.comment-content, .post-box input.comment-content').trigger('change');
+  $(function() {
+    $('.editable').each(function() {
+      setupEditable(this);
+    });
+    $('.post-box textarea.comment-content, .post-box input.comment-content').trigger('change');
+  });
 	
-  var result = { rich: rich, poor: poor, init: setupEditable };
-  return Object.freeze ? Object.freeze(result) : result;
+  return Object.freeze({
+    rich: rich,
+    poor: poor,
+    init: setupEditable
+  });
 })();
