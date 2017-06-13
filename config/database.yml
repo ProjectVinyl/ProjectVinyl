@@ -5,7 +5,9 @@ default: &default
   timeout: 5000
   username: root
   password: seCur17y
-  socket: /var/run/mysqld.sock
+  host: 127.0.0.1
+  port: 3306
+#  socket: /var/run/mysqld.sock
   reconnect: true
 
 development:
