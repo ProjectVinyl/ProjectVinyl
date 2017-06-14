@@ -12,32 +12,32 @@ function slideOut(holder) {
 }
 
 function slideAcross(me, direction) {
-	var form = me.parents('.slide-group');
-	var to = form.find('.group[data-stage=' + me.attr('data-to') + ']');
-	if (to.length) {
-		var offset = (parseInt(form.attr('data-offset')) || 0) + direction;
-		form.attr('data-offset', offset);
-		var from = form.find('.active');
-		var fromH = from.height();
-		var formH = form.height();
-		from.removeClass('active');
-		if (direction > 0) {
-			from.after(to);
-		} else {
-			from.before(to);
-		}
-		to.addClass('active');
-		setTimeout(function() {
-			form.css('min-height', formH - (fromH - to.height()));
-			form.css('max-height', formH - (fromH - to.height()));
-			form.addClass('animating');
-			form.find('.group').css('transform', 'translate(' + (-100 * offset) + '%,0)');
-			setTimeout(function() {
-				form.removeClass('animating');
-				form.css('max-height', '');
-			}, 500);
-		},1);
-	}
+  var form = me.parents('.slide-group');
+  var to = form.find('.group[data-stage=' + me.attr('data-to') + ']');
+  if (to.length) {
+    var offset = (parseInt(form.attr('data-offset')) || 0) + direction;
+    form.attr('data-offset', offset);
+    var from = form.find('.active');
+    var fromH = from.height();
+    var formH = form.height();
+    from.removeClass('active');
+    if (direction > 0) {
+      from.after(to);
+    } else {
+      from.before(to);
+    }
+    to.addClass('active');
+    setTimeout(function() {
+      form.css('min-height', formH - (fromH - to.height()));
+      form.css('max-height', formH - (fromH - to.height()));
+      form.addClass('animating');
+      form.find('.group').css('transform', 'translate(' + (-100 * offset) + '%,0)');
+      setTimeout(function() {
+        form.removeClass('animating');
+        form.css('max-height', '');
+      }, 500);
+    },1);
+  }
 }
 
 $doc.on('click', '.slider-toggle', function(e) {
@@ -47,15 +47,15 @@ $doc.on('click', '.slider-toggle', function(e) {
     me.addClass('loaded');
     ajax(me.attr('data-url'), function(json) {
       holder[0].innerHTML = json.content;
-			holder.find('script').each(function() {
-				var cs = document.createElement('SCRIPT');
-				cs.textContent = '(function(){' + this.innerText + '}).apply({})';
-				cs.onload = cs.onerror = function() {
-					cs.parentNode.removeChild(cs);
-				};
-				this.parentNode.removeChild(this);
-				document.head.appendChild(cs);
-			});
+      holder.find('script').each(function() {
+        var cs = document.createElement('SCRIPT');
+        cs.textContent = '(function(){' + this.innerText + '}).apply({})';
+        cs.onload = cs.onerror = function() {
+          cs.parentNode.removeChild(cs);
+        };
+        this.parentNode.removeChild(this);
+        document.head.appendChild(cs);
+      });
       slideOut(holder);
     });
   } else {

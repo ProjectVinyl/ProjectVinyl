@@ -7,9 +7,7 @@
   }
   
   function reorder(target, id, index) {
-    ajax.post('update/' + target, function() {
-      
-    }, true, {
+    ajax.post('update/' + target, function() {}, true, {
       id: id, index: index
     });
   }
@@ -68,7 +66,6 @@
       });
     });
   });
-  
   
   $doc.on('click', '.removeable .remove', function(e) {
     var me = $(this).parents('.removeable');
