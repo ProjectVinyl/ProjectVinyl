@@ -24,7 +24,7 @@
     return me;
   }
   
-  function like() {
+  $doc.on('click', 'button.action.like, button.action.dislike', function() {
     var me = $(this);
     if (me.hasClass('liked')) {
       count(me, -1).removeClass('liked');
@@ -35,9 +35,9 @@
       }
       count(me, 1).addClass('liked');
     }
-  }
+  });
   
-  function fave() {
+  $doc.on('click', 'button.action.star', function fave() {
     var me = $(this);
     me.toggleClass('starred');
     ajax.post(me.attr('data-action') + '/' + me.attr('data-id'), function(xml) {
@@ -47,8 +47,5 @@
         me.removeClass('starred');
       }
     });
-  }
-  
-  $doc.on('click', 'button.action.like, button.action.dislike', like);
-  $doc.on('click', 'button.action.star', fave);
+  });
 })();

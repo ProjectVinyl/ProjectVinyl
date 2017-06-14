@@ -154,7 +154,7 @@ function Player() {}
     Child.Super = this.prototype;
     Child.Extend = this.Extend;
     var keys = Object.keys(overrides);
-    for (var i = keys.length; i-- > 0;) {
+    for (var i = keys.length; i--;) {
       Child.prototype[keys[i]] = overrides[keys[i]];
     }
   };

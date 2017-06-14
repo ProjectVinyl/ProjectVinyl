@@ -14,16 +14,18 @@ $doc.on('click', '.tab-set > li.button:not([data-disabled])', function() {
 
 $doc.on('click', '.tab-set > li.button i.fa-close', function(e) {
   var me = $(this).parent();
-  var other = me.parent();
   $('div[data-tab="' + me.attr('data-target') + '"]').remove();
-	me.addClass('hidden');
-	setTimeout(function() {
-		me.remove();
-	}, 25);
-	other = other.find('li.button:not([data-disabled]):not(.hidden)[data-target]')
-	focusTab(other.first());
-	e.preventDefault();
-	e.stopPropagation();
+  me.addClass('hidden');
+  
+  setTimeout(function() {
+    me.remove();
+  }, 25);
+  
+  var other = me.parent().find('li.button:not([data-disabled]):not(.hidden)[data-target]').first();
+  focusTab(other);
+  
+  e.preventDefault();
+  e.stopPropagation();
 });
 
 $doc.on('click', '.tab-set.async a.button:not([data-disabled])', function(e) {
@@ -31,10 +33,13 @@ $doc.on('click', '.tab-set.async a.button:not([data-disabled])', function(e) {
   if (!me.hasClass('selected')) {
     var parent = me.parent();
     var other = parent.find('.selected');
+    
     other.removeClass('selected');
     me.addClass('selected');
+    
     var holder = $('.tab[data-tab=' + parent.attr('data-target') + ']');
     holder.addClass('waiting');
+    
     ajax.get(parent.attr('data-url'), function(json) {
       holder.html(json.content);
       holder.removeClass('waiting');

@@ -21,7 +21,6 @@ $doc.on('click', '.load-more button', function() {
 });
 
 $doc.on('click', '.mix a', function(e) {
-  var ref = $(this).attr('href');
-  document.location.replace(ref + '&t=' + $('#video .player')[0].getPlayerObj().video.currentTime);
+  document.location.replace($(this).attr('href') + '&t=' + $('#video .player')[0].getPlayerObj().video.currentTime);
   e.preventDefault();
 });
