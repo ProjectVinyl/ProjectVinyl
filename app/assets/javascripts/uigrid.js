@@ -38,3 +38,15 @@ function resizeGrid(grid, beside) {
     }
   });
 }
+
+$(function() {
+  if ($('.grid-root').length) {
+    $(window).on('resize', function() {
+      resizeGrid($('.column-left'), $('.column-right'));
+    });
+    
+    $(document).on('ready', function() {
+      resizeGrid($('.column-left'), $('.column-right'));
+    });
+  }
+});

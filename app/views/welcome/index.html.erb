@@ -1,4 +1,4 @@
-﻿<div style="margin-left:-10px;width:23%" class="wrapper resize-holder column-right right column-mobile-fragmented wrap-around-fixed">
+﻿<div style="margin-left:-10px;width:23%" class="wrapper resize-holder column-right right column-mobile-fragmented wrap-around-fixed grid-root">
 	<% if @featured %>
 	<section style="width:100%" class="page featured column-mobile-shown">
 		<h1>Featured Video</h1>
@@ -102,11 +102,3 @@ iframe.twitter-timeline {
   min-width: 100% !important;
 }
 </style>
-<script>
-$(window).on('resize', function() {
-  resizeGrid($('.column-left'), $('.column-right'));
-});
-$(document).on('ready', function() {
-	resizeGrid($('.column-left'), $('.column-right'));
-});
-</script>
