@@ -12,7 +12,7 @@ globals:
 rules:
   accessor-pairs: 2
   array-bracket-spacing: 0
-  array-callback-return: 2
+  array-callback-return: 0
   arrow-body-style: 0
   arrow-parens: [2, 'as-needed']
   arrow-spacing: 2
@@ -28,22 +28,22 @@ rules:
   complexity: 0
   computed-property-spacing: [2, 'never']
   consistent-return: 0
-  consistent-this: [2, 'that']
+  consistent-this: [2, 'self']
   constructor-super: 2
   curly: [2, 'multi-line', 'consistent']
-  default-case: 2
+  default-case: 0
   dot-location: [2, 'property']
   dot-notation: [2, {allowKeywords: true}]
-  eol-last: 2
-  eqeqeq: 2
-  func-call-spacing: 0
-  func-name-matching: 2
+  eol-last: [2, 'never']
+  eqeqeq: 0
+  func-call-spacing: [2, 'never']
+  func-name-matching: 0
   func-names: 0
-  func-style: 0
+  func-style: [2, 'declaration', { 'allowArrowFunctions': false}]
   generator-star-spacing: 2
   global-require: 2
   guard-for-in: 0
-  handle-callback-err: 2
+  handle-callback-err: 0
   id-blacklist: 0
   id-length: 0
   id-match: 2
@@ -71,7 +71,7 @@ rules:
   newline-per-chained-call: 0
   no-alert: 0
   no-array-constructor: 2
-  no-bitwise: 2
+  no-bitwise: 0
   no-caller: 2
   no-case-declarations: 2
   no-catch-shadow: 2
@@ -81,7 +81,7 @@ rules:
   no-console: 0
   no-const-assign: 2
   no-constant-condition: 2
-  no-continue: 2
+  no-continue: 0
   no-control-regex: 2
   no-debugger: 2
   no-delete-var: 2
@@ -96,7 +96,7 @@ rules:
   no-empty-function: 0
   no-empty-pattern: 2
   no-empty: 2
-  no-eq-null: 2
+  no-eq-null: 0
   no-eval: 2
   no-ex-assign: 2
   no-extend-native: 2
@@ -105,12 +105,12 @@ rules:
   no-extra-label: 2
   no-extra-parens: [2, 'all', {nestedBinaryExpressions: false}]
   no-extra-semi: 2
-  no-fallthrough: 2
+  no-fallthrough: 0
   no-floating-decimal: 2
-  no-func-assign: 2
+  no-func-assign: 0
   no-global-assign: 2
-  no-implicit-coercion: 2
-  no-implicit-globals: 2
+  no-implicit-coercion: 0
+  no-implicit-globals: 0
   no-implied-eval: 2
   no-inline-comments: 0
   no-inner-declarations: [2, 'both']
@@ -128,22 +128,22 @@ rules:
   no-mixed-requires: 0
   no-mixed-spaces-and-tabs: 2
   no-multi-spaces: 0
-  no-multi-str: 2
+  no-multi-str: 0
   no-multiple-empty-lines: [2, {max: 3, maxBOF: 0, maxEOF: 1}]
   no-native-reassign: 2
   no-negated-condition: 0
-  no-negated-in-lhs: 2
-  no-nested-ternary: 2
+  no-negated-in-lhs: 0
+  no-nested-ternary: 0
   no-new-func: 2
   no-new-object: 2
   no-new-require: 2
   no-new-symbol: 2
   no-new-wrappers: 2
-  no-new: 2
+  no-new: 0
   no-obj-calls: 2
   no-octal-escape: 2
   no-octal: 2
-  no-param-reassign: 2
+  no-param-reassign: 0
   no-path-concat: 2
   no-plusplus: 0
   no-process-env: 2
@@ -151,12 +151,12 @@ rules:
   no-proto: 2
   no-prototype-builtins: 0
   no-redeclare: 2
-  no-regex-spaces: 2
+  no-regex-spaces: 0
   no-restricted-globals: [2, 'event']
   no-restricted-imports: 2
   no-restricted-modules: 2
   no-restricted-properties: 0
-  no-restricted-syntax: 2
+  no-restricted-syntax: [2, 'WithStatement', 'ClassDeclaration']
   no-return-assign: 0
   no-script-url: 2
   no-self-assign: 2
@@ -166,14 +166,14 @@ rules:
   no-shadow: 2
   no-spaced-func: 2
   no-sparse-arrays: 2
-  no-sync: 0
+  no-sync: 3
   no-tabs: 2
   no-template-curly-in-string: 2
   no-ternary: 0
-  no-this-before-super: 2
-  no-throw-literal: 2
+  no-this-before-super: 0
+  no-throw-literal: 0
   no-trailing-spaces: 2
-  no-undef-init: 2
+  no-undef-init: 0
   no-undef: 2
   no-undefined: 2
   no-underscore-dangle: 0
@@ -181,7 +181,7 @@ rules:
   no-unmodified-loop-condition: 2
   no-unneeded-ternary: 2
   no-unreachable: 2
-  no-unsafe-finally: 2
+  no-unsafe-finally: 0
   no-unsafe-negation: 2
   no-unused-expressions: [2, {allowShortCircuit: true, allowTernary: true}]
   no-unused-labels: 2
@@ -193,7 +193,7 @@ rules:
   no-useless-constructor: 2
   no-useless-escape: 2
   no-useless-rename: 2
-  no-var: 2
+  no-var: 0
   no-void: 2
   no-warning-comments: 0
   no-whitespace-before-property: 2
@@ -201,22 +201,22 @@ rules:
   object-curly-newline: 0
   object-curly-spacing: 0
   object-property-newline: 0
-  object-shorthand: 2
+  object-shorthand: [2, 'never']
   one-var-declaration-per-line: 0
   one-var: 0
   operator-assignment: [2, 'always']
   operator-linebreak: 0
   padded-blocks: 0
-  prefer-arrow-callback: 2
+  prefer-arrow-callback: 0
   prefer-const: 2
   prefer-numeric-literals: 2
   prefer-reflect: 0
   prefer-rest-params: 2
   prefer-spread: 0
-  prefer-template: 2
+  prefer-template: 0
   quote-props: [2, 'as-needed']
   quotes: [2, 'single']
-  radix: 2
+  radix: [0, 'as-needed']
   require-jsdoc: 0
   require-yield: 2
   rest-spread-spacing: 2
@@ -231,7 +231,7 @@ rules:
   space-infix-ops: 2
   space-unary-ops: [2, {words: true, nonwords: false}]
   spaced-comment: 0
-  strict: [2, 'function']
+  strict: [2, 'never']
   symbol-description: 2
   template-curly-spacing: [2, 'never']
   unicode-bom: 2
