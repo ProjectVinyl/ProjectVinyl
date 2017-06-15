@@ -3,7 +3,7 @@ var TagEditor = (function() {
     if (name.indexOf(':') != -1) return name.split(':')[0];
     return '';
   }
-  
+
   function createTagItem(ed, tag) {
     var item = $('<li class="tag tag-' + tag.namespace + '" data-slug="' + tag.slug + '"><i title="Remove Tag" data-name="' + tag.name + '" class="fa fa-times remove"></i><a href="/tags/' + tag.link + '">' + tag.name + '</a></li>');
     ed.list.append(item);
@@ -12,7 +12,7 @@ var TagEditor = (function() {
       e.stopPropagation();
     });
   }
-  
+
   function createDisplayTagItem(tag) {
     return '<li class="tag tag-' + tag.namespace + ' drop-down-holder popper" data-slug="' + tag.slug + '">\
       <a href="/tags/' + tag.link + '"><span>' + tag.name + '</span>' + (tag.members > -1 ? ' (' + tag.members + ')' : '') + '</a>\
@@ -35,16 +35,16 @@ var TagEditor = (function() {
       </ul>\
     </li>';
   }
-  
+
   function BakedArray(arr) {
     if (arr && arr.baked) return arr;
     arr = arr || [];
     arr.baked = function() {
       var result = [];
-      for (var i = this.length; i--; ) result.unshift(this[i].toString());
+      for (var i = this.length; i--;) result.unshift(this[i].toString());
       return result;
     };
-    arr.join = function (splitter) {
+    arr.join = function(splitter) {
       return Array.prototype.join.apply(this.baked(), arguments);
     };
     arr.indexOf = function(e, i) {
@@ -53,7 +53,7 @@ var TagEditor = (function() {
     };
     return arr;
   }
-  
+
   function Tag(name) {
     var ans = name.name ? name : {
       namespace: namespace(name),
@@ -61,7 +61,7 @@ var TagEditor = (function() {
       members: -1,
       link: name
     };
-    ans.slug = ans.name.replace(ans.namespace+ ':', '');
+    ans.slug = ans.name.replace(ans.namespace + ':', '');
     ans.toString = function() {
       return this.name;
     };
@@ -70,7 +70,7 @@ var TagEditor = (function() {
     };
     return ans;
   }
-  
+
   function TagEditor(el) {
     var self = this;
     this.history = [];
@@ -88,7 +88,7 @@ var TagEditor = (function() {
     this.value = el.find('.value textarea');
     this.list = el.find('ul.tags');
     this.searchResults = el.find('.search-results');
-    this.tags = this.value.val().replace(/,,|^,|,$/g,'');
+    this.tags = this.value.val().replace(/,,|^,|,$/g, '');
     this.target = this.value.attr('data-target');
     this.id = this.value.attr('data-id');
     this.norm = null;
@@ -96,7 +96,7 @@ var TagEditor = (function() {
       this.norm = el.parent().parent().find('.normal.tags');
     }
     this.loadTags(this.tags);
-    
+
     var last_value = '';
     var handled_back = false;
     this.input.on('keydown', function(e) {
@@ -142,13 +142,15 @@ var TagEditor = (function() {
     });
     var autocomplete = null;
     this.input.on('focus', function(e) {
-      if (!autocomplete) autocomplete = setInterval(function() {
-        var value = self.input.val();
-        if (value != last_value) {
-          last_value = value;
-          self.doSearch(value.trim().split(/,|;/).reverse()[0]);
-        }
-      }, 1000);
+      if (!autocomplete) {
+        autocomplete = setInterval(function() {
+          var value = self.input.val();
+          if (value != last_value) {
+            last_value = value;
+            self.doSearch(value.trim().split(/,|;/).reverse()[0]);
+          }
+        }, 1000);
+      }
       self.dom.addClass('focus');
     });
     this.input.on('blur', function() {
@@ -164,13 +166,13 @@ var TagEditor = (function() {
       e.stopPropagation();
     });
   }
-  
+
   TagEditor.getOrCreate = function(el) {
     el = $(el);
     if (el[0].getTagEditorObj) return el[0].getTagEditorObj();
     return new TagEditor(el);
-  }
-  
+  };
+
   TagEditor.prototype = {
     loadTags: function(tags) {
       if (tags.length) {
@@ -305,7 +307,7 @@ var TagEditor = (function() {
       }
       ajax.get('find/tags', function(json) {
         me.searchResults.empty();
-        for (var i = json.results.length; i--; ) {
+        for (var i = json.results.length; i--;) {
           var item = $('<li class="tag-' + json.results[i].namespace + '"><span>' + json.results[i].name.replace(name, '<b>' + name + '</b>') + '</span> (' + json.results[i].members + ')' + '</li>');
           item[0].tag = json.results[i];
           item.on('click', function() {
@@ -324,11 +326,11 @@ var TagEditor = (function() {
         }
         me.dom[json.results.length ? 'addClass' : 'removeClass']('pop-out-shown');
       }, {
-        'q': name
+        q: name
       });
     }
   };
-  
+
   return TagEditor;
 })();
 

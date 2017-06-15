@@ -18,7 +18,7 @@
             this.content.message_content.append('<br/><br/>');
           }
           this.content.message_content.append('Are you sure you want to continue?');
-          
+
           var ok = $('<button class="button-fw green confirm">Yes</button>');
           var cancel = $('<button class="cancel button-fw blue" style="margin-left:20px;" type="button">No</button>');
           ok.on('click', function() {
@@ -67,7 +67,7 @@
       e.preventDefault();
     });
   }
-  
+
   $doc.on('click', '.confirm-button:not(.loaded)', function(e) {
     init($(this));
     e.preventDefault();

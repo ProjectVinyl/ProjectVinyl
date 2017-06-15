@@ -9,8 +9,8 @@ function resizeGrid(grid, beside) {
     var calculatedWidth = width + 1;
     var n = 10;
     do {
-      calculatedWidth = 60 + (182 * n) + 45 * (--n) + 60;
-    } while (calculatedWidth > width)
+      calculatedWidth = 60 + (182 * n) + 45 * --n + 60;
+    } while (calculatedWidth > width);
     grid.css('width', calculatedWidth + 'px');
     if (beside) {
       beside.css('width', (beside.parent().innerWidth() - (calculatedWidth + 15)) + 'px');
@@ -44,7 +44,7 @@ $(function() {
     $(window).on('resize', function() {
       resizeGrid($('.column-left'), $('.column-right'));
     });
-    
+
     $(document).on('ready', function() {
       resizeGrid($('.column-left'), $('.column-right'));
     });

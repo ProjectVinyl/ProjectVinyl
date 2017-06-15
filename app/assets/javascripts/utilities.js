@@ -7,7 +7,7 @@ var $doc = $(document);
 var window_focused = false;
 $(window).on('focus', function() {
   window_focused = true;
-}).on('blur', function () {
+}).on('blur', function() {
   window_focused = false;
 });
 
@@ -50,7 +50,7 @@ var decode_entities = (function() {
   return function(string) {
     div.innerHTML = string;
     return div.innerText;
-  }
+  };
 })();
 
 function toBool(string) {
@@ -59,7 +59,7 @@ function toBool(string) {
 
 function round(num, precision) {
   precision = Math.pow(10, precision || 0);
-  return Math.round(num * precision)/precision;
+  return Math.round(num * precision) / precision;
 }
 
 function timeoutOn(target, func, time) {

@@ -1,5 +1,5 @@
 const ajax = (function() {
-  
+
   function xhr(params) {
     if (params.xhr) {
       var xhr = params.xhr;
@@ -9,7 +9,7 @@ const ajax = (function() {
     }
     return $.ajax(params);
   }
-  
+
   function request(method, resource, callback, data, direct) {
     xhr({
       type: method,
@@ -24,16 +24,16 @@ const ajax = (function() {
       data: data
     });
   }
-  
+
   function sanitizeUrl(url) {
     while (url.indexOf('/') == 0) url = url.substring(1, url.length);
     return url;
   }
-  
+
   function AjaxRequest(resource, callback, direct) {
     AjaxRequest.get(resource, callback, {}, direct);
   }
-  
+
   return Object.freeze(extendObj(AjaxRequest, {
     form: function(form, e, callbacks) {
       if (!callbacks && !e.preventDefault) {
@@ -49,7 +49,7 @@ const ajax = (function() {
       var timeStarted = new Date();
       var timer;
       var callback_func = form.attr('data-callback');
-      
+
       callbacks = callbacks || {};
       xhr({
         type: form.attr('method'),
@@ -60,7 +60,7 @@ const ajax = (function() {
           if (xhr.upload) {
             xhr.upload.addEventListener('progress', function(e) {
               uploadedBytes = e.loaded;
-              totalBytes = e.total
+              totalBytes = e.total;
               if (e.lengthComputable) {
                 if (!message.hasClass('plain')) message.addClass('bobber');
                 var percentage = Math.min((e.loaded / e.total) * 100, 100);
@@ -75,12 +75,12 @@ const ajax = (function() {
                   }
                   fill.css('width', percentage + '%');
                   message.css({
-                    'left': percentage + '%'
+                    left: percentage + '%'
                   });
                 }
                 if (callbacks.update) callbacks.update.apply(form, [e, percentage, secondsRemaining]);
                 message.css({
-                  'margin-left': -message.outerWidth()/2
+                  'margin-left': -message.outerWidth() / 2
                 });
               }
             }, false);
@@ -89,13 +89,13 @@ const ajax = (function() {
         },
         beforeSend: function() {
           timer = setInterval(function() {
-            var timeElapsed = (new Date()) - timeStarted;
+            var timeElapsed = new Date() - timeStarted;
             var uploadSpeed = uploadedBytes / (timeElapsed / 1000);
             secondsRemaining = new Duration((totalBytes - uploadedBytes) / uploadSpeed);
           }, 1000);
           form.addClass('uploading');
         },
-        success: function (data) {
+        success: function(data) {
           if (timer) clearInterval(timer);
           if (callbacks.success) {
             form.removeClass('waiting');
@@ -106,7 +106,7 @@ const ajax = (function() {
           } else if (data.ref) {
             document.location.href = data.ref;
           }
-          
+
         },
         error: function(e, err, msg) {
           if (timer) clearInterval(timer);

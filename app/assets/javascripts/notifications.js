@@ -36,13 +36,13 @@ function sendMessage(msg) {
   ports = ports.filter(function(port) {
     try {
       if (msg.feeds !== undefined && msg.feeds != feed_count) {
-        port.postMessage({ command: 'feeds', count: (feed_count = msg.feeds) });
+        port.postMessage({ command: 'feeds', count: feed_count = msg.feeds });
       }
       if (msg.notices !== undefined && msg.notices != notifications_count) {
-        port.postMessage({ command: 'notices', count: (notifications_count = msg.notices) });
+        port.postMessage({ command: 'notices', count: notifications_count = msg.notices });
       }
       if (msg.mail !== undefined && msg.mail != message_count) {
-        port.postMessage({ command: 'mail', count: (message_count = msg.mail) });
+        port.postMessage({ command: 'mail', count: message_count = msg.mail });
       }
     } catch (ex) {
       return false;

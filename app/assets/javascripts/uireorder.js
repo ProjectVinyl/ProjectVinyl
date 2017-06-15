@@ -1,17 +1,17 @@
 (function() {
   var grabber;
   var floater;
-  
+
   function moveFloater(e) {
     floater.css('top', e.pageY - floater.parent().offset().top);
   }
-  
+
   function reorder(target, id, index) {
     ajax.post('update/' + target, function() {}, true, {
       id: id, index: index
     });
   }
-  
+
   function grab(target, container, item) {
     container.addClass('ordering');
     container.find('.grabbed').removeClass('grabbed');
@@ -48,7 +48,7 @@
       item.attr('data-index', index);
     });
   }
-  
+
   $(function() {
     $('.reorderable').each(function() {
       var orderable = $(this);
@@ -66,7 +66,7 @@
       });
     });
   });
-  
+
   $doc.on('click', '.removeable .remove', function(e) {
     var me = $(this).parents('.removeable');
     if (me.hasClass('repaintable')) {

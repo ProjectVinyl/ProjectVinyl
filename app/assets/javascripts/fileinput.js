@@ -7,7 +7,7 @@ const initFileSelect = (function() {
     }
     return false;
   }
-  
+
   function renderPreview(me, file) {
     var preview = me.find('.preview');
     var img = preview[0];
@@ -15,7 +15,7 @@ const initFileSelect = (function() {
     img.src = URL.createObjectURL(file);
     preview.css('background-image', 'url(' + img.src + ')');
   }
-  
+
   function handleFiles(files, multi, type, callback) {
     var accepted = 0;
     for (var i = 0; i < files.length; i++) {
@@ -29,7 +29,7 @@ const initFileSelect = (function() {
       return error('File type not surrorted. Please try again.');
     }
   }
-  
+
   return function(me) {
     var type = me.attr('data-type');
     var allowMulti = toBool(me.attr('allow-multi'));

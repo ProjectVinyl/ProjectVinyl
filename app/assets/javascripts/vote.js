@@ -23,7 +23,7 @@
     });
     return me;
   }
-  
+
   $doc.on('click', 'button.action.like, button.action.dislike', function() {
     var me = $(this);
     if (me.hasClass('liked')) {
@@ -36,7 +36,7 @@
       count(me, 1).addClass('liked');
     }
   });
-  
+
   $doc.on('click', 'button.action.star', function fave() {
     var me = $(this);
     me.toggleClass('starred');

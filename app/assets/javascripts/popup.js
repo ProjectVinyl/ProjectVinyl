@@ -1,7 +1,7 @@
 var Popup = (function() {
   var INSTANCES = [];
   var win = $(window);
-  
+
   win.on('resize', function() {
     for (var i = INSTANCES.length; i--;) INSTANCES[i].resize();
   });
@@ -11,7 +11,7 @@ var Popup = (function() {
       if (c.length && !$('input::focuse, textarea::focus, button::focus, .button.focus')) c[0].instance.handleShortcut(e);
     }
   });
-  
+
   function Popup(title, icon, construct) {
     this.container = $('<div class="popup-container"></div>');
     this.container[0].instance = this;
@@ -37,21 +37,21 @@ var Popup = (function() {
       ev.preventDefault();
       ev.stopPropagation();
     });
-		this.dom.find('h1').on('touchstart', function(ev) {
-			var x = ev.originalEvent.touches[0].pageX || 0;
-			var y = ev.originalEvent.touches[0].pageY || 0;
+    this.dom.find('h1').on('touchstart', function(ev) {
+      var x = ev.originalEvent.touches[0].pageX || 0;
+      var y = ev.originalEvent.touches[0].pageY || 0;
       me.touchgrab(x, y);
       ev.preventDefault();
       ev.stopPropagation();
-		});
+    });
     if (construct) construct.apply(this);
     this.id = INSTANCES.length;
     INSTANCES.push(this);
     return this;
   }
-  
+
   Popup.fetch = function(resource, title, icon, thin, loaded_func) {
-    return (new Popup(title, icon, function() {
+    return new Popup(title, icon, function() {
       this.content.html('<div class="loader"><i class="fa fa-pulse fa-spinner" /></div>');
       this.thin = thin;
       if (thin) this.container.addClass('thin');
@@ -67,17 +67,17 @@ var Popup = (function() {
         }
       }, 1);
       this.show();
-    }));
-  }
-  
+    });
+  };
+
   function domain() {
-    return 'http' + (document.domain == 'localhost' ? '' : 's') + '://' +  document.location.hostname+(document.location.port ? ':'+document.location.port : '');
+    return 'http' + (document.domain == 'localhost' ? '' : 's') + '://' +  document.location.hostname + (document.location.port ? ':' + document.location.port : '');
   }
-  
+
   function iframe(me, resource) {
     resource = domain() + '/ajax/' + resource;
     var frame = document.createElement('iframe');
-    frame.style['display'] = 'none';
+    frame.style.display = 'none';
     frame.setAttribute('frameborder', '0');
     frame.onload = function() {
       frame.onload = 0;
@@ -91,7 +91,7 @@ var Popup = (function() {
             me.center();
           }
           window.removeEventListener('mesage', f);
-        }
+        };
         window.addEventListener('message', f);
       } else {
         frame.style.height = frame.contentWindow.document.body.scrollHeight + 'px';
@@ -102,16 +102,16 @@ var Popup = (function() {
     frame.src = resource;
     me.content.append(frame);
   }
-  
+
   Popup.iframe = function(resource, title, icon, thin) {
-    return (new Popup(title, icon, function() {
+    return new Popup(title, icon, function() {
       this.content.html('<div class="loader"><i class="fa fa-pulse fa-spinner" /></div>');
       if (thin) this.container.addClass('thin');
       iframe(this, resource);
       this.show();
-    }));
+    });
   };
-  
+
   Popup.prototype = {
     setPersistent: function() {
       this.persistent = true;
@@ -125,21 +125,21 @@ var Popup = (function() {
       }
     },
     center: function() {
-      this.x = (win.width() - this.container.width())/2 + win.scrollLeft();
-      this.y = (win.height() - this.container.height())/2 + win.scrollTop();
+      this.x = (win.width() - this.container.width()) / 2 + win.scrollLeft();
+      this.y = (win.height() - this.container.height()) / 2 + win.scrollTop();
       this.move(this.x, this.y);
     },
     bob: function(reverse, callback) {
       if (reverse) {
         this.container.css('transition', 'transform 0.5s ease, opacity 0.5s ease');
         this.container.css({
-          'opacity': 0, 'transform': 'translate(0,30px)'
+          opacity: 0, transform: 'translate(0,30px)'
         });
       } else {
         this.container.css('transition', 'transform 0.5s ease, opacity 0.5s ease');
         timeoutOn(this, function() {
           this.container.css({
-            'opacity': 1, 'transform': 'translate(0,0)'
+            opacity: 1, transform: 'translate(0,0)'
           });
         }, 1);
       }
@@ -163,7 +163,7 @@ var Popup = (function() {
       $('.popup-container.focus').removeClass('focus');
       this.container.addClass('focus');
       this.container.css({
-        'opacity': 0, 'transform': 'translate(0,30px)'
+        opacity: 0, transform: 'translate(0,30px)'
       });
       this.container.css('display', '');
       $('body').append(this.container);

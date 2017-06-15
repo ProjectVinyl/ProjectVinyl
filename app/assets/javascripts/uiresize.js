@@ -12,7 +12,7 @@ var resizeFont = (function() {
     var currentWidth = div.width();
     var factor = -1;
     while (currentWidth > targetWidth) {
-      factor = targetWidth/currentWidth;
+      factor = targetWidth / currentWidth;
       size *= factor;
       div.css('font-size', size);
       currentWidth = div.width();
@@ -21,17 +21,17 @@ var resizeFont = (function() {
     el.css('font-size', size);
     div.remove();
   }
-  
+
   function resizeFont(el) {
     sizeFont(el, el.closest('.resize-holder').width());
   }
-  
+
   function fixFonts() {
     $('h1.resize-target').each(function() {
       resizeFont($(this));
     });
   }
-  
+
   $(window).on('resize', fixFonts);
   $(fixFonts);
   return resizeFont;

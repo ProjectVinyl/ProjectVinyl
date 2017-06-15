@@ -1,13 +1,13 @@
 (function() {
   var worker;
-  $(function () {
+  $(function() {
     if (document.location.hash.indexOf('#comment_') == 0) {
       lookupComment(document.location.hash.split('_')[1]);
     }
     function scroller() {
       var top = window.scrollY;
       var width = window.innerWidth;
-      if (top <= 200) banner.css('background-position', 'top calc(50% + ' + (top*0.5) + 'px) ' + (width > 1300 ? 'left' : 'center') + ', top calc(50% + ' + (top*0.5) + 'px) right');
+      if (top <= 200) banner.css('background-position', 'top calc(50% + ' + (top * 0.5) + 'px) ' + (width > 1300 ? 'left' : 'center') + ', top calc(50% + ' + (top * 0.5) + 'px) right');
     }
     var banner = $('#banner');
     if (banner.length) {
@@ -22,8 +22,8 @@
         $(window).on('scroll', scroller);
       }
     }
-    
-    if (window['current_user'] && window.SharedWorker && (window['force_notifications'] || !!localStorage['give_me_notifications'])) {
+
+    if (window.current_user && window.SharedWorker && (window.force_notifications || !!localStorage.give_me_notifications)) {
       var doc_title = $('#document_title');
       var title = doc_title.text();
       worker = new SharedWorker('<%= asset_path("notifications.js") %>');

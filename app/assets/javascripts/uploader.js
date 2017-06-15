@@ -48,11 +48,11 @@ var Uploader = (function() {
       return 0;
     }
   };
-  
+
   function Uploader() {
     this.id = INDEX++;
     this.el = $($('#template').html().replace(/\{id\}/g, this.id));
-    
+
     $('#uploader_frame > .tab.selected').removeClass('selected');
     $('#uploader_frame').append(this.el);
     this.tab = $('<li data-target="new[' + this.id + ']" class="button hidden"><span class="progress"><span class="fill"></span></span class="label"><span>untitled' + (this.id > 0 ? ' ' + this.id : '') + '</span><i class="fa fa-close" ></i></li>');
@@ -60,11 +60,11 @@ var Uploader = (function() {
     this.tab.progress = this.tab.find('.progress');
     this.tab.progress.fill = this.tab.progress.find('.fill');
     $('#new_tab_button').before(this.tab);
-    
+
     this.el.notify = this.el.find('.notify');
     this.el.notify.bobber = this.el.notify.find('.bobber');
     this.el.info = this.el.find('.info');
-    
+
     this.form = this.el.find('form');
     this.video_title = this.el.find('#video_title');
     this.video_title.input = this.video_title.find('input');
@@ -77,19 +77,19 @@ var Uploader = (function() {
     this.cover.input = this.cover.find('input[type=file]');
     this.cover.preview = this.cover.find('.preview');
     this.source = this.el.find('#video_source');
-    
+
     BBC.init(this.video_title);
     initFileSelect(this.video);
     initFileSelect(this.cover);
-    
+
     this.time = this.el.find('#time');
     this.lastTime = -1;
     this.src_neeeded = false;
     this.has_cover = false;
     this.needs_cover = false;
     this.src_needed = false;
-    
-    
+
+
     var me = this;
     setTimeout(function() {
       me.tab.removeClass('hidden');
@@ -122,7 +122,7 @@ var Uploader = (function() {
       me.time.val(me.lastTime);
       me.validateInput();
     });
-    
+
     if (typeof focusTab === 'function') {
       focusTab(this.tab);
     } else {
@@ -131,14 +131,14 @@ var Uploader = (function() {
     this.el.find('h1.resize-target').each(function() {
       resizeFont($(this));
     });
-    
+
     INSTANCES.push(this);
   }
-  
+
   Uploader.upload_all = function() {
     uploading_queue.enqueue_all(INSTANCES);
   };
-  
+
   Uploader.prototype = {
     initPlayer: function() {
       this.player = new ThumbPicker();
@@ -165,7 +165,7 @@ var Uploader = (function() {
       if (this.needs_cover) {
         this.player.load(null);
         this.el.find('li[data-target="thumbupload_' + this.id + '"]').click();
-        this.el.find('li[data-target="thumbpick_' + this.id + '"]').attr('data-disabled','1');
+        this.el.find('li[data-target="thumbpick_' + this.id + '"]').attr('data-disabled', '1');
       } else {
         if (Player.canPlayType(file.mime)) {
           this.player.load(file.data);
@@ -179,8 +179,8 @@ var Uploader = (function() {
       this.validateInput();
     },
     cleanup: function(title) {
-      return title.toLowerCase().replace(/^[0-9]*/g, '').replace(/[-_]|[^a-z\s]/gi,' ').replace(/(^|\s)[a-z]/g, function(i) {
-        return i.toUpperCase()
+      return title.toLowerCase().replace(/^[0-9]*/g, '').replace(/[-_]|[^a-z\s]/gi, ' ').replace(/(^|\s)[a-z]/g, function(i) {
+        return i.toUpperCase();
       }).trim();
     },
     notify: function(msg) {
@@ -204,7 +204,7 @@ var Uploader = (function() {
           if (tags[i].name.trim().toLowerCase() == 'source needed') this.src_needed = true;
         }
         if (!this.src_needed) {
-          this.info("You have not provided a source. If you know what it is add it to the source field, otherwise consider tagging this video as 'source needed' so others know to search for one.");
+          this.info('You have not provided a source. If you know what it is add it to the source field, otherwise consider tagging this video as \'source needed\' so others know to search for one.');
         } else {
           this.el.info.css('display', 'none');
         }
@@ -212,7 +212,7 @@ var Uploader = (function() {
         this.el.info.css('display', 'none');
       }
       if (tags.length == 0) return this.notify('You need at least one tag.');
-      if (tags.length == 1 && tags[0].name.trim().toLowerCase() == 'music') return this.notify("'music' is implied. Tags should be more specific than that. Do you perhaps know who the artist is?");
+      if (tags.length == 1 && tags[0].name.trim().toLowerCase() == 'music') return this.notify('\'music\' is implied. Tags should be more specific than that. Do you perhaps know who the artist is?');
       this.is_ready = true;
       this.el.notify.removeClass('shown');
     },
@@ -238,13 +238,13 @@ var Uploader = (function() {
     dispose: function() {
       INSTANCES.splice(INSTANCES.indexOf(this), 1);
     }
-  }
-  
+  };
+
   $(function() {
     $('#new_tab_button').on('click', function() {
       new Uploader();
     });
   });
-  
+
   return Uploader;
 })();

@@ -32,13 +32,15 @@
       autocomplete = null;
     });
     input.on('focus', function(e) {
-      if (!autocomplete) autocomplete = setInterval(function() {
-        var value = input.val();
-        if (value != last_value) {
-          last_value = value;
-          lookup(me, popout, action, input, validate);
-        }
-      }, 1000);
+      if (!autocomplete) {
+        autocomplete = setInterval(function() {
+          var value = input.val();
+          if (value != last_value) {
+            last_value = value;
+            lookup(me, popout, action, input, validate);
+          }
+        }, 1000);
+      }
     });
   });
 })();

@@ -1,8 +1,8 @@
 var shares = {
-  'facebook': 'http://www.facebook.com/sharer/sharer.php?href={url}',
-  'twitter': 'https://twitter.com/intent/tweet?url={url}&via=ProjectVinyl&related=ProjectVInyl,Brony,Music',
-  'googleplus': 'https://plus.google.com/u/0/share?url={url}&hl=en-GB&caption={title}',
-  'tumblr': 'https://www.tumblr.com/widgets/share/tool?canonicalUrl={url}&posttype=video&title={title}&content={url}'
+  facebook: 'http://www.facebook.com/sharer/sharer.php?href={url}',
+  twitter: 'https://twitter.com/intent/tweet?url={url}&via=ProjectVinyl&related=ProjectVInyl,Brony,Music',
+  googleplus: 'https://plus.google.com/u/0/share?url={url}&hl=en-GB&caption={title}',
+  tumblr: 'https://www.tumblr.com/widgets/share/tool?canonicalUrl={url}&posttype=video&title={title}&content={url}'
 };
 
 $doc.on('click', '.share-buttons button', function() {

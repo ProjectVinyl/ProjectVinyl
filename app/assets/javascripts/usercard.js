@@ -13,7 +13,7 @@
       }, 500);
     }, 500);
   }
-  
+
   $doc.on('mouseenter', '.user-link', function() {
     var sender = $(this);
     var id = sender.attr('data-id');
@@ -32,7 +32,7 @@
       openUsercard(sender, usercard);
     }
   });
-  
+
   $doc.on('mouseleave', '.user-link', function() {
     $('.hovercard.shown').toggleClass('shown');
   });

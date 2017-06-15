@@ -1,9 +1,9 @@
 const BBC = (function() {
   var active = null;
   var emptyMessage = 'A description has not been written yet.';
-  
+
   function rich(text) {
-    text = text.replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    text = text.replace(/</g, '&lt;').replace(/>/g, '&gt;');
     text = text.replace(/@([^\s\[\<]+)/, '<a class="user-link" data-id="0" href="/">$1</a>');
     text = text.replace(/\[icon\]([^\[]+)\[\/icon\]/g, '<i class="fa fa-fw fa-$1"></i>');
     text = text.replace(/\n/g, '<br>').replace(/\[([\/]?([buis]|sup|sub|hr))\]/g, '<$1>').replace(/\[([\/]?)q\]/g, '<$1blockquote>');
@@ -16,11 +16,11 @@ const BBC = (function() {
     while (i--) {
       text = text.replace(new RegExp(':' + emoticons[i] + ':', 'g'), '<img class="emoticon" src="/emoticons/' + emoticons[i] + '.png">');
     }
-		text = text.replace(/\[([0-9]+)\]/, '<iframe class="embed" src="/embed/$1" allowfullscreen></iframe>');
-		text = text.replace(/\[yt([^\]]+)\]/, '<iframe class="embed" src="https://www.youtube.com/embed/$1" allowfullscreen></iframe>');
+    text = text.replace(/\[([0-9]+)\]/, '<iframe class="embed" src="/embed/$1" allowfullscreen></iframe>');
+    text = text.replace(/\[yt([^\]]+)\]/, '<iframe class="embed" src="https://www.youtube.com/embed/$1" allowfullscreen></iframe>');
     return text;
   }
-  
+
   function poor(text) {
     text = text.replace(/<i class="fa fa-fw fa-([^"]+)"><\/i>/g, '[icon]$1[/icon]');
     text = text.replace(/<a class="user-link" data-id="[0-9]+" href="[^"]+">([^<]+)<\/a>/g, '@$1');
@@ -34,11 +34,11 @@ const BBC = (function() {
     while (i--) {
       text = text.replace(new RegExp('<img class="emoticon" src="/emoticons/' + emoticons[i] + '.png">', 'g'), ':' + emoticons[i] + ':');
     }
-		text = text.replace(/<iframe class="embed" src="\/embed\/([0-9+])" allowfullscreen><\/iframe>/, '[$1]');
+    text = text.replace(/<iframe class="embed" src="\/embed\/([0-9+])" allowfullscreen><\/iframe>/, '[$1]');
     text = text.replace(/<iframe class="embed" src="https:\/\/www.youtube.come\/embed\/([^&"]+)[^"]*" allowfullscreen><\/iframe>/, '[yt$1]');
     return text;
   }
-  
+
   function initEditable(holder, content, short) {
     var textarea = holder.find('.input');
     var lastHeight = 0;
@@ -84,11 +84,11 @@ const BBC = (function() {
     });
     return textarea;
   }
-  
+
   var key_events = {
-    66: 'b',85: 'u',73: 'i',83: 's',80: 'spoiler'
+    66: 'b', 85: 'u', 73: 'i', 83: 's', 80: 'spoiler'
   };
-  
+
   function handleSpecialKeys(key, callback) {
     var k;
     if (k = key_events[key]) {
@@ -97,7 +97,7 @@ const BBC = (function() {
       deactivate(active);
     }
   }
-  
+
   function insertTags(textarea, open, close) {
     var start = textarea.selectionStart;
     if (start || start == 0) {
@@ -116,7 +116,7 @@ const BBC = (function() {
       textarea.focus();
     }
   }
-  
+
   function toggleEdit(editing, holder, content, textarea, short) {
     var text = content.text().toLowerCase().trim();
     var textarea = holder.find('.input');
@@ -138,7 +138,7 @@ const BBC = (function() {
     }
     return !editing;
   }
-  
+
   function save(action, id, field, holder) {
     if (holder.hasClass('dirty')) {
       holder.addClass('saving');
@@ -150,20 +150,20 @@ const BBC = (function() {
       });
     }
   }
-  
+
   function deactivate(button) {
     active = null;
     button.trigger('click');
   }
-  
-	function setupEditable(me) {
-		me = $(me);
-		var editing = false;
+
+  function setupEditable(me) {
+    me = $(me);
+    var editing = false;
     var id = me.attr('data-id');
     var member = me.attr('data-member');
     var target = me.attr('data-target');
     var short = me.hasClass('short');
-    
+
     var content = me.children('.content');
     var button = me.children('.edit');
     var textarea = initEditable(me, content, short);
@@ -178,19 +178,19 @@ const BBC = (function() {
     me.on('click', function(ev) {
       ev.stopPropagation();
     });
-	}
-  
+  }
+
   $doc.on('click', function() {
     if (active && !active.closest('.editable').is(':hover')) deactivate(active);
   });
-  
+
   $doc.on('change', 'textarea.comment-content', function() {
     var preview = $(this).parent().find('.comment-content.preview');
     if (preview.length) {
       preview.html(rich($(this).val()));
     }
   });
-  
+
   $doc.on('keydown', 'textarea.comment-content', function(ev) {
     if (ev.ctrlKey) {
       var me = this;
@@ -201,7 +201,7 @@ const BBC = (function() {
       });
     }
   });
-  
+
   $doc.on('mouseup', '.edit-action', function() {
     var me = $(this);
     var type = me.attr('data-action');
@@ -220,7 +220,7 @@ const BBC = (function() {
       $(textarea).trigger('change');
     }
   });
-  
+
   $doc.on('dragstart', '#emoticons img[title]', function(event) {
     var data = event.originalEvent.dataTransfer.getData('Text/plain');
     if (data && data.trim().indexOf('[') == 0) {
@@ -233,18 +233,18 @@ const BBC = (function() {
       event.originalEvent.dataTransfer.setData('Text/plain', $(this).attr('title'));
     }
   });
-  
+
   $doc.on('keydown', '#emoticons', function() {
     $(this).select();
   });
-  
+
   $(function() {
     $('.editable').each(function() {
       setupEditable(this);
     });
     $('.post-box textarea.comment-content, .post-box input.comment-content').trigger('change');
   });
-	
+
   return Object.freeze({
     rich: rich,
     poor: poor,

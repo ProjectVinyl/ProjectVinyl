@@ -9,7 +9,7 @@ function loadBannerSelector() {
   initFileSelect(me).on('accept', function(e, file) {
     var form = $(this).closest('form');
     ajax.form(form, e, {
-      'success': function() {
+      success: function() {
         form.removeClass('uploading');
         var av = $('#banner');
         av.css({
@@ -19,7 +19,7 @@ function loadBannerSelector() {
       }
     });
   });
-};
+}
 
 function editVideo(sender, data) {
   sender.find('.tag-editor')[0].getTagEditorObj().reload(data.results);

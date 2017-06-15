@@ -40,15 +40,15 @@ $doc.on('click', '.pop-out-toggle', function() {
       popout.addClass('pop-out-shown');
       popout.removeClass('pop-left');
       popout.removeClass('pop-right');
-      
+
       var left = popoutcontent.offset().left;
       var right = left + popoutcontent.width();
       var width = $(window).width();
-      
+
       if (right > width) {
         popout.addClass('pop-left');
       }
-      if (left < 0 ) {
+      if (left < 0) {
         popout.addClass('pop-right');
       }
     } else {

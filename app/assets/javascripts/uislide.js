@@ -36,7 +36,7 @@ function slideAcross(me, direction) {
         form.removeClass('animating');
         form.css('max-height', '');
       }, 500);
-    },1);
+    }, 1);
   }
 }
 
@@ -65,9 +65,9 @@ $doc.on('click', '.slider-toggle', function(e) {
 });
 
 $doc.on('click', '.slide-holder .goto.slide-right', function() {
-	slideAcross($(this), 1);
+  slideAcross($(this), 1);
 });
 
 $doc.on('click', '.slide-holder .goto.slide-left', function() {
-	slideAcross($(this), -1);
+  slideAcross($(this), -1);
 });

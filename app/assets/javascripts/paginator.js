@@ -11,7 +11,7 @@ var paginator = (function() {
       populatePage(context, json);
     }, {});
   }
-  
+
   function populatePage(context, json) {
     var container = context.find('ul');
     container.html(json.content);
@@ -21,7 +21,7 @@ var paginator = (function() {
       repaintPages($(this), json.page, json.pages);
     });
   }
-  
+
   function repaintPages(context, page, pages) {
     var index = page > 4 ? page - 4 : 0;
     var id = context.attr('data-id');
@@ -42,7 +42,7 @@ var paginator = (function() {
     }
     document.location.hash = '/' + id + '/' + (page + 1);
   }
-  
+
   var hash = document.location.hash;
   var page = -2;
   var match;
@@ -58,7 +58,7 @@ var paginator = (function() {
     }
     if (page > -2) {
       $doc.ready(function() {
-        var pagination = $('.pagination[data-id=' + id +']');
+        var pagination = $('.pagination[data-id=' + id + ']');
         if (pagination.length) {
           requestPage(pagination.closest('.paginator'), page - 1);
         } else {
@@ -80,7 +80,7 @@ var paginator = (function() {
       requestPage(button.closest('.paginator'), button.attr('data-page-to'));
       if (!button.hasClass('selected')) button.parent().removeClass('hover');
     }
-  }
+  };
 })();
 
 $doc.on('click', '.pagination .pages .button, .pagination .button.left, .pagination .button.right', function() {
