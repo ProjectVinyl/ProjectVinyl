@@ -148,12 +148,12 @@ var Popup = (function() {
       }, 500);
     },
     handleShortcut: function(e) {
-      if (e.which == KEY_ENTER) {
+      if (e.which == Key.ENTER) {
         this.dom.find('.confirm').click();
         this.close();
         e.preventDefault();
         e.stopPropagation();
-      } else if (e.which == KEY_ESC) {
+      } else if (e.which == Key.ESC) {
         this.close();
         e.preventDefault();
         e.stopPropagation();

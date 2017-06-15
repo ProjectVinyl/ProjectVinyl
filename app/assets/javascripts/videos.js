@@ -6,7 +6,7 @@ Copyright Project Vinyl Foundation 2016
 
 function Player() {}
 (function() {
-  var KEY_SPACE = 32;
+  var Key = { SPACE: 32 };
   /* Standardise fullscreen API */
   (function(p) {
     Player.requestFullscreen = p.requestFullscreen || p.mozRequestFullScreen || p.msRequestFullscreen || p.webkitRequestFullscreen || function() {};
@@ -252,7 +252,7 @@ function Player() {}
         me.removeContext(ev);
       });
       $(document).on('keydown', function(ev) {
-        if (ev.which == KEY_SPACE) {
+        if (ev.which == Key.SPACE) {
           if (!$('input:focus,textarea:focus').length) {
             if (me.video) {
               me.toggleVideo();

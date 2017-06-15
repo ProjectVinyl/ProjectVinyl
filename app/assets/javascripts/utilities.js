@@ -1,4 +1,6 @@
-var KEY_ENTER = 13, KEY_ESC = 27, KEY_COMMA = 188, KEY_BACKSPACE = 8, KEY_Z = 90, KEY_Y = 89;
+var Key = {
+  ENTER: 13, ESC: 27, COMMA: 188, BACKSPACE: 8, Z: 90, Y: 89
+};
 
 var $doc = $(document);
 
@@ -72,4 +74,12 @@ function bind(target, func) {
   return function() {
     return func.apply(target, arguments);
   };
+}
+
+function extendObj(onto, overrides) {
+  var keys = Object.keys(overrides);
+  for (var i = keys.length; i--;) {
+    onto[keys[i]] = overrides[keys[i]];
+  }
+  return onto;
 }

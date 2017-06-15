@@ -100,7 +100,7 @@ var TagEditor = (function() {
     var last_value = '';
     var handled_back = false;
     this.input.on('keydown', function(e) {
-      if (e.which == KEY_ENTER || e.which == KEY_COMMA) {
+      if (e.which == Key.ENTER || e.which == Key.COMMA) {
         var text = self.input.val().trim().split(/,|;/);
         for (var i = 0; i < text.length; i++) {
           self.appendTag(text[i]);
@@ -110,7 +110,7 @@ var TagEditor = (function() {
         e.preventDefault();
         e.stopPropagation();
         handled_back = false;
-      } else if (e.which == KEY_BACKSPACE) {
+      } else if (e.which == Key.BACKSPACE) {
         if (!handled_back) {
           handled_back = true;
           var value = self.input.val();
@@ -119,11 +119,11 @@ var TagEditor = (function() {
           }
         }
       } else if (e.ctrlKey) {
-        if (e.which == KEY_Z) {
+        if (e.which == Key.Z) {
           self.undo();
           e.preventDefault();
           e.stopPropagation();
-        } else if (e.which == KEY_Y) {
+        } else if (e.which == Key.Y) {
           self.redo();
           e.preventDefault();
           e.stopPropagation();
@@ -249,7 +249,7 @@ var TagEditor = (function() {
       if (this.future.length) {
         var item = this.future.shift();
         this.history.unshift(item);
-        if (item.type) {
+        if (item.type > 0) {
           this.pickupTag(item.tag);
           this.save();
         } else {
