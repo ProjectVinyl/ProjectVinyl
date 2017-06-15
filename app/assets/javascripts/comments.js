@@ -1,28 +1,28 @@
 function postComment(sender, thread_id, order, report_state) {
   sender = $(sender).parent();
-  var input = sender.find('textarea, input.comment-content');
-  var comment = input.val();
+  const input = sender.find('textarea, input.comment-content');
+  const comment = input.val();
   if (!comment.length) {
     return error('You have to type something to post');
   }
   sender.addClass('posting');
-  var data = {
+  const data = {
     thread: thread_id,
-    order: order,
-    comment: comment
+    order,
+    comment
   };
   if (report_state) data.report_state = report_state;
-  ajax.post('comments/new', function(json) {
+  ajax.post('comments/new', json => {
     sender.removeClass('posting');
-    paginator.repaint($('#thread-' + thread_id).closest('.paginator'), json);
-    scrollTo('#comment_' + json.focus);
+    paginator.repaint($(`#thread-${thread_id}`).closest('.paginator'), json);
+    scrollTo(`#comment_${json.focus}`);
     input.val('').change();
   }, 0, data);
 }
 
 function editComment(sender) {
   sender = $(sender).parent();
-  ajax.post('comments/edit', function(html) {
+  ajax.post('comments/edit', html => {
     sender.removeClass('editing');
   }, 1, {
     id: sender.attr('data-id'),
@@ -31,7 +31,7 @@ function editComment(sender) {
 }
 
 function removeComment(id, json) {
-  id = $('#comment_' + id);
+  id = $(`#comment_${id}`);
   if (json.content) {
     return id.after(json.content).remove();
   }
@@ -42,31 +42,31 @@ function removeComment(id, json) {
     }).css('transition', '0.5s ease all').css({
       opacity: 0, height: 0
     });
-    setTimeout(function() {
+    setTimeout(() => {
       id.remove();
     }, 500);
   }
 }
 
 function lookupComment(comment_id) {
-  var comment = $('#comment_' + comment_id);
+  const comment = $(`#comment_${comment_id}`);
   if (comment.length) {
     scrollTo(comment).addClass('highlight');
   } else {
-    var pagination = $('.comments').parent();
-    ajax.get(pagination.attr('data-type') + '?comment=' + comment_id + '&' + pagination.attr('data-args'), function(json) {
+    const pagination = $('.comments').parent();
+    ajax.get(`${pagination.attr('data-type')}?comment=${comment_id}&${pagination.attr('data-args')}`, json => {
       paginator.repaint(pagination, json);
-      scrollTo($('#comment_' + comment_id)).addClass('highlight');
+      scrollTo($(`#comment_${comment_id}`)).addClass('highlight');
     });
   }
 }
 
 function findComment(sender) {
   sender = $(sender);
-  var container = sender.parents('comment');
-  var parent = sender.attr('href');
+  const container = sender.parents('comment');
+  let parent = sender.attr('href');
   if (!$(parent).length) {
-    ajax.get('comments/get', function(html) {
+    ajax.get('comments/get', html => {
       container.parent().prepend(html);
       $('.comment.highlight').removeClass('highlight');
       if (parent = scrollTo(parent)) parent.addClass('highlight').addClass('inline');
@@ -87,14 +87,14 @@ function replyTo(sender) {
   sender = $(sender).parent();
   textarea = sender.closest('.page, body').find('.post-box textarea');
   textarea.focus();
-  textarea.val('>>' + sender.attr('data-o-id') + ' [q]\n' + decode_entities(sender.attr('data-comment')) + '\n[/q]' + textarea.val());
+  textarea.val(`>>${sender.attr('data-o-id')} [q]\n${decode_entities(sender.attr('data-comment'))}\n[/q]${textarea.val()}`);
   textarea.change();
 }
 
 function markRead() {
   messageOperation({
-    id: 'read', callback: function() {
-      var me = $(this);
+    id: 'read', callback() {
+      const me = $(this);
       me.removeClass('unread');
       me.find('button.button-bub.toggle i').attr('class', 'fa fa-star-o');
     }
@@ -103,8 +103,8 @@ function markRead() {
 
 function markUnRead() {
   messageOperation({
-    id: 'unread', callback: function() {
-      var me = $(this);
+    id: 'unread', callback() {
+      const me = $(this);
       me.addClass('unread');
       me.find('button.button-bub.toggle i').attr('class', 'fa fa-star');
     }
@@ -113,20 +113,20 @@ function markUnRead() {
 
 function markDeleted() {
   messageOperation({
-    id: 'delete', callback: function(me, json) {
+    id: 'delete', callback(me, json) {
       paginator.repaint(me.closest('.paginator'), json);
     }
   });
 }
 
 function messageOperation(action) {
-  var checks = $('input.message_select:checked');
+  const checks = $('input.message_select:checked');
   if (checks.length > 0) {
-    var ids = [];
+    const ids = [];
     checks.each(function() {
       ids.push(this.value);
     });
-    ajax.post('/messages/action', function(json) {
+    ajax.post('/messages/action', json => {
       if (json.content) {
         action.callback(checks, json);
       } else {

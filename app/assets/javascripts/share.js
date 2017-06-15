@@ -1,12 +1,12 @@
-var shares = {
-  'facebook': 'http://www.facebook.com/sharer/sharer.php?href={url}',
-  'twitter': 'https://twitter.com/intent/tweet?url={url}&via=ProjectVinyl&related=ProjectVInyl,Brony,Music',
-  'googleplus': 'https://plus.google.com/u/0/share?url={url}&hl=en-GB&caption={title}',
-  'tumblr': 'https://www.tumblr.com/widgets/share/tool?canonicalUrl={url}&posttype=video&title={title}&content={url}'
+const shares = {
+  facebook: 'http://www.facebook.com/sharer/sharer.php?href={url}',
+  twitter: 'https://twitter.com/intent/tweet?url={url}&via=ProjectVinyl&related=ProjectVInyl,Brony,Music',
+  googleplus: 'https://plus.google.com/u/0/share?url={url}&hl=en-GB&caption={title}',
+  tumblr: 'https://www.tumblr.com/widgets/share/tool?canonicalUrl={url}&posttype=video&title={title}&content={url}'
 };
 
 $doc.on('click', '.share-buttons button', function() {
-  var ref = shares[$(this).attr('data-type')];
+  let ref = shares[$(this).attr('data-type')];
   if (ref) {
     ref = ref.replace(/{url}/g, encodeURIComponent(document.location.href));
     ref = ref.replace(/{title}/g, encodeURIComponent($(this).parent().attr('data-caption')));

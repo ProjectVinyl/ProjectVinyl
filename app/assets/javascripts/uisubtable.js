@@ -1,7 +1,7 @@
-$(function() {
+$(() => {
   function sizeSpannedBlocks() {
     $('.row.row-spanned > .content').each(function() {
-      var me = $(this);
+      const me = $(this);
       me.parent().css('height', me.children().height());
     });
   }

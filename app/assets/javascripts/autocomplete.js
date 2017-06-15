@@ -1,10 +1,10 @@
 (function() {
   function lookup(sender, popout, action, input, validate) {
-    ajax.post(action + '/lookup', function(json) {
+    ajax.post(`${action}/lookup`, json => {
       popout.empty();
-      for (var i = 0; i < json.content.length; i++) {
-        var item = $('<li></li>');
-        item.text(json.content[i][1] + ' (#' + json.content[i][0] + ')');
+      for (let i = 0; i < json.content.length; i++) {
+        const item = $('<li></li>');
+        item.text(`${json.content[i][1]} (#${json.content[i][0]})`);
         item.attr('data-name', json.content[i][1]);
         item.on('mousedown', function() {
           input.val($(this).attr('data-name'));
@@ -18,27 +18,29 @@
       query: input.val(), validate: validate ? 1 : 0
     });
   }
-  var autocomplete = null;
+  let autocomplete = null;
   $doc.on('focus', '.auto-lookup:not(.loaded) input', function() {
-    var input = $(this);
-    var me = input.parent();
+    const input = $(this);
+    const me = input.parent();
     me.addClass('loaded');
-    var popout = me.find('.pop-out');
-    var action = me.attr('data-action');
-    var last_value = null;
-    var validate = me.hasClass('validate');
-    input.on('blur', function() {
+    const popout = me.find('.pop-out');
+    const action = me.attr('data-action');
+    let last_value = null;
+    const validate = me.hasClass('validate');
+    input.on('blur', () => {
       clearInterval(autocomplete);
       autocomplete = null;
     });
-    input.on('focus', function(e) {
-      if (!autocomplete) autocomplete = setInterval(function() {
-        var value = input.val();
-        if (value != last_value) {
-          last_value = value;
-          lookup(me, popout, action, input, validate);
-        }
-      }, 1000);
+    input.on('focus', e => {
+      if (!autocomplete) {
+        autocomplete = setInterval(() => {
+          const value = input.val();
+          if (value != last_value) {
+            last_value = value;
+            lookup(me, popout, action, input, validate);
+          }
+        }, 1000);
+      }
     });
   });
-})();
+}());

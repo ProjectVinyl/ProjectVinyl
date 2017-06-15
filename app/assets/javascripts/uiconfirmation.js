@@ -1,30 +1,30 @@
 (function() {
   function init(me) {
     me.addClass('loaded');
-    var action = me.attr('data-action');
-    var url = me.attr('data-url');
-    var id = me.attr('data-id');
-    var callback = me.attr('data-callback');
-    var max_width = me.attr('data-max-width');
-    var popup;
+    const action = me.attr('data-action');
+    const url = me.attr('data-url');
+    const id = me.attr('data-id');
+    const callback = me.attr('data-callback');
+    const max_width = me.attr('data-max-width');
+    let popup;
     if (action == 'delete' || action == 'remove') {
       if (!popup) {
         popup = new Popup(me.attr('data-title'), me.attr('data-icon'), function() {
           this.content.append('<div class="message_content"></div><div class="foot"></div>');
           this.content.message_content = this.content.find('.message_content');
-          var msg = me.attr('data-msg');
+          const msg = me.attr('data-msg');
           if (msg) {
             this.content.message_content.text(msg);
             this.content.message_content.append('<br/><br/>');
           }
           this.content.message_content.append('Are you sure you want to continue?');
-          
-          var ok = $('<button class="button-fw green confirm">Yes</button>');
-          var cancel = $('<button class="cancel button-fw blue" style="margin-left:20px;" type="button">No</button>');
-          ok.on('click', function() {
-            ajax.post(url, function(json) {
+
+          const ok = $('<button class="button-fw green confirm">Yes</button>');
+          const cancel = $('<button class="cancel button-fw blue" style="margin-left:20px;" type="button">No</button>');
+          ok.on('click', () => {
+            ajax.post(url, json => {
               if (action == 'remove') {
-                var removeable = me.parents('.removeable');
+                const removeable = me.parents('.removeable');
                 if (removeable.hasClass('repaintable')) {
                   paginator.repaint(removeable.closest('.paginator'), json);
                 } else {
@@ -40,7 +40,7 @@
             });
             popup.close();
           });
-          cancel.on('click', function() {
+          cancel.on('click', () => {
             popup.close();
           });
           this.content.foot = this.content.find('.foot');
@@ -62,14 +62,14 @@
       popup.setPersistent();
     }
     if (popup && max_width) popup.content.css('max-width', max_width);
-    me.on('click', function(e) {
+    me.on('click', e => {
       popup.show();
       e.preventDefault();
     });
   }
-  
+
   $doc.on('click', '.confirm-button:not(.loaded)', function(e) {
     init($(this));
     e.preventDefault();
   });
-})();
+}());

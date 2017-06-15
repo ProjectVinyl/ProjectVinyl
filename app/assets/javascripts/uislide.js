@@ -1,5 +1,5 @@
 function slideOut(holder) {
-  var h = holder.find('.group.active').height();
+  const h = holder.find('.group.active').height();
   holder.css('min-height', h);
   holder.css('max-height', h + 10);
   if (holder.hasClass('shown')) {
@@ -12,14 +12,14 @@ function slideOut(holder) {
 }
 
 function slideAcross(me, direction) {
-  var form = me.parents('.slide-group');
-  var to = form.find('.group[data-stage=' + me.attr('data-to') + ']');
+  const form = me.parents('.slide-group');
+  const to = form.find(`.group[data-stage=${me.attr('data-to')}]`);
   if (to.length) {
-    var offset = (parseInt(form.attr('data-offset')) || 0) + direction;
+    const offset = (parseInt(form.attr('data-offset')) || 0) + direction;
     form.attr('data-offset', offset);
-    var from = form.find('.active');
-    var fromH = from.height();
-    var formH = form.height();
+    const from = form.find('.active');
+    const fromH = from.height();
+    const formH = form.height();
     from.removeClass('active');
     if (direction > 0) {
       from.after(to);
@@ -27,29 +27,29 @@ function slideAcross(me, direction) {
       from.before(to);
     }
     to.addClass('active');
-    setTimeout(function() {
+    setTimeout(() => {
       form.css('min-height', formH - (fromH - to.height()));
       form.css('max-height', formH - (fromH - to.height()));
       form.addClass('animating');
-      form.find('.group').css('transform', 'translate(' + (-100 * offset) + '%,0)');
-      setTimeout(function() {
+      form.find('.group').css('transform', `translate(${-100 * offset}%,0)`);
+      setTimeout(() => {
         form.removeClass('animating');
         form.css('max-height', '');
       }, 500);
-    },1);
+    }, 1);
   }
 }
 
 $doc.on('click', '.slider-toggle', function(e) {
-  var me = $(this);
-  var holder = $(me.attr('data-target'));
+  const me = $(this);
+  const holder = $(me.attr('data-target'));
   if (me.hasClass('loadable') && !me.hasClass('loaded')) {
     me.addClass('loaded');
-    ajax(me.attr('data-url'), function(json) {
+    ajax(me.attr('data-url'), json => {
       holder[0].innerHTML = json.content;
       holder.find('script').each(function() {
-        var cs = document.createElement('SCRIPT');
-        cs.textContent = '(function(){' + this.innerText + '}).apply({})';
+        const cs = document.createElement('SCRIPT');
+        cs.textContent = `(function(){${this.innerText}}).apply({})`;
         cs.onload = cs.onerror = function() {
           cs.parentNode.removeChild(cs);
         };
@@ -65,9 +65,9 @@ $doc.on('click', '.slider-toggle', function(e) {
 });
 
 $doc.on('click', '.slide-holder .goto.slide-right', function() {
-	slideAcross($(this), 1);
+  slideAcross($(this), 1);
 });
 
 $doc.on('click', '.slide-holder .goto.slide-left', function() {
-	slideAcross($(this), -1);
+  slideAcross($(this), -1);
 });

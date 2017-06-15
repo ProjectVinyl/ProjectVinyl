@@ -1,20 +1,20 @@
 function ThumbPicker() { }
 Player.Extend(ThumbPicker, {
-  constructor: function(el) {
+  constructor(el) {
     ThumbPicker.Super.constructor.call(this, el, true);
     this.time_input = el.find('input');
     el.find('.icon.fullscreen, .icon.volume').remove();
   },
-  pause: function() {
+  pause() {
     if (this.video) this.video.pause();
     return false;
   },
-  start: function() {
+  start() {
     if (!this.video) {
       ThumbPicker.Super.start.call(this);
       if (this.video) {
-        var me = this;
-        this.video.addEventListener('loadedmetadata', function() {
+        const me = this;
+        this.video.addEventListener('loadedmetadata', () => {
           me.changetrack(0.5);
         });
       }
@@ -23,11 +23,11 @@ Player.Extend(ThumbPicker, {
     }
     this.pause();
   },
-  changetrack: function(progress) {
+  changetrack(progress) {
     ThumbPicker.Super.changetrack.call(this, progress);
     this.time_input.val(this.video.currentTime);
   },
-  load: function(d) {
+  load(d) {
     this.start();
     this.volume(0, !0);
     ThumbPicker.Super.load.call(this, d);

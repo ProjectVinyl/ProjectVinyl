@@ -1,8 +1,8 @@
 function lazyLoad(button) {
-  var target = $('#' + button.attr('data-target'));
-  var page = parseInt(button.attr('data-page')) + 1;
+  const target = $(`#${button.attr('data-target')}`);
+  const page = parseInt(button.attr('data-page')) + 1;
   button.addClass('working');
-  ajax.get(button.attr('data-url'), function(json) {
+  ajax.get(button.attr('data-url'), json => {
     button.removeClass('working');
     if (json.page == page) {
       target.append(json.content);
@@ -11,7 +11,7 @@ function lazyLoad(button) {
       button.remove();
     }
   }, {
-    page: page,
+    page,
     id: button.attr('data-id')
   });
 }
@@ -21,6 +21,6 @@ $doc.on('click', '.load-more button', function() {
 });
 
 $doc.on('click', '.mix a', function(e) {
-  document.location.replace($(this).attr('href') + '&t=' + $('#video .player')[0].getPlayerObj().video.currentTime);
+  document.location.replace(`${$(this).attr('href')}&t=${$('#video .player')[0].getPlayerObj().video.currentTime}`);
   e.preventDefault();
 });

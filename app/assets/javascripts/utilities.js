@@ -1,13 +1,13 @@
-var Key = {
+const Key = {
   ENTER: 13, ESC: 27, COMMA: 188, BACKSPACE: 8, Z: 90, Y: 89
 };
 
-var $doc = $(document);
+const $doc = $(document);
 
-var window_focused = false;
-$(window).on('focus', function() {
+let window_focused = false;
+$(window).on('focus', () => {
   window_focused = true;
-}).on('blur', function () {
+}).on('blur', () => {
   window_focused = false;
 });
 
@@ -32,26 +32,26 @@ function Duration(seconds) {
   this.seconds = round(this.seconds, 2);
 }
 Duration.prototype = {
-  toString: function() {
-    var s = '';
-    if (this.days > 0) s += this.days + 'd ';
-    if (this.hours > 0) s += this.hours + 'h ';
-    if (this.minutes > 0) s += this.minutes + 'm ';
-    if (s.length == 0 || this.seconds > 0) s += this.seconds + 's';
+  toString() {
+    let s = '';
+    if (this.days > 0) s += `${this.days}d `;
+    if (this.hours > 0) s += `${this.hours}h `;
+    if (this.minutes > 0) s += `${this.minutes}m `;
+    if (s.length == 0 || this.seconds > 0) s += `${this.seconds}s`;
     return s.trim();
   },
-  valueOf: function() {
+  valueOf() {
     return this.time;
   }
 };
 
-var decode_entities = (function() {
-  var div = document.createElement('DIV');
+const decode_entities = (function() {
+  const div = document.createElement('DIV');
   return function(string) {
     div.innerHTML = string;
     return div.innerText;
-  }
-})();
+  };
+}());
 
 function toBool(string) {
   return string && string.length && (string == '1' || string.toLowerCase() == 'true');
@@ -59,7 +59,7 @@ function toBool(string) {
 
 function round(num, precision) {
   precision = Math.pow(10, precision || 0);
-  return Math.round(num * precision)/precision;
+  return Math.round(num * precision) / precision;
 }
 
 function timeoutOn(target, func, time) {
@@ -77,8 +77,8 @@ function bind(target, func) {
 }
 
 function extendObj(onto, overrides) {
-  var keys = Object.keys(overrides);
-  for (var i = keys.length; i--;) {
+  const keys = Object.keys(overrides);
+  for (let i = keys.length; i--;) {
     onto[keys[i]] = overrides[keys[i]];
   }
   return onto;
