@@ -1,19 +1,19 @@
-let feed_count = 0;
-let notifications_count = 0;
-let message_count = 0;
+var feed_count = 0;
+var notifications_count = 0;
+var message_count = 0;
 
-const step_delay_increment = 15000;
-let step_delay = 30000;
+var step_delay_increment = 15000;
+var step_delay = 30000;
 
-let control_flag = null;
-let ports = [];
+var control_flag = null;
+var ports = [];
 
 function heartbeat() {
-  const request = new XMLHttpRequest();
+  var request = new XMLHttpRequest();
   request.onreadystatechange = function() {
     if (request.readyState == XMLHttpRequest.DONE) {
       if (request.status == 200) {
-        const json = JSON.parse(request.responseText);
+        var json = JSON.parse(request.responseText);
         sendMessage(json);
         if (step_delay > 30000) step_delay -= step_delay_increment;
       } else {
@@ -24,25 +24,25 @@ function heartbeat() {
       }
     }
   };
-  let url = '/ajax/notifications?';
-  if (notifications_count !== undefined) url += `notes=${notifications_count}`;
-  if (feed_count !== undefined) url += `&feeds=${feed_count}`;
-  if (message_count !== undefined) url += `&mail=${message_count}`;
+  var url = '/ajax/notifications?';
+  if (notifications_count !== undefined) url += 'notes=' + notifications_count;
+  if (feed_count !== undefined) url += '&feeds=' + feed_count;
+  if (message_count !== undefined) url += '&mail=' + message_count;
   request.open('GET', url, true);
   request.send();
 }
 
 function sendMessage(msg) {
-  ports = ports.filter(port => {
+  ports = ports.filter(function(port) {
     try {
       if (msg.feeds !== undefined && msg.feeds != feed_count) {
-        port.postMessage({ command: 'feeds', count: feed_count = msg.feeds });
+        port.postMessage({ command: 'feeds', count: (feed_count = msg.feeds) });
       }
       if (msg.notices !== undefined && msg.notices != notifications_count) {
-        port.postMessage({ command: 'notices', count: notifications_count = msg.notices });
+        port.postMessage({ command: 'notices', count: (notifications_count = msg.notices) });
       }
       if (msg.mail !== undefined && msg.mail != message_count) {
-        port.postMessage({ command: 'mail', count: message_count = msg.mail });
+        port.postMessage({ command: 'mail', count: (message_count = msg.mail) });
       }
     } catch (ex) {
       return false;
@@ -69,8 +69,8 @@ function recieveMessage(e) {
   }
 }
 
-self.addEventListener('connect', e => {
-  const port = e.ports[0];
+self.addEventListener('connect', function(e) {
+  var port = e.ports[0];
   port.addEventListener('message', recieveMessage);
   port.start();
 });

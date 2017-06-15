@@ -1,4 +1,4 @@
-$doc.on('mousedown', () => {
+$doc.on('mousedown', function() {
   $('.pop-out-shown').removeClass('pop-out-shown');
 });
 
@@ -11,12 +11,12 @@ $doc.on('blur', 'label input, label select', function() {
 });
 
 $doc.on('touchstart', '.drop-down-holder:not(.hover), .mobile-touch-toggle:not(.hover)', function(e) {
-  const me = $(this);
+  var me = $(this);
   me.addClass('hover');
   e.preventDefault();
   e.stopPropagation();
-  const lis = me.find('a, li');
-  lis.on('touchstart', e => {
+  var lis = me.find('a, li');
+  lis.on('touchstart', function(e) {
     e.stopPropagation();
   });
   function clos(e) {
@@ -31,24 +31,24 @@ $doc.on('touchstart', '.drop-down-holder:not(.hover), .mobile-touch-toggle:not(.
 });
 
 $doc.on('click', '.pop-out-toggle', function() {
-  const me = $(this);
-  const popout = $(this).closest('.popper');
-  const popoutcontent = popout.find('.pop-out');
-  me.on('click', e => {
+  var me = $(this);
+  var popout = $(this).closest('.popper');
+  var popoutcontent = popout.find('.pop-out');
+  me.on('click', function(e) {
     if (popout.length && !popout.hasClass('pop-out-shown')) {
       $('.pop-out-shown').removeClass('pop-out-shown');
       popout.addClass('pop-out-shown');
       popout.removeClass('pop-left');
       popout.removeClass('pop-right');
-
-      const left = popoutcontent.offset().left;
-      const right = left + popoutcontent.width();
-      const width = $(window).width();
-
+      
+      var left = popoutcontent.offset().left;
+      var right = left + popoutcontent.width();
+      var width = $(window).width();
+      
       if (right > width) {
         popout.addClass('pop-left');
       }
-      if (left < 0) {
+      if (left < 0 ) {
         popout.addClass('pop-right');
       }
     } else {
@@ -57,7 +57,7 @@ $doc.on('click', '.pop-out-toggle', function() {
     e.stopPropagation();
     e.preventDefault();
   });
-  popout.on('mousedown', e => {
+  popout.on('mousedown', function(e) {
     e.stopPropagation();
   });
   me.click();

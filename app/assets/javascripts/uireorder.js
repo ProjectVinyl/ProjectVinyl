@@ -1,32 +1,32 @@
 (function() {
-  let grabber;
-  let floater;
-
+  var grabber;
+  var floater;
+  
   function moveFloater(e) {
     floater.css('top', e.pageY - floater.parent().offset().top);
   }
-
+  
   function reorder(target, id, index) {
-    ajax.post(`update/${target}`, () => {}, true, {
-      id, index
+    ajax.post('update/' + target, function() {}, true, {
+      id: id, index: index
     });
   }
-
+  
   function grab(target, container, item) {
     container.addClass('ordering');
     container.find('.grabbed').removeClass('grabbed');
     floater = item.clone();
     item.addClass('grabbed');
     container.append(floater);
-    const srcChilds = item.children();
-    const dstChilds = floater.children();
-    for (let i = 0; i < srcChilds.length; i++) {
+    var srcChilds = item.children();
+    var dstChilds = floater.children();
+    for (var i = 0; i < srcChilds.length; i++) {
       dstChilds.eq(i).css('width', srcChilds.eq(i).innerWidth());
     }
-    const originalIndex = parseInt(item.attr('data-index'));
+    var originalIndex = parseInt(item.attr('data-index'));
     floater.addClass('floater');
     floater.css('top', item.offset().top);
-    $doc.one('mouseup', e => {
+    $doc.one('mouseup', function(e) {
       floater.remove();
       floater = null;
       reorder(target, item.attr('data-id'), item.attr('data-index'));
@@ -43,39 +43,39 @@
     $doc.on('mousemove', moveFloater);
     container.children(':not(.floater)').on('mouseover', function() {
       $(this).after(item);
-      let index = parseInt($(this).attr('data-index'));
+      var index = parseInt($(this).attr('data-index'));
       if (index <= originalIndex) index++;
       item.attr('data-index', index);
     });
   }
-
-  $(() => {
+  
+  $(function() {
     $('.reorderable').each(function() {
-      const orderable = $(this);
-      const target = orderable.attr('data-target');
+      var orderable = $(this);
+      var target = orderable.attr('data-target');
       orderable.find('.handle').on('mousedown', function(e) {
-        const me = $(this).parent();
+        var me = $(this).parent();
         grabber = function() {
           grab(target, orderable, me);
         };
         $(document).one('mousemove', grabber);
         e.preventDefault();
         e.stopPropagation();
-      }).on('mouseup', '.reorderable .handle', e => {
+      }).on('mouseup', '.reorderable .handle', function(e) {
         $(document).off('mousemove', grabber);
       });
     });
   });
-
+  
   $doc.on('click', '.removeable .remove', function(e) {
-    const me = $(this).parents('.removeable');
+    var me = $(this).parents('.removeable');
     if (me.hasClass('repaintable')) {
-      ajax.post(`delete/${me.attr('data-target')}`, json => {
+      ajax.post('delete/' + me.attr('data-target'), function(json) {
         paginator.repaint(me.closest('.paginator'), json);
       }, false, { id: me.attr('data-id') });
     } else {
       if (me.attr('data-target')) {
-        ajax.post(`delete/${me.attr('data-target')}`, () => {
+        ajax.post('delete/' + me.attr('data-target'), function() {
           me.remove();
         }, true, { id: me.attr('data-id') });
       } else {
@@ -85,4 +85,4 @@
     e.preventDefault();
     e.stopPropagation();
   });
-}());
+})();

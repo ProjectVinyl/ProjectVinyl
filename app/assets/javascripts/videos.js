@@ -6,21 +6,21 @@ Copyright Project Vinyl Foundation 2016
 
 function Player() {}
 (function() {
-  const Key = { SPACE: 32 };
+  var Key = { SPACE: 32 };
   /* Standardise fullscreen API */
   (function(p) {
     Player.requestFullscreen = p.requestFullscreen || p.mozRequestFullScreen || p.msRequestFullscreen || p.webkitRequestFullscreen || function() {};
     Player.exitFullscreen = document.exitFullscreen || document.mozCancelFullScreen || document.msExitFullscreen || document.webkitExitFullscreen || function() {};
     Player.isFullscreen = function() {
       return document.fullScreen || document.mozFullScreen || document.webkitIsFullScreen;
-    };
-  }(Element.prototype));
+    }
+  })(Element.prototype);
   Player.onFullscreen = function(func) {
     $(document).on('webkitfullscreenchange mozfullscreenchange fullscreenchange', func);
   };
-  const VIDEO_ELEMENT = document.createElement('video');
+  var VIDEO_ELEMENT = document.createElement('video');
   Player.canPlayType = function(mime) {
-    return Boolean((mime = VIDEO_ELEMENT.canPlayType(mime)).length) && mime !== 'no';
+    return !!(mime = VIDEO_ELEMENT.canPlayType(mime)).length && mime !== 'no';
   };
   Player.speeds = [
     {name: 'Double', value: 2},
@@ -31,13 +31,13 @@ function Player() {}
     {name: '0.25x', value: 0.25}
   ];
   Player.createVideoElement = function(player) {
-    if (!player.source || player.source == '0') return $('<video></video>');
-    if (typeof player.source === 'string' && player.source.indexOf('blob') == 0) return $(`<video src="${player.source}"></video>`);
-    return $(`\
+    if (!player.source || player.source == "0") return $('<video></video>');
+    if (typeof player.source === 'string' && player.source.indexOf('blob') == 0) return $('<video src="' + player.source + '"></video>');
+    return $('\
             <video>\
-             <source src="/stream/${player.source}.webm" type="video/webm"></source>\
-             <source src="/stream/${player.source}${player.mime[0]}" type="${player.mime[1]}"></source>\
-            </video>`);
+             <source src="/stream/' + player.source + '.webm" type="video/webm"></source>\
+             <source src="/stream/' + player.source + player.mime[0] + '" type="' + player.mime[1] + '"></source>\
+            </video>');
   };
   Player.errorMessage = function(video) {
     if (!video.error) {
@@ -62,16 +62,16 @@ function Player() {}
     return video.readyState == 4;
   };
   Player.noise = (function() {
-    let canvas = null, ctx = null;
-    let toggle = true;
+    var canvas = null, ctx = null;
+    var toggle = true;
     function noise(ctx) {
-      let w = ctx.canvas.width,
+      var w = ctx.canvas.width,
           h = ctx.canvas.height,
           idata = ctx.createImageData(w, h),
           buffer32 = new Uint32Array(idata.data.buffer),
           len = buffer32.length,
           i = 0;
-      for (; i < len;) buffer32[i++] = ((255 * Math.random()) | 0) << 24;
+      for(; i < len;) buffer32[i++] = ((255 * Math.random())|0) << 24;
       ctx.putImageData(idata, 0, 0);
     }
     function loop() {
@@ -87,8 +87,8 @@ function Player() {}
       canvas.width = canvas.height = 256;
       loop();
       return canvas;
-    };
-  }());
+    }
+  })();
   Player.generate = function(holder) {
     holder.prepend('<div class="player" >\
     <span class="playing"></span>\
@@ -120,7 +120,7 @@ function Player() {}
   </div>\
   <ul class="contextmenu"></ul>');
   };
-  let fadeControl = null;
+  var fadeControl = null;
   function controlsFade() {
     if (Player.fullscreenPlayer) {
       Player.fullscreenPlayer.controls.css('opacity', 0);
@@ -129,7 +129,7 @@ function Player() {}
     fadeControl = null;
   }
   function attachMessageListener(me) {
-    $(window).on('storage', ev => {
+    $(window).on('storage', function(ev) {
       if (ev.originalEvent.key === '::activeplayer' && ev.originalEvent.newValue != me.__seed) {
         me.pause();
       }
@@ -137,11 +137,11 @@ function Player() {}
   }
   function sendMessage(me) {
     if (me.__sendMessages) {
-      me.__seed = String((parseInt(localStorage['::activeplayer'] || '0') + 1) % 3);
+      me.__seed = '' + ((parseInt(localStorage['::activeplayer'] || '0') + 1) % 3);
       localStorage.setItem('::activeplayer', me.__seed);
     }
   }
-  Player.onFullscreen(() => {
+  Player.onFullscreen(function() {
     if (Player.fullscreenPlayer) {
       Player.fullscreenPlayer.fullscreen(Player.isFullscreen());
     }
@@ -153,15 +153,15 @@ function Player() {}
     Child.prototype = new this();
     Child.Super = this.prototype;
     Child.Extend = this.Extend;
-    const keys = Object.keys(overrides);
-    for (let i = keys.length; i--;) {
+    var keys = Object.keys(overrides);
+    for (var i = keys.length; i--;) {
       Child.prototype[keys[i]] = overrides[keys[i]];
     }
   };
   Player.prototype = {
-    constructor(el, standalone) {
+    constructor: function(el, standalone) {
       if (canGen(el.children())) Player.generate(el);
-      const me = this;
+      var me = this;
       this.__sendMessages = !standalone;
       this.dom = el;
       this.player = el.find('.player');
@@ -174,26 +174,26 @@ function Player() {}
         return me;
       };
       this.video = null;
-      this.mime = (el.attr('data-mime') || '.mp4|video/m4v').split('|');
+      this.mime = (el.attr('data-mime') || ".mp4|video/m4v").split('|');
       this.controls = el.find('.controls');
       this.source = el.attr('data-video');
       if (!this.source) {
         this.source = el.attr('data-audio');
         this.audioOnly = true;
-        this.preview = $(`<img src="/cover/${this.source}-small.png" />`)[0];
+        this.preview = $('<img src="/cover/' + this.source + '-small.png" />')[0];
       } else {
         this.preview = $('<canvas />')[0];
       }
-
+      
       this.time = el.attr('data-time');
-
+      
       resize.apply(el);
-
+      
       el.find('h1 .title').text(this.title = el.attr('data-title'));
       if (this.artist = el.attr('data-artist')) el.find('h1 .artist').text(this.artist);
-
+      
       new TapToggler(this.dom);
-      el.on('click', ev => {
+      el.on('click', function(ev) {
         if (!me.removeContext(ev)) {
           if (!me.player.hasClass('playing') || me.dom.toggler.interactable()) {
             if (me.dom.playlist && me.dom.playlist.hasClass('visible')) {
@@ -204,11 +204,11 @@ function Player() {}
           }
         }
       });
-      el.on('contextmenu', ev => {
+      el.on('contextmenu', function(ev) {
         me.showContext(ev);
       });
-      const active_touches = [];
-      let tapped = false;
+      var active_touches = [];
+      var tapped = false;
       el.on('touchstart', function(ev) {
         if (Player.fullscreenPlayer == this) {
           if (active_touches.length > 0) {
@@ -223,15 +223,15 @@ function Player() {}
           tapped = null;
           return;
         } else {
-          tapped = setTimeout(() => {
+          tapped = setTimeout(function() {
             tapped = null;
           }, 500);
         }
         me.dom.toggler.update(ev);
         active_touches.push({identifier: ev.identifier});
       });
-      el.on('touchmove touchend touchcancel', ev => {
-        for (let i = 0; i < active_touches; i++) {
+      el.on('touchmove touchend touchcancel', function(ev) {
+        for (var i = 0; i < active_touches; i++) {
           if (active_touches[i].identifier == ev.identifier) {
             active_touches.splice(i, 1);
           }
@@ -240,18 +240,18 @@ function Player() {}
       this.__loop = false;
       this.__speed = 3;
       this.contextmenu.on('click', this.halt);
-      this.addContext('Loop', false, val => {
+      this.addContext('Loop', false, function(val) {
         val(me.loop(!me.__loop));
       });
-      this.addContext('Speed', me.speed(me.__speed), val => {
+      this.addContext('Speed', me.speed(me.__speed), function(val) {
         me.__speed = (me.__speed + 1) % Player.speeds.length;
         val(me.speed(me.__speed));
       });
-
-      $(document).on('click', ev => {
+      
+      $(document).on('click', function(ev) {
         me.removeContext(ev);
       });
-      $(document).on('keydown', ev => {
+      $(document).on('keydown', function(ev) {
         if (ev.which == Key.SPACE) {
           if (!$('input:focus,textarea:focus').length) {
             if (me.video) {
@@ -263,7 +263,7 @@ function Player() {}
       });
       if (this.controls.length) {
         this.controls.track = this.controls.find('.track');
-        this.controls.track.on('mousedown', ev => {
+        this.controls.track.on('mousedown', function(ev) {
           if (!me.removeContext(ev)) {
             me.checkstart();
             me.jump(ev);
@@ -271,50 +271,50 @@ function Player() {}
         });
         this.controls.track.bob = this.controls.find('.track .bob');
         this.controls.track.fill = this.controls.find('.track .fill');
-        this.controls.track.bob.on('mousedown', ev => {
+        this.controls.track.bob.on('mousedown', function(ev) {
           if (!me.removeContext(ev)) me.startChange(ev);
         });
-        this.controls.track.bob.on('touchstart', ev => {
+        this.controls.track.bob.on('touchstart', function(ev) {
           me.removeContext(ev);
           me.startChange(ev);
         });
         this.controls.track.preview = el.find('.track .previewer');
         this.controls.track.preview.append(this.preview);
-        this.controls.track.on('mousemove', ev => {
+        this.controls.track.on('mousemove', function(ev) {
           me.drawPreview(me.evToProgress(ev));
         });
         this.controls.volume = this.controls.find('.volume');
-        this.controls.volume.on('click', ev => {
+        this.controls.volume.on('click', function(ev) {
           if (!me.removeContext(ev)) {
             if (me.controls.volume.toggler.interactable()) {
-              me.muteUnmute();
+              me.muteUnmute(); 
             }
           }
         });
         new TapToggler(this.controls.volume);
-        this.controls.volume.on('touchstart', ev => {
+        this.controls.volume.on('touchstart', function(ev) {
           me.controls.volume.toggler.update(ev);
           me.halt(ev);
         });
-
+        
         this.controls.volume.bob = this.controls.find('.volume .bob');
         this.controls.volume.fill = this.controls.find('.volume .fill');
-        this.controls.volume.bob.on('mousedown', ev => {
+        this.controls.volume.bob.on('mousedown', function(ev) {
           if (!me.removeContext(ev)) me.startChangeVolume(ev);
         });
-        this.controls.volume.bob.on('touchstart', ev => {
+        this.controls.volume.bob.on('touchstart', function(ev) {
           me.removeContext(ev);
           me.startChangeVolume(ev);
         });
         this.controls.volume.slider = this.controls.find('.volume .slider');
-        this.controls.volume.slider.on('mousedown', ev => {
+        this.controls.volume.slider.on('mousedown', function(ev) {
           if (!me.removeContext(ev)) {
             me.checkstart();
             me.changeVolume(ev);
           }
         });
         this.controls.fullscreen = this.controls.find('.fullscreen .indicator');
-        this.controls.find('.fullscreen').on('click', ev => {
+        this.controls.find('.fullscreen').on('click', function(ev) {
           if (!me.removeContext(ev)) {
             me.fullscreen(!Player.isFullscreen());
             me.halt(ev);
@@ -326,29 +326,29 @@ function Player() {}
       attachMessageListener(this);
       if (el.attr('data-autoplay')) {
         this.checkstart();
-        this.addContext('Autoplay', this.autoplay(!document.cookie.replace(/(?:(?:^|.*;\s*)autoplay\s*\=\s*([^;]*).*$)|^.*$/, '$1')), val => {
+        this.addContext('Autoplay', this.autoplay(!document.cookie.replace(/(?:(?:^|.*;\s*)autoplay\s*\=\s*([^;]*).*$)|^.*$/, "$1")), function(val) {
           val(me.__autoplay = !me.__autoplay);
-          document.cookie = `autoplay=${on ? ';' : '1;'}`;
+          document.cookie = 'autoplay=' + (on ? ';' : '1;');
         });
       } else if (el.attr('data-resume') == 'true') {
         this.checkstart();
       }
       return this;
     },
-    removeContext(ev) {
+    removeContext: function(ev) {
       if (ev.which == 1 && this.contextmenu.css('display') == 'table') {
         this.contextmenu.css('opacity', '');
-        const me = this;
-        setTimeout(() => {
+        var me = this;
+        setTimeout(function() {
           me.contextmenu.css('display', '');
         }, 100);
         return 1;
       }
       return 0;
     },
-    showContext(ev) {
-      let y = ev.pageY;
-      let x = ev.pageX;
+    showContext: function(ev) {
+      var y = ev.pageY;
+      var x = ev.pageX;
       if (x + this.contextmenu.width() > $(window).width()) x = $(window).width() - this.contextmenu.width();
       if (y + this.contextmenu.height() + 10 >= $(window).height()) y = $(window).height() - this.contextmenu.height() - 10;
       this.contextmenu.css({
@@ -359,43 +359,43 @@ function Player() {}
       this.contextmenu.css('opacity', '1');
       this.halt(ev);
     },
-    setEmbed(id) {
+    setEmbed: function(id) {
       this.player.find('.pause h1').css({
-        'pointer-events': 'initial', display: ''
+        'pointer-events': 'initial', 'display': ''
       });
-      const link = this.player.find('.pause h1 a');
+      var link = this.player.find('.pause h1 a');
       link.attr({
-        target: '_blank', href: `/view/${id}-${this.title}`
+        target: '_blank', href: '/view/' + id + '-' + this.title
       });
-      const me = this;
-      link.on('mouseover', () => {
+      var me = this;
+      link.on('mouseover', function() {
         if (me.video && me.video.currentTime > 0) {
-          link.attr('href', `/view/${id}-${me.title}?resume=${me.video.currentTime}`);
+          link.attr('href', '/view/' + id + '-' + me.title + '?resume=' + me.video.currentTime);
         }
       });
-      link.on('click', ev => {
+      link.on('click', function (ev) {
         ev.stopPropagation();
       });
     },
-    setPlaylist(album_id, album_index) {
+    setPlaylist: function(album_id, album_index) {
       this.album = {
         id: album_id, index: album_index
       };
       this.dom.playlist = $('.playlist');
       this.dom.playlist.link = $('<div class="playlist-toggle"><i class="fa fa-list" /></div>');
       this.dom.append(this.dom.playlist.link);
-      const me = this;
-      this.dom.playlist.link.on('click', ev => {
+      var me = this;
+      this.dom.playlist.link.on('click', function(ev) {
         me.dom.playlist.toggleClass('visible');
         me.halt(ev);
       });
-      this.addContext('Autoplay', this.autoplay(!document.cookie.replace(/(?:(?:^|.*;\s*)autoplay\s*\=\s*([^;]*).*$)|^.*$/, '$1')), val => {
+      this.addContext('Autoplay', this.autoplay(!document.cookie.replace(/(?:(?:^|.*;\s*)autoplay\s*\=\s*([^;]*).*$)|^.*$/, "$1")), function(val) {
         val(me.__autoplay = !me.__autoplay);
-        document.cookie = `autoplay=${on ? ';' : '1;'}`;
+        document.cookie = 'autoplay=' + (on ? ';' : '1;');
       });
       this.dom.playlist.on('click', '.items a, #playlist_next, #playlist_prev', function(ev) {
-        const next = $(this);
-        ajax.get(`view${next.attr('href')}`, json => {
+        var next = $(this);
+        ajax.get('view' + next.attr('href'), function(json) {
           me.redirect = next.attr('href');
           me.loadAttributesAndRestart(json);
           if (json.next) {
@@ -405,32 +405,32 @@ function Player() {}
             $('#playlist_prev').attr('href', json.prev);
           }
           $('.playlist a.selected').removeClass('selected');
-          const selected = $(`.playlist a[data-id=${json.id}]`);
+          var selected = $('.playlist a[data-id=' + json.id + ']');
           selected.addClass('selected');
           scrollTo(selected, '.playlist .scroll-container');
         });
         me.halt(ev);
       });
     },
-    addContext(title, initial, callback) {
-      const item = $(`<li><div class="label">${title}</div></li>`);
-      const value = $('<div class="value" ></div>');
+    addContext: function(title, initial, callback) {
+      var item = $('<li><div class="label">' + title + '</div></li>');
+      var value = $('<div class="value" ></div>');
       item.append(value);
       function val(s) {
-        value.html(typeof s === 'boolean' ? s ? '<i class="fa fa-check" />' : '' : s);
+        value.html(typeof s === 'boolean' ? (s ? '<i class="fa fa-check" />' : '') : s);
       }
       val(initial);
-      item.on('click', () => {
+      item.on('click', function() {
         callback(val);
       });
       this.contextmenu.append(item);
     },
-    speed(speed) {
+    speed: function(speed) {
       speed = Player.speeds[speed] || Player.speeds[3];
       if (this.video) this.video.playbackRate = speed.value;
       return speed.name;
     },
-    fullscreen(on) {
+    fullscreen: function(on) {
       this.onfullscreen(on);
       if (!Player.requestFullscreen) return false;
       if (fadeControl != null) clearTimeout(fadeControl);
@@ -444,7 +444,7 @@ function Player() {}
       } else if (Player.fullscreenPlayer) {
         if (this.redirect) {
           if (this.video) {
-            this.redirect += `${this.redirect.indexOf('?') >= 0 ? '&' : '?'}t=${this.video.currentTime}`;
+            this.redirect += (this.redirect.indexOf('?') >= 0 ? "&" : "?") + "t=" + this.video.currentTime;
           }
           document.location.replace(this.redirect);
           return;
@@ -456,27 +456,27 @@ function Player() {}
       Player.fullscreenPlayer = on ? this : null;
       return on;
     },
-    onfullscreen(on) {
+    onfullscreen: function(on) {
       this.controls.fullscreen.html(on ? '<i class="fa fa-restore"></i>' : '<i class="fa fa-arrows-alt"></i>');
       if (!on) this.player.find('.playing').css('cursor', '');
     },
-    autoplay(on) {
+    autoplay: function(on) {
       this.__autoplay = on;
       if (on) {
         this.loop(false);
       }
       return on;
     },
-    loop(on) {
+    loop: function(on) {
       this.__loop = on;
       if (this.video) this.video.loop = on;
       return on;
     },
-    checkstart() {
+    checkstart: function() {
       if (!this.video) this.start();
     },
-    loadAttributesAndRestart(attr) {
-      this.dom.css('background-image', `url('/cover/${attr.source}.png')`);
+    loadAttributesAndRestart: function(attr) {
+      this.dom.css('background-image', "url('/cover/" + attr.source + ".png')");
       this.dom.find('h1 .title').text(this.title = attr.title);
       this.dom.find('h1 .artist').text(this.artist = attr.artist);
       this.source = attr.source;
@@ -488,7 +488,7 @@ function Player() {}
       }
       this.start();
     },
-    load(data) {
+    load: function(data) {
       this.audioOnly = false;
       if (this.source) {
         URL.revokeObjectURL(this.source);
@@ -504,7 +504,7 @@ function Player() {}
         this.video.load();
       }
     },
-    loadURL(url) {
+    loadURL: function(url) {
       this.audioOnly = false;
       if (this.source) {
         URL.revokeObjectURL(this.source);
@@ -521,11 +521,11 @@ function Player() {}
         this.video.load();
       }
     },
-    start() {
+    start: function() {
       if (!this.video) {
-        let video;
+        var video;
         if (this.audioOnly && this.source) {
-          video = $(`<audio src="/stream/${this.source}${this.mime[0]}" type="${this.mime[1]}"></audio>`);
+          video = $('<audio src="/stream/' + this.source + this.mime[0] + '" type="' + this.mime[1] + '"></audio>');
         } else {
           video = Player.createVideoElement(this);
         }
@@ -534,7 +534,7 @@ function Player() {}
           if (Player.isready(this.video)) {
             this.video.currentTime = parseInt(this.time);
           } else {
-            const t = parseInt(this.time);
+            var t = parseInt(this.time);
             this.video.addEventListener('canplay', function set_time() {
               this.currentTime = t;
               this.removeEventListener('canplay', set_time);
@@ -542,8 +542,8 @@ function Player() {}
           }
         }
         this.player.find('.playing').append(this.video);
-        const me = this;
-        video.on('pause', () => {
+        var me = this;
+        video.on('pause', function() {
           me.pause();
         });
         video.on('play', function() {
@@ -551,22 +551,22 @@ function Player() {}
           me.player.removeClass('stopped');
           me.player.removeClass('paused');
           me.player.removeClass('error');
-          me.video.loop = Boolean(me.__loop);
+          me.video.loop = !!me.__loop;
           sendMessage(me);
           me.volume(this.volume, this.muted);
         });
-        video.on('abort error', e => {
+        video.on('abort error', function(e) {
           me.error(e);
         });
-        video.find('source').last().on('error', e => {
+        video.find('source').last().on('error', function(e) {
           me.error(e);
         });
-        video.on('ended', () => {
+        video.on('ended', function() {
           if (me.__autoplay) {
-            const next = $('#playlist_next');
+            var next = $('#playlist_next');
             if (next.length) {
               if (Player.fullscreenPlayer == me || me.album) {
-                ajax.get(`view${next.attr('href')}`, json => {
+                ajax.get('view' + next.attr('href'), function(json) {
                   me.redirect = next.attr('href');
                   me.loadAttributesAndRestart(json);
                   if (json.next) {
@@ -581,7 +581,7 @@ function Player() {}
                     $('#playlist_prev').remove();
                   }
                   $('.playlist a.selected').removeClass('selected');
-                  const selected = $(`.playlist a[data-id=${json.id}]`);
+                  var selected = $('.playlist a[data-id=' + json.id + ']');
                   selected.addClass('selected');
                   scrollTo(selected, '.playlist .scroll-container');
                 });
@@ -593,18 +593,18 @@ function Player() {}
             if (me.pause()) me.player.addClass('stopped');
           }
         });
-        let suspendTimer = null;
-        video.on('suspend waiting', () => {
+        var suspendTimer = null;
+        video.on('suspend waiting', function() {
           if (!suspendTimer) {
-            suspendTimer = setTimeout(() => {
+            suspendTimer = setTimeout(function() {
               me.suspend.css('display', 'block');
             }, 3000);
           }
         });
-        video.on('volumechange', () => {
+        video.on('volumechange', function() {
           me.volume(me.video.volume, me.video.muted || me.video.volume == 0);
         });
-        video.on('timeupdate', () => {
+        video.on('timeupdate', function() {
           if (suspendTimer) {
             clearTimeout(suspendTimer);
             suspendTimer = null;
@@ -618,24 +618,24 @@ function Player() {}
       }
       this.video.play();
     },
-    stop() {
+    stop: function() {
       this.pause();
       this.changetrack(0);
       this.video.parentNode.removeChild(this.video);
       this.video = null;
       this.suspend.css('display', 'none');
     },
-    pause() {
+    pause: function() {
       this.player.removeClass('playing');
       this.player.addClass('paused');
       if (this.video) this.video.pause();
       this.suspend.css('display', 'none');
       return true;
     },
-    error(e) {
+    error: function(e) {
       this.pause();
       if (Player.errorPresent(this.video)) {
-        const message = Player.errorMessage(this.video);
+        var message = Player.errorMessage(this.video);
         this.player.addClass('stopped');
         this.player.addClass('error');
         this.player.error.message.text(message);
@@ -647,86 +647,86 @@ function Player() {}
       }
       console.log(e);
     },
-    toggleVideo() {
+    toggleVideo: function() {
       if (!this.player.hasClass('playing')) {
         this.start();
       } else {
         this.pause();
       }
     },
-    track(time, duration) {
-      const percentFill = (time / duration) * 100;
-      this.controls.track.bob.css('left', `${percentFill}%`);
-      this.controls.track.fill.css('right', `${100 - percentFill}%`);
+    track: function(time, duration) {
+      var percentFill = (time/duration) * 100;
+      this.controls.track.bob.css('left', percentFill + '%');
+      this.controls.track.fill.css('right', (100 - percentFill) + '%');
       if (this.dom.toggler.touching()) {
-        this.controls.track.preview.css('left', `${percentFill}%`);
+        this.controls.track.preview.css('left', percentFill + '%');
         this.controls.track.preview.attr('data-time', this.descriptive(time));
       }
       this.suspend.css('display', 'none');
     },
-    changetrack(progress) {
+    changetrack: function(progress) {
       if (progress < 0) progress = 0;
       if (progress > 1) progress = 1;
-      const duration = parseFloat(this.video.duration) || 0;
-      const time = duration * progress;
+      var duration = parseFloat(this.video.duration) || 0;
+      var time = duration * progress;
       this.video.currentTime = time;
       this.track(time, duration);
     },
-    jump(ev) {
-      const progress = this.evToProgress(ev);
+    jump: function(ev) {
+      var progress = this.evToProgress(ev);
       this.changetrack(progress);
       if (ev.originalEvent.touches) {
         this.drawPreview(progress);
       }
       this.halt(ev);
     },
-    evToProgress(ev) {
-      let x = ev.pageX;
+    evToProgress: function(ev) {
+      var x = ev.pageX;
       if (!x && ev.originalEvent.touches) {
         x = ev.originalEvent.touches[0].pageX || 0;
       }
-
+      
       x -= this.controls.track.offset().left;
       if (x < 0) x = 0;
       if (x > this.controls.track.width()) x = this.controls.track.width();
       return x / this.controls.track.width();
     },
-    startChange(ev, bob) {
+    startChange: function(ev, bob) {
       this.checkstart();
-      const me = this;
-      const func = function(ev) {
+      var me = this;
+      var func = function(ev) {
         me.jump(ev);
-      };
+      }
       this.dom.addClass('tracking');
       $(document).on('mousemove touchmove', func);
-      const ender = function() {
+      var ender = function() {
         $(document).off('mouseup touchend touchcancel', ender);
         $(document).off('mousemove touchmove', func);
         me.dom.removeClass('tracking');
-      };
+      }
       $(document).one('mouseup touchend touchcancel', ender);
       this.halt(ev);
     },
-    startChangeVolume(ev) {
+    startChangeVolume: function(ev) {
       this.checkstart();
-      const me = this;
-      const func = function(ev) {
+      var me = this;
+      var func = function(ev) {
         me.changeVolume(ev);
       };
       this.dom.addClass('voluming');
       $(document).on('mousemove touchmove', func);
-      const ender = function() {
+      var ender = function() {
         $(document).off('mouseup touchend touchcancel', ender);
         $(document).off('mousemove touchmove', func);
         me.dom.removeClass('voluming');
-      };
+      }
       $(document).one('mouseup touchend touchcancel', ender);
       this.halt(ev);
     },
-    changeVolume(ev) {
-      const height = this.controls.volume.slider.height();
+    changeVolume: function(ev) {
+      var height = this.controls.volume.slider.height();
       if (height == 0) return;
-      let y = ev.pageY;
+      var y = ev.pageY;
       if (!y && ev.originalEvent.touches) {
         y = ev.originalEvent.touches[0].pageY || 0;
       }
@@ -737,25 +737,25 @@ function Player() {}
       this.volume(y / height, y == 0);
       this.halt(ev);
     },
-    halt(ev) {
+    halt: function(ev) {
       ev.preventDefault();
       ev.stopPropagation();
     },
-    volume(volume, muted) {
+    volume: function(volume, muted) {
       this.dom.find('.volume .indicator i').attr('class', muted ? 'fa fa-volume-off' : volume < 0.33 ? 'fa fa-volume-down' : volume < 0.66 ? 'fa fa-volume-mid' : 'fa fa-volume-up');
       if (this.video) this.video.volume = volume;
       if (muted) volume = 0;
       volume *= 100;
-      this.controls.volume.bob.css('bottom', `${volume}%`);
-      this.controls.volume.fill.css('top', `${100 - volume}%`);
+      this.controls.volume.bob.css('bottom', volume + '%');
+      this.controls.volume.fill.css('top', (100 - volume) + '%');
     },
-    muteUnmute() {
+    muteUnmute: function() {
       this.checkstart();
       this.video.muted = !this.video.muted;
       this.volume(this.video.volume, this.video.muted);
     },
-    descriptive(t) {
-      const times = [];
+    descriptive: function(t) {
+      var times = [];
       t = Math.floor(t);
       while (t >= 60) {
         times.push(t % 60);
@@ -765,25 +765,25 @@ function Player() {}
       if (times.length < 2) times.push(0);
       return times.reverse().join(':');
     },
-    drawPreview(progress) {
+    drawPreview: function(progress) {
       if (!this.video) return;
-      const duration = parseInt(this.video.duration) || 0;
-      let time = duration * progress;
-      this.controls.track.preview.css('left', `${(time / duration) * 100}%`);
+      var duration = parseInt(this.video.duration) || 0;
+      var time = duration * progress;
+      this.controls.track.preview.css('left', ((time/duration) * 100) + '%');
       this.controls.track.preview.attr('data-time', this.descriptive(time));
       if (!this.audioOnly) {
         time = time -= time % 5;
         if (this.preview && this.preview.time != time) {
           this.preview.time = time;
           if (!this.preview.video) {
-            const temp_vid = this.preview.video = Player.createVideoElement(this)[0];
-            const canvas = this.preview;
-            const context = this.preview.getContext('2d');
+            var temp_vid = this.preview.video = Player.createVideoElement(this)[0];
+            var canvas = this.preview;
+            var context = this.preview.getContext('2d');
             temp_vid.addEventListener('loadeddata', function load_time() {
               this.currentTime = time;
               this.removeEventListener('loadeddata', load_time);
             });
-            temp_vid.addEventListener('seeked', () => {
+            temp_vid.addEventListener('seeked', function() {
               context.drawImage(temp_vid, 0, 0, canvas.width, canvas.height);
             });
           } else {
@@ -795,25 +795,25 @@ function Player() {}
       }
     }
   };
-
-  const aspect = 16 / 9;
+  
+  var aspect = 16/9;
   function resize() {
-    const me = $(this);
+    var me = $(this);
     me.css({
-      'margin-bottom': '', height: `${me.width() / aspect}px`
+      'margin-bottom': '', 'height': (me.width() / aspect) + 'px'
     });
   }
-  const ev = {which:1};
+  var ev = {which:1};
   function removeContext() {
     if (this.getPlayerObj) this.getPlayerObj().removeContext(ev);
   }
-
+  
   function TapToggler(owner) {
-    let hover_timeout = null;
-    let touching = false;
-    let hover_flag = 0;
+    var hover_timeout = null;
+    var touching = false;
+    var hover_flag = 0;
     return owner.toggler = {
-      update(ev) {
+      update: function(ev) {
         if (!touching) touching = true;
         owner.addClass('hover');
         hover_flag++;
@@ -821,37 +821,37 @@ function Player() {}
           clearTimeout(hover_timeout);
           hover_timeout = null;
         }
-        hover_timeout = setTimeout(() => {
+        hover_timeout = setTimeout(function() {
           owner.removeClass('hover');
           hover_timeout = null;
           hover_flag = 0;
         }, 1700);
       },
-      touching() {
+      touching: function() {
         return touching;
       },
-      interactable() {
+      interactable: function() {
         return !touching || hover_flag > 1;
       }
     };
   }
-
-  $(() => {
+  
+  $(function() {
     $('.video').each(function() {
-      const el = $(this);
+      var el = $(this);
       if (!el.attr('data-pending') && !el.hasClass('unplayable')) (new Player()).constructor(el);
     });
   });
-
-  $(window).on('resize', () => {
+  
+  $(window).on('resize', function() {
     $('.video').each(resize);
   });
-
-  $(window).on('resize blur', () => {
+  
+  $(window).on('resize blur', function() {
     $('.player').each(removeContext);
   });
-
-  $doc.on('mousemove', () => {
+  
+  $doc.on('mousemove', function() {
     fadeTimer = 2;
     if (Player.fullscreenPlayer) {
       Player.fullscreenPlayer.controls.css('opacity', 1);
@@ -859,4 +859,4 @@ function Player() {}
       if (fadeControl == null) fadeControl = setTimeout(controlsFade, 1000);
     }
   });
-}());
+})();

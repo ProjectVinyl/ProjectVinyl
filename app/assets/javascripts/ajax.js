@@ -1,15 +1,15 @@
 const ajax = (function() {
-
+  
   function xhr(params) {
     if (params.xhr) {
-      const xhr = params.xhr;
+      var xhr = params.xhr;
       params.xhr = function() {
         return xhr($.ajaxSettings.xhr());
       };
     }
     return $.ajax(params);
   }
-
+  
   function request(method, resource, callback, data, direct) {
     xhr({
       type: method,
@@ -18,52 +18,52 @@ const ajax = (function() {
       success: direct ? callback : function(xml, type, ev) {
         callback(ev.status == 204 ? {} : JSON.parse(ev.responseText), ev.status);
       },
-      error(d) {
-        console.error(`${method} ${resource}\n\n${d.responseText}`);
+      error: function(d) {
+        console.error(method + ' ' + resource + '\n\n' + d.responseText);
       },
-      data
+      data: data
     });
   }
-
+  
   function sanitizeUrl(url) {
     while (url.indexOf('/') == 0) url = url.substring(1, url.length);
     return url;
   }
-
+  
   function AjaxRequest(resource, callback, direct) {
     AjaxRequest.get(resource, callback, {}, direct);
   }
-
+  
   return Object.freeze(extendObj(AjaxRequest, {
-    form(form, e, callbacks) {
+    form: function(form, e, callbacks) {
       if (!callbacks && !e.preventDefault) {
         callbacks = e;
         e = undefined;
       }
       if (e) e.preventDefault();
-      const message = form.find('.progressor .message');
-      const fill = form.find('.progressor .fill');
-      let uploadedBytes = 0;
-      let totalBytes = 0;
-      let secondsRemaining = new Duration();
-      const timeStarted = new Date();
-      let timer;
-      const callback_func = form.attr('data-callback');
-
+      var message = form.find('.progressor .message');
+      var fill = form.find('.progressor .fill');
+      var uploadedBytes = 0;
+      var totalBytes = 0;
+      var secondsRemaining = new Duration();
+      var timeStarted = new Date();
+      var timer;
+      var callback_func = form.attr('data-callback');
+      
       callbacks = callbacks || {};
       xhr({
         type: form.attr('method'),
-        url: `${form.attr('action')}/async`,
+        url: form.attr('action') + '/async',
         enctype: 'multipart/form-data',
         data: new FormData(form[0]),
-        xhr(xhr) {
+        xhr: function(xhr) {
           if (xhr.upload) {
-            xhr.upload.addEventListener('progress', e => {
+            xhr.upload.addEventListener('progress', function(e) {
               uploadedBytes = e.loaded;
-              totalBytes = e.total;
+              totalBytes = e.total
               if (e.lengthComputable) {
                 if (!message.hasClass('plain')) message.addClass('bobber');
-                const percentage = Math.min((e.loaded / e.total) * 100, 100);
+                var percentage = Math.min((e.loaded / e.total) * 100, 100);
                 if (callbacks.progress) {
                   callbacks.progress.apply(form, [e, message, fill, percentage, secondsRemaining]);
                 } else {
@@ -71,31 +71,31 @@ const ajax = (function() {
                     form.addClass('waiting');
                     message.text('Waiting for server...');
                   } else {
-                    message.text(`${secondsRemaining.toString()} remaining (${Math.floor(percentage)}% )`);
+                    message.text(secondsRemaining.toString() + ' remaining (' + Math.floor(percentage) + '% )');
                   }
-                  fill.css('width', `${percentage}%`);
+                  fill.css('width', percentage + '%');
                   message.css({
-                    left: `${percentage}%`
+                    'left': percentage + '%'
                   });
                 }
                 if (callbacks.update) callbacks.update.apply(form, [e, percentage, secondsRemaining]);
                 message.css({
-                  'margin-left': -message.outerWidth() / 2
+                  'margin-left': -message.outerWidth()/2
                 });
               }
             }, false);
           }
           return xhr;
         },
-        beforeSend() {
-          timer = setInterval(() => {
-            const timeElapsed = new Date() - timeStarted;
-            const uploadSpeed = uploadedBytes / (timeElapsed / 1000);
+        beforeSend: function() {
+          timer = setInterval(function() {
+            var timeElapsed = (new Date()) - timeStarted;
+            var uploadSpeed = uploadedBytes / (timeElapsed / 1000);
             secondsRemaining = new Duration((totalBytes - uploadedBytes) / uploadSpeed);
           }, 1000);
           form.addClass('uploading');
         },
-        success(data) {
+        success: function (data) {
           if (timer) clearInterval(timer);
           if (callbacks.success) {
             form.removeClass('waiting');
@@ -106,15 +106,15 @@ const ajax = (function() {
           } else if (data.ref) {
             document.location.href = data.ref;
           }
-
+          
         },
-        error(e, err, msg) {
+        error: function(e, err, msg) {
           if (timer) clearInterval(timer);
           form.removeClass('waiting').addClass('error');
           if (callbacks.error) return callbacks.error(message, msg, e.responseText);
           message.text(e.responseText);
         },
-        complete() {
+        complete: function() {
           if (form.hasClass('form-state-toggle')) {
             form.parent().toggleClass(form.attr('data-state'));
             form.removeClass('waiting').removeClass('uploading');
@@ -125,14 +125,14 @@ const ajax = (function() {
         processData: false
       });
     },
-    post(resource, callback, direct, data) {
-      request('POST', `/ajax/${sanitizeUrl(resource)}`, callback, data || {}, direct);
+    post: function(resource, callback, direct, data) {
+      request('POST', '/ajax/' + sanitizeUrl(resource), callback, data || {}, direct);
     },
-    delete(resource, callback, direct) {
+    delete: function(resource, callback, direct) {
       request('DELETE', resource, callback, {}, direct);
     },
-    get(resource, callback, data, direct) {
-      request('GET', `/ajax/${sanitizeUrl(resource)}`, callback, data, direct);
+    get: function(resource, callback, data, direct) {
+      request('GET', '/ajax/' + sanitizeUrl(resource), callback, data, direct);
     }
   }));
-}());
+})();
