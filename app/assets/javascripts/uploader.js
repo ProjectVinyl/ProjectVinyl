@@ -81,7 +81,7 @@ var Uploader = (function() {
     this.cover.preview = this.cover.find('.preview');
     this.source = this.el.find('#video_source');
     
-    BBC.init(this.videoTitle);
+    BBC.init(this.videoTitle[0]);
     initFileSelect(this.video);
     initFileSelect(this.cover);
     

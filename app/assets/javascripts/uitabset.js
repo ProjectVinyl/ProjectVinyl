@@ -1,9 +1,11 @@
 function focusTab(me) {
   if (!me.hasClass('selected') && me[0].dataset.target) {
     var other = me.parent().find('.selected');
-    other.removeClass('selected');
+    if (other.length) {
+      other.removeClass('selected');
+      $('div[data-tab="' + other[0].dataset.target + '"]').removeClass('selected').trigger('tabblur');
+    }
     me.addClass('selected');
-    $('div[data-tab="' + other[0].dataset.target + '"]').removeClass('selected').trigger('tabblur');
     $('div[data-tab="' + me[0].dataset.target + '"]').addClass('selected').trigger('tabfocus');
   }
 }
