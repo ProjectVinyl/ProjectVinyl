@@ -1,19 +1,19 @@
 (function() {
-  var hover_timeout = null;
+  var hoverTimeout = null;
   function openUsercard(sender, usercard) {
     $('.hovercard.shown').removeClass('shown');
     sender.append(usercard);
-    if (hover_timeout) {
-      clearTimeout(hover_timeout);
+    if (hoverTimeout) {
+      clearTimeout(hoverTimeout);
     }
     setTimeout(function() {
       usercard.addClass('shown');
-      hover_timeout = setTimeout(function() {
+      hoverTimeout = setTimeout(function() {
         $('.user-link:not(:hover) .hovercard.shown').removeClass('shown');
       }, 500);
     }, 500);
   }
-
+  
   $doc.on('mouseenter', '.user-link', function() {
     var sender = $(this);
     var id = sender.attr('data-id');
@@ -32,7 +32,7 @@
       openUsercard(sender, usercard);
     }
   });
-
+  
   $doc.on('mouseleave', '.user-link', function() {
     $('.hovercard.shown').toggleClass('shown');
   });

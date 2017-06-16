@@ -1,12 +1,15 @@
 /*
-Initialises basic video playback funtionality.
-
-Copyright Project Vinyl Foundation 2016
+ * Initialises basic video playback funtionality.
+ *
+ * Copyright Project Vinyl Foundation 2016
 */
 
-function Player() {}
-(function() {
-  var Key = { SPACE: 32 };
+const Player = (function() {
+  const VIDEO_ELEMENT = document.createElement('video');
+  const Key = { SPACE: 32 };
+  const aspect = 16 / 9;
+  var fadeControl = null;
+  
   /* Standardise fullscreen API */
   (function(p) {
     Player.requestFullscreen = p.requestFullscreen || p.mozRequestFullScreen || p.msRequestFullscreen || p.webkitRequestFullscreen || function() {};
@@ -15,13 +18,43 @@ function Player() {}
       return document.fullScreen || document.mozFullScreen || document.webkitIsFullScreen;
     };
   })(Element.prototype);
+  
+  function controlsFade() {
+    if (Player.fullscreenPlayer) {
+      Player.fullscreenPlayer.controls.css('opacity', 0);
+      Player.fullscreenPlayer.player.find('.playing').css('cursor', 'none');
+    }
+    fadeControl = null;
+  }
+  
+  function attachMessageListener(sender) {
+    $win.on('storage', function(ev) {
+      if (ev.originalEvent.key === '::activeplayer' && ev.originalEvent.newValue != sender.__seed) {
+        sender.pause();
+      }
+    });
+  }
+  
+  function sendMessage(sender) {
+    if (sender.__sendMessages) {
+      sender.__seed = '' + ((parseInt(localStorage['::activeplayer'] || '0') + 1) % 3);
+      localStorage.setItem('::activeplayer', sender.__seed);
+    }
+  }
+  
+  function canGen(childs) {
+    return !childs.length || (childs.length == 1 && childs.first().hasClass('playlist'));
+  }
+  
+  function Player() {}
   Player.onFullscreen = function(func) {
-    $(document).on('webkitfullscreenchange mozfullscreenchange fullscreenchange', func);
+    $doc.on('webkitfullscreenchange mozfullscreenchange fullscreenchange', func);
   };
-  var VIDEO_ELEMENT = document.createElement('video');
+  
   Player.canPlayType = function(mime) {
     return !!(mime = VIDEO_ELEMENT.canPlayType(mime)).length && mime !== 'no';
   };
+  
   Player.speeds = [
     {name: 'Double', value: 2},
     {name: '1.5x', value: 1.5},
@@ -30,6 +63,7 @@ function Player() {}
     {name: '0.5x', value: 0.5},
     {name: '0.25x', value: 0.25}
   ];
+  
   Player.createVideoElement = function(player) {
     if (!player.source || player.source == '0') return $('<video></video>');
     if (typeof player.source === 'string' && player.source.indexOf('blob') == 0) return $('<video src="' + player.source + '"></video>');
@@ -39,6 +73,7 @@ function Player() {}
              <source src="/stream/' + player.source + player.mime[0] + '" type="' + player.mime[1] + '"></source>\
             </video>');
   };
+  
   Player.errorMessage = function(video) {
     if (!video.error) {
       switch (video.networkState) {
@@ -55,12 +90,15 @@ function Player() {}
       default: return 'Unknown Error';
     }
   };
+  
   Player.errorPresent = function(video) {
     return (video.error && video.error.code != video.error.MEDIA_ERR_ABORTED) || (video.networkState == HTMLMediaElement.NETWORK_NO_SOURCE);
   };
+  
   Player.isready = function(video) {
     return video.readyState == 4;
   };
+  
   Player.noise = (function() {
     var canvas = null, ctx = null;
     var toggle = true;
@@ -89,6 +127,7 @@ function Player() {}
       return canvas;
     };
   })();
+  
   Player.generate = function(holder) {
     holder.prepend('<div class="player" >\
     <span class="playing"></span>\
@@ -120,40 +159,18 @@ function Player() {}
   </div>\
   <ul class="contextmenu"></ul>');
   };
-  var fadeControl = null;
-  function controlsFade() {
-    if (Player.fullscreenPlayer) {
-      Player.fullscreenPlayer.controls.css('opacity', 0);
-      Player.fullscreenPlayer.player.find('.playing').css('cursor', 'none');
-    }
-    fadeControl = null;
-  }
-  function attachMessageListener(me) {
-    $(window).on('storage', function(ev) {
-      if (ev.originalEvent.key === '::activeplayer' && ev.originalEvent.newValue != me.__seed) {
-        me.pause();
-      }
-    });
-  }
-  function sendMessage(me) {
-    if (me.__sendMessages) {
-      me.__seed = '' + ((parseInt(localStorage['::activeplayer'] || '0') + 1) % 3);
-      localStorage.setItem('::activeplayer', me.__seed);
-    }
-  }
+  
   Player.onFullscreen(function() {
     if (Player.fullscreenPlayer) {
       Player.fullscreenPlayer.fullscreen(Player.isFullscreen());
     }
   });
-  function canGen(childs) {
-    return !childs.length || (childs.length == 1 && childs.first().hasClass('playlist'));
-  }
+  
   Player.Extend = function(Child, overrides) {
+    var keys = Object.keys(overrides);
     Child.prototype = new this();
     Child.Super = this.prototype;
     Child.Extend = this.Extend;
-    var keys = Object.keys(overrides);
     for (var i = keys.length; i--;) {
       Child.prototype[keys[i]] = overrides[keys[i]];
     }
@@ -161,7 +178,7 @@ function Player() {}
   Player.prototype = {
     constructor: function(el, standalone) {
       if (canGen(el.children())) Player.generate(el);
-      var me = this;
+      var self = this;
       this.__sendMessages = !standalone;
       this.dom = el;
       this.player = el.find('.player');
@@ -171,7 +188,7 @@ function Player() {}
       this.contextmenu = el.find('.contextmenu');
       this.contextmenu.unset = 1;
       this.player[0].getPlayerObj = function() {
-        return me;
+        return self;
       };
       this.video = null;
       this.mime = (el.attr('data-mime') || '.mp4|video/m4v').split('|');
@@ -184,41 +201,43 @@ function Player() {}
       } else {
         this.preview = $('<canvas />')[0];
       }
-
+      
       this.time = el.attr('data-time');
-
+      
       resize.apply(el);
-
+      
       el.find('h1 .title').text(this.title = el.attr('data-title'));
-      if (this.artist = el.attr('data-artist')) el.find('h1 .artist').text(this.artist);
-
+      this.artist = el.attr('data-artist');
+      if (this.artist) el.find('h1 .artist').text(this.artist);
+      
       new TapToggler(this.dom);
+      
       el.on('click', function(ev) {
-        if (!me.removeContext(ev)) {
-          if (!me.player.hasClass('playing') || me.dom.toggler.interactable()) {
-            if (me.dom.playlist && me.dom.playlist.hasClass('visible')) {
-              me.dom.playlist.toggleClass('visible');
+        if (!self.removeContext(ev)) {
+          if (!self.player.hasClass('playing') || self.dom.toggler.interactable()) {
+            if (self.dom.playlist && self.dom.playlist.hasClass('visible')) {
+              self.dom.playlist.toggleClass('visible');
             } else {
-              me.toggleVideo();
+              self.toggleVideo();
             }
           }
         }
       });
       el.on('contextmenu', function(ev) {
-        me.showContext(ev);
+        self.showContext(ev);
       });
-      var active_touches = [];
+      var activeTouches = [];
       var tapped = false;
       el.on('touchstart', function(ev) {
         if (Player.fullscreenPlayer == this) {
-          if (active_touches.length > 0) {
-            me.halt(ev);
+          if (activeTouches.length > 0) {
+            self.halt(ev);
             return;
           }
         }
         if (tapped) {
-          me.fullscreen(!Player.isFullscreen());
-          me.halt(ev);
+          self.fullscreen(!Player.isFullscreen());
+          self.halt(ev);
           clearTimeout(tapped);
           tapped = null;
           return;
@@ -226,14 +245,14 @@ function Player() {}
         tapped = setTimeout(function() {
           tapped = null;
         }, 500);
-
-        me.dom.toggler.update(ev);
-        active_touches.push({identifier: ev.identifier});
+        
+        self.dom.toggler.update(ev);
+        activeTouches.push({identifier: ev.identifier});
       });
       el.on('touchmove touchend touchcancel', function(ev) {
-        for (var i = 0; i < active_touches; i++) {
-          if (active_touches[i].identifier == ev.identifier) {
-            active_touches.splice(i, 1);
+        for (var i = 0; i < activeTouches; i++) {
+          if (activeTouches[i].identifier == ev.identifier) {
+            activeTouches.splice(i, 1);
           }
         }
       });
@@ -241,22 +260,22 @@ function Player() {}
       this.__speed = 3;
       this.contextmenu.on('click', this.halt);
       this.addContext('Loop', false, function(val) {
-        val(me.loop(!me.__loop));
+        val(self.loop(!self.__loop));
       });
-      this.addContext('Speed', me.speed(me.__speed), function(val) {
-        me.__speed = (me.__speed + 1) % Player.speeds.length;
-        val(me.speed(me.__speed));
+      this.addContext('Speed', self.speed(self.__speed), function(val) {
+        self.__speed = (self.__speed + 1) % Player.speeds.length;
+        val(self.speed(self.__speed));
       });
-
-      $(document).on('click', function(ev) {
-        me.removeContext(ev);
+      
+      $doc.on('click', function(ev) {
+        self.removeContext(ev);
       });
-      $(document).on('keydown', function(ev) {
+      $doc.on('keydown', function(ev) {
         if (ev.which == Key.SPACE) {
           if (!$('input:focus,textarea:focus').length) {
-            if (me.video) {
-              me.toggleVideo();
-              me.halt(ev);
+            if (self.video) {
+              self.toggleVideo();
+              self.halt(ev);
             }
           }
         }
@@ -264,60 +283,60 @@ function Player() {}
       if (this.controls.length) {
         this.controls.track = this.controls.find('.track');
         this.controls.track.on('mousedown', function(ev) {
-          if (!me.removeContext(ev)) {
-            me.checkstart();
-            me.jump(ev);
+          if (!self.removeContext(ev)) {
+            self.checkstart();
+            self.jump(ev);
           }
         });
         this.controls.track.bob = this.controls.find('.track .bob');
         this.controls.track.fill = this.controls.find('.track .fill');
         this.controls.track.bob.on('mousedown', function(ev) {
-          if (!me.removeContext(ev)) me.startChange(ev);
+          if (!self.removeContext(ev)) self.startChange(ev);
         });
         this.controls.track.bob.on('touchstart', function(ev) {
-          me.removeContext(ev);
-          me.startChange(ev);
+          self.removeContext(ev);
+          self.startChange(ev);
         });
         this.controls.track.preview = el.find('.track .previewer');
         this.controls.track.preview.append(this.preview);
         this.controls.track.on('mousemove', function(ev) {
-          me.drawPreview(me.evToProgress(ev));
+          self.drawPreview(self.evToProgress(ev));
         });
         this.controls.volume = this.controls.find('.volume');
         this.controls.volume.on('click', function(ev) {
-          if (!me.removeContext(ev)) {
-            if (me.controls.volume.toggler.interactable()) {
-              me.muteUnmute();
+          if (!self.removeContext(ev)) {
+            if (self.controls.volume.toggler.interactable()) {
+              self.muteUnmute();
             }
           }
         });
         new TapToggler(this.controls.volume);
         this.controls.volume.on('touchstart', function(ev) {
-          me.controls.volume.toggler.update(ev);
-          me.halt(ev);
+          self.controls.volume.toggler.update(ev);
+          self.halt(ev);
         });
-
+        
         this.controls.volume.bob = this.controls.find('.volume .bob');
         this.controls.volume.fill = this.controls.find('.volume .fill');
         this.controls.volume.bob.on('mousedown', function(ev) {
-          if (!me.removeContext(ev)) me.startChangeVolume(ev);
+          if (!self.removeContext(ev)) self.startChangeVolume(ev);
         });
         this.controls.volume.bob.on('touchstart', function(ev) {
-          me.removeContext(ev);
-          me.startChangeVolume(ev);
+          self.removeContext(ev);
+          self.startChangeVolume(ev);
         });
         this.controls.volume.slider = this.controls.find('.volume .slider');
         this.controls.volume.slider.on('mousedown', function(ev) {
-          if (!me.removeContext(ev)) {
-            me.checkstart();
-            me.changeVolume(ev);
+          if (!self.removeContext(ev)) {
+            self.checkstart();
+            self.changeVolume(ev);
           }
         });
         this.controls.fullscreen = this.controls.find('.fullscreen .indicator');
         this.controls.find('.fullscreen').on('click', function(ev) {
-          if (!me.removeContext(ev)) {
-            me.fullscreen(!Player.isFullscreen());
-            me.halt(ev);
+          if (!self.removeContext(ev)) {
+            self.fullscreen(!Player.isFullscreen());
+            self.halt(ev);
           }
         });
         this.controls.volume.slider.on('click', this.halt);
@@ -326,9 +345,9 @@ function Player() {}
       attachMessageListener(this);
       if (el.attr('data-autoplay')) {
         this.checkstart();
-        this.addContext('Autoplay', this.autoplay(!document.cookie.replace(/(?:(?:^|.*;\s*)autoplay\s*\=\s*([^;]*).*$)|^.*$/, '$1')), function(val) {
-          val(me.__autoplay = !me.__autoplay);
-          document.cookie = 'autoplay=' + (on ? ';' : '1;');
+        this.addContext('Autoplay', this.autoplay(!document.cookie.replace(/(?:(?:^|.*;\s*)autoplay\s*=\s*([^;]*).*$)|^.*$/, '$1')), function(val) {
+          val(self.__autoplay = !self.__autoplay);
+          document.cookie = 'autoplay=' + (self.__autoplay ? ';' : '1;');
         });
       } else if (el.attr('data-resume') == 'true') {
         this.checkstart();
@@ -338,9 +357,9 @@ function Player() {}
     removeContext: function(ev) {
       if (ev.which == 1 && this.contextmenu.css('display') == 'table') {
         this.contextmenu.css('opacity', '');
-        var me = this;
+        var self = this;
         setTimeout(function() {
-          me.contextmenu.css('display', '');
+          self.contextmenu.css('display', '');
         }, 100);
         return 1;
       }
@@ -349,8 +368,8 @@ function Player() {}
     showContext: function(ev) {
       var y = ev.pageY;
       var x = ev.pageX;
-      if (x + this.contextmenu.width() > $(window).width()) x = $(window).width() - this.contextmenu.width();
-      if (y + this.contextmenu.height() + 10 >= $(window).height()) y = $(window).height() - this.contextmenu.height() - 10;
+      if (x + this.contextmenu.width() > $win.width()) x = $win.width() - this.contextmenu.width();
+      if (y + this.contextmenu.height() + 10 >= $win.height()) y = $win.height() - this.contextmenu.height() - 10;
       this.contextmenu.css({
         top: y - this.dom.offset().top,
         left: x - this.dom.offset().left,
@@ -367,37 +386,37 @@ function Player() {}
       link.attr({
         target: '_blank', href: '/view/' + id + '-' + this.title
       });
-      var me = this;
+      var self = this;
       link.on('mouseover', function() {
-        if (me.video && me.video.currentTime > 0) {
-          link.attr('href', '/view/' + id + '-' + me.title + '?resume=' + me.video.currentTime);
+        if (self.video && self.video.currentTime > 0) {
+          link.attr('href', '/view/' + id + '-' + self.title + '?resume=' + self.video.currentTime);
         }
       });
       link.on('click', function(ev) {
         ev.stopPropagation();
       });
     },
-    setPlaylist: function(album_id, album_index) {
+    setPlaylist: function(albumId, albumIndex) {
       this.album = {
-        id: album_id, index: album_index
+        id: albumId, index: albumIndex
       };
       this.dom.playlist = $('.playlist');
       this.dom.playlist.link = $('<div class="playlist-toggle"><i class="fa fa-list" /></div>');
       this.dom.append(this.dom.playlist.link);
-      var me = this;
+      var self = this;
       this.dom.playlist.link.on('click', function(ev) {
-        me.dom.playlist.toggleClass('visible');
-        me.halt(ev);
+        self.dom.playlist.toggleClass('visible');
+        self.halt(ev);
       });
-      this.addContext('Autoplay', this.autoplay(!document.cookie.replace(/(?:(?:^|.*;\s*)autoplay\s*\=\s*([^;]*).*$)|^.*$/, '$1')), function(val) {
-        val(me.__autoplay = !me.__autoplay);
-        document.cookie = 'autoplay=' + (on ? ';' : '1;');
+      this.addContext('Autoplay', this.autoplay(!document.cookie.replace(/(?:(?:^|.*;\s*)autoplay\s*=\s*([^;]*).*$)|^.*$/, '$1')), function(val) {
+        val(self.__autoplay = !self.__autoplay);
+        document.cookie = 'autoplay=' + (self.__autoplay ? ';' : '1;');
       });
       this.dom.playlist.on('click', '.items a, #playlist_next, #playlist_prev', function(ev) {
         var next = $(this);
         ajax.get('view' + next.attr('href'), function(json) {
-          me.redirect = next.attr('href');
-          me.loadAttributesAndRestart(json);
+          self.redirect = next.attr('href');
+          self.loadAttributesAndRestart(json);
           if (json.next) {
             $('#playlist_next').attr('href', json.next);
           }
@@ -409,7 +428,7 @@ function Player() {}
           selected.addClass('selected');
           scrollTo(selected, '.playlist .scroll-container');
         });
-        me.halt(ev);
+        self.halt(ev);
       });
     },
     addContext: function(title, initial, callback) {
@@ -522,8 +541,8 @@ function Player() {}
       }
     },
     start: function() {
+      var video;
       if (!this.video) {
-        var video;
         if (this.audioOnly && this.source) {
           video = $('<audio src="/stream/' + this.source + this.mime[0] + '" type="' + this.mime[1] + '"></audio>');
         } else {
@@ -535,40 +554,40 @@ function Player() {}
             this.video.currentTime = parseInt(this.time);
           } else {
             var t = parseInt(this.time);
-            this.video.addEventListener('canplay', function set_time() {
+            this.video.addEventListener('canplay', function setTime() {
               this.currentTime = t;
-              this.removeEventListener('canplay', set_time);
+              this.removeEventListener('canplay', setTime);
             });
           }
         }
         this.player.find('.playing').append(this.video);
-        var me = this;
+        var self = this;
         video.on('pause', function() {
-          me.pause();
+          self.pause();
         });
         video.on('play', function() {
-          me.player.addClass('playing');
-          me.player.removeClass('stopped');
-          me.player.removeClass('paused');
-          me.player.removeClass('error');
-          me.video.loop = !!me.__loop;
-          sendMessage(me);
-          me.volume(this.volume, this.muted);
+          self.player.addClass('playing');
+          self.player.removeClass('stopped');
+          self.player.removeClass('paused');
+          self.player.removeClass('error');
+          self.video.loop = !!self.__loop;
+          sendMessage(self);
+          self.volume(this.volume, this.muted);
         });
         video.on('abort error', function(e) {
-          me.error(e);
+          self.error(e);
         });
         video.find('source').last().on('error', function(e) {
-          me.error(e);
+          self.error(e);
         });
         video.on('ended', function() {
-          if (me.__autoplay) {
+          if (self.__autoplay) {
             var next = $('#playlist_next');
             if (next.length) {
-              if (Player.fullscreenPlayer == me || me.album) {
+              if (Player.fullscreenPlayer == self || self.album) {
                 ajax.get('view' + next.attr('href'), function(json) {
-                  me.redirect = next.attr('href');
-                  me.loadAttributesAndRestart(json);
+                  self.redirect = next.attr('href');
+                  self.loadAttributesAndRestart(json);
                   if (json.next) {
                     next.attr('href', json.next);
                   } else {
@@ -590,28 +609,28 @@ function Player() {}
               }
             }
           } else {
-            if (me.pause()) me.player.addClass('stopped');
+            if (self.pause()) self.player.addClass('stopped');
           }
         });
         var suspendTimer = null;
         video.on('suspend waiting', function() {
           if (!suspendTimer) {
             suspendTimer = setTimeout(function() {
-              me.suspend.css('display', 'block');
+              self.suspend.css('display', 'block');
             }, 3000);
           }
         });
         video.on('volumechange', function() {
-          me.volume(me.video.volume, me.video.muted || me.video.volume == 0);
+          self.volume(self.video.volume, self.video.muted || self.video.volume == 0);
         });
         video.on('timeupdate', function() {
           if (suspendTimer) {
             clearTimeout(suspendTimer);
             suspendTimer = null;
           }
-          me.track(me.video.currentTime, parseInt(me.video.duration) || 0);
+          self.track(self.video.currentTime, parseInt(self.video.duration) || 0);
         });
-        this.volume(me.video.volume, video.muted);
+        this.volume(self.video.volume, video.muted);
       }
       if (this.video.networkState == HTMLMediaElement.NETWORK_NO_SOURCE) {
         this.video.load();
@@ -685,43 +704,49 @@ function Player() {}
       if (!x && ev.originalEvent.touches) {
         x = ev.originalEvent.touches[0].pageX || 0;
       }
-
+      
       x -= this.controls.track.offset().left;
       if (x < 0) x = 0;
       if (x > this.controls.track.width()) x = this.controls.track.width();
       return x / this.controls.track.width();
     },
-    startChange: function(ev, bob) {
+    startChange: function(ev) {
+      var self = this;
+      
       this.checkstart();
-      var me = this;
-      var func = function(ev) {
-        me.jump(ev);
-      };
       this.dom.addClass('tracking');
-      $(document).on('mousemove touchmove', func);
-      var ender = function() {
-        $(document).off('mouseup touchend touchcancel', ender);
-        $(document).off('mousemove touchmove', func);
-        me.dom.removeClass('tracking');
-      };
-      $(document).one('mouseup touchend touchcancel', ender);
+      $doc.on('mousemove touchmove', func);
+      $doc.one('mouseup touchend touchcancel', ender);
       this.halt(ev);
+      
+      function func(ev) {
+        self.jump(ev);
+      }
+      
+      function ender() {
+        $doc.off('mouseup touchend touchcancel', ender);
+        $doc.off('mousemove touchmove', func);
+        self.dom.removeClass('tracking');
+      }
     },
     startChangeVolume: function(ev) {
       this.checkstart();
-      var me = this;
-      var func = function(ev) {
-        me.changeVolume(ev);
-      };
+      var self = this;
+      
       this.dom.addClass('voluming');
-      $(document).on('mousemove touchmove', func);
-      var ender = function() {
-        $(document).off('mouseup touchend touchcancel', ender);
-        $(document).off('mousemove touchmove', func);
-        me.dom.removeClass('voluming');
-      };
-      $(document).one('mouseup touchend touchcancel', ender);
+      $doc.on('mousemove touchmove', func);
+      $doc.one('mouseup touchend touchcancel', ender);
       this.halt(ev);
+      
+      function func(ev) {
+        self.changeVolume(ev);
+      }
+      
+      function ender() {
+        $doc.off('mouseup touchend touchcancel', ender);
+        $doc.off('mousemove touchmove', func);
+        self.dom.removeClass('voluming');
+      }
     },
     changeVolume: function(ev) {
       var height = this.controls.volume.slider.height();
@@ -776,15 +801,15 @@ function Player() {}
         if (this.preview && this.preview.time != time) {
           this.preview.time = time;
           if (!this.preview.video) {
-            var temp_vid = this.preview.video = Player.createVideoElement(this)[0];
+            var tempVid = this.preview.video = Player.createVideoElement(this)[0];
             var canvas = this.preview;
             var context = this.preview.getContext('2d');
-            temp_vid.addEventListener('loadeddata', function load_time() {
+            tempVid.addEventListener('loadeddata', function loadTime() {
               this.currentTime = time;
-              this.removeEventListener('loadeddata', load_time);
+              this.removeEventListener('loadeddata', loadTime);
             });
-            temp_vid.addEventListener('seeked', function() {
-              context.drawImage(temp_vid, 0, 0, canvas.width, canvas.height);
+            tempVid.addEventListener('seeked', function() {
+              context.drawImage(tempVid, 0, 0, canvas.width, canvas.height);
             });
           } else {
             if (Player.isready(this.preview.video)) {
@@ -795,68 +820,70 @@ function Player() {}
       }
     }
   };
-
-  var aspect = 16 / 9;
-  function resize() {
-    var me = $(this);
-    me.css({
-      'margin-bottom': '', height: (me.width() / aspect) + 'px'
-    });
-  }
-  var ev = {which:1};
-  function removeContext() {
-    if (this.getPlayerObj) this.getPlayerObj().removeContext(ev);
-  }
-
+  
   function TapToggler(owner) {
-    var hover_timeout = null;
+    var hoverTimeout = null;
     var touching = false;
-    var hover_flag = 0;
+    var hoverFlag = 0;
     return owner.toggler = {
-      update: function(ev) {
+      update: function() {
         if (!touching) touching = true;
         owner.addClass('hover');
-        hover_flag++;
-        if (hover_timeout) {
-          clearTimeout(hover_timeout);
-          hover_timeout = null;
+        hoverFlag++;
+        if (hoverTimeout) {
+          clearTimeout(hoverTimeout);
+          hoverTimeout = null;
         }
-        hover_timeout = setTimeout(function() {
+        hoverTimeout = setTimeout(function() {
           owner.removeClass('hover');
-          hover_timeout = null;
-          hover_flag = 0;
+          hoverTimeout = null;
+          hoverFlag = 0;
         }, 1700);
       },
       touching: function() {
         return touching;
       },
       interactable: function() {
-        return !touching || hover_flag > 1;
+        return !touching || hoverFlag > 1;
       }
     };
   }
-
+  
   $(function() {
     $('.video').each(function() {
-      var el = $(this);
-      if (!el.attr('data-pending') && !el.hasClass('unplayable')) (new Player()).constructor(el);
+      if (!this.dataset.pending && !this.classList.contains('unplayable')) (new Player()).constructor($(this));
     });
   });
-
-  $(window).on('resize', function() {
+  
+  function resize() {
+    var me = $(this);
+    me.css({
+      'margin-bottom': '', height: (me.width() / aspect) + 'px'
+    });
+  }
+  
+  $win.on('resize', function() {
     $('.video').each(resize);
   });
-
-  $(window).on('resize blur', function() {
-    $('.player').each(removeContext);
-  });
-
+  
+  (function() {
+    var ev = {which:1};
+    function removeContext() {
+      if (this.getPlayerObj) this.getPlayerObj().removeContext(ev);
+    }
+    
+    $win.on('resize blur', function() {
+      $('.player').each(removeContext);
+    });
+  })();
+  
   $doc.on('mousemove', function() {
-    fadeTimer = 2;
     if (Player.fullscreenPlayer) {
       Player.fullscreenPlayer.controls.css('opacity', 1);
       Player.fullscreenPlayer.player.find('.playing').css('cursor', '');
       if (fadeControl == null) fadeControl = setTimeout(controlsFade, 1000);
     }
   });
+  
+  return Player;
 })();

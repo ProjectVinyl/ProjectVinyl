@@ -1,29 +1,31 @@
 (function() {
   function count(me, offset) {
-    var likes = me.attr('data-count');
+    var likes = me[0].dataset.count;
+    var count = me.find('.count');
+    
     if (!likes) {
       likes = 0;
     } else {
       likes = parseInt(likes);
     }
     likes += offset;
-    me.attr('data-count', likes);
+    me[0].dataset.count = likes;
     if (likes == 0) {
-      me.find('.count').remove();
+      count.remove();
     } else {
-      var count = me.find('.count');
       if (!count.length) {
         me.children('span').append('<span class="count" >' + likes + '</span>');
       } else {
         count.text(likes);
       }
     }
-    ajax.post(me.attr('data-action') + '/' + me.attr('data-id') + '/' + offset, function(json) {
-      if (count) count.text(json.count);
+    
+    ajax.post(me[0].dataset.action + '/' + me[0].dataset.id + '/' + offset, function(json) {
+      if (count.length) count.text(json.count);
     });
     return me;
   }
-
+  
   $doc.on('click', 'button.action.like, button.action.dislike', function() {
     var me = $(this);
     if (me.hasClass('liked')) {
@@ -36,11 +38,11 @@
       count(me, 1).addClass('liked');
     }
   });
-
+  
   $doc.on('click', 'button.action.star', function fave() {
     var me = $(this);
     me.toggleClass('starred');
-    ajax.post(me.attr('data-action') + '/' + me.attr('data-id'), function(xml) {
+    ajax.post(me[0].dataset.action + '/' + me[0].dataset.id, function(xml) {
       if (xml.added) {
         me.addClass('starred');
       } else {

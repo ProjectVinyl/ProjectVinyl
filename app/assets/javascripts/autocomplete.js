@@ -1,4 +1,6 @@
 (function() {
+  var autocomplete = null;
+  
   function lookup(sender, popout, action, input, validate) {
     ajax.post(action + '/lookup', function(json) {
       popout.empty();
@@ -18,25 +20,26 @@
       query: input.val(), validate: validate ? 1 : 0
     });
   }
-  var autocomplete = null;
+  
   $doc.on('focus', '.auto-lookup:not(.loaded) input', function() {
     var input = $(this);
     var me = input.parent();
-    me.addClass('loaded');
     var popout = me.find('.pop-out');
     var action = me.attr('data-action');
-    var last_value = null;
+    var lastValue = null;
     var validate = me.hasClass('validate');
+    
+    me.addClass('loaded');
     input.on('blur', function() {
       clearInterval(autocomplete);
       autocomplete = null;
     });
-    input.on('focus', function(e) {
+    input.on('focus', function() {
       if (!autocomplete) {
         autocomplete = setInterval(function() {
           var value = input.val();
-          if (value != last_value) {
-            last_value = value;
+          if (value != lastValue) {
+            lastValue = value;
             lookup(me, popout, action, input, validate);
           }
         }, 1000);

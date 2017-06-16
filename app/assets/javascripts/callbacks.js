@@ -5,16 +5,14 @@
 
 function loadBannerSelector() {
   var me = $('#banner-upload');
-  var base_path = me.attr('data-base-path');
-  initFileSelect(me).on('accept', function(e, file) {
-    var form = $(this).closest('form');
-    ajax.form(form, e, {
+  var basePath = me[0].dataset.path;
+  initFileSelect(me).on('accept', function(e) {
+    ajax.form($(this).closest('form'), e, {
       success: function() {
-        form.removeClass('uploading');
-        var av = $('#banner');
-        av.css({
+        this.removeClass('uploading');
+        $('#banner').css({
           'background-size': 'cover',
-          'background-image': 'url(' + base_path + '?' + new Date().getTime() + ')'
+          'background-image': 'url(' + basePath + '?' + new Date().getTime() + ')'
         });
       }
     });

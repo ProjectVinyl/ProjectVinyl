@@ -1,20 +1,20 @@
-function postComment(sender, thread_id, order, report_state) {
+function postComment(sender, threadId, order, reportState) {
   sender = $(sender).parent();
   var input = sender.find('textarea, input.comment-content');
-  var comment = input.val();
-  if (!comment.length) {
-    return error('You have to type something to post');
-  }
-  sender.addClass('posting');
+  var comment = input.val().trim();
+  if (!comment.length) return error('You have to type something to post');
+  
   var data = {
-    thread: thread_id,
+    thread: threadId,
     order: order,
     comment: comment
   };
-  if (report_state) data.report_state = report_state;
+  if (reportState) data.report_state = reportState;
+  
+  sender.addClass('posting');
   ajax.post('comments/new', function(json) {
     sender.removeClass('posting');
-    paginator.repaint($('#thread-' + thread_id).closest('.paginator'), json);
+    paginator.repaint($('#thread-' + threadId).closest('.paginator'), json);
     scrollTo('#comment_' + json.focus);
     input.val('').change();
   }, 0, data);
@@ -22,10 +22,10 @@ function postComment(sender, thread_id, order, report_state) {
 
 function editComment(sender) {
   sender = $(sender).parent();
-  ajax.post('comments/edit', function(html) {
+  ajax.post('comments/edit', function() {
     sender.removeClass('editing');
   }, 1, {
-    id: sender.attr('data-id'),
+    id: sender[0].dataset.id,
     comment: sender.find('textarea, input.comment-content').val()
   });
 }
@@ -48,46 +48,46 @@ function removeComment(id, json) {
   }
 }
 
-function lookupComment(comment_id) {
-  var comment = $('#comment_' + comment_id);
+function lookupComment(commentId) {
+  var comment = $('#comment_' + commentId);
   if (comment.length) {
-    scrollTo(comment).addClass('highlight');
-  } else {
-    var pagination = $('.comments').parent();
-    ajax.get(pagination.attr('data-type') + '?comment=' + comment_id + '&' + pagination.attr('data-args'), function(json) {
-      paginator.repaint(pagination, json);
-      scrollTo($('#comment_' + comment_id)).addClass('highlight');
-    });
+    return scrollTo(comment).addClass('highlight');
   }
+  var pagination = $('.comments').parent();
+  ajax.get(pagination[0].dataset.type + '?comment=' + commentId + '&' + pagination[0].dataset.args, function(json) {
+    paginator.repaint(pagination, json);
+    scrollTo($('#comment_' + commentId)).addClass('highlight');
+  });
 }
 
 function findComment(sender) {
   sender = $(sender);
   var container = sender.parents('comment');
   var parent = sender.attr('href');
-  if (!$(parent).length) {
-    ajax.get('comments/get', function(html) {
-      container.parent().prepend(html);
-      $('.comment.highlight').removeClass('highlight');
-      if (parent = scrollTo(parent)) parent.addClass('highlight').addClass('inline');
-    }, {
-      id: sender.attr('data-comment-id') || parseInt(parent.split('_')[1], 36)
-    }, 1);
-  } else {
+  if ($(parent).length) {
     parent = $(parent);
     if (parent.hasClass('inline')) {
       container.parent().prepend(parent);
     }
     $('.comment.highlight').removeClass('highlight');
-    scrollTo(parent).addClass('highlight');
+    return scrollTo(parent).addClass('highlight');
   }
+  
+  ajax.get('comments/get', function(html) {
+    container.parent().prepend(html);
+    $('.comment.highlight').removeClass('highlight');
+    parent = scrollTo(parent);
+    if (parent) parent.addClass('highlight').addClass('inline');
+  }, {
+    id: sender[0].dataset.id || parseInt(parent.split('_')[1], 36)
+  }, 1);
 }
 
 function replyTo(sender) {
   sender = $(sender).parent();
   textarea = sender.closest('.page, body').find('.post-box textarea');
   textarea.focus();
-  textarea.val('>>' + sender.attr('data-o-id') + ' [q]\n' + decode_entities(sender.attr('data-comment')) + '\n[/q]' + textarea.val());
+  textarea.val('>>' + sender[0].dataset['o-id'] + ' [q]\n' + decodeEntities(sender[0].dataset.comment) + '\n[/q]' + textarea.val());
   textarea.change();
 }
 
@@ -121,11 +121,7 @@ function markDeleted() {
 
 function messageOperation(action) {
   var checks = $('input.message_select:checked');
-  if (checks.length > 0) {
-    var ids = [];
-    checks.each(function() {
-      ids.push(this.value);
-    });
+  if (checks.length) {
     ajax.post('/messages/action', function(json) {
       if (json.content) {
         action.callback(checks, json);
@@ -133,7 +129,9 @@ function messageOperation(action) {
         checks.parents('li.thread').each(action.callback);
       }
     }, false, {
-      ids: ids.join(';'), op: action.id
+      ids: collect(checks, function() {
+        return this.value;
+      }).join(';'), op: action.id
     });
   }
 }
@@ -154,3 +152,7 @@ $doc.on('click', '.comment .mention, .comment .comment-content a[data-link="2"]'
 $doc.on('click', '.spoiler', function() {
   $(this).toggleClass('revealed');
 });
+
+if (document.location.hash.indexOf('#comment_') == 0) {
+  lookupComment(document.location.hash.split('_')[1]);
+}

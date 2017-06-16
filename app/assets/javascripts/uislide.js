@@ -15,23 +15,23 @@ function slideAcross(me, direction) {
   var form = me.parents('.slide-group');
   var to = form.find('.group[data-stage=' + me.attr('data-to') + ']');
   if (to.length) {
-    var offset = (parseInt(form.attr('data-offset')) || 0) + direction;
-    form.attr('data-offset', offset);
+    form[0].dataset.offset = (parseInt(form[0].dataset.offset) || 0) + direction;
     var from = form.find('.active');
-    var fromH = from.height();
-    var formH = form.height();
     from.removeClass('active');
     if (direction > 0) {
       from.after(to);
     } else {
       from.before(to);
     }
+    
     to.addClass('active');
     setTimeout(function() {
-      form.css('min-height', formH - (fromH - to.height()));
-      form.css('max-height', formH - (fromH - to.height()));
+      var diffH = form.height() - (from.height() - to.height());
+      
+      form.css('min-height', diffH);
+      form.css('max-height', diffH);
       form.addClass('animating');
-      form.find('.group').css('transform', 'translate(' + (-100 * offset) + '%,0)');
+      form.find('.group').css('transform', 'translate(' + (-100 * form[0].dataset.offset) + '%,0)');
       setTimeout(function() {
         form.removeClass('animating');
         form.css('max-height', '');

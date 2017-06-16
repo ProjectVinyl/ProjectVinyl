@@ -1,6 +1,5 @@
 var scrollTo = (function() {
   function scrollIntoView(me, container, viewport) {
-    if (!me.length) return;
     var offset = me.offset();
     var scrollpos = container.offset();
     container.animate({
@@ -9,8 +8,10 @@ var scrollTo = (function() {
     });
     return me;
   }
-
+  
   return function(el, container, viewport) {
-    return scrollIntoView($(el), $(container || 'html, body'), $(viewport || window));
+    el = $(el);
+    if (!el.length) return el;
+    return scrollIntoView(el, $(container || 'html, body'), $(viewport || window));
   };
 })();

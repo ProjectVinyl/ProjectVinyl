@@ -1,14 +1,15 @@
-var Key = {
+const Key = {
   ENTER: 13, ESC: 27, COMMA: 188, BACKSPACE: 8, Z: 90, Y: 89
 };
 
-var $doc = $(document);
+const $doc = $(document);
+const $win = $(window);
 
-var window_focused = false;
-$(window).on('focus', function() {
-  window_focused = true;
+var windowFocused = false;
+$win.on('focus', function() {
+  windowFocused = true;
 }).on('blur', function() {
-  window_focused = false;
+  windowFocused = false;
 });
 
 function Duration(seconds) {
@@ -45,9 +46,9 @@ Duration.prototype = {
   }
 };
 
-var decode_entities = (function() {
+(function() {
   var div = document.createElement('DIV');
-  return function(string) {
+  window.decodeEntities = function(string) {
     div.innerHTML = string;
     return div.innerText;
   };
@@ -76,10 +77,30 @@ function bind(target, func) {
   };
 }
 
-function extendObj(onto, overrides) {
-  var keys = Object.keys(overrides);
-  for (var i = keys.length; i--;) {
-    onto[keys[i]] = overrides[keys[i]];
+function iteration(arr, func) {
+  return function() {
+    each(arr, func);
+  };
+}
+
+function each(arr, func) {
+  var i = arr.length, j = 0;
+  for (; i--; j++) {
+    if (func.apply(arr[j], [arr, j]) === false) return arr;
   }
+  return arr;
+}
+
+function collect(arr, func) {
+  var result = [];
+  each(arr, function() {
+    result.push(func.call(this));
+  });
+  return result;
+}
+
+function extendObj(onto, overrides) {
+  var keys = Object.keys(overrides), i = keys.length;
+  for (; i--;) onto[keys[i]] = overrides[keys[i]];
   return onto;
 }

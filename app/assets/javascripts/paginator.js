@@ -1,27 +1,53 @@
 var paginator = (function() {
+  var hash = document.location.hash;
+  var page = -2;
+  var id = hash.match(/#\/([^/]+)/);
+  if (id) {
+    id = id[1];
+    hash = hash.replace('/' + id + '/', '');
+    if (hash.indexOf('#first') == 0) {
+      page = 0;
+    } else if (hash.indexOf('#last') == 0) {
+      page = -1;
+    } else {
+      page = parseInt(hash.match(/#([0-9]+)/)[1]);
+    }
+    if (page > -2) {
+      $(function() {
+        var pagination = $('.pagination[data-id=' + id + ']');
+        if (pagination.length) {
+          return requestPage(pagination.closest('.paginator'), page - 1);
+        }
+        var tabSwitch = $('.tab-set.async a.button[data-target=' + id + ']');
+        if (tabSwitch.length) {
+          tabSwitch[0].dataset.page = page - 1;
+          tabSwitch.click();
+        }
+      });
+    }
+  }
+  
   function requestPage(context, page) {
-    if (page == context.attr('data-page')) return;
-    context.attr('data-page', page);
+    if (page == context[0].dataset.page) return;
+    context[0].dataset.page = page;
     page = parseInt(page);
-    arguments = arguments || {};
-    arguments.page = page;
     context.find('ul').addClass('waiting');
     context.find('.pagination .pages .button.selected').removeClass('selected');
-    ajax.get(context.attr('data-type') + '?page=' + context.attr('data-page') + '&' + context.attr('data-args'), function(json) {
+    ajax.get(context.attr('data-type') + '?page=' + context[0].dataset.page + '&' + context[0].dataset.args, function(json) {
       populatePage(context, json);
     }, {});
   }
-
+  
   function populatePage(context, json) {
     var container = context.find('ul');
     container.html(json.content);
     container.removeClass('waiting');
-    context.attr('data-page', json.page);
+    context[0].dataset.page = json.page;
     context.find('.pagination').each(function() {
       repaintPages($(this), json.page, json.pages);
     });
   }
-
+  
   function repaintPages(context, page, pages) {
     var index = page > 4 ? page - 4 : 0;
     var id = context.attr('data-id');
@@ -42,35 +68,7 @@ var paginator = (function() {
     }
     document.location.hash = '/' + id + '/' + (page + 1);
   }
-
-  var hash = document.location.hash;
-  var page = -2;
-  var match;
-  if (match = hash.match(/#\/([^\/]+)/)) {
-    var id = match[1];
-    hash = hash.replace('/' + id + '/', '');
-    if (hash.indexOf('#first') == 0) {
-      page = 0;
-    } else if (hash.indexOf('#last') == 0) {
-      page = -1;
-    } else {
-      page = parseInt(hash.match(/#([0-9]+)/)[1]);
-    }
-    if (page > -2) {
-      $doc.ready(function() {
-        var pagination = $('.pagination[data-id=' + id + ']');
-        if (pagination.length) {
-          requestPage(pagination.closest('.paginator'), page - 1);
-        } else {
-          var tab_switch = $('.tab-set.async a.button[data-target=' + id + ']');
-          if (tab_switch.length) {
-            tab_switch.attr('data-page', page - 1);
-            tab_switch.click();
-          }
-        }
-      });
-    }
-  }
+  
   return {
     repaint: function(context, json) {
       context.find('.pagination .pages .button.selected').removeClass('selected');

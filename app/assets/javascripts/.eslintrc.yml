@@ -113,7 +113,7 @@ rules:
   no-implicit-globals: 0
   no-implied-eval: 2
   no-inline-comments: 0
-  no-inner-declarations: [2, 'both']
+  no-inner-declarations: [2, 'functions']
   no-invalid-regexp: 2
   no-invalid-this: 2
   no-irregular-whitespace: 2
@@ -163,7 +163,7 @@ rules:
   no-self-compare: 2
   no-sequences: 2
   no-shadow-restricted-names: 2
-  no-shadow: 2
+  no-shadow: 0
   no-spaced-func: 2
   no-sparse-arrays: 2
   no-sync: 2
@@ -172,7 +172,7 @@ rules:
   no-ternary: 0
   no-this-before-super: 0
   no-throw-literal: 0
-  no-trailing-spaces: 2
+  no-trailing-spaces: [2, {skipBlankLines: true}]
   no-undef-init: 0
   no-undef: 1
   no-undefined: 1
@@ -191,7 +191,7 @@ rules:
   no-useless-computed-key: 2
   no-useless-concat: 2
   no-useless-constructor: 2
-  no-useless-escape: 2
+  no-useless-escape: 1
   no-useless-rename: 2
   no-var: 0
   no-void: 2
@@ -211,7 +211,7 @@ rules:
   prefer-const: 2
   prefer-numeric-literals: 2
   prefer-reflect: 0
-  prefer-rest-params: 2
+  prefer-rest-params: 1
   prefer-spread: 0
   prefer-template: 0
   quote-props: [2, 'as-needed']
@@ -238,7 +238,7 @@ rules:
   use-isnan: 2
   valid-jsdoc: 0
   valid-typeof: 2
-  vars-on-top: 2
+  vars-on-top: 1
   wrap-iife: 0
   wrap-regex: 0
   yield-star-spacing: 2

@@ -1,11 +1,11 @@
-var feed_count = 0;
-var notifications_count = 0;
-var message_count = 0;
+var feedCount = 0;
+var notificationsCount = 0;
+var messageCount = 0;
 
-var step_delay_increment = 15000;
-var step_delay = 30000;
+var stepDelayIncrement = 15000;
+var stepDelay = 30000;
 
-var control_flag = null;
+var controlFlag = null;
 var ports = [];
 
 function heartbeat() {
@@ -15,19 +15,19 @@ function heartbeat() {
       if (request.status == 200) {
         var json = JSON.parse(request.responseText);
         sendMessage(json);
-        if (step_delay > 30000) step_delay -= step_delay_increment;
+        if (stepDelay > 30000) stepDelay -= stepDelayIncrement;
       } else {
-        step_delay += step_delay_increment;
+        stepDelay += stepDelayIncrement;
       }
       if (ports.length > 0) {
-        control_flag = setTimeout(heartbeat, step_delay);
+        controlFlag = setTimeout(heartbeat, stepDelay);
       }
     }
   };
   var url = '/ajax/notifications?';
-  if (notifications_count !== undefined) url += 'notes=' + notifications_count;
-  if (feed_count !== undefined) url += '&feeds=' + feed_count;
-  if (message_count !== undefined) url += '&mail=' + message_count;
+  if (notificationsCount !== undefined) url += 'notes=' + notificationsCount;
+  if (feedCount !== undefined) url += '&feeds=' + feedCount;
+  if (messageCount !== undefined) url += '&mail=' + messageCount;
   request.open('GET', url, true);
   request.send();
 }
@@ -35,14 +35,14 @@ function heartbeat() {
 function sendMessage(msg) {
   ports = ports.filter(function(port) {
     try {
-      if (msg.feeds !== undefined && msg.feeds != feed_count) {
-        port.postMessage({ command: 'feeds', count: feed_count = msg.feeds });
+      if (msg.feeds !== undefined && msg.feeds != feedCount) {
+        port.postMessage({ command: 'feeds', count: feedCount = msg.feeds });
       }
-      if (msg.notices !== undefined && msg.notices != notifications_count) {
-        port.postMessage({ command: 'notices', count: notifications_count = msg.notices });
+      if (msg.notices !== undefined && msg.notices != notificationsCount) {
+        port.postMessage({ command: 'notices', count: notificationsCount = msg.notices });
       }
-      if (msg.mail !== undefined && msg.mail != message_count) {
-        port.postMessage({ command: 'mail', count: message_count = msg.mail });
+      if (msg.mail !== undefined && msg.mail != messageCount) {
+        port.postMessage({ command: 'mail', count: messageCount = msg.mail });
       }
     } catch (ex) {
       return false;
@@ -53,17 +53,17 @@ function sendMessage(msg) {
 
 function recieveMessage(e) {
   if (e.data.command == 'connect') {
-    feed_count = e.data.feeds;
-    notifications_count = e.data.notices;
+    feedCount = e.data.feeds;
+    notificationsCount = e.data.notices;
     ports.push(this);
     if (ports.length == 1) {
-      control_flag = setTimeout(heartbeat, step_delay * 2);
+      controlFlag = setTimeout(heartbeat, stepDelay * 2);
     }
   } else if (e.data.command == 'disconnect' && ports.length > 0) {
     ports.splice(ports.indexOf(this), 1);
     if (this.chatId) this.chatId.remove();
-    if (ports.length == 0 && control_flag) {
-      clearTimeout(control_flag);
+    if (ports.length == 0 && controlFlag) {
+      clearTimeout(controlFlag);
       self.close();
     }
   }

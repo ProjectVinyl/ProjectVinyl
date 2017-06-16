@@ -1,15 +1,14 @@
 const ajax = (function() {
-
   function xhr(params) {
-    if (params.xhr) {
-      var xhr = params.xhr;
+    var xhr = params.xhr;
+    if (xhr) {
       params.xhr = function() {
         return xhr($.ajaxSettings.xhr());
       };
     }
     return $.ajax(params);
   }
-
+  
   function request(method, resource, callback, data, direct) {
     xhr({
       type: method,
@@ -24,23 +23,18 @@ const ajax = (function() {
       data: data
     });
   }
-
+  
   function sanitizeUrl(url) {
     while (url.indexOf('/') == 0) url = url.substring(1, url.length);
     return url;
   }
-
+  
   function AjaxRequest(resource, callback, direct) {
     AjaxRequest.get(resource, callback, {}, direct);
   }
-
+  
   return Object.freeze(extendObj(AjaxRequest, {
     form: function(form, e, callbacks) {
-      if (!callbacks && !e.preventDefault) {
-        callbacks = e;
-        e = undefined;
-      }
-      if (e) e.preventDefault();
       var message = form.find('.progressor .message');
       var fill = form.find('.progressor .fill');
       var uploadedBytes = 0;
@@ -48,8 +42,14 @@ const ajax = (function() {
       var secondsRemaining = new Duration();
       var timeStarted = new Date();
       var timer;
-      var callback_func = form.attr('data-callback');
-
+      var callbackFunc = form.attr('data-callback');
+      
+      if (!callbacks && !e.preventDefault) {
+        callbacks = e;
+        e = null;
+      }
+      if (e) e.preventDefault();
+      
       callbacks = callbacks || {};
       xhr({
         type: form.attr('method'),
@@ -99,14 +99,14 @@ const ajax = (function() {
           if (timer) clearInterval(timer);
           if (callbacks.success) {
             form.removeClass('waiting');
-            return callbacks.success.apply(this, arguments);
+            return callbacks.success.apply(form, arguments);
           }
-          if (callback_func && typeof window[callback_func] === 'function') {
-            window[callback_func](form, data);
+          if (callbackFunc && typeof window[callbackFunc] === 'function') {
+            window[callbackFunc](form, data);
           } else if (data.ref) {
             document.location.href = data.ref;
           }
-
+          
         },
         error: function(e, err, msg) {
           if (timer) clearInterval(timer);

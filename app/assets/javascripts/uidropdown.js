@@ -1,7 +1,3 @@
-$doc.on('mousedown', function() {
-  $('.pop-out-shown').removeClass('pop-out-shown');
-});
-
 $doc.on('focus', 'label input, label select', function() {
   $(this).closest('label').addClass('focus');
 });
@@ -12,13 +8,19 @@ $doc.on('blur', 'label input, label select', function() {
 
 $doc.on('touchstart', '.drop-down-holder:not(.hover), .mobile-touch-toggle:not(.hover)', function(e) {
   var me = $(this);
-  me.addClass('hover');
-  e.preventDefault();
-  e.stopPropagation();
   var lis = me.find('a, li');
+  
   lis.on('touchstart', function(e) {
     e.stopPropagation();
   });
+  
+  me.one('touchstart touchmove', clos);
+  $doc.one('touchstart touchmove', clos);
+  
+  me.addClass('hover');
+  e.preventDefault();
+  e.stopPropagation();
+  
   function clos(e) {
     me.off('touchstart touchmove');
     me.removeClass('hover');
@@ -26,39 +28,58 @@ $doc.on('touchstart', '.drop-down-holder:not(.hover), .mobile-touch-toggle:not(.
     e.preventDefault();
     e.stopPropagation();
   }
-  me.one('touchstart touchmove', clos);
-  $(document).one('touchstart touchmove', clos);
 });
 
-$doc.on('click', '.pop-out-toggle', function() {
-  var me = $(this);
-  var popout = $(this).closest('.popper');
-  var popoutcontent = popout.find('.pop-out');
-  me.on('click', function(e) {
-    if (popout.length && !popout.hasClass('pop-out-shown')) {
-      $('.pop-out-shown').removeClass('pop-out-shown');
-      popout.addClass('pop-out-shown');
-      popout.removeClass('pop-left');
-      popout.removeClass('pop-right');
-
-      var left = popoutcontent.offset().left;
-      var right = left + popoutcontent.width();
-      var width = $(window).width();
-
-      if (right > width) {
-        popout.addClass('pop-left');
+(function() {
+  var win = $(window);
+  var Popout = {
+    toggle: function(sender) {
+      if (sender.length && !sender.hasClass('pop-out-shown')) {
+        this.show(sender);
+      } else {
+        this.hideAll();
+      }
+    },
+    show: function(sender) {
+      var left = sender.content.offset().left;
+      
+      this.hideAll();
+      sender.addClass('pop-out-shown');
+      sender.removeClass('pop-left');
+      sender.removeClass('pop-right');
+      
+      if (left + sender.content.width() > win.width()) {
+        sender.addClass('pop-left');
       }
       if (left < 0) {
-        popout.addClass('pop-right');
+        sender.addClass('pop-right');
       }
-    } else {
+    },
+    hideAll: function() {
       $('.pop-out-shown').removeClass('pop-out-shown');
     }
-    e.stopPropagation();
-    e.preventDefault();
+  };
+  
+  $doc.on('click', '.pop-out-toggle', function() {
+    var me = $(this);
+    var popout = me.closest('.popper');
+    
+    popout.content = popout.find('.pop-out');
+    
+    me.on('click', function(e) {
+      e.stopPropagation();
+      e.preventDefault();
+      Popout.toggle(popout);
+    });
+    
+    popout.on('mousedown', function(e) {
+      e.stopPropagation();
+    });
+    
+    Popout.toggle(popout);
   });
-  popout.on('mousedown', function(e) {
-    e.stopPropagation();
+  
+  $doc.on('mousedown', function() {
+    Popout.hideAll();
   });
-  me.click();
-});
+})();

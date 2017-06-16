@@ -1,18 +1,20 @@
 var Popup = (function() {
   var INSTANCES = [];
   var win = $(window);
-
-  win.on('resize', function() {
-    for (var i = INSTANCES.length; i--;) INSTANCES[i].resize();
-  });
+  
+  win.on('resize', iteration(INSTANCES, function() {
+    this.resize();
+  }));
   win.on('keydown', function(e) {
-    if (INSTANCES.length > 0) {
-      var c = $('.popup-container.focus');
-      if (c.length && !$('input::focuse, textarea::focus, button::focus, .button.focus')) c[0].instance.handleShortcut(e);
+    if (INSTANCES.length && !$('input:focus, textarea:focus, button:focus, .button.focus').length) {
+      var c = $('.popup-container.focus')[0];
+      if (c) c.instance.handleShortcut(e);
     }
   });
-
+  
   function Popup(title, icon, construct) {
+    var self = this;
+    
     this.container = $('<div class="popup-container"></div>');
     this.container[0].instance = this;
     this.dom = $('<div class="popup"><h1>' + title + '<a class="close" /></h1>');
@@ -20,27 +22,28 @@ var Popup = (function() {
     this.content = $('<div class="content" />');
     this.fixed = false;
     this.x = this.y = -1;
+    
     this.dom.append(this.content);
     if (typeof icon === 'string') {
       this.dom.find('h1').prepend('<i class="fa fa-' + icon + '" />');
     }
     if (typeof icon === 'function') construct = icon;
-    var me = this;
+    
     this.container.on('click mousedown mousup', function() {
-      me.focus();
+      self.focus();
     });
     this.dom.find('.close').on('click touchend', function() {
-      me.close();
+      self.close();
     });
     this.dom.find('h1').on('mousedown', function(ev) {
-      me.grab(ev.pageX, ev.pageY);
+      self.grab(ev.pageX, ev.pageY);
       ev.preventDefault();
       ev.stopPropagation();
     });
     this.dom.find('h1').on('touchstart', function(ev) {
       var x = ev.originalEvent.touches[0].pageX || 0;
       var y = ev.originalEvent.touches[0].pageY || 0;
-      me.touchgrab(x, y);
+      self.touchgrab(x, y);
       ev.preventDefault();
       ev.stopPropagation();
     });
@@ -49,69 +52,29 @@ var Popup = (function() {
     INSTANCES.push(this);
     return this;
   }
-
-  Popup.fetch = function(resource, title, icon, thin, loaded_func) {
+  
+  Popup.fetch = function(resource, title, icon, thin, loadedFunc) {
     return new Popup(title, icon, function() {
+      var self = this;
+      
       this.content.html('<div class="loader"><i class="fa fa-pulse fa-spinner" /></div>');
       this.thin = thin;
       if (thin) this.container.addClass('thin');
-      var me = this;
+      
       ajax(resource, function(xml, type, ev) {
-        me.content.html(ev.responseText);
-        me.content.find('.cancel').on('click', function() {
-          me.close();
+        self.content.html(ev.responseText);
+        self.content.find('.cancel').on('click', function() {
+          self.close();
         });
-        me.center();
-        if (loaded_func && typeof window[loaded_func] === 'function') {
-          window[loaded_func](me.content);
+        self.center();
+        if (loadedFunc && typeof window[loadedFunc] === 'function') {
+          window[loadedFunc](self.content);
         }
       }, 1);
       this.show();
     });
   };
-
-  function domain() {
-    return 'http' + (document.domain == 'localhost' ? '' : 's') + '://' +  document.location.hostname + (document.location.port ? ':' + document.location.port : '');
-  }
-
-  function iframe(me, resource) {
-    resource = domain() + '/ajax/' + resource;
-    var frame = document.createElement('iframe');
-    frame.style.display = 'none';
-    frame.setAttribute('frameborder', '0');
-    frame.onload = function() {
-      frame.onload = 0;
-      me.content.find('.loader').remove();
-      frame.style.display = '';
-      if (document.location.protocol != 'https:') {
-        frame.contentWindow.postMessage('hellow', resource);
-        var f = function(e) {
-          if ((e.origin || e.originalEvent.origin) == domain()) {
-            frame.style.height = e.data;
-            me.center();
-          }
-          window.removeEventListener('mesage', f);
-        };
-        window.addEventListener('message', f);
-      } else {
-        frame.style.height = frame.contentWindow.document.body.scrollHeight + 'px';
-        me.center();
-        frame.onload = 0;
-      }
-    };
-    frame.src = resource;
-    me.content.append(frame);
-  }
-
-  Popup.iframe = function(resource, title, icon, thin) {
-    return new Popup(title, icon, function() {
-      this.content.html('<div class="loader"><i class="fa fa-pulse fa-spinner" /></div>');
-      if (thin) this.container.addClass('thin');
-      iframe(this, resource);
-      this.show();
-    });
-  };
-
+  
   Popup.prototype = {
     setPersistent: function() {
       this.persistent = true;
@@ -198,36 +161,36 @@ var Popup = (function() {
       return this;
     },
     grab: function(x, y) {
-      var me = this;
+      var self = this;
       var offX = x - this.container.offset().left;
       var offY = y - this.container.offset().top;
       this.dragging = function(ev) {
-        me.move(ev.pageX - offX, ev.pageY - offY);
+        self.move(ev.pageX - offX, ev.pageY - offY);
       };
       this.focus();
-      $(document).on('mousemove', this.dragging);
-      $(document).one('mouseup', function() {
-        me.release();
+      $doc.on('mousemove', this.dragging);
+      $doc.one('mouseup', function() {
+        self.release();
       });
     },
     touchgrab: function(x, y) {
-      var me = this;
+      var self = this;
       var offX = x - this.container.offset().left;
       var offY = y - this.container.offset().top;
       this.dragging = function(ev) {
         var x = ev.originalEvent.touches[0].pageX || 0;
         var y = ev.originalEvent.touches[0].pageY || 0;
-        me.move(x - offX, y - offY);
+        self.move(x - offX, y - offY);
       };
       this.focus();
-      $(document).on('touchmove', this.dragging);
-      $(document).one('touchend', function() {
-        me.release();
+      $doc.on('touchmove', this.dragging);
+      $doc.one('touchend', function() {
+        self.release();
       });
     },
     release: function() {
       if (this.dragging) {
-        $(document).off('mousemove touchmove', this.dragging);
+        $doc.off('mousemove touchmove', this.dragging);
         this.dragging = null;
       }
     },
@@ -268,12 +231,12 @@ var Popup = (function() {
 
 function error(message) {
   new Popup('Error', 'warning', function() {
-    this.content.append('<div class="message_content">' + message + '</div><div class="foot"></div>');
+    var self = this;
     var ok = $('<button class="right button-fw">Ok</button>');
-    var me = this;
     ok.on('click', function() {
-      me.close();
+      self.close();
     });
+    this.content.append('<div class="message_content">' + message + '</div><div class="foot"></div>');
     this.content.find('.foot').append(ok);
     this.setWidth(400);
     this.show();
