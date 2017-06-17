@@ -171,6 +171,7 @@ Rails.application.routes.draw do
 
   # Boards/Categories #
   get 'ajax/board/new' => 'board#new'
+  get 'ajax/boards' => 'board#page'
   post 'ajax/create/board' => 'board#create'
   post 'ajax/delete/board/:id' => 'board#delete'
 

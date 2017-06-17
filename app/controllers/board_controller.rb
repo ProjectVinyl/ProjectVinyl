@@ -17,7 +17,7 @@ class BoardController < ApplicationController
     @page = params[:page].to_i
     @boards = Pagination.paginate(Board.all, @page, 10, false)
     render json: {
-      content: render_to_string(partial: '/thread/board_thumb.html.erb', collection: @boards.records),
+      content: render_to_string(partial: '/board/board_thumb.html.erb', collection: @boards.records),
       pages: @boards.pages,
       page: @boards.page
     }
