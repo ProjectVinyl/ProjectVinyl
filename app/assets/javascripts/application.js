@@ -8,6 +8,7 @@
 //= require jquery_ujs
 //= require compatability
 //= require utilities
+//= require queryparamaters
 //= require pageload
 //= require notifier
 //= require ajax

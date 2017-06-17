@@ -74,16 +74,9 @@
 		<% end %>
 		<h1 class="title resize-target">Open Reports (<%= number_with_delimiter @reports.count %>)</h1>
 		<% if @reports.count > 0 %>
-		<%= render layout: '/layouts/paginated', locals: {type: "admin/videos/hidden", paginated: @reports, id: "hidden"} do %>
+		<%= render layout: '/layouts/paginated', locals: {type: "admin/reports", paginated: @reports, id: "reports"} do %>
 		<ul id="reports" class="report-list">
-			<% @reports.records.each do |report| %>
-			<li class="generic">
-				<a href="admin/report/view/<%= report.id %>">Report #<%= report.id %></a>
-				<% if report.video %>
-					<%= render partial: 'layouts/video_thumb_h', locals: {video_thumb_h: report.video } %>
-				<% end %>
-			</li>
-			<% end %>
+			<%= render partial: '/admin/report_thumb', collection: @reports.record %>
 		</ul>
 		<% end %>
 		<% end %>

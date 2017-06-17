@@ -5,10 +5,10 @@ class AdminController < ApplicationController
     if !user_signed_in? || !current_user.is_contributor?
       return render 'layouts/error', locals: { title: 'Access Denied', description: "You can't do that right now." }
     end
-    @hiddenvideos = Pagination.paginate(Video.where(hidden: true), 0, 40, true)
-    @unprocessed = Pagination.paginate(Video.where("(processed IS NULL or processed = ?) AND hidden = false", false), 0, 40, false)
+    @hiddenvideos = Pagination.paginate(Video.where(hidden: true), params[:hidden].to_i, 40, true)
+    @unprocessed = Pagination.paginate(Video.where("(processed IS NULL or processed = ?) AND hidden = false", false), params[:unprocessed].to_i, 40, false)
     @users = User.where('last_sign_in_at > ? OR updated_at > ?', Time.zone.now.beginning_of_month, Time.zone.now.beginning_of_month).limit(100).order(:last_sign_in_at).reverse_order
-    @reports = Pagination.paginate(Report.includes(:video).where(resolved: nil), 0, 40, false)
+    @reports = Pagination.paginate(Report.includes(:video).where(resolved: nil), params[:reports].to_i, 40, false)
   end
 
   def files
@@ -88,7 +88,7 @@ class AdminController < ApplicationController
     @page = params[:page].to_i
     @results = Pagination.paginate(Video.where(hidden: true), @page, 40, true)
     render json: {
-      content: render_to_string(partial: '/admin/video_thumb_h.html.erb', collection: @results.records),
+      content: render_to_string(partial: '/admin/report_thumb.html.erb', collection: @results.records),
       pages: @results.pages,
       page: @results.page
     }
@@ -97,6 +97,16 @@ class AdminController < ApplicationController
   def page_unprocessed
     @page = params[:page].to_i
     @results = Pagination.paginate(Video.where("(processed IS NULL or processed = ?) AND hidden = false", false), @page, 40, false)
+    render json: {
+      content: render_to_string(partial: '/admin/video_thumb_h.html.erb', collection: @results.records),
+      pages: @results.pages,
+      page: @results.page
+    }
+  end
+
+  def page_reports
+    @page = params[:page].to_i
+    @result = Pagination.paginate(Report.includes(:video).where(resolved: nil), @page, 40, false)
     render json: {
       content: render_to_string(partial: '/admin/video_thumb_h.html.erb', collection: @results.records),
       pages: @results.pages,

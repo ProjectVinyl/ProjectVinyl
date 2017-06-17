@@ -1,13 +1,17 @@
 <div class="pagination" data-id="<%= pagination_id %>">
-	<a class="button left" data-page-to="0" href="#/<%= pagination_id %>/first">First</a>
+	<% query_hash = request.query_parameters.clone %>
+	<% query_hash[pagination_id] = 1 %>
+	<a class="button left" data-page-to="0" href="?<%= query_hash.to_query %>">First</a>
 	<span class="pages mobile-touch-toggle">
 		<% i = results.page > 4 ? results.page - 4 : 0 %>
 		<% while i <= results.page + 4 && i <= results.pages do %>
-		<a class="button<% if i == results.page %> selected<% end %>" data-page-to="<%= i %>" href="#/<%= pagination_id %>/<%= i + 1 %>">
+		<% query_hash[pagination_id] = i + 1 %>
+		<a class="button<% if i == results.page %> selected<% end %>" data-page-to="<%= i %>" href="?<%= query_hash.to_query %>">
 			<%= i + 1 %>
 		</a>
 		<% i = i + 1 %>
 		<% end %>
 	</span>
-	<a class="button right" data-page-to="-1" href="#/<%= pagination_id %>/last">Last</a>
+	<% query_hash[pagination_id] = -1 %>
+	<a class="button right" data-page-to="-1" href="?<%= query_hash.to_query %>">Last</a>
 </div>
