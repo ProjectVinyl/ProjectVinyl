@@ -1,6 +1,7 @@
 import { ajax } from './ajax.js';
 import { paginator } from './paginator.js';
 import { error } from './popup.js';
+import { decodeEntities } from './utilities.js';
 
 (function() {
   window.postComment = function postComment(sender, threadId, order, reportState) {

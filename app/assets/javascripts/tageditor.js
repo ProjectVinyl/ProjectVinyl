@@ -1,4 +1,5 @@
 import { ajax } from './ajax.js';
+import { Key } from './utilities.js';
 
 function namespace(name) {
   if (name.indexOf(':') != -1) return name.split(':')[0];
@@ -41,9 +42,7 @@ function asBakedArray(arr) {
   if (arr && arr.baked) return arr;
   arr = arr || [];
   arr.baked = function() {
-    return collect(this, function() {
-      return this.toString();
-    });
+    return this.map(e => e.toString())
   };
   arr.join = function() {
     return Array.prototype.join.apply(this.baked(), arguments);
@@ -105,8 +104,8 @@ function TagEditor(el) {
   
   this.input.on('keydown', function(e) {
     if (e.which == Key.ENTER || e.which == Key.COMMA) {
-      each(self.input.val().trim().split(/,|;/), function() {
-        self.appendTag(this);
+      self.input.val().trim().split(/,|;/).forEach(t => {
+        self.appendTag(t);
       });
       self.input.val('');
       self.save();
@@ -182,9 +181,8 @@ TagEditor.prototype = {
     var unloadedSlugs = asBakedArray();
     
     if (tags.length) {
-      this.tags = each(tags.split ? tags.split(',') : tags, function(arr, i) {
-        arr[i] = asTag(this);
-      });
+      if (tags.split) tags = tags.split(',');
+      this.tags = tags.map(t => asTag(t));
     } else {
       this.tags = [];
     }
@@ -207,8 +205,8 @@ TagEditor.prototype = {
       });
       item.namespace = li.parent().attr('data-namespace');
     });
-    each(unloadedSlugs, function() {
-      createTagItem(self, this);
+    unloadedSlugs.forEach(slug => {
+      createTagItem(self, slug);
     });
     
     this.value.val(this.tags.join(','));
@@ -269,9 +267,8 @@ TagEditor.prototype = {
     this.tags.length = 0;
     this.list.empty();
     if (this.norm) this.norm.html('');
-    each(tags, function(arr) {
-      var tag = asTag(this);
-      arr.unshift(this);
+    tags.forEach(t => {
+      var tag = asTag(t);
       createTagItem(self, tag);
       if (self.norm) {
         self.norm.append(createDisplayTagItem(tag));
@@ -292,8 +289,8 @@ TagEditor.prototype = {
       });
     } else if (this.norm) {
       this.norm.html('');
-      each(this.tags, function() {
-        self.norm.append(createDisplayTagItem(this));
+      this.tags.forEach(tag => {
+        self.norm.append(createDisplayTagItem(tag));
       });
     }
   },
@@ -316,16 +313,14 @@ TagEditor.prototype = {
     }
     ajax.get('find/tags', function(json) {
       self.searchResults.empty();
-      each(json.results, function() {
-        var item = $('<li class="tag-' + this.namespace + '"><span>' + this.name.replace(name, '<b>' + name + '</b>') + '</span> (' + this.members + ')</li>');
-        item[0].tag = this;
+      json.results.forEach(result => {
+        var item = $('<li class="tag-' + result.namespace + '"><span>' + result.name.replace(name, '<b>' + name + '</b>') + '</span> (' + result.members + ')</li>');
+        item[0].tag = result;
         item.on('click', function() {
           var text = self.input.val().trim().split(/,|;/);
           self.dom.removeClass('pop-out-shown');
           text.pop();
-          each(text, function() {
-            self.appendTag(this);
-          });
+          text.forEach(t => self.appendTag(t));
           self.appendTag(this.tag);
           self.input.val('');
           self.sizeInput();

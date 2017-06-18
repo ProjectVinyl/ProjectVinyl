@@ -5,9 +5,9 @@
 */
 
 import { ajax } from './ajax.js';
+import { Key } from './utilities.js';
 
 const VIDEO_ELEMENT = document.createElement('video');
-const Key = { SPACE: 32 };
 const aspect = 16 / 9;
 var fadeControl = null;
 

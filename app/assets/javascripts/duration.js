@@ -1,3 +1,8 @@
+function round(num, precision) {
+  precision = Math.pow(10, precision || 0);
+  return Math.round(num * precision) / precision;
+};
+
 function Duration(seconds) {
   this.time = seconds || 0;
   this.seconds = this.time;

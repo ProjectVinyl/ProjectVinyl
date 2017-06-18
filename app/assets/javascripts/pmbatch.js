@@ -40,9 +40,8 @@ import { paginator } from './paginator.js';
           checks.parents('li.thread').each(action.callback);
         }
       }, false, {
-        ids: collect(checks, function() {
-          return this.value;
-        }).join(';'), op: action.id
+        ids: checks.map(c => c.value).join(';'),
+        op: action.id
       });
     }
   }

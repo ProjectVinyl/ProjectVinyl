@@ -1,17 +1,20 @@
 import { ajax } from './ajax.js';
+import { Key } from './utilities.js';
 
 var INSTANCES = [];
 var win = $(window);
 
-win.on('resize', iteration(INSTANCES, function() {
-  this.resize();
-}));
+win.on('resize', () => INSTANCES.forEach(i => i.resize()));
 win.on('keydown', function(e) {
   if (INSTANCES.length && !$('input:focus, textarea:focus, button:focus, .button.focus').length) {
     var c = $('.popup-container.focus')[0];
     if (c) c.instance.handleShortcut(e);
   }
 });
+
+function timeoutOn(target, func, time) {
+  return setTimeout(func.bind(target), time);
+};
 
 function Popup(title, icon, construct) {
   var self = this;

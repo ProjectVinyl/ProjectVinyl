@@ -1,4 +1,5 @@
 import { error } from './popup.js';
+import { toBool } from './utilities.js';
 
 function validateTypes(type, file) {
   if (type == 'image') {
@@ -20,9 +21,9 @@ function renderPreview(me, file) {
 
 function handleFiles(files, multi, type, callback) {
   var accepted = 0;
-  each(files, function() {
-    if (validateTypes(type, this)) {
-      callback(this, this.name.split('.'));
+  files.forEach(file => {
+    if (validateTypes(type, file)) {
+      callback(file, file.name.split('.'));
       accepted++;
     }
     if (!multi) return false;

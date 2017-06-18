@@ -5,6 +5,7 @@ import { TagEditor } from './tageditor.js';
 import { ThumbPicker } from './thumbnailpicker.js';
 import { resizeFont } from './uiresize.js';
 import { Player } from './videos.js';
+import { toBool, extendObj } from './utilities.js';
 
 var INSTANCES = [];
 var INDEX = 0;
@@ -223,11 +224,11 @@ Uploader.prototype = extendObj({
     var src = this.source.val();
     if (!src || src == '') {
       this.srcNeeded = false;
-      each(tags, function(arr, i) {
-        if (arr[i].name.trim().toLowerCase() == 'source needed') {
+      tags.forEach(tag => {
+        if (tag.name.trim().toLowerCase() == 'source needed') {
           this.srcNeeded = true;
         }
-      }, this);
+      });
       if (!this.srcNeeded) {
         this.info('You have not provided a source. If you know what it is add it to the source field, otherwise consider tagging this video as \'source needed\' so others know to search for one.');
       } else {
@@ -303,3 +304,7 @@ UploadChecker.prototype = extendObj({
 Uploader.createChecker = function(el) {
   return new UploadChecker(el);
 };
+
+// video/edit.html.erb
+// video/upload.html.erb
+window.Uploader = Uploader;

@@ -1,4 +1,5 @@
 import { Duration } from './duration.js';
+import { extendObj } from './utilities.js';
 
 function xhr(params) {
   var xhr = params.xhr;

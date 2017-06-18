@@ -1,7 +1,5 @@
 function encodeParamaters(queryPars) {
-  return collect(queryPars.keys, function() {
-    return this + '=' + encodeURIComponent(queryPars.values[this]);
-  }).join('&');
+  return queryPars.keys.map(k => `${k}=${encodeURIComponent(queryPars.values[k])}`).join('&');
 }
 
 function updateHistoryObj(queryPars) {
@@ -21,8 +19,8 @@ function QueryPars(raw, historyObj) {
   this.values = {};
   this.historyObj = historyObj;
   if (raw.indexOf('&') > -1) {
-    each(raw.split('&'), function() {
-      var item = this.split('=');
+    raw.split('&').forEach(pair => {
+      var item = pair.split('=');
       if (item.length < 2) item.push('');
       if (self.keys.indexOf(item[0]) < 0) {
         self.keys.push(item[0]);
