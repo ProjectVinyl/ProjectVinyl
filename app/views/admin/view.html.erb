@@ -76,7 +76,7 @@
 		<% if @reports.count > 0 %>
 		<%= render layout: '/layouts/paginated', locals: {type: "admin/reports", paginated: @reports, id: "reports"} do %>
 		<ul id="reports" class="report-list">
-			<%= render partial: '/admin/report_thumb', collection: @reports.record %>
+			<%= render partial: '/admin/report_thumb', collection: @reports.records %>
 		</ul>
 		<% end %>
 		<% end %>
