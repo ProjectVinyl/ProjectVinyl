@@ -1,7 +1,7 @@
 (function() {
   function toggle(sender) {
     var id = sender.dataset.id;
-    var action = sender.dataset.target + '/' + sender[0].dataset.action;
+    var action = sender.dataset.target + '/' + sender.dataset.action;
     var data = sender.dataset.with;
     var checkIcon = sender.dataset.checkedIcon || 'check';
     var uncheckIcon = sender.dataset.uncheckedIcon;
