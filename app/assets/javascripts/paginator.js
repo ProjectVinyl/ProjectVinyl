@@ -5,7 +5,7 @@ var paginator = (function() {
     page = parseInt(page);
     context.find('ul').addClass('waiting');
     context.find('.pagination .pages .button.selected').removeClass('selected');
-    ajax.get(context[0].dataser.type + '?page=' + context[0].dataset['page-to'] + (context[0].dataset.args ? '&' + context[0].dataset.args : ''), function(json) {
+    ajax.get(context[0].dataset.type + '?page=' + page + (context[0].dataset.args ? '&' + context[0].dataset.args : ''), function(json) {
       populatePage(context, json);
     }, {});
   }
@@ -27,7 +27,7 @@ var paginator = (function() {
       if (index > page + 4 || index > pages) {
         $(this).remove();
       } else {
-        this.dataset['page-to'] = index;
+        this.dataset.pageTo = index;
         this.href = '?' + QueryParameters.current.clone().setItem(id, index + 1).toString();
         this.innerText = index + 1;
         if (index == page) {
@@ -49,7 +49,7 @@ var paginator = (function() {
       populatePage(context, json);
     },
     go: function(button) {
-      requestPage(button.closest('.paginator'), button[0].dataset.to);
+      requestPage(button.closest('.paginator'), button[0].dataset.pageTo);
       if (!button.hasClass('selected')) button.parent().removeClass('hover');
     }
   };
