@@ -21,16 +21,6 @@
     }, 0, data);
   };
   
-  window.editComment = function editComment(sender) {
-    sender = $(sender).parent();
-    ajax.post('comments/edit', function() {
-      sender.removeClass('editing');
-    }, 1, {
-      id: sender[0].dataset.id,
-      comment: sender.find('textarea, input.comment-content').val()
-    });
-  };
-  
   window.removeComment = function removeComment(id, json) {
     id = $('#comment_' + id);
     if (json.content) {
@@ -49,7 +39,17 @@
     }
   };
   
-  window.lookupComment = function lookupComment(commentId) {
+  function editComment(sender) {
+    sender = $(sender).parent();
+    ajax.post('comments/edit', function() {
+      sender.removeClass('editing');
+    }, 1, {
+      id: sender[0].dataset.id,
+      comment: sender.find('textarea, input.comment-content').val()
+    });
+  };
+  
+  function lookupComment(commentId) {
     var comment = $('#comment_' + commentId);
     if (comment.length) {
       return scrollTo(comment).addClass('highlight');
@@ -61,7 +61,7 @@
     });
   };
   
-  window.findComment = function findComment(sender) {
+  function findComment(sender) {
     sender = $(sender);
     var container = sender.parents('comment');
     var parent = sender.attr('href');
@@ -84,40 +84,12 @@
     }, 1);
   };
   
-  window.replyTo = function replyTo(sender) {
+  function replyTo(sender) {
     sender = $(sender).parent();
     textarea = sender.closest('.page, body').find('.post-box textarea');
     textarea.focus();
     textarea.val('>>' + sender[0].dataset['o-id'] + ' [q]\n' + decodeEntities(sender[0].dataset.comment) + '\n[/q]' + textarea.val());
     textarea.change();
-  };
-  
-  window.markRead = function markRead() {
-    messageOperation({
-      id: 'read', callback: function() {
-        var me = $(this);
-        me.removeClass('unread');
-        me.find('button.button-bub.toggle i').attr('class', 'fa fa-star-o');
-      }
-    });
-  }
-  
-  window.markUnRead = function markUnRead() {
-    messageOperation({
-      id: 'unread', callback: function() {
-        var me = $(this);
-        me.addClass('unread');
-        me.find('button.button-bub.toggle i').attr('class', 'fa fa-star');
-      }
-    });
-  };
-  
-  window.markDeleted = function markDeleted() {
-    messageOperation({
-      id: 'delete', callback: function(me, json) {
-        paginator.repaint(me.closest('.paginator'), json);
-      }
-    });
   };
   
   window.reportState = function reportState(sender) {
@@ -128,44 +100,24 @@
     return false;
   };
   
-  function messageOperation(action) {
-    var checks = $('input.message_select:checked');
-    if (checks.length) {
-      ajax.post('/messages/' + action, function(json) {
-        if (json.content) {
-          action.callback(checks, json);
-        } else {
-          checks.parents('li.thread').each(action.callback);
-        }
-      }, false, {
-        ids: collect(checks, function() {
-          return this.value;
-        }).join(';'), op: action.id
-      });
-    }
+  $doc.on('click', '.comment .mention, .comment .comment-content a[data-link="2"]', function(ev) {
+    findComment(this);
+    ev.preventDefault();
+  });
+  
+  $doc.on('click', '.reply-comment', function() {
+    replyTo(this);
+  });
+  
+  $doc.on('click', '.edit-comment-submit', function() {
+    editComment(this);
+  });
+  
+  $doc.on('click', '.spoiler', function() {
+    $(this).toggleClass('revealed');
+  });
+  
+  if (document.location.hash.indexOf('#comment_') == 0) {
+    lookupComment(document.location.hash.split('_')[1]);
   }
 });
-
-$doc.on('click', '.reply-comment', function() {
-  replyTo(this);
-});
-
-$doc.on('click', '.edit-comment-submit', function() {
-  editComment(this);
-});
-
-$doc.on('click', '.comment .mention, .comment .comment-content a[data-link="2"]', function(ev) {
-  window.findComment(this);
-  ev.preventDefault();
-});
-
-$doc.on('click', '.spoiler', function() {
-  $(this).toggleClass('revealed');
-});
-
-if (document.location.hash.indexOf('#comment_') == 0) {
-  lookupComment(document.location.hash.split('_')[1]);
-}
-
-
-

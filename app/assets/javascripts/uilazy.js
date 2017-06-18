@@ -1,5 +1,5 @@
 (function() {
-  window.lazyLoad = function lazyLoad(button) {
+  function lazyLoad(button) {
     var target = document.getElementById(button.dataset.target);
     var page = parseInt(button[0].dataset.page) + 1;
     button.classList.add('working');
@@ -16,11 +16,11 @@
       id: button.attr('data-id')
     });
   };
+  
+  $doc.on('click', '.load-more button', function() {
+    lazyLoad(this);
+  });
 })();
-
-$doc.on('click', '.load-more button', function() {
-  lazyLoad(this);
-});
 
 $doc.on('click', '.mix a', function(e) {
   document.location.replace(this.href + '&t=' + $('#video .player')[0].getPlayerObj().video.currentTime);

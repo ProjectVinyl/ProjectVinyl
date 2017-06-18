@@ -38,6 +38,7 @@
 //= require uiselect
 //= require vote
 //= require comments
+//= require pmbatch
 //= require share
 //= require search
 //= require callbacks
