@@ -58,4 +58,4 @@ QueryPars.prototype = {
 
 QueryPars.current = new QueryPars(document.location.href.indexOf('?') < 0 ? '' : document.location.href.split('?')[1], window.history);
 
-export { QueryParameters: QueryPars };
+export { QueryPars as QueryParameters };
