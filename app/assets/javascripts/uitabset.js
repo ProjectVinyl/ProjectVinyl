@@ -1,14 +1,17 @@
-function focusTab(me) {
-  if (!me.hasClass('selected') && me[0].dataset.target) {
-    var other = me.parent().find('.selected');
-    if (other.length) {
-      other.removeClass('selected');
-      $('div[data-tab="' + other[0].dataset.target + '"]').removeClass('selected').trigger('tabblur');
+(function() {
+  window.focusTab = function focusTab(me) {
+    if (!me.hasClass('selected') && me[0].dataset.target) {
+      var other = me.parent().find('.selected');
+      if (other.length) {
+        other.removeClass('selected');
+        $('div[data-tab="' + other[0].dataset.target + '"]').removeClass('selected').trigger('tabblur');
+      }
+      me.addClass('selected');
+      $('div[data-tab="' + me[0].dataset.target + '"]').addClass('selected').trigger('tabfocus');
     }
-    me.addClass('selected');
-    $('div[data-tab="' + me[0].dataset.target + '"]').addClass('selected').trigger('tabfocus');
-  }
-}
+  };
+  
+})();
 
 $doc.on('click', '.tab-set > li.button:not([data-disabled])', function() {
   focusTab($(this));

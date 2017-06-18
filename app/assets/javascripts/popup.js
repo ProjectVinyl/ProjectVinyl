@@ -226,19 +226,20 @@ var Popup = (function() {
       return this;
     }
   };
+  
+  window.error = function error(message) {
+    new Popup('Error', 'warning', function() {
+      var self = this;
+      var ok = $('<button class="right button-fw">Ok</button>');
+      ok.on('click', function() {
+        self.close();
+      });
+      this.content.append('<div class="message_content">' + message + '</div><div class="foot"></div>');
+      this.content.find('.foot').append(ok);
+      this.setWidth(400);
+      this.show();
+    });
+  };
+  
   return Popup;
 })();
-
-function error(message) {
-  new Popup('Error', 'warning', function() {
-    var self = this;
-    var ok = $('<button class="right button-fw">Ok</button>');
-    ok.on('click', function() {
-      self.close();
-    });
-    this.content.append('<div class="message_content">' + message + '</div><div class="foot"></div>');
-    this.content.find('.foot').append(ok);
-    this.setWidth(400);
-    this.show();
-  });
-}

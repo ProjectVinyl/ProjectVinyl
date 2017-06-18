@@ -1,26 +1,28 @@
-function lazyLoad(button) {
-  var target = $('#' + button.attr('data-target'));
-  var page = parseInt(button.attr('data-page')) + 1;
-  button.addClass('working');
-  ajax.get(button.attr('data-url'), function(json) {
-    button.removeClass('working');
-    if (json.page == page) {
-      target.append(json.content);
-      button.attr('data-page', page);
-    } else {
-      button.remove();
-    }
-  }, {
-    page: page,
-    id: button.attr('data-id')
-  });
-}
+(function() {
+  window.lazyLoad = function lazyLoad(button) {
+    var target = document.getElementById(button.dataset.target);
+    var page = parseInt(button[0].dataset.page) + 1;
+    button.classList.add('working');
+    ajax.get(button.dataset.url, function(json) {
+      button.classList.remove('working');
+      if (json.page == page) {
+        target.innerHTML += json.content;
+        button.dataset.page = page;
+      } else {
+        $(button).remove();
+      }
+    }, {
+      page: page,
+      id: button.attr('data-id')
+    });
+  };
+})();
 
 $doc.on('click', '.load-more button', function() {
-  lazyLoad($(this));
+  lazyLoad(this);
 });
 
 $doc.on('click', '.mix a', function(e) {
-  document.location.replace($(this).attr('href') + '&t=' + $('#video .player')[0].getPlayerObj().video.currentTime);
+  document.location.replace(this.href + '&t=' + $('#video .player')[0].getPlayerObj().video.currentTime);
   e.preventDefault();
 });

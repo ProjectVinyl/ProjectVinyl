@@ -1,51 +1,55 @@
-function slideOut(holder) {
-  var h = holder.find('.group.active').height();
-  holder.css('min-height', h);
-  holder.css('max-height', h + 10);
-  if (holder.hasClass('shown')) {
-    holder.removeClass('shown');
-  } else {
-    $('.slideout.shown').removeClass('shown');
-    holder.addClass('shown');
-  }
-  return holder;
-}
-
-function slideAcross(me, direction) {
-  var form = me.parents('.slide-group');
-  var to = form.find('.group[data-stage=' + me.attr('data-to') + ']');
-  if (to.length) {
-    form[0].dataset.offset = (parseInt(form[0].dataset.offset) || 0) + direction;
-    var from = form.find('.active');
-    from.removeClass('active');
-    if (direction > 0) {
-      from.after(to);
+(function() {
+  window.slideOut = function slideOut(holder) {
+    var h = holder.find('.group.active').height();
+    holder.css('min-height', h);
+    holder.css('max-height', h + 10);
+    if (holder.hasClass('shown')) {
+      holder.removeClass('shown');
     } else {
-      from.before(to);
+      $('.slideout.shown').removeClass('shown');
+      holder.addClass('shown');
     }
-    
-    to.addClass('active');
-    setTimeout(function() {
-      var diffH = form.height() - (from.height() - to.height());
+    return holder;
+  };
+  
+  window.slideAcross = function slideAcross(me, direction) {
+    var form = me.parents('.slide-group');
+    var to = form.find('.group[data-stage=' + me[0].dataset.to + ']');
+    if (to.length) {
+      form[0].dataset.offset = (parseInt(form[0].dataset.offset) || 0) + direction;
+      var from = form.find('.active');
+      from.removeClass('active');
+      if (direction > 0) {
+        from.after(to);
+      } else {
+        from.before(to);
+      }
       
-      form.css('min-height', diffH);
-      form.css('max-height', diffH);
-      form.addClass('animating');
-      form.find('.group').css('transform', 'translate(' + (-100 * form[0].dataset.offset) + '%,0)');
+      to.addClass('active');
       setTimeout(function() {
-        form.removeClass('animating');
-        form.css('max-height', '');
-      }, 500);
-    }, 1);
-  }
-}
+        var diffH = form.height() - (from.height() - to.height());
+        
+        form.css('min-height', diffH);
+        form.css('max-height', diffH);
+        form.addClass('animating');
+        form.find('.group').css('transform', 'translate(' + (-100 * form[0].dataset.offset) + '%,0)');
+        setTimeout(function() {
+          form.removeClass('animating');
+          form.css('max-height', '');
+        }, 500);
+      }, 1);
+    }
+  };
+  
+  
+})();
 
 $doc.on('click', '.slider-toggle', function(e) {
   var me = $(this);
-  var holder = $(me.attr('data-target'));
+  var holder = $(this.dataset.target);
   if (me.hasClass('loadable') && !me.hasClass('loaded')) {
     me.addClass('loaded');
-    ajax(me.attr('data-url'), function(json) {
+    ajax(this.dataset.url, function(json) {
       holder[0].innerHTML = json.content;
       holder.find('script').each(function() {
         var cs = document.createElement('SCRIPT');

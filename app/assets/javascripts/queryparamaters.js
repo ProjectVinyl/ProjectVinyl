@@ -1,10 +1,8 @@
 const QueryParameters = (function() {
   function encodeParamaters(queryPars) {
-    var items = [];
-    each(queryPars.keys, function() {
-      items.push(this + '=' + encodeURIComponent(queryPars.values[this]));
-    });
-    return items.join('&');
+    return collect(queryPars.keys, function() {
+      return this + '=' + encodeURIComponent(queryPars.values[this]);
+    }).join('&');
   }
   
   function updateHistoryObj(queryPars) {

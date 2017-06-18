@@ -5,10 +5,11 @@ $(function() {
       me.parent().css('height', me.children().height());
     });
   }
-  if ($('.row.row-spanned').length) {
+  
+  if (document.querySelector('.row.row-spanned')) {
     $('.state-toggle').on('toggle', sizeSpannedBlocks);
     $('.row.row-spanned input, .row.row-spanned textarea').on('keyup', sizeSpannedBlocks);
-    $(window).on('resize', sizeSpannedBlocks);
+    $win.on('resize', sizeSpannedBlocks);
     $('.row.row-spanned .tag-editor').on('tagschange', sizeSpannedBlocks);
   }
 });

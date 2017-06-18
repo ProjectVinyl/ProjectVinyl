@@ -31,7 +31,6 @@ $doc.on('touchstart', '.drop-down-holder:not(.hover), .mobile-touch-toggle:not(.
 });
 
 (function() {
-  var win = $(window);
   var Popout = {
     toggle: function(sender) {
       if (sender.length && !sender.hasClass('pop-out-shown')) {
@@ -48,7 +47,7 @@ $doc.on('touchstart', '.drop-down-holder:not(.hover), .mobile-touch-toggle:not(.
       sender.removeClass('pop-left');
       sender.removeClass('pop-right');
       
-      if (left + sender.content.width() > win.width()) {
+      if (left + sender.content.width() > $win.width()) {
         sender.addClass('pop-left');
       }
       if (left < 0) {
