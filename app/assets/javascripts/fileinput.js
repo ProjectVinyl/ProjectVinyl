@@ -1,4 +1,4 @@
-const initFileSelect = (function() {
+window.initFileSelect = (function() {
   function validateTypes(type, file) {
     if (type == 'image') {
       return !!file.type.match(/image\//);

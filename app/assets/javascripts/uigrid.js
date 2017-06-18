@@ -1,4 +1,4 @@
-var resizeGrid = (function() {
+window.resizeGrid = (function() {
   
   function calculateNewWidth(grid, beside) {
     var width = grid.parent().innerWidth() - 195;

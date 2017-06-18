@@ -1,4 +1,4 @@
-const QueryParameters = (function() {
+window.QueryParameters = (function() {
   function encodeParamaters(queryPars) {
     return collect(queryPars.keys, function() {
       return this + '=' + encodeURIComponent(queryPars.values[this]);

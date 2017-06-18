@@ -1,4 +1,4 @@
-var TagEditor = (function() {
+window.TagEditor = (function() {
   function namespace(name) {
     if (name.indexOf(':') != -1) return name.split(':')[0];
     return '';

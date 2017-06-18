@@ -1,4 +1,4 @@
-var Uploader = (function() {
+window.Uploader = (function() {
   var INSTANCES = [];
   var INDEX = 0;
   var uploadingQueue = {

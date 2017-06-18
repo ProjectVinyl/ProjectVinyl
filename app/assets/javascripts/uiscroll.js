@@ -1,4 +1,4 @@
-var scrollTo = (function() {
+window.scrollTo = (function() {
   function scrollIntoView(me, container, viewport) {
     var offset = me.offset();
     var scrollpos = container.offset();

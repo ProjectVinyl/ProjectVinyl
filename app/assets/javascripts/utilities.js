@@ -1,11 +1,11 @@
-const Key = {
-  ENTER: 13, ESC: 27, COMMA: 188, BACKSPACE: 8, Z: 90, Y: 89
-};
-
-const $doc = $(document);
-const $win = $(window);
-
 (function() {
+  window.Key = {
+    ENTER: 13, ESC: 27, COMMA: 188, BACKSPACE: 8, Z: 90, Y: 89
+  };
+
+  window.$doc = $(document);
+  window.$win = $(window);
+
   document.windowFocused = false;
   $win.on('focus', function() {
     document.windowFocused = true;
@@ -71,15 +71,3 @@ const $win = $(window);
   };
   window.each = each;
 })();
-
-
-
-
-
-
-
-
-
-
-
-

@@ -1,4 +1,4 @@
-const ThumbPicker = (function() {
+window.ThumbPicker = (function() {
   function ThumbPicker() {
     
   }

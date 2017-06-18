@@ -36,3 +36,5 @@ gem 'elasticsearch-model'
 gem 'resque'
 gem 'foreman'
 gem 'eye'
+
+gem 'sprockets-rollup'

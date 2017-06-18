@@ -1,4 +1,4 @@
-var paginator = (function() {
+window.paginator = (function() {
   function requestPage(context, page) {
     if (page == context[0].dataset.page) return;
     context[0].dataset.page = page;

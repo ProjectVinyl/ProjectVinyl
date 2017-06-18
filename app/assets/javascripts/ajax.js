@@ -1,4 +1,4 @@
-const ajax = (function() {
+window.ajax = (function() {
   function xhr(params) {
     var xhr = params.xhr;
     if (xhr) {

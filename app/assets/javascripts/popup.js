@@ -1,4 +1,4 @@
-var Popup = (function() {
+window.Popup = (function() {
   var INSTANCES = [];
   var win = $(window);
   

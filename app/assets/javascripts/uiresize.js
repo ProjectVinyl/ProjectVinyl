@@ -1,4 +1,4 @@
-var resizeFont = (function() {
+window.resizeFont = (function() {
   function sizeFont(el, targetWidth) {
     var div = $('<div style="position:fixed;top:0;left:0;white-space:nowrap;background:#fff" />');
     div.css({

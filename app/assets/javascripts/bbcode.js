@@ -1,4 +1,4 @@
-const BBC = (function() {
+window.BBC = (function() {
   var active = null;
   var emptyMessage = 'A description has not been written yet.';
   

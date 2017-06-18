@@ -1,4 +1,4 @@
-var Duration = (function() {
+window.Duration = (function() {
   function Duration(seconds) {
     this.time = seconds || 0;
     this.seconds = this.time;
