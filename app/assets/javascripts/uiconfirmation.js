@@ -100,7 +100,7 @@ import { Popup } from './popup.js';
     });
   }
   
-  $doc.on('click', '.confirm-button:not(.loaded)', function(e) {
+  $(document).on('click', '.confirm-button:not(.loaded)', function(e) {
     init($(this));
     e.preventDefault();
   });

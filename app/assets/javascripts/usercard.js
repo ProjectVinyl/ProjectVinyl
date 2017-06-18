@@ -16,7 +16,7 @@ import { ajax } from './ajax.js';
     }, 500);
   }
   
-  $doc.on('mouseenter', '.user-link', function() {
+  $(document).on('mouseenter', '.user-link', function() {
     var sender = $(this);
     var id = sender.attr('data-id');
     var usercard = $('.hovercard[data-id=' + id + ']');
@@ -35,7 +35,7 @@ import { ajax } from './ajax.js';
     }
   });
   
-  $doc.on('mouseleave', '.user-link', function() {
+  $(document).on('mouseleave', '.user-link', function() {
     $('.hovercard.shown').toggleClass('shown');
   });
 })();

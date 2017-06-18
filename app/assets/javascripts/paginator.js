@@ -56,7 +56,7 @@ const paginator = {
   }
 };
 
-$doc.on('click', '.pagination .pages .button, .pagination .button.left, .pagination .button.right', function(e) {
+$(document).on('click', '.pagination .pages .button, .pagination .button.left, .pagination .button.right', function(e) {
   if (!e.ctrlKey && !e.shiftKey) {
     paginator.go($(this));
     e.preventDefault();

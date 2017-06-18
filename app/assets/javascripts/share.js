@@ -25,7 +25,7 @@
 		share_field.val(htm);
 	}
   
-  $doc.on('click', '.share-buttons button', function() {
+  $(document).on('click', '.share-buttons button', function() {
     var ref = shares[this.dataset.type];
     if (ref) {
       ref = ref.replace(/{url}/g, encodeURIComponent(document.location.href));

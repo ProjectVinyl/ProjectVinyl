@@ -3,11 +3,8 @@
     ENTER: 13, ESC: 27, COMMA: 188, BACKSPACE: 8, Z: 90, Y: 89
   };
 
-  window.$doc = $(document);
-  window.$win = $(window);
-
   document.windowFocused = false;
-  $win.on('focus', function() {
+  $(window).on('focus', function() {
     document.windowFocused = true;
   }).on('blur', function() {
     document.windowFocused = false;

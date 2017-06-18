@@ -104,20 +104,20 @@ import { error } from './popup.js';
     return false;
   };
   
-  $doc.on('click', '.comment .mention, .comment .comment-content a[data-link="2"]', function(ev) {
+  $(document).on('click', '.comment .mention, .comment .comment-content a[data-link="2"]', function(ev) {
     findComment(this);
     ev.preventDefault();
   });
   
-  $doc.on('click', '.reply-comment', function() {
+  $(document).on('click', '.reply-comment', function() {
     replyTo(this);
   });
   
-  $doc.on('click', '.edit-comment-submit', function() {
+  $(document).on('click', '.edit-comment-submit', function() {
     editComment(this);
   });
   
-  $doc.on('click', '.spoiler', function() {
+  $(document).on('click', '.spoiler', function() {
     $(this).toggleClass('revealed');
   });
   

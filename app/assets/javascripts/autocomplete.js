@@ -23,7 +23,7 @@ import { ajax } from './ajax.js';
     });
   }
   
-  $doc.on('focus', '.auto-lookup:not(.loaded) input', function() {
+  $(document).on('focus', '.auto-lookup:not(.loaded) input', function() {
     var input = $(this);
     var me = input.parent();
     var popout = me.find('.pop-out');

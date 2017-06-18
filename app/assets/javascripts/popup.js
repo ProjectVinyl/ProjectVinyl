@@ -169,8 +169,8 @@ Popup.prototype = {
       self.move(ev.pageX - offX, ev.pageY - offY);
     };
     this.focus();
-    $doc.on('mousemove', this.dragging);
-    $doc.one('mouseup', function() {
+    $(document).on('mousemove', this.dragging);
+    $(document).one('mouseup', function() {
       self.release();
     });
   },
@@ -184,14 +184,14 @@ Popup.prototype = {
       self.move(x - offX, y - offY);
     };
     this.focus();
-    $doc.on('touchmove', this.dragging);
-    $doc.one('touchend', function() {
+    $(document).on('touchmove', this.dragging);
+    $(document).one('touchend', function() {
       self.release();
     });
   },
   release: function() {
     if (this.dragging) {
-      $doc.off('mousemove touchmove', this.dragging);
+      $(document).off('mousemove touchmove', this.dragging);
       this.dragging = null;
     }
   },

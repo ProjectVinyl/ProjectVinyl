@@ -1,12 +1,12 @@
-$doc.on('focus', 'label input, label select', function() {
+$(document).on('focus', 'label input, label select', function() {
   $(this).closest('label').addClass('focus');
 });
 
-$doc.on('blur', 'label input, label select', function() {
+$(document).on('blur', 'label input, label select', function() {
   $(this).closest('label').removeClass('focus');
 });
 
-$doc.on('touchstart', '.drop-down-holder:not(.hover), .mobile-touch-toggle:not(.hover)', function(e) {
+$(document).on('touchstart', '.drop-down-holder:not(.hover), .mobile-touch-toggle:not(.hover)', function(e) {
   var me = $(this);
   var lis = me.find('a, li');
   
@@ -15,7 +15,7 @@ $doc.on('touchstart', '.drop-down-holder:not(.hover), .mobile-touch-toggle:not(.
   });
   
   me.one('touchstart touchmove', clos);
-  $doc.one('touchstart touchmove', clos);
+  $(document).one('touchstart touchmove', clos);
   
   me.addClass('hover');
   e.preventDefault();
@@ -47,7 +47,7 @@ $doc.on('touchstart', '.drop-down-holder:not(.hover), .mobile-touch-toggle:not(.
       sender.removeClass('pop-left');
       sender.removeClass('pop-right');
       
-      if (left + sender.content.width() > $win.width()) {
+      if (left + sender.content.width() > $(window).width()) {
         sender.addClass('pop-left');
       }
       if (left < 0) {
@@ -59,7 +59,7 @@ $doc.on('touchstart', '.drop-down-holder:not(.hover), .mobile-touch-toggle:not(.
     }
   };
   
-  $doc.on('click', '.pop-out-toggle', function() {
+  $(document).on('click', '.pop-out-toggle', function() {
     var me = $(this);
     var popout = me.closest('.popper');
     
@@ -78,7 +78,7 @@ $doc.on('touchstart', '.drop-down-holder:not(.hover), .mobile-touch-toggle:not(.
     Popout.toggle(popout);
   });
   
-  $doc.on('mousedown', function() {
+  $(document).on('mousedown', function() {
     Popout.hideAll();
   });
 })();

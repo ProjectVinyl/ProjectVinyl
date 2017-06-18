@@ -46,7 +46,7 @@ import { ajax } from './ajax.js';
   
 })();
 
-$doc.on('click', '.slider-toggle', function(e) {
+$(document).on('click', '.slider-toggle', function(e) {
   var me = $(this);
   var holder = $(this.dataset.target);
   if (me.hasClass('loadable') && !me.hasClass('loaded')) {
@@ -70,10 +70,10 @@ $doc.on('click', '.slider-toggle', function(e) {
   e.preventDefault();
 });
 
-$doc.on('click', '.slide-holder .goto.slide-right', function() {
+$(document).on('click', '.slide-holder .goto.slide-right', function() {
   slideAcross($(this), 1);
 });
 
-$doc.on('click', '.slide-holder .goto.slide-left', function() {
+$(document).on('click', '.slide-holder .goto.slide-left', function() {
   slideAcross($(this), -1);
 });

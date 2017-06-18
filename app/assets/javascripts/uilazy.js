@@ -19,12 +19,12 @@ import { ajax } from './ajax.js';
     });
   };
   
-  $doc.on('click', '.load-more button', function() {
+  $(document).on('click', '.load-more button', function() {
     lazyLoad(this);
   });
 })();
 
-$doc.on('click', '.mix a', function(e) {
+$(document).on('click', '.mix a', function(e) {
   document.location.replace(this.href + '&t=' + $('#video .player')[0].getPlayerObj().video.currentTime);
   e.preventDefault();
 });

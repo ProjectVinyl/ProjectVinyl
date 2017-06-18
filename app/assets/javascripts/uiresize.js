@@ -35,6 +35,6 @@ function fixFonts() {
   });
 }
 
-$win.on('resize', fixFonts);
+$(window).on('resize', fixFonts);
 $(fixFonts);
 export { resizeFont };

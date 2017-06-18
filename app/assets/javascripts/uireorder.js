@@ -33,7 +33,7 @@ import { paginator } from './paginator.js';
     
     floater.addClass('floater');
     floater.css('top', item.offset().top);
-    $doc.one('mouseup', function(e) {
+    $(document).one('mouseup', function(e) {
       floater.remove();
       floater = null;
       reorder(target, item[0].dataset.id, item[0].dataset.index);
@@ -41,7 +41,7 @@ import { paginator } from './paginator.js';
       container.find('.grabbed').removeClass('grabbed');
       container.children(':not(.floater)').off('mouseover');
       
-      $doc.off('mousemove', moveFloater);
+      $(document).off('mousemove', moveFloater);
       container.children().each(function(i) {
         this.dataset.index = i;
       });
@@ -49,7 +49,7 @@ import { paginator } from './paginator.js';
       e.preventDefault();
       e.stopPropagation();
     });
-    $doc.on('mousemove', moveFloater);
+    $(document).on('mousemove', moveFloater);
     container.children(':not(.floater)').on('mouseover', function() {
       var index = parseInt(this.dataset.index);
       $(this).after(item);
@@ -67,16 +67,16 @@ import { paginator } from './paginator.js';
         grabber = function() {
           grab(target, orderable, me);
         };
-        $doc.one('mousemove', grabber);
+        $(document).one('mousemove', grabber);
         e.preventDefault();
         e.stopPropagation();
       }).on('mouseup', '.reorderable .handle', function() {
-        $doc.off('mousemove', grabber);
+        $(document).off('mousemove', grabber);
       });
     });
   });
   
-  $doc.on('click', '.removeable .remove', function(e) {
+  $(document).on('click', '.removeable .remove', function(e) {
     var me = $(this).parents('.removeable');
     
     if (me.hasClass('repaintable')) {

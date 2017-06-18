@@ -28,7 +28,7 @@ import { ajax } from './ajax.js';
     return me;
   }
   
-  $doc.on('click', 'button.action.like, button.action.dislike', function() {
+  $(document).on('click', 'button.action.like, button.action.dislike', function() {
     var me = $(this);
     if (me.hasClass('liked')) {
       count(me, -1).removeClass('liked');
@@ -41,7 +41,7 @@ import { ajax } from './ajax.js';
     }
   });
   
-  $doc.on('click', 'button.action.star', function fave() {
+  $(document).on('click', 'button.action.star', function fave() {
     var me = $(this);
     me.toggleClass('starred');
     ajax.post(me[0].dataset.action + '/' + me[0].dataset.id, function(xml) {

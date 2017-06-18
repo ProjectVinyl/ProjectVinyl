@@ -199,18 +199,18 @@ function setupEditable(sender) {
   });
 }
 
-$doc.on('click', function() {
+$(document).on('click', function() {
   if (active && !active.closest('.editable').is(':hover')) deactivate(active);
 });
 
-$doc.on('change', 'textarea.comment-content', function() {
+$(document).on('change', 'textarea.comment-content', function() {
   var preview = $(this).parent().find('.comment-content.preview');
   if (preview.length) {
     preview.html(rich($(this).val()));
   }
 });
 
-$doc.on('keydown', 'textarea.comment-content', function(ev) {
+$(document).on('keydown', 'textarea.comment-content', function(ev) {
   var self = this;
   if (ev.ctrlKey) {
     handleSpecialKeys(ev.keyCode, function(tag) {
@@ -221,14 +221,14 @@ $doc.on('keydown', 'textarea.comment-content', function(ev) {
   }
 });
 
-$doc.on('mouseup', '.edit-action', function() {
+$(document).on('mouseup', '.edit-action', function() {
   var sender = $(this);
   var textarea = sender.parents('.content.editing').find('textarea, input.comment-content')[0];
   var type = specialActions[sender.attr('data-action')];
   if (type) type(sender, textarea);
 });
 
-$doc.on('dragstart', '#emoticons img[title]', function(event) {
+$(document).on('dragstart', '#emoticons img[title]', function(event) {
   var data = event.originalEvent.dataTransfer.getData('Text/plain');
   if (data && data.trim().indexOf('[') == 0) {
     data = data.split('\n');
@@ -241,7 +241,7 @@ $doc.on('dragstart', '#emoticons img[title]', function(event) {
   }
 });
 
-$doc.on('keydown', '#emoticons', function() {
+$(document).on('keydown', '#emoticons', function() {
   $(this).select();
 });
 

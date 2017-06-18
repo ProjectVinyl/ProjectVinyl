@@ -15,11 +15,11 @@ import { ajax } from './ajax.js';
   
 })();
 
-$doc.on('click', '.tab-set > li.button:not([data-disabled])', function() {
+$(document).on('click', '.tab-set > li.button:not([data-disabled])', function() {
   focusTab($(this));
 });
 
-$doc.on('click', '.tab-set > li.button i.fa-close', function(e) {
+$(document).on('click', '.tab-set > li.button i.fa-close', function(e) {
   var me = $(this.parentNode);
   $('div[data-tab="' + me[0].dataset.target + '"]').remove();
   me.addClass('hidden');
@@ -34,7 +34,7 @@ $doc.on('click', '.tab-set > li.button i.fa-close', function(e) {
   e.stopPropagation();
 });
 
-$doc.on('click', '.tab-set.async a.button:not([data-disabled])', function(e) {
+$(document).on('click', '.tab-set.async a.button:not([data-disabled])', function(e) {
   var me = $(this);
   if (!me.hasClass('selected')) {
     var parent = this.parentNode;

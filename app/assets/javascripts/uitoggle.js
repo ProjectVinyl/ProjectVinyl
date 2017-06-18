@@ -30,11 +30,11 @@ import { ajax } from './ajax.js';
     });
   }
 
-  $doc.on('click', '.action.toggle', function() {
+  $(document).on('click', '.action.toggle', function() {
     toggle(this);
   });
 
-  $doc.on('click', '.state-toggle', function(ev) {
+  $(document).on('click', '.state-toggle', function(ev) {
     var state = this.dataset.state;
     var parent = this.dataset.parent;
     var me = $(this);

@@ -53,11 +53,11 @@ function resizeGrid(grid, beside) {
 
 $(function() {
   if ($('.grid-root').length) {
-    $win.on('resize', function() {
+    $(window).on('resize', function() {
       resizeGrid($('.column-left'), $('.column-right'));
     });
     
-    $doc.on('ready', function() {
+    $(document).on('ready', function() {
       resizeGrid($('.column-left'), $('.column-right'));
     });
   }

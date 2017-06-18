@@ -29,7 +29,7 @@ function controlsFade() {
 }
 
 function attachMessageListener(sender) {
-  $win.on('storage', function(ev) {
+  $(window).on('storage', function(ev) {
     if (ev.originalEvent.key === '::activeplayer' && ev.originalEvent.newValue != sender.__seed) {
       sender.pause();
     }
@@ -49,7 +49,7 @@ function canGen(childs) {
 
 function Player() {}
 Player.onFullscreen = function(func) {
-  $doc.on('webkitfullscreenchange mozfullscreenchange fullscreenchange', func);
+  $(document).on('webkitfullscreenchange mozfullscreenchange fullscreenchange', func);
 };
 
 Player.canPlayType = function(mime) {
@@ -268,10 +268,10 @@ Player.prototype = {
       val(self.speed(self.__speed));
     });
     
-    $doc.on('click', function(ev) {
+    $(document).on('click', function(ev) {
       self.removeContext(ev);
     });
-    $doc.on('keydown', function(ev) {
+    $(document).on('keydown', function(ev) {
       if (ev.which == Key.SPACE) {
         if (!$('input:focus,textarea:focus').length) {
           if (self.video) {
@@ -369,8 +369,8 @@ Player.prototype = {
   showContext: function(ev) {
     var y = ev.pageY;
     var x = ev.pageX;
-    if (x + this.contextmenu.width() > $win.width()) x = $win.width() - this.contextmenu.width();
-    if (y + this.contextmenu.height() + 10 >= $win.height()) y = $win.height() - this.contextmenu.height() - 10;
+    if (x + this.contextmenu.width() > $(window).width()) x = $(window).width() - this.contextmenu.width();
+    if (y + this.contextmenu.height() + 10 >= $(window).height()) y = $(window).height() - this.contextmenu.height() - 10;
     this.contextmenu.css({
       top: y - this.dom.offset().top,
       left: x - this.dom.offset().left,
@@ -716,8 +716,8 @@ Player.prototype = {
     
     this.checkstart();
     this.dom.addClass('tracking');
-    $doc.on('mousemove touchmove', func);
-    $doc.one('mouseup touchend touchcancel', ender);
+    $(document).on('mousemove touchmove', func);
+    $(document).one('mouseup touchend touchcancel', ender);
     this.halt(ev);
     
     function func(ev) {
@@ -725,8 +725,8 @@ Player.prototype = {
     }
     
     function ender() {
-      $doc.off('mouseup touchend touchcancel', ender);
-      $doc.off('mousemove touchmove', func);
+      $(document).off('mouseup touchend touchcancel', ender);
+      $(document).off('mousemove touchmove', func);
       self.dom.removeClass('tracking');
     }
   },
@@ -735,8 +735,8 @@ Player.prototype = {
     var self = this;
     
     this.dom.addClass('voluming');
-    $doc.on('mousemove touchmove', func);
-    $doc.one('mouseup touchend touchcancel', ender);
+    $(document).on('mousemove touchmove', func);
+    $(document).one('mouseup touchend touchcancel', ender);
     this.halt(ev);
     
     function func(ev) {
@@ -744,8 +744,8 @@ Player.prototype = {
     }
     
     function ender() {
-      $doc.off('mouseup touchend touchcancel', ender);
-      $doc.off('mousemove touchmove', func);
+      $(document).off('mouseup touchend touchcancel', ender);
+      $(document).off('mousemove touchmove', func);
       self.dom.removeClass('voluming');
     }
   },
@@ -863,7 +863,7 @@ function resize() {
   });
 }
 
-$win.on('resize', function() {
+$(window).on('resize', function() {
   $('.video').each(resize);
 });
 
@@ -873,12 +873,12 @@ $win.on('resize', function() {
     if (this.getPlayerObj) this.getPlayerObj().removeContext(ev);
   }
   
-  $win.on('resize blur', function() {
+  $(window).on('resize blur', function() {
     $('.player').each(removeContext);
   });
 })();
 
-$doc.on('mousemove', function() {
+$(document).on('mousemove', function() {
   if (Player.fullscreenPlayer) {
     Player.fullscreenPlayer.controls.css('opacity', 1);
     Player.fullscreenPlayer.player.find('.playing').css('cursor', '');
