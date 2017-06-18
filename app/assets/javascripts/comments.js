@@ -120,10 +120,18 @@
     });
   };
   
+  window.reportState = function reportState(sender) {
+    sender = $(sender).parent();
+    if (sender.find('input[name=resolve]:checked').length) return 'resolve';
+    if (sender.find('input[name=close]:checked').length) return 'close';
+    if (sender.find('input[name=unresolve]:checked').length) return 'open';
+    return false;
+  };
+  
   function messageOperation(action) {
     var checks = $('input.message_select:checked');
     if (checks.length) {
-      ajax.post('/messages/action', function(json) {
+      ajax.post('/messages/' + action, function(json) {
         if (json.content) {
           action.callback(checks, json);
         } else {

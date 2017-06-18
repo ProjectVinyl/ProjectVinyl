@@ -1,9 +1,11 @@
 (function() {
-  function createPopup(me, url, action, msg, title, icon) {
+  function createPopup(me, action) {
     var id = me[0].dataset.id;
     var callback = me[0].dataset.callback;
+    var url = me[0].dataset.url;
+    var msg = me[0].dataset.msg;
     
-    return new Popup(title, icon, function() {
+    return new Popup(me[0].dataset.title, me[0].dataset.icon, function() {
       var ok = $('<button class="button-fw green confirm">Yes</button>');
       var cancel = $('<button class="cancel button-fw blue" style="margin-left:20px;" type="button">No</button>');
       
@@ -52,10 +54,20 @@
     });
   }
   
+  function createTemplatePopup(sender) {
+    return new Popup(sender.dataset.title, sender.dataset.icon, function() {
+      this.content.append(document.getElementById(sender.dataset.template).innerHTML);
+      var self = this;
+      this.content.find('button.cancel').on('click', function() {
+        self.close();
+      });
+      this.setFixed();
+      this.show();
+    });
+  }
+  
   function init(me) {
     var action = me[0].dataset.action;
-    var url = me[0].dataset.url;
-    
     var maxWidth = me[0].dataset.maxWidth;
     var popup;
     
@@ -63,12 +75,18 @@
     
     if (action == 'delete' || action == 'remove') {
       if (!popup) {
-        popup = createPopup(me, url, action, me[0].dataset.msg, me[0].dataset.title, me[0].dataset.icon);
+        popup = createPopup(me, action);
+      } else {
+        popup.show();
+      }
+    } else if (action == 'template') {
+      if (!popup) {
+        popup = createTemplatePopup(me[0]);
       } else {
         popup.show();
       }
     } else {
-      popup = Popup.fetch(url, me[0].dataset.title, me[0].dataset.icon, me.hasClass('confirm-button-thin'), me[0].dataset['event-loaded']);
+      popup = Popup.fetch(me[0].dataset.url, me[0].dataset.title, me[0].dataset.icon, me.hasClass('confirm-button-thin'), me[0].dataset.eventLoaded);
       popup.setPersistent();
     }
     if (popup && maxWidth) popup.content.css('max-width', maxWidth);

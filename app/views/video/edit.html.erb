@@ -1,4 +1,4 @@
-<section class="page column-left<% if !@video.audio_only %> tab-set<% end %>">
+<section id="video-editor" data-needs-cover="<% if !@video.audio_only %>" class="page column-left<% if !@video.audio_only %> tab-set<% end %>">
 	<% if !@video.audio_only %>
 	<ul class="tab-set tabs">
 		<li data-target="thumbupload" class="button selected">Upload Image</li>
@@ -40,51 +40,6 @@
 			<%= f.file_field :file %>
 		</div>
 		<% end %>
-		<script>
-var player = null;
-<% if !@video.audio_only %>
-$(document).on('ready', function() {
-	player = new ThumbPicker();
-	player.constructor($('.video'));
-	player.start();
-});
-(function(lastTime) {
-	$('.tab[data-tab="thumbpick"]').on('tabblur', function() {
-		lastTime = player.time_input.val();
-		player.time_input.val(-1);
-	}).on('tabfocus', function() {
-		player.time_input.val(lastTime);
-	});
-})(-1);
-<% end %>
-(function() {
-  var has_cover = false;
-  var needs_cover = <%= @video.audio_only %>;
-  $('#video-upload').on('accept', function(e, file) {
-    needs_cover = file.mime.match(/audio\//);
-    validateInput();
-		if (Player.canPlayType(file.mime)) {
-			player.load(file.data);
-			$('li[data-target="thumbpick"]').removeAttr('data-disabled').click();
-		} else {
-			$('li[data-target="thumbupload"]').click();
-			$('li[data-target="thumbpick"]').attr('data-disabled', '1');
-		}
-  });
-  $('#cover-upload').on('accept', function() {
-    has_cover = true;
-    validateInput();
-  });
-  function notify(msg) {
-    $('.notify').addClass('shown');
-    $('.notify .bobber').text(msg);
-  }
-  function validateInput() {
-    if (needs_cover && !has_cover) return notify('Audio files require a cover image.');
-    $('.notify').removeClass('shown');
-  }
-})();
-		</script>
 	</div>
 	<div class="post description resize-holder">
 		<div class="actions">
@@ -140,3 +95,4 @@ $(document).on('ready', function() {
 <section class="page column-left">
 	<div class="comments"></div>
 </section>
+<script>$doc.ready(function() { Uploader.createChecker($('#video-editor')); });</script>

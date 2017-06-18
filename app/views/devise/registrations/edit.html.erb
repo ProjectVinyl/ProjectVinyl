@@ -80,21 +80,7 @@
 					Careful! This can not be undone.
 				</td>
 				<td class="field">
-					<button id="close_account" class="red">Cancel my account</button>
-					<script>
-	$('#close_account').on('click', function() {
-		if (!$('#cancel_msg').length) new Popup('Here be dragons', 'warning', function() {
-			this.content.attr('id', 'cancel_msg');
-			this.content.append($('#cancel_form').html());
-			var me = this;
-			this.content.find('button.cancel').on('click', function() {
-				me.close();
-			});
-			this.setFixed();
-			this.show();
-		});
-	});
-					</script>
+					<button class="confirm-button" data-action="template" data-template="cancel_form" data-title="Here be dragons" data-icon="warning" id="close_account" class="red">Cancel my account</button>
 					<div id="cancel_form" style="display:none;">
 						<div class="message_content">
 							<p>
@@ -177,20 +163,6 @@
 						<i class="fa fa-check"></i>
 						Enable
 					</label>
-					<script>
-	(function() {
-		var give_me_notifications = $('#give_me_notifications');
-		give_me_notifications.val(window.SharedWorker && !!localStorage['give_me_notification'])
-		give_me_notifications.on('change', function() {
-			if (this.checked) {
-				localStorage['give_me_notifications'] = this.checked;
-			} else {
-				localStorage.removeItem('give_me_notifications');
-			}
-			console.log(this.checked);
-		});
-	})();
-					</script>
 				</td>
 			</tr>
 		</table>

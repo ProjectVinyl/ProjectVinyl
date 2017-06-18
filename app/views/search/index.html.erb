@@ -111,12 +111,6 @@
 							<option value="2"<% if @type == 2 %> selected<% end %>>User</option>
 							<option value="3"<% if @type == 3 %> selected<% end %>>Tag</option>
 						</select>
-						<script>
-$('#search_type').on('change', function() {
-var val = $(this).val() ;
-$('#search_tags').css('display', (val == '0' || val == '2') ? '' : 'none');
-});
-						</script>
 					</div>
 				</label>
 				<label>

@@ -56,7 +56,19 @@
   }
   
   $(function() {
-    if (window.current_user && window.SharedWorker && (window.force_notifications || !!localStorage.give_me_notifications)) {
+    var giveMeNotifications = $('#give_me_notifications');
+    if (giveMeNotifications.length) {
+      giveMeNotifications.val(window.SharedWorker && !!localStorage['give_me_notification'])
+      giveMeNotifications.on('change', function() {
+        if (this.checked) {
+          localStorage['give_me_notifications'] = this.checked;
+        } else {
+          localStorage.removeItem('give_me_notifications');
+        }
+      });
+    }
+    
+    if (window.current_user && window.SharedWorker && !!localStorage['give_me_notifications']) {
       initWorker();
     }
   });

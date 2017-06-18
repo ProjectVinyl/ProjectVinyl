@@ -50,6 +50,61 @@ var Uploader = (function() {
     }
   };
   
+  function Validator(el) {
+    var self = this;
+    
+    this.el = el;
+    
+    this.hasCover = false;
+    this.needsCover = toBool(el[0].dataset['needs-cover']);
+    
+    this.el.notify = this.el.find('.notify');
+    this.el.notify.bobber = this.el.notify.find('.bobber');
+    this.el.info = this.el.find('.info');
+    
+    this.time = this.el.find('#time');
+    this.lastTime = -1;
+    
+    this.cover = this.el.find('#cover-upload');
+    this.cover.input = this.cover.find('input[type=file]');
+    this.cover.preview = this.cover.find('.preview');
+    
+    this.video = this.el.find('#video-upload');
+    this.video.input = this.video.find('input[type=file]');
+    
+    this.video.on('accept', function(e, file) {
+      this.needsCover = !!file.mime.match(/audio\//);
+      this.accept(file);
+    });
+    
+    this.cover.on('accept', function() {
+      self.hasCover = true;
+      self.validateInput();
+    });
+    
+    this.el.find('.tab[data-tab="thumbpick"]').on('tabblur', function() {
+      self.lastTime = self.time.val();
+      self.time.val(-1);
+      self.validateInput();
+    }).on('tabfocus', function() {
+      self.time.val(self.lastTime);
+      self.validateInput();
+    });
+  }
+  Validator.prototype = {
+    isReady: function() {
+      return this.hasFile && (this.hasCover || !this.needsCover) && this.ready;
+    },
+    notify: function(msg) {
+      this.el.notify.addClass('shown');
+      this.el.notify.bobber.text(msg);
+    },
+    info: function(msg) {
+      this.el.info.css('display', '');
+      this.el.info.text(msg);
+    }
+  };
+  
   function Uploader() {
     var self = this;
     
@@ -64,32 +119,19 @@ var Uploader = (function() {
     this.tab.progress.fill = this.tab.progress.find('.fill');
     $('#new_tab_button').before(this.tab);
     
-    this.el.notify = this.el.find('.notify');
-    this.el.notify.bobber = this.el.notify.find('.bobber');
-    this.el.info = this.el.find('.info');
-    
     this.form = this.el.find('form');
     this.videoTitle = this.el.find('#video_title');
     this.videoTitle.input = this.videoTitle.find('input');
     this.videoDescription = this.el.find('textarea.comment-content');
     this.title = this.el.find('#video_title .content');
     this.tagEditor = TagEditor.getOrCreate(this.el.find('.tag-editor')[0]);
-    this.video = this.el.find('#video-upload');
-    this.video.input = this.video.find('input[type=file]');
-    this.cover = this.el.find('#cover-upload');
-    this.cover.input = this.cover.find('input[type=file]');
-    this.cover.preview = this.cover.find('.preview');
+    
     this.source = this.el.find('#video_source');
+    this.srcNeeded = false;
     
     BBC.init(this.videoTitle[0]);
     initFileSelect(this.video);
     initFileSelect(this.cover);
-    
-    this.time = this.el.find('#time');
-    this.lastTime = -1;
-    this.hasCover = false;
-    this.needsCover = false;
-    this.srcNeeded = false;
     
     setTimeout(function() {
       self.tab.removeClass('hidden');
@@ -102,35 +144,20 @@ var Uploader = (function() {
       e.preventDefault();
       e.stopPropagation();
     });
-    this.video.on('accept', function(e, file) {
-      self.accept(file);
-    });
-    this.cover.on('accept', function() {
-      self.hasCover = true;
-      self.validateInput();
-    });
+    
     this.el.find('#new_video').on('tagschange', function() {
       self.validateInput();
     }).on('change', 'h1#video_title input', function() {
       self.validateInput();
     });
-    this.el.find('.tab[data-tab="thumbpick"]').on('tabblur', function() {
-      self.lastTime = self.time.val();
-      self.time.val(-1);
-      self.validateInput();
-    }).on('tabfocus', function() {
-      self.time.val(self.lastTime);
-      self.validateInput();
-    });
     
-    if (typeof focusTab === 'function') {
-      focusTab(this.tab);
-    } else {
-      this.tab.addClass('selected');
-    }
     this.el.find('h1.resize-target').each(function() {
       resizeFont($(this));
     });
+    
+    Validator.call(this, this.el);
+    
+    focusTab(this.tab);
     
     INSTANCES.push(this);
   }
@@ -139,7 +166,7 @@ var Uploader = (function() {
     uploadingQueue.enqueueAll(INSTANCES);
   };
   
-  Uploader.prototype = {
+  Uploader.prototype = extendObj({
     initPlayer: function() {
       this.player = new ThumbPicker();
       this.player.constructor(this.el.find('.video'));
@@ -150,9 +177,6 @@ var Uploader = (function() {
       this.tab.label.text(title);
       this.tab.attr(title);
     },
-    isReady: function() {
-      return this.hasFile && (this.hasCover || !this.needsCover) && this.isReady;
-    },
     accept: function(file) {
       if (this.video.hasClass('shown')) {
         var title = this.cleanup(file.title);
@@ -160,7 +184,6 @@ var Uploader = (function() {
         this.videoTitle.input.val(title);
         this.showUI(file.title + '.' + file.type);
       }
-      this.needsCover = !!file.mime.match(/audio\//);
       if (!this.player) this.initPlayer();
       if (this.needsCover) {
         this.player.load(null);
@@ -183,18 +206,10 @@ var Uploader = (function() {
         return i.toUpperCase();
       }).trim();
     },
-    notify: function(msg) {
-      this.el.notify.addClass('shown');
-      this.el.notify.bobber.text(msg);
-    },
-    info: function(msg) {
-      this.el.info.css('display', '');
-      this.el.info.text(msg);
-    },
     validateInput: function() {
       var tit = this.videoTitle.input.val();
       
-      this.isReady = false;
+      this.ready = false;
       if (!tit || tit == '') return this.notify('You need to provide a title.');
       if (this.needsCover && !this.hasCover) return this.notify('Audio files require a cover image.');
       var tags = this.tagEditor.tags;
@@ -216,7 +231,7 @@ var Uploader = (function() {
       }
       if (tags.length == 0) return this.notify('You need at least one tag.');
       if (tags.length == 1 && tags[0].name.trim().toLowerCase() == 'music') return this.notify('\'music\' is implied. Tags should be more specific than that. Do you perhaps know who the artist is?');
-      this.isReady = true;
+      this.ready = true;
       this.el.notify.removeClass('shown');
     },
     update: function(percentage) {
@@ -227,7 +242,7 @@ var Uploader = (function() {
     complete: function(ref) {
       this.form.removeClass('uploading');
       this.tab.removeClass('uploading');
-      this.isReady = false;
+      this.ready = false;
       if (this.tab.hasClass('selected')) {
         focusTab(this.tab.parent().find('li.button:not([data-disabled]):not(.hidden)[data-target]:not([data-target="' + this.id + '"])').first());
       }
@@ -241,7 +256,7 @@ var Uploader = (function() {
     dispose: function() {
       INSTANCES.splice(INSTANCES.indexOf(this), 1);
     }
-  };
+  }, Validator.prototype);
   
   $(function() {
     $('#new_tab_button').on('click', function() {
@@ -249,5 +264,37 @@ var Uploader = (function() {
     });
   });
   
+  function UploadChecker (el) {
+    Validator.call(this, el);
+    if (this.needsCover) {
+      this.initPlayer();
+    }
+  }
+  UploadChecker.prototype = extendObj({
+    initPlayer: function() {
+      this.player = new ThumbPicker();
+      this.player.constructor(this.el.find('.video'));
+      this.player.start();
+    },
+    accept: function(file) {
+      if (this.needsCover && !this.player) this.initPlayer();
+      if (Player.canPlayType(file.mime)) {
+        this.player.load(file.data);
+        this.el.find('li[data-target="thumbpick"]').removeAttr('data-disabled').click();
+      } else {
+        this.el.find('li[data-target="thumbupload"]').click();
+        this.el.find('li[data-target="thumbpick"]').attr('data-disabled', '1');
+      }
+      this.validateInput();
+    },
+    validateInput: function() {
+      if (this.needsCover && !this.hasCover) return this.notify('Audio files require a cover image.');
+      this.el.notify.removeClass('shown');
+    }
+  }, Validator.prototype);
+  
+  Uploader.createChecker = function(el) {
+    return new UploadChecker(el);
+  };
   return Uploader;
 })();
