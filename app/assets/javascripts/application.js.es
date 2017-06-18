@@ -48,21 +48,10 @@ import './compatibility.js';
 import './utilities.js';
 
 // Our code (this can be shortened to 1-2 imports later)
-import './duration.js';
-import './queryparameters.js';
 import './pageload.js';
-import './ajax.js';
-import './videos.js';
-import './thumbnailpicker.js';
 import './uploader.js';
-import './popup.js';
-import './paginator.js';
-import './bbcode.js';
-import './fileinput.js';
 import './autocomplete.js';
 import './usercard.js';
-import './tageditor.js';
-import './uiresize.js';
 import './uiscroll.js';
 import './uilazy.js';
 import './uiconfirmation.js';

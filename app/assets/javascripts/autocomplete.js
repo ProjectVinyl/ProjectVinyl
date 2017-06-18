@@ -1,3 +1,5 @@
+import { ajax } from './ajax.js';
+
 (function() {
   var autocomplete = null;
   

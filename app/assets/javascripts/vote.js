@@ -1,3 +1,5 @@
+import { ajax } from './ajax.js';
+
 (function() {
   function count(me, offset) {
     var likes = me[0].dataset.count;

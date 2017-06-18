@@ -1,3 +1,6 @@
+import { ajax } from './ajax.js';
+import { paginator } from './paginator.js';
+
 (function() {
   window.markRead = function markRead() {
     messageOperation({

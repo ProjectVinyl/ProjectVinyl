@@ -1,3 +1,7 @@
+import { ajax } from './ajax.js';
+import { paginator } from './paginator.js';
+import { Popup } from './popup.js';
+
 (function() {
   function createPopup(me, action) {
     var id = me[0].dataset.id;

@@ -1,3 +1,5 @@
+import { ajax } from './ajax.js';
+
 (function() {
   function toggle(sender) {
     var id = sender.dataset.id;

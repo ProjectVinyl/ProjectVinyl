@@ -2,6 +2,9 @@
  * i.e. When the banner selection ialogue is opened
  */
 
+import { ajax } from './ajax.js';
+import { initFileSelect } from './fileinput.js';
+
 (function() {
   window.loadBannerSelector = function loadBannerSelector() {
     var me = $('#banner-upload');

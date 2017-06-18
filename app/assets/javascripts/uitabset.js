@@ -1,3 +1,5 @@
+import { ajax } from './ajax.js';
+
 (function() {
   window.focusTab = function focusTab(me) {
     if (!me.hasClass('selected') && me[0].dataset.target) {

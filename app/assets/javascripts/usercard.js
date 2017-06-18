@@ -1,3 +1,5 @@
+import { ajax } from './ajax.js';
+
 (function() {
   var hoverTimeout = null;
   function openUsercard(sender, usercard) {

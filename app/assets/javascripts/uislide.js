@@ -1,3 +1,5 @@
+import { ajax } from './ajax.js';
+
 (function() {
   window.slideOut = function slideOut(holder) {
     var h = holder.find('.group.active').height();
