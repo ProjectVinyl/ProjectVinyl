@@ -23,13 +23,4 @@
     sender.find('.tag-editor')[0].getTagEditorObj().reload(data.results);
     sender.parent().find('.normal.tiny-link a').attr('href', data.source).text(data.source);
   };
-  
-
 })();
-
-$(function() {
-  /* Everything's ready, load latecomers
-   * TODO: Remove this when there's no more envload stuff
-   */
-  $doc.trigger('envload');
-});
