@@ -96,7 +96,7 @@ class PmController < ApplicationController
         page: @results.page
       }
     end
-    render status: 402, nothing: true
+    render status: 403, nothing: true
   end
 
   def mark_read
