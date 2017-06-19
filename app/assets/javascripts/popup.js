@@ -1,4 +1,5 @@
 import { ajax } from './ajax.js';
+import { scrollTo } from './uiscroll.js';
 import { Key } from './utilities.js';
 
 var INSTANCES = [];

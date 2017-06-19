@@ -1,41 +1,39 @@
 import { ajax } from './ajax.js';
 
-(function() {
-  var hoverTimeout = null;
-  function openUsercard(sender, usercard) {
-    $('.hovercard.shown').removeClass('shown');
-    sender.append(usercard);
-    if (hoverTimeout) {
-      clearTimeout(hoverTimeout);
-    }
-    setTimeout(function() {
-      usercard.addClass('shown');
-      hoverTimeout = setTimeout(function() {
-        $('.user-link:not(:hover) .hovercard.shown').removeClass('shown');
-      }, 500);
-    }, 500);
+var hoverTimeout = null;
+function openUsercard(sender, usercard) {
+  $('.hovercard.shown').removeClass('shown');
+  sender.append(usercard);
+  if (hoverTimeout) {
+    clearTimeout(hoverTimeout);
   }
-  
-  $(document).on('mouseenter', '.user-link', function() {
-    var sender = $(this);
-    var id = sender.attr('data-id');
-    var usercard = $('.hovercard[data-id=' + id + ']');
-    if (!usercard.length) {
-      usercard = $('<div class="hovercard" data-id="' + id + '"></div>');
-      usercard.on('mouseenter', function(ev) {
-        ev.stopPropagation();
-      });
-      sender.append(usercard);
-      ajax.get('artist/hovercard', function(html) {
-        usercard.html(html);
-        openUsercard(sender, usercard);
-      }, {id: id}, 1);
-    } else {
+  setTimeout(function() {
+    usercard.addClass('shown');
+    hoverTimeout = setTimeout(function() {
+      $('.user-link:not(:hover) .hovercard.shown').removeClass('shown');
+    }, 500);
+  }, 500);
+}
+
+$(document).on('mouseenter', '.user-link', function() {
+  var sender = $(this);
+  var id = sender.attr('data-id');
+  var usercard = $('.hovercard[data-id=' + id + ']');
+  if (!usercard.length) {
+    usercard = $('<div class="hovercard" data-id="' + id + '"></div>');
+    usercard.on('mouseenter', function(ev) {
+      ev.stopPropagation();
+    });
+    sender.append(usercard);
+    ajax.get('artist/hovercard', function(html) {
+      usercard.html(html);
       openUsercard(sender, usercard);
-    }
-  });
-  
-  $(document).on('mouseleave', '.user-link', function() {
-    $('.hovercard.shown').toggleClass('shown');
-  });
-})();
+    }, {id: id}, 1);
+  } else {
+    openUsercard(sender, usercard);
+  }
+});
+
+$(document).on('mouseleave', '.user-link', function() {
+  $('.hovercard.shown').toggleClass('shown');
+});

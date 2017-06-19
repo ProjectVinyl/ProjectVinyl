@@ -13,7 +13,7 @@ function toBool(string) {
 };
 
 function extendObj(onto, overrides) {
-  const keys = Object.keys(overrides), i = keys.length;
+  let keys = Object.keys(overrides), i = keys.length;
   for (; i--;) onto[keys[i]] = overrides[keys[i]];
   return onto;
 };

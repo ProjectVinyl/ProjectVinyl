@@ -52,7 +52,6 @@ import './pageload.js';
 import './uploader.js';
 import './autocomplete.js';
 import './usercard.js';
-import './uiscroll.js';
 import './uilazy.js';
 import './uiconfirmation.js';
 import './uitabset.js';

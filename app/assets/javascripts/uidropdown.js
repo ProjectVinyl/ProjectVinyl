@@ -30,55 +30,53 @@ $(document).on('touchstart', '.drop-down-holder:not(.hover), .mobile-touch-toggl
   }
 });
 
-(function() {
-  var Popout = {
-    toggle: function(sender) {
-      if (sender.length && !sender.hasClass('pop-out-shown')) {
-        this.show(sender);
-      } else {
-        this.hideAll();
-      }
-    },
-    show: function(sender) {
-      var left = sender.content.offset().left;
-      
+const Popout = {
+  toggle: function(sender) {
+    if (sender.length && !sender.hasClass('pop-out-shown')) {
+      this.show(sender);
+    } else {
       this.hideAll();
-      sender.addClass('pop-out-shown');
-      sender.removeClass('pop-left');
-      sender.removeClass('pop-right');
-      
-      if (left + sender.content.width() > $(window).width()) {
-        sender.addClass('pop-left');
-      }
-      if (left < 0) {
-        sender.addClass('pop-right');
-      }
-    },
-    hideAll: function() {
-      $('.pop-out-shown').removeClass('pop-out-shown');
     }
-  };
+  },
+  show: function(sender) {
+    var left = sender.content.offset().left;
+    
+    this.hideAll();
+    sender.addClass('pop-out-shown');
+    sender.removeClass('pop-left');
+    sender.removeClass('pop-right');
+    
+    if (left + sender.content.width() > $(window).width()) {
+      sender.addClass('pop-left');
+    }
+    if (left < 0) {
+      sender.addClass('pop-right');
+    }
+  },
+  hideAll: function() {
+    $('.pop-out-shown').removeClass('pop-out-shown');
+  }
+};
+
+$(document).on('click', '.pop-out-toggle', function() {
+  var me = $(this);
+  var popout = me.closest('.popper');
   
-  $(document).on('click', '.pop-out-toggle', function() {
-    var me = $(this);
-    var popout = me.closest('.popper');
-    
-    popout.content = popout.find('.pop-out');
-    
-    me.on('click', function(e) {
-      e.stopPropagation();
-      e.preventDefault();
-      Popout.toggle(popout);
-    });
-    
-    popout.on('mousedown', function(e) {
-      e.stopPropagation();
-    });
-    
+  popout.content = popout.find('.pop-out');
+  
+  me.on('click', function(e) {
+    e.stopPropagation();
+    e.preventDefault();
     Popout.toggle(popout);
   });
   
-  $(document).on('mousedown', function() {
-    Popout.hideAll();
+  popout.on('mousedown', function(e) {
+    e.stopPropagation();
   });
-})();
+  
+  Popout.toggle(popout);
+});
+
+$(document).on('mousedown', function() {
+  Popout.hideAll();
+});

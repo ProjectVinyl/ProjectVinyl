@@ -5,6 +5,7 @@
 */
 
 import { ajax } from './ajax.js';
+import { scrollTo } from './uiscroll.js';
 import { Key } from './utilities.js';
 
 const VIDEO_ELEMENT = document.createElement('video');

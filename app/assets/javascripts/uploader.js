@@ -4,8 +4,9 @@ import { initFileSelect } from './fileinput.js';
 import { TagEditor } from './tageditor.js';
 import { ThumbPicker } from './thumbnailpicker.js';
 import { resizeFont } from './uiresize.js';
-import { Player } from './videos.js';
+import { focusTab } from './uitabset.js';
 import { toBool, extendObj } from './utilities.js';
+import { Player } from './videos.js';
 
 var INSTANCES = [];
 var INDEX = 0;
