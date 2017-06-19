@@ -55,7 +55,7 @@ function editComment(sender) {
     id: sender[0].dataset.id,
     comment: sender.find('textarea, input.comment-content').val()
   });
-};
+}
 
 function lookupComment(commentId) {
   var comment = $('#comment_' + commentId);
@@ -67,7 +67,7 @@ function lookupComment(commentId) {
     paginator.repaint(pagination, json);
     scrollTo($('#comment_' + commentId)).addClass('highlight');
   });
-};
+}
 
 function findComment(sender) {
   sender = $(sender);
@@ -90,7 +90,7 @@ function findComment(sender) {
   }, {
     id: sender[0].dataset.id || parseInt(parent.split('_')[1], 36)
   }, 1);
-};
+}
 
 function replyTo(sender) {
   sender = $(sender).parent();
@@ -98,7 +98,7 @@ function replyTo(sender) {
   textarea.focus();
   textarea.val('>>' + sender[0].dataset['o-id'] + ' [q]\n' + decodeEntities(sender[0].dataset.comment) + '\n[/q]' + textarea.val());
   textarea.change();
-};
+}
 
 // app/views/thread/_view_reverse.erb
 window.reportState = function reportState(sender) {

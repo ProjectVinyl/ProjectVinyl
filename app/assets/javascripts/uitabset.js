@@ -10,7 +10,7 @@ function focusTab(me) {
     me.addClass('selected');
     $('div[data-tab="' + me[0].dataset.target + '"]').addClass('selected').trigger('tabfocus');
   }
-};
+}
 
 $(document).on('click', '.tab-set > li.button:not([data-disabled])', function() {
   focusTab($(this));

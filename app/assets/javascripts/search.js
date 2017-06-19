@@ -17,6 +17,6 @@ $(function() {
   
   $('#search_type').on('change', function() {
     var val = this.value;
-    $('#search_tags').css('display', (val == '0' || val == '2') ? '' : 'none');
+    $('#search_tags').css('display', val == '0' || val == '2' ? '' : 'none');
   });
 });

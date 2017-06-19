@@ -12,7 +12,7 @@ function scrollTo(el, container, viewport) {
   el = $(el);
   if (!el.length) return el;
   return scrollIntoView(el, $(container || 'html, body'), $(viewport || window));
-};
+}
 
 // app/views/admin/files.html.erb
 // app/views/embed/view.html.erb

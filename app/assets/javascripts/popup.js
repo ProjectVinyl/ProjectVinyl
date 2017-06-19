@@ -15,7 +15,7 @@ win.on('keydown', function(e) {
 
 function timeoutOn(target, func, time) {
   return setTimeout(func.bind(target), time);
-};
+}
 
 function Popup(title, icon, construct) {
   var self = this;
@@ -244,6 +244,6 @@ function error(message) {
     this.setWidth(400);
     this.show();
   });
-};
+}
 
 export { Popup, error };

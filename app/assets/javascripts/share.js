@@ -17,7 +17,7 @@ function updateShareIframe() {
   console.log(id);
   var extra = '';
   if (toggle.length && toggle[0].checked) {
-    extra += '?list=' + button.attr('data-album-id') + '&index='
+    extra += '?list=' + button.attr('data-album-id') + '&index=';
     extra += type == 'beginning' ? 0 : button.attr('data-index');
   }
   htm = htm.replace('{id}', id);

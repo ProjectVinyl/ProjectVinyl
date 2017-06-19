@@ -16,7 +16,7 @@ function lazyLoad(button) {
     page: page,
     id: button.attr('data-id')
   });
-};
+}
 
 $(document).on('click', '.load-more button', function() {
   lazyLoad(this);

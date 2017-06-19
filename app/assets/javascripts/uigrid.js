@@ -49,7 +49,7 @@ function resizeGrid(grid, beside) {
   }
   
   calculatePageSplit(grid, beside);
-};
+}
 
 $(function() {
   if ($('.grid-root').length) {

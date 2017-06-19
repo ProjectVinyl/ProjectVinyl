@@ -11,7 +11,7 @@ function slideOut(holder) {
     holder.addClass('shown');
   }
   return holder;
-};
+}
 
 function slideAcross(me, direction) {
   var form = me.parents('.slide-group');
@@ -40,7 +40,7 @@ function slideAcross(me, direction) {
       }, 500);
     }, 1);
   }
-};
+}
 
 $(document).on('click', '.slider-toggle', function(e) {
   var me = $(this);

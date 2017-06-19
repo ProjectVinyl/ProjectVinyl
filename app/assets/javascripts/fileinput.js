@@ -68,7 +68,7 @@ function initFileSelect(me) {
     });
   }
   return me;
-};
+}
 
 $(function() {
   $('.file-select').each(function() {

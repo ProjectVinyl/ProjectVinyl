@@ -42,7 +42,7 @@ function asBakedArray(arr) {
   if (arr && arr.baked) return arr;
   arr = arr || [];
   arr.baked = function() {
-    return this.map(e => e.toString())
+    return this.map(e => e.toString());
   };
   arr.join = function() {
     return Array.prototype.join.apply(this.baked(), arguments);

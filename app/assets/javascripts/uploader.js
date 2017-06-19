@@ -273,7 +273,7 @@ $(function() {
   });
 });
 
-function UploadChecker (el) {
+function UploadChecker(el) {
   Validator.call(this, el);
   if (this.needsCover) {
     this.initPlayer();
