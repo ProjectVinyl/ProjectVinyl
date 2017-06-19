@@ -9,7 +9,7 @@ $(function() {
   if (document.querySelector('.row.row-spanned')) {
     $('.state-toggle').on('toggle', sizeSpannedBlocks);
     $('.row.row-spanned input, .row.row-spanned textarea').on('keyup', sizeSpannedBlocks);
-    $win.on('resize', sizeSpannedBlocks);
+    $(window).on('resize', sizeSpannedBlocks);
     $('.row.row-spanned .tag-editor').on('tagschange', sizeSpannedBlocks);
   }
 });

@@ -1,4 +1,13 @@
 (function() {
+
+  let windowFocused = false;
+
+  $(window).on('focus', function() {
+    windowFocused = true;
+  }).on('blur', function() {
+    windowFocused = false;
+  });
+
   function initWorker() {
     var docTitle = $('#document_title');
     var title = docTitle.text();

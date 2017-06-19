@@ -4,7 +4,7 @@ env:
 
 parserOptions:
   ecmaVersion: 6
-  sourceType: script
+  sourceType: module
 
 globals:
   $: false
@@ -34,7 +34,7 @@ rules:
   default-case: 0
   dot-location: [2, 'property']
   dot-notation: [2, {allowKeywords: true}]
-  eol-last: [2, 'never']
+  eol-last: [2, 'always']
   eqeqeq: 0
   func-call-spacing: [2, 'never']
   func-name-matching: 0
