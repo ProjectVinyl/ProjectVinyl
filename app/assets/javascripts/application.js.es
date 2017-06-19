@@ -6,6 +6,10 @@
 //
 //= require jquery2
 //= require jquery_ujs
+
+//  Due to ERB parsing (this can be eliminated later)
+//= require notifier
+
 //= depend_on compatibility
 //= depend_on utilities
 //= depend_on duration
@@ -70,5 +74,3 @@ import './share.js';
 import './search.js';
 import './callbacks.js';
 
-// Due to ERB parsing (this can be eliminated later)
-//= require notifier
