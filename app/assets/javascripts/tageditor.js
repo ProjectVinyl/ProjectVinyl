@@ -301,14 +301,11 @@ TagEditor.prototype = {
     this.input.css('width', this.input[0].scrollWidth + 20);
     this.input.css('margin-left', '');
   },
-  searchCompleted: function() {
-    
-  },
   doSearch: function(name) {
     var self = this;
     name = name.toLowerCase();
     if (name.length <= 0) {
-      self.dom.removeClass('pop-out-shown');
+      this.dom.removeClass('pop-out-shown');
       return;
     }
     ajax.get('find/tags', function(json) {
