@@ -1,48 +1,68 @@
 import { ajax } from './ajax.js';
 import { Key } from './utilities.js';
+import { indirectEventFunc } from './utilities.js';
+import { ready } from './utilities.js';
 
 function namespace(name) {
-  if (name.indexOf(':') != -1) return name.split(':')[0];
-  return '';
+  return name.indexOf(':') == -1 ? '' : name.split(':')[0];
 }
 
-function createTagItem(ed, tag) {
-  var item = $('<li class="tag tag-' + tag.namespace + '" data-slug="' + tag.slug + '"><i title="Remove Tag" data-name="' + tag.name + '" class="fa fa-times remove"></i><a href="/tags/' + tag.link + '">' + tag.name + '</a></li>');
-  ed.list.append(item);
-  item.find('.remove').on('click', function(e) {
-    ed.removeTag(item, tag);
-    e.stopPropagation();
-  });
+function halt(ev) {
+  ev.preventDefault();
+  ev.stopPropagation();
 }
 
-function createDisplayTagItem(tag) {
-  return '<li class="tag tag-' + tag.namespace + ' drop-down-holder popper" data-slug="' + tag.slug + '">\
-    <a href="/tags/' + tag.link + '"><span>' + tag.name + '</span>' + (tag.members > -1 ? ' (' + tag.members + ')' : '') + '</a>\
-    <ul class="drop-down pop-out">\
-      <li class="action toggle" data-family="tag-flags" data-descriminator="hide" data-action="hide" data-target="tag" data-id="' + name + '">\
-        <span class="icon">\
-        </span>\
-          <span class="label">Hide</span>\
-      </li>\
-      <li class="action toggle" data-family="tag-flags" data-descriminator="spoiler" data-action="spoiler" data-target="tag" data-id="' + name + '">\
-        <span class="icon">\
-        </span>\
-          <span class="label">Spoiler</span>\
-      </li>\
-      <li class="action toggle" data-family="tag-flags" data-descriminator="watch" data-action="watch" data-target="tag" data-id="' + name + '">\
-        <span class="icon">\
-        </span>\
-          <span class="label">Watch</span>\
-      </li>\
-    </ul>\
+function stopPropa(ev) {
+  ev.stopPropagation();
+}
+
+function createBaseItem(container, tag, content) {
+  var item = document.createElement('LI');
+  item.classList.add('tag-' + tag.namespace);
+  item.innerHTML = content;
+  item.dataset.slug = tag.slug;
+  item.tag = tag;
+  container.appendChild(item);
+  return item;
+}
+
+function createSearchItem(container, result, name) {
+  createBaseItem(container, result, '<span>' + result.name.replace(name, '<b>' + name + '</b>') + '</span> (' + result.members + ')');
+}
+
+function createTagItem(container, tag) {
+  var item = createBaseItem(container, tag, '<i title="Remove Tag" data-name="' + tag.name + '" class="fa fa-times remove"></i><a href="/tags/' + tag.link + '">' + tag.name + '</a>');
+  item.classList.add('tag');
+}
+
+function tagAction(action, name) {
+  var laction = action.toLowerCase();
+  return '\
+  <li class="action toggle" data-family="tag-flags" data-descriminator="' + laction + '" data-action="' + laction + '" data-target="tag" data-id="' + name + '">\
+    <span class="icon"></span>\
+    <span class="label">' + action + '</span>\
   </li>';
+}
+
+function createDisplayTagItem(container, tag) {
+  var item = createBaseItem(container, tag, '\
+    <a href="/tags/' + tag.link + '"><span>' + tag.name + '</span>' + (tag.members > -1 ? ' (' + tag.members + ')' : '') + '</a>\
+    <ul class="drop-down pop-out">' + ['Hide','Spoiler','Watch'].map(function(a) {
+      return tagAction(a, tag.name);
+    }).join('') + '\
+    </ul>');
+  item.classList.add('tag');
+  item.classList.add('drop-down-holder');
+  item.classList.add('popper');
 }
 
 function asBakedArray(arr) {
   if (arr && arr.baked) return arr;
   arr = arr || [];
   arr.baked = function() {
-    return this.map(e => e.toString());
+    return this.map(function(a) {
+      return a.toString();
+    });
   };
   arr.join = function() {
     return Array.prototype.join.apply(this.baked(), arguments);
@@ -54,12 +74,12 @@ function asBakedArray(arr) {
   return arr;
 }
 
-function asTag(name) {
-  var ans = name.name ? name : {
-    namespace: namespace(name),
-    name: name,
+function asTag(ans) {
+  ans = ans.name ? ans : {
+    namespace: namespace(ans),
+    name: ans,
     members: -1,
-    link: name
+    link: ans
   };
   ans.slug = ans.name.replace(ans.namespace + ':', '');
   ans.toString = function() {
@@ -71,145 +91,195 @@ function asTag(name) {
   return ans;
 }
 
-function TagEditor(el) {
-  var self = this;
-  var lastValue = '';
-  var handledBack = false;
-  var autocomplete = null;
-  
-  this.history = [];
-  this.future = [];
-  el = $(el);
-  el.find('.values').remove();
-  el[0].getActiveTagsArray = function() {
-    return self.tags;
-  };
-  el[0].getTagEditorObj = function() {
-    return self;
-  };
-  this.dom = el;
-  this.input = el.find('.input');
-  this.value = el.find('.value textarea');
-  this.list = el.find('ul.tags');
-  this.searchResults = el.find('.search-results');
-  this.tags = this.value.val().replace(/,,|^,|,$/g, '');
-  this.target = this.value.attr('data-target');
-  this.id = this.value.attr('data-id');
-  this.norm = null;
-  
-  if (el.parent().hasClass('editing')) {
-    this.norm = el.parent().parent().find('.normal.tags');
+function invertAction(sender, item, forward, dest) {
+  dest.unshift(item);
+  if (forward) {
+    sender.pickupTag(item.tag);
+    sender.save();
+  } else {
+    forward = sender.list.querySelector('[data-name="' + item.tag.name + '"]');
+    if (forward) sender.dropTag(forward.parentNode, item.tag);
   }
-  this.loadTags(this.tags);
+  dest.unshift(item);
+}
+
+function autoCompleteHandler(sender) {
+  var autocomplete = null;
+  var lastValue = '';
   
-  this.input.on('keydown', function(e) {
-    if (e.which == Key.ENTER || e.which == Key.COMMA) {
-      self.input.val().trim().split(/,|;/).forEach(t => {
-        self.appendTag(t);
-      });
-      self.input.val('');
-      self.save();
-      e.preventDefault();
-      e.stopPropagation();
-      handledBack = false;
-    } else if (e.which == Key.BACKSPACE) {
-      if (!handledBack) {
-        handledBack = true;
-        var value = self.input.val();
-        if (!value.length) {
-          self.list.children('.tag').last().find('.remove').click();
-        }
-      }
-    } else if (e.ctrlKey) {
-      if (e.which == Key.Z) {
-        self.undo();
-        e.preventDefault();
-        e.stopPropagation();
-      } else if (e.which == Key.Y) {
-        self.redo();
-        e.preventDefault();
-        e.stopPropagation();
-      }
-      handledBack = false;
-    } else {
-      handledBack = false;
-    }
-    self.sizeInput();
-  });
-  this.input.on('keyup', function() {
-    self.sizeInput();
-    handledBack = false;
-  }).on('mousedown', function(e) {
-    e.stopPropagation();
-  });
-  
-  this.input.on('focus', function() {
+  sender.input.addEventListener('focus', function() {
     if (!autocomplete) {
       autocomplete = setInterval(function() {
-        var value = self.input.val();
+        var value = sender.input.value;
         if (value != lastValue) {
           lastValue = value;
-          self.doSearch(value.trim().split(/,|;/).reverse()[0]);
+          sender.doSearch(value.trim().split(/,|;/).reverse()[0]);
         }
       }, 1000);
     }
-    self.dom.addClass('focus');
+    sender.dom.classList.add('focus');
   });
-  this.input.on('blur', function() {
+  sender.input.addEventListener('blur', function() {
     clearInterval(autocomplete);
     autocomplete = null;
-    self.dom.removeClass('focus');
-  });
-  el.on('mouseup', function(e) {
-    self.input.focus();
-    e.preventDefault();
-    e.stopPropagation();
-  }).on('mousedown', function(e) {
-    e.stopPropagation();
+    sender.dom.classList.remove('focus');
   });
 }
 
+function inputHandler(sender) {
+  var handledBack = false;
+  
+  function backspace() {
+    if (handledBack) return;
+    handledBack = true;
+    var value = sender.input.value;
+    if (!value.length && sender.list.lastChild) {
+      sender.removeTag(sender.list.lastChild);
+    }
+  }
+  
+  function enter() {
+    sender.input.value.trim().split(/,|;/).forEach(function(t) {
+      sender.appendTag(t);
+    });
+    sender.input.value = '';
+    sender.save();
+    handledBack = false;
+    return true;
+  }
+  
+  function handleKey(key, ctrlKey) {
+    if (ctrlKey) {
+      if (key == Key.Z) {
+        sender.undo();
+        return true;
+      }
+      if (key == Key.Y) {
+        sender.redo();
+        return true;
+      }
+    }
+    if (key == Key.BACKSPACE) {
+      return backspace();
+    }
+    if (key == Key.ENTER) {
+      return enter();
+    }
+    handledBack = false;
+  }
+  
+  sender.input.addEventListener('keydown', function(e) {
+    var key = e.which;
+    if (key == Key.COMMA) key = Key.ENTER;
+    if (handleKey(key, e.ctrlKey)) {
+      halt(e);
+    }
+    sender.sizeInput();
+  });
+  sender.input.addEventListener('keyup', function() {
+    sender.sizeInput();
+    handledBack = false;
+  });
+}
+
+function TagEditor(el) {
+  var self = this;
+  
+  this.history = [];
+  this.future = [];
+  
+  [].forEach.call(el.querySelectorAll('.values'), function(a) {
+    a.parentNode.removeChild(a);
+  });
+  el.getActiveTagsArray = function() {
+    return self.tags;
+  };
+  el.getTagEditorObj = function() {
+    return self;
+  };
+  
+  this.dom = el;
+  this.input = el.querySelector('.input');
+  this.value = el.querySelector('.value textarea');
+  this.list = el.querySelector('ul.tags');
+  this.searchResults = el.querySelector('.search-results');
+  this.norm = null;
+  
+  this.tags = this.value.value.replace(/,,|^,|,$/g, '');
+  this.target = this.value.dataset.target;
+  this.id = this.value.dataset.id;
+  
+  
+  if (el.parentNode.classList.contains('editing')) {
+    this.norm = el.parentNode.parentNode.querySelector('.normal.tags');
+  }
+  this.loadTags(this.tags);
+  
+  inputHandler(this);
+  autoCompleteHandler(this);
+  
+  this.input.addEventListener('mousedown', stopPropa);
+  
+  this.searchResults.addEventListener('click', indirectEventFunc('li', function(e) {
+    self.fillSearchedTag(this.tag);
+  }));
+  
+  this.list.addEventListener('click', indirectEventFunc('i.remove', function(e) {
+    self.removeTag(this.parentNode);
+    stopPropa(e);
+  }));
+  
+  this.dom.addEventListener('mouseup', function(e) {
+    self.input.focus();
+    halt(e);
+  });
+  this.dom.addEventListener('mousedown', stopPropa);
+}
+
 TagEditor.getOrCreate = function(el) {
-  el = $(el);
-  if (el[0].getTagEditorObj) return el[0].getTagEditorObj();
-  return new TagEditor(el);
+  return el.getTagEditorObj ? el.getTagEditorObj() : new TagEditor(el);
 };
 
 TagEditor.prototype = {
   loadTags: function(tags) {
-    var self = this;
     var unloadedSlugs = asBakedArray();
     
     if (tags.length) {
       if (tags.split) tags = tags.split(',');
-      this.tags = tags.map(t => asTag(t));
+      this.tags = asBakedArray(tags.map(asTag));
     } else {
-      this.tags = [];
+      this.tags = asBakedArray();;
     }
-    asBakedArray(this.tags);
     
     unloadedSlugs.push.apply(unloadedSlugs, this.tags);
-    this.list.find('li i.remove').each(function() {
-      var li = $(this);
-      var name = li.attr('data-name');
-      var index = unloadedSlugs.indexOf(name);
+    this.tags.forEach.call(this.list.childNodes, function(li) {
+      var index = unloadedSlugs.indexOf(li.firstElementChild.dataset.name);
       if (index < 0) {
-        li.parent().remove();
+        li.parentNode.removeChild(li);
         return;
       }
       
       var item = unloadedSlugs.splice(index, 1)[0];
-      li.on('click', function(e) {
-        self.removeTag(li.parent(), item);
-        e.stopPropagation();
-      });
-      item.namespace = li.parent().attr('data-namespace');
+      item.namespace = li.dataset.namespace;
+      li.tag = item;
     });
-    unloadedSlugs.forEach(slug => {
-      createTagItem(self, slug);
-    });
+    unloadedSlugs.forEach(function(slug) {
+      createTagItem(this.list, slug);
+    }, this);
     
-    this.value.val(this.tags.join(','));
+    this.value.value = this.tags.join(',');
+  },
+  fillSearchedTag: function(tag) {
+    var text = this.input.value.trim().split(/,|;/);
+    this.dom.classList.remove('pop-out-shown');
+    text.pop();
+    text.push(tag);
+    text.forEach(function(t) {
+      this.appendTag(t);
+    }, this);
+    this.input.value = '';
+    this.sizeInput();
+    this.save();
   },
   appendTag: function(tag) {
     tag = asTag(tag);
@@ -224,117 +294,91 @@ TagEditor.prototype = {
   pickupTag: function(tag) {
     tag = asTag(tag);
     this.tags.push(tag);
-    this.value.val(this.tags.join(','));
-    createTagItem(this, tag);
+    this.value.value = this.tags.join(',');
+    createTagItem(this.list, tag);
   },
-  removeTag: function(sender, tag) {
-    tag = asTag(tag);
-    this.dropTag(sender, tag);
+  removeTag: function(sender) {
+    var tag = asTag(sender.tag);
     this.history.unshift({type: -1, tag: tag});
     this.future.length = 0;
+    this.dropTag(sender, tag);
   },
   dropTag: function(sender, tag) {
-    sender.remove();
+    sender.parentNode.removeChild(sender);
     this.tags.splice(this.tags.indexOf(tag), 1);
-    this.value.val(this.tags.join(','));
+    this.value.value = this.tags.join(',');
     this.save();
   },
   undo: function() {
     if (this.history.length) {
       var item = this.history.shift();
-      this.future.unshift(item);
-      if (item.type > 0) {
-        this.dropTag(this.list.find('[data-name="' + item.tag.name + '"]').parent(), item.tag);
-      } else {
-        this.pickupTag(item.tag);
-        this.save();
-      }
+      invertAction(this, item, item.type <= 0, this.future);
     }
   },
   redo: function() {
     if (this.future.length) {
       var item = this.future.shift();
-      this.history.unshift(item);
-      if (item.type > 0) {
-        this.pickupTag(item.tag);
-        this.save();
-      } else {
-        this.dropTag(this.list.find('[data-name="' + item.tag.name + '"]').parent(), item.tag);
-      }
+      invertAction(this, item, item.type > 0, this.history);
     }
   },
   reload: function(tags) {
     this.tags.length = 0;
-    this.list.empty();
-    if (this.norm) this.norm.html('');
-    tags.forEach(t => {
+    this.list.innerHTML = '';
+    if (this.norm) this.norm.innerHTML = '';
+    tags.forEach(function (t) {
       var tag = asTag(t);
-      createTagItem(self, tag);
-      if (self.norm) {
-        self.norm.append(createDisplayTagItem(tag));
+      createTagItem(this.list, tag);
+      if (this.norm) {
+        createDisplayTagItem(this.norm, tag);
       }
-    });
-    this.value.val(this.tags.join(','));
+    }, this);
+    this.value.value = this.tags.join(',');
   },
   save: function() {
     var self = this;
-    this.dom.trigger('tagschange');
+    this.dom.dispatchEvent(new CustomEvent('tagschange'));
     if (this.target && this.id) {
       ajax.post('update/' + this.target, function(json) {
         self.reload(json.results);
       }, false, {
         id: this.id,
         field: 'tags',
-        value: this.value.val()
+        value: this.value.value
       });
     } else if (this.norm) {
-      this.norm.html('');
-      this.tags.forEach(tag => {
-        self.norm.append(createDisplayTagItem(tag));
+      this.norm.innerHTML = '';
+      this.tags.forEach(function(tag) {
+        createDisplayTagItem(self.norm, tag);
       });
     }
-  },
-  sizeInput: function() {
-    var width = this.input.width();
-    this.input.css('width', 0);
-    this.input.css('margin-left', width);
-    this.input.css('width', this.input[0].scrollWidth + 20);
-    this.input.css('margin-left', '');
   },
   doSearch: function(name) {
     var self = this;
-    name = name.toLowerCase();
-    if (name.length <= 0) {
-      this.dom.removeClass('pop-out-shown');
+    name = name.trim().toLowerCase();
+    if (!name.length) {
+      this.dom.classList.remove('pop-out-shown');
       return;
     }
     ajax.get('find/tags', function(json) {
-      self.searchResults.empty();
-      json.results.forEach(result => {
-        var item = $('<li class="tag-' + result.namespace + '"><span>' + result.name.replace(name, '<b>' + name + '</b>') + '</span> (' + result.members + ')</li>');
-        item[0].tag = result;
-        item.on('click', function() {
-          var text = self.input.val().trim().split(/,|;/);
-          self.dom.removeClass('pop-out-shown');
-          text.pop();
-          text.forEach(t => self.appendTag(t));
-          self.appendTag(this.tag);
-          self.input.val('');
-          self.sizeInput();
-          self.save();
-        });
-        self.searchResults.append(item);
+      self.searchResults.innerHTML = '';
+      json.results.forEach(function(result) {
+        createSearchItem(self.searchResults, result, name);
       });
-      self.dom[json.results.length ? 'addClass' : 'removeClass']('pop-out-shown');
-    }, {
-      q: name
-    });
+      self.dom.classList.toggle('pop-out-shown', !!json.results.length);
+    }, { q: name });
+  },
+  sizeInput: function() {
+    var width = this.input.clientWidth;
+    this.input.style.width = '0px';
+    this.input.style.marginLeft = width + 'px';
+    this.input.style.width = this.input.scrollWidth + 20;
+    this.input.style.marginLeft = '';
   }
 };
 
-$(function() {
-  $('.tag-editor').each(function() {
-    new TagEditor(this);
+ready(function() {
+  [].forEach.call(document.querySelectorAll('.tag-editor'), function(a) {
+    new TagEditor(a);
   });
 });
 

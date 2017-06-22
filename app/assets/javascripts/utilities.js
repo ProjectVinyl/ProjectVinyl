@@ -18,4 +18,20 @@ function extendObj(onto, overrides) {
   return onto;
 }
 
-export { Key, decodeEntities, toBool, extendObj };
+function indirectEventFunc(selector, func) {
+  return function(e) {
+    var target = e.target;
+    while(target != null && target != document) {
+      if (target.matches(selector)) {
+          return func.call(target, e);
+      }
+      target = target.parentNode;
+    }
+  };
+}
+
+function ready(func) {
+  document.addEventListener('DOMContentLoaded', func);
+}
+
+export { Key, decodeEntities, toBool, extendObj, indirectEventFunc, ready };
