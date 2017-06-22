@@ -12,15 +12,6 @@ const VIDEO_ELEMENT = document.createElement('video');
 const aspect = 16 / 9;
 var fadeControl = null;
 
-/* Standardise fullscreen API */
-(function(p) {
-  Player.requestFullscreen = p.requestFullscreen || p.mozRequestFullScreen || p.msRequestFullscreen || p.webkitRequestFullscreen || function() {};
-  Player.exitFullscreen = document.exitFullscreen || document.mozCancelFullScreen || document.msExitFullscreen || document.webkitExitFullscreen || function() {};
-  Player.isFullscreen = function() {
-    return document.fullScreen || document.mozFullScreen || document.webkitIsFullScreen;
-  };
-})(Element.prototype);
-
 function controlsFade() {
   if (Player.fullscreenPlayer) {
     Player.fullscreenPlayer.controls.css('opacity', 0);
@@ -49,6 +40,16 @@ function canGen(childs) {
 }
 
 function Player() {}
+
+/* Standardise fullscreen API */
+(function(p) {
+  Player.requestFullscreen = p.requestFullscreen || p.mozRequestFullScreen || p.msRequestFullscreen || p.webkitRequestFullscreen || function() {};
+  Player.exitFullscreen = document.exitFullscreen || document.mozCancelFullScreen || document.msExitFullscreen || document.webkitExitFullscreen || function() {};
+  Player.isFullscreen = function() {
+    return document.fullScreen || document.mozFullScreen || document.webkitIsFullScreen;
+  };
+})(Element.prototype);
+
 Player.onFullscreen = function(func) {
   $(document).on('webkitfullscreenchange mozfullscreenchange fullscreenchange', func);
 };
@@ -345,6 +346,18 @@ Player.prototype = {
       this.controls.find('li').on('click', this.halt);
     }
     attachMessageListener(this);
+    
+    if (el.attr('data-embed')) {
+      this.setEmbed();
+      $(document).ready(function() {
+        var selected = $('.playlist a.selected');
+        if (selected.length) scrollTo(selected, '.playlist .scroll-container');
+      });
+    }
+    if (el.attr('data-playlist-id')) {
+      this.setPlaylist(el.attr('data-playlist-id'), el.attr('data-playlist-index'));
+    }
+    
     if (el.attr('data-autoplay')) {
       this.checkstart();
       this.addContext('Autoplay', this.autoplay(!document.cookie.replace(/(?:(?:^|.*;\s*)autoplay\s*=\s*([^;]*).*$)|^.*$/, '$1')), function(val) {
@@ -380,18 +393,18 @@ Player.prototype = {
     this.contextmenu.css('opacity', '1');
     this.halt(ev);
   },
-  setEmbed: function(id) {
+  setEmbed: function() {
+    var self = this;
+    var link = this.player.find('.pause h1 a');
     this.player.find('.pause h1').css({
       'pointer-events': 'initial', display: ''
     });
-    var link = this.player.find('.pause h1 a');
     link.attr({
-      target: '_blank', href: '/view/' + id + '-' + this.title
+      target: '_blank', href: '/view/' + this.source + '-' + this.title
     });
-    var self = this;
     link.on('mouseover', function() {
       if (self.video && self.video.currentTime > 0) {
-        link.attr('href', '/view/' + id + '-' + self.title + '?resume=' + self.video.currentTime);
+        link.attr('href', '/view/' + self.source + '-' + self.title + '?resume=' + self.video.currentTime);
       }
     });
     link.on('click', function(ev) {

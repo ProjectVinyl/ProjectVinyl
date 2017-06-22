@@ -20,8 +20,18 @@
 		</div>
 	</div>
 	<% else %>
-	<div id="video" style="background-image: url('<%= @video.thumb %>');" data-title="<%= @video.title %>" data-artist="<%= @user.username %>" data-<% if @video.audio_only %>audio<% else %>video<% end %>="<%= @video.id %>" data-mime="<%= @video.file %>|<%= @video.mime %>" class="video">
-	<% if @album %>
+	<div id="video" style="background-image: url('<%= @video.thumb %>');"
+			data-title="<%= @video.title %>"
+			data-artist="<%= @user.username %>"
+			data-<% if @video.audio_only %>audio<% else %>video<% end %>="<%= @video.id %>"
+			data-mime="<%= @video.file %>|<%= @video.mime %>"
+			data-embed="true"
+			<% if @album %>
+				data-playlist-id="<%= @album.id %>"
+				data-playlist-index="<%= @index %>"
+			<% end %>
+			class="video">
+		<% if @album %>
 		<div class="listing compact playlist">
 			<div class="controls">
 				<a id="playlist_prev" class="slide-left" title="Previous" <% if @prev_video %>href="<%= @prev_video.link %>"<% end %>>
@@ -37,23 +47,9 @@
 					<%= render partial: '/album/album_item', collection: @items %>
 				</div>
 			</div>
-			<script>
-$(document).ready(function() {
-  var selected = $('.playlist a.selected');
-  if (selected.length) scrollTo(selected, '.playlist .scroll-container');
-});
-			</script>
 		</div>
-	<% end %>
+		<% end %>
 	</div>
-	<% end %>
-	<% if @video && !@video.hidden %>
-	<script>
-$('#video .player')[0].getPlayerObj().setEmbed('<%= @video.id %>');
-<% if @album %>
-$('#video .player')[0].getPlayerObj().setPlaylist('<%= @album.id %>', <%= @index %>);
-<% end %>
-	</script>
 	<% end %>
 </body>
 </html>
