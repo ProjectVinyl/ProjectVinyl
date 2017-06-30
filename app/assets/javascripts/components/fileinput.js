@@ -26,7 +26,7 @@ function handleFiles(files, multi, type, callback) {
   if (!multi) files = [files[0]];
   let accepted = 0;
   
-  [].forEach.call(files, file => {
+  [].forEach.call(files, function(file) {
     if (validateTypes(type, file)) {
       callback(file, file.name.split('.'));
       accepted++;
@@ -44,11 +44,18 @@ function initFileSelect(me) {
   const allowMulti = toBool(me.getAttribute('allow-multi'));
   const input = me.querySelector('input');
   
-  // ?
-  input.addEventListener('click', e => e.stopPropagation());
+  // Don't let the clicks escape; they might get out and replicate.
+  // (prevents triggering handlers higher up in the dom)
+  input.addEventListener('click', function(e) {
+    e.stopPropagation()
+  });
   
-  function enterDrag() { me.classList.add('drag'); }
-  function leaveDrag() { me.classList.remove('drag'); }
+  function enterDrag() {
+    me.classList.add('drag');
+  }
+  function leaveDrag() {
+    me.classList.remove('drag');
+  }
   
   me.addEventListener('dragover', enterDrag);
   me.addEventListener('dragenter', enterDrag);
@@ -56,9 +63,10 @@ function initFileSelect(me) {
   me.addEventListener('drop', leaveDrag);
   
   if (me.classList.contains('image-selector')) {
-    input.addEventListener('change', () => {
+    input.addEventListener('change', function() {
       handleFiles(input.files, allowMulti, type, function(f, title) {
         renderPreview(me, f);
+        //TODO: Convert these to CustomEvent / figure out custom data passing
         $(me).trigger('accept', {
           mime: f.type,
           type: title[title.length - 1]
@@ -66,8 +74,8 @@ function initFileSelect(me) {
       });
     });
   } else {
-    input.addEventListener('change', () => {
-      handleFiles(input.files, allowMulti, type, (f, title) => {
+    input.addEventListener('change', function() {
+      handleFiles(input.files, allowMulti, type, function(f, title) {
         $(me).trigger('accept', {
           title: title.splice(0, title.length - 1).join('.'),
           mime: f.type,
