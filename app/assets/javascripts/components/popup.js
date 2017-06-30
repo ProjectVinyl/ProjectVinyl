@@ -1,14 +1,19 @@
 import { ajax } from '../utils/ajax.js';
 import { scrollTo } from '../ui/scroll.js';
 import { Key } from '../utils/misc.js';
+import { jSlim } from '../jslim.js';
 
 var INSTANCES = [];
 var win = $(window);
 
-win.on('resize', () => INSTANCES.forEach(i => i.resize()));
+win.on('resize', function() {
+  INSTANCES.forEach(function(i) {
+    i.resize();
+  })
+});
 win.on('keydown', function(e) {
-  if (INSTANCES.length && !$('input:focus, textarea:focus, button:focus, .button.focus').length) {
-    var c = $('.popup-container.focus')[0];
+  if (INSTANCES.length && !document.querySelectorAll('input:focus, textarea:focus, button:focus, .button.focus').length) {
+    var c = document.querySelector('.popup-container.focus');
     if (c) c.instance.handleShortcut(e);
   }
 });
@@ -17,35 +22,71 @@ function timeoutOn(target, func, time) {
   return setTimeout(func.bind(target), time);
 }
 
+function unfocusPopups() {
+  jSlim.all('.popup-container.focus', function(a) {
+    a.classList.remove('focus');
+  });
+}
+
+function doGrab(sender, x, y, func, move, end) {
+  var off = jSlim.offset(sender.container);
+  var offX = x - off.left;
+  var offY = y - off.top;
+  sender.focus();
+  sender.dragging = function(ev) {
+    ev.preventDefault();
+    ev.stopPropagation();
+    ev = func(ev);
+    sender.move(ev.x - offX, ev.y - offY);
+  };
+  sender.dragging.ev = move;
+  document.addEventListener(move, sender.dragging);
+  document.addEventListener(end, function() {
+    sender.release();
+  });
+}
+
 function Popup(title, icon, construct) {
   var self = this;
   
-  this.container = $('<div class="popup-container"></div>');
-  this.container[0].instance = this;
-  this.dom = $('<div class="popup"><h1>' + title + '<a class="close" /></h1>');
-  this.container.append(this.dom);
-  this.content = $('<div class="content" />');
+  this.container = document.createElement('DIV');
+  this.container.classList.add('popup-container');
+  this.container.instance = this;
+  this.container.innerHTML = '<div class="popup"><h1 class="popup-header"><i class="fa"></i>' + title + '<a class="close"></a></h1><div class="content"></div></div>';
+  this.dom = this.container.firstChild;
+  this.content = this.dom.lastChild;
   this.fixed = false;
   this.x = this.y = -1;
   
-  this.dom.append(this.content);
   if (typeof icon === 'string') {
-    this.dom.find('h1').prepend('<i class="fa fa-' + icon + '" />');
+    this.dom.querySelector('.fa').classList.add('fa-' + icon);
   }
   if (typeof icon === 'function') construct = icon;
   
-  this.container.on('click mousedown mousup', function() {
+  this.container.addEventListener('click', focusFunc);
+  this.container.addEventListener('mousedown', focusFunc);
+  this.container.addEventListener('mouseup', focusFunc);
+  
+  function focusFunc() {
     self.focus();
-  });
-  this.dom.find('.close').on('click touchend', function() {
+  }
+  
+  jSlim.on(this.container, 'click', '.close, .cancel', closeFunc);
+  jSlim.on(this.container, 'click', '.confirm', function() {
+    if (self.confirm) self.confirm();
     self.close();
   });
-  this.dom.find('h1').on('mousedown', function(ev) {
+  jSlim.on(this.container, 'touchend', '.close', closeFunc);
+  function closeFunc() {
+    self.close();
+  }
+  
+  jSlim.on(this.container, 'mousedown', 'h1.popup-header', function(ev) {
     self.grab(ev.pageX, ev.pageY);
     ev.preventDefault();
     ev.stopPropagation();
   });
-  this.dom.find('h1').on('touchstart', function(ev) {
+  jSlim.on(this.container, 'touchstart', 'h1.popup-header', function(ev) {
     var x = ev.originalEvent.touches[0].pageX || 0;
     var y = ev.originalEvent.touches[0].pageY || 0;
     self.touchgrab(x, y);
@@ -62,15 +103,11 @@ Popup.fetch = function(resource, title, icon, thin, loadedFunc) {
   return new Popup(title, icon, function() {
     var self = this;
     
-    this.content.html('<div class="loader"><i class="fa fa-pulse fa-spinner" /></div>');
+    this.content.innerHTML = '<div class="loader"><i class="fa fa-pulse fa-spinner"></i></div>';
     this.thin = thin;
-    if (thin) this.container.addClass('thin');
-    
+    if (thin) this.container.classList.add('thin');
     ajax(resource, function(xml, type, ev) {
-      self.content.html(ev.responseText);
-      self.content.find('.cancel').on('click', function() {
-        self.close();
-      });
+      self.content.innerHTML = ev.responseText;
       self.center();
       if (loadedFunc && typeof window[loadedFunc] === 'function') {
         window[loadedFunc](self.content);
@@ -85,30 +122,27 @@ Popup.prototype = {
     this.persistent = true;
   },
   focus: function() {
-    if (!this.container.hasClass('focus')) {
-      this.container.parent().append(this.container);
-      this.fade.parent().append(this.fade);
-      $('.popup-container.focus').removeClass('focus');
-      this.container.addClass('focus');
+    if (!this.container.classList.contains('focus')) {
+      this.container.parentNode.appendChild(this.container);
+      this.fade.parentNode.appendChild(this.fade);
+      unfocusPopups();
+      this.container.classList.add('focus');
     }
   },
   center: function() {
-    this.x = (win.width() - this.container.width()) / 2 + win.scrollLeft();
-    this.y = (win.height() - this.container.height()) / 2 + win.scrollTop();
+    this.x = (document.body.offsetWidth - this.container.offsetWidth) / 2 + document.scrollingElement.scrollLeft;
+    this.y = (document.body.offsetHeight - this.container.offsetHeight) / 2 + document.scrollingElement.scrollTop;
     this.move(this.x, this.y);
   },
   bob: function(reverse, callback) {
+    this.container.style.transition = 'transform 0.5s ease, opacity 0.5s ease';
     if (reverse) {
-      this.container.css('transition', 'transform 0.5s ease, opacity 0.5s ease');
-      this.container.css({
-        opacity: 0, transform: 'translate(0,30px)'
-      });
+      this.container.style.opacity = 0;
+      this.container.style.transform = 'translate(0,30px)';
     } else {
-      this.container.css('transition', 'transform 0.5s ease, opacity 0.5s ease');
       timeoutOn(this, function() {
-        this.container.css({
-          opacity: 1, transform: 'translate(0,0)'
-        });
+        this.container.style.opacity = 1;
+        this.container.style.transform = 'translate(0,0)';
       }, 1);
     }
     timeoutOn(this, function() {
@@ -117,7 +151,7 @@ Popup.prototype = {
   },
   handleShortcut: function(e) {
     if (e.which == Key.ENTER) {
-      this.dom.find('.confirm').click();
+      this.dom.querySelector('.confirm').dispatchEvent(new Event('click'));
       this.close();
       e.preventDefault();
       e.stopPropagation();
@@ -128,20 +162,20 @@ Popup.prototype = {
     }
   },
   show: function() {
-    $('.popup-container.focus').removeClass('focus');
-    this.container.addClass('focus');
-    this.container.css({
-      opacity: 0, transform: 'translate(0,30px)'
-    });
-    this.container.css('display', '');
-    $('body').append(this.container);
+    unfocusPopups();
+    this.container.classList.add('focus');
+    this.container.style.opacity = 1;
+    this.container.style.transform = 'translate(0,30px)';
+    this.container.style.display = '';
+    document.body.appendChild(this.container);
     if (this.thin || this.x <= 0 || this.y <= 0) {
       this.center();
     }
-    this.fade = $('<div style="opacity:0" />');
-    $('.fades').append(this.fade);
+    this.fade = document.createElement('DIV');
+    this.fade.style.opacity = 0;
+    document.querySelector('.fades').appendChild(this.fade);
     timeoutOn(this, function() {
-      this.fade.css('opacity', 1);
+      this.fade.style.opacity = 1;
     }, 1);
     this.bob();
   },
@@ -151,51 +185,33 @@ Popup.prototype = {
         me.container.remove();
         INSTANCES.splice(this.id, 1);
       } else {
-        me.container.css('display', 'none');
+        me.container.style.display = 'none';
       }
     });
     if (this.fade) {
-      this.fade.css('opacity', 0);
+      this.fade.style.opacity = 0;
       timeoutOn(this, function() {
-        this.fade.remove();
+        this.fade.parentNode.removeChild(this.fade);
       }, 500);
     }
   },
   setId: function(id) {
-    this.container.attr('id', id);
+    this.container.setAttribute('id', id);
     return this;
   },
   grab: function(x, y) {
-    var self = this;
-    var offX = x - this.container.offset().left;
-    var offY = y - this.container.offset().top;
-    this.dragging = function(ev) {
-      self.move(ev.pageX - offX, ev.pageY - offY);
-    };
-    this.focus();
-    $(document).on('mousemove', this.dragging);
-    $(document).one('mouseup', function() {
-      self.release();
-    });
+    doGrab(this, x, y, function(ev) {
+      return {x: ev.pageX, y: ev.pageY};
+    }, 'mousemove', 'mouseup');
   },
   touchgrab: function(x, y) {
-    var self = this;
-    var offX = x - this.container.offset().left;
-    var offY = y - this.container.offset().top;
-    this.dragging = function(ev) {
-      var x = ev.originalEvent.touches[0].pageX || 0;
-      var y = ev.originalEvent.touches[0].pageY || 0;
-      self.move(x - offX, y - offY);
-    };
-    this.focus();
-    $(document).on('touchmove', this.dragging);
-    $(document).one('touchend', function() {
-      self.release();
-    });
+    doGrab(this, x, y, function(ev) {
+      return {x: ev.originalEvent.touches[0].pageX || 0, y: ev.originalEvent.touches[0].pageY};
+    }, 'touchmove', 'touchend');
   },
   release: function() {
     if (this.dragging) {
-      $(document).off('mousemove touchmove', this.dragging);
+      document.removeEventListener(this.dragging.ev, this.dragging);
       this.dragging = null;
     }
   },
@@ -207,27 +223,28 @@ Popup.prototype = {
     }
   },
   move: function(x, y) {
-    var scrollX = win.scrollLeft();
-    var scrollY = win.scrollTop();
+    var scrollX = document.scrollingElement.scrollLeft;
+    var scrollY = document.scrollingElement.scrollTop;
     if (this.fixed) {
       x -= scrollX;
       y -= scrollY;
       scrollX = 0;
       scrollY = 0;
     }
-    if (x > win.width() - this.container.width() + scrollX) x = win.width() - this.container.width() + scrollX;
-    if (y > win.height() - this.container.height() + scrollY) y = win.height() - this.container.height() + scrollY;
+    if (x > document.body.offsetWidth - this.container.offsetWidth + scrollX) x = document.body.offsetWidth - this.container.offsetWidth + scrollX;
+    if (y > document.body.offsetheight - this.container.offsetHeight + scrollY) y = document.body.offsetheight - this.container.offsetHeight + scrollY;
     if (y < 0) y = 0;
     if (x < 0) x = 0;
-    this.container.css({top: this.y = y, left: this.x = x});
+    this.container.style.top = (this.y = y) + 'px';
+    this.container.style.left = (this.x = x) + 'px';
   },
   setFixed: function() {
     this.fixed = true;
-    this.container.css('position', 'fixed');
+    this.container.style.position = 'fixed';
     return this;
   },
   setWidth: function(width) {
-    this.content.css('max-width', width);
+    this.content.style.maxWidth = width;
     return this;
   }
 };
@@ -235,15 +252,18 @@ Popup.prototype = {
 function error(message) {
   new Popup('Error', 'warning', function() {
     var self = this;
-    var ok = $('<button class="right button-fw">Ok</button>');
-    ok.on('click', function() {
-      self.close();
-    });
-    this.content.append('<div class="message_content">' + message + '</div><div class="foot"></div>');
-    this.content.find('.foot').append(ok);
+    var msg = document.createElement('DIV');
+    this.content.appendChild(msg);
+    msg.innerText = message;
+    msg = document.createElement('DIV');
+    msg.classList.add('foot');
+    this.content.appendChild(msg);
+    msg.classList.add('message_content');
     this.setWidth(400);
     this.show();
   });
 }
+//
+window.error = error;
 
 export { Popup, error };

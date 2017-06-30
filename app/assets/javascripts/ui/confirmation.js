@@ -1,6 +1,7 @@
 import { ajax } from '../utils/ajax.js';
 import { paginator } from '../components/paginator.js';
 import { Popup } from '../components/popup.js';
+import { jSlim } from '../jslim.js';
 
 function createPopup(me, action) {
   var id = me[0].dataset.id;
@@ -9,28 +10,29 @@ function createPopup(me, action) {
   var msg = me[0].dataset.msg;
   
   return new Popup(me[0].dataset.title, me[0].dataset.icon, function() {
-    const popup = this; // ?
-
-    var ok = $('<button class="button-fw green confirm">Yes</button>');
-    var cancel = $('<button class="cancel button-fw blue" style="margin-left:20px;" type="button">No</button>');
-    
-    this.content.append('<div class="message_content"></div><div class="foot"></div>');
-    this.content.messageContent = this.content.find('.message_content');
+    this.content.innerHTML = '\
+      <div class="message_content"></div>\
+      <div class="foot center">\
+        <button class="button-fw green confirm">Yes</button>\
+        <button class="cancel button-fw blue" style="margin-left:20px;" type="button">No</button>\
+      </div>';
+    this.content.foot = this.content.querySelector('.foot');
+    this.content.messageContent = this.content.querySelector('.message_content');
     
     if (msg) {
-      this.content.messageContent.text(msg);
-      this.content.messageContent.append('<br/><br/>');
+      this.content.messageContent.innerText = msg;
+      this.content.messageContent.appendChild(document.createElement('BR'));
     }
-    this.content.messageContent.append('Are you sure you want to continue?');
+    this.content.messageContent.innerHTML += 'Are you sure you want to continue?';
     
-    ok.on('click', function() {
+    this.confirm = function() {
       ajax.post(url, function(json) {
         if (action == 'remove') {
-          var removeable = me.parents('.removeable');
-          if (removeable.hasClass('repaintable')) {
+          var removeable = me.closest('.removeable');
+          if (removeable.classList.contains('repaintable')) {
             paginator.repaint(removeable.closest('.paginator'), json);
           } else {
-            removeable.remove();
+            removeable.parentNode.removeChild(removeable);
           }
           return;
         }
@@ -42,17 +44,7 @@ function createPopup(me, action) {
           window[callback](id, json);
         }
       });
-      popup.close();
-    });
-    
-    cancel.on('click', function() {
-      popup.close();
-    });
-    
-    this.content.foot = this.content.find('.foot');
-    this.content.foot.addClass('center');
-    this.content.foot.append(ok);
-    this.content.foot.append(cancel);
+    };
     this.setPersistent();
     this.setWidth(400);
     this.show();
@@ -61,22 +53,18 @@ function createPopup(me, action) {
 
 function createTemplatePopup(sender) {
   return new Popup(sender.dataset.title, sender.dataset.icon, function() {
-    this.content.append(document.getElementById(sender.dataset.template).innerHTML);
-    var self = this;
-    this.content.find('button.cancel').on('click', function() {
-      self.close();
-    });
+    this.content.innerHTML = document.getElementById(sender.dataset.template).innerHTML;
     this.setFixed();
     this.show();
   });
 }
 
 function init(me) {
-  var action = me[0].dataset.action;
-  var maxWidth = me[0].dataset.maxWidth;
+  var action = me.dataset.action;
+  var maxWidth = me.dataset.maxWidth;
   var popup;
   
-  me.addClass('loaded');
+  me.classList.add('loaded');
   
   if (action == 'delete' || action == 'remove') {
     if (!popup) {
@@ -86,22 +74,22 @@ function init(me) {
     }
   } else if (action == 'template') {
     if (!popup) {
-      popup = createTemplatePopup(me[0]);
+      popup = createTemplatePopup(me);
     } else {
       popup.show();
     }
   } else {
-    popup = Popup.fetch(me[0].dataset.url, me[0].dataset.title, me[0].dataset.icon, me.hasClass('confirm-button-thin'), me[0].dataset.eventLoaded);
+    popup = Popup.fetch(me.dataset.url, me.dataset.title, me.dataset.icon, me.classList.contains('confirm-button-thin'), me.dataset.eventLoaded);
     popup.setPersistent();
   }
-  if (popup && maxWidth) popup.content.css('max-width', maxWidth);
-  me.on('click', function(e) {
+  if (popup && maxWidth) popup.setWidth(maxWidth);
+  me.addEventListener('click', function(e) {
     popup.show();
     e.preventDefault();
   });
 }
 
-$(document).on('click', '.confirm-button:not(.loaded)', function(e) {
-  init($(this));
+jSlim.on(document, 'click', '.confirm-button:not(.loaded)', function(e) {
+  init(this);
   e.preventDefault();
 });
