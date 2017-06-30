@@ -144,13 +144,16 @@ var targets = {
   '.spoiler': revealSpoiler
 };
 
-jSlim.ready({
+jSlim.ready(function() {
   document.addEventListener('click', function(event) {
     // Left-click only
     if (event.button !== 0) return;
+    
     for (const target in targets) {
-      if (event.target.closest(target)) {
-        return targets[target](event.target.closest(target));
+      var el = event.target.closest(target);
+      if (el) {
+        event.preventDefault();
+        return targets[target](el);
       }
     }
   });
