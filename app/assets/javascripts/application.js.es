@@ -52,12 +52,13 @@
 //= depend_on utils/misc
 //= depend_on utils/queryparameters
 //= depend_on utils/requests
-
+//= depend_on jslim
 
 // Utilities for use at top scope
 import './compat/all.js';
 
 // Our code (this can be shortened to 1-2 imports later)
+import './jslim.js';
 import './pageload.js';
 import './components/comments.js';
 import './components/search.js';
