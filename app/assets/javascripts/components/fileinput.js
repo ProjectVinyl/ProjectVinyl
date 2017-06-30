@@ -1,64 +1,74 @@
 import { error } from './popup.js';
 import { toBool } from '../utils/misc.js';
+import { jSlim } from '../utils/jslim.js';
 
 function validateTypes(type, file) {
-  if (type == 'image') {
-    return !!file.type.match(/image\//);
+  switch (type) {
+    case 'image':
+      return !!file.type.match(/image\//);
+    case 'a/v':
+      return !!file.type.match(/(audio|video)\//);
+    default:
+      return false;
   }
-  if (type == 'a/v') {
-    return !!file.type.match(/(audio|video)\//);
-  }
-  return false;
 }
 
 function renderPreview(me, file) {
-  var preview = me.find('.preview');
-  var img = preview[0];
+  var img = me.querySelector('.preview');
+  
   if (img.src) URL.revokeObjectURL(img.src);
   img.src = URL.createObjectURL(file);
-  preview.css('background-image', 'url(' + img.src + ')');
+  img.style.backgroundImage = 'url(' + img.src + ')';
 }
 
 function handleFiles(files, multi, type, callback) {
-  var accepted = 0;
-  files.forEach(file => {
+  // Only accept the first file in this case
+  if (!multi) files = [files[0]];
+  let accepted = 0;
+  
+  [].forEach.call(files, file => {
     if (validateTypes(type, file)) {
       callback(file, file.name.split('.'));
       accepted++;
     }
-    if (!multi) return false;
   });
-  if (accepted == 0 && (files.length == 1 || !multi)) {
-    return error('File type not surrorted. Please try again.');
+  
+  // If a single-file upload wasn't accepted...
+  if (accepted === 0 && files.length === 1) {
+    return error('File type not supported. Please try again.');
   }
 }
 
 function initFileSelect(me) {
-  var type = me.attr('data-type');
-  var allowMulti = toBool(me.attr('allow-multi'));
-  var input = me.find('input').first();
-  input.on('click', function(e) {
-    e.stopPropagation();
-  });
-  me.on('dragover dragenter', function() {
-    me.addClass('drag');
-  }).on('dragleave drop', function() {
-    me.removeClass('drag');
-  });
-  if (me.hasClass('image-selector') && window.FileReader) {
-    input.on('change', function() {
-      handleFiles(input[0].files, allowMulti, type, function(f, title) {
+  const type = me.dataset.type;
+  const allowMulti = toBool(me.getAttribute('allow-multi'));
+  const input = me.querySelector('input');
+  
+  // ?
+  input.addEventListener('click', e => e.stopPropagation());
+  
+  function enterDrag() { me.classList.add('drag'); }
+  function leaveDrag() { me.classList.remove('drag'); }
+  
+  me.addEventListener('dragover', enterDrag);
+  me.addEventListener('dragenter', enterDrag);
+  me.addEventListener('dragleave', leaveDrag);
+  me.addEventListener('drop', leaveDrag);
+  
+  if (me.classList.contains('image-selector')) {
+    input.addEventListener('change', () => {
+      handleFiles(input.files, allowMulti, type, function(f, title) {
         renderPreview(me, f);
-        me.trigger('accept', {
+        $(me).trigger('accept', {
           mime: f.type,
           type: title[title.length - 1]
         });
       });
     });
   } else {
-    input.on('change', function() {
-      handleFiles(input[0].files, allowMulti, type, function(f, title) {
-        me.trigger('accept', {
+    input.addEventListener('change', () => {
+      handleFiles(input.files, allowMulti, type, (f, title) => {
+        $(me).trigger('accept', {
           title: title.splice(0, title.length - 1).join('.'),
           mime: f.type,
           type: title[title.length - 1],
@@ -67,12 +77,13 @@ function initFileSelect(me) {
       });
     });
   }
+  
   return me;
 }
 
-$(function() {
-  $('.file-select').each(function() {
-    initFileSelect($(this));
+jSlim.ready(function() {
+  jSlim.all('.file-select', function(f) {
+    initFileSelect(f);
   });
 });
 

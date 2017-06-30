@@ -17,7 +17,7 @@ const Callbacks = {
       var me = document.getElementById('banner-upload');
       var banner = document.getElementById('banner');
       var basePath = me.dataset.path;
-      initFileSelect($(me)).on('accept', function(e) {
+      initFileSelect(me).addEventListener('accept', function(e) {
         ajax.form(this.closest('form'), e, {
           success: function() {
             this.classList.remove('uploading');
