@@ -11,7 +11,7 @@
     const title = docTitle.text;
     const worker = new SharedWorker('<%= asset_path("notifications.js") %>');
     const feeds = document.querySelector('.notices-bell.feeds');
-    const notices = docuemnt.querySelector('.notices-bell.notices');
+    const notices = document.querySelector('.notices-bell.notices');
 
     worker.port.addEventListener('message', function(e) {
       if (e.data.command == 'feeds') {
