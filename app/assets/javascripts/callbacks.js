@@ -10,7 +10,8 @@ import { initFileSelect } from './components/fileinput.js';
 window.loadBannerSelector = function loadBannerSelector() {
   var me = $('#banner-upload');
   var basePath = me[0].dataset.path;
-  initFileSelect(me).on('accept', function(e) {
+  initFileSelect(me[0]);
+  $(me).on('accept', function(e) {
     ajax.form($(this).closest('form'), e, {
       success: function() {
         this.removeClass('uploading');

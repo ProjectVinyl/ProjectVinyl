@@ -82,8 +82,8 @@ function Validator(el) {
   this.video.input = this.video.find('input[type=file]');
   
   this.video.on('accept', function(e, file) {
-    this.needsCover = !!file.mime.match(/audio\//);
-    this.accept(file);
+    self.needsCover = !!file.mime.match(/audio\//);
+    self.accept(file);
   });
   
   this.cover.on('accept', function() {
@@ -139,8 +139,12 @@ function Uploader() {
   this.srcNeeded = false;
   
   BBC.init(this.videoTitle[0]);
-  initFileSelect(this.video);
-  initFileSelect(this.cover);
+
+  this.video = this.el.find('#video-upload');
+  this.cover = this.el.find('#cover-upload');
+
+  initFileSelect(this.video[0]);
+  initFileSelect(this.cover[0]);
   
   setTimeout(function() {
     self.tab.removeClass('hidden');
