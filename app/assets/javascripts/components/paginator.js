@@ -47,6 +47,7 @@ function repaintPages(context, page, pages) {
 
 const paginator = {
   repaint: function(context, json) {
+    context = $(context);
     context.find('.pagination .pages .button.selected').removeClass('selected');
     populatePage(context, json);
   },

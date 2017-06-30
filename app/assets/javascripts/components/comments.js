@@ -23,7 +23,7 @@ window.postComment = function postComment(sender, threadId, order, reportState) 
   sender.classList.add('posting');
   ajax.post('comments/new', function(json) {
     sender.classList.remove('posting');
-    paginator.repaint($('#thread-' + threadId).closest('.paginator'), json);
+    paginator.repaint(document.getElementById('#thread-' + threadId).closest('.paginator'), json);
     scrollTo('#comment_' + json.focus);
     input.value = '';
     input.change();
@@ -136,7 +136,6 @@ function revealSpoiler(target) {
   target.classList.toggle('revealed');
 }
 
-//wat
 var targets = {
   '.comment .mention, .comment .comment-content a[data-link="2"]': findComment,
   '.reply-comment': replyTo,
@@ -147,7 +146,7 @@ var targets = {
 jSlim.ready(function() {
   document.addEventListener('click', function(event) {
     // Left-click only
-    if (event.button !== 0) return;
+    if (event.which !== 1 && event.button !== 0) return;
     
     for (const target in targets) {
       var el = event.target.closest(target);
