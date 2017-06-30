@@ -4,9 +4,10 @@
 	<meta http-equiv="Content-type" content="text/html; charset=utf-8">
 	<title id="document_title">Project Vinyl - Premium Pony Tunes</title>
 	<link rel="icon" sizes="160x160" href="/images/favicon.png">
-  <%= stylesheet_link_tag "application" %>
-  <%= stylesheet_link_tag "embed" %>
-  <%= javascript_include_tag "application" %>
+	<%= stylesheet_link_tag "application" %>
+	<%= stylesheet_link_tag "embed" %>
+	<%= javascript_include_tag "application" %>
+	<%= csrf_meta_tags %>
 </head>
 <body class="embed">
 	<% if !@video || @video.hidden %>
