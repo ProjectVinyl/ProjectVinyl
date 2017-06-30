@@ -22,12 +22,9 @@ const jSlim = {
   })(),
   delegateEv: function(selector, func) {
     return function(e) {
-      var target = e.target;
-      while(target != null && target != document) {
-        if (target.matches(selector)) {
-            return func.call(target, e);
-        }
-        target = target.parentNode;
+      var target = e.target.closest(selector);
+      if (target) {
+        return func.call(target, e);
       }
     };
   },
