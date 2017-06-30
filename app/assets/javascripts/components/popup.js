@@ -5,7 +5,7 @@ import { jSlim } from '../jslim.js';
 
 var INSTANCES = [];
 
-window.addEventListener'resize', function() {
+window.addEventListener('resize', function() {
   INSTANCES.forEach(function(i) {
     i.resize();
   })
