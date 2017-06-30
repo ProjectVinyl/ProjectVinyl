@@ -1,4 +1,4 @@
-import { ajax } from '../utils/ajax.js';
+import { fetchJson, fetchHtml } from '../utils/requests.js';
 import { paginator } from './paginator.js';
 import { error } from './popup.js';
 import { scrollTo } from '../ui/scroll.js';
@@ -7,125 +7,164 @@ import { decodeEntities } from '../utils/misc.js';
 // app/views/thread/_comment_box.html.erb
 // app/views/thread/_view_reverse.erb
 window.postComment = function postComment(sender, threadId, order, reportState) {
-  sender = $(sender).parent();
-  var input = sender.find('textarea, input.comment-content');
-  var comment = input.val().trim();
+  sender = sender.parentNode;
+  let input = sender.querySelector('textarea, input.comment-content');
+  let comment = input.value.trim();
   if (!comment.length) return error('You have to type something to post');
-  
-  var data = {
+
+  const data = {
     thread: threadId,
     order: order,
     comment: comment
   };
+
   if (reportState) data.report_state = reportState;
-  
-  sender.addClass('posting');
-  ajax.post('comments/new', function(json) {
-    sender.removeClass('posting');
-    paginator.repaint($('#thread-' + threadId).closest('.paginator'), json);
-    scrollTo('#comment_' + json.focus);
-    input.val('').change();
-  }, 0, data);
+
+  sender.classList.add('posting');
+
+  fetchJson('POST', '/ajax/comments/new', data)
+    .then(response => response.json())
+    .then(json => {
+      sender.classList.remove('posting');
+      paginator.repaint($('#thread-' + threadId).closest('.paginator'), json);
+      scrollTo('#comment_' + json.focus);
+      input.value = '';
+    });
 };
 
 // app/views/thread/_comment.html.erb
 window.removeComment = function removeComment(id, json) {
-  id = $('#comment_' + id);
+  const el = document.querySelector(`#comment_${id}`);
+  if (!el) return;
+
   if (json.content) {
-    return id.after(json.content).remove();
+    el.insertAdjacentHTML('afterend', json.content);
+    el.parentNode.removeChild(el);
+    return;
   }
-  if (id.length) {
-    id.css({
-      'min-height': 0,
-      height: id.height(), overflow: 'hidden'
-    }).css('transition', '0.5s ease all').css({
-      opacity: 0, height: 0
-    });
-    setTimeout(function() {
-      id.remove();
-    }, 500);
-  }
+
+  el.style.minHeight = '0';
+  el.style.height = el.offsetHeight;
+  el.style.overflow = 'hidden';
+  el.style.transition = '0.5s ease all';
+
+  // Fade out (FIXME: do this in CSS)
+  requestAnimationFrame(() => {
+    el.style.opacity = '0';
+    el.style.height = '0';
+  });
+
+  setTimeout(() => el.parentNode.removeChild(el), 500);
 };
 
-function editComment(sender) {
-  sender = $(sender).parent();
-  ajax.post('comments/edit', function() {
-    sender.removeClass('editing');
-  }, 1, {
-    id: sender[0].dataset.id,
-    comment: sender.find('textarea, input.comment-content').val()
-  });
+function scrollToAndHighlight(commentId) {
+  const comment = document.querySelector(`#comment_${commentId}`);
+  if (comment) {
+    scrollTo($(comment));
+    comment.classList.add('highlight');
+    return true;
+  }
 }
 
 function lookupComment(commentId) {
-  var comment = $('#comment_' + commentId);
-  if (comment.length) {
-    return scrollTo(comment).addClass('highlight');
-  }
-  var pagination = $('.comments').parent();
-  ajax.get(pagination[0].dataset.type + '?comment=' + commentId + '&' + pagination[0].dataset.args, function(json) {
-    paginator.repaint(pagination, json);
-    scrollTo($('#comment_' + commentId)).addClass('highlight');
-  });
+  if (scrollToAndHighlight(commentId)) return;
+
+  const pagination = document.querySelector('.comments').parentNode;
+  fetchJson('GET', `${pagination.dataset.type}?comment=${commentId}&${pagination.dataset.args}`)
+    .then(response => response.json())
+    .then(json => {
+      paginator.repaint(pagination, json);
+      scrollToAndHighlight(commentId);
+    });
+}
+
+function editComment(sender) {
+  sender = sender.parentNode;
+
+  const data = {
+    id: sender.dataset.id,
+    comment: sender.querySelector('textarea, input.comment-content').value
+  };
+
+  fetchJson('POST', '/ajax/comments/edit', data)
+    .then(response => response.text())
+    .then(() => {
+      sender.classList.remove('editing');
+    });
 }
 
 function findComment(sender) {
-  sender = $(sender);
-  var container = sender.parents('comment');
-  var parent = sender.attr('href');
-  if ($(parent).length) {
-    parent = $(parent);
-    if (parent.hasClass('inline')) {
-      container.parent().prepend(parent);
+  const container = sender.closest('comment');
+  let parent = sender.attr('href');
+  const parentEl = document.querySelector(parent);
+
+  // This is begging for a refactor.
+  if (parentEl) {
+    if (parentEl.classList.contains('inline')) {
+      // Prepend
+      container.parentNode.insertBefore(parentEl, container.parentNode.firstChild);
     }
     $('.comment.highlight').removeClass('highlight');
-    return scrollTo(parent).addClass('highlight');
+    return scrollTo(parentEl).addClass('highlight');
   }
-  
-  ajax.get('comments/get', function(html) {
-    container.parent().prepend(html);
-    $('.comment.highlight').removeClass('highlight');
-    parent = scrollTo(parent);
-    if (parent) parent.addClass('highlight').addClass('inline');
-  }, {
-    id: sender[0].dataset.id || parseInt(parent.split('_')[1], 36)
-  }, 1);
+
+  const data = {
+    id: sender.dataset.id || parseInt(parent.split('_')[1], 36)
+  };
+
+  fetchHtml('GET', '/ajax/comments/get', data)
+    .then(response => response.text())
+    .then(html => {
+      container.parentNode.insertAdjacentHTML('afterbegin', html);
+      parent = scrollTo(parent);
+      if (parent) parent.addClass('highlight').addClass('inline');
+    });
 }
 
 function replyTo(sender) {
-  sender = $(sender).parent();
-  textarea = sender.closest('.page, body').find('.post-box textarea');
+  sender = sender.parentNode;
+  const textarea = sender.closest('.page, body').querySelector('.post-box textarea');
+  textarea.value = `>>${sender.dataset.oId} [q]\n${decodeEntities(sender.dataset.comment)}\n[/q]${textarea.value}`;
   textarea.focus();
-  textarea.val('>>' + sender[0].dataset['o-id'] + ' [q]\n' + decodeEntities(sender[0].dataset.comment) + '\n[/q]' + textarea.val());
-  textarea.change();
 }
 
 // app/views/thread/_view_reverse.erb
 window.reportState = function reportState(sender) {
-  sender = $(sender).parent();
-  if (sender.find('input[name=resolve]:checked').length) return 'resolve';
-  if (sender.find('input[name=close]:checked').length) return 'close';
-  if (sender.find('input[name=unresolve]:checked').length) return 'open';
+  sender = sender.parentNode;
+  if (sender.querySelector('input[name="resolve"]:checked')) return 'resolve';
+  if (sender.querySelector('input[name="close"]:checked')) return 'close';
+  if (sender.querySelector('input[name="unresolve"]:checked')) return 'open';
   return false;
 };
 
-$(document).on('click', '.comment .mention, .comment .comment-content a[data-link="2"]', function(ev) {
-  findComment(this);
-  ev.preventDefault();
-});
-
-$(document).on('click', '.reply-comment', function() {
-  replyTo(this);
-});
-
-$(document).on('click', '.edit-comment-submit', function() {
-  editComment(this);
-});
-
-$(document).on('click', '.spoiler', function() {
-  $(this).toggleClass('revealed');
-});
-
-if (document.location.hash.indexOf('#comment_') == 0) {
-  lookupComment(document.location.hash.split('_')[1]);
+function revealSpoiler(target) {
+  target.classList.toggle('revealed');
 }
+
+const targets = {
+  '.comment .mention, .comment .comment-content a[data-link="2"]': findComment,
+  '.reply-comment': replyTo,
+  '.edit-comment-submit': editComment,
+  '.spoiler': revealSpoiler
+};
+
+function onReady() {
+  document.addEventListener('click', event => {
+    // Left-click only
+    if (event.button !== 0) return;
+
+    for (const target in targets) {
+      if (event.target.closest(target)) {
+        targets[target](event.target.closest(target));
+        event.preventDefault();
+      }
+    }
+  });
+
+  if (document.location.hash.indexOf('#comment_') == 0) {
+    lookupComment(document.location.hash.split('_')[1]);
+  }
+}
+
+if (document.readyState !== 'loading') onReady();
+else document.addEventListener('DOMContentLoaded', onReady);

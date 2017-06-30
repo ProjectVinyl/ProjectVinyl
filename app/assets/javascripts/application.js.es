@@ -51,6 +51,7 @@
 //= depend_on utils/duration
 //= depend_on utils/misc
 //= depend_on utils/queryparameters
+//= depend_on utils/requests
 
 
 // Utilities for use at top scope
