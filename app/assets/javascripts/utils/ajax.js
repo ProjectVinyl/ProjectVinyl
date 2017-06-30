@@ -1,26 +1,56 @@
 import { Duration } from './duration.js';
 import { extendObj } from './misc.js';
+import { error } from '../components/popup.js';
 
 function xhr(params) {
-  var xhr = params.xhr;
-  if (xhr) {
-    params.xhr = function() {
-      return xhr($.ajaxSettings.xhr());
-    };
+  var csrf = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+  var xhr = new XMLHttpRequest();
+  if (params.xhr) params.xhr(xhr);
+  if (params.method == 'GET') {
+    params.url += '?' + queryPars(params.data);
   }
-  return $.ajax(params);
+  xhr.open(params.method, params.url, true);
+  xhr.setRequestHeader('X-CSRF-Token', csrf);
+  xhr.setRequestHeader('Content-Type', params.enctype || 'application/x-www-form-urlencoded');
+  xhr.onreadystatechange = function() {
+    try {
+        if (xhr.readyState === XMLHttpRequest.DONE) {
+            if (xhr.status >= 200 && xhr.status < 300) {
+              if (params.success) {
+                params.success(xhr.responseXML || xhr.responseText, null, xhr);
+              }
+            } else {
+                if (xhr.responseText && params.error) {
+                  params.error(xhr.responseText);
+                }
+                console.error(xhr.responseText);
+            }
+            if (params.complete) params.complete();
+        }
+    } catch (e) {
+      console.error(e);
+    }
+};
+  if (params.beforeSend) params.beforeSend();
+  xhr.send(params.data);
+}
+
+function queryPars(data) {
+  if (!data) return null;
+  return Object.keys(data).map(function(key) {
+    return encodeURIComponent(key) + '=' + encodeURIComponent(data[key]);
+  }).join('&');
 }
 
 function request(method, resource, callback, data, direct) {
   xhr({
-    type: method,
-    datatype: 'text/plain',
+    method: method,
     url: resource,
     success: direct ? callback : function(xml, type, ev) {
       callback(ev.status == 204 ? {} : JSON.parse(ev.responseText), ev.status);
     },
-    error: function(d) {
-      console.error(method + ' ' + resource + '\n\n' + d.responseText);
+    error: function(msg) {
+      error(method + ' ' + resource + '\n\n' + msg);
     },
     data: data
   });
@@ -54,7 +84,7 @@ const ajax = Object.freeze(extendObj(AjaxRequest, {
     
     callbacks = callbacks || {};
     xhr({
-      type: form.attr('method'),
+      method: form.attr('method'),
       url: form.attr('action') + '/async',
       enctype: 'multipart/form-data',
       data: new FormData(form[0]),
@@ -110,10 +140,10 @@ const ajax = Object.freeze(extendObj(AjaxRequest, {
         }
         
       },
-      error: function(e, err, msg) {
+      error: function(msg) {
         if (timer) clearInterval(timer);
         form.removeClass('waiting').addClass('error');
-        if (callbacks.error) return callbacks.error(message, msg, e.responseText);
+        if (callbacks.error) return callbacks.error(message, '', msg);
         message.text(e.responseText);
       },
       complete: function() {
@@ -121,10 +151,7 @@ const ajax = Object.freeze(extendObj(AjaxRequest, {
           form.parent().toggleClass(form.attr('data-state'));
           form.removeClass('waiting').removeClass('uploading');
         }
-      },
-      cache: false,
-      contentType: false,
-      processData: false
+      }
     });
   },
   post: function(resource, callback, direct, data) {
