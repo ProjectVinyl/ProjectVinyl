@@ -1,4 +1,4 @@
-import { jSlim } from './jslim.js';
+import { jSlim } from './utils/jslim.js';
 
 jSlim.ready(function() {
   var banner = document.getElementById('banner');

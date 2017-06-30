@@ -1,7 +1,7 @@
 import { ajax } from '../utils/ajax.js';
 import { scrollTo } from '../ui/scroll.js';
 import { Key } from '../utils/misc.js';
-import { jSlim } from '../jslim.js';
+import { jSlim } from '../utils/jslim.js';
 
 var INSTANCES = [];
 
