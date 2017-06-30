@@ -8,69 +8,74 @@
 //= require jquery_ujs
 
 //  Due to ERB parsing (this can be eliminated later)
-//= require notifier
+//= require components/notifier
 
-//= depend_on compatibility
-//= depend_on utilities
-//= depend_on duration
-//= depend_on queryparameters
-//= depend_on pageload
-//= depend_on notifier
-//= depend_on ajax
-//= depend_on videos
-//= depend_on thumbnailpicker
-//= depend_on uploader
-//= depend_on popup
-//= depend_on paginator
-//= depend_on bbcode
-//= depend_on fileinput
-//= depend_on autocomplete
-//= depend_on usercard
-//= depend_on tageditor
-//= depend_on uiresize
-//= depend_on uiscroll
-//= depend_on uilazy
-//= depend_on uiconfirmation
-//= depend_on uitabset
-//= depend_on uitoggle
-//= depend_on uireorder
-//= depend_on uidropdown
-//= depend_on uiform
-//= depend_on uigrid
-//= depend_on uislide
-//= depend_on uisubtable
-//= depend_on uiselect
-//= depend_on vote
-//= depend_on comments
-//= depend_on pmbatch
-//= depend_on share
-//= depend_on search
+//= depend_on compat/all.js
+//= depend_on compat/opera.js
+//= depend_on compat/promise.polyfill.js
+//= depend_on compat/fetch.polyfill.js
+//= depend_on compat/closest.polyfill.js
+
 //= depend_on callbacks
+//= depend_on pageload
+
+//= depend_on components/comments
+//= depend_on components/fileinput
+//= depend_on components/notifier
+//= depend_on components/paginator
+//= depend_on components/popup
+//= depend_on components/search
+//= depend_on components/share
+//= depend_on components/tageditor
+//= depend_on components/thumbnailpicker
+//= depend_on components/uploader
+//= depend_on components/usercard
+//= depend_on components/videos
+//= depend_on components/vote
+//= depend_on ui/confirmation
+//= depend_on ui/dropdown
+//= depend_on ui/form
+//= depend_on ui/grid
+//= depend_on ui/lazy
+//= depend_on ui/reorder
+//= depend_on ui/resize
+//= depend_on ui/scroll
+//= depend_on ui/select
+//= depend_on ui/slide
+//= depend_on ui/subtable
+//= depend_on ui/tabset
+//= depend_on ui/toggle
+//= depend_on utils/ajax
+//= depend_on utils/autocomplete
+//= depend_on utils/bbcode
+//= depend_on utils/duration
+//= depend_on utils/misc
+//= depend_on utils/queryparameters
+//= depend_on utils/requests
+
 
 // Utilities for use at top scope
-import './compatibility.js';
-import './utilities.js';
+import './compat/all.js';
 
 // Our code (this can be shortened to 1-2 imports later)
 import './pageload.js';
-import './uploader.js';
-import './autocomplete.js';
-import './usercard.js';
-import './uilazy.js';
-import './uiconfirmation.js';
-import './uitabset.js';
-import './uitoggle.js';
-import './uireorder.js';
-import './uidropdown.js';
-import './uiform.js';
-import './uigrid.js';
-import './uislide.js';
-import './uisubtable.js';
-import './uiselect.js';
-import './vote.js';
-import './comments.js';
-import './pmbatch.js';
-import './share.js';
-import './search.js';
-import './callbacks.js';
+import './components/comments.js';
+import './components/search.js';
+import './components/share.js';
+import './components/uploader.js';
+import './components/usercard.js';
+import './components/vote.js';
+import './ui/confirmation.js';
+import './ui/dropdown.js';
+import './ui/form.js';
+import './ui/grid.js';
+import './ui/lazy.js';
+import './ui/reorder.js';
+import './ui/select.js';
+import './ui/slide.js';
+import './ui/subtable.js';
+import './ui/tabset.js';
+import './ui/toggle.js';
+import './utils/autocomplete.js';
 
+import './callbacks.js';

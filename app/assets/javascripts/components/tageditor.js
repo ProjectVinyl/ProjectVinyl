@@ -1,5 +1,5 @@
-import { ajax } from './ajax.js';
-import { Key } from './utilities.js';
+import { ajax } from '../utils/ajax.js';
+import { Key } from '../utils/misc.js';
 import { jSlim } from './jslim.js';
 
 function namespace(name) {

@@ -3,8 +3,8 @@
  * i.e. When the banner selection dialog is opened
  */
 
-import { ajax } from './ajax.js';
-import { initFileSelect } from './fileinput.js';
+import { ajax } from './utils/ajax.js';
+import { initFileSelect } from './components/fileinput.js';
 
 // app/views/artist/view.html.erb
 window.loadBannerSelector = function loadBannerSelector() {

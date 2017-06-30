@@ -1,5 +1,5 @@
-import { ajax } from './ajax.js';
 import { jSlim } from './jslim.js';
+import { ajax } from '../utils/ajax.js';
 
 function count(me, offset, save) {
   var likes = me.dataset.count;

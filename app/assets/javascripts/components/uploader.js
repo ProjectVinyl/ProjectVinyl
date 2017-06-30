@@ -1,11 +1,11 @@
-import { ajax } from './ajax.js';
-import { BBC } from './bbcode.js';
+import { ajax } from '../utils/ajax.js';
+import { BBC } from '../utils/bbcode.js';
 import { initFileSelect } from './fileinput.js';
 import { TagEditor } from './tageditor.js';
 import { ThumbPicker } from './thumbnailpicker.js';
-import { resizeFont } from './uiresize.js';
-import { focusTab } from './uitabset.js';
-import { toBool, extendObj } from './utilities.js';
+import { resizeFont } from '../ui/resize.js';
+import { focusTab } from '../ui/tabset.js';
+import { toBool, extendObj } from '../utils/misc.js';
 import { Player } from './videos.js';
 
 var INSTANCES = [];

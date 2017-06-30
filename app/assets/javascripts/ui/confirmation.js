@@ -1,6 +1,6 @@
-import { ajax } from './ajax.js';
-import { paginator } from './paginator.js';
-import { Popup } from './popup.js';
+import { ajax } from '../utils/ajax.js';
+import { paginator } from '../components/paginator.js';
+import { Popup } from '../components/popup.js';
 
 function createPopup(me, action) {
   var id = me[0].dataset.id;
@@ -9,6 +9,8 @@ function createPopup(me, action) {
   var msg = me[0].dataset.msg;
   
   return new Popup(me[0].dataset.title, me[0].dataset.icon, function() {
+    const popup = this; // ?
+
     var ok = $('<button class="button-fw green confirm">Yes</button>');
     var cancel = $('<button class="cancel button-fw blue" style="margin-left:20px;" type="button">No</button>');
     

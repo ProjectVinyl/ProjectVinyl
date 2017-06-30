@@ -1,5 +1,5 @@
-import { ajax } from './ajax.js';
 import { jSlim } from './jslim.js';
+import { ajax } from '../utils/ajax.js';
 
 var hoverTimeout = null;
 function closeUsercard() {

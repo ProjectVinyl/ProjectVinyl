@@ -43,6 +43,9 @@ const jSlim = {
     return jSlim.each(document.querySelectorAll(selector), func, thisArg);
   },
   ready: function(func) {
+    if (document.readyState !== 'loading') {
+      return func();
+    }
     document.addEventListener('DOMContentLoaded', func);
   }
 };

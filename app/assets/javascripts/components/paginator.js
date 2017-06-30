@@ -1,5 +1,5 @@
-import { ajax } from './ajax.js';
-import { QueryParameters } from './queryparameters.js';
+import { ajax } from '../utils/ajax.js';
+import { QueryParameters } from '../utils/queryparameters.js';
 
 function requestPage(context, page) {
   if (page == context[0].dataset.page) return;
