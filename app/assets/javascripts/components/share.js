@@ -6,46 +6,64 @@ const shares = {
   googleplus: 'https://plus.google.com/u/0/share?url={url}&hl=en-GB&caption={title}',
   tumblr: 'https://www.tumblr.com/widgets/share/tool?canonicalUrl={url}&posttype=video&title={title}&content={url}'
 };
-  
+
 function updateShareIframe() {
-  var toggle = $('#album_share_toggle');
-  var type = $('#album_share_type').val();
-  var share_field = $('#share_field');
-  var htm = share_field.attr('data-value');
-  var button = $('.action.test');
-  var id = button.attr(toggle.length && toggle[0].checked && type == 'beginning' ? 'data-first' : 'data-id');
-  console.log(id);
-  var extra = '';
-  if (toggle.length && toggle[0].checked) {
-    extra += '?list=' + button.attr('data-album-id') + '&index=';
-    extra += type == 'beginning' ? 0 : button.attr('data-index');
+  // FIXME: too much going on here
+  const toggle = document.querySelector('#album_share_toggle'),
+        type = document.querySelector('#album_share_type'),
+        shareField = document.querySelector('#share_field'),
+        button = document.querySelector('.action.test'),
+        id = button.dataset[(toggle && toggle.checked && type) ? 'first' : 'id'],
+        frame = document.querySelector('#embed_preview iframe');
+
+  let typeValue = type && type.value;
+  let htm = shareField.dataset.value;
+  let extra = '';
+  if (toggle && toggle.checked) {
+    extra += `?list=${button.dataset.albumId}&index=${typeValue === 'beginning' ? 0 : button.dataset.index}`;
   }
+
   htm = htm.replace('{id}', id);
   htm = htm.replace('{extra}', extra);
-  $('#embed_preview iframe').attr('src', '/embed/' + id + extra);
-  share_field.val(htm);
+
+  frame.setAttribute('src', `/embed/${id}${extra}`);
+  shareField.value = htm;
 }
 
-$(document).on('click', '.share-buttons button', function() {
-  var ref = shares[this.dataset.type];
-  if (ref) {
-    ref = ref.replace(/{url}/g, encodeURIComponent(document.location.href));
-    ref = ref.replace(/{title}/g, encodeURIComponent(this.parentNode.dataset.caption));
-    window.open(ref, 'sharer', 'width=500px,height=450px,status=0,toolbar=0,menubar=0,addressbar=0,location=0');
+document.addEventListener('click', event => {
+  // Left-click only
+  if (event.button !== 0) return;
+
+  const target = event.target.closest('.share-buttons button');
+  if (target) {
+    let ref = shares[target.dataset.type];
+    if (ref) {
+      ref = ref.replace(/{url}/g, encodeURIComponent(document.location.href));
+      ref = ref.replace(/{title}/g, encodeURIComponent(target.parentNode.dataset.caption));
+      // https://medium.com/@jitbit/target-blank-the-most-underestimated-vulnerability-ever-96e328301f4c
+      window.open(ref, 'sharer', 'width=500px,height=450px,status=0,toolbar=0,menubar=0,addressbar=0,location=0');
+    }
   }
 });
 
-$(function() {
-  var embedPreview = $('#embed_preview');
-  if (embedPreview.length) {
-    $('.action.test').on('click', function() {
-      embedPreview.css('display', '');
-      updateShareIframe();
-      slideOut(slideOut($(this).closest('.slideout')));
-    });
-    
-    $('#album_share_toggle, #album_share_type').on('change', function() {
-      updateShareIframe();
-    });
-  }
-});
+function setupShares() {
+  // FIXME: same here
+  const embedPreview = document.querySelector('#embed_preview'),
+        previewButton = document.querySelector('.action.test'),
+        shareToggle = document.querySelector('#album_share_toggle'),
+        shareType = document.querySelector('#album_share_type');
+
+  if (!embedPreview) return;
+
+  previewButton.addEventListener('click', () => {
+    embedPreview.style.display = '';
+    updateShareIframe();
+    slideOut(slideOut($(previewButton.closest('.slideout'))));
+  });
+
+  if (shareToggle) shareToggle.addEventListener('change', updateShareIframe);
+  if (shareType) shareType.addEventListener('change', updateShareIframe);
+}
+
+if (document.readyState !== 'loading') setupShares();
+else document.addEventListener('DOMContentLoaded', setupShares);
