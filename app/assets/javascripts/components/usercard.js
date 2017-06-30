@@ -24,24 +24,24 @@ function openUsercard(sender, usercard) {
   }, 500);
 }
 
-jSlim.on(document, 'mouseenter', '.user-link', function() {
+jSlim.on(document, 'mouseover', '.user-link', function() {
   var id = this.dataset.id;
-  var usercard = document.querySelector('.hovercard[data-id=' + id + ']');
+  var usercard = document.querySelector('.hovercard[data-id="' + id + '"]');
   if (!usercard) {
     usercard = document.createElement('DIV');
     usercard.classList.add('hovercard');
     usercard.dataset.id = id;
-    usercard.addEventListener('mouseenter', function(ev) {
+    usercard.addEventListener('mouseover', function(ev) {
       ev.stopPropagation();
     });
     var self = this;
     ajax.get('artist/hovercard', function(html) {
       usercard.innerHTML = html;
       openUsercard(self, usercard);
-    }, {id: id}, 1);
+    }, { id: id }, 1);
   } else {
     openUsercard(this, usercard);
   }
 });
 
-jSlim.on(document, 'mouseleave', '.user-link', closeUsercard);
+jSlim.on(document, 'mouseout', '.user-link', closeUsercard);

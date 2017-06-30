@@ -219,14 +219,14 @@ function TagEditor(el) {
   
   this.input.addEventListener('mousedown', stopPropa);
   
-  this.searchResults.addEventListener('click', jSlim.delegateEv('li', function(e) {
+  jSlim.on(this.searchResults, 'click', 'li', function(e) {
     self.fillSearchedTag(this.tag);
-  }));
+  });
   
-  this.list.addEventListener('click', jSlim.delegateEv('i.remove', function(e) {
+  jSlim.on(this.list, 'click', 'i.remove', function(e) {
     self.removeTag(this.parentNode);
     stopPropa(e);
-  }));
+  });
   
   this.dom.addEventListener('mouseup', function(e) {
     self.input.focus();
