@@ -1,6 +1,7 @@
 import { ajax } from '../utils/ajax.js';
 
 function slideOut(holder) {
+  holder = $(holder);
   var h = holder.find('.group.active').height();
   holder.css('min-height', h);
   holder.css('max-height', h + 10);

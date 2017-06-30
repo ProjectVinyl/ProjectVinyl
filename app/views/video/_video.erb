@@ -181,55 +181,6 @@
 			><button class="action report mobile-friendly right slider-toggle loadable" data-url="reporter/<%= @video.id %>" data-target=".form.report"><i class="fa fa-flag"></i><span> Report</span></button>
 		</div>
 		<div class="slideout form report slide-group" data-offset="0"></div>
-		<div class="slideout share properties">
-			<table class="group active">
-				<tr>
-					<td class="field share-buttons" data-caption="<%= @video.title %> - ProjectVinyl">
-						<button class="action" data-action="share" data-type="facebook"><i class="fa fa-lg fa-fw fa-facebook"></i></button>
-						<button class="action" data-action="share" data-type="twitter"><i class="fa fa-lg fa-fw fa-twitter"></i></button>
-						<button class="action" data-action="share" data-type="googleplus"><i class="fa fa-lg fa-fw fa-google-plus"></i></button>
-						<button class="action" data-action="share" data-type="tumblr"><i class="fa fa-lg fa-fw fa-tumblr"></i></button>
-					</td>
-				</tr>
-				<tr>
-					<td class="field">
-						Embed
-						<p>
-						<input id="share_field" name="share_field" type="text" data-value="<%= '<iframe width="560" height="315" src="http://www.projectvinyl.net/embed/{id}{extra}" frameborder="0" allowfullscreen></iframe>' %>" value="<%= '<iframe width="560" height="315" src="http://www.projectvinyl.net/embed/' + @video.id.to_s + '" frameborder="0" allowfullscreen></iframe>' %>"></input>
-						</p>
-						<% if @album && !@album.virtual? %><div>
-							<input id="album_share_toggle" type="checkbox" value="playlist"></input>
-							Share with playlist from the
-							<select id="album_share_type">
-								<option>current video</option>
-								<option>beginning</option>
-							</select>.
-						</div><% end %>
-						<div id="embed_preview" class="center" style="display:none;height:315px">
-							<iframe style="max-width:100%;" width="560px" height="100%" frameborder="0"></iframe>
-						</div>
-						<p>
-							<button class="action test center" data-id="<%= @video.id %>"<% if @album %> data-first="<%= @items.length > 1 ? @items.first.video_id : @video.id %>" data-index="<%= @index %>" data-album-id="<%= @album.id %>"<% end %>>Preview</button>
-						</p>
-					</td>
-				</tr>
-				<tr>
-					<td class="field">
-						Projectvinyl preview
-						<p>
-							<input type="text" value="[<%= @video.id %>]"></input>
-						</p>
-					</td>
-				</tr>
-				<tr>
-					<td class="field">
-						BBCode
-						<p>
-							<textarea rows="2">[url=http://www.projectvinyl.net/<%= @video.id %>][img]http://www.projectvinyl.net/cover/<%= @video.id %>-small.png[/img]<%= @video.title.strip %>[/url]</textarea>
-						</p>
-					</td>
-				</tr>
-			</table>
-		</div>
+		<%= render partial: 'share' %>
 	</div>
 </section>

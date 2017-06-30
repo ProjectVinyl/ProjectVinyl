@@ -1,4 +1,5 @@
 import { slideOut } from '../ui/slide.js';
+import { jSlim } from '../utils/jslim.js';
 
 const shares = {
   facebook: 'http://www.facebook.com/sharer/sharer.php?href={url}',
@@ -7,63 +8,81 @@ const shares = {
   tumblr: 'https://www.tumblr.com/widgets/share/tool?canonicalUrl={url}&posttype=video&title={title}&content={url}'
 };
 
-function updateShareIframe() {
-  // FIXME: too much going on here
-  const toggle = document.querySelector('#album_share_toggle'),
-        type = document.querySelector('#album_share_type'),
-        shareField = document.querySelector('#share_field'),
-        button = document.querySelector('.action.test'),
-        id = button.dataset[(toggle && toggle.checked && type) ? 'first' : 'id'],
-        frame = document.querySelector('#embed_preview iframe');
-
-  let typeValue = type && type.value;
-  let htm = shareField.dataset.value;
-  let extra = '';
-  if (toggle && toggle.checked) {
-    extra += `?list=${button.dataset.albumId}&index=${typeValue === 'beginning' ? 0 : button.dataset.index}`;
-  }
-
-  htm = htm.replace('{id}', id);
-  htm = htm.replace('{extra}', extra);
-
-  frame.setAttribute('src', `/embed/${id}${extra}`);
-  shareField.value = htm;
+// https://medium.com/@jitbit/target-blank-the-most-underestimated-vulnerability-ever-96e328301f4c
+function popOpen(url, title, props) {
+  var other = window.open("_blank", title, props);
+  other.opener = null;
+  other.location = url;
 }
 
-document.addEventListener('click', event => {
+jSlim.on(document, 'click', '.share-buttons button', function(e) {
   // Left-click only
-  if (event.button !== 0) return;
-
-  const target = event.target.closest('.share-buttons button');
-  if (target) {
-    let ref = shares[target.dataset.type];
-    if (ref) {
-      ref = ref.replace(/{url}/g, encodeURIComponent(document.location.href));
-      ref = ref.replace(/{title}/g, encodeURIComponent(target.parentNode.dataset.caption));
-      // https://medium.com/@jitbit/target-blank-the-most-underestimated-vulnerability-ever-96e328301f4c
-      window.open(ref, 'sharer', 'width=500px,height=450px,status=0,toolbar=0,menubar=0,addressbar=0,location=0');
-    }
+  if (e.which != 1 && e.button !== 0) return;
+  var ref = shares[target.dataset.type];
+  if (ref) {
+    ref = ref.replace(/{url}/g, encodeURIComponent(document.location.href));
+    ref = ref.replace(/{title}/g, encodeURIComponent(target.parentNode.dataset.caption));
+    popOpen(ref, 'sharer', 'width=500px,height=450px,status=0,toolbar=0,menubar=0,addressbar=0,location=0');
   }
 });
 
+// FIXME: too much going on here
+// Eugh, I'll say
 function setupShares() {
-  // FIXME: same here
-  const embedPreview = document.querySelector('#embed_preview'),
-        previewButton = document.querySelector('.action.test'),
-        shareToggle = document.querySelector('#album_share_toggle'),
-        shareType = document.querySelector('#album_share_type');
-
-  if (!embedPreview) return;
-
-  previewButton.addEventListener('click', () => {
-    embedPreview.style.display = '';
+  var frame = document.querySelector('#embed_preview iframe');
+  if (!frame) return;
+  
+  var shareField = document.getElementById('share_field');
+  
+  // Only used on pages with a linked playlist
+  var shareToggle = document.getElementById('album_share_toggle');
+  var shareType = document.getElementById('album_share_type');
+  //
+  
+  document.querySelector('.action.test').addEventListener('click', function() {
+    frame.parentNode.style.display = '';
     updateShareIframe();
-    slideOut(slideOut($(previewButton.closest('.slideout'))));
+    // Refresh container height - Kind of hacky, imo
+    // TODO: replace this
+    slideOut(slideOut(frame.closest('.slideout')));
   });
+  
+  if (shareToggle) {
+    shareToggle.addEventListener('change', updateShareIframe);
+    shareType.addEventListener('change', updateShareIframe);
+  }
+  
+  function updateShareIframe() {
+    var id = getVideoId();
+    var src = '/embed/' + id;
+    
+    var htm = shareField.dataset.value;
+    
+    htm = htm.replace('{id}', id);
+    
+    if (shouldIncludeAlbum()) {
+      var extra = getAlbumParams();
+      htm = htm.replace('{extra}', extra);
+      src += extra;
+    } else {
+      htm = htm.replace('{extra}', '');
+    }
+    frame.src = src;
+    shareField.value = htm;
+  }
+  
+  function getVideoId() {
+    return shareField.dataset[shouldIncludeAlbum() ? 'first' : 'id'];
+  }
+  
+  function shouldIncludeAlbum() {
+    return shareToggle && shareToggle.checked;
+  }
 
-  if (shareToggle) shareToggle.addEventListener('change', updateShareIframe);
-  if (shareType) shareType.addEventListener('change', updateShareIframe);
+  function getAlbumParams() {
+    var index = shareType.value == 'beginning' ? 0 : shareField.dataset.albumIndex;
+    return '?list=' + shareField.dataset.albumId + '&index=' + index;
+  }
 }
 
-if (document.readyState !== 'loading') setupShares();
-else document.addEventListener('DOMContentLoaded', setupShares);
+jSlim.ready(setupShares);
