@@ -1,28 +1,29 @@
 import { ajax } from '../utils/ajax.js';
+import { jSlim } from '../utils/jslim.js';
 
 function lazyLoad(button) {
   var target = document.getElementById(button.dataset.target);
-  var page = parseInt(button[0].dataset.page) + 1;
+  var page = parseInt(button.dataset.page) + 1;
   button.classList.add('working');
-  ajax.get(button.dataset.url, function(json) {
+  ajax.get(button.dataset.url, {
+    page: page,
+    id: button.dataset.id
+  }).json(function(json) {
     button.classList.remove('working');
     if (json.page == page) {
       target.innerHTML += json.content;
       button.dataset.page = page;
     } else {
-      $(button).remove();
+      button.parentNode.removeChild(button);
     }
-  }, {
-    page: page,
-    id: button.attr('data-id')
   });
 }
 
-$(document).on('click', '.load-more button', function() {
+jSlim.on(document, 'click', '.load-more button', function() {
   lazyLoad(this);
 });
 
-$(document).on('click', '.mix a', function(e) {
-  document.location.replace(this.href + '&t=' + $('#video .player')[0].getPlayerObj().video.currentTime);
+jSlim.on(document, 'click', '.mix a', function(e) {
+  document.location.replace(this.href + '&t=' + document.querySelector('#video .player').getPlayerObj().video.currentTime);
   e.preventDefault();
 });

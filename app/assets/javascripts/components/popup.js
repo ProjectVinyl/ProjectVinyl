@@ -105,13 +105,13 @@ Popup.fetch = function(resource, title, icon, thin, loadedFunc) {
     this.content.innerHTML = '<div class="loader"><i class="fa fa-pulse fa-spinner"></i></div>';
     this.thin = thin;
     if (thin) this.container.classList.add('thin');
-    ajax(resource, function(xml, type, ev) {
-      self.content.innerHTML = ev.responseText;
+    ajax.get(resource).text(function(text) {
+      self.content.innerHTML = text;
       self.center();
       if (loadedFunc && typeof window[loadedFunc] === 'function') {
         window[loadedFunc](self.content);
       }
-    }, 1);
+    });
     this.show();
   });
 };

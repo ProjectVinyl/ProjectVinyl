@@ -337,12 +337,12 @@ TagEditor.prototype = {
     var self = this;
     this.dom.dispatchEvent(new CustomEvent('tagschange'));
     if (this.target && this.id) {
-      ajax.post('update/' + this.target, function(json) {
-        self.reload(json.results);
-      }, false, {
+      ajax.post('update/' + this.target, {
         id: this.id,
         field: 'tags',
         value: this.value.value
+      }).json(function(json) {
+        self.reload(json.results);
       });
     } else if (this.norm) {
       this.norm.innerHTML = '';
@@ -358,13 +358,13 @@ TagEditor.prototype = {
       this.dom.classList.remove('pop-out-shown');
       return;
     }
-    ajax.get('find/tags', function(json) {
+    ajax.get('find/tags', { q: name }).json(function(json) {
       self.searchResults.innerHTML = '';
       json.results.forEach(function(result) {
         createSearchItem(self.searchResults, result, name);
       });
       self.dom.classList.toggle('pop-out-shown', !!json.results.length);
-    }, { q: name });
+    });
   },
   sizeInput: function() {
     var width = this.input.clientWidth;

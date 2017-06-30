@@ -2,14 +2,15 @@ import { ajax } from '../utils/ajax.js';
 import { paginator } from '../components/paginator.js';
 import { Popup } from '../components/popup.js';
 import { jSlim } from '../utils/jslim.js';
+import { Callbacks } from '../callbacks.js';
 
 function createPopup(me, action) {
-  var id = me[0].dataset.id;
-  var callback = me[0].dataset.callback;
-  var url = me[0].dataset.url;
-  var msg = me[0].dataset.msg;
+  var id = me.dataset.id;
+  var callback = me.dataset.callback;
+  var url = me.dataset.url;
+  var msg = me.dataset.msg;
   
-  return new Popup(me[0].dataset.title, me[0].dataset.icon, function() {
+  return new Popup(me.dataset.title, me.dataset.icon, function() {
     this.content.innerHTML = '\
       <div class="message_content"></div>\
       <div class="foot center">\
@@ -26,7 +27,7 @@ function createPopup(me, action) {
     this.content.messageContent.innerHTML += 'Are you sure you want to continue?';
     
     this.confirm = function() {
-      ajax.post(url, function(json) {
+      ajax.post(url).json(function(json) {
         if (action == 'remove') {
           var removeable = me.closest('.removeable');
           if (removeable.classList.contains('repaintable')) {
@@ -40,9 +41,7 @@ function createPopup(me, action) {
         if (json.ref) {
           return document.location.replace(json.ref);
         }
-        if (callback && typeof window[callback] === 'function') {
-          window[callback](id, json);
-        }
+        Callbacks.execute(callback, [id, json]);
       });
     };
     this.setPersistent();

@@ -47,7 +47,7 @@ $(document).on('click', '.slider-toggle', function(e) {
   var holder = $(this.dataset.target);
   if (me.hasClass('loadable') && !me.hasClass('loaded')) {
     me.addClass('loaded');
-    ajax(this.dataset.url, function(json) {
+    ajax.get(this.dataset.url).json(function(json) {
       holder[0].innerHTML = json.content;
       holder.find('script').each(function() {
         var cs = document.createElement('SCRIPT');

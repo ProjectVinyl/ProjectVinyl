@@ -26,7 +26,7 @@ jSlim.ready(function() {
 jSlim.on(document, 'click', '#sign-out', function(e) {
   e.preventDefault();
   e.stopPropagation();
-  ajax.delete(this.href, function() {
+  ajax.delete(this.href).text(function() {
     document.location.href = document.location.href;
-  }, 1);
+  });
 });

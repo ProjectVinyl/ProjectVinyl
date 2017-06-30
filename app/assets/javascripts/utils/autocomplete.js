@@ -3,7 +3,9 @@ import { ajax } from './ajax.js';
 var autocomplete = null;
 
 function lookup(sender, popout, action, input, validate) {
-  ajax.post(action + '/lookup', function(json) {
+  ajax.post(action + '/lookup', {
+    query: input.val(), validate: validate ? 1 : 0
+  }).json(function(json) {
     popout.empty();
     for (var i = 0; i < json.content.length; i++) {
       var item = $('<li></li>');
@@ -17,8 +19,6 @@ function lookup(sender, popout, action, input, validate) {
     }
     sender[json.content.length ? 'addClass' : 'removeClass']('pop-out-shown');
     sender[json.reject ? 'addClass' : 'removeClass']('invalid');
-  }, 0, {
-    query: input.val(), validate: validate ? 1 : 0
   });
 }
 

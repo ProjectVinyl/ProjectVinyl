@@ -429,7 +429,7 @@ Player.prototype = {
     });
     this.dom.playlist.on('click', '.items a, #playlist_next, #playlist_prev', function(ev) {
       var next = $(this);
-      ajax.get('view' + next.attr('href'), function(json) {
+      ajax.get('view' + next.attr('href')).json(function(json) {
         self.redirect = next.attr('href');
         self.loadAttributesAndRestart(json);
         if (json.next) {
@@ -600,7 +600,7 @@ Player.prototype = {
           var next = $('#playlist_next');
           if (next.length) {
             if (Player.fullscreenPlayer == self || self.album) {
-              ajax.get('view' + next.attr('href'), function(json) {
+              ajax.get('view' + next.attr('href')).json(function(json) {
                 self.redirect = next.attr('href');
                 self.loadAttributesAndRestart(json);
                 if (json.next) {

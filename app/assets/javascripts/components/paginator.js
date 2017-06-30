@@ -7,9 +7,9 @@ function requestPage(context, page) {
   page = parseInt(page);
   context.find('ul').addClass('waiting');
   context.find('.pagination .pages .button.selected').removeClass('selected');
-  ajax.get(context[0].dataset.type + '?page=' + page + (context[0].dataset.args ? '&' + context[0].dataset.args : ''), function(json) {
+  ajax.get(context[0].dataset.type, 'page=' + page + (context[0].dataset.args ? '&' + context[0].dataset.args : '')).json(function(json) {
     populatePage(context, json);
-  }, {});
+  });
 }
 
 function populatePage(context, json) {

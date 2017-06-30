@@ -161,11 +161,13 @@ function toggleEdit(editing, holder, content, textarea, short) {
 function save(action, id, field, holder) {
   if (holder.hasClass('dirty')) {
     holder.addClass('saving');
-    ajax.post(action, function() {
+    ajax.post(action, {
+      id: id,
+      field: field,
+      value: poor(holder.find('.input').val())
+    }, function() {
       holder.removeClass('saving');
       holder.removeClass('dirty');
-    }, true, {
-      id: id, field: field, value: poor(holder.find('.input').val())
     });
   }
 }

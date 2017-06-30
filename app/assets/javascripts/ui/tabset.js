@@ -42,11 +42,11 @@ $(document).on('click', '.tab-set.async a.button:not([data-disabled])', function
     me.addClass('selected');
     holder.addClass('waiting');
     
-    ajax.get(parent.dataset.url, function(json) {
+    ajax.get(parent.dataset.url, {
+      type: this.dataset.target, page: this.dataset.page || 0
+    }).json(function(json) {
       holder.html(json.content);
       holder.removeClass('waiting');
-    }, {
-      type: this.dataset.target, page: this.dataset.page || 0
     });
   }
   e.preventDefault();

@@ -35,10 +35,12 @@ jSlim.on(document, 'mouseover', '.user-link', function() {
       ev.stopPropagation();
     });
     var self = this;
-    ajax.get('artist/hovercard', function(html) {
-      usercard.innerHTML = html;
+    ajax.get('artist/hovercard', {
+      id: id
+    }).text(function(text) {
+      usercard.innerHTML = text;
       openUsercard(self, usercard);
-    }, { id: id }, 1);
+    });
   } else {
     openUsercard(this, usercard);
   }

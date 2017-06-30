@@ -19,7 +19,7 @@ function count(me, offset, save) {
   count.classList.toggle('hidden', likes < 1);
   
   if (save) {
-    ajax.post(me.dataset.action + '/' + me.dataset.id + '/' + offset, function(json) {
+    ajax.post(me.dataset.action + '/' + me.dataset.id + '/' + offset).json(function(json) {
       if (count.length) count.innerText = json.count;
     });
   }
@@ -42,7 +42,7 @@ jSlim.on(document, 'click', 'button.action.star', function fave(e) {
   if (e.which != 1 && e.button != 0) return;
   this.classList.toggle('starred');
   var self = this;
-  ajax.post(this.dataset.action + '/' + this.dataset.id, function(xml) {
-    self.classList.toggle('starred', xml.added);
+  ajax.post(this.dataset.action + '/' + this.dataset.id).json(function(json) {
+    self.classList.toggle('starred', json.added);
   });
 });

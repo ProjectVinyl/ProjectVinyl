@@ -1,5 +1,6 @@
 import { ajax } from '../utils/ajax.js';
 import { paginator } from '../components/paginator.js';
+import { jSlim } from '../utils/jslim.js';
 
 var grabber;
 var floater;
@@ -9,9 +10,9 @@ function moveFloater(e) {
 }
 
 function reorder(target, id, index) {
-  ajax.post('update/' + target, function() {}, true, {
+  ajax.post('update/' + target, {
     id: id, index: index
-  });
+  }, function() { });
 }
 
 function grab(target, container, item) {
@@ -57,7 +58,7 @@ function grab(target, container, item) {
   });
 }
 
-$(function() {
+jSlim.ready(function() {
   $('.reorderable').each(function() {
     var target = this.dataset.target;
     var orderable = $(this);
@@ -75,21 +76,25 @@ $(function() {
   });
 });
 
-$(document).on('click', '.removeable .remove', function(e) {
-  var me = $(this).parents('.removeable');
+jSlim.on(document, 'click', '.removeable .remove', function(e) {
+  var me = this.closest('.removeable');
   
-  if (me.hasClass('repaintable')) {
-    return ajax.post('delete/' + me[0].dataset.target, function(json) {
-      paginator.repaint(me.closest('.paginator'), json);
-    }, false, { id: me[0].dataset.id });
+  if (me.classList.contains('repaintable')) {
+    return ajax.post('delete/' + me.dataset.target, {
+      id: me.dataset.id
+    }, function(json) {
+      paginator.repaint($(me.closest('.paginator')), json);
+    });
   }
   
-  if (me[0].dataset.target) {
-    ajax.post('delete/' + me[0].dataset.target, function() {
-      me.remove();
-    }, true, { id: me[0].dataset.id });
+  if (me.dataset.target) {
+    ajax.post('delete/' + me.dataset.target, {
+      id: me.dataset.id
+    }, function() {
+      me.parentNode.removeChild(me);
+    });
   } else {
-    me.remove();
+    me.parentNode.removeChild(me);
   }
   e.preventDefault();
   e.stopPropagation();

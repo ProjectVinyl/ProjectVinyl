@@ -10,7 +10,9 @@ function toggle(sender) {
   
   if (data) action += '?extra=' + $(data).val();
   
-  ajax.post(action, function(json) {
+  ajax.post(action, {
+    id: id, item: sender.dataset.item
+  }).json(function(json) {
     var family = sender.dataset.family;
     if (family) {
       return $('.action.toggle[data-family="' + family + '"][data-id="' + id + '"]').each(function() {
@@ -24,8 +26,6 @@ function toggle(sender) {
     if (state) {
       $(sender).parents(sender.dataset.parent)[json.added ? 'addClass' : 'removeClass'](state);
     }
-  }, false, {
-    id: id, item: sender.dataset.item
   });
 }
 

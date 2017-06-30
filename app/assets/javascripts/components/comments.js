@@ -21,13 +21,13 @@ window.postComment = function postComment(sender, threadId, order, reportState) 
   if (reportState) data.report_state = reportState;
   
   sender.classList.add('posting');
-  ajax.post('comments/new', function(json) {
+  ajax.post('comments/new', data).json(function(json) {
     sender.classList.remove('posting');
     paginator.repaint(document.getElementById('#thread-' + threadId).closest('.paginator'), json);
     scrollTo('#comment_' + json.focus);
     input.value = '';
     input.change();
-  }, 0, data);
+  });
 };
 
 // app/views/thread/_comment.html.erb
@@ -72,7 +72,7 @@ function lookupComment(commentId) {
   if (scrollToAndHighlight(commentId)) return;
   
   var pagination = document.querySelector('.comments').parentNode;
-  ajax.get(pagination.dataset.type + '?comment=' + commentId + '&' + pagination.dataset.args, function(json) {
+  ajax.get(pagination.dataset.type, 'comment=' + commentId + '&' + pagination.dataset.args).json(function(json) {
     paginator.repaint(pagination, json);
     scrollToAndHighlight(commentId);
   });
@@ -80,11 +80,11 @@ function lookupComment(commentId) {
 
 function editComment(sender) {
   sender = sender.parentNode;
-  ajax.post('comments/edit', function() {
-    sender.classList.remove('editing');
-  }, 1, {
+  ajax.post('comments/edit', {
     id: sender.dataset.id,
     comment: sender.querySelector('textarea, input.comment-content').value
+  }, function() {
+    sender.classList.remove('editing');
   });
 }
 
