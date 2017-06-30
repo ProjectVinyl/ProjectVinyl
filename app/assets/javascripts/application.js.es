@@ -12,6 +12,8 @@
 
 //= depend_on compat/all.js
 //= depend_on compat/opera.js
+//= depend_on compat/promise.polyfill.js
+//= depend_on compat/fetch.polyfill.js
 //= depend_on compat/closest.polyfill.js
 
 //= depend_on callbacks
