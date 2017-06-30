@@ -1,4 +1,4 @@
-import { ajax } from './ajax.js';
+import { ajax } from '../utils/ajax.js';
 
 function lazyLoad(button) {
   var target = document.getElementById(button.dataset.target);

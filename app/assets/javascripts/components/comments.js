@@ -1,8 +1,8 @@
-import { ajax } from './ajax.js';
+import { ajax } from '../utils/ajax.js';
 import { paginator } from './paginator.js';
 import { error } from './popup.js';
-import { scrollTo } from './uiscroll.js';
-import { decodeEntities } from './utilities.js';
+import { scrollTo } from '../ui/scroll.js';
+import { decodeEntities } from '../utils/misc.js';
 
 // app/views/thread/_comment_box.html.erb
 // app/views/thread/_view_reverse.erb

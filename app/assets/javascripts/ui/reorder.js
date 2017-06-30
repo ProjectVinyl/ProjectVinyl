@@ -1,5 +1,5 @@
-import { ajax } from './ajax.js';
-import { paginator } from './paginator.js';
+import { ajax } from '../utils/ajax.js';
+import { paginator } from '../components/paginator.js';
 
 var grabber;
 var floater;

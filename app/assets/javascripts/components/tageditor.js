@@ -1,7 +1,5 @@
-import { ajax } from './ajax.js';
-import { Key } from './utilities.js';
-import { indirectEventFunc } from './utilities.js';
-import { ready } from './utilities.js';
+import { ajax } from '../utils/ajax.js';
+import { Key, indirectEventFunc, ready } from '../utils/misc.js';
 
 function namespace(name) {
   return name.indexOf(':') == -1 ? '' : name.split(':')[0];

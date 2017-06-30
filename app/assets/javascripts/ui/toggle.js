@@ -1,4 +1,4 @@
-import { ajax } from './ajax.js';
+import { ajax } from '../utils/ajax.js';
 
 function toggle(sender) {
   var id = sender.dataset.id;

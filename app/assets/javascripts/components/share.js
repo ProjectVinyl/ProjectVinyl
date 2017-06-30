@@ -1,4 +1,4 @@
-import { slideOut } from './uislide.js';
+import { slideOut } from '../ui/slide.js';
 
 const shares = {
   facebook: 'http://www.facebook.com/sharer/sharer.php?href={url}',

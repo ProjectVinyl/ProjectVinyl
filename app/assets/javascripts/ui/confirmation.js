@@ -1,6 +1,6 @@
-import { ajax } from './ajax.js';
-import { paginator } from './paginator.js';
-import { Popup } from './popup.js';
+import { ajax } from '../utils/ajax.js';
+import { paginator } from '../components/paginator.js';
+import { Popup } from '../components/popup.js';
 
 function createPopup(me, action) {
   var id = me[0].dataset.id;

@@ -1,5 +1,5 @@
 import { error } from './popup.js';
-import { toBool } from './utilities.js';
+import { toBool } from '../utils/misc.js';
 
 function validateTypes(type, file) {
   if (type == 'image') {

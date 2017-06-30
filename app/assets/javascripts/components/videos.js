@@ -4,9 +4,9 @@
  * Copyright Project Vinyl Foundation 2016
 */
 
-import { ajax } from './ajax.js';
-import { scrollTo } from './uiscroll.js';
-import { Key } from './utilities.js';
+import { ajax } from '../utils/ajax.js';
+import { scrollTo } from '../ui/scroll.js';
+import { Key } from '../utils/misc.js';
 
 const VIDEO_ELEMENT = document.createElement('video');
 const aspect = 16 / 9;
