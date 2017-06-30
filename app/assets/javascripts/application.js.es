@@ -10,7 +10,10 @@
 //  Due to ERB parsing (this can be eliminated later)
 //= require components/notifier
 
-//= depend_on compatibility
+//= depend_on compat/all.js
+//= depend_on compat/opera.js
+//= depend_on compat/closest.polyfill.js
+
 //= depend_on callbacks
 //= depend_on pageload
 
@@ -49,7 +52,7 @@
 
 
 // Utilities for use at top scope
-import './compatibility.js';
+import './compat/all.js';
 
 // Our code (this can be shortened to 1-2 imports later)
 import './pageload.js';
