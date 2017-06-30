@@ -4,15 +4,14 @@ import { Key } from '../utils/misc.js';
 import { jSlim } from '../jslim.js';
 
 var INSTANCES = [];
-var win = $(window);
 
-win.on('resize', function() {
+window.addEventListener'resize', function() {
   INSTANCES.forEach(function(i) {
     i.resize();
   })
 });
-win.on('keydown', function(e) {
-  if (INSTANCES.length && !document.querySelectorAll('input:focus, textarea:focus, button:focus, .button.focus').length) {
+window.addEventListener('keydown', function(e) {
+  if (INSTANCES.length && !document.querySelector('input:focus, textarea:focus, button:focus, .button.focus')) {
     var c = document.querySelector('.popup-container.focus');
     if (c) c.instance.handleShortcut(e);
   }
