@@ -1,67 +1,89 @@
-import { ajax } from '../utils/ajax.js';
+import { fetchJson } from '../utils/requests.js';
 import { QueryParameters } from '../utils/queryparameters.js';
 
-function requestPage(context, page) {
-  if (page == context[0].dataset.page) return;
-  context[0].dataset.page = page;
-  page = parseInt(page);
-  context.find('ul').addClass('waiting');
-  context.find('.pagination .pages .button.selected').removeClass('selected');
-  ajax.get(context[0].dataset.type, 'page=' + page + (context[0].dataset.args ? '&' + context[0].dataset.args : '')).json(function(json) {
-    populatePage(context, json);
-  });
-}
-
-function populatePage(context, json) {
-  var container = context.find('ul');
-  container.html(json.content);
-  container.removeClass('waiting');
-  context[0].dataset.page = json.page;
-  context.find('.pagination').each(function() {
-    repaintPages($(this), json.page, json.pages);
-  });
-}
-
 function repaintPages(context, page, pages) {
-  var index = page > 4 ? page - 4 : 0;
-  var id = context.attr('data-id');
-  context.find('.pages .button').each(function() {
+  const id = context.dataset.id;
+  let index = page > 4 ? page - 4 : 0;
+
+  [].forEach.call(context.querySelectorAll('.pages .button'), button => {
     if (index > page + 4 || index > pages) {
-      $(this).remove();
+      button.parentNode.removeChild(button);
     } else {
-      this.dataset.pageTo = index;
-      this.href = '?' + QueryParameters.current.clone().setItem(id, index + 1).toString();
-      this.innerText = index + 1;
+      button.dataset.pageTo = index;
+      button.href = '?' + QueryParameters.current.clone().setItem(id, index + 1).toString();
+      button.innerText = index + 1;
       if (index == page) {
-        this.classList.add('selected');
+        button.classList.add('selected');
       }
     }
     index++;
   });
-  context = context.find('.pages');
+
+  context = context.querySelector('.pages');
+
   while (index <= page + 4 && index <= pages) {
-    context.append('<a class="button' + (index == page ? ' selected' : '') + '" data-page-to="' + index + '" href="?' + QueryParameters.current.clone(id, ++index).toString() + '">' + index + '</a> ');
+    context.insertAdjacentHTML('beforeend', `<a class="button${index === page ? ' selected' : ''}" data-page-to="${index}" href="?${QueryParameters.current.clone(id, ++index).toString()}">${index}</a>`);
   }
+
   QueryParameters.current.setItem(id, page + 1);
 }
 
+function populatePage(context, json) {
+  const container = context.querySelector('ul');
+
+  container.innerHTML = json.content;
+  container.classList.remove('waiting');
+  context.dataset.page = json.page;
+
+  [].forEach.call(context.querySelectorAll('.pagination'), page => {
+    repaintPages(page, json.page, json.pages);
+  });
+}
+
+function requestPage(context, page) {
+  // Avoid no-op
+  if (page == context.dataset.page) return;
+
+  context.dataset.page = page;
+  page = parseInt(page, 10);
+
+  context.querySelector('ul').classList.add('waiting');
+  context.querySelector('.pagination .pages .button.selected').classList.remove('selected');
+
+  fetchJson('GET', `/ajax/${context.dataset.type}?page=${page}${context.dataset.args ? '&' + context.dataset.args : ''}`)
+    .then(response => response.json())
+    .then(json => {
+      populatePage(context, json);
+    });
+}
+
 const paginator = {
-  repaint: function(context, json) {
-    context = $(context);
-    context.find('.pagination .pages .button.selected').removeClass('selected');
+  repaint(context, json) {
+    context.querySelector('.pagination .pages .button.selected').classList.remove('selected');
     populatePage(context, json);
   },
-  go: function(button) {
-    requestPage(button.closest('.paginator'), button[0].dataset.pageTo);
-    if (!button.hasClass('selected')) button.parent().removeClass('hover');
+
+  go(button) {
+    requestPage(button.closest('.paginator'), button.dataset.pageTo);
+    if (!button.classList.contains('selected')) button.parentNode.classList.remove('hover');
   }
 };
 
-$(document).on('click', '.pagination .pages .button, .pagination .button.left, .pagination .button.right', function(e) {
-  if (!e.ctrlKey && !e.shiftKey) {
-    paginator.go($(this));
-    e.preventDefault();
-  }
-});
+function setupPagination() {
+  document.addEventListener('click', event => {
+    // Left-click only, no modifiers
+    if (event.button !== 0) return;
+    if (event.ctrlKey || event.shiftKey) return;
+
+    const target = event.target.closest('.pagination .pages .button, .pagination .button.left, .pagination .button.right');
+    if (target) {
+      paginator.go(target);
+      event.preventDefault();
+    }
+  });
+}
+
+if (document.readyState !== 'loading') setupPagination();
+else document.addEventListener('DOMContentLoaded', setupPagination);
 
 export { paginator };

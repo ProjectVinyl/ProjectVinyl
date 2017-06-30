@@ -83,7 +83,7 @@ jSlim.on(document, 'click', '.removeable .remove', function(e) {
     return ajax.post('delete/' + me.dataset.target, {
       id: me.dataset.id
     }, function(json) {
-      paginator.repaint($(me.closest('.paginator')), json);
+      paginator.repaint(me.closest('.paginator'), json);
     });
   }
   
