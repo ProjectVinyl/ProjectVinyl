@@ -2,15 +2,15 @@ import { ajax } from './ajax.js';
 import { paginator } from './paginator.js';
 import { error } from './popup.js';
 import { scrollTo } from './uiscroll.js';
-import { decodeEntities } from './utilities.js';
+import { jSlim } from './jslim.js';
 
 // app/views/thread/_comment_box.html.erb
 // app/views/thread/_view_reverse.erb
 window.postComment = function postComment(sender, threadId, order, reportState) {
   sender = $(sender).parent();
-  var input = sender.find('textarea, input.comment-content');
-  var comment = input.val().trim();
-  if (!comment.length) return error('You have to type something to post');
+  var input = sender.querySelector('textarea, input.comment-content');
+  var comment = input.value.trim();
+  if (!comment) return error('You have to type something to post');
   
   var data = {
     thread: threadId,
@@ -19,41 +19,44 @@ window.postComment = function postComment(sender, threadId, order, reportState) 
   };
   if (reportState) data.report_state = reportState;
   
-  sender.addClass('posting');
+  sender.classList.add('posting');
   ajax.post('comments/new', function(json) {
-    sender.removeClass('posting');
+    sender.classList.remove('posting');
     paginator.repaint($('#thread-' + threadId).closest('.paginator'), json);
     scrollTo('#comment_' + json.focus);
-    input.val('').change();
+    input.value = '';
+    input.change();
   }, 0, data);
 };
 
 // app/views/thread/_comment.html.erb
 window.removeComment = function removeComment(id, json) {
-  id = $('#comment_' + id);
-  if (json.content) {
-    return id.after(json.content).remove();
-  }
-  if (id.length) {
-    id.css({
-      'min-height': 0,
-      height: id.height(), overflow: 'hidden'
-    }).css('transition', '0.5s ease all').css({
-      opacity: 0, height: 0
-    });
+  id = document.getElementById('comment_' + id);
+  if (id) {
+    if (json.content) {
+      id.outerHTML += json.content;
+      id.parentNode.removeChild(id);
+      return;
+    }
+    id.style.minHeight = 0;
+    id.style.height = id.clientHeight;
+    id.style.overflow = 'hidden';
+    id.style.transition = '0.5s ease all';
+    id.style.opacity = 0;
+    id.style.height = 0;
     setTimeout(function() {
-      id.remove();
+      id.parentNode.removeChild(id);
     }, 500);
   }
 };
 
 function editComment(sender) {
-  sender = $(sender).parent();
+  sender = sender.parentNode;
   ajax.post('comments/edit', function() {
-    sender.removeClass('editing');
+    sender.classList.remove('editing');
   }, 1, {
-    id: sender[0].dataset.id,
-    comment: sender.find('textarea, input.comment-content').val()
+    id: sender.dataset.id,
+    comment: sender.querySelector('textarea, input.comment-content').value
   });
 }
 
@@ -96,34 +99,34 @@ function replyTo(sender) {
   sender = $(sender).parent();
   textarea = sender.closest('.page, body').find('.post-box textarea');
   textarea.focus();
-  textarea.val('>>' + sender[0].dataset['o-id'] + ' [q]\n' + decodeEntities(sender[0].dataset.comment) + '\n[/q]' + textarea.val());
+  textarea.val('>>' + sender[0].dataset['o-id'] + ' [q]\n' + jSlim.dom.decodeEntities(sender[0].dataset.comment) + '\n[/q]' + textarea.val());
   textarea.change();
 }
 
 // app/views/thread/_view_reverse.erb
 window.reportState = function reportState(sender) {
-  sender = $(sender).parent();
-  if (sender.find('input[name=resolve]:checked').length) return 'resolve';
-  if (sender.find('input[name=close]:checked').length) return 'close';
-  if (sender.find('input[name=unresolve]:checked').length) return 'open';
+  sender = sender.parentNode;
+  if (sender.querySelector('input[name=resolve]:checked')) return 'resolve';
+  if (sender.querySelector('input[name=close]:checked')) return 'close';
+  if (sender.querySelector('input[name=unresolve]:checked')) return 'open';
   return false;
 };
 
-$(document).on('click', '.comment .mention, .comment .comment-content a[data-link="2"]', function(ev) {
+jSlim.on(document, 'click', '.comment .mention, .comment .comment-content a[data-link="2"]', function(ev) {
   findComment(this);
   ev.preventDefault();
 });
 
-$(document).on('click', '.reply-comment', function() {
+jSlim.on(document, 'click', '.reply-comment', function() {
   replyTo(this);
 });
 
-$(document).on('click', '.edit-comment-submit', function() {
+jSlim.on(document, 'click', '.edit-comment-submit', function() {
   editComment(this);
 });
 
-$(document).on('click', '.spoiler', function() {
-  $(this).toggleClass('revealed');
+jSlim.on(document, 'click', '.spoiler', function() {
+  this.classList.toggle('revealed');
 });
 
 if (document.location.hash.indexOf('#comment_') == 0) {

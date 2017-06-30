@@ -1,53 +1,48 @@
 import { ajax } from './ajax.js';
+import { jSlim } from './jslim.js';
 
-function count(me, offset) {
-  var likes = me[0].dataset.count;
-  var count = me.find('.count');
+function count(me, offset, save) {
+  var likes = me.dataset.count;
+  var count = me.querySelector('.count');
   
-  if (!likes) {
-    likes = 0;
-  } else {
-    likes = parseInt(likes);
+  if (!count) {
+    count = me.querySelector('span');
+    count.innerHTML = '<span class="count"></span>';
+    count = count.firstChild;
   }
+  
+  likes = likes ? parseInt(likes) : 0;
   likes += offset;
-  me[0].dataset.count = likes;
-  if (likes == 0) {
-    count.remove();
-  } else {
-    if (!count.length) {
-      me.children('span').append('<span class="count" >' + likes + '</span>');
-    } else {
-      count.text(likes);
-    }
-  }
+  me.dataset.count = likes;
+  me.classList.toggle('liked', offset > 0);
+  count.innerText = likes;
+  count.classList.toggle('hidden', likes < 1);
   
-  ajax.post(me[0].dataset.action + '/' + me[0].dataset.id + '/' + offset, function(json) {
-    if (count.length) count.text(json.count);
-  });
-  return me;
+  if (save) {
+    ajax.post(me.dataset.action + '/' + me.dataset.id + '/' + offset, function(json) {
+      if (count.length) count.innerText = json.count;
+    });
+  }
 }
 
-$(document).on('click', 'button.action.like, button.action.dislike', function() {
-  var me = $(this);
-  if (me.hasClass('liked')) {
-    count(me, -1).removeClass('liked');
+jSlim.on(document, 'click', 'button.action.like, button.action.dislike', function(e) {
+  if (e.which != 1 && e.button != 0) return;
+  if (this.classList.contains('liked')) {
+    count(this, -1, true);
   } else {
-    var other = me.parent().find('.liked');
-    if (other.length) {
-      count(other, -1).removeClass('liked');
+    var other = this.parentNode.querySelector('.liked');
+    if (other) {
+      count(other, -1, false);
     }
-    count(me, 1).addClass('liked');
+    count(this, 1, true);
   }
 });
 
-$(document).on('click', 'button.action.star', function fave() {
-  var me = $(this);
-  me.toggleClass('starred');
-  ajax.post(me[0].dataset.action + '/' + me[0].dataset.id, function(xml) {
-    if (xml.added) {
-      me.addClass('starred');
-    } else {
-      me.removeClass('starred');
-    }
+jSlim.on(document, 'click', 'button.action.star', function fave(e) {
+  if (e.which != 1 && e.button != 0) return;
+  this.classList.toggle('starred');
+  var self = this;
+  ajax.post(this.dataset.action + '/' + this.dataset.id, function(xml) {
+    self.classList.toggle('starred', xml.added);
   });
 });

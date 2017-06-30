@@ -1,39 +1,47 @@
 import { ajax } from './ajax.js';
+import { jSlim } from './jslim.js';
 
 var hoverTimeout = null;
+function closeUsercard() {
+  jSlim.all('.hovercard.shown', function(card) {
+    card.classList.remove('shown');
+  });
+}
+
 function openUsercard(sender, usercard) {
-  $('.hovercard.shown').removeClass('shown');
-  sender.append(usercard);
+  closeUsercard();
+  sender.appendChild(usercard);
   if (hoverTimeout) {
     clearTimeout(hoverTimeout);
   }
   setTimeout(function() {
-    usercard.addClass('shown');
+    usercard.classList.add('shown');
     hoverTimeout = setTimeout(function() {
-      $('.user-link:not(:hover) .hovercard.shown').removeClass('shown');
+      jSlim.all('.user-link:not(:hover) .hovercard.shown', function(a) {
+        a.classList.remove('shown');
+      });
     }, 500);
   }, 500);
 }
 
-$(document).on('mouseenter', '.user-link', function() {
-  var sender = $(this);
-  var id = sender.attr('data-id');
-  var usercard = $('.hovercard[data-id=' + id + ']');
-  if (!usercard.length) {
-    usercard = $('<div class="hovercard" data-id="' + id + '"></div>');
-    usercard.on('mouseenter', function(ev) {
+jSlim.on(document, 'mouseenter', '.user-link', function() {
+  var id = this.dataset.id;
+  var usercard = document.querySelector('.hovercard[data-id=' + id + ']');
+  if (!usercard) {
+    usercard = document.createElement('DIV');
+    usercard.classList.add('hovercard');
+    usercard.dataset.id = id;
+    usercard.addEventListener('mouseenter', function(ev) {
       ev.stopPropagation();
     });
-    sender.append(usercard);
+    var self = this;
     ajax.get('artist/hovercard', function(html) {
-      usercard.html(html);
-      openUsercard(sender, usercard);
+      usercard.innerHTML = html;
+      openUsercard(self, usercard);
     }, {id: id}, 1);
   } else {
-    openUsercard(sender, usercard);
+    openUsercard(this, usercard);
   }
 });
 
-$(document).on('mouseleave', '.user-link', function() {
-  $('.hovercard.shown').toggleClass('shown');
-});
+jSlim.on(document, 'mouseleave', '.user-link', closeUsercard);

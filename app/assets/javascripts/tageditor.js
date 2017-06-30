@@ -1,7 +1,6 @@
 import { ajax } from './ajax.js';
 import { Key } from './utilities.js';
-import { indirectEventFunc } from './utilities.js';
-import { ready } from './utilities.js';
+import { jSlim } from './jslim.js';
 
 function namespace(name) {
   return name.indexOf(':') == -1 ? '' : name.split(':')[0];
@@ -188,7 +187,7 @@ function TagEditor(el) {
   this.history = [];
   this.future = [];
   
-  [].forEach.call(el.querySelectorAll('.values'), function(a) {
+  jSlim.each(el.querySelectorAll('.values'), function(a) {
     a.parentNode.removeChild(a);
   });
   el.getActiveTagsArray = function() {
@@ -220,11 +219,11 @@ function TagEditor(el) {
   
   this.input.addEventListener('mousedown', stopPropa);
   
-  this.searchResults.addEventListener('click', indirectEventFunc('li', function(e) {
+  this.searchResults.addEventListener('click', jSlim.delegateEv('li', function(e) {
     self.fillSearchedTag(this.tag);
   }));
   
-  this.list.addEventListener('click', indirectEventFunc('i.remove', function(e) {
+  this.list.addEventListener('click', jSlim.delegateEv('i.remove', function(e) {
     self.removeTag(this.parentNode);
     stopPropa(e);
   }));
@@ -252,7 +251,7 @@ TagEditor.prototype = {
     }
     
     unloadedSlugs.push.apply(unloadedSlugs, this.tags);
-    this.tags.forEach.call(this.list.childNodes, function(li) {
+    jSlim.each(this.list.childNodes, function(li) {
       var index = unloadedSlugs.indexOf(li.firstElementChild.dataset.name);
       if (index < 0) {
         li.parentNode.removeChild(li);
@@ -376,8 +375,8 @@ TagEditor.prototype = {
   }
 };
 
-ready(function() {
-  [].forEach.call(document.querySelectorAll('.tag-editor'), function(a) {
+jSlim.ready(function() {
+  jSlim.all('.tag-editor', function(a) {
     new TagEditor(a);
   });
 });
