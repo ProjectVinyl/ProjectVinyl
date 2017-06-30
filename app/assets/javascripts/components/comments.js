@@ -3,7 +3,7 @@ import { paginator } from './paginator.js';
 import { error } from './popup.js';
 import { scrollTo } from '../ui/scroll.js';
 import { decodeEntities } from '../utils/misc.js';
-import { jSlim } from './jslim.js';
+import { jSlim } from '../jslim.js';
 
 // app/views/thread/_comment_box.html.erb
 // app/views/thread/_view_reverse.erb
@@ -12,7 +12,7 @@ window.postComment = function postComment(sender, threadId, order, reportState) 
   let input = sender.querySelector('textarea, input.comment-content');
   let comment = input.value.trim();
   if (!comment) return error('You have to type something to post');
-
+  
   var data = {
     thread: threadId,
     order: order,
@@ -72,7 +72,7 @@ function lookupComment(commentId) {
   if (scrollToAndHighlight(commentId)) return;
   
   var pagination = document.querySelector('.comments').parentNode;
-  ajax.get(pagination.dataset.type + '?comment=' + commentId + '&' + pagination.dataset..args, function(json) {
+  ajax.get(pagination.dataset.type + '?comment=' + commentId + '&' + pagination.dataset.args, function(json) {
     paginator.repaint(pagination, json);
     scrollToAndHighlight(commentId);
   });

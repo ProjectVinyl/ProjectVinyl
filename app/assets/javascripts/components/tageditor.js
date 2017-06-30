@@ -1,6 +1,6 @@
 import { ajax } from '../utils/ajax.js';
 import { Key } from '../utils/misc.js';
-import { jSlim } from './jslim.js';
+import { jSlim } from '../jslim.js';
 
 function namespace(name) {
   return name.indexOf(':') == -1 ? '' : name.split(':')[0];

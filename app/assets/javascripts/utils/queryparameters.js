@@ -1,5 +1,7 @@
 function encodeParamaters(queryPars) {
-  return queryPars.keys.map(k => `${k}=${encodeURIComponent(queryPars.values[k])}`).join('&');
+  return queryPars.keys.map(function(k) {
+    return k + '=' + encodeURIComponent(queryPars.values[k]);
+  }).join('&');
 }
 
 function updateHistoryObj(queryPars) {
@@ -14,19 +16,18 @@ function updateHistoryObj(queryPars) {
 }
 
 function QueryPars(raw, historyObj) {
-  var self = this;
   this.keys = [];
   this.values = {};
   this.historyObj = historyObj;
   if (raw.indexOf('&') > -1) {
-    raw.split('&').forEach(pair => {
+    raw.split('&').forEach(function(pair) {
       var item = pair.split('=');
       if (item.length < 2) item.push('');
-      if (self.keys.indexOf(item[0]) < 0) {
-        self.keys.push(item[0]);
+      if (this.keys.indexOf(item[0]) < 0) {
+        this.keys.push(item[0]);
       }
-      self.values[item[0]] = decodeURIComponent(item[1]);
-    });
+      this.values[item[0]] = decodeURIComponent(item[1]);
+    }, this);
   }
   this.raw = encodeParamaters(this);
 }

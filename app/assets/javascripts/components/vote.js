@@ -1,4 +1,4 @@
-import { jSlim } from './jslim.js';
+import { jSlim } from '../jslim.js';
 import { ajax } from '../utils/ajax.js';
 
 function count(me, offset, save) {

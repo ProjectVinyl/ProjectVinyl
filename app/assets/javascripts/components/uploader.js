@@ -225,11 +225,11 @@ Uploader.prototype = extendObj({
     var src = this.source.val();
     if (!src || src == '') {
       this.srcNeeded = false;
-      tags.forEach(tag => {
+      tags.forEach(function(tag) {
         if (tag.name.trim().toLowerCase() == 'source needed') {
           this.srcNeeded = true;
         }
-      });
+      }, this);
       if (!this.srcNeeded) {
         this.info('You have not provided a source. If you know what it is add it to the source field, otherwise consider tagging this video as \'source needed\' so others know to search for one.');
       } else {
