@@ -254,10 +254,11 @@ function error(message) {
     var msg = document.createElement('DIV');
     this.content.appendChild(msg);
     msg.innerText = message;
+    msg.classList.add('message_content');
     msg = document.createElement('DIV');
     msg.classList.add('foot');
+    msg.innerHTML = '<button type="button" class="button-fw confirm right">Ok</button>';
     this.content.appendChild(msg);
-    msg.classList.add('message_content');
     this.setWidth(400);
     this.show();
   });
