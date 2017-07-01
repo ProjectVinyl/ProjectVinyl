@@ -182,7 +182,7 @@ const ajax = Object.freeze(extendObj(AjaxRequest, {
       e = null;
     }
     if (e) e.preventDefault();
-    sendForm(form[0] || form, callbacks || {});
+    sendForm(form[0] || form, e, callbacks || {});
   }
 }));
 

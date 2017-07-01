@@ -1,6 +1,7 @@
 import { ajax } from '../utils/ajax.js';
 
 function focusTab(me) {
+  if (!me.length) return;
   if (!me.hasClass('selected') && me[0].dataset.target) {
     var other = me.parent().find('.selected');
     if (other.length) {

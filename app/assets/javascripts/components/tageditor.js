@@ -335,7 +335,7 @@ TagEditor.prototype = {
   },
   save: function() {
     var self = this;
-    this.dom.dispatchEvent(new CustomEvent('tagschange'));
+    this.dom.dispatchEvent(new CustomEvent('tagschange', { bubbles: true }));
     if (this.target && this.id) {
       ajax.post('update/' + this.target, {
         id: this.id,
