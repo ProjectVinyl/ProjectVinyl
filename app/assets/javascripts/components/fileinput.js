@@ -69,21 +69,26 @@ function initFileSelect(me) {
     input.addEventListener('change', function() {
       handleFiles(input.files, allowMulti, type, function(f, title) {
         renderPreview(me, f);
-        //TODO: Convert these to CustomEvent / figure out custom data passing
-        $(me).trigger('accept', {
-          mime: f.type,
-          type: title[title.length - 1]
-        });
+        me.dispatchEvent(new CustomEvent('accept', {
+          detail: {
+            mime: f.type,
+            type: title[title.length - 1]
+          },
+          bubbles: true
+        }));
       });
     });
   } else {
     input.addEventListener('change', function(e) {
       handleFiles(input.files, allowMulti, type, function(f, title) {
-        $(me).trigger('accept', {
-          title: title.splice(0, title.length - 1).join('.'),
-          mime: f.type,
-          type: title[title.length - 1],
-          data: f
+        me.dispatchEvent(new CustomEvent('accept', {
+          detail: {
+            title: title.splice(0, title.length - 1).join('.'),
+            mime: f.type,
+            type: title[title.length - 1],
+            data: f
+          },
+          bubbles: true
         });
       });
     });

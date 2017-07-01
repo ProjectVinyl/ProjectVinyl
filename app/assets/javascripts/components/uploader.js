@@ -85,13 +85,13 @@ function Validator(el) {
   initFileSelect(this.cover);
   
   var self = this;
-  // Interact with jquery elements
-  $(this.video).on('accept', (e, file) => {
-    self.needsCover = !!file.mime.match(/audio\//);
+
+  this.video.addEventListener('accept', event => {
+    self.needsCover = !!event.detail.mime.match(/audio\//);
     self.accept(file);
   });
   
-  $(this.cover).on('accept', function() {
+  this.cover.addEventListener('accept', function() {
     self.hasCover = true;
     self.validateInput();
   });
