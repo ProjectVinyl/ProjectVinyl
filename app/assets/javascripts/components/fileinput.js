@@ -89,7 +89,7 @@ function initFileSelect(me) {
             data: f
           },
           bubbles: true
-        });
+        }));
       });
     });
   }
