@@ -2,7 +2,6 @@ import { fetchJson, fetchHtml } from '../utils/requests.js';
 import { paginator } from './paginator.js';
 import { error } from './popup.js';
 import { scrollTo } from '../ui/scroll.js';
-import { decodeEntities } from '../utils/misc.js';
 import { jSlim } from '../utils/jslim.js';
 
 // app/views/thread/_comment_box.html.erb
