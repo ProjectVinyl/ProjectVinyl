@@ -40,6 +40,9 @@ function handleFiles(files, multi, type, callback) {
 }
 
 function initFileSelect(me) {
+  if (me.loaded) return;
+  me.loaded = true;
+  
   const type = me.dataset.type;
   const allowMulti = toBool(me.getAttribute('allow-multi'));
   const input = me.querySelector('input');
@@ -74,7 +77,7 @@ function initFileSelect(me) {
       });
     });
   } else {
-    input.addEventListener('change', function() {
+    input.addEventListener('change', function(e) {
       handleFiles(input.files, allowMulti, type, function(f, title) {
         $(me).trigger('accept', {
           title: title.splice(0, title.length - 1).join('.'),
