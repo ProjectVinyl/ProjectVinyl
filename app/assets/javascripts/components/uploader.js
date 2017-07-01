@@ -15,43 +15,45 @@ let INDEX = 0;
 const uploadingQueue = {
   running: false,
   items: [],
-  enqueue(me) {
+  enqueue: function(me) {
     if (me.isReady()) {
       this.items.push(me);
       return this.poke();
     }
   },
-  enqueueAll(args) {
+  enqueueAll: function(args) {
     this.items.push.apply(this.items, args);
     return this.poke();
   },
-  poke() {
+  poke: function() {
     if (this.running) return;
     this.running = true;
-    return this.tick(() => {
+    var self = this;
+    return this.tick(function() {
       let i = 0;
-      while (this.items.length > 0 && !(i = this.items.shift()).isReady());
+      while (self.items.length > 0 && !(i = self.items.shift()).isReady());
       if (i && i.isReady()) return i;
     });
   },
-  tick(next) {
+  tick: function(next) {
     const uploader = next();
     this.running = !!uploader;
+    var self = this;
     if (this.running) {
       uploader.tab.classList.add('loading');
       uploader.tab.classList.add('waiting');
       ajax.form($(uploader.form), {
-        success: (data) => {
+        success: function(data) {
           uploader.complete(data.ref);
-          if (next) next = this.tick(next);
+          if (next) next = self.tick(next);
         },
-        error: (message, msg, response) => {
+        error: function(message, msg, response) {
           uploader.error();
           message.text(response);
         },
-        update: (e, percentage) => {
+        update: function(e, percentage) {
           uploader.update(percentage);
-          if (next && percentage > 100) next = this.tick(next);
+          if (next && percentage > 100) next = self.tick(next);
         },
       });
     }
@@ -79,66 +81,74 @@ function Validator(el) {
   this.video = this.el.querySelector('#video-upload');
   this.video.input = this.video.querySelector('input[type=file]');
   
+  initFileSelect(this.video);
+  initFileSelect(this.cover);
+  
+  var self = this;
   // Interact with jquery elements
   $(this.video).on('accept', (e, file) => {
-    this.needsCover = !!file.mime.match(/audio\//);
-    this.accept(file);
+    self.needsCover = !!file.mime.match(/audio\//);
+    self.accept(file);
   });
   
-  $(this.cover).on('accept', () => {
-    this.hasCover = true;
-    this.validateInput();
+  $(this.cover).on('accept', function() {
+    self.hasCover = true;
+    self.validateInput();
   });
   
   const thumbPicker = this.el.querySelector('.tab[data-tab="thumbpick"]');
   
-  $(thumbPicker).on('tabblur', () => {
-    this.lastTime = this.time.value;
-    this.time.value = -1;
-    this.validateInput();
+  $(thumbPicker).on('tabblur', function() {
+    self.lastTime = self.time.value;
+    self.time.value = -1;
+    self.validateInput();
   });
   
-  $(thumbPicker).on('tabfocus', () => {
-    this.time.value = this.lastTime;
-    this.validateInput();
+  $(thumbPicker).on('tabfocus', function() {
+    self.time.value = self.lastTime;
+    self.validateInput();
   });
 }
 Validator.prototype = {
-  isReady() {
+  isReady: function() {
     return this.hasFile && (this.hasCover || !this.needsCover) && this.ready;
   },
-  notify(msg) {
+  notify: function(msg) {
     this.el.notify.classList.add('shown');
     this.el.notify.bobber.textContent = msg;
   },
-  info(msg) {
+  info: function(msg) {
     this.el.info.style.display = '';
     this.el.info.textContent = msg;
   }
 };
 
+// FIXME template
+function markup(id) {
+  return '<li data-target="new[' + id + ']" class="button hidden">\
+    <span class="progress">\
+      <span class="fill"></span>\
+    </span>\
+    <span class="label">untitled' + (id > 0 ? ' ' + id : '') + '</span>\
+    <i class="fa fa-close"></i>\
+  </li>';
+}
+
 function Uploader() {
   this.id = INDEX++;
   
   // Create new upload form from template
-  this.el = document.querySelector('#template').firstElementChild.cloneNode(true);
+  this.el = document.getElementById('template').firstElementChild.cloneNode(true);
   this.el.dataset.tab = this.el.dataset.tab.replace(/\{id\}/g, this.id);
   this.el.innerHTML = this.el.innerHTML.replace(/\{id\}/g, this.id);
   
   // Unselect prior tab and insert
   const selectedTab = document.querySelector('#uploader_frame > .tab.selected');
   if (selectedTab) selectedTab.classList.remove('selected');
-  document.querySelector('#uploader_frame').appendChild(this.el);
+  document.getElementById('uploader_frame').appendChild(this.el);
   
-  // FIXME template
-  const markup = '<li data-target="new[' + this.id + ']" class="button hidden">\
-    <span class="progress">\
-      <span class="fill"></span>\
-    </span>\
-    <span class="label">untitled' + (this.id > 0 ? ' ' + this.id : '') + '</span>\
-    <i class="fa fa-close"></i>\
-  </li>';
-  document.querySelector('#new_tab_button').insertAdjacentHTML('beforebegin', markup);
+  document.getElementById('new_tab_button').insertAdjacentHTML('beforebegin', markup(this.id));
+  
   this.tab = document.querySelector('[data-target="new[' + this.id + ']"');
   
   this.tab.label = this.tab.querySelector('.label');
@@ -149,7 +159,8 @@ function Uploader() {
   this.videoTitle = this.el.querySelector('#video_title');
   this.videoTitle.input = this.videoTitle.querySelector('input');
   this.videoDescription = this.el.querySelector('textarea.comment-content');
-  this.title = this.el.querySelector('#video_title .content');
+  this.title = this.videoTitle.querySelector('.content');
+  
   this.tagEditor = TagEditor.getOrCreate(this.el.querySelector('.tag-editor'));
   
   this.source = this.el.querySelector('#video_source');
@@ -157,33 +168,38 @@ function Uploader() {
   
   BBC.init(this.videoTitle);
   
-  this.video = this.el.querySelector('#video-upload');
-  this.cover = this.el.querySelector('#cover-upload');
-  
-  initFileSelect(this.video);
-  initFileSelect(this.cover);
+  var self = this;
   
   // FIXME
-  requestAnimationFrame(() => this.tab.classList.remove('hidden'));
+  requestAnimationFrame(function() {
+    self.tab.classList.remove('hidden');
+  });
   
   // Close button click
-  this.tab.querySelector('i').addEventListener('click', () => this.dispose);
-  this.form.addEventListener('submit', event => {
-    uploadingQueue.enqueue(this);
+  this.tab.querySelector('i').addEventListener('click', function() {
+    self.dispose();
+  });
+  this.form.addEventListener('submit', function(event) {
+    uploadingQueue.enqueue(self);
     event.preventDefault();
     event.stopPropagation();
   });
   
   const newVideo = this.el.querySelector('#new_video');
-  newVideo.addEventListener('tagschange', () => this.validateInput());
-  newVideo.addEventListener('change', event => {
-    if (event.target.matches('h1#video_title input')) this.validateInput();
+  newVideo.addEventListener('tagschange', function() {
+    self.validateInput();
+  });
+  newVideo.addEventListener('change', function(event) {
+    if (event.target.matches('h1#video_title input')) {
+      self.validateInput();
+    }
   });
   
-  [].forEach.call(this.el.querySelectorAll('h1.resize-target'), t => resizeFont($(t)));
+  jSlim.all(this.el, 'h1.resize-target', function(t) {
+    resizeFont($(t));
+  });
   
   Validator.call(this, this.el);
-  
   focusTab($(this.tab));
   
   INSTANCES.push(this);
@@ -192,22 +208,22 @@ Uploader.uploadAll = function() {
   uploadingQueue.enqueueAll(INSTANCES);
 };
 Uploader.prototype = extendObj({
-  initPlayer() {
+  initPlayer: function() {
     this.player = new ThumbPicker();
     this.player.constructor($(this.el.querySelector('.video')));
   },
-  showUI(title) {
-    [].forEach.call(this.el.querySelectorAll('.hidden'), e => {
+  showUI: function(title) {
+    jSlim.all(this.el, '.hidden', function(e) {
       e.classList.remove('hidden')
     });
-    [].forEach.call(this.el.querySelectorAll('.shown'), e => {
+    jSlim.all(this.el, '.shown', function(e) {
       e.classList.add('hidden');
       e.classList.remove('shown');
     });
     
     this.tab.label.textContent = title;
   },
-  accept(file) {
+  accept: function(file) {
     const thumbUpload = this.el.querySelector('li[data-target="thumbupload_' + this.id + '"]');
     const thumbPick = this.el.querySelector('li[data-target="thumbpick_' + this.id + '"]');
     
@@ -238,7 +254,7 @@ Uploader.prototype = extendObj({
     this.hasFile = true;
     this.validateInput();
   },
-  cleanup(title) {
+  cleanup: function(title) {
     // 1. Convert everything to lowercase
     // 2. Remove any beginning digit strings
     // 3. Replace non-alpha/non-whitespace with a single space
@@ -246,20 +262,20 @@ Uploader.prototype = extendObj({
     // 5. Strip whitespace (FIXME: shouldn't this be first?)
     return title.toLowerCase().replace(/^[0-9]*/g, '').replace(/[-_]|[^a-z\s]/gi, ' ').replace(/(^|\s)[a-z]/g, i => i.toUpperCase()).trim();
   },
-  validateInput() {
+  validateInput: function() {
     const title = this.videoTitle.input.value;
     this.ready = false;
     
     if (!title) return this.notify('You need to provide a title.');
     if (this.needsCover && !this.hasCover) return this.notify('Audio files require a cover image.');
     
-    const tags = this.tagEditor.tags.map(t => t.name.trim().toLowerCase());
-    const src = this.source.value;
+    const tags = this.tagEditor.tags.baked();
     
-    if (!src) {
+    if (!this.source.value) {
       this.srcNeeded = false;
       
       // FIXME: Polyfill Array.prototype.includes for IE
+      // Why? -_-
       if (tags.indexOf('source needed') !== -1) {
         this.srcNeeded = true;
       }
@@ -275,16 +291,20 @@ Uploader.prototype = extendObj({
     
     if (tags.length === 0) return this.notify('You need at least one tag.');
     // FIXME: Is this validation even worth including?
-    if (tags.length === 1 && tags[0] === 'music') return this.notify('\'music\' is implied. Tags should be more specific than that. Do you perhaps know who the artist is?');
+    // people used to tag their videos with 'music' and nothing else. I wanted to discourage that behaviour...
+    if (tags.length === 1 && tags[0] === 'music') {
+      return this.notify('\'music\' is implied. Tags should be more specific than that. Do you perhaps know who the artist is?');
+    }
+    
     this.ready = true;
     this.el.notify.classList.remove('shown');
   },
-  update(percentage) {
+  update: function(percentage) {
     this.tab.classList.add('uploading');
     this.tab.progress.fill.style.width = percentage;
     if (percentage >= 100) this.tab.classList.add('waiting');
   },
-  complete(ref) {
+  complete: function(ref) {
     this.form.classList.remove('uploading');
     this.tab.classList.remove('uploading');
     this.ready = false;
@@ -298,18 +318,22 @@ Uploader.prototype = extendObj({
       this.el.innerHTML = 'Uploading Complete. You can see your new video over <a target="_blank" href="' + ref + '">here</a>.';
     }
   },
-  error() {
+  error: function() {
     this.tab.classList.add('error');
   },
-  dispose() {
+  dispose: function() {
     INSTANCES.splice(INSTANCES.indexOf(this), 1);
   }
 }, Validator.prototype);
 
-jSlim.ready(() => {
-  const button = document.querySelector('#new_tab_button');
+jSlim.ready(function() {
+  const button = document.getElementById('new_tab_button');
   if (button) {
-    button.addEventListener('click', event => event.button === 0 && new Uploader());
+    button.addEventListener('click', function(event) {
+      if (event.button === 0) {
+        new Uploader();
+      }
+    });
   }
 });
 
@@ -320,12 +344,12 @@ function UploadChecker(el) {
   }
 }
 UploadChecker.prototype = extendObj({
-  initPlayer() {
+  initPlayer: function() {
     this.player = new ThumbPicker();
     this.player.constructor($(this.el.querySelector('.video')));
     this.player.start();
   },
-  accept(file) {
+  accept: function(file) {
     const thumbPick = this.el.querySelector('li[data-target="thumbpick"]');
     const thumbUpload = this.el.querySelector('li[data-target="thumbupload"]');
     
@@ -341,7 +365,7 @@ UploadChecker.prototype = extendObj({
     
     this.validateInput();
   },
-  validateInput() {
+  validateInput: function() {
     if (this.needsCover && !this.hasCover) return this.notify('Audio files require a cover image.');
     this.el.notify.classList.remove('shown');
   }

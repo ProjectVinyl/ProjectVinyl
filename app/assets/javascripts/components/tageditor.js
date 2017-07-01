@@ -26,7 +26,7 @@ function createBaseItem(container, tag, content) {
 }
 
 function createSearchItem(container, result, name) {
-  createBaseItem(container, result, '<span>' + result.name.replace(name, '<b>' + name + '</b>') + '</span> (' + result.members + ')');
+  createBaseItem(container, asTag(result), '<span>' + result.name.replace(name, '<b>' + name + '</b>') + '</span> (' + result.members + ')');
 }
 
 function createTagItem(container, tag) {
@@ -82,7 +82,7 @@ function asTag(ans) {
   };
   ans.slug = ans.name.replace(ans.namespace + ':', '');
   ans.toString = function() {
-    return this.name;
+    return this.name.trim();
   };
   ans.valueOf = function() {
     return this.toString().valueOf();
@@ -377,7 +377,7 @@ TagEditor.prototype = {
 
 jSlim.ready(function() {
   jSlim.all('.tag-editor', function(a) {
-    new TagEditor(a);
+    TagEditor.getOrCreate(a);
   });
 });
 

@@ -33,8 +33,11 @@ const jSlim = {
   each: function(arrLike, func, thisArg) {
     return Array.prototype.forEach.call(arrLike, func, thisArg);
   },
-  all: function(selector, func, thisArg) {
-    return jSlim.each(document.querySelectorAll(selector), func, thisArg);
+  all: function(el, selector, func, thisArg) {
+    if (typeof el == 'string') {
+      return jSlim.all(document, el, selector, func);
+    }
+    return jSlim.each((el || document).querySelectorAll(selector), func, thisArg);
   },
   ready: function(func) {
     if (document.readyState !== 'loading') {
