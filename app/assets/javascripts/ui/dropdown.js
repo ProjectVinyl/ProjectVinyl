@@ -1,82 +1,105 @@
-$(document).on('focus', 'label input, label select', function() {
-  $(this).closest('label').addClass('focus');
-});
-
-$(document).on('blur', 'label input, label select', function() {
-  $(this).closest('label').removeClass('focus');
-});
-
-$(document).on('touchstart', '.drop-down-holder:not(.hover), .mobile-touch-toggle:not(.hover)', function(e) {
-  var me = $(this);
-  var lis = me.find('a, li');
-  
-  lis.on('touchstart', function(e) {
-    e.stopPropagation();
-  });
-  
-  me.one('touchstart touchmove', clos);
-  $(document).one('touchstart touchmove', clos);
-  
-  me.addClass('hover');
-  e.preventDefault();
-  e.stopPropagation();
-  
-  function clos(e) {
-    me.off('touchstart touchmove');
-    me.removeClass('hover');
-    lis.off('touchstart');
-    e.preventDefault();
-    e.stopPropagation();
-  }
-});
+import { jSlim } from '../utils/jslim.js';
 
 const Popout = {
-  toggle: function(sender) {
-    if (sender.length && !sender.hasClass('pop-out-shown')) {
+  toggle(sender) {
+    if (sender && sender.classList.contains('pop-out-shown')) {
       this.show(sender);
     } else {
       this.hideAll();
     }
   },
-  show: function(sender) {
-    var left = sender.content.offset().left;
+  show(sender) {
+    const left = jSlim.offset(sender.content).left;
     
     this.hideAll();
-    sender.addClass('pop-out-shown');
-    sender.removeClass('pop-left');
-    sender.removeClass('pop-right');
+    sender.classList.add('pop-out-shown');
+    sender.classList.remove('pop-left');
+    sender.classList.remove('pop-right');
     
-    if (left + sender.content.width() > $(window).width()) {
-      sender.addClass('pop-left');
+    if (left + sender.content.clientWidth > document.documentElement.clientWidth) {
+      sender.classList.add('pop-left');
     }
     if (left < 0) {
-      sender.addClass('pop-right');
+      sender.classList.add('pop-right');
     }
   },
-  hideAll: function() {
-    $('.pop-out-shown').removeClass('pop-out-shown');
+  hideAll() {
+    const shown = document.querySelector('.pop-out-shown');
+    if (shown) shown.classList.remove('pop-out-shown');
   }
 };
 
-$(document).on('click', '.pop-out-toggle', function() {
-  var me = $(this);
-  var popout = me.closest('.popper');
-  
-  popout.content = popout.find('.pop-out');
-  
-  me.on('click', function(e) {
-    e.stopPropagation();
+function delegate(node, event, selector, callback) {
+  node.addEventListener(event, e => {
+    const target = e.target.closest(selector);
+    if (target) callback(target, e);
+  }, { passive: false }); // ffs https://www.chromestatus.com/features/5093566007214080
+}
+
+jSlim.ready(() => {
+  // FIXME what are these even doing here??
+  delegate(document, 'focusin', 'label input, label select', target => {
+    target.closest('label').classList.add('focus');
+  });
+
+  delegate(document, 'focusout', 'label input, label select', target => {
+    target.closest('label').classList.remove('focus');
+  })
+
+  // FIXME what a clusterfuck
+  delegate(document, 'touchstart', '.drop-down-holder:not(.hover), .mobile-touch-toggle:not(.hover)', (target, e) => {
+    const lis = [].slice.call(target.querySelectorAll('a, li'));
+
+    lis.forEach(li => {
+      li.addEventListener('touchstart', stopPropa);
+    });
+
+    ['touchstart', 'touchmove'].forEach(t => {
+      target.addEventListener(t, clos);
+      document.addEventListener(t, clos);
+    });
+    
+    target.classList.add('hover');
     e.preventDefault();
+    e.stopPropagation(); // FIXME
+
+    function stopPropa(e2) {
+      e2.stopPropagation(); // FIXME
+    }
+
+    function clos(e3) {
+      ['touchstart', 'touchmove'].forEach(t => {
+        target.removeEventListener(t, clos);
+        document.removeEventListener(t, clos);
+      });
+
+      target.classList.remove('hover');
+
+      lis.forEach(li => {
+        li.removeEventListener('touchstart', stopPropa);
+      });
+
+      e3.preventDefault();
+      e3.stopPropagation();
+    }
+  });
+
+  delegate(document, 'click', '.pop-out-toggle', target => {
+    const popout = target.closest('.popper');
+    popout.content = popout.querySelector('.pop-out');
+
+    target.addEventListener('click', event => {
+      event.stopPropagation(); // FIXME
+      event.preventDefault();
+      Popout.toggle(popout);
+    });
+
+    popout.addEventListener('mousedown', event => {
+      event.stopPropagation(); // FIXME
+    });
+
     Popout.toggle(popout);
   });
-  
-  popout.on('mousedown', function(e) {
-    e.stopPropagation();
-  });
-  
-  Popout.toggle(popout);
-});
 
-$(document).on('mousedown', function() {
-  Popout.hideAll();
+  document.addEventListener('mousedown', () => Popout.hideAll());
 });
