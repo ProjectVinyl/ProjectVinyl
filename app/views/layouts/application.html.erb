@@ -4,7 +4,7 @@
 	<meta charset="utf-8">
 	<title id="document_title"><%= content_for?(:title) ? content_for(:title) + " - Project Vinyl" : "Project Vinyl - Premium Pony Tunes" %></title>
 	<% if user_signed_in? %>
-	<meta name="current_user" content="{\"id\": <%= current_user.id %>}">
+	<meta name="current_user" content="<%= { id: current_user.id }.to_json %>">
 	<% end %>
 	<%= csrf_meta_tags %>
 	<meta name="theme-color" content="#a66ebe">
