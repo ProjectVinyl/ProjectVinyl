@@ -1,7 +1,10 @@
 import { ajax } from '../utils/ajax.js';
+import { jSlim } from '../utils/jslim.js';
 
-$(function() {
-  $('form.async').on('submit', function(e) {
-    ajax.form($(this), e);
+jSlim.ready(() => {
+  const forms = [].slice.call(document.querySelectorAll('form.async'));
+
+  forms.forEach(f => {
+    f.addEventListener('submit', e => ajax.form(f, e));
   });
 });

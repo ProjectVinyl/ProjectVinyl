@@ -102,7 +102,7 @@ function sendForm(form, e, callbacks) {
     progress: function(e) {
       uploadedBytes = e.loaded;
       totalBytes = e.total;
-      if (e.lengthComputable) {
+      if (e.lengthComputable && message) {
         if (!message.classList.contains('plain')) message.classList.add('bobber');
         var percentage = Math.min((e.loaded / e.total) * 100, 100);
         if (callbacks.progress) {
