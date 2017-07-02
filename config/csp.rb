@@ -13,84 +13,33 @@ module ProjectVinyl
     
     HEADERS = {
       default: Csp.parse({
-        default_src: [
-          'self'
-        ],
-        form_action: [
-          'self'
-        ],
-        child_src: [
-          'self', 'https://www.youtube.com'
-        ],
-        media_src: [
-          'self', 'blob:'
-        ],
-        img_src: [
-          '*', 'blob:', 'data:'
-        ],
-        script_src: [
-          'self', 'unsafe-inline'
-        ],
-        style_src: [
-          'self', 'unsafe-inline'
-        ]
+        default_src: [ 'self' ],
+        form_action: [ 'self' ],
+        child_src: [ 'self', 'https://www.youtube.com' ],
+        media_src: [ 'self', 'blob:' ],
+        img_src: [ '*', 'blob:', 'data:' ],
+        script_src: [ 'self', 'unsafe-inline' ],
+        style_src: [ 'self', 'unsafe-inline' ]
       }),
       embed: Csp.parse({
-        default_src: [
-          'self'
-        ],
-        form_action: [
-          'self'
-        ],
-        frame_ancestors: [
-          '*'
-        ],
-        child_src: [
-          'self'
-        ],
-        media_src: [
-          'self', 'blob:'
-        ],
-        img_src: [
-          '*', 'blob:', 'data:'
-        ],
-        script_src: [
-          'self', 'unsafe-inline'
-        ],
-        style_src: [
-          'self', 'unsafe-inline'
-        ]
+        default_src: [ 'self' ],
+        form_action: [ 'self' ],
+        frame_ancestors: [ '*' ],
+        child_src: [ 'self' ],
+        media_src: [ 'self', 'blob:' ],
+        img_src: [ '*', 'blob:', 'data:' ],
+        script_src: [ 'self', 'unsafe-inline' ],
+        style_src: [ 'self', 'unsafe-inline' ]
       }),
       twitter: Csp.parse({
-        default_src: [
-          'self'
-        ],
-        form_action: [
-          'self', 'https://syndication.twitter.com/'
-        ],
-        frame_ancestors: [
-          'self'
-        ],
-        child_src: [
-          'self', 'https://www.youtube.com'
-        ],
-        media_src: [
-          'self', 'blob:'
-        ],
-        img_src: [
-          '*', 'blob:', 'data:'
-        ],
-        script_src: [
-          'self', 'unsafe-inline',
-          'http://platform.twitter.com/',
-          'http://196.25.211.41/',
-          'https://cdn.syndication.twimg.com/'
-        ],
-        style_src: [
-          'self', 'unsafe-inline',
-          'http://platform.twitter.com/',
-          'https://ton.twimg.com'
-        ]
+        default_src: [ 'self' ],
+        form_action: [ 'self', 'https://syndication.twitter.com/' ],
+        frame_ancestors: [ 'self' ],
+        child_src: [ 'self', 'https://www.youtube.com' ],
+        media_src: [ 'self', 'blob:' ],
+        img_src: [ '*', 'blob:', 'data:' ],
+        script_src: [ 'self', 'unsafe-inline', 'http://platform.twitter.com/', 'http://196.25.211.41/', 'https://cdn.syndication.twimg.com/' ],
+        style_src: [ 'self', 'unsafe-inline', 'http://platform.twitter.com/', 'https://ton.twimg.com' ]
       })
     }
   end
