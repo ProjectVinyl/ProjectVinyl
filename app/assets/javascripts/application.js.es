@@ -43,7 +43,6 @@
 //= depend_on ui/reorder
 //= depend_on ui/resize
 //= depend_on ui/scroll
-//= depend_on ui/select
 //= depend_on ui/slide
 //= depend_on ui/subtable
 //= depend_on ui/tabset
@@ -76,7 +75,6 @@ import './ui/form.js';
 import './ui/grid.js';
 import './ui/lazy.js';
 import './ui/reorder.js';
-import './ui/select.js';
 import './ui/slide.js';
 import './ui/subtable.js';
 import './ui/tabset.js';
