@@ -34,6 +34,7 @@
 //= depend_on components/usercard
 //= depend_on components/videos
 //= depend_on components/vote
+//= depend_on ui/infiniscroll
 //= depend_on ui/confirmation
 //= depend_on ui/dropdown
 //= depend_on ui/form
@@ -68,6 +69,7 @@ import './components/uploader.js';
 import './components/usercard.js';
 import './components/vote.js';
 import './components/notifier.js';
+import './ui/infiniscroll.js';
 import './ui/confirmation.js';
 import './ui/dropdown.js';
 import './ui/form.js';
