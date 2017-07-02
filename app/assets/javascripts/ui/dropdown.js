@@ -2,7 +2,7 @@ import { jSlim } from '../utils/jslim.js';
 
 const Popout = {
   toggle(sender) {
-    if (sender && sender.classList.contains('pop-out-shown')) {
+    if (sender && !sender.classList.contains('pop-out-shown')) {
       this.show(sender);
     } else {
       this.hideAll();
