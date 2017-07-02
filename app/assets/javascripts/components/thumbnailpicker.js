@@ -6,21 +6,21 @@ function ThumbPicker() {
 Player.Extend(ThumbPicker, {
   constructor: function(el) {
     ThumbPicker.Super.constructor.call(this, el, true);
-    this.timeInput = el.find('input');
-    el.find('.icon.fullscreen, .icon.volume').remove();
+    this.timeInput = el.querySelector('input');
+    const fullscreen = el.querySelector('.icon.fullscreen');
+    const volume = el.querySelector('.icon.volume');
+    fullscreen.parentNode.removeChild(fullscreen);
+    volume.parentNode.removeChild(volume);
   },
   pause: function() {
     if (this.video) this.video.pause();
     return false;
   },
   start: function() {
-    var self = this;
     if (!this.video) {
       ThumbPicker.Super.start.call(this);
       if (this.video) {
-        this.video.addEventListener('loadedmetadata', function() {
-          self.changetrack(0.5);
-        });
+        this.video.addEventListener('loadedmetadata', () => this.changetrack(0.5));
       }
     } else {
       ThumbPicker.Super.start.call(this);

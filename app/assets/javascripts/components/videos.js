@@ -1,28 +1,29 @@
 /*
  * Initialises basic video playback funtionality.
  *
- * Copyright Project Vinyl Foundation 2016
+ * Copyright Project Vinyl Foundation 2017
 */
 
-import { ajax } from '../utils/ajax.js';
+import { fetchJson } from '../utils/requests.js';
 import { scrollTo } from '../ui/scroll.js';
 import { Key } from '../utils/misc.js';
+import { jSlim } from '../utils/jslim.js';
 
 const VIDEO_ELEMENT = document.createElement('video');
 const aspect = 16 / 9;
-var fadeControl = null;
+let fadeControl = null;
 
 function controlsFade() {
   if (Player.fullscreenPlayer) {
-    Player.fullscreenPlayer.controls.css('opacity', 0);
-    Player.fullscreenPlayer.player.find('.playing').css('cursor', 'none');
+    Player.fullscreenPlayer.controls.style.opacity = 0;
+    Player.fullscreenPlayer.player.querySelector('.playing').style.cursor = 'none';
   }
   fadeControl = null;
 }
 
 function attachMessageListener(sender) {
-  $(window).on('storage', function(ev) {
-    if (ev.originalEvent.key === '::activeplayer' && ev.originalEvent.newValue != sender.__seed) {
+  window.addEventListener('storage', event => {
+    if (event.key === '::activeplayer' && event.newValue !== sender.__seed) {
       sender.pause();
     }
   });
@@ -30,16 +31,17 @@ function attachMessageListener(sender) {
 
 function sendMessage(sender) {
   if (sender.__sendMessages) {
-    sender.__seed = '' + ((parseInt(localStorage['::activeplayer'] || '0') + 1) % 3);
+    // FIXME: wtf
+    sender.__seed = '' + ((parseInt(localStorage['::activeplayer'] || '0', 10) + 1) % 3);
     localStorage.setItem('::activeplayer', sender.__seed);
   }
 }
 
-function canGen(childs) {
-  return !childs.length || (childs.length == 1 && childs.first().hasClass('playlist'));
+function canGen(child) {
+  return !child || child.classList.contains('playlist');
 }
 
-function Player() {}
+function Player() { }
 
 /* Standardise fullscreen API */
 (function(p) {
@@ -51,7 +53,9 @@ function Player() {}
 })(Element.prototype);
 
 Player.onFullscreen = function(func) {
-  $(document).on('webkitfullscreenchange mozfullscreenchange fullscreenchange', func);
+  document.addEventListener('webkitfullscreenchange', func);
+  document.addEventListener('mozfullscreenchange', func);
+  document.addEventListener('fullscreenchange', func);
 };
 
 Player.canPlayType = function(mime) {
@@ -68,13 +72,21 @@ Player.speeds = [
 ];
 
 Player.createVideoElement = function(player) {
-  if (!player.source || player.source == '0') return $('<video></video>');
-  if (typeof player.source === 'string' && player.source.indexOf('blob') == 0) return $('<video src="' + player.source + '"></video>');
-  return $('\
-          <video>\
-           <source src="/stream/' + player.source + '.webm" type="video/webm"></source>\
-           <source src="/stream/' + player.source + player.mime[0] + '" type="' + player.mime[1] + '"></source>\
-          </video>');
+  const video = document.createElement('video');
+
+  if (!player.source || player.source === '0') return video;
+
+  if (typeof player.source === 'string' && player.source.indexOf('blob') === 0) {
+    video.setAttribute('src', player.source);
+    return video;
+  }
+
+  video.innerHTML = `
+    <source src="/stream/${player.source}.webm" type="video/webm"></source>
+    <source src="/stream/${player.source}${player.mime[0]}" type="${player.mime[1]}"></source>
+  `;
+
+  return video;
 };
 
 Player.errorMessage = function(video) {
@@ -95,16 +107,17 @@ Player.errorMessage = function(video) {
 };
 
 Player.errorPresent = function(video) {
-  return (video.error && video.error.code != video.error.MEDIA_ERR_ABORTED) || (video.networkState == HTMLMediaElement.NETWORK_NO_SOURCE);
+  return (video.error && video.error.code !== video.error.MEDIA_ERR_ABORTED) || (video.networkState === HTMLMediaElement.NETWORK_NO_SOURCE);
 };
 
 Player.isready = function(video) {
-  return video.readyState == 4;
+  return video.readyState === 4;
 };
 
 Player.noise = (function() {
   var canvas = null, ctx = null;
   var toggle = true;
+
   function noise(ctx) {
     var w = ctx.canvas.width,
         h = ctx.canvas.height,
@@ -115,12 +128,14 @@ Player.noise = (function() {
     for (; i < len;) buffer32[i++] = ((255 * Math.random()) | 0) << 24;
     ctx.putImageData(idata, 0, 0);
   }
+
   function loop() {
     toggle = !toggle;
     if (toggle) return requestAnimationFrame(loop);
     noise(ctx);
     requestAnimationFrame(loop);
   }
+
   return function setupNoise() {
     if (canvas !== null) return canvas;
     canvas = document.createElement('canvas');
@@ -132,35 +147,36 @@ Player.noise = (function() {
 })();
 
 Player.generate = function(holder) {
-  holder.prepend('<div class="player" >\
-  <span class="playing"></span>\
-  <span class="error"><span class="error-message"></span></span>\
-  <span class="suspend" style="display:none"><i class="fa fa-pulse fa-spinner"></i></span>\
-  <span class="pause resize-holder">\
-    <span class="playback"></span>\
-    <h1 class="resize-target" style="display:none;"><a class="title"></a></h1>\
-  </span>\
-</div>\
-<div class="controls playback-controls">\
-  <ul>\
-    <li class="track">\
-      <span class="fill"></span>\
-      <div class="previewer"></div>\
-      <span class="bob"></span>\
-    </li>\
-    <li class="icon volume">\
-      <span class="indicator"><i class="fa fa-volume-up"></i></span>\
-      <div class="slider">\
-        <span class="fill"></span>\
-        <span class="bob"></span>\
-      </div>\
-    </li>\
-    <li class="icon fullscreen">\
-      <span class="indicator"><i class="fa fa-arrows-alt"></i></span>\
-    </li>\
-  </ul>\
-</div>\
-<ul class="contextmenu"></ul>');
+  holder.insertAdjacentHTML('afterbegin', `
+<div class="player">
+  <span class="playing"></span>
+  <span class="error"><span class="error-message"></span></span>
+  <span class="suspend" style="display:none"><i class="fa fa-pulse fa-spinner"></i></span>
+  <span class="pause resize-holder">
+    <span class="playback"></span>
+    <h1 class="resize-target" style="display:none;"><a class="title"></a></h1>
+  </span>
+</div>
+<div class="controls playback-controls">
+  <ul>
+    <li class="track">
+      <span class="fill"></span>
+      <div class="previewer"></div>
+      <span class="bob"></span>
+    </li>
+    <li class="icon volume">
+      <span class="indicator"><i class="fa fa-volume-up"></i></span>
+      <div class="slider">
+        <span class="fill"></span>
+        <span class="bob"></span>
+      </div>
+    </li>
+    <li class="icon fullscreen">
+      <span class="indicator"><i class="fa fa-arrows-alt"></i></span>
+    </li>
+  </ul>
+</div>
+<ul class="contextmenu"></ul>`);
 };
 
 Player.onFullscreen(function() {
@@ -178,301 +194,349 @@ Player.Extend = function(Child, overrides) {
     Child.prototype[keys[i]] = overrides[keys[i]];
   }
 };
+
 Player.prototype = {
-  constructor: function(el, standalone) {
-    if (canGen(el.children())) Player.generate(el);
-    var self = this;
+
+  // FIXME: way too much happening here
+  constructor(el, standalone) {
+    if (canGen(el.firstElementChild)) Player.generate(el);
+
     this.__sendMessages = !standalone;
     this.dom = el;
-    this.player = el.find('.player');
-    this.player.error = this.player.find('.error');
-    this.player.error.message = this.player.error.find('.error-message');
-    this.suspend = el.find('.suspend');
-    this.contextmenu = el.find('.contextmenu');
+    this.player = el.querySelector('.player');
+    this.player.error = this.player.querySelector('.error');
+    this.player.error.message = this.player.error.querySelector('.error-message');
+    this.suspend = el.querySelector('.suspend');
+    this.contextmenu = el.querySelector('.contextmenu');
     this.contextmenu.unset = 1;
-    this.player[0].getPlayerObj = function() {
-      return self;
-    };
+    this.player.getPlayerObj = () => this;
+
     this.video = null;
-    this.mime = (el.attr('data-mime') || '.mp4|video/m4v').split('|');
-    this.controls = el.find('.controls');
-    this.source = el.attr('data-video');
+    this.mime = (el.dataset.mime || '.mp4|video/m4v').split('|');
+    this.controls = el.querySelector('.controls');
+    this.source = el.dataset.video;
+
     if (!this.source) {
-      this.source = el.attr('data-audio');
+      this.source = el.dataset.audio;
       this.audioOnly = true;
-      this.preview = $('<img src="/cover/' + this.source + '-small.png" />')[0];
+      this.preview = document.createElement('img');
+      this.preview.src = `/cover/${this.source}-small.png`;
     } else {
-      this.preview = $('<canvas />')[0];
+      this.preview = document.createElement('canvas');
     }
     
-    this.time = el.attr('data-time');
-    
-    resize.apply(el);
-    
-    el.find('h1 .title').text(this.title = el.attr('data-title'));
-    this.artist = el.attr('data-artist');
-    if (this.artist) el.find('h1 .artist').text(this.artist);
+    this.time = el.dataset.time;
+
+    // at the bottom
+    resize(el);
+
+    const h1Title = el.querySelector('h1 .title');
+    const h1Artist = el.querySelector('h1 .artist');
+
+    this.title = el.dataset.title;
+    if (h1Title) h1Title.textContent = this.title;
+    this.artist = el.dataset.artist;
+    if (this.artist && h1Artist) h1Artist.textContent = this.artist;
     
     new TapToggler(this.dom);
-    
-    el.on('click', function(ev) {
-      if (!self.removeContext(ev)) {
-        if (!self.player.hasClass('playing') || self.dom.toggler.interactable()) {
-          if (self.dom.playlist && self.dom.playlist.hasClass('visible')) {
-            self.dom.playlist.toggleClass('visible');
+
+    el.addEventListener('click', ev => {
+      if (ev.button !== 0) return;
+
+      if (!this.removeContext(ev)) {
+        if (!this.player.classList.contains('playing') || this.dom.toggler.interactable()) {
+          if (this.dom.playlist && this.dom.playlist.classList.contains('visible')) {
+            this.dom.playlist.classList.toggle('visible');
           } else {
-            self.toggleVideo();
+            this.toggleVideo();
           }
         }
       }
     });
-    el.on('contextmenu', function(ev) {
-      self.showContext(ev);
-    });
-    var activeTouches = [];
-    var tapped = false;
-    el.on('touchstart', function(ev) {
-      if (Player.fullscreenPlayer == this) {
+
+    el.addEventListener('contextmenu', ev => this.showContext(ev));
+
+    const activeTouches = [];
+    let tapped = false;
+
+    el.addEventListener('touchstart', ev => {
+      if (Player.fullscreenPlayer === ev.target) {
         if (activeTouches.length > 0) {
-          self.halt(ev);
+          this.halt(ev);
           return;
         }
       }
+
       if (tapped) {
-        self.fullscreen(!Player.isFullscreen());
-        self.halt(ev);
+        this.fullscreen(!Player.isFullscreen());
+        this.halt(ev);
         clearTimeout(tapped);
         tapped = null;
         return;
       }
-      tapped = setTimeout(function() {
-        tapped = null;
-      }, 500);
-      
-      self.dom.toggler.update(ev);
+
+      tapped = setTimeout(() => tapped = null, 500);
       activeTouches.push({identifier: ev.identifier});
     });
-    el.on('touchmove touchend touchcancel', function(ev) {
-      for (var i = 0; i < activeTouches; i++) {
-        if (activeTouches[i].identifier == ev.identifier) {
+
+    function onTouchEvent(ev) {
+      for (let i = 0; i < activeTouches; i++) {
+        if (activeTouches[i].identifier === ev.identifier) {
           activeTouches.splice(i, 1);
         }
       }
-    });
+    }
+
+    el.addEventListener('touchmove', onTouchEvent);
+    el.addEventListener('touchend', onTouchEvent);
+    el.addEventListener('touchcancel', onTouchEvent);
+
     this.__loop = false;
     this.__speed = 3;
-    this.contextmenu.on('click', this.halt);
-    this.addContext('Loop', false, function(val) {
-      val(self.loop(!self.__loop));
+    this.contextmenu.addEventListener('click', this.halt);
+    this.addContext('Loop', false, val => {
+      val(this.loop(!this.__loop));
     });
-    this.addContext('Speed', self.speed(self.__speed), function(val) {
-      self.__speed = (self.__speed + 1) % Player.speeds.length;
-      val(self.speed(self.__speed));
+    this.addContext('Speed', this.speed(this.__speed), val => {
+      this.__speed = (this.__speed + 1) % Player.speeds.length;
+      val(this.speed(this.__speed));
     });
-    
-    $(document).on('click', function(ev) {
-      self.removeContext(ev);
-    });
-    $(document).on('keydown', function(ev) {
-      if (ev.which == Key.SPACE) {
-        if (!$('input:focus,textarea:focus').length) {
-          if (self.video) {
-            self.toggleVideo();
-            self.halt(ev);
+
+    document.addEventListener('click', ev => { if (ev.button === 0) this.removeContext(ev); });
+    document.addEventListener('keydown', ev => {
+      if (ev.which === Key.SPACE) {
+        if (!document.querySelector('input:focus,textarea:focus')) {
+          if (this.video) {
+            this.toggleVideo();
+            this.halt(ev);
           }
         }
       }
     });
-    if (this.controls.length) {
-      this.controls.track = this.controls.find('.track');
-      this.controls.track.on('mousedown', function(ev) {
-        if (!self.removeContext(ev)) {
-          self.checkstart();
-          self.jump(ev);
+
+    if (this.controls) {
+      this.controls.track = this.controls.querySelector('.track');
+      this.controls.track.addEventListener('mousedown', ev => {
+        if (!this.removeContext(ev)) {
+          this.checkstart();
+          this.jump(ev);
         }
       });
-      this.controls.track.bob = this.controls.find('.track .bob');
-      this.controls.track.fill = this.controls.find('.track .fill');
-      this.controls.track.bob.on('mousedown', function(ev) {
-        if (!self.removeContext(ev)) self.startChange(ev);
+      this.controls.track.bob = this.controls.querySelector('.track .bob');
+      this.controls.track.fill = this.controls.querySelector('.track .fill');
+      this.controls.track.bob.addEventListener('mousedown', ev => {
+        if (!this.removeContext(ev)) this.startChange(ev);
       });
-      this.controls.track.bob.on('touchstart', function(ev) {
-        self.removeContext(ev);
-        self.startChange(ev);
+      this.controls.track.bob.addEventListener('touchstart', ev => {
+        this.removeContext(ev);
+        this.startChange(ev);
       });
-      this.controls.track.preview = el.find('.track .previewer');
-      this.controls.track.preview.append(this.preview);
-      this.controls.track.on('mousemove', function(ev) {
-        self.drawPreview(self.evToProgress(ev));
+      this.controls.track.preview = el.querySelector('.track .previewer');
+      this.controls.track.preview.appendChild(this.preview);
+      this.controls.track.addEventListener('mousemove', ev => {
+        this.drawPreview(this.evToProgress(ev));
       });
-      this.controls.volume = this.controls.find('.volume');
-      this.controls.volume.on('click', function(ev) {
-        if (!self.removeContext(ev)) {
-          if (self.controls.volume.toggler.interactable()) {
-            self.muteUnmute();
+      this.controls.volume = this.controls.querySelector('.volume');
+      this.controls.volume.addEventListener('click', ev => {
+        if (ev.button !== 0) return;
+        if (!this.removeContext(ev)) {
+          if (this.controls.volume.toggler.interactable()) {
+            this.muteUnmute();
           }
         }
       });
       new TapToggler(this.controls.volume);
-      this.controls.volume.on('touchstart', function(ev) {
-        self.controls.volume.toggler.update(ev);
-        self.halt(ev);
+      this.controls.volume.addEventListener('touchstart', ev => {
+        this.controls.volume.toggler.update(ev);
+        this.halt(ev);
       });
       
-      this.controls.volume.bob = this.controls.find('.volume .bob');
-      this.controls.volume.fill = this.controls.find('.volume .fill');
-      this.controls.volume.bob.on('mousedown', function(ev) {
-        if (!self.removeContext(ev)) self.startChangeVolume(ev);
+      this.controls.volume.bob = this.controls.querySelector('.volume .bob');
+      this.controls.volume.fill = this.controls.querySelector('.volume .fill');
+      this.controls.volume.bob.addEventListener('mousedown', ev => {
+        if (!this.removeContext(ev)) this.startChangeVolume(ev);
       });
-      this.controls.volume.bob.on('touchstart', function(ev) {
-        self.removeContext(ev);
-        self.startChangeVolume(ev);
+      this.controls.volume.bob.querySelector('touchstart', ev => {
+        this.removeContext(ev);
+        this.startChangeVolume(ev);
       });
-      this.controls.volume.slider = this.controls.find('.volume .slider');
-      this.controls.volume.slider.on('mousedown', function(ev) {
-        if (!self.removeContext(ev)) {
-          self.checkstart();
-          self.changeVolume(ev);
+      this.controls.volume.slider = this.controls.querySelector('.volume .slider');
+      this.controls.volume.slider.addEventListener('mousedown', ev => {
+        if (!this.removeContext(ev)) {
+          this.checkstart();
+          this.changeVolume(ev);
         }
       });
-      this.controls.fullscreen = this.controls.find('.fullscreen .indicator');
-      this.controls.find('.fullscreen').on('click', function(ev) {
-        if (!self.removeContext(ev)) {
-          self.fullscreen(!Player.isFullscreen());
-          self.halt(ev);
+      this.controls.fullscreen = this.controls.querySelector('.fullscreen .indicator');
+      this.controls.querySelector('.fullscreen').addEventListener('click', ev => {
+        if (ev.button !== 0) return;
+        if (!this.removeContext(ev)) {
+          this.fullscreen(!Player.isFullscreen());
+          this.halt(ev);
         }
       });
-      this.controls.volume.slider.on('click', this.halt);
-      this.controls.find('li').on('click', this.halt);
+      this.controls.volume.slider.addEventListener('click', this.halt);
+      this.controls.querySelector('li').addEventListener('click', this.halt);
     }
+
     attachMessageListener(this);
     
-    if (el.attr('data-embed')) {
+    if (el.dataset.embed) {
       this.setEmbed();
-      $(document).ready(function() {
-        var selected = $('.playlist a.selected');
-        if (selected.length) scrollTo(selected, '.playlist .scroll-container');
+      jSlim.ready(function() {
+        const selected = document.querySelector('.playlist a.selected');
+        if (selected) scrollTo(selected, '.playlist .scroll-container');
       });
     }
-    if (el.attr('data-playlist-id')) {
-      this.setPlaylist(el.attr('data-playlist-id'), el.attr('data-playlist-index'));
+
+    if (el.dataset.playlistId) {
+      this.setPlaylist(el.dataset.playlistId, el.dataset.playlistIndex);
     }
     
-    if (el.attr('data-autoplay')) {
+    if (el.dataset.autoplay) {
       this.checkstart();
-      this.addContext('Autoplay', this.autoplay(!document.cookie.replace(/(?:(?:^|.*;\s*)autoplay\s*=\s*([^;]*).*$)|^.*$/, '$1')), function(val) {
-        val(self.__autoplay = !self.__autoplay);
-        document.cookie = 'autoplay=' + (self.__autoplay ? ';' : '1;');
+      // FIXME: extract cookie fetch code to some util
+      this.addContext('Autoplay', this.autoplay(!document.cookie.replace(/(?:(?:^|.*;\s*)autoplay\s*=\s*([^;]*).*$)|^.*$/, '$1')), val => {
+        val(this.__autoplay = !this.__autoplay);
+        document.cookie = 'autoplay=' + (this.__autoplay ? ';' : '1;');
       });
-    } else if (el.attr('data-resume') == 'true') {
+    } else if (el.dataset.resume === 'true') {
       this.checkstart();
     }
+
     return this;
   },
-  removeContext: function(ev) {
-    if (ev.which == 1 && this.contextmenu.css('display') == 'table') {
-      this.contextmenu.css('opacity', '');
-      var self = this;
-      setTimeout(function() {
-        self.contextmenu.css('display', '');
-      }, 100);
+
+  removeContext(ev) {
+    if (ev.which === 1 && this.contextmenu.style.display === 'table') {
+      this.contextmenu.style.opacity = '';
+      setTimeout(() => this.contextmenu.style.display = '', 100);
       return 1;
     }
     return 0;
   },
-  showContext: function(ev) {
-    var y = ev.pageY;
-    var x = ev.pageX;
-    if (x + this.contextmenu.width() > $(window).width()) x = $(window).width() - this.contextmenu.width();
-    if (y + this.contextmenu.height() + 10 >= $(window).height()) y = $(window).height() - this.contextmenu.height() - 10;
-    this.contextmenu.css({
-      top: y - this.dom.offset().top,
-      left: x - this.dom.offset().left,
-      display: 'table'
-    });
-    this.contextmenu.css('opacity', '1');
+
+  showContext(ev) {
+    let y = ev.pageY;
+    let x = ev.pageX;
+
+    const vWidth = document.documentElement.clientWidth;
+    const vHeight = document.documentElement.clientHeight;
+
+    if (x + this.contextmenu.clientWidth > vWidth) x = vWidth - this.contextmenu.clientWidth;
+    if (y + this.contextmenu.clientHeight + 10 >= vHeight) y = vHeight - this.contextmenu.clientHeight - 10;
+
+    this.contextmenu.style.top = `${y - (this.dom.getBoundingClientRect().top + pageYOffset)}px`;
+    this.contextmenu.style.left = `${x - (this.dom.getBoundingClientRect().left + pageXOffset)}px`;
+    this.contextmenu.style.display = 'table';
+    this.contextmenu.style.opacity = '1';
+
     this.halt(ev);
   },
-  setEmbed: function() {
-    var self = this;
-    var link = this.player.find('.pause h1 a');
-    this.player.find('.pause h1').css({
-      'pointer-events': 'initial', display: ''
-    });
-    link.attr({
-      target: '_blank', href: '/view/' + this.source + '-' + this.title
-    });
-    link.on('mouseover', function() {
-      if (self.video && self.video.currentTime > 0) {
-        link.attr('href', '/view/' + self.source + '-' + self.title + '?resume=' + self.video.currentTime);
+
+  setEmbed() {
+    const h1 = this.player.querySelector('.pause h1');
+    const link = h1.querySelector('.pause h1 a');
+
+    h1.style.pointerEvents = 'initial';
+    h1.style.display = '';
+
+    link.target = '_blank';
+    link.href = `/view/${this.source}-${this.title}`;
+
+    link.addEventListener('mouseover', () => {
+      if (this.video && this.video.currentTime > 0) {
+        link.href = `/view/${this.source}-${this.title}?resume=${this.video.currentTime}`;
       }
     });
-    link.on('click', function(ev) {
-      ev.stopPropagation();
-    });
+
+    link.addEventListener('click', ev => ev.stopPropagation());
   },
-  setPlaylist: function(albumId, albumIndex) {
+
+  setPlaylist(albumId, albumIndex) {
     this.album = {
-      id: albumId, index: albumIndex
+      id: albumId,
+      index: albumIndex
     };
-    this.dom.playlist = $('.playlist');
-    this.dom.playlist.link = $('<div class="playlist-toggle"><i class="fa fa-list" /></div>');
+
+    this.dom.playlist = document.querySelector('.playlist');
+    this.dom.playlist.link = document.createElement('div');
+    this.dom.playlist.link.class = 'playlist-toggle';
+    this.dom.playlist.link.innerHTML = '<i class="fa fa-list"/>';
     this.dom.append(this.dom.playlist.link);
-    var self = this;
-    this.dom.playlist.link.on('click', function(ev) {
-      self.dom.playlist.toggleClass('visible');
-      self.halt(ev);
+
+    this.dom.playlist.link.addEventListener('click', ev => {
+      this.dom.playlist.classList.toggle('visible');
+      this.halt(ev);
     });
-    this.addContext('Autoplay', this.autoplay(!document.cookie.replace(/(?:(?:^|.*;\s*)autoplay\s*=\s*([^;]*).*$)|^.*$/, '$1')), function(val) {
-      val(self.__autoplay = !self.__autoplay);
-      document.cookie = 'autoplay=' + (self.__autoplay ? ';' : '1;');
+
+    // FIXME: cookie parsing
+    this.addContext('Autoplay', this.autoplay(!document.cookie.replace(/(?:(?:^|.*;\s*)autoplay\s*=\s*([^;]*).*$)|^.*$/, '$1')), val => {
+      val(this.__autoplay = !this.__autoplay);
+      document.cookie = `autoplay=${this.__autoplay ? ';' : '1;'}`;
     });
-    this.dom.playlist.on('click', '.items a, #playlist_next, #playlist_prev', function(ev) {
-      var next = $(this);
-      ajax.get('view' + next.attr('href')).json(function(json) {
-        self.redirect = next.attr('href');
-        self.loadAttributesAndRestart(json);
-        if (json.next) {
-          $('#playlist_next').attr('href', json.next);
-        }
-        if (json.prev) {
-          $('#playlist_prev').attr('href', json.prev);
-        }
-        $('.playlist a.selected').removeClass('selected');
-        var selected = $('.playlist a[data-id=' + json.id + ']');
-        selected.addClass('selected');
-        scrollTo(selected, '.playlist .scroll-container');
-      });
-      self.halt(ev);
+
+    this.dom.playlist.addEventListener('click', ev => {
+      if (ev.button !== 0) return;
+
+      const target = ev.target.closest('.items a, #playlist_next, #playlist_prev');
+      if (target) {
+        fetchJson('GET', `/ajax/view${target.href}`)
+        .then(response => response.json())
+        .then(json => {
+          const playlistNext = document.querySelector('#playlist_next');
+          const playlistPrev = document.querySelector('#playlist_prev');
+          let selectedItem = document.querySelector('.playlist a.selected');
+
+          this.redirect = target.href;
+          this.loadAttributesAndRestart(json);
+
+          if (json.next) playlistNext.href = json.next;
+          if (json.prev) playlistPrev.href = json.prev;
+
+          if (selectedItem) selectedItem.classList.remove('selected');
+          selectedItem = document.querySelector(`.playlist a[data-id=${json.id}]`);
+          selectedItem.classList.add('selected');
+          scrollTo(selectedItem, '.playlist .scroll-container');
+        });
+      }
+      
+      this.halt(ev);
     });
   },
-  addContext: function(title, initial, callback) {
-    var item = $('<li><div class="label">' + title + '</div></li>');
-    var value = $('<div class="value" ></div>');
-    item.append(value);
+
+  addContext(title, initial, callback) {
+    const item = document.createElement('li');
+    item.innerHTML = `<div class="label">${title}</div>`;
+
+    const value = document.createElement('div');
+    value.classList.add('value');
+    item.appendChild(value);
+
     function val(s) {
-      value.html(typeof s === 'boolean' ? s ? '<i class="fa fa-check" />' : '' : s);
+      value.innerHTML = typeof s === 'boolean' ? s ? '<i class="fa fa-check" />' : '' : s;
     }
+
     val(initial);
-    item.on('click', function() {
-      callback(val);
-    });
-    this.contextmenu.append(item);
+    item.addEventListener('click', () => callback(val));
+    this.contextmenu.appendChild(item);
   },
-  speed: function(speed) {
+
+  speed(speed) {
     speed = Player.speeds[speed] || Player.speeds[3];
     if (this.video) this.video.playbackRate = speed.value;
     return speed.name;
   },
-  fullscreen: function(on) {
+
+  fullscreen(on) {
     this.onfullscreen(on);
     if (!Player.requestFullscreen) return false;
-    if (fadeControl != null) clearTimeout(fadeControl);
-    if (Player.fullscreenPlayer && Player.fullscreenPlayer != this) {
+    if (fadeControl !== null) clearTimeout(fadeControl);
+    if (Player.fullscreenPlayer && Player.fullscreenPlayer !== this) {
       Player.fullscreenPlayer.fullscreen(false);
     }
     if (on) {
-      Player.requestFullscreen.apply(this.dom[0]);
+      Player.requestFullscreen.apply(this.dom);
       Player.fullscreenPlayer = this;
       fadeControl = setTimeout(controlsFade, 1000);
     } else if (Player.fullscreenPlayer) {
@@ -485,44 +549,50 @@ Player.prototype = {
       }
       Player.fullscreenPlayer = null;
       Player.exitFullscreen.apply(document);
-      this.controls.css('opacity', '');
+      this.controls.style.opacity = '';
     }
     Player.fullscreenPlayer = on ? this : null;
     return on;
   },
-  onfullscreen: function(on) {
-    this.controls.fullscreen.html(on ? '<i class="fa fa-restore"></i>' : '<i class="fa fa-arrows-alt"></i>');
-    if (!on) this.player.find('.playing').css('cursor', '');
+
+  onfullscreen(on) {
+    this.controls.fullscreen.innerHTML = on ? '<i class="fa fa-restore"></i>' : '<i class="fa fa-arrows-alt"></i>';
+    if (!on) this.player.querySelector('.playing').style.cursor = '';
   },
-  autoplay: function(on) {
+
+  autoplay(on) {
     this.__autoplay = on;
     if (on) {
       this.loop(false);
     }
     return on;
   },
-  loop: function(on) {
+
+  loop(on) {
     this.__loop = on;
     if (this.video) this.video.loop = on;
     return on;
   },
-  checkstart: function() {
+
+  checkstart() {
     if (!this.video) this.start();
   },
-  loadAttributesAndRestart: function(attr) {
-    this.dom.css('background-image', 'url(\'/cover/' + attr.source + '.png\')');
-    this.dom.find('h1 .title').text(this.title = attr.title);
-    this.dom.find('h1 .artist').text(this.artist = attr.artist);
+
+  loadAttributesAndRestart(attr) {
+    this.dom.style.backgroundImage = `url('/cover/${attr.source}.png')`;
+    this.dom.querySelector('h1 .title').textContent = this.title = attr.title;
+    this.dom.querySelector('h1 .artist').textContent = this.artist = attr.artist;
     this.source = attr.source;
     this.mime = attr.mime;
     this.audioOnly = attr.audioOnly;
     if (this.video) {
-      $(this.video).remove();
+      this.video.parentNode.removeChild(this.video);
       this.video = null;
     }
     this.start();
   },
-  load: function(data) {
+
+  load(data) {
     this.audioOnly = false;
     if (this.source) {
       URL.revokeObjectURL(this.source);
@@ -538,7 +608,10 @@ Player.prototype = {
       this.video.load();
     }
   },
-  loadURL: function(url) {
+
+  // FIXME: almost completely duplicated, likely can simply
+  // change client code to just use one or other
+  loadURL(url) {
     this.audioOnly = false;
     if (this.source) {
       URL.revokeObjectURL(this.source);
@@ -555,247 +628,283 @@ Player.prototype = {
       this.video.load();
     }
   },
-  start: function() {
-    var video;
+
+  start() {
+    let video;
+
     if (!this.video) {
       if (this.audioOnly && this.source) {
-        video = $('<audio src="/stream/' + this.source + this.mime[0] + '" type="' + this.mime[1] + '"></audio>');
+        video = document.createElement('audio');
+        video.src = `/stream/${this.source}${this.mime[0]}`;
+        video.type = this.mime[1];
       } else {
         video = Player.createVideoElement(this);
       }
-      this.video = video[0];
-      if (this.time && this.time != '0') {
+
+      this.video = video;
+
+      if (this.time && this.time !== '0') {
         if (Player.isready(this.video)) {
-          this.video.currentTime = parseInt(this.time);
+          this.video.currentTime = parseInt(this.time, 10);
         } else {
-          var t = parseInt(this.time);
-          this.video.addEventListener('canplay', function setTime() {
+          const t = parseInt(this.time, 10);
+          const setTime = () => {
             this.currentTime = t;
             this.removeEventListener('canplay', setTime);
-          });
+          };
+          this.video.addEventListener('canplay', setTime);
         }
       }
-      this.player.find('.playing').append(this.video);
-      var self = this;
-      video.on('pause', function() {
-        self.pause();
+      this.player.querySelector('.playing').appendChild(this.video);
+
+      video.addEventListener('pause', () => this.pause());
+      video.addEventListener('play', () => {
+        this.player.classList.add('playing');
+        this.player.classList.remove('stopped');
+        this.player.classList.remove('paused');
+        this.player.classList.remove('error');
+        this.video.loop = !!this.__loop;
+        sendMessage(this);
+        this.volume(video.volume, video.muted);
       });
-      video.on('play', function() {
-        self.player.addClass('playing');
-        self.player.removeClass('stopped');
-        self.player.removeClass('paused');
-        self.player.removeClass('error');
-        self.video.loop = !!self.__loop;
-        sendMessage(self);
-        self.volume(this.volume, this.muted);
-      });
-      video.on('abort error', function(e) {
-        self.error(e);
-      });
-      video.find('source').last().on('error', function(e) {
-        self.error(e);
-      });
-      video.on('ended', function() {
-        if (self.__autoplay) {
-          var next = $('#playlist_next');
-          if (next.length) {
-            if (Player.fullscreenPlayer == self || self.album) {
-              ajax.get('view' + next.attr('href')).json(function(json) {
-                self.redirect = next.attr('href');
-                self.loadAttributesAndRestart(json);
+      video.addEventListener('abort', e => this.error(e));
+      video.addEventListener('error', e => this.error(e));
+
+      const sources = video.querySelectorAll('source');
+      if (sources.length) sources[sources.length - 1].addEventListener('error', e => this.error(e));
+
+      video.addEventListener('ended', () => {
+        if (this.__autoplay) {
+          // FIXME: more duplication
+          const next = document.querySelector('#playlist_next');
+          const prev = document.querySelector('#playlist_prev');
+          let selected = document.querySelector('.playlist a.selected');
+
+          if (next) {
+            if (Player.fullscreenPlayer === this || this.album) {
+              fetchJson('GET', `/ajax/view${next.href}`)
+              .then(response => response.json())
+              .then(json => {
+                this.redirect = next.href;
+                this.loadAttributesAndRestart(json);
                 if (json.next) {
-                  next.attr('href', json.next);
+                  next.href = json.next;
                 } else {
-                  next.remove();
-                  $('.buff-right').removeClass('.buff-right');
+                  next.parentNode.removeChild(next);
+                  document.querySelector('.buff-right').classList.remove('buff-right');
                 }
                 if (json.prev) {
-                  $('#playlist_prev').attr('href', json.prev);
+                  prev.href = json.prev;
                 } else {
-                  $('#playlist_prev').remove();
+                  prev.parentNode.removeChild(prev);
                 }
-                $('.playlist a.selected').removeClass('selected');
-                var selected = $('.playlist a[data-id=' + json.id + ']');
-                selected.addClass('selected');
+                if (selected) selected.classList.remove('selected');
+                selected = document.querySelector(`.playlist a[data-id=${json.id}]`);
+                selected.classList.add('selected');
                 scrollTo(selected, '.playlist .scroll-container');
               });
             } else {
-              document.location.replace(next.attr('href'));
+              document.location.replace(next.href);
             }
           }
         } else {
-          if (self.pause()) self.player.addClass('stopped');
+          if (this.pause()) this.player.classList.add('stopped');
         }
       });
-      var suspendTimer = null;
-      video.on('suspend waiting', function() {
-        if (!suspendTimer) {
-          suspendTimer = setTimeout(function() {
-            self.suspend.css('display', 'block');
-          }, 3000);
-        }
+
+      let suspendTimer = null;
+      function suspended() {
+        if (suspendTimer) return;
+        suspendTimer = setTimeout(() => this.style.display = 'block', 3000);
+      }
+
+      video.addEventListener('suspend', suspended.bind(this));
+      video.addEventListener('waiting', suspended.bind(this));
+
+      video.addEventListener('volumechange', () => {
+        this.volume(this.video.volume, this.video.muted || this.video.volume === 0);
       });
-      video.on('volumechange', function() {
-        self.volume(self.video.volume, self.video.muted || self.video.volume == 0);
-      });
-      video.on('timeupdate', function() {
+
+      video.addEventListener('timeupdate', () => {
         if (suspendTimer) {
           clearTimeout(suspendTimer);
           suspendTimer = null;
         }
-        self.track(self.video.currentTime, parseInt(self.video.duration) || 0);
+        this.track(this.video.currentTime, parseInt(this.video.duration, 10) || 0);
       });
-      this.volume(self.video.volume, video.muted);
+
+      this.volume(this.video.volume, video.muted);
     }
-    if (this.video.networkState == HTMLMediaElement.NETWORK_NO_SOURCE) {
+
+    if (this.video.networkState === HTMLMediaElement.NETWORK_NO_SOURCE) {
       this.video.load();
     }
+
     this.video.play();
   },
-  stop: function() {
+
+  stop() {
     this.pause();
     this.changetrack(0);
     this.video.parentNode.removeChild(this.video);
     this.video = null;
-    this.suspend.css('display', 'none');
+    this.suspend.style.display = 'none';
   },
-  pause: function() {
-    this.player.removeClass('playing');
-    this.player.addClass('paused');
+
+  pause() {
+    this.player.classList.remove('playing');
+    this.player.classList.add('paused');
     if (this.video) this.video.pause();
-    this.suspend.css('display', 'none');
+    this.suspend.style.display = 'none';
     return true;
   },
-  error: function(e) {
+
+  error(e) {
     this.pause();
     if (Player.errorPresent(this.video)) {
-      var message = Player.errorMessage(this.video);
-      this.player.addClass('stopped');
-      this.player.addClass('error');
-      this.player.error.message.text(message);
+      const message = Player.errorMessage(this.video);
+      this.player.classList.add('stopped');
+      this.player.classList.add('error');
+      this.player.error.message.textContent = message;
       if (!this.noise) {
         this.noise = Player.noise();
-        this.player.error.append(this.noise);
+        this.player.error.appendChild(this.noise);
       }
       console.warn(message);
     }
     console.log(e);
   },
+
   toggleVideo: function() {
-    if (!this.player.hasClass('playing')) {
+    if (!this.player.classList.contains('playing')) {
       this.start();
     } else {
       this.pause();
     }
   },
-  track: function(time, duration) {
-    var percentFill = (time / duration) * 100;
-    this.controls.track.bob.css('left', percentFill + '%');
-    this.controls.track.fill.css('right', (100 - percentFill) + '%');
+
+  track(time, duration) {
+    const percentFill = Math.round((time / duration) * 100);
+
+    this.controls.track.bob.style.left = `${percentFill}%`;
+    this.controls.track.fill.style.right = `${100 - percentFill}%`;
+
     if (this.dom.toggler.touching()) {
-      this.controls.track.preview.css('left', percentFill + '%');
-      this.controls.track.preview.attr('data-time', this.descriptive(time));
+      this.controls.track.preview.style.left = `${percentFill}%`;
+      this.controls.track.preview.dataset.time = this.descriptive(time);
     }
-    this.suspend.css('display', 'none');
+
+    this.suspend.style.display = 'none';
   },
-  changetrack: function(progress) {
+
+  changetrack(progress) {
     if (progress < 0) progress = 0;
     if (progress > 1) progress = 1;
-    var duration = parseFloat(this.video.duration) || 0;
-    var time = duration * progress;
+    const duration = parseFloat(this.video.duration) || 0;
+    const time = duration * progress;
     this.video.currentTime = time;
     this.track(time, duration);
   },
-  jump: function(ev) {
-    var progress = this.evToProgress(ev);
+
+  jump(ev) {
+    const progress = this.evToProgress(ev);
     this.changetrack(progress);
-    if (ev.originalEvent.touches) {
+    if (ev.touches) {
       this.drawPreview(progress);
     }
     this.halt(ev);
   },
-  evToProgress: function(ev) {
-    var x = ev.pageX;
-    if (!x && ev.originalEvent.touches) {
-      x = ev.originalEvent.touches[0].pageX || 0;
+
+  evToProgress(ev) {
+    let x = ev.pageX;
+    if (!x && ev.touches) {
+      x = ev.touches[0].pageX || 0;
     }
     
-    x -= this.controls.track.offset().left;
+    x -= this.controls.track.getBoundingClientRect().left + pageXOffset;
     if (x < 0) x = 0;
-    if (x > this.controls.track.width()) x = this.controls.track.width();
-    return x / this.controls.track.width();
+    if (x > this.controls.track.clientWidth) x = this.controls.track.clientWidth;
+    return x / this.controls.track.clientWidth;
   },
-  startChange: function(ev) {
-    var self = this;
-    
+
+  startChange(ev) {
     this.checkstart();
-    this.dom.addClass('tracking');
-    $(document).on('mousemove touchmove', func);
-    $(document).one('mouseup touchend touchcancel', ender);
+    this.dom.classList.add('tracking');
+
+    const func = ev => this.jump(ev);
+    const ender = () => {
+      ['mouseup', 'touchend', 'touchcancel'].forEach(t => document.removeEventListener(t, ender));
+      ['mousemove', 'touchmove'            ].forEach(t => document.removeEventListener(t, func));
+      this.dom.classList.remove('tracking');
+    };
+
+    // FIXME: damn that's a lot of events
+    ['mouseup', 'touchend', 'touchcancel'].forEach(t => document.addEventListener(t, ender));
+    ['mousemove', 'touchmove'            ].forEach(t => document.addEventListener(t, func));
+
     this.halt(ev);
-    
-    function func(ev) {
-      self.jump(ev);
-    }
-    
-    function ender() {
-      $(document).off('mouseup touchend touchcancel', ender);
-      $(document).off('mousemove touchmove', func);
-      self.dom.removeClass('tracking');
-    }
   },
-  startChangeVolume: function(ev) {
+
+  // FIXME: almost exact duplicate of above
+  startChangeVolume(ev) {
     this.checkstart();
-    var self = this;
-    
-    this.dom.addClass('voluming');
-    $(document).on('mousemove touchmove', func);
-    $(document).one('mouseup touchend touchcancel', ender);
+    this.dom.classList.add('voluming');
+
+    const func = ev => this.changeVolume(ev);
+    const ender = () => {
+      ['mouseup', 'touchend', 'touchcancel'].forEach(t => document.removeEventListener(t, ender));
+      ['mousemove', 'touchmove'            ].forEach(t => document.removeEventListener(t, func));
+      this.dom.classList.remove('voluming');
+    };
+
+    ['mouseup', 'touchend', 'touchcancel'].forEach(t => document.addEventListener(t, ender));
+    ['mousemove', 'touchmove'            ].forEach(t => document.addEventListener(t, func));
+
     this.halt(ev);
-    
-    function func(ev) {
-      self.changeVolume(ev);
-    }
-    
-    function ender() {
-      $(document).off('mouseup touchend touchcancel', ender);
-      $(document).off('mousemove touchmove', func);
-      self.dom.removeClass('voluming');
-    }
   },
-  changeVolume: function(ev) {
-    var height = this.controls.volume.slider.height();
-    if (height == 0) return;
-    var y = ev.pageY;
-    if (!y && ev.originalEvent.touches) {
-      y = ev.originalEvent.touches[0].pageY || 0;
+
+  changeVolume(ev) {
+    const height = this.controls.volume.slider.clientHeight;
+    if (height === 0) return;
+
+    let y = ev.pageY;
+    if (!y && ev.touches) {
+      y = ev.touches[0].pageY || 0;
     }
-    y -= this.controls.volume.slider.offset().top;
+    y -= this.controls.volume.slider.getBoundingClientRect().top + window.pageYOffset;
     if (y < 0) y = 0;
     if (y > height) y = height;
     y = height - y;
-    this.volume(y / height, y == 0);
+    this.volume(y / height, y === 0);
     this.halt(ev);
   },
-  halt: function(ev) {
+
+  // FIXME: why is it necessary to also stopPropagation?
+  // FIXME: why is this function part of the prototype?
+  halt(ev) {
     ev.preventDefault();
     ev.stopPropagation();
   },
-  volume: function(volume, muted) {
-    this.dom.find('.volume .indicator i').attr('class', muted ? 'fa fa-volume-off' : volume < 0.33 ? 'fa fa-volume-down' : volume < 0.66 ? 'fa fa-volume-mid' : 'fa fa-volume-up');
+
+  volume(volume, muted) {
+    const indicator = this.dom.querySelector('.volume .indicator i');
+    if (indicator) indicator.class = muted ? 'fa fa-volume-off' : volume < 0.33 ? 'fa fa-volume-down' : volume < 0.66 ? 'fa fa-volume-mid' : 'fa fa-volume-up';
     if (this.video) this.video.volume = volume;
     if (muted) volume = 0;
     volume *= 100;
-    this.controls.volume.bob.css('bottom', volume + '%');
-    this.controls.volume.fill.css('top', (100 - volume) + '%');
+    this.controls.volume.bob.style.bottom = `${volume}%`;
+    this.controls.volume.fill.style.top = `${100 - volume}%`;
   },
-  muteUnmute: function() {
+
+  muteUnmute() {
     this.checkstart();
     this.video.muted = !this.video.muted;
     this.volume(this.video.volume, this.video.muted);
   },
-  descriptive: function(t) {
-    var times = [];
+
+  // FIXME: Highly ironic name
+  descriptive(t) {
+    const times = [];
     t = Math.floor(t);
     while (t >= 60) {
       times.push(t % 60);
@@ -805,25 +914,32 @@ Player.prototype = {
     if (times.length < 2) times.push(0);
     return times.reverse().join(':');
   },
-  drawPreview: function(progress) {
+
+  drawPreview(progress) {
     if (!this.video) return;
-    var duration = parseInt(this.video.duration) || 0;
-    var time = duration * progress;
-    this.controls.track.preview.css('left', ((time / duration) * 100) + '%');
-    this.controls.track.preview.attr('data-time', this.descriptive(time));
+
+    const duration = parseInt(this.video.duration, 10) || 0;
+    let time = duration * progress;
+
+    this.controls.track.preview.style.left = `${(time / duration) * 100}%`;
+    this.controls.track.preview.dataset.time = this.descriptive(time);
+
     if (!this.audioOnly) {
+      // TODO: wtf
       time = time -= time % 5;
-      if (this.preview && this.preview.time != time) {
+
+      if (this.preview && this.preview.time !== time) {
         this.preview.time = time;
+
         if (!this.preview.video) {
-          var tempVid = this.preview.video = Player.createVideoElement(this)[0];
-          var canvas = this.preview;
-          var context = this.preview.getContext('2d');
+          const tempVid = this.preview.video = Player.createVideoElement(this);
+          const canvas = this.preview;
+          const context = this.preview.getContext('2d');
           tempVid.addEventListener('loadeddata', function loadTime() {
-            this.currentTime = time;
-            this.removeEventListener('loadeddata', loadTime);
+            tempVid.currentTime = time;
+            tempVid.removeEventListener('loadeddata', loadTime);
           });
-          tempVid.addEventListener('seeked', function() {
+          tempVid.addEventListener('seeked', () => {
             context.drawImage(tempVid, 0, 0, canvas.width, canvas.height);
           });
         } else {
@@ -831,73 +947,79 @@ Player.prototype = {
             this.preview.video.currentTime = time;
           }
         }
+
       }
     }
+
   }
 };
 
 function TapToggler(owner) {
-  var hoverTimeout = null;
-  var touching = false;
-  var hoverFlag = 0;
+  let hoverTimeout = null;
+  let touching = false;
+  let hoverFlag = 0;
+
   return owner.toggler = {
-    update: function() {
+    update() {
       if (!touching) touching = true;
-      owner.addClass('hover');
+      owner.classList.add('hover');
       hoverFlag++;
       if (hoverTimeout) {
         clearTimeout(hoverTimeout);
         hoverTimeout = null;
       }
-      hoverTimeout = setTimeout(function() {
-        owner.removeClass('hover');
+      hoverTimeout = setTimeout(() => {
+        owner.classList.add('hover');
         hoverTimeout = null;
         hoverFlag = 0;
       }, 1700);
     },
-    touching: function() {
+    touching() {
       return touching;
     },
-    interactable: function() {
+    interactable() {
       return !touching || hoverFlag > 1;
     }
   };
 }
 
-$(function() {
-  $('.video').each(function() {
-    if (!this.dataset.pending && !this.classList.contains('unplayable')) (new Player()).constructor($(this));
-  });
-});
+// For utils, eventually
+function $$(sel) {
+  return [].slice.call(document.querySelectorAll(sel));
+}
 
-function resize() {
-  var me = $(this);
-  me.css({
-    'margin-bottom': '', height: (me.width() / aspect) + 'px'
+function resize(obj) {
+  // aspect is defined at the top of the file
+  obj.style.marginBottom = '';
+  obj.style.height = `${obj.clientWidth / aspect}px`;
+}
+
+function removeContext() {
+  const fakeEvent = { which: 1 };
+  $$('.player').forEach(p => {
+    if (p.getPlayerObj) p.getPlayerObj().removeContext(fakeEvent);
   });
 }
 
-$(window).on('resize', function() {
-  $('.video').each(resize);
-});
-
-(function() {
-  var ev = {which:1};
-  function removeContext() {
-    if (this.getPlayerObj) this.getPlayerObj().removeContext(ev);
-  }
-  
-  $(window).on('resize blur', function() {
-    $('.player').each(removeContext);
+jSlim.ready(() => {
+  $$('.video').forEach(v => {
+    if (!v.dataset.pending && !v.classList.contains('unplayable')) (new Player()).constructor(v);
   });
-})();
 
-$(document).on('mousemove', function() {
-  if (Player.fullscreenPlayer) {
-    Player.fullscreenPlayer.controls.css('opacity', 1);
-    Player.fullscreenPlayer.player.find('.playing').css('cursor', '');
-    if (fadeControl == null) fadeControl = setTimeout(controlsFade, 1000);
-  }
+  window.addEventListener('resize', () => {
+    $$('.video').forEach(resize);
+  });
+
+  window.addEventListener('resize', removeContext);
+  window.addEventListener('blur', removeContext);
+
+  document.addEventListener('mousemove', () => {
+    if (Player.fullscreenPlayer) {
+      Player.fullscreenPlayer.controls.style.opacity = 1;
+      Player.fullscreenPlayer.player.querySelector('.playing').style.cursor = '';
+      if (fadeControl === null) fadeControl = setTimeout(controlsFade, 1000);
+    }
+  });
 });
 
 export { Player };

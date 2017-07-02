@@ -88,7 +88,7 @@ function Validator(el) {
 
   this.video.addEventListener('accept', event => {
     self.needsCover = !!event.detail.mime.match(/audio\//);
-    self.accept(file);
+    self.accept(event.detail);
   });
   
   this.cover.addEventListener('accept', function() {
@@ -210,7 +210,7 @@ Uploader.uploadAll = function() {
 Uploader.prototype = extendObj({
   initPlayer: function() {
     this.player = new ThumbPicker();
-    this.player.constructor($(this.el.querySelector('.video')));
+    this.player.constructor(this.el.querySelector('.video'));
   },
   showUI: function(title) {
     jSlim.all(this.el, '.hidden', function(e) {
