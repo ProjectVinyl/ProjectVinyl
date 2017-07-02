@@ -730,7 +730,7 @@ Player.prototype = {
           clearTimeout(suspendTimer);
           suspendTimer = null;
         }
-        this.track(this.video.currentTime, parseInt(this.video.duration, 10) || 0);
+        this.track(this.video.currentTime, parseFloat(this.video.duration) || 0);
       });
 
       this.volume(this.video.volume, video.muted);
@@ -784,8 +784,8 @@ Player.prototype = {
   },
 
   track(time, duration) {
-    const percentFill = Math.round((time / duration) * 100);
-
+    const percentFill = (time / duration) * 100;
+    
     this.controls.track.bob.style.left = `${percentFill}%`;
     this.controls.track.fill.style.right = `${100 - percentFill}%`;
 
