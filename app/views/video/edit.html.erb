@@ -1,4 +1,4 @@
-<section id="video-editor" data-needs-cover="<% @video.audio_only %>" class="page column-left<% if !@video.audio_only %> tab-set<% end %>">
+<section id="video-editor" <% if @video.audio_only %>data-needs-cover="true"<% end %> class="page column-left<% if !@video.audio_only %> tab-set<% end %>">
 	<% if !@video.audio_only %>
 	<ul class="tab-set tabs">
 		<li data-target="thumbupload" class="button selected">Upload Image</li>
