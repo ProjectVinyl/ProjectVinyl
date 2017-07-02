@@ -20,15 +20,16 @@ const jSlim = {
       }
     };
   })(),
-  on: function(el, event, selector, func) {
-    el.addEventListener(event, function(e) {
+  on: function(el, event, selector, func, bubble) {
+    var k = function(e) {
       var target = e.target.closest(selector);
       if (target) {
         if ((event == 'mouseout' || event == 'mouseover') && target.contains(e.relatedTarget)) return;
         return func.call(target, e);
       }
-    });
-    return func;
+    };
+    el.addEventListener(event, k, bubble);
+    return k;
   },
   each: function(arrLike, func, thisArg) {
     return Array.prototype.forEach.call(arrLike, func, thisArg);
