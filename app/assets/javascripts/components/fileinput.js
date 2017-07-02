@@ -1,6 +1,7 @@
 import { error } from './popup.js';
 import { toBool } from '../utils/misc.js';
 import { jSlim } from '../utils/jslim.js';
+import { Callbacks } from '../callbacks.js';
 
 function validateTypes(type, file) {
   switch (type) {
@@ -68,28 +69,34 @@ function initFileSelect(me) {
   if (me.classList.contains('image-selector')) {
     input.addEventListener('change', function() {
       handleFiles(input.files, allowMulti, type, function(f, title) {
+        var detail = {
+          mime: f.type,
+          type: title[title.length - 1]
+        };
         renderPreview(me, f);
-        me.dispatchEvent(new CustomEvent('accept', {
-          detail: {
-            mime: f.type,
-            type: title[title.length - 1]
-          },
-          bubbles: true
-        }));
+        if (!Callbacks.execute(me.dataset.callback, [me, detail])) {
+          me.dispatchEvent(new CustomEvent('accept', {
+            detail: detail,
+            bubbles: true
+          }));
+        }
       });
     });
   } else {
     input.addEventListener('change', function(e) {
       handleFiles(input.files, allowMulti, type, function(f, title) {
-        me.dispatchEvent(new CustomEvent('accept', {
-          detail: {
-            title: title.splice(0, title.length - 1).join('.'),
-            mime: f.type,
-            type: title[title.length - 1],
-            data: f
-          },
-          bubbles: true
-        }));
+        var detail = {
+          title: title.splice(0, title.length - 1).join('.'),
+          mime: f.type,
+          type: title[title.length - 1],
+          data: f
+        };
+        if (!Callbacks.execute(me.dataset.callback, [me, detail])) {
+          me.dispatchEvent(new CustomEvent('accept', {
+            detail: detail,
+            bubbles: true
+          }));
+        }
       });
     });
   }

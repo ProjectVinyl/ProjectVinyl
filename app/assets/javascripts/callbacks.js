@@ -64,11 +64,22 @@ const Callbacks = {
           }
         });
       });
+    },
+    changeAvatar: function(sender, data) {
+      var form = sender.closest('form');
+      ajax.form(form, {
+        success: function() {
+           form.classList.remove('uploading');
+           jSlim.all('#login .avatar.small span, #avatar-upload .preview', function(el) {
+              el.style.backgroundImage = 'url(/avatar/' + sender.dataset.id + '.' + data.type + '?' + new Date().getTime() + ')';
+           });
+        }
+      });
     }
   },
   execute: function(name, params) {
     if (name && typeof this.callbackFunctions[name] === 'function') {
-      this.callbackFunctions[name].call(window, params);
+      this.callbackFunctions[name].apply(window, params);
       return true;
     }
   }

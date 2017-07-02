@@ -11,7 +11,7 @@
 		<td class="field center">
 		<%= form_for(user, as: "user", url: "/ajax/avatar/upload", "html": { "class": "async" }) do |f| %>
 			<%= f.text_field :id, hidden: true %>
-			<div id="avatar-upload" class="avatar file-select image-selector uploaded-preview revertable" data-type="image">
+			<div id="avatar-upload" class="avatar file-select image-selector uploaded-preview revertable" data-type="image" data-callback="changeAvatar" data-id="<%= user.id %>">
 				<span class="preview" style="background-image: url('<%= user.avatar %>');"></span>
 				<span class="drop-icon" style="box-shadow: none;">
 					<i class="fa fa-camera"></i>
@@ -19,11 +19,11 @@
 				<%= f.file_field :avatar %>
 			</div>
 			<div class="buttons">
-			<label class="link red">
-				<input id="erase-avatar" name="erase" type="checkbox"></input>
-				<i class="fa fa-check"></i>
-				Delete
-			</label>
+				<label class="link red">
+					<input id="erase-avatar" name="erase" type="checkbox"></input>
+					<i class="fa fa-check"></i>
+					Delete
+				</label>
 			</div>
 			<div class="progressor">
 				<div class="cover-block">
@@ -36,16 +36,12 @@
 				</div>
 			</div>
 			<script>
-$('#avatar-upload').on('accept', function(e, file) {
-  var form = $(this).closest('form');
-  ajax.form(form, e, {
-    'success': function() {
-       form.removeClass('uploading');
-       $('#login .avatar.small span, #avatar-upload .preview').css('background-image', 'url(/avatar/<%= user.id %>.' + file.type + '?' + new Date().getTime() + ')');
-    }
-  });
-}).parent().find('input#erase-avatar').on('change', function() {
-	if (this.checked) $('#avatar-upload').trigger('accept'), this.checked = false;
+var avatar = document.getElementById('avatar-upload');
+avatar.parentNode.querySelector('input#erase-avatar').addEventListener('change', function() {
+	if (this.checked) {
+		avatar.trigger('accept');
+		this.checked = false;
+	}
 });
 			</script>
 			<% end %>
