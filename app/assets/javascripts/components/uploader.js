@@ -193,7 +193,7 @@ function Uploader() {
   });
   
   jSlim.all(this.el, 'h1.resize-target', function(t) {
-    resizeFont($(t));
+    resizeFont(t);
   });
   
   Validator.call(this, this.el);
