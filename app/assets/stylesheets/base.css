@@ -1352,6 +1352,9 @@ label input[type=checkbox]:checked + i + i {
   animation: 1s bobben 0s 1;
   -webkit-animation: 1s bobben 0s 1;
 }
+#login .notices-bell span[data-count="0"] {
+  display: none;
+}
 #login .notices-bell span.invert {
   top: auto;
   bottom: -3px;

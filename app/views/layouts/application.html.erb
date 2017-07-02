@@ -3,13 +3,15 @@
 <head>
 	<meta charset="utf-8">
 	<title id="document_title"><%= content_for?(:title) ? content_for(:title) + " - Project Vinyl" : "Project Vinyl - Premium Pony Tunes" %></title>
-  <%= stylesheet_link_tag "application" %>
-	<script>var emoticons = <%= raw emoticons %><% if user_signed_in? %>,current_user = {id:<%= current_user.id %>}<% end %>;</script>
-  <%= javascript_include_tag "application" %>
+	<% if user_signed_in? %>
+	<meta name="current_user" content="{\"id\": <%= current_user.id %>}">
+	<% end %>
 	<%= csrf_meta_tags %>
 	<meta name="theme-color" content="#a66ebe">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<%= content_for(:metadata) %>
+  <%= stylesheet_link_tag "application" %>
+  <%= javascript_include_tag "application" %>
 </head>
 <body>
 	<header class="header<% if !user_signed_in? %> logged-out<% end %>">
@@ -22,18 +24,12 @@
 					</a>
 					<a class="notices-bell feeds" href="/feed">
 						<i class="fa fa-globe"></i>
-						<% if current_user.feed_count > 0 %>
-							<span class="count"><%= safe_to_display current_user.feed_count, 999 %></span>
-						<% end %>
+						<span data-count="<%= current_user.feed_count %>"class="feed-count count"><%= safe_to_display current_user.feed_count, 999 %></span>
 					</a>
 					<a class="notices-bell notices" href="/notifications">
 						<i class="fa fa-bell"></i>
-						<% if current_user.notification_count > 0 %>
-							<span class="count"><%= safe_to_display current_user.notification_count, 999 %></span>
-						<% end %>
-						<% if current_user.message_count > 0 %>
-							<span class="count invert"><%= safe_to_display current_user.message_count, 999 %></span>
-						<% end %>
+							<span data-count="<%= current_user.notification_count %>" class="notification-count count"><%= safe_to_display current_user.notification_count, 999 %></span>
+							<span data-count="<%= current_user.message_count %>" class="message-count count invert"><%= safe_to_display current_user.message_count, 999 %></span>
 					</a>
 					<ul class="drop-down" style="z-index:300;">
 						<% if current_user.is_contributor? %>

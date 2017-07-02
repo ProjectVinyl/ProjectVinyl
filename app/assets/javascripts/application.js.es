@@ -8,7 +8,7 @@
 //= require jquery_ujs
 
 //  Due to ERB parsing (this can be eliminated later)
-//= require components/notifier
+//= require data/all
 
 //= depend_on compat/all.js
 //= depend_on compat/opera.js
@@ -20,6 +20,7 @@
 //= depend_on callbacks
 //= depend_on pageload
 
+//= depend_on components/notifier
 //= depend_on components/comments
 //= depend_on components/fileinput
 //= depend_on components/notifier
@@ -66,6 +67,7 @@ import './components/share.js';
 import './components/uploader.js';
 import './components/usercard.js';
 import './components/vote.js';
+import './components/notifier.js';
 import './ui/confirmation.js';
 import './ui/dropdown.js';
 import './ui/form.js';
