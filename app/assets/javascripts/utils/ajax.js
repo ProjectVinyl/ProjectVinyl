@@ -6,9 +6,6 @@ import { Callbacks } from '../callbacks.js';
 function xhr(params) {
   var csrf = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
   var xhr = new XMLHttpRequest();
-  xhr.open(params.method, params.url, true);
-  xhr.setRequestHeader('X-CSRF-Token', csrf);
-  xhr.setRequestHeader('Content-Type', params.encoding);
   xhr.onreadystatechange = function() {
     try {
         if (xhr.readyState === XMLHttpRequest.DONE) {
@@ -28,6 +25,8 @@ function xhr(params) {
   };
   if (params.progress && xhr.upload) xhr.upload.addEventListener('progress', params.progress); 
   if (params.beforeSend) params.beforeSend();
+  xhr.open(params.method, params.url, true);
+  xhr.setRequestHeader('X-CSRF-Token', csrf);
   xhr.send(params.data);
 }
 
@@ -93,11 +92,9 @@ function sendForm(form, e, callbacks) {
   var secondsRemaining = new Duration();
   var timeStarted = new Date();
   var timer;
-  
   var params = {
     method: form.getAttribute('method'),
     url: form.getAttribute('action') + '/async',
-    ancoding: 'multipart/form-data',
     data: new FormData(form),
     progress: function(e) {
       uploadedBytes = e.loaded;
@@ -182,7 +179,7 @@ const ajax = Object.freeze(extendObj(AjaxRequest, {
       e = null;
     }
     if (e) e.preventDefault();
-    sendForm(form[0] || form, e, callbacks || {});
+    sendForm(form, e, callbacks || {});
   }
 }));
 
