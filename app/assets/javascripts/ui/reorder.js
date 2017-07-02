@@ -2,11 +2,19 @@ import { ajax } from '../utils/ajax.js';
 import { paginator } from '../components/paginator.js';
 import { jSlim } from '../utils/jslim.js';
 
-var grabber;
-var floater;
+let floater = null;
+
+// For utils
+function once(node, type, listener) {
+  function wrapper() {
+    node.removeEventListener(type, wrapper);
+    return listener.apply(this, arguments);
+  }
+  node.addEventListener(type, wrapper);
+}
 
 function moveFloater(e) {
-  floater.css('top', e.pageY - floater.parent().offset().top);
+  floater.style.top = `${e.pageY - jSlim.offset(floater.parentNode).top}px`;
 }
 
 function reorder(target, id, index) {
@@ -16,69 +24,86 @@ function reorder(target, id, index) {
 }
 
 function grab(target, container, item) {
-  var originalIndex = parseInt(item[0].dataset.index);
-  
-  container.addClass('ordering');
-  container.find('.grabbed').removeClass('grabbed');
-  floater = item.clone();
-  item.addClass('grabbed');
-  container.append(floater);
-  
-  var srcChilds = item.children();
-  var dstChilds = floater.children();
-  
-  for (var i = 0; i < srcChilds.length; i++) {
-    dstChilds.eq(i).css('width', srcChilds.eq(i).innerWidth());
+  const originalIndex = parseInt(item.dataset.index, 10);
+
+  container.classList.add('ordering');
+  let grabbed = container.querySelector('.grabbed');
+  if (grabbed) item.classList.remove('grabbed');
+
+  floater = item.cloneNode(true);
+  item.classList.add('grabbed');
+  container.appendChild(floater);
+
+  const srcChilds = item.children;
+  const dstChilds = floater.children;
+
+  for (let i = 0; i < srcChilds.length; ++i) {
+    dstChilds[i].style.width = `${srcChilds[i].clientWidth}px`;
   }
-  
-  floater.addClass('floater');
-  floater.css('top', item.offset().top);
-  $(document).one('mouseup', function(e) {
-    floater.remove();
+
+  floater.classList.add('floater');
+  floater.style.top = `${jSlim.offset(item).top}px`;
+
+  const notFloating = [].filter.call(container.children, c => c.matches(':not(.floater)'));
+
+  function childMouseover(event) {
+    const child = event.currentTarget;
+    let index = parseInt(child.dataset.index, 10);
+
+    child.insertAdjacentElement('afterend', item);
+    if (index <= originalIndex) ++index;
+    item.dataset.index = index;
+  }
+
+  once(document, 'mouseup', e => {
+    floater.parentNode.removeChild(floater);
     floater = null;
-    reorder(target, item[0].dataset.id, item[0].dataset.index);
-    container.removeClass('ordering');
-    container.find('.grabbed').removeClass('grabbed');
-    container.children(':not(.floater)').off('mouseover');
-    
-    $(document).off('mousemove', moveFloater);
-    container.children().each(function(i) {
-      this.dataset.index = i;
-    });
-    
+    reorder(target, item.dataset.id, item.dataset.index);
+    container.classList.remove('ordering');
+    grabbed = container.querySelector('.grabbed');
+    if (grabbed) item.classList.remove('grabbed');
+
+    notFloating.forEach(el => el.removeEventListener('mouseover', childMouseover));
+
+    document.removeEventListener('mousemove', moveFloater);
+    for (let i = 0; i < container.children.length; ++i) {
+      container.children[i].dataset.index = i;
+    }
+
     e.preventDefault();
     e.stopPropagation();
   });
-  $(document).on('mousemove', moveFloater);
-  container.children(':not(.floater)').on('mouseover', function() {
-    var index = parseInt(this.dataset.index);
-    $(this).after(item);
-    if (index <= originalIndex) index++;
-    item.attr('data-index', index);
-  });
+
+  document.addEventListener('mousemove', moveFloater);
+  notFloating.forEach(el => el.addEventListener('mouseover', childMouseover));
 }
 
-jSlim.ready(function() {
-  $('.reorderable').each(function() {
-    var target = this.dataset.target;
-    var orderable = $(this);
-    orderable.find('.handle').on('mousedown', function(e) {
-      var me = $(this).parent();
-      grabber = function() {
-        grab(target, orderable, me);
-      };
-      $(document).one('mousemove', grabber);
-      e.preventDefault();
-      e.stopPropagation();
-    }).on('mouseup', '.reorderable .handle', function() {
-      $(document).off('mousemove', grabber);
+jSlim.ready(() => {
+  const reorderable = [].slice.call(document.querySelectorAll('.reorderable'));
+
+  reorderable.forEach(el => {
+    const target = el.dataset.target;
+    const handles = [].slice.call(el.querySelectorAll('.handle'));
+
+    handles.forEach(handle => {
+      const grabber = () => grab(target, el, handle.parentNode);
+
+      handle.addEventListener('mousedown', e => {
+        once(document, 'mousemove', grabber);
+        e.preventDefault();
+        e.stopPropagation();
+      });
+
+      handle.addEventListener('mouseup', () => {
+        document.removeEventListener('mousemove', grabber);
+      });
     });
   });
 });
 
 jSlim.on(document, 'click', '.removeable .remove', function(e) {
   var me = this.closest('.removeable');
-  
+
   if (me.classList.contains('repaintable')) {
     return ajax.post('delete/' + me.dataset.target, {
       id: me.dataset.id
@@ -86,7 +111,7 @@ jSlim.on(document, 'click', '.removeable .remove', function(e) {
       paginator.repaint(me.closest('.paginator'), json);
     });
   }
-  
+
   if (me.dataset.target) {
     ajax.post('delete/' + me.dataset.target, {
       id: me.dataset.id
