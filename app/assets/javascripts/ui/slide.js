@@ -1,64 +1,66 @@
 import { ajax } from '../utils/ajax.js';
+import { Callbacks } from '../callbacks.js';
+import { jSlim } from '../utils/jslim.js';
 
 function slideOut(holder) {
-  holder = $(holder);
-  var h = holder.find('.group.active').height();
-  holder.css('min-height', h);
-  holder.css('max-height', h + 10);
-  if (holder.hasClass('shown')) {
-    holder.removeClass('shown');
+  var h = holder.querySelector('.group.active').offsetHeight;
+  holder.style.minHeight = h + 'px';
+  holder.style.maxHeight = (h + 10) + 'px';
+  if (holder.classList.contains('shown')) {
+    holder.classList.remove('shown');
   } else {
-    $('.slideout.shown').removeClass('shown');
-    holder.addClass('shown');
+    jSlim.all('.slideout.shown', function(el) {
+      el.classList.remove('shown');
+    });
+    holder.classList.add('shown');
   }
   return holder;
 }
 
 function slideAcross(me, direction) {
-  var form = me.parents('.slide-group');
-  var to = form.find('.group[data-stage=' + me[0].dataset.to + ']');
-  if (to.length) {
-    form[0].dataset.offset = (parseInt(form[0].dataset.offset) || 0) + direction;
-    var from = form.find('.active');
-    from.removeClass('active');
+  var form = me.closest('.slide-group');
+  
+  var to = form.querySelector('.group[data-stage=' + me.dataset.to + ']');
+  if (!to) return;
+  
+  form.dataset.offset = (parseInt(form.dataset.offset) || 0) + direction;
+  
+  var from = form.querySelector('.active');
+  if (from) {
+    from.classList.remove('active');
     if (direction > 0) {
-      from.after(to);
+      from.parentNode.insertBefore(to, from.nextSibling);
     } else {
-      from.before(to);
+      from.parentNode.insertBefore(to, from);
     }
-    
-    to.addClass('active');
-    setTimeout(function() {
-      var diffH = form.height() - (from.height() - to.height());
-      
-      form.css('min-height', diffH);
-      form.css('max-height', diffH);
-      form.addClass('animating');
-      form.find('.group').css('transform', 'translate(' + (-100 * form[0].dataset.offset) + '%,0)');
-      setTimeout(function() {
-        form.removeClass('animating');
-        form.css('max-height', '');
-      }, 500);
-    }, 1);
   }
+  
+  to.classList.add('active');
+  
+  setTimeout(function() {
+    var diffH = form.offsetHeight - (from.offsetHeight - to.offsetHeight);
+    
+    form.style.maxHeight = form.style.minHeight = diffH + 'px';
+    form.classList.add('animating');
+    jSlim.all(form, '.group', function(el) {
+      el.style.transform = 'translate(' + (-100 * form.dataset.offset) + '%,0)';
+    });
+    setTimeout(function() {
+      form.classList.remove('animating');
+      form.style.maxHeight = '';
+    }, 500);
+  }, 1);
 }
 
-$(document).on('click', '.slider-toggle', function(e) {
-  var me = $(this);
-  var holder = $(this.dataset.target);
-  if (me.hasClass('loadable') && !me.hasClass('loaded')) {
-    me.addClass('loaded');
-    ajax.get(this.dataset.url).json(function(json) {
-      holder[0].innerHTML = json.content;
-      holder.find('script').each(function() {
-        var cs = document.createElement('SCRIPT');
-        cs.textContent = '(function(){' + this.innerText + '}).apply({})';
-        cs.onload = cs.onerror = function() {
-          cs.parentNode.removeChild(cs);
-        };
-        this.parentNode.removeChild(this);
-        document.head.appendChild(cs);
-      });
+jSlim.on(document, 'click', '.slider-toggle', function(e) {
+  var url = this.dataset.url;
+  var callback = this.dataset.callback;
+  var holder = document.querySelector(this.dataset.target);
+  if (this.classList.contains('loadable') && !this.classList.contains('loaded')) {
+    this.classList.add('loaded');
+    ajax.get(url).json(function(json) {
+      holder.innerHTML = json.content;
+      Callbacks.execute(callback);
       slideOut(holder);
     });
   } else {
@@ -67,15 +69,12 @@ $(document).on('click', '.slider-toggle', function(e) {
   e.preventDefault();
 });
 
-$(document).on('click', '.slide-holder .goto.slide-right', function() {
-  slideAcross($(this), 1);
+jSlim.on(document, 'click', '.slide-holder .goto.slide-right', function() {
+  slideAcross(this, 1);
 });
 
-$(document).on('click', '.slide-holder .goto.slide-left', function() {
-  slideAcross($(this), -1);
+jSlim.on(document, 'click', '.slide-holder .goto.slide-left', function() {
+  slideAcross(this, -1);
 });
-
-// app/views/layouts/_reporter.html.erb
-window.slideAcross = slideAcross;
 
 export { slideOut, slideAcross };
