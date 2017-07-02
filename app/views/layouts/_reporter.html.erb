@@ -157,45 +157,4 @@
 			</tr>
 		</table>
 	</div>
-	<script>
-(function() {
-  $('.form.report input[data-to], .form.report button.goto.right').on('click', function() {
-    var me = $(this);
-    var required = me.parents('.group').find('input[data-required]');
-    if (required.length) {
-      for (var i = 0; i < required.length; i++) {
-         var r = required.eq(i);
-         if (r.val() != r.attr('data-required') && (r.attr('type') !== 'checkbox' || !!r.attr('checked') != !!r.attr('data-required'))) {
-            alert('One or more required fields need to be filled in.');
-            r.focus();
-            return;
-         }
-      }
-    }
-    slideAcross(me, 1);
-  });
-  $('.form.report button.goto.left').on('click', function() {
-		slideAcross($(this), -1);
-  });
-  $('.form.report form.async').on('submit', function(e) {
-    var me = $(this);
-    ajax.form(me, e, {
-      progress: function(e, message, fill, percentage) {
-        if (percentage >= 100) {
-          message.html('<i style="color: lightgreen; font-size: 50px;" class="fa fa-check"></i></br>Thank you! Your report will be addressed shortly.');
-        }
-      },
-      success: function() {
-        me.removeClass('uploading');
-      },
-      error: function(message, error, msg) {
-        me.removeClass('uploading');
-        message.css('margin-left', '');
-        message.html('<i style="color: red; font-size: 50px;" class="fa fa-times"></i></br>' + error + ': ' + msg);
-        message.append('<br>Please contact <a href="mailto://support@projectvinyl.net">support@projectvinyl.net</a> for assistance.');
-      }
-    });
-  });
-})();
-	</script>
 <% end %>

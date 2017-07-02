@@ -4,7 +4,9 @@
  */
 
 import { ajax } from './utils/ajax.js';
+import { jSlim } from './utils/jslim.js';
 import { initFileSelect } from './components/fileinput.js';
+import { slideAcross } from './ui/slide.js';
 
 const Callbacks = {
   callbackFunctions: {
@@ -26,11 +28,47 @@ const Callbacks = {
           }
         });
       });
+    },
+    loadReporter: function() {
+      jSlim.on(document, 'click', '.form.report input[data-to], .form.report button.goto.right', function() {
+        var required = this.closest('.group').querySelectorAll('input[data-required]');
+        if (required.length) {
+          for (var i = 0; i < required.length; i++) {
+             if (r.value != r.dataset.required && (r.getAttribute('type') !== 'checkbox' || !!r.checked != !!r.dataset.required)) {
+              error('One or more required fields need to be filled in.');
+              r.focus();
+              return;
+            }
+          }
+        }
+        slideAcross(this, 1);
+      });
+      jSlim.on(document, 'click', '.form.report button.goto.left', function() {
+        slideAcross(this, -1);
+      });
+      jSlim.on(document, 'submit', '.form.report form.async', function(e) {
+        var self = this;
+        ajax.form(this, e, {
+          progress: function(e, message, fill, percentage) {
+            if (percentage >= 100) {
+              message.innerHTML = '<i style="color: lightgreen; font-size: 50px;" class="fa fa-check"></i></br>Thank you! Your report will be addressed shortly.';
+            }
+          },
+          success: function() {
+            self.classList.remove('uploading');
+          },
+          error: function(message, error, msg) {
+            self.classList.remove('uploading');
+            message.style.marginLeft = '';
+            message.innerHTML = '<i style="color: red; font-size: 50px;" class="fa fa-times"></i><br>' + error + ': ' + msg + '<br>Please contact <a href="mailto://support@projectvinyl.net">support@projectvinyl.net</a> for assistance.';
+          }
+        });
+      });
     }
   },
   execute: function(name, params) {
-    if (callbackFunc && typeof this.callbackFunctions[callbackFunc] === 'function') {
-      this.callbackFunctions[callbackFunc].call(window, params);
+    if (name && typeof this.callbackFunctions[name] === 'function') {
+      this.callbackFunctions[name].call(window, params);
       return true;
     }
   }
