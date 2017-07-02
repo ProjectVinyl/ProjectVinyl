@@ -187,11 +187,11 @@ Player.onFullscreen(function() {
   }
 });
 
-Player.Extend = function(Child, overrides) {
+Player.extend = function(Child, overrides) {
   var keys = Object.keys(overrides);
   Child.prototype = new this();
   Child.Super = this.prototype;
-  Child.Extend = this.Extend;
+  Child.extend = this.extend;
   for (var i = keys.length; i--;) {
     Child.prototype[keys[i]] = overrides[keys[i]];
   }
@@ -199,7 +199,7 @@ Player.Extend = function(Child, overrides) {
 
 Player.prototype = {
   // FIXME: way too much happening here
-  constructor(el, standalone) {
+  constructor: function(el, standalone) {
     if (canGen(el.firstElementChild)) Player.generate(el);
     
     this.__sendMessages = !standalone;
@@ -407,7 +407,7 @@ Player.prototype = {
     
     return this;
   },
-  removeContext(ev) {
+  removeContext: function(ev) {
     if (ev.which === 1 && this.contextmenu.style.display === 'table') {
       this.contextmenu.style.opacity = '';
       setTimeout(() => this.contextmenu.style.display = '', 100);
@@ -415,7 +415,7 @@ Player.prototype = {
     }
     return 0;
   },
-  showContext(ev) {
+  showContext: function(ev) {
     let y = ev.pageY;
     let x = ev.pageX;
     
@@ -432,7 +432,7 @@ Player.prototype = {
     
     this.halt(ev);
   },
-  setEmbed() {
+  setEmbed: function() {
     const h1 = this.player.querySelector('.pause h1');
     const link = h1.querySelector('.pause h1 a');
     
@@ -450,7 +450,7 @@ Player.prototype = {
     
     link.addEventListener('click', ev => ev.stopPropagation());
   },
-  setPlaylist(albumId, albumIndex) {
+  setPlaylist: function(albumId, albumIndex) {
     this.album = {
       id: albumId,
       index: albumIndex
@@ -478,9 +478,7 @@ Player.prototype = {
       
       const target = ev.target.closest('.items a, #playlist_next, #playlist_prev');
       if (target) {
-        fetchJson('GET', `/ajax/view${target.href}`)
-        .then(response => response.json())
-        .then(json => {
+        fetchJson('GET', `/ajax/view${target.href}`).then(response => response.json()).then(json => {
           const playlistNext = document.querySelector('#playlist_next');
           const playlistPrev = document.querySelector('#playlist_prev');
           let selectedItem = document.querySelector('.playlist a.selected');
@@ -501,7 +499,7 @@ Player.prototype = {
       this.halt(ev);
     });
   },
-  addContext(title, initial, callback) {
+  addContext: function(title, initial, callback) {
     const item = document.createElement('li');
     item.innerHTML = `<div class="label">${title}</div>`;
     
@@ -517,12 +515,12 @@ Player.prototype = {
     item.addEventListener('click', () => callback(val));
     this.contextmenu.appendChild(item);
   },
-  speed(speed) {
+  speed: function(speed) {
     speed = Player.speeds[speed] || Player.speeds[3];
     if (this.video) this.video.playbackRate = speed.value;
     return speed.name;
   },
-  fullscreen(on) {
+  fullscreen: function(on) {
     this.onfullscreen(on);
     if (!Player.requestFullscreen) return false;
     if (fadeControl !== null) clearTimeout(fadeControl);
@@ -548,26 +546,26 @@ Player.prototype = {
     Player.fullscreenPlayer = on ? this : null;
     return on;
   },
-  onfullscreen(on) {
+  onfullscreen: function(on) {
     this.controls.fullscreen.innerHTML = on ? '<i class="fa fa-restore"></i>' : '<i class="fa fa-arrows-alt"></i>';
     if (!on) this.player.querySelector('.playing').style.cursor = '';
   },
-  autoplay(on) {
+  autoplay: function(on) {
     this.__autoplay = on;
     if (on) {
       this.loop(false);
     }
     return on;
   },
-  loop(on) {
+  loop: function(on) {
     this.__loop = on;
     if (this.video) this.video.loop = on;
     return on;
   },
-  checkstart() {
+  checkstart: function() {
     if (!this.video) this.start();
   },
-  loadAttributesAndRestart(attr) {
+  loadAttributesAndRestart: function(attr) {
     this.dom.style.backgroundImage = `url('/cover/${attr.source}.png')`;
     this.dom.querySelector('h1 .title').textContent = this.title = attr.title;
     this.dom.querySelector('h1 .artist').textContent = this.artist = attr.artist;
@@ -580,12 +578,12 @@ Player.prototype = {
     }
     this.start();
   },
-  load(data) {
+  load: function(data) {
     this.loadURL(URL.createObjectURL(data));
   },
   // FIXME: almost completely duplicated, likely can simply
   // change client code to just use one or other
-  loadURL(url) {
+  loadURL: function(url) {
     this.audioOnly = false;
     if (this.source) {
       URL.revokeObjectURL(this.source);
@@ -602,7 +600,7 @@ Player.prototype = {
       this.video.load();
     }
   },
-  start() {
+  start: function() {
     let video;
     
     if (!this.video) {
@@ -655,9 +653,8 @@ Player.prototype = {
           
           if (next) {
             if (Player.fullscreenPlayer === this || this.album) {
-              fetchJson('GET', `/ajax/view${next.href}`)
-              .then(response => response.json())
-              .then(json => {
+              // ew
+              fetchJson('GET', `/ajax/view${next.href}`).then(response => response.json()).then(json => {
                 this.redirect = next.href;
                 this.loadAttributesAndRestart(json);
                 if (json.next) {
@@ -715,21 +712,21 @@ Player.prototype = {
     
     this.video.play();
   },
-  stop() {
+  stop: function() {
     this.pause();
     this.changetrack(0);
     this.video.parentNode.removeChild(this.video);
     this.video = null;
     this.suspend.style.display = 'none';
   },
-  pause() {
+  pause: function() {
     this.player.classList.remove('playing');
     this.player.classList.add('paused');
     if (this.video) this.video.pause();
     this.suspend.style.display = 'none';
     return true;
   },
-  error(e) {
+  error: function(e) {
     this.pause();
     if (Player.errorPresent(this.video)) {
       const message = Player.errorMessage(this.video);
@@ -751,7 +748,7 @@ Player.prototype = {
       this.pause();
     }
   },
-  track(time, duration) {
+  track: function(time, duration) {
     const percentFill = (time / duration) * 100;
     
     this.controls.track.bob.style.left = `${percentFill}%`;
@@ -764,7 +761,7 @@ Player.prototype = {
     
     this.suspend.style.display = 'none';
   },
-  changetrack(progress) {
+  changetrack: function(progress) {
     if (progress < 0) progress = 0;
     if (progress > 1) progress = 1;
     const duration = parseFloat(this.video.duration) || 0;
@@ -772,7 +769,7 @@ Player.prototype = {
     this.video.currentTime = time;
     this.track(time, duration);
   },
-  jump(ev) {
+  jump: function(ev) {
     const progress = this.evToProgress(ev);
     this.changetrack(progress);
     if (ev.touches) {
@@ -780,7 +777,7 @@ Player.prototype = {
     }
     this.halt(ev);
   },
-  evToProgress(ev) {
+  evToProgress: function(ev) {
     let x = ev.pageX;
     if (!x && ev.touches) {
       x = ev.touches[0].pageX || 0;
@@ -791,7 +788,7 @@ Player.prototype = {
     if (x > this.controls.track.clientWidth) x = this.controls.track.clientWidth;
     return x / this.controls.track.clientWidth;
   },
-  startChange(ev) {
+  startChange: function(ev) {
     this.checkstart();
     this.dom.classList.add('tracking');
     
@@ -811,7 +808,7 @@ Player.prototype = {
   // FIXME: almost exact duplicate of above
   // Except for the *volume* slider!
   // Should probably combine them
-  startChangeVolume(ev) {
+  startChangeVolume: function(ev) {
     this.checkstart();
     this.dom.classList.add('voluming');
     
@@ -827,7 +824,7 @@ Player.prototype = {
     
     this.halt(ev);
   },
-  changeVolume(ev) {
+  changeVolume: function(ev) {
     const height = this.controls.volume.slider.clientHeight;
     if (height === 0) return;
     
@@ -845,11 +842,11 @@ Player.prototype = {
   // FIXME: why is it necessary to also stopPropagation?
   // FIXME: why is this function part of the prototype?
   // Utility function, used all over the place. Move it if you like.
-  halt(ev) {
+  halt: function(ev) {
     ev.preventDefault();
     ev.stopPropagation();
   },
-  volume(volume, muted) {
+  volume: function(volume, muted) {
     const indicator = this.dom.querySelector('.volume .indicator i');
     if (indicator) indicator.class = muted ? 'fa fa-volume-off' : volume < 0.33 ? 'fa fa-volume-down' : volume < 0.66 ? 'fa fa-volume-mid' : 'fa fa-volume-up';
     if (this.video) this.video.volume = volume;
@@ -858,25 +855,25 @@ Player.prototype = {
     this.controls.volume.bob.style.bottom = `${volume}%`;
     this.controls.volume.fill.style.top = `${100 - volume}%`;
   },
-  muteUnmute() {
+  muteUnmute: function() {
     this.checkstart();
     this.video.muted = !this.video.muted;
     this.volume(this.video.volume, this.video.muted);
   },
   // FIXME: Highly ironic name
   //Convert a time to hh:mm:ss
-  descriptive(time) {
+  descriptive: function(time) {
     const times = [];
     time = Math.floor(time);
-    while (t >= 60) {
-      times.push(t % 60);
-      time = Math.floor(t / 60);
+    while (time >= 60) {
+      times.push(time % 60);
+      time = Math.floor(time / 60);
     }
-    times.push(t);
+    times.push(time);
     if (times.length < 2) times.push(0);
     return times.reverse().join(':');
   },
-  drawPreview(progress) {
+  drawPreview: function(progress) {
     if (!this.video) return;
     
     const duration = parseInt(this.video.duration, 10) || 0;
@@ -921,7 +918,7 @@ function TapToggler(owner) {
   let hoverFlag = 0;
 
   return owner.toggler = {
-    update() {
+    update: function() {
       if (!touching) touching = true;
       owner.classList.add('hover');
       hoverFlag++;
@@ -935,18 +932,13 @@ function TapToggler(owner) {
         hoverFlag = 0;
       }, 1700);
     },
-    touching() {
+    touching: function() {
       return touching;
     },
-    interactable() {
+    interactable: function() {
       return !touching || hoverFlag > 1;
     }
   };
-}
-
-// For utils, eventually
-function $$(sel) {
-  return [].slice.call(document.querySelectorAll(sel));
 }
 
 function resize(obj) {
@@ -957,18 +949,18 @@ function resize(obj) {
 
 function removeContext() {
   const fakeEvent = { which: 1 };
-  $$('.player').forEach(p => {
+  jSlim.all('.player', p => {
     if (p.getPlayerObj) p.getPlayerObj().removeContext(fakeEvent);
   });
 }
 
 jSlim.ready(() => {
-  $$('.video').forEach(v => {
+  jSlim.all('.video', v => {
     if (!v.dataset.pending && !v.classList.contains('unplayable')) (new Player()).constructor(v);
   });
   
   window.addEventListener('resize', () => {
-    $$('.video').forEach(resize);
+    jSlim.all('.video', resize);
   });
   
   window.addEventListener('resize', removeContext);

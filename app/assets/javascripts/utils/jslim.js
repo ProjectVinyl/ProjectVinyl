@@ -14,11 +14,11 @@ const jSlim = {
         });
       },
       decodeEntities: function(string) {
-        return pull(html, function() {
+        return pull(string, function() {
           return div.innerText;
         });
       }
-    }
+    };
   })(),
   on: function(el, event, selector, func) {
     el.addEventListener(event, function(e) {
@@ -46,17 +46,17 @@ const jSlim = {
     document.addEventListener('DOMContentLoaded', func);
   },
   offset: function(element) {
-      if (!element || !element.getClientRects().length) {
-          return { top: 0, left: 0 };
-      }
-      var rect = element.getBoundingClientRect();
-      var doc = element.ownerDocument || document;
-      var win = doc.defaultView || win;
-      doc = doc.documentElement;
-      return {
-          top: rect.top + win.pageYOffset - doc.clientTop,
-          left: rect.left + win.pageXOffset - doc.clientLeft
-      };
+    if (!element || !element.getClientRects().length) {
+      return { top: 0, left: 0 };
+    }
+    var rect = element.getBoundingClientRect();
+    var doc = element.ownerDocument || document;
+    var win = doc.defaultView || window;
+    doc = doc.documentElement;
+    return {
+      top: rect.top + win.pageYOffset - doc.clientTop,
+      left: rect.left + win.pageXOffset - doc.clientLeft
+    };
   }
 };
 

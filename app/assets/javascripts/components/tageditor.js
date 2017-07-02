@@ -46,7 +46,7 @@ function tagAction(action, name) {
 function createDisplayTagItem(container, tag) {
   var item = createBaseItem(container, tag, '\
     <a href="/tags/' + tag.link + '"><span>' + tag.name + '</span>' + (tag.members > -1 ? ' (' + tag.members + ')' : '') + '</a>\
-    <ul class="drop-down pop-out">' + ['Hide','Spoiler','Watch'].map(function(a) {
+    <ul class="drop-down pop-out">' + ['Hide', 'Spoiler', 'Watch'].map(function(a) {
       return tagAction(a, tag.name);
     }).join('') + '\
     </ul>');
@@ -219,7 +219,7 @@ function TagEditor(el) {
   
   this.input.addEventListener('mousedown', stopPropa);
   
-  jSlim.on(this.searchResults, 'click', 'li', function(e) {
+  jSlim.on(this.searchResults, 'click', 'li', function() {
     self.fillSearchedTag(this.tag);
   });
   
@@ -247,7 +247,7 @@ TagEditor.prototype = {
       if (tags.split) tags = tags.split(',');
       this.tags = asBakedArray(tags.map(asTag));
     } else {
-      this.tags = asBakedArray();;
+      this.tags = asBakedArray();
     }
     
     unloadedSlugs.push.apply(unloadedSlugs, this.tags);
@@ -324,7 +324,7 @@ TagEditor.prototype = {
     this.tags.length = 0;
     this.list.innerHTML = '';
     if (this.norm) this.norm.innerHTML = '';
-    tags.forEach(function (t) {
+    tags.forEach(function(t) {
       var tag = asTag(t);
       createTagItem(this.list, tag);
       if (this.norm) {

@@ -68,17 +68,17 @@ function initWorker() {
 jSlim.ready(function() {
   var giveMeNotifications = document.getElementById('give_me_notifications');
   if (giveMeNotifications) {
-    giveMeNotifications.checked = window.SharedWorker && !!localStorage['give_me_notification'];
+    giveMeNotifications.checked = window.SharedWorker && !!localStorage.give_me_notification;
     giveMeNotifications.addEventListener('change', function() {
       if (this.checked) {
-        localStorage['give_me_notifications'] = this.checked;
+        localStorage.give_me_notifications = this.checked;
       } else {
         localStorage.removeItem('give_me_notifications');
       }
     });
   }
   
-  if (window.current_user && window.SharedWorker && !!localStorage['give_me_notifications']) {
+  if (window.current_user && window.SharedWorker && !!localStorage.give_me_notifications) {
     initWorker();
   }
 });

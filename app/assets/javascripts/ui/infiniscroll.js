@@ -1,4 +1,5 @@
 import { jSlim } from '../utils/jslim.js';
+import { ajax } from '../utils/ajax.js';
 
 function initInfinitePage(target) {
   var path = target.dataset.path;

@@ -10,7 +10,7 @@ const shares = {
 
 // https://medium.com/@jitbit/target-blank-the-most-underestimated-vulnerability-ever-96e328301f4c
 function popOpen(url, title, props) {
-  var other = window.open("_blank", title, props);
+  var other = window.open('_blank', title, props);
   other.opener = null;
   other.location = url;
 }
@@ -18,16 +18,14 @@ function popOpen(url, title, props) {
 jSlim.on(document, 'click', '.share-buttons button', function(e) {
   // Left-click only
   if (e.which != 1 && e.button !== 0) return;
-  var ref = shares[target.dataset.type];
+  var ref = shares[this.dataset.type];
   if (ref) {
     ref = ref.replace(/{url}/g, encodeURIComponent(document.location.href));
-    ref = ref.replace(/{title}/g, encodeURIComponent(target.parentNode.dataset.caption));
+    ref = ref.replace(/{title}/g, encodeURIComponent(this.parentNode.dataset.caption));
     popOpen(ref, 'sharer', 'width=500px,height=450px,status=0,toolbar=0,menubar=0,addressbar=0,location=0');
   }
 });
 
-// FIXME: too much going on here
-// Eugh, I'll say
 function setupShares() {
   var frame = document.querySelector('#embed_preview iframe');
   if (!frame) return;

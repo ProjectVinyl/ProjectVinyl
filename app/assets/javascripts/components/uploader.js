@@ -211,7 +211,7 @@ Uploader.prototype = extendObj({
   },
   showUI: function(title) {
     jSlim.all(this.el, '.hidden', function(e) {
-      e.classList.remove('hidden')
+      e.classList.remove('hidden');
     });
     jSlim.all(this.el, '.shown', function(e) {
       e.classList.add('hidden');
@@ -371,10 +371,6 @@ UploadChecker.prototype = extendObj({
 Uploader.createChecker = function(el) {
   return new UploadChecker(el);
 };
-
-// video/edit.html.erb
-// video/upload.html.erb
-window.Uploader = Uploader;
 
 jSlim.ready(function() {
   jSlim.all('#uploader_frame', function() {

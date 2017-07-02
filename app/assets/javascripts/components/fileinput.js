@@ -51,7 +51,7 @@ function initFileSelect(me) {
   // Don't let the clicks escape; they might get out and replicate.
   // (prevents triggering handlers higher up in the dom)
   input.addEventListener('click', function(e) {
-    e.stopPropagation()
+    e.stopPropagation();
   });
   
   function enterDrag() {
@@ -83,7 +83,7 @@ function initFileSelect(me) {
       });
     });
   } else {
-    input.addEventListener('change', function(e) {
+    input.addEventListener('change', function() {
       handleFiles(input.files, allowMulti, type, function(f, title) {
         var detail = {
           title: title.splice(0, title.length - 1).join('.'),

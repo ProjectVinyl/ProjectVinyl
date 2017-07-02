@@ -3,7 +3,7 @@ import { Player } from './videos.js';
 function ThumbPicker() {
 }
 
-Player.Extend(ThumbPicker, {
+Player.extend(ThumbPicker, {
   constructor: function(el) {
     ThumbPicker.Super.constructor.call(this, el, true);
     this.timeInput = el.querySelector('input');

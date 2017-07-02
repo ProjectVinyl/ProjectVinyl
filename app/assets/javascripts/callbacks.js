@@ -7,22 +7,24 @@ import { ajax } from './utils/ajax.js';
 import { jSlim } from './utils/jslim.js';
 import { initFileSelect } from './components/fileinput.js';
 import { slideAcross } from './ui/slide.js';
+import { error } from './components/popup.js';
 
 const Callbacks = {
   callbackFunctions: {
     editVideo: function(sender, data) {
       sender.find('.tag-editor')[0].getTagEditorObj().reload(data.results);
       var source = sender[0].parentNode.querySelector('.normal.tiny-link a');
-      source.innerText = source.href = data.source
+      source.innerText = source.href = data.source;
     },
     loadBannerSelector: function() {
       var me = document.getElementById('banner-upload');
       var banner = document.getElementById('banner');
       var basePath = me.dataset.path;
       initFileSelect(me).addEventListener('accept', function(e) {
-        ajax.form(this.closest('form'), e, {
+        var form = this.closest('form');
+        ajax.form(form, e, {
           success: function() {
-            this.classList.remove('uploading');
+            form.classList.remove('uploading');
             banner.style.backgroundSize = 'cover';
             banner.style.backgroundImage = 'url(' + basePath + '?' + new Date().getTime() + ')';
           }
@@ -34,9 +36,9 @@ const Callbacks = {
         var required = this.closest('.group').querySelectorAll('input[data-required]');
         if (required.length) {
           for (var i = 0; i < required.length; i++) {
-             if (r.value != r.dataset.required && (r.getAttribute('type') !== 'checkbox' || !!r.checked != !!r.dataset.required)) {
+            if (required.value != required.dataset.required && (required.getAttribute('type') !== 'checkbox' || !!required.checked != !!required.dataset.required)) {
               error('One or more required fields need to be filled in.');
-              r.focus();
+              required.focus();
               return;
             }
           }
@@ -69,10 +71,10 @@ const Callbacks = {
       var form = sender.closest('form');
       ajax.form(form, {
         success: function() {
-           form.classList.remove('uploading');
-           jSlim.all('#login .avatar.small span, #avatar-upload .preview', function(el) {
-              el.style.backgroundImage = 'url(/avatar/' + sender.dataset.id + '.' + data.type + '?' + new Date().getTime() + ')';
-           });
+          form.classList.remove('uploading');
+          jSlim.all('#login .avatar.small span, #avatar-upload .preview', function(el) {
+            el.style.backgroundImage = 'url(/avatar/' + sender.dataset.id + '.' + data.type + '?' + new Date().getTime() + ')';
+          });
         }
       });
     }

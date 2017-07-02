@@ -8,22 +8,22 @@ function xhr(params) {
   var xhr = new XMLHttpRequest();
   xhr.onreadystatechange = function() {
     try {
-        if (xhr.readyState === XMLHttpRequest.DONE) {
-            if (xhr.status >= 200 && xhr.status < 300) {
-              if (params.success) {
-                params.success(xhr.responseXML || xhr.responseText, null, xhr);
-              }
-            } else if (xhr.responseText) {
-              if (params.error) params.error(xhr.responseText);
-              console.error(xhr.responseText);
-            }
-            if (params.complete) params.complete();
+      if (xhr.readyState === XMLHttpRequest.DONE) {
+        if (xhr.status >= 200 && xhr.status < 300) {
+          if (params.success) {
+            params.success(xhr.responseXML || xhr.responseText, null, xhr);
+          }
+        } else if (xhr.responseText) {
+          if (params.error) params.error(xhr.responseText);
+          console.error(xhr.responseText);
         }
+        if (params.complete) params.complete();
+      }
     } catch (e) {
       console.error(e);
     }
   };
-  if (params.progress && xhr.upload) xhr.upload.addEventListener('progress', params.progress); 
+  if (params.progress && xhr.upload) xhr.upload.addEventListener('progress', params.progress);
   if (params.beforeSend) params.beforeSend();
   xhr.open(params.method, params.url, true);
   xhr.setRequestHeader('X-CSRF-Token', csrf);
@@ -70,7 +70,7 @@ function request(method, resource, data, callback) {
   };
 }
 
-function queryPars(data, csrf) {
+function queryPars(data) {
   if (!data) return null;
   if (typeof data === 'string') return data;
   return Object.keys(data).map(function(key) {

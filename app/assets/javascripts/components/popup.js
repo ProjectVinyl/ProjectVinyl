@@ -1,5 +1,4 @@
 import { ajax } from '../utils/ajax.js';
-import { scrollTo } from '../ui/scroll.js';
 import { Key } from '../utils/misc.js';
 import { jSlim } from '../utils/jslim.js';
 
@@ -8,7 +7,7 @@ var INSTANCES = [];
 window.addEventListener('resize', function() {
   INSTANCES.forEach(function(i) {
     i.resize();
-  })
+  });
 });
 window.addEventListener('keydown', function(e) {
   if (INSTANCES.length && !document.querySelector('input:focus, textarea:focus, button:focus, .button.focus')) {
@@ -250,7 +249,6 @@ Popup.prototype = {
 
 function error(message) {
   new Popup('Error', 'warning', function() {
-    var self = this;
     var msg = document.createElement('DIV');
     this.content.appendChild(msg);
     msg.innerText = message;
@@ -263,7 +261,7 @@ function error(message) {
     this.show();
   });
 }
-//
+// Debugging purposes
 window.error = error;
 
 export { Popup, error };

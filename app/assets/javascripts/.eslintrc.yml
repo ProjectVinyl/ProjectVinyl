@@ -115,7 +115,7 @@ rules:
   no-inline-comments: 0
   no-inner-declarations: [2, 'functions']
   no-invalid-regexp: 2
-  no-invalid-this: 2
+  no-invalid-this: 0
   no-irregular-whitespace: 2
   no-iterator: 2
   no-label-var: 2
@@ -208,10 +208,10 @@ rules:
   operator-linebreak: 0
   padded-blocks: 0
   prefer-arrow-callback: 0
-  prefer-const: 2
+  prefer-const: 0
   prefer-numeric-literals: 2
   prefer-reflect: 0
-  prefer-rest-params: 1
+  prefer-rest-params: 0
   prefer-spread: 0
   prefer-template: 0
   quote-props: [2, 'as-needed']

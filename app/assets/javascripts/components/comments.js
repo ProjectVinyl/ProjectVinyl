@@ -1,4 +1,4 @@
-import { fetchJson, fetchHtml } from '../utils/requests.js';
+import { ajax } from '../utils/json.js';
 import { paginator } from './paginator.js';
 import { error } from './popup.js';
 import { scrollTo } from '../ui/scroll.js';
