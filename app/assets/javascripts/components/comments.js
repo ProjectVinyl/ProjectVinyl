@@ -23,7 +23,7 @@ window.postComment = function postComment(sender, threadId, order, reportState) 
   ajax.post('comments/new', data).json(function(json) {
     sender.classList.remove('posting');
     paginator.repaint(document.getElementById('#thread-' + threadId).closest('.paginator'), json);
-    scrollTo('#comment_' + json.focus);
+    scrollTo(document.querySelector('#comment_' + json.focus));
     input.value = '';
     input.change();
   });
@@ -105,7 +105,7 @@ function findComment(sender) {
   
   ajax.get('comment/get', function(html) {
     container.parentNode.insertAdjacentHTML('afterbegin', html);
-    parentEl = scrollTo(parent)[0];
+    parentEl = scrollTo(parent);
     if (parentEl) {
       parentEl.classList.add('highlight');
       parentEl.classList.add('inline');

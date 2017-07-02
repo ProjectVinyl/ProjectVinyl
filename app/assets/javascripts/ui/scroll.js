@@ -1,21 +1,38 @@
-function scrollIntoView(me, container, viewport) {
-  var offset = me.offset();
-  var scrollpos = container.offset();
-  container.animate({
-    scrollTop: offset.top - scrollpos.top - viewport.height() / 2 + me.height() / 2,
-    scrollLeft: offset.left - scrollpos.left - viewport.width() / 2 + me.width() / 2
+import { jSlim } from '../utils/jslim.js';
+
+function animateScroll(elementX, elementY, viewport, duration) {
+  const startingX = viewport.scrollLeft;
+  const startingY = viewport.scrollTop;
+  const diffX = elementX - startingX;
+  const diffY = elementY - startingY;
+  let start;
+
+  requestAnimationFrame(function step(timestamp) {
+    if (!start) start = timestamp;
+    const time = timestamp - start;
+    // 0.5*(1-cosx) is the easing function used here,
+    // linear would be simply be Math.min(time / duration, 1)
+    const percent = (1 - Math.cos(Math.min(time / duration, 1) * Math.PI)) / 2;
+    viewport.scrollLeft = startingX + diffX * percent;
+    viewport.scrollTop = startingY + diffY * percent;
+    if (time < duration) requestAnimationFrame(step);
   });
+}
+
+// me: The element you want to find
+// container: The container whose scroll position changes
+function scrollTo(me, container = document.documentElement) {
+  const childOff = jSlim.offset(me);
+  const containerOff = jSlim.offset(container);
+  const viewX = container.clientWidth, viewY = container.clientHeight;
+  const elementX = (childOff.left - containerOff.left) - (viewX / 2),
+        elementY = (childOff.top - containerOff.top) - (viewY / 2);
+
+  animateScroll(elementX, elementY, container, 500);
+
   return me;
 }
 
-function scrollTo(el, container, viewport) {
-  el = $(el);
-  if (!el.length) return el;
-  return scrollIntoView(el, $(container || 'html, body'), $(viewport || window));
-}
-
-// app/views/admin/files.html.erb
-// app/views/embed/view.html.erb
 // app/views/video/view.html.erb
 window.scrollTo = scrollTo;
 

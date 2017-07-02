@@ -26,7 +26,7 @@
 jSlim.ready(function() {
   var selected = document.querySelector('.playlist a.selected');
   if (selected) {
-		scrollTo(selected, '.playlist .scroll-container');
+		scrollTo(selected, document.querySelector('.playlist .scroll-container'));
 	}
 	document.body.scrollTop = 200;
 });

@@ -386,7 +386,7 @@ Player.prototype = {
       this.setEmbed();
       jSlim.ready(function() {
         const selected = document.querySelector('.playlist a.selected');
-        if (selected) scrollTo(selected, '.playlist .scroll-container');
+        if (selected) scrollTo(selected, document.querySelector('.playlist .scroll-container'));
       });
     }
     
@@ -492,7 +492,7 @@ Player.prototype = {
           if (selectedItem) selectedItem.classList.remove('selected');
           selectedItem = document.querySelector(`.playlist a[data-id=${json.id}]`);
           selectedItem.classList.add('selected');
-          scrollTo(selectedItem, '.playlist .scroll-container');
+          scrollTo(selectedItem, document.querySelector('.playlist .scroll-container'));
         });
       }
       
@@ -671,7 +671,7 @@ Player.prototype = {
                 if (selected) selected.classList.remove('selected');
                 selected = document.querySelector(`.playlist a[data-id=${json.id}]`);
                 selected.classList.add('selected');
-                scrollTo(selected, '.playlist .scroll-container');
+                scrollTo(selected, document.querySelector('.playlist .scroll-container'));
               });
             } else {
               document.location.replace(next.href);
