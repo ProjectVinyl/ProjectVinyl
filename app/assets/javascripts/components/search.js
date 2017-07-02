@@ -33,3 +33,12 @@ function setupSearch() {
 }
 
 jSlim.ready(setupSearch);
+
+// Hover events for labels in the search forms (and other places, maybe, eventually)
+jSlim.on(document, 'focusin', 'label input, label select', function() {
+  this.closest('label').classList.add('focus');
+});
+
+jSlim.on(document, 'focusout', 'label input, label select', function() {
+  this.closest('label').classList.remove('focus');
+});

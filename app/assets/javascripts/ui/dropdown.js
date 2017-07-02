@@ -5,95 +5,72 @@ const Popout = {
     if (sender && !sender.classList.contains('pop-out-shown')) {
       this.show(sender);
     } else {
-      this.hideAll();
+      this.hide(sender);
     }
   },
   show: function(sender) {
-    const left = jSlim.offset(sender.content).left;
+    var content = sender.querySelector('.pop-out');
+    const left = jSlim.offset(content).left;
     
     this.hideAll();
     sender.classList.add('pop-out-shown');
     sender.classList.remove('pop-left');
     sender.classList.remove('pop-right');
     
-    if (left + sender.content.clientWidth > document.documentElement.clientWidth) {
+    if (left + content.clientWidth > document.documentElement.clientWidth) {
       sender.classList.add('pop-left');
     }
     if (left < 0) {
       sender.classList.add('pop-right');
     }
   },
+  hide: function(sender) {
+    sender.classList.remove('pop-out-shown');
+  },
   hideAll: function() {
-    const shown = document.querySelector('.pop-out-shown');
-    if (shown) shown.classList.remove('pop-out-shown');
+    jSlim.all('.pop-out-shown:not(:hover)', this.hide);
   }
 };
 
-jSlim.ready(function() {
-  // FIXME what are these even doing here??
-  // No better place to put them -_-
-  jSlim.on(document, 'focusin', 'label input, label select', target => {
-    target.closest('label').classList.add('focus');
+// FIXME what a clusterfuck
+// Touch events. Uuuug... At least it works better than a certain other website that shall remain unnamed
+// The general advice it to keep them on a short a leash as possible, to prevent issues when scrolling on
+// a touch device.
+jSlim.on(document, 'touchstart', '.drop-down-holder:not(.hover), .mobile-touch-toggle:not(.hover)', function(e) {
+  if (e.relatedElement.matches('a, li')) {
+    return;
+  }
+  
+  var self = this;
+  
+  // ffs https://www.chromestatus.com/features/5093566007214080
+  
+  ['touchstart', 'touchmove'].forEach(function(t) {
+    self.addEventListener(t, clos, { passive: false });
+    document.addEventListener(t, clos, { passive: false });
   });
   
-  jSlim.on(document, 'focusout', 'label input, label select', target => {
-    target.closest('label').classList.remove('focus');
-  });
+  this.classList.add('hover');
+  e.preventDefault();
   
-  // FIXME what a clusterfuck
-  jSlim.on(document, 'touchstart', '.drop-down-holder:not(.hover), .mobile-touch-toggle:not(.hover)', (target, e) => {
-    const lis = [].slice.call(target.querySelectorAll('a, li'));
+  function clos(e) {
+    self.classList.remove('hover');
     
-    lis.forEach(li => {
-      li.addEventListener('touchstart', stopPropa);
+    ['touchstart', 'touchmove'].forEach(function(t) {
+      self.removeEventListener(t, clos);
+      document.removeEventListener(t, clos);
     });
     
-    ['touchstart', 'touchmove'].forEach(t => {
-      target.addEventListener(t, clos);
-      document.addEventListener(t, clos);
-    });
-    
-    target.classList.add('hover');
     e.preventDefault();
-    e.stopPropagation(); // FIXME
-    
-    function stopPropa(e2) {
-      e2.stopPropagation(); // FIXME
-    }
-    
-    function clos(e3) {
-      ['touchstart', 'touchmove'].forEach(t => {
-        target.removeEventListener(t, clos);
-        document.removeEventListener(t, clos);
-      });
-      
-      target.classList.remove('hover');
-      
-      lis.forEach(li => {
-        li.removeEventListener('touchstart', stopPropa);
-      });
-      
-      e3.preventDefault();
-      e3.stopPropagation();
-    }
-  });
-  
-  jSlim.on(document, 'click', '.pop-out-toggle', target => {
-    const popout = target.closest('.popper');
-    popout.content = popout.querySelector('.pop-out');
-    
-    target.addEventListener('click', event => {
-      event.stopPropagation(); // FIXME
-      event.preventDefault();
-      Popout.toggle(popout);
-    });
-    
-    popout.addEventListener('mousedown', event => {
-      event.stopPropagation(); // FIXME
-    });
-    
-    Popout.toggle(popout);
-  });
+    e.stopPropagation();
+  }
+}, { passive: false });
 
-  document.addEventListener('mousedown', () => Popout.hideAll());
+jSlim.on(document, 'click', '.pop-out-toggle', function() {
+  Popout.toggle(this.closest('.popper'));
+  e.preventDefault();
+});
+
+document.addEventListener('mousedown', function() {
+  Popout.hideAll();
 });

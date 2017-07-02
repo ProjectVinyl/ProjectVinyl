@@ -1,6 +1,6 @@
 import { fetchJson } from '../utils/requests.js';
 import { QueryParameters } from '../utils/queryparameters.js';
-import { jSlim } from './utils/jslim.js';
+import { jSlim } from '../utils/jslim.js';
 
 function repaintPages(context, page, pages) {
   const id = context.dataset.id;
