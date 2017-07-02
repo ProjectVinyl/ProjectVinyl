@@ -9,7 +9,7 @@ jSlim.ready(function() {
   }
   
   console.log('RequestAnimationFrame not supported. Using scroll instead');
-  window.addEventListsner('scroll', scroller);
+  window.addEventListener('scroll', scroller);
   
   function animator() {
     scroller();
