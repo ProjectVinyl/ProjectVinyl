@@ -1,5 +1,6 @@
 require File.expand_path('../boot', __FILE__)
 require 'rails/all'
+require File.expand_path('../csp', __FILE__)
 
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
@@ -7,6 +8,7 @@ Bundler.require(*Rails.groups)
 
 module Projectvinyl
   class Application < Rails::Application
+    
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration should go into files in config/initializers
     # -- all .rb files in that directory are automatically loaded.
@@ -32,9 +34,10 @@ module Projectvinyl
       'X-Frame-Options' => 'SAMEORIGIN',
       'X-XSS-Protection' => '1; mode=block',
       'X-Content-Type-Options' => 'nosniff',
-      'Content-Security-Policy' => "default-src 'self'; form-action 'self' https://syndication.twitter.com/; frame-ancestors *; child-src 'self' https://www.youtube.com; media-src 'self' blob:; img-src * blob: data:; script-src 'self' 'unsafe-inline' https://www.google.com/ https://code.jquery.com/ http://platform.twitter.com/ http://196.25.211.41/ https://cdn.syndication.twimg.com/; style-src 'self' 'unsafe-inline' http://platform.twitter.com/ https://ton.twimg.com;"
+      'Content-Security-Policy' => ProjectVinyl::Csp.headers[:default]
     }
-
+    
+    
     # F***n' rails
     config.autoload_paths += %W[#{config.root}/lib]
     config.eager_load_paths += %W[#{config.root}/lib]

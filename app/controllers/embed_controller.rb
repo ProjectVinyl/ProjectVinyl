@@ -18,7 +18,11 @@ class EmbedController < ActionController::Base
       end
     end
   end
-
+  
+  def twitter
+    
+  end
+  
   def oembed
     if url = params[:url]
       url = url.split('?')
@@ -77,5 +81,11 @@ class EmbedController < ActionController::Base
 
   def allow_embeds
     response.headers.except! 'X-Frame-Options'
+    
+    if action_name == 'twitter'
+      response.headers['Content-Security-Policy'] = ProjectVinyl::Csp.headers[:twitter]
+    else
+      response.headers['Content-Security-Policy'] = ProjectVinyl::Csp.headers[:embed]
+    end
   end
 end

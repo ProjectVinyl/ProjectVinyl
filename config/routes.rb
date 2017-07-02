@@ -78,6 +78,7 @@ Rails.application.routes.draw do
   get 'ajax/history/:id' => 'history#page'
 
   get 'embed/:id' => 'embed#view'
+  get 'embeds/twitter' => 'embed#twitter'
   get 'oembed' => 'embed#oembed'
   get 'download/:id' => 'video#download'
 
