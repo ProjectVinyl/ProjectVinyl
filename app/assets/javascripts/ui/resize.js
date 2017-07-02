@@ -3,7 +3,7 @@ import { jSlim } from '../utils/jslim.js';
 function sizeFont(el, targetWidth) {
   const div = document.createElement('div');
   let computed = getComputedStyle(el);
-
+  
   div.setAttribute('style', 'position:fixed;top:0;left:0;white-space:nowrap;background:#fff');
   div.style.fontFamily = computed.fontFamily;
   div.style.fontWeight = computed.fontWeight;
@@ -12,30 +12,30 @@ function sizeFont(el, targetWidth) {
   div.style.paddingRight = computed.paddingRight;
   div.textContent = el.textContent;
   document.body.appendChild(div);
-
+  
   // Using 2 style recalculations, we can determine the slope of the linear
   // equation defining the font-size for a given element width:
   //   independent X = width
   //   dependent   Y = font size
-
+  
   computed = getComputedStyle(div);
   const x1 = div.clientWidth, y1 = parseFloat(computed.fontSize);
-
-  div.style.fontSize = `${parseFloat(computed.fontSize) + 1}px`;
+  
+  div.style.fontSize = (parseFloat(computed.fontSize) + 1) + 'px';
   computed = getComputedStyle(div);
   const x2 = div.clientWidth, y2 = parseFloat(computed.fontSize);
-
+  
   // slope formula
   const m = (y2 - y1) / (x2 - x1);
-
+  
   // y = m(x - x1) + y1, point-slope form
   let newSize = (m * (targetWidth - x1)) + y1;
-
+  
   // clamped minimum/maximum font sizes
   if (newSize < 5) newSize = 5;
   if (newSize > 16.25) newSize = 16.25;
-
-  el.style.fontSize = `${newSize}px`;
+  
+  el.style.fontSize = newSize + 'px';
   document.body.removeChild(div);
 }
 
@@ -43,13 +43,12 @@ function resizeFont(el) {
   const holder = el.closest('.resize-holder');
   const computed = getComputedStyle(holder);
   const targetWidth = parseFloat(computed.width) - (parseFloat(computed.paddingLeft) + parseFloat(computed.paddingRight));
-
+  
   sizeFont(el, targetWidth);
 }
 
 function fixFonts() {
-  const targets = [].slice.call(document.querySelectorAll('h1.resize-target'));
-  targets.forEach(t => resizeFont(t));
+  jSlim.all('h1.resize-target', resizeFont);
 }
 
 window.addEventListener('resize', fixFonts);
