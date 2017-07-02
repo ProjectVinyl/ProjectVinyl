@@ -123,31 +123,28 @@ Validator.prototype = {
   }
 };
 
-// FIXME template
-function markup(id) {
-  return '<li data-target="new[' + id + ']" class="button hidden">\
-    <span class="progress">\
-      <span class="fill"></span>\
-    </span>\
-    <span class="label">untitled' + (id > 0 ? ' ' + id : '') + '</span>\
-    <i class="fa fa-close"></i>\
-  </li>';
+function tabMarkup(id) {
+  return document.getElementById('tab-template').innerHTML.replace(/\{id\}/g, id);
+}
+
+function uploaderMarkup(id) {
+  var result = document.getElementById('template').firstElementChild.cloneNode(true);
+  result.outerHTML = result.outerHTML.replace(/\{id\}/g, id);
+  return result;
 }
 
 function Uploader() {
   this.id = INDEX++;
   
   // Create new upload form from template
-  this.el = document.getElementById('template').firstElementChild.cloneNode(true);
-  this.el.dataset.tab = this.el.dataset.tab.replace(/\{id\}/g, this.id);
-  this.el.innerHTML = this.el.innerHTML.replace(/\{id\}/g, this.id);
+  this.el = uploaderMarkup(this.id);
   
   // Unselect prior tab and insert
   const selectedTab = document.querySelector('#uploader_frame > .tab.selected');
   if (selectedTab) selectedTab.classList.remove('selected');
   document.getElementById('uploader_frame').appendChild(this.el);
   
-  document.getElementById('new_tab_button').insertAdjacentHTML('beforebegin', markup(this.id));
+  document.getElementById('new_tab_button').insertAdjacentHTML('beforebegin', tabMarkup(this.id));
   
   this.tab = document.querySelector('[data-target="new[' + this.id + ']"');
   
@@ -378,3 +375,10 @@ Uploader.createChecker = function(el) {
 // video/edit.html.erb
 // video/upload.html.erb
 window.Uploader = Uploader;
+
+jSlim.ready(function() {
+  jSlim.all('#uploader_frame', function() {
+    new Uploader();
+  });
+  jSlim.all('#video-editor', Uploader.createChecker);
+});

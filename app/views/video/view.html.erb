@@ -23,10 +23,12 @@
 			</div>
 		</div>
 		<script>
-$(document).ready(function() {
-  var selected = $('.playlist a.selected');
-  if (selected.length) scrollTo(selected, '.playlist .scroll-container');
-	$('html,body').scrollTop(200);
+jSlim.ready(function() {
+  var selected = document.querySelector('.playlist a.selected');
+  if (selected) {
+		scrollTo(selected, '.playlist .scroll-container');
+	}
+	document.body.scrollTop = 200;
 });
 		</script>
 	</section>
