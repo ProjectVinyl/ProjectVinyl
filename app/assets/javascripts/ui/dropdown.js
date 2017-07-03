@@ -66,7 +66,7 @@ jSlim.on(document, 'touchstart', '.drop-down-holder:not(.hover), .mobile-touch-t
   }
 }, { passive: false });
 
-jSlim.on(document, 'click', '.pop-out-toggle', function() {
+jSlim.on(document, 'click', '.pop-out-toggle', function(e) {
   Popout.toggle(this.closest('.popper'));
   e.preventDefault();
 });
