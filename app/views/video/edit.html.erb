@@ -49,7 +49,7 @@
 				Remove current Image
 			</label>
 			<% if current_user.is_staff? %>
-			<button id="change_video" class="action" type="button" onclick="$('#video_file').trigger('click');">Change Main File</button>
+			<button id="change_video" class="action" type="button" onclick="document.querySelector('#video_file').click();">Change Main File</button>
 			<% end %>
 			<span class="notify bob-holder">
 				<div class="bobber bob-left">
