@@ -82,7 +82,7 @@ function initEditable(holder, content, short) {
       textarea.style.width = `${content.clientWidth + 20}px`;
       content.insertAdjacentElement('afterend', textarea);
     } else {
-      textarea = document.createElement('input');
+      textarea = document.createElement('textarea');
       textarea.className = 'input';
       textarea.style.height = `${content.clientHeight + 20}px`;
       content.insertAdjacentElement('afterend', textarea);
