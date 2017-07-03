@@ -42,7 +42,7 @@ const uploadingQueue = {
     if (this.running) {
       uploader.tab.classList.add('loading');
       uploader.tab.classList.add('waiting');
-      ajax.form($(uploader.form), {
+      ajax.form(uploader.form, {
         success: function(data) {
           uploader.complete(data.ref);
           if (next) next = self.tick(next);
@@ -345,7 +345,7 @@ function UploadChecker(el) {
 UploadChecker.prototype = extendObj({
   initPlayer: function() {
     this.player = new ThumbPicker();
-    this.player.constructor($(this.el.querySelector('.video')));
+    this.player.constructor(this.el.querySelector('.video'));
     this.player.start();
   },
   accept: function(file) {

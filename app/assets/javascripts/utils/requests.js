@@ -2,13 +2,18 @@
  * Request Utils
  */
 
+function csrfToken() {
+  const meta = document.querySelector('meta[name=csrf-token]');
+  return meta && meta.content;
+}
+
 function fetchJson(verb, endpoint, body) {
   const data = {
     method: verb,
     credentials: 'same-origin',
     headers: {
       'Content-Type': 'application/json',
-      'X-CSRF-Token': $.rails.csrfToken(),
+      'X-CSRF-Token': csrfToken(),
     },
   };
 
@@ -26,7 +31,7 @@ function fetchHtml(verb, endpoint, body) {
     credentials: 'same-origin',
     headers: {
       'X-Requested-With': 'XMLHttpRequest',
-      'X-CSRF-Token': $.rails.csrfToken(),
+      'X-CSRF-Token': csrfToken(),
     },
   };
 
