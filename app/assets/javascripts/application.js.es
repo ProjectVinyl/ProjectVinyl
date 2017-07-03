@@ -4,18 +4,15 @@
 // It's not advisable to add code directly here, but if you do, it'll appear at the bottom of the
 // the compiled file.
 //
-//= require jquery2
-//= require jquery_ujs
-
 //  Due to ERB parsing (this can be eliminated later)
 //= require data/all
 
-//= depend_on compat/all.js
-//= depend_on compat/opera.js
-//= depend_on compat/promise.polyfill.js
-//= depend_on compat/fetch.polyfill.js
-//= depend_on compat/closest.polyfill.js
-//= depend_on compat/customevent.polyfill.js
+//= depend_on vendor/all.js
+//= depend_on vendor/opera.js
+//= depend_on vendor/promise.polyfill.js
+//= depend_on vendor/fetch.polyfill.js
+//= depend_on vendor/closest.polyfill.js
+//= depend_on vendor/customevent.polyfill.js
 
 //= depend_on callbacks
 //= depend_on pageload
@@ -56,8 +53,8 @@
 //= depend_on utils/requests
 //= depend_on utils/jslim
 
-// Utilities for use at top scope
-import './compat/all.js';
+// Not part of the codebase
+import './vendor/all.js';
 
 // Our code (this can be shortened to 1-2 imports later)
 import './pageload.js';
