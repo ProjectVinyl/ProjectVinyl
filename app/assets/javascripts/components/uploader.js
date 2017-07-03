@@ -197,7 +197,7 @@ function Uploader() {
   });
   
   Validator.call(this, this.el);
-  focusTab($(this.tab));
+  focusTab(this.tab);
   
   INSTANCES.push(this);
 }
@@ -308,7 +308,7 @@ Uploader.prototype = extendObj({
     
     if (this.tab.classList.contains('selected')) {
       const otherTab = this.tab.parentNode.querySelector('li.button:not([data-disabled]):not(.hidden)[data-target]:not([data-target="' + this.id + '"])');
-      if (otherTab) focusTab($(otherTab));
+      if (otherTab) focusTab(otherTab);
     }
     
     if (ref) {

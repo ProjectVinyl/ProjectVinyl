@@ -1,56 +1,63 @@
 import { ajax } from '../utils/ajax.js';
+import { jSlim } from '../utils/jslim.js';
 
 function focusTab(me) {
-  if (!me.length) return;
-  if (!me.hasClass('selected') && me[0].dataset.target) {
-    var other = me.parent().find('.selected');
-    if (other.length) {
-      other.removeClass('selected');
-      $('div[data-tab="' + other[0].dataset.target + '"]').removeClass('selected').trigger('tabblur');
-    }
-    me.addClass('selected');
-    $('div[data-tab="' + me[0].dataset.target + '"]').addClass('selected').trigger('tabfocus');
+  debugger;
+  if (!me || me.classList.contains('selected') || !me.dataset.target)
+    return;
+
+  // Unfocus other tab first
+  const other = me.parentNode.querySelector('.selected');
+  if (other) {
+    other.classList.remove('selected');
+    const otherTab = document.querySelector(`div[data-tab="${other.dataset.target}"]`);
+    otherTab.classList.remove('selected');
+    otherTab.dispatchEvent(new CustomEvent('tabblur', { bubbles: true }));
   }
+
+  me.classList.add('selected');
+  const thisTab = document.querySelector(`div[data-tab="${me.dataset.target}"]`);
+  thisTab.classList.add('selected');
+  thisTab.dispatchEvent(new CustomEvent('tabfocus', { bubbles: true }));
 }
 
-$(document).on('click', '.tab-set > li.button:not([data-disabled])', function() {
-  focusTab($(this));
+jSlim.on(document, 'click', '.tab-set > li.button:not([data-disabled])', function() {
+  focusTab(this);
 });
 
-$(document).on('click', '.tab-set > li.button i.fa-close', function(e) {
-  var me = $(this.parentNode);
-  $('div[data-tab="' + me[0].dataset.target + '"]').remove();
-  me.addClass('hidden');
-  
-  setTimeout(function() {
-    me.remove();
-  }, 25);
-  
-  focusTab(me.parent().find('li.button:not([data-disabled]):not(.hidden)[data-target]').first());
-  
+jSlim.on(document, 'click', '.tab-set > li.button i.fa-close',  function(e) {
+  const tabset = this.parentNode;
+  const toRemove = document.querySelector(`div[data-tab="${tabset.dataset.target}"]`);
+
+  toRemove.parentNode.removeChild(toRemove);
+  tabset.classList.add('hidden');
+
+  setTimeout(() => tabset.parentNode.removeChild(tabset), 25);
+
+  focusTab(tabset.parentNode.querySelector('li.button:not([data-disabled]):not(.hidden)[data-target]'));
+
   e.preventDefault();
-  e.stopPropagation();
+  e.stopPropagation(); //
 });
 
-$(document).on('click', '.tab-set.async a.button:not([data-disabled])', function(e) {
-  var me = $(this);
-  if (!me.hasClass('selected')) {
-    var parent = this.parentNode;
-    var other = $(parent).find('.selected');
-    var holder = $('.tab[data-tab=' + parent.dataset.target + ']');
-    
-    other.removeClass('selected');
-    me.addClass('selected');
-    holder.addClass('waiting');
-    
-    ajax.get(parent.dataset.url, {
-      type: this.dataset.target, page: this.dataset.page || 0
-    }).json(function(json) {
-      holder.html(json.content);
-      holder.removeClass('waiting');
-    });
-  }
+jSlim.on(document, 'click', '.tab-set.async a.button:not([data-disabled])', function(e) {
   e.preventDefault();
+  if (this.classList.contains('selected')) return;
+
+  const parent = this.parentNode;
+  const other = parent.querySelector('.selected');
+  const holder = document.querySelector(`.tab[data-tab="${parent.dataset.target}"]`);
+
+  other.classList.remove('selected');
+  this.classList.add('selected');
+  holder.classList.add('waiting');
+
+  ajax.get(parent.dataset.url, {
+    type: this.dataset.target, page: this.dataset.page || 0
+  }).json(function(json) {
+    holder.innerHTML = json.content;
+    holder.classList.remove('waiting');
+  });
 });
 
 export { focusTab };
