@@ -98,13 +98,13 @@ function Validator(el) {
   
   const thumbPicker = this.el.querySelector('.tab[data-tab="thumbpick"]');
   
-  $(thumbPicker).on('tabblur', function() {
+  thumbPicker.addEventListener('tabblur', function() {
     self.lastTime = self.time.value;
     self.time.value = -1;
     self.validateInput();
   });
   
-  $(thumbPicker).on('tabfocus', function() {
+  thumbPicker.addEventListener('tabfocus', function() {
     self.time.value = self.lastTime;
     self.validateInput();
   });
