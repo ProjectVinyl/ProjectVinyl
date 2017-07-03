@@ -31,10 +31,10 @@ function initInfinitePage(target) {
       }
       return;
     }
-    if(document.scrollingElement.scrollTop + window.innerHeight == document.body.offsetHeight) {
+    if (document.scrollingElement.scrollTop + window.innerHeight == document.body.offsetHeight) {
       if (!loadingAfter) {
         loadingAfter = true;
-        target.addClass('loading-after');
+        target.classList.add('loading-after');
         ajax.get(path + '&start=' + startFrom).json(function(json) {
           if (json.content) {
             startFrom = json.end;
