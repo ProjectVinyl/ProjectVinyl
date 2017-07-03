@@ -1,4 +1,5 @@
 import { ajax } from './ajax.js';
+import { jSlim } from './jslim.js';
 
 var active = null;
 var emptyMessage = 'A description has not been written yet.';
@@ -9,19 +10,18 @@ var keyEvents = {
 
 var specialActions = {
   tag: function(sender, textarea) {
-    var tag = sender.attr('data-tag');
+    var tag = sender.dataset.tag;
     insertTags(textarea, '[' + tag + ']', '[/' + tag + ']');
-    $(textarea).trigger('change');
+    textarea.dispatchEvent(new Event('change'));
   },
   emoticons: function(sender) {
-    sender.removeClass('edit-action');
-    sender.find('.pop-out').html(emoticons.map(function(e) {
-      return '<li class="edit-action" data-action="emoticon" title=":' + e + ':"><img title=":' + e + ':" alt=":' + e + ':" src="/emoticons/' + e + '.png"></li>';
-    }).join(''));
+    sender.classList.remove('edit-action');
+    sender.querySelector('.pop-out').innerHTML =
+      emoticons.map(e => `<li class="edit-action" data-action="emoticon" title=":${e}:"><img title=":${e}:" alt=":${e}:" src="/emoticons/${e}.png"></li>`).join('');
   },
   emoticon: function(sender, textarea) {
-    insertTags(textarea, sender.attr('title'), '');
-    $(textarea).trigger('change');
+    insertTags(textarea, sender.title, '');
+    textarea.dispatchEvent(new Event('change'));
   }
 };
 
@@ -73,43 +73,47 @@ function poor(text) {
 }
 
 function initEditable(holder, content, short) {
-  var textarea = holder.find('.input');
-  if (!textarea.length) {
+  var textarea = holder.querySelector('.input');
+  if (!textarea) {
     if (short) {
-      textarea = $('<input class="input" />');
-      textarea.css('height', content.innerHeight() + 20);
-      textarea.css('width', content.innerWidth() + 20);
-      content.after(textarea);
+      textarea = document.createElement('input');
+      textarea.className = 'input';
+      textarea.style.height = `${content.clientHeight + 20}px`;
+      textarea.style.width = `${content.clientWidth + 20}px`;
+      content.insertAdjacentElement('afterend', textarea);
     } else {
-      textarea = $('<textarea class="input" />');
-      textarea.css('height', content.innerHeight() + 20);
-      content.after(textarea);
+      textarea = document.createElement('input');
+      textarea.className = 'input';
+      textarea.style.height = `${content.clientHeight + 20}px`;
+      content.insertAdjacentElement('afterend', textarea);
     }
   }
   if (!short) {
-    textarea.on('keydown keyup', function() {
-      var height = textarea.height();
-      textarea.css('height', 0);
-      textarea.css('margin-bottom', height);
-      textarea.css('height', textarea[0].scrollHeight + 20);
-      textarea.css('margin-bottom', '');
-    });
+    function changeHeight() {
+      const height = getComputedStyle(textarea).height;
+      textarea.style.height = 0;
+      textarea.style.marginBottom = height;
+      textarea.style.height = `${textarea.scrollHeight + 20}px`;
+      textarea.style.marginBottom = '';
+    }
+    textarea.addEventListener('keydown', changeHeight);
+    textarea.addEventListener('keyup', changeHeight);
   } else {
-    textarea.on('keydown keyup', function() {
-      var width = textarea.width();
-      textarea.css('width', 0);
-      textarea.css('margin-left', width);
-      textarea.css('width', textarea[0].scrollWidth + 20);
-      textarea.css('margin-left', '');
-    });
+    function changeWidth() {
+      const width = getComputedStyle(textarea).width;
+      textarea.style.width = 0;
+      textarea.style.marginLeft = width;
+      textarea.style.width = `${textarea.scrollWidth + 20}px`;
+      textarea.style.marginLeft = '';
+    }
+    textarea.addEventListener('keydown', changeWidth);
+    textarea.addEventListener('keyup', changeWidth);
   }
-  textarea.on('change', function() {
-    holder.addClass('dirty');
-  });
-  textarea.on('keydown', function(ev) {
+  textarea.addEventListener('change', () => holder.classList.add('dirty'));
+  textarea.addEventListener('keydown', ev => {
     if (ev.ctrlKey) {
       handleSpecialKeys(ev.keyCode, function(tag) {
-        insertTags(textarea[0], '[' + tag + ']', '[/' + tag + ']');
+        insertTags(textarea, '[' + tag + ']', '[/' + tag + ']');
         ev.preventDefault();
       });
     }
@@ -138,43 +142,44 @@ function insertTags(textarea, open, close) {
 }
 
 function toggleEdit(editing, holder, content, textarea, short) {
-  var text = content.text().toLowerCase().trim();
+  const text = content.textContent.toLowerCase().trim();
   if (!editing) {
-    content.find('.hovercard').remove();
-    textarea.val(poor(content.html()));
-    holder.addClass('editing');
+    const hovercard = content.querySelector('.hovercard');
+    if (hovercard) hovercard.parentNode.removeChild(hovercard);
+    textarea.value = poor(content.innerHTML);
+    holder.classList.add('editing');
   } else {
-    if (!text || !text.length || text == emptyMessage.toLowerCase()) {
-      content.text(emptyMessage);
+    if (!text || !text.length || text === emptyMessage.toLowerCase()) {
+      content.textContent = emptyMessage;
     }
     if (short) {
-      content.text(poor(textarea.val()));
+      content.textContent = poor(textarea.value);
     } else {
-      content.html(rich(textarea.val()));
+      content.innerHTML = rich(textarea.value);
     }
-    holder.removeClass('editing');
-    holder.trigger('change');
+    holder.classList.remove('editing');
+    holder.dispatchEvent(new Event('change'));
   }
   return !editing;
 }
 
 function save(action, id, field, holder) {
-  if (holder.hasClass('dirty')) {
-    holder.addClass('saving');
+  if (holder.classList.contains('dirty')) {
+    holder.classList.add('saving');
     ajax.post(action, {
       id: id,
       field: field,
-      value: poor(holder.find('.input').val())
+      value: poor(holder.querySelector('.input').value)
     }, function() {
-      holder.removeClass('saving');
-      holder.removeClass('dirty');
+      holder.classList.remove('saving');
+      holder.classList.remove('dirty');
     });
   }
 }
 
 function deactivate(button) {
   active = null;
-  button.trigger('click');
+  button.click();
 }
 
 function setupEditable(sender) {
@@ -183,75 +188,66 @@ function setupEditable(sender) {
   var member = sender.dataset.member;
   var target = sender.dataset.target;
   var short = sender.classList.contains('short');
-  var me = $(sender);
-  var content = me.children('.content');
-  var button = me.children('.edit');
-  var textarea = initEditable(me, content, short);
+  var content = sender.querySelector('.content');
+  var button = sender.querySelector('.edit');
+  var textarea = initEditable(sender, content, short);
   
-  button.on('click', function() {
+  button.addEventListener('click', function() {
     if (active && active != button) deactivate(active);
-    editing = toggleEdit(editing, me, content, textarea, short);
+    editing = toggleEdit(editing, sender, content, textarea, short);
     active = editing ? button : null;
     if (!editing && target) {
-      save('update/' + target, id, member, me);
+      save('update/' + target, id, member, sender);
     }
   });
-  me.on('click', function(ev) {
+  sender.addEventListener('click', function(ev) {
     ev.stopPropagation();
   });
 }
 
-$(document).on('click', function() {
-  if (active && !active.closest('.editable').is(':hover')) deactivate(active);
+document.addEventListener('click', () => {
+  if (active && !active.closest('.editable').matches(':hover')) deactivate(active);
 });
 
-$(document).on('change', 'textarea.comment-content', function() {
-  var preview = $(this).parent().find('.comment-content.preview');
-  if (preview.length) {
-    preview.html(rich($(this).val()));
-  }
+jSlim.on(document, 'change', 'textarea.comment-content', function() {
+  const preview = this.parentNode.querySelector('.comment-content.preview');
+  if (preview) preview.innerHTML = rich(this.value);
 });
 
-$(document).on('keydown', 'textarea.comment-content', function(ev) {
-  var self = this;
+jSlim.on(document, 'keydown', 'textarea.comment-content', function(ev) {
   if (ev.ctrlKey) {
-    handleSpecialKeys(ev.keyCode, function(tag) {
-      insertTags(self, '[' + tag + ']', '[/' + tag + ']');
-      $(self).trigger('change');
+    handleSpecialKeys(ev.keyCode, tag => {
+      insertTags(this, '[' + tag + ']', '[/' + tag + ']');
+      this.dispatchEvent(new Event('change'));
       ev.preventDefault();
     });
   }
 });
 
-$(document).on('mouseup', '.edit-action', function() {
-  var sender = $(this);
-  var textarea = sender.parents('.content.editing').find('textarea, input.comment-content')[0];
-  var type = specialActions[sender.attr('data-action')];
-  if (type) type(sender, textarea);
+jSlim.on(document, 'mouseup', '.edit-action', function() {
+  const textarea = this.closest('.content.editing').querySelector('textarea, input.comment-content');
+  const type = specialActions[this.dataset.action];
+  if (type) type(this, textarea);
 });
 
-$(document).on('dragstart', '#emoticons img[title]', function(event) {
-  var data = event.originalEvent.dataTransfer.getData('Text/plain');
+jSlim.on(document, 'dragstart', '#emoticons img[title]', function(event) {
+  let data = event.dataTransfer.getData('Text/plain');
   if (data && data.trim().indexOf('[') == 0) {
     data = data.split('\n');
     for (var i = data.length; i--;) {
       data[i] = data[i].trim().replace(/\[/g, '').replace(/\]/g, '');
     }
-    event.originalEvent.dataTransfer.setData('Text/plain', data.join(''));
+    event.dataTransfer.setData('Text/plain', data.join(''));
   } else {
-    event.originalEvent.dataTransfer.setData('Text/plain', $(this).attr('title'));
+    event.dataTransfer.setData('Text/plain', this.title);
   }
 });
 
-$(document).on('keydown', '#emoticons', function() {
-  $(this).select();
-});
-
-$(function() {
-  $('.editable').each(function() {
-    setupEditable(this);
+jSlim.ready(() => {
+  jSlim.all('.editable', e => setupEditable(e));
+  jSlim.all('.post-box textarea.comment-content, .post-box input.comment-content', c => {
+    c.dispatchEvent(new Event('change'));
   });
-  $('.post-box textarea.comment-content, .post-box input.comment-content').trigger('change');
 });
 
 const BBC = Object.freeze({
