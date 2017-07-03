@@ -22,7 +22,7 @@ const jSlim = {
   })(),
   on: function(el, event, selector, func, bubble) {
     var k = function(e) {
-      var target = e.target.closest(selector);
+      var target = e.target && e.target.closest && e.target.closest(selector);
       if (target) {
         if ((event == 'mouseout' || event == 'mouseover') && target.contains(e.relatedTarget)) return;
         return func.call(target, e);
