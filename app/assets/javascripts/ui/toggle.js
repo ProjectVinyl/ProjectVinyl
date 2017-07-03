@@ -1,4 +1,5 @@
 import { ajax } from '../utils/ajax.js';
+import { jSlim } from '../utils/jslim.js';
 
 function toggle(sender) {
   var id = sender.dataset.id;
@@ -7,41 +8,41 @@ function toggle(sender) {
   var checkIcon = sender.dataset.checkedIcon || 'check';
   var uncheckIcon = sender.dataset.uncheckedIcon;
   var state = sender.dataset.state;
-  
-  if (data) action += '?extra=' + $(data).val();
-  
+
+  if (data) action += `?extra=${document.querySelector(data).value}`;
+
   ajax.post(action, {
     id: id, item: sender.dataset.item
   }).json(function(json) {
-    var family = sender.dataset.family;
+    const family = sender.dataset.family;
     if (family) {
-      return $('.action.toggle[data-family="' + family + '"][data-id="' + id + '"]').each(function() {
-        var uncheck = this.dataset.uncheckedIcon;
-        var check = this.dataset.checkedIcon || 'check';
-        $(this).find('.icon').html(json[this.dataset.descriminator] ? '<i class="fa fa-' + check + '"></i>' : uncheck ? '<i class="fa fa-' + uncheck + '"></i>' : '');
+      return jSlim.all(`.action.toggle[data-family="${family}"][data-id="${id}"]`, t => {
+        const uncheck = t.dataset.uncheckedIcon;
+        const check = t.dataset.checkedIcon || 'check';
+        t.querySelector('.icon').innerHTML = json[t.dataset.descriminator] ? `<i class="fa fa-${check}"></i>` : uncheck ? `<i class="fa fa-${uncheck}"></i>` : '';
       });
     }
-    
-    $(sender).find('.icon').html(json.added ? '<i class="fa fa-' + checkIcon + '"></i>' : uncheckIcon ? '<i class="fa fa-' + uncheckIcon + '"></i>' : '');
+
+    sender.querySelector('.icon').innerHTML = json.added ? `<i class="fa fa-${checkIcon}"></i>` : uncheckIcon ? `<i class="fa fa-${uncheckIcon}"></i>` : '';
     if (state) {
-      $(sender).parents(sender.dataset.parent)[json.added ? 'addClass' : 'removeClass'](state);
+      sender.closest(sender.dataset.parent).classList[json.added ? 'add' : 'remove'](state);
     }
   });
 }
 
-$(document).on('click', '.action.toggle', function() {
+jSlim.on(document, 'click', '.action.toggle', function() {
   toggle(this);
 });
 
-$(document).on('click', '.state-toggle', function(ev) {
+jSlim.on(document, 'click', '.state-toggle', function(ev) {
   var state = this.dataset.state;
   var parent = this.dataset.parent;
-  var me = $(this);
-  
-  parent = parent ? me.closest(parent) : me.parent();
-  parent.toggleClass(state);
-  me.text(this.dataset[parent.hasClass(state)]);
-  me.trigger('toggle');
-  
+
+  parent = parent ? this.closest(parent) : this.parentNode;
+  parent.classList.toggle(state);
+
+  this.textContext = this.dataset[parent.classList.contains(state)];
+  this.dispatchEvent(new CustomEvent('toggle', { bubbles: true }));
+
   ev.preventDefault();
 });
