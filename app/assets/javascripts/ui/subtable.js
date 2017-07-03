@@ -1,15 +1,16 @@
-$(function() {
+import { jSlim } from '../utils/jslim.js';
+
+jSlim.ready(() => {
   function sizeSpannedBlocks() {
-    $('.row.row-spanned > .content').each(function() {
-      var me = $(this);
-      me.parent().css('height', me.children().height());
+    jSlim.all('.row.row-spanned > .content', el => {
+      el.parentNode.style.height = `${el.children[0].clientHeight}px`; // clientHeight not quite accurate
     });
   }
-  
+
   if (document.querySelector('.row.row-spanned')) {
-    $('.state-toggle').on('toggle', sizeSpannedBlocks);
-    $('.row.row-spanned input, .row.row-spanned textarea').on('keyup', sizeSpannedBlocks);
-    $(window).on('resize', sizeSpannedBlocks);
-    $('.row.row-spanned .tag-editor').on('tagschange', sizeSpannedBlocks);
+    jSlim.all('.state-toggle', el => el.addEventListener('toggle', sizeSpannedBlocks));
+    jSlim.all('.row.row-spanned input, .row.row-spanned textarea', el => el.addEventListener('keyup', sizeSpannedBlocks));
+    jSlim.all('.row.row-spanned .tag-editor', el => el.addEventListener('tagschange', sizeSpannedBlocks));
+    window.addEventListener('resize', sizeSpannedBlocks);
   }
 });
