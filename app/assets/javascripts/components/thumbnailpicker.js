@@ -29,7 +29,7 @@ Player.extend(ThumbPicker, {
   },
   changetrack: function(progress) {
     ThumbPicker.Super.changetrack.call(this, progress);
-    this.timeInput.val(this.video.currentTime);
+    this.timeInput.value = this.video.currentTime;
   },
   load: function(d) {
     this.start();

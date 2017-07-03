@@ -95,19 +95,6 @@ function Validator(el) {
     self.hasCover = true;
     self.validateInput();
   });
-  
-  const thumbPicker = this.el.querySelector('.tab[data-tab="thumbpick"]');
-  
-  thumbPicker.addEventListener('tabblur', function() {
-    self.lastTime = self.time.value;
-    self.time.value = -1;
-    self.validateInput();
-  });
-  
-  thumbPicker.addEventListener('tabfocus', function() {
-    self.time.value = self.lastTime;
-    self.validateInput();
-  });
 }
 Validator.prototype = {
   isReady: function() {
@@ -128,8 +115,9 @@ function tabMarkup(id) {
 }
 
 function uploaderMarkup(id) {
-  var result = document.getElementById('template').firstElementChild.cloneNode(true);
-  result.outerHTML = result.outerHTML.replace(/\{id\}/g, id);
+  const result = document.getElementById('template').firstElementChild.cloneNode(true);
+  result.innerHTML = result.innerHTML.replace(/\{id\}/g, id);
+  result.dataset.tab = result.dataset.tab.replace(/\{id\}/g, id);
   return result;
 }
 
@@ -181,17 +169,31 @@ function Uploader() {
     event.preventDefault();
     event.stopPropagation();
   });
-  
+
   const newVideo = this.el.querySelector('#new_video');
+  const thumbPicker = this.el.querySelector(`.tab[data-tab="thumbpick_${this.id}"]`);
+
   newVideo.addEventListener('tagschange', function() {
     self.validateInput();
   });
+
   newVideo.addEventListener('change', function(event) {
     if (event.target.matches('h1#video_title input')) {
       self.validateInput();
     }
   });
   
+  thumbPicker.addEventListener('tabblur', function() {
+    self.lastTime = self.time.value;
+    self.time.value = -1;
+    self.validateInput();
+  });
+  
+  thumbPicker.addEventListener('tabfocus', function() {
+    self.time.value = self.lastTime;
+    self.validateInput();
+  });
+
   jSlim.all(this.el, 'h1.resize-target', function(t) {
     resizeFont(t);
   });

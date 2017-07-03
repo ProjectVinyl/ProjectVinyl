@@ -2,7 +2,6 @@ import { ajax } from '../utils/ajax.js';
 import { jSlim } from '../utils/jslim.js';
 
 function focusTab(me) {
-  debugger;
   if (!me || me.classList.contains('selected') || !me.dataset.target)
     return;
 
