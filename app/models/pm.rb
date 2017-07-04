@@ -1,4 +1,4 @@
-class Pm < ActiveRecord::Base
+class Pm < ApplicationRecord
   belongs_to :receiver, class_name: 'User'
   belongs_to :sender, class_name: 'User'
 

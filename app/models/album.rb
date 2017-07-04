@@ -1,4 +1,4 @@
-class Album < ActiveRecord::Base
+class Album < ApplicationRecord
   belongs_to :user
   has_many :album_items
   has_many :videos, through: :album_items

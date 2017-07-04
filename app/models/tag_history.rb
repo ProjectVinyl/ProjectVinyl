@@ -1,4 +1,4 @@
-class TagHistory < ActiveRecord::Base
+class TagHistory < ApplicationRecord
   belongs_to :tag
   belongs_to :video
   belongs_to :user

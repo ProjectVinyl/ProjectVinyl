@@ -1,2 +1,2 @@
-class CommentVote < ActiveRecord::Base
+class CommentVote < ApplicationRecord
 end

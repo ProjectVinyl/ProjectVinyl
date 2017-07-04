@@ -28,7 +28,7 @@ class BadgeInstance
   end
 end
 
-class Badge < ActiveRecord::Base
+class Badge < ApplicationRecord
   Types = [
     BadgeInstance.new('Admin', 'star', 'orange', &:admin?),
     BadgeInstance.new('Moderator', 'gavel', 'orange', &:contributor?),

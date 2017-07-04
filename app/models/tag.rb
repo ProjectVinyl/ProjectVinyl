@@ -1,4 +1,4 @@
-class Tag < ActiveRecord::Base
+class Tag < ApplicationRecord
   belongs_to :tag_type
   belongs_to :alias, class_name: "Tag", foreign_key: "alias_id"
 
@@ -120,7 +120,7 @@ class Tag < ActiveRecord::Base
     values = Tag.hash_to_values(hash)
     sql = 'INSERT INTO tags (' + values[:keys].join(',') + ') VALUES (?) ON DUPLICATE KEY UPDATE name = name;'
     sql = Tag.sanitize_sql([sql, values[:values]])
-    ActiveRecord::Base.connection.execute(sql)
+    ApplicationRecord.connection.execute(sql)
     Tag.where(name: hash[:name]).first
   end
 

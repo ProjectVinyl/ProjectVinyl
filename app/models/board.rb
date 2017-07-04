@@ -1,4 +1,4 @@
-class Board < ActiveRecord::Base
+class Board < ApplicationRecord
   has_many :comment_threads, as: :owner, dependent: :destroy
 
   def self.listables

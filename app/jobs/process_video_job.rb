@@ -1,4 +1,4 @@
-class ProcessVideoJob < ActiveJob::Base
+class ProcessVideoJob < ApplicationJob
   queue_as :default
 
   def perform(video_id)

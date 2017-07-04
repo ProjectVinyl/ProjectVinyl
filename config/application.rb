@@ -38,11 +38,11 @@ module Projectvinyl
     }
     
     
-    # F***n' rails
+    # Fucking rails
     config.autoload_paths += %W[#{config.root}/lib]
     config.eager_load_paths += %W[#{config.root}/lib]
     config.active_support.escape_html_entities_in_json = false
-
+    config.active_record.belongs_to_required_by_default = false
     config.active_job.queue_adapter = :resque
   end
 end

@@ -1,4 +1,4 @@
-class AlbumItem < ActiveRecord::Base
+class AlbumItem < ApplicationRecord
   belongs_to :album
   belongs_to :video
   has_one :direct_user, through: :video

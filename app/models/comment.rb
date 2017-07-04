@@ -1,4 +1,4 @@
-class Comment < ActiveRecord::Base
+class Comment < ApplicationRecord
   REPLY_MATCHER = /(?<=\>\>|&gt;&gt;)[1234567890abcdefghijklmnopqrstuvwxyz]+(?= |\s|\n|$)/
   MENTION_MATCHER = /(?<=@)[^\s\[\<]+(?= |\s|\s|$)/
   QUOTED_TEXT = /\[q\].*\[\/q\]?/m
@@ -49,7 +49,7 @@ class Comment < ActiveRecord::Base
         Notification.notify_recievers(recievers, self,
                                       self.user.username + " has <b>replied</b> to your comment on <b>" + self.comment_thread.get_title + "</b>",
                                       self.comment_thread.location)
-        ActiveRecord::Base.connection.execute('INSERT INTO comment_replies (`comment_id`,`parent_id`) VALUES ' + replied_to)
+        ApplicationRecord.connection.execute('INSERT INTO comment_replies (`comment_id`,`parent_id`) VALUES ' + replied_to)
       end
     end
   end

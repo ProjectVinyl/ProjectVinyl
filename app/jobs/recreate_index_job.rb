@@ -1,4 +1,4 @@
-class RecreateIndexJob < ActiveJob::Base
+class RecreateIndexJob < ApplicationJob
   queue_as :default
 
   def perform(user_id, table)

@@ -1,4 +1,4 @@
-class Notification < ActiveRecord::Base
+class Notification < ApplicationRecord
   scope :preload_comment_threads, -> {
     mapping = {}
     ids = []

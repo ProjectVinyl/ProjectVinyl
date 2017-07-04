@@ -75,7 +75,7 @@ class Subscription
   end
 end
 
-class User < ActiveRecord::Base
+class User < ApplicationRecord
   # Include default devise modules. Others available are:
   # :omniauth_providers, :omniauthable, :lockable and :timeoutable
   devise :database_authenticatable, :registerable,

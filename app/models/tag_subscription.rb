@@ -1,4 +1,4 @@
-class TagSubscription < ActiveRecord::Base
+class TagSubscription < ApplicationRecord
   belongs_to :user
   belongs_to :tag
 

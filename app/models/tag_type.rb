@@ -1,4 +1,4 @@
-class TagType < ActiveRecord::Base
+class TagType < ApplicationRecord
   has_many :tag_type_implications, dependent: :destroy
   has_many :tags, through: :tag_type_implications, source: :implied
 

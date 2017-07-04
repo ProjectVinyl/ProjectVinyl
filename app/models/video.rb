@@ -1,6 +1,6 @@
 require 'elasticsearch/model'
 
-class Video < ActiveRecord::Base
+class Video < ApplicationRecord
   include Elasticsearch::Model
   include Indexable
   include Uncachable

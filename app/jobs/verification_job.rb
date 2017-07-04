@@ -1,4 +1,4 @@
-class VerificationJob < ActiveJob::Base
+class VerificationJob < ApplicationJob
   queue_as :default
 
   def perform(user_id)
