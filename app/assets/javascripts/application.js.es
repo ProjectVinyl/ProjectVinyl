@@ -4,6 +4,8 @@
 // It's not advisable to add code directly here, but if you do, it'll appear at the bottom of the
 // the compiled file.
 //
+//= require rails-ujs
+//
 //  Due to ERB parsing (this can be eliminated later)
 //= require data/all
 
