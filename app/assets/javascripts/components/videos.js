@@ -4,10 +4,10 @@
  * Copyright Project Vinyl Foundation 2017
 */
 
-import { fetchJson } from '../utils/requests.js';
-import { scrollTo } from '../ui/scroll.js';
-import { Key } from '../utils/misc.js';
-import { jSlim } from '../utils/jslim.js';
+import { fetchJson } from '../utils/requests';
+import { scrollTo } from '../ui/scroll';
+import { Key } from '../utils/misc';
+import { jSlim } from '../utils/jslim';
 
 const VIDEO_ELEMENT = document.createElement('video');
 const aspect = 16 / 9;

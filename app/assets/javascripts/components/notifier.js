@@ -1,5 +1,5 @@
-import { docTitle } from '../utils/doctitle.js';
-import { jSlim } from '../utils/jslim.js';
+import { docTitle } from '../utils/doctitle';
+import { jSlim } from '../utils/jslim';
 
 function updateCounter(counter, count) {
   counter.dataset.count = count;

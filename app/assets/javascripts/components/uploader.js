@@ -1,13 +1,13 @@
-import { ajax } from '../utils/ajax.js';
-import { BBC } from '../utils/bbcode.js';
-import { initFileSelect } from './fileinput.js';
-import { TagEditor } from './tageditor.js';
-import { ThumbPicker } from './thumbnailpicker.js';
-import { resizeFont } from '../ui/resize.js';
-import { focusTab } from '../ui/tabset.js';
-import { toBool, extendObj } from '../utils/misc.js';
-import { Player } from './videos.js';
-import { jSlim } from '../utils/jslim.js';
+import { ajax } from '../utils/ajax';
+import { BBC } from '../utils/bbcode';
+import { initFileSelect } from './fileinput';
+import { TagEditor } from './tageditor';
+import { ThumbPicker } from './thumbnailpicker';
+import { resizeFont } from '../ui/resize';
+import { focusTab } from '../ui/tabset';
+import { toBool, extendObj } from '../utils/misc';
+import { Player } from './videos';
+import { jSlim } from '../utils/jslim';
 
 const INSTANCES = [];
 let INDEX = 0;

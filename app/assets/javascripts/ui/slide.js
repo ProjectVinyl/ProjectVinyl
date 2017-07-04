@@ -1,6 +1,6 @@
-import { ajax } from '../utils/ajax.js';
-import { Callbacks } from '../callbacks.js';
-import { jSlim } from '../utils/jslim.js';
+import { ajax } from '../utils/ajax';
+import { Callbacks } from '../callbacks';
+import { jSlim } from '../utils/jslim';
 
 function slideOut(holder) {
   var h = holder.querySelector('.group.active').offsetHeight;

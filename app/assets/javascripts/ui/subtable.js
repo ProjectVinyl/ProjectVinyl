@@ -1,4 +1,4 @@
-import { jSlim } from '../utils/jslim.js';
+import { jSlim } from '../utils/jslim';
 
 jSlim.ready(() => {
   function sizeSpannedBlocks() {

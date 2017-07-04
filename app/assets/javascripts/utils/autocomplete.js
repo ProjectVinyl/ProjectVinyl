@@ -1,5 +1,5 @@
-import { ajax } from './ajax.js';
-import { jSlim } from './jslim.js';
+import { ajax } from './ajax';
+import { jSlim } from './jslim';
 
 let autocomplete = null;
 

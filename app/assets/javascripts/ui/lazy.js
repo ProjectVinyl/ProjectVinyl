@@ -1,5 +1,5 @@
-import { ajax } from '../utils/ajax.js';
-import { jSlim } from '../utils/jslim.js';
+import { ajax } from '../utils/ajax';
+import { jSlim } from '../utils/jslim';
 
 function lazyLoad(button) {
   var target = document.getElementById(button.dataset.target);

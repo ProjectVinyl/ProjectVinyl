@@ -3,11 +3,11 @@
  * i.e. When the banner selection dialog is opened
  */
 
-import { ajax } from './utils/ajax.js';
-import { jSlim } from './utils/jslim.js';
-import { initFileSelect } from './components/fileinput.js';
-import { slideAcross } from './ui/slide.js';
-import { error } from './components/popup.js';
+import { ajax } from './utils/ajax';
+import { jSlim } from './utils/jslim';
+import { initFileSelect } from './components/fileinput';
+import { slideAcross } from './ui/slide';
+import { error } from './components/popup';
 
 const Callbacks = {
   callbackFunctions: {

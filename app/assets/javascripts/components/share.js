@@ -1,5 +1,5 @@
-import { slideOut } from '../ui/slide.js';
-import { jSlim } from '../utils/jslim.js';
+import { slideOut } from '../ui/slide';
+import { jSlim } from '../utils/jslim';
 
 const shares = {
   facebook: 'http://www.facebook.com/sharer/sharer.php?href={url}',

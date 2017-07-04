@@ -1,6 +1,6 @@
-import { ajax } from '../utils/ajax.js';
-import { paginator } from '../components/paginator.js';
-import { jSlim } from '../utils/jslim.js';
+import { ajax } from '../utils/ajax';
+import { paginator } from '../components/paginator';
+import { jSlim } from '../utils/jslim';
 
 let floater = null;
 

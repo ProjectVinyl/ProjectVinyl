@@ -1,8 +1,8 @@
-import { ajax } from '../utils/ajax.js';
-import { paginator } from '../components/paginator.js';
-import { Popup } from '../components/popup.js';
-import { jSlim } from '../utils/jslim.js';
-import { Callbacks } from '../callbacks.js';
+import { ajax } from '../utils/ajax';
+import { paginator } from '../components/paginator';
+import { Popup } from '../components/popup';
+import { jSlim } from '../utils/jslim';
+import { Callbacks } from '../callbacks';
 
 function createPopup(me, action) {
   var id = me.dataset.id;

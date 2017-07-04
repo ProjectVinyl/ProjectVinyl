@@ -1,4 +1,4 @@
-import { Player } from './videos.js';
+import { Player } from './videos';
 
 function ThumbPicker() {
 }

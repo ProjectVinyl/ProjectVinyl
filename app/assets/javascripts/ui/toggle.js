@@ -1,5 +1,5 @@
-import { ajax } from '../utils/ajax.js';
-import { jSlim } from '../utils/jslim.js';
+import { ajax } from '../utils/ajax';
+import { jSlim } from '../utils/jslim';
 
 function toggle(sender) {
   var id = sender.dataset.id;

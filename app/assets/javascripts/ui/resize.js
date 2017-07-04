@@ -1,4 +1,4 @@
-import { jSlim } from '../utils/jslim.js';
+import { jSlim } from '../utils/jslim';
 
 function sizeFont(el, targetWidth) {
   const div = document.createElement('div');

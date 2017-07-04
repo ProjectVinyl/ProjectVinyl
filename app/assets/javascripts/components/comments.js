@@ -1,8 +1,8 @@
-import { ajax } from '../utils/ajax.js';
-import { paginator } from './paginator.js';
-import { error } from './popup.js';
-import { scrollTo } from '../ui/scroll.js';
-import { jSlim } from '../utils/jslim.js';
+import { ajax } from '../utils/ajax';
+import { paginator } from './paginator';
+import { error } from './popup';
+import { scrollTo } from '../ui/scroll';
+import { jSlim } from '../utils/jslim';
 
 // app/views/thread/_comment_box.html.erb
 // app/views/thread/_view_reverse.erb

@@ -1,4 +1,4 @@
-import { jSlim } from '../utils/jslim.js';
+import { jSlim } from '../utils/jslim';
 
 function animateScroll(elementX, elementY, viewport, duration) {
   const startingX = viewport.scrollLeft;

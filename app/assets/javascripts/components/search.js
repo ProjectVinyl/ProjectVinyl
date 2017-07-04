@@ -1,4 +1,4 @@
-import { jSlim } from '../utils/jslim.js';
+import { jSlim } from '../utils/jslim';
 
 function setupSearch() {
   var searchInput = document.querySelector('#search input');

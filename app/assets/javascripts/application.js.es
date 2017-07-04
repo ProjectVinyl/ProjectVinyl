@@ -10,29 +10,29 @@
 //= require data/all
 
 // Not part of the codebase
-import './vendor/all.js';
+import './vendor/all';
 
 // Our code (this can be shortened to 1-2 imports later)
-import './pageload.js';
-import './components/comments.js';
-import './components/search.js';
-import './components/share.js';
-import './components/uploader.js';
-import './components/usercard.js';
-import './components/vote.js';
-import './components/notifier.js';
-import './ui/infiniscroll.js';
-import './ui/confirmation.js';
-import './ui/dropdown.js';
-import './ui/form.js';
-import './ui/grid.js';
-import './ui/lazy.js';
-import './ui/reorder.js';
-import './ui/slide.js';
-import './ui/subtable.js';
-import './ui/tabset.js';
-import './ui/toggle.js';
-import './utils/autocomplete.js';
-import './utils/jslim.js';
+import './pageload';
+import './components/comments';
+import './components/search';
+import './components/share';
+import './components/uploader';
+import './components/usercard';
+import './components/vote';
+import './components/notifier';
+import './ui/infiniscroll';
+import './ui/confirmation';
+import './ui/dropdown';
+import './ui/form';
+import './ui/grid';
+import './ui/lazy';
+import './ui/reorder';
+import './ui/slide';
+import './ui/subtable';
+import './ui/tabset';
+import './ui/toggle';
+import './utils/autocomplete';
+import './utils/jslim';
 
-import './callbacks.js';
+import './callbacks';

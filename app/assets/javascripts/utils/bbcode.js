@@ -1,5 +1,5 @@
-import { ajax } from './ajax.js';
-import { jSlim } from './jslim.js';
+import { ajax } from './ajax';
+import { jSlim } from './jslim';
 
 var active = null;
 var emptyMessage = 'A description has not been written yet.';

@@ -1,7 +1,7 @@
-import { error } from './popup.js';
-import { toBool } from '../utils/misc.js';
-import { jSlim } from '../utils/jslim.js';
-import { Callbacks } from '../callbacks.js';
+import { error } from './popup';
+import { toBool } from '../utils/misc';
+import { jSlim } from '../utils/jslim';
+import { Callbacks } from '../callbacks';
 
 function validateTypes(type, file) {
   switch (type) {

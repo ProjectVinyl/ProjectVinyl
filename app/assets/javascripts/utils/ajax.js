@@ -1,7 +1,7 @@
-import { Duration } from './duration.js';
-import { extendObj } from './misc.js';
-import { error } from '../components/popup.js';
-import { Callbacks } from '../callbacks.js';
+import { Duration } from './duration';
+import { extendObj } from './misc';
+import { error } from '../components/popup';
+import { Callbacks } from '../callbacks';
 
 function xhr(params) {
   var csrf = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
