@@ -167,7 +167,7 @@ function Uploader() {
   this.form.addEventListener('submit', function(event) {
     uploadingQueue.enqueue(self);
     event.preventDefault();
-    event.stopPropagation();
+    event.stopImmediatePropagation();
   });
 
   const newVideo = this.el.querySelector('#new_video');

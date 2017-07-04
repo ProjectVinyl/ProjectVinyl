@@ -11,7 +11,9 @@ function xhr(params) {
       if (xhr.readyState === XMLHttpRequest.DONE) {
         if (xhr.status >= 200 && xhr.status < 300) {
           if (params.success) {
-            params.success(xhr.responseXML || xhr.responseText, null, xhr);
+            let data = xhr.responseXML || xhr.responseText;
+            try { data = JSON.parse(data) } catch(undefined) {} // try to unmarshal
+            params.success(data, null, xhr);
           }
         } else if (xhr.responseText) {
           if (params.error) params.error(xhr.responseText);

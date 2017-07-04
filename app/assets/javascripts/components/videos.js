@@ -579,7 +579,7 @@ Player.prototype = {
     this.start();
   },
   load: function(data) {
-    this.loadURL(URL.createObjectURL(data));
+    if (data) this.loadURL(URL.createObjectURL(data));
   },
   // FIXME: almost completely duplicated, likely can simply
   // change client code to just use one or other
