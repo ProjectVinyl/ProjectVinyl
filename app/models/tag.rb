@@ -17,7 +17,7 @@ class Tag < ApplicationRecord
   has_many :aliases, class_name: "Tag", foreign_key: "alias_id"
 
   def self.sanitize_sql(arguments)
-    Tag.sanitize_sql_for_conditions(arguments)
+    Tag.send :sanitize_sql_for_conditions, arguments
   end
 
   def self.sanitize_name(name)
