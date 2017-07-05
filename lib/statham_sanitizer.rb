@@ -4,7 +4,7 @@ require 'rails-html-sanitizer'
 # https://www.viget.com/articles/html-sanitization-in-rails-that-actually-works
 class StathamSanitizer < Rails::Html::WhiteListSanitizer
   protected
-
+    
     def tokenize(text, options)
       super.map do |token|
         if token.is_a?(HTML::Tag) && options[:parent].include?(token.name)
@@ -14,7 +14,7 @@ class StathamSanitizer < Rails::Html::WhiteListSanitizer
         end
       end
     end
-
+    
     def process_node(node, result, options)
       result << case node
       when HTML::Tag
@@ -23,9 +23,9 @@ class StathamSanitizer < Rails::Html::WhiteListSanitizer
         elsif node.closing != :self
           options[:parent].unshift node.name
         end
-
+        
         process_attributes_for node, options
-
+        
         if options[:tags].include?(node.name)
           node
         else
