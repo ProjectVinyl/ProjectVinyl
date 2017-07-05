@@ -24,7 +24,9 @@ function openUsercard(sender, usercard) {
   }, 500);
 }
 
-jSlim.on(document, 'mouseover', '.user-link', function() {
+jSlim.on(document, 'mouseover', '.user-link', function(e) {
+  if (e.relatedTarget.closest('.user-link-ignore')) return;
+  
   var id = this.dataset.id;
   var usercard = document.querySelector('.hovercard[data-id="' + id + '"]');
   if (!usercard) {

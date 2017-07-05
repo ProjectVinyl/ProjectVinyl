@@ -9,6 +9,7 @@
 	<div class="content editing">
 		<div class="name">
 			<a class="user-link" data-id="<%= current_user.id %>" href="<%= current_user.link %>"><%= current_user.username %></a>
+			<%= render partial: 'badge/badges', locals: {user: current_user} %>
 		</div>
 		<div class="comment-content preview"></div>
 			<textarea class="comment-content"></textarea>
