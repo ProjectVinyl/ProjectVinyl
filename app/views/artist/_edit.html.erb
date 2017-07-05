@@ -11,19 +11,20 @@
 		<td class="field center">
 		<%= form_for(user, as: "user", url: "/ajax/avatar/upload", "html": { "class": "async" }) do |f| %>
 			<%= f.text_field :id, hidden: true %>
-			<div id="avatar-upload" class="avatar file-select image-selector uploaded-preview revertable" data-type="image" data-callback="changeAvatar" data-id="<%= user.id %>">
-				<span class="preview" style="background-image: url('<%= user.avatar %>');"></span>
-				<span class="drop-icon" style="box-shadow: none;">
-					<i class="fa fa-camera"></i>
-				</span>
-				<%= f.file_field :avatar %>
-			</div>
-			<div class="buttons">
-				<label class="link red">
-					<input id="erase-avatar" name="erase" type="checkbox"></input>
-					<i class="fa fa-check"></i>
-					Delete
-				</label>
+			<div class="file-select-container">
+				<div id="avatar-upload" class="avatar file-select image-selector uploaded-preview revertable" data-type="image" data-callback="changeAvatar" data-id="<%= user.id %>">
+					<span class="preview" style="background-image: url('<%= user.avatar %>');"></span>
+					<span class="drop-icon" style="box-shadow: none;">
+						<i class="fa fa-camera"></i>
+					</span>
+					<%= f.file_field :avatar %>
+				</div>
+				<div class="buttons file-select-options">
+					<label class="link red">
+						<input data-action="erase" id="erase-avatar" name="erase" type="checkbox"></input>
+						<i class="fa fa-check"></i> Delete
+					</label>
+				</div>
 			</div>
 			<div class="progressor">
 				<div class="cover-block">
@@ -35,15 +36,6 @@
 					</div>
 				</div>
 			</div>
-			<script>
-var avatar = document.getElementById('avatar-upload');
-avatar.parentNode.querySelector('input#erase-avatar').addEventListener('change', function() {
-	if (this.checked) {
-		avatar.trigger('accept');
-		this.checked = false;
-	}
-});
-			</script>
 			<% end %>
 		</td>
 	</tr>

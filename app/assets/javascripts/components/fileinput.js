@@ -46,13 +46,6 @@ function initFileSelect(me) {
   
   const type = me.dataset.type;
   const allowMulti = toBool(me.getAttribute('allow-multi'));
-  const input = me.querySelector('input');
-  
-  // Don't let the clicks escape; they might get out and replicate.
-  // (prevents triggering handlers higher up in the dom)
-  input.addEventListener('click', function(e) {
-    e.stopPropagation();
-  });
   
   function enterDrag() {
     me.classList.add('drag');
@@ -66,39 +59,40 @@ function initFileSelect(me) {
   me.addEventListener('dragleave', leaveDrag);
   me.addEventListener('drop', leaveDrag);
   
-  if (me.classList.contains('image-selector')) {
-    input.addEventListener('change', function() {
-      handleFiles(input.files, allowMulti, type, function(f, title) {
-        var detail = {
-          mime: f.type,
-          type: title[title.length - 1]
-        };
-        renderPreview(me, f);
-        if (!Callbacks.execute(me.dataset.callback, [me, detail])) {
-          me.dispatchEvent(new CustomEvent('accept', {
-            detail: detail,
-            bubbles: true
-          }));
-        }
+  function despatchCallback(detail) {
+    if (!Callbacks.execute(me.dataset.callback, [me, detail])) {
+      me.dispatchEvent(new CustomEvent('accept', {
+        detail: detail,
+        bubbles: true
+      }));
+    }
+  }
+  
+  jSlim.on(me, 'change', 'input', function() {
+    handleFiles(this.files, allowMulti, type, function(f, title) {
+      despatchCallback({
+        title: title.splice(0, title.length - 1).join('.'),
+        mime: f.type,
+        type: title[title.length - 1],
+        data: f
       });
     });
-  } else {
-    input.addEventListener('change', function() {
-      handleFiles(input.files, allowMulti, type, function(f, title) {
-        var detail = {
-          title: title.splice(0, title.length - 1).join('.'),
-          mime: f.type,
-          type: title[title.length - 1],
-          data: f
-        };
-        if (!Callbacks.execute(me.dataset.callback, [me, detail])) {
-          me.dispatchEvent(new CustomEvent('accept', {
-            detail: detail,
-            bubbles: true
-          }));
+  });
+  
+  if (me.parentNode.classList.contains('file-select-container')) {
+    var options = me.parentNode.querySelector('.file-select-options');
+    if (options) {
+      jSlim.on(options, 'change', 'input', function(e) {
+        if (this.dataset.action == 'erase') {
+          if (this.checked) {
+            let input = me.querySelector('input');
+            input.value = '';
+            despatchCallback({}); // Deletion is handled by the server when this checkbox is set, since we can't easily erase a fileinput's value
+            this.checked = false;
+          }
         }
       });
-    });
+    }
   }
   
   return me;
