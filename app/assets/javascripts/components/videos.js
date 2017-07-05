@@ -4,7 +4,7 @@
  * Copyright Project Vinyl Foundation 2017
 */
 
-import { fetchJson } from '../utils/requests';
+import { ajax } from '../utils/ajax';
 import { scrollTo } from '../ui/scroll';
 import { Key } from '../utils/misc';
 import { jSlim } from '../utils/jslim';
@@ -203,6 +203,7 @@ Player.prototype = {
     if (canGen(el.firstElementChild)) Player.generate(el);
     
     this.__sendMessages = !standalone;
+    this.embedded = false;
     this.dom = el;
     this.player = el.querySelector('.player');
     this.player.error = this.player.querySelector('.error');
@@ -416,23 +417,31 @@ Player.prototype = {
     return 0;
   },
   showContext: function(ev) {
-    let y = ev.pageY;
-    let x = ev.pageX;
     
-    const vWidth = document.documentElement.clientWidth;
-    const vHeight = document.documentElement.clientHeight;
+    var x = ev.clientX;
+    var y = ev.clientY;
     
-    if (x + this.contextmenu.clientWidth > vWidth) x = vWidth - this.contextmenu.clientWidth;
-    if (y + this.contextmenu.clientHeight + 10 >= vHeight) y = vHeight - this.contextmenu.clientHeight - 10;
+    if (x + this.contextmenu.offsetWidth >= document.body.clientWidth) {
+      x = document.body.clientWidth - this.contextmenu.offsetWidth;
+    }
+    if (y + this.contextmenu.offsetHeight >= document.body.clientHeight) {
+      y = document.body.clientHeight - this.contextmenu.offsetHeight;
+    }
     
-    this.contextmenu.style.top = `${y - (this.dom.getBoundingClientRect().top + pageYOffset)}px`;
-    this.contextmenu.style.left = `${x - (this.dom.getBoundingClientRect().left + pageXOffset)}px`;
+    var off = jSlim.offset(this.dom);
+    x += document.scrollingElement.scrollLeft - off.left;
+    y += document.scrollingElement.scrollTop - off.top;
+    
+    this.contextmenu.style.top = y + 'px';
+    this.contextmenu.style.left = x + 'px';
     this.contextmenu.style.display = 'table';
     this.contextmenu.style.opacity = '1';
     
     this.halt(ev);
   },
   setEmbed: function() {
+    this.embedded = true;
+    
     const h1 = this.player.querySelector('.pause h1');
     const link = h1.querySelector('.pause h1 a');
     
@@ -458,10 +467,10 @@ Player.prototype = {
     
     this.dom.playlist = document.querySelector('.playlist');
     this.dom.playlist.link = document.createElement('div');
-    this.dom.playlist.link.class = 'playlist-toggle';
+    this.dom.playlist.link.classList.add('playlist-toggle');
     this.dom.playlist.link.innerHTML = '<i class="fa fa-list"/>';
-    this.dom.append(this.dom.playlist.link);
-
+    this.dom.appendChild(this.dom.playlist.link);
+    
     this.dom.playlist.link.addEventListener('click', ev => {
       this.dom.playlist.classList.toggle('visible');
       this.halt(ev);
@@ -477,38 +486,60 @@ Player.prototype = {
       if (ev.button !== 0) return;
       
       const target = ev.target.closest('.items a, #playlist_next, #playlist_prev');
-      if (target) {
-        fetchJson('GET', `/ajax/view${target.href}`).then(response => response.json()).then(json => {
-          const playlistNext = document.querySelector('#playlist_next');
-          const playlistPrev = document.querySelector('#playlist_prev');
-          let selectedItem = document.querySelector('.playlist a.selected');
-          
-          this.redirect = target.href;
-          this.loadAttributesAndRestart(json);
-          
-          if (json.next) playlistNext.href = json.next;
-          if (json.prev) playlistPrev.href = json.prev;
-          
-          if (selectedItem) selectedItem.classList.remove('selected');
-          selectedItem = document.querySelector(`.playlist a[data-id=${json.id}]`);
-          selectedItem.classList.add('selected');
-          scrollTo(selectedItem, document.querySelector('.playlist .scroll-container'));
-        });
-      }
-      
+      this.navTo(target);
       this.halt(ev);
     });
   },
+  navTo: function(sender) {
+    if (sender) {
+      return ajax.get('view' + sender.getAttribute('href')).json(json => {
+        const next = document.querySelector('#playlist_next');
+        const prev = document.querySelector('#playlist_prev');
+        
+        this.redirect = target.href;
+        this.loadAttributesAndRestart(json);
+        
+        var selected = document.querySelector('.playlist a.selected');
+        if (selected) selected.classList.remove('selected');
+        selected = document.querySelector('.playlist a[data-id="' + json.id + '"]');
+        selected.classList.add('selected');
+        scrollTo(selected, document.querySelector('.playlist .scroll-container'));
+        
+        if (this.embedded) {
+          if (next && json.next) next.href = json.next;
+          if (prev && json.prev) prev.href = json.prev;
+        } else {
+          if (next) {
+            if (json.next) {
+              next.href = json.next;
+            } else {
+              next.parentNode.removeChild(next);
+              document.querySelector('.buff-right').classList.remove('buff-right');
+            }
+          }
+          if (prev) {
+            if (json.prev) {
+              prev.href = json.prev;
+            } else {
+              prev.parentNode.removeChild(prev);
+            }
+          }
+        }
+      });
+    }
+    
+    document.location.href.replace(sender.href);
+  },
   addContext: function(title, initial, callback) {
     const item = document.createElement('li');
-    item.innerHTML = `<div class="label">${title}</div>`;
+    item.innerHTML = '<div class="label">' + title + '</div>';
     
     const value = document.createElement('div');
     value.classList.add('value');
     item.appendChild(value);
     
     function val(s) {
-      value.innerHTML = typeof s === 'boolean' ? s ? '<i class="fa fa-check" />' : '' : s;
+      value.innerHTML = typeof s === 'boolean' ? s ? '<i class="fa fa-check"></i>' : '' : s;
     }
     
     val(initial);
@@ -646,37 +677,7 @@ Player.prototype = {
       
       video.addEventListener('ended', () => {
         if (this.__autoplay) {
-          // FIXME: more duplication
-          const next = document.querySelector('#playlist_next');
-          const prev = document.querySelector('#playlist_prev');
-          let selected = document.querySelector('.playlist a.selected');
-          
-          if (next) {
-            if (Player.fullscreenPlayer === this || this.album) {
-              // ew
-              fetchJson('GET', `/ajax/view${next.href}`).then(response => response.json()).then(json => {
-                this.redirect = next.href;
-                this.loadAttributesAndRestart(json);
-                if (json.next) {
-                  next.href = json.next;
-                } else {
-                  next.parentNode.removeChild(next);
-                  document.querySelector('.buff-right').classList.remove('buff-right');
-                }
-                if (json.prev) {
-                  prev.href = json.prev;
-                } else {
-                  prev.parentNode.removeChild(prev);
-                }
-                if (selected) selected.classList.remove('selected');
-                selected = document.querySelector(`.playlist a[data-id=${json.id}]`);
-                selected.classList.add('selected');
-                scrollTo(selected, document.querySelector('.playlist .scroll-container'));
-              });
-            } else {
-              document.location.replace(next.href);
-            }
-          }
+          this.navTo(document.querySelector('#playlist_next'));
         } else {
           if (this.pause()) this.player.classList.add('stopped');
         }
@@ -751,11 +752,11 @@ Player.prototype = {
   track: function(time, duration) {
     const percentFill = (time / duration) * 100;
     
-    this.controls.track.bob.style.left = `${percentFill}%`;
-    this.controls.track.fill.style.right = `${100 - percentFill}%`;
+    this.controls.track.bob.style.left = percentFill + '%';
+    this.controls.track.fill.style.right = (100 - percentFill) + '%';
     
     if (this.dom.toggler.touching()) {
-      this.controls.track.preview.style.left = `${percentFill}%`;
+      this.controls.track.preview.style.left = percentFill + '%';
       this.controls.track.preview.dataset.time = this.descriptive(time);
     }
     
@@ -789,34 +790,19 @@ Player.prototype = {
     return x / this.controls.track.clientWidth;
   },
   startChange: function(ev) {
-    this.checkstart();
-    this.dom.classList.add('tracking');
-    
-    const func = ev => this.jump(ev);
-    const ender = () => {
-      ['mouseup', 'touchend', 'touchcancel'].forEach(t => document.removeEventListener(t, ender));
-      ['mousemove', 'touchmove'            ].forEach(t => document.removeEventListener(t, func));
-      this.dom.classList.remove('tracking');
-    };
-    
-    // FIXME: damn that's a lot of events
-    ['mouseup', 'touchend', 'touchcancel'].forEach(t => document.addEventListener(t, ender));
-    ['mousemove', 'touchmove'            ].forEach(t => document.addEventListener(t, func));
-
-    this.halt(ev);
+    this.startChangeGeneric(ev, 'tracking', ev => this.jump(ev));
   },
-  // FIXME: almost exact duplicate of above
-  // Except for the *volume* slider!
-  // Should probably combine them
   startChangeVolume: function(ev) {
+    this.startChangeGeneric(ev, 'voluming', ev => this.changeVolume(ev));
+  },
+  startChangeGeneric: function(ev, clazz, func) {
     this.checkstart();
-    this.dom.classList.add('voluming');
+    this.dom.classList.add(clazz);
     
-    const func = ev => this.changeVolume(ev);
     const ender = () => {
       ['mouseup', 'touchend', 'touchcancel'].forEach(t => document.removeEventListener(t, ender));
       ['mousemove', 'touchmove'            ].forEach(t => document.removeEventListener(t, func));
-      this.dom.classList.remove('voluming');
+      this.dom.classList.remove(clazz);
     };
     
     ['mouseup', 'touchend', 'touchcancel'].forEach(t => document.addEventListener(t, ender));
@@ -848,12 +834,12 @@ Player.prototype = {
   },
   volume: function(volume, muted) {
     const indicator = this.dom.querySelector('.volume .indicator i');
-    if (indicator) indicator.class = muted ? 'fa fa-volume-off' : volume < 0.33 ? 'fa fa-volume-down' : volume < 0.66 ? 'fa fa-volume-mid' : 'fa fa-volume-up';
+    if (indicator) indicator.setAttribute('class', muted ? 'fa fa-volume-off' : volume < 0.33 ? 'fa fa-volume-down' : volume < 0.66 ? 'fa fa-volume-mid' : 'fa fa-volume-up');
     if (this.video) this.video.volume = volume;
     if (muted) volume = 0;
     volume *= 100;
-    this.controls.volume.bob.style.bottom = `${volume}%`;
-    this.controls.volume.fill.style.top = `${100 - volume}%`;
+    this.controls.volume.bob.style.bottom = volume + '%';
+    this.controls.volume.fill.style.top = (100 - volume) + '%';
   },
   muteUnmute: function() {
     this.checkstart();
@@ -879,7 +865,7 @@ Player.prototype = {
     const duration = parseInt(this.video.duration, 10) || 0;
     let time = duration * progress;
     
-    this.controls.track.preview.style.left = `${(time / duration) * 100}%`;
+    this.controls.track.preview.style.left = (time * 100 / duration) + '%';
     this.controls.track.preview.dataset.time = this.descriptive(time);
     
     if (!this.audioOnly) {
@@ -944,7 +930,7 @@ function TapToggler(owner) {
 function resize(obj) {
   // aspect is defined at the top of the file
   obj.style.marginBottom = '';
-  obj.style.height = `${obj.clientWidth / aspect}px`;
+  obj.style.height = (obj.clientWidth / aspect) + 'px';
 }
 
 function removeContext() {
