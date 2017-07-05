@@ -18,7 +18,7 @@ module ProjectVinyl
         child_src: [ 'self', 'https://www.youtube.com' ],
         media_src: [ 'self', 'blob:' ],
         img_src: [ '*', 'blob:', 'data:' ],
-        script_src: [ 'self', 'unsafe-inline' ],
+        script_src: [ 'self' ],
         style_src: [ 'self', 'unsafe-inline' ]
       }),
       embed: Csp.parse({
@@ -28,7 +28,7 @@ module ProjectVinyl
         child_src: [ 'self' ],
         media_src: [ 'self', 'blob:' ],
         img_src: [ '*', 'blob:', 'data:' ],
-        script_src: [ 'self', 'unsafe-inline' ],
+        script_src: [ 'self' ],
         style_src: [ 'self', 'unsafe-inline' ]
       }),
       twitter: Csp.parse({
