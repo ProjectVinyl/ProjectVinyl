@@ -17,20 +17,11 @@
 			</span>
 		<% end %>
 		</div>
-		<div class="scroll-container">
+		<div class="scroll-container" data-document-scroll-y="200">
 			<div class="items<% if @album_editable %> reorderable<% end %>" data-target="albumitem">
 				<%= render partial: '/album/album_item', collection: @items %>
 			</div>
 		</div>
-		<script>
-jSlim.ready(function() {
-  var selected = document.querySelector('.playlist a.selected');
-  if (selected) {
-		scrollTo(selected, document.querySelector('.playlist .scroll-container'));
-	}
-	document.body.scrollTop = 200;
-});
-		</script>
 	</section>
 	<% end %>
 	<%= render partial: '/video/queue' %>

@@ -33,7 +33,19 @@ function scrollTo(me, container = document.documentElement) {
   return me;
 }
 
-// app/views/video/view.html.erb
-window.scrollTo = scrollTo;
+jSlim.ready(function() {
+  jSlim.all('.scroll-container', function(el) {
+    var target = el.querySelector('.scroll-focus');
+    if (target) {
+      scrollTo(target, el);
+    }
+    if (el.dataset.documentScrollY) {
+      document.scrollingElement.scrollTop = parseInt(el.dataset.documentScrollY);
+    }
+    if (el.dataset.documentScrollX) {
+      document.scrollingElement.scrollLeft = parseInt(el.dataset.documentScrollX);
+    }
+  });
+});
 
 export { scrollTo };
