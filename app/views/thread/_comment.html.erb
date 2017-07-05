@@ -51,9 +51,7 @@
 			<a <% if !comment.user.is_dummy %>class="user-link" data-id="<%= comment.user_id %>" href="<%= comment.user.link %>"<% end %>>
 				<%= comment.user.username %>
 			</a>
-			<% Badge.all_badges(comment.user) do |badge| %>
-				<i style="color:<%= badge.colour %>" onmouseover="(arguments[0] || window.event).stopPropagation();" class="fa fa-<%= badge.icon %> icon" title="<%= badge.get_title(comment.user) %>"></i>
-			<% end %>
+			<%= render partial: 'badge/badges', locals: {user: comment.user} %>
 	<% comment.mentions.each do |mention| %>
 		<a href="#comment_<%= Comment.encode_open_id(mention.parent_id) %>" data-comment-id="<%= mention.parent_id %>" class="mention">
 			&gt;&gt;<%= Comment.encode_open_id(mention.parent_id) %>

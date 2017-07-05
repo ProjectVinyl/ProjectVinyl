@@ -85,7 +85,14 @@ function Validator(el) {
   initFileSelect(this.cover);
   
   var self = this;
-
+  
+  var changeVideo = this.el.querySelector('.change-video');
+  if (changeVideo) {
+    changeVideo.addEventListener('click', function(e) {
+      self.video.input.click();
+    });
+  }
+  
   this.video.addEventListener('accept', event => {
     self.needsCover = !!event.detail.mime.match(/audio\//);
     self.accept(event.detail);
@@ -111,7 +118,7 @@ Validator.prototype = {
 };
 
 function tabMarkup(id) {
-  return document.getElementById('tab-template').innerHTML.replace(/\{id\}/g, id);
+  return document.getElementById('tab-template').innerHTML.replace(/\{index\}/g, id || '').replace(/\{id\}/g, id);
 }
 
 function uploaderMarkup(id) {
@@ -171,7 +178,7 @@ function Uploader() {
   });
 
   const newVideo = this.el.querySelector('#new_video');
-  const thumbPicker = this.el.querySelector(`.tab[data-tab="thumbpick_${this.id}"]`);
+  const thumbPicker = this.el.querySelector('.tab[data-tab="thumbpick_' + this.id + '"]');
 
   newVideo.addEventListener('tagschange', function() {
     self.validateInput();

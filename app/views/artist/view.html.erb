@@ -18,9 +18,7 @@ div#banner {
 			<h1 class="title">
 				<a class="name<% if @user.banned? %> banned<% end %>" href="<%= @user.link %>">
 					<%= @user.username %>
-					<% Badge.all_badges(@user) do |badge| %>
-						<i style="color:<%= badge.colour %>" onmouseover="e.stopPropagation();" class="fa fa-<%= badge.icon %> icon" title="<%= badge.get_title(@user) %>"></i>
-					<% end %>
+					<%= render partial: 'badge/badges', locals: {user: @user} %>
 				</a>
 			</h1>
 			<span class="content bio"><%= raw @user.html_description %></span>

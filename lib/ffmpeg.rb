@@ -6,11 +6,11 @@ class Ffmpeg
   HEADER = '-hide_banner -nostats -loglevel panic -y'.freeze
 
   def self.max_of(width, height)
-    "max(#{width}\,#{height})"
+    "max(#{width}\\,#{height})"
   end
 
   def self.min_of(width, height)
-    "min(#{width}\,#{height})"
+    "min(#{width}\\,#{height})"
   end
 
   def self.compute_checksum(data)
@@ -113,7 +113,7 @@ class Ffmpeg
   end
 
   def self.crop_avatar(source, destination)
-    `ffmpeg #{Ffmpeg::HEADER} -i "#{source}" -vf crop=min(iw\\,ih):min(iw\\,ih):(in_w-out_w)/2:(in_h-out_h)/2,scale=min(min(iw\\,ih)\\,240):min(min(iw\\,ih)\\,240) "#{destination}"`
+    `ffmpeg #{Ffmpeg::HEADER} -i "#{source}" -vf crop=min(iw\\,ih):min(iw\\,ih):(in_w-out_w)/2:(in_h-out_h)/2\\,scale=min(min(iw\\,ih)\\,240):min(min(iw\\,ih)\\,240) "#{destination}"`
   end
 
   def self.crop_square(source, destination)

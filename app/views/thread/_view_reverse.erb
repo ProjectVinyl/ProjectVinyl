@@ -37,7 +37,7 @@ Thread locked
 		<div class="comment-content preview"></div>
 		<textarea class="comment-content"></textarea>
 		<hr>
-		<button class="green" onclick="postComment(this, '<%= @thread.id %>', '<%= @order %>', reportState(this));">
+		<button class="green post-submitter report-state" data-thread-id="'<%= @thread.id %>'" data-order="'<%= @order %>'">
 			<span>Post Comment</span>
 			<i class="posting-spinner fa fw fa-spinner fa-spin"></i>
 		</button>

@@ -84,6 +84,11 @@ const Callbacks = {
       this.callbackFunctions[name].apply(window, params);
       return true;
     }
+  },
+  register: function(name, func) {
+    if (!this.callbackFunctions[name]) {
+      this.callbackFunctions[name] = func;
+    }
   }
 };
 

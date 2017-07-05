@@ -3,10 +3,12 @@ import { paginator } from './paginator';
 import { error } from './popup';
 import { scrollTo } from '../ui/scroll';
 import { jSlim } from '../utils/jslim';
+import { Callbacks } from '../callbacks';
 
-// app/views/thread/_comment_box.html.erb
-// app/views/thread/_view_reverse.erb
-window.postComment = function postComment(sender, threadId, order, reportState) {
+function postComment(sender) {
+  var threadId = sender.dataset.threadId;
+  var order = sender.dataset.order;
+  
   sender = sender.parentNode;
   let input = sender.querySelector('textarea, input.comment-content');
   let comment = input.value.trim();
@@ -17,7 +19,7 @@ window.postComment = function postComment(sender, threadId, order, reportState) 
     order: order,
     comment: comment
   };
-  if (reportState) data.report_state = reportState;
+  if (sender.hasClass('report-state')) data.report_state = reportState(sender);
   
   sender.classList.add('posting');
   ajax.post('comments/new', data).json(function(json) {
@@ -27,10 +29,9 @@ window.postComment = function postComment(sender, threadId, order, reportState) 
     input.value = '';
     input.change();
   });
-};
+}
 
-// app/views/thread/_comment.html.erb
-window.removeComment = function removeComment(id, json) {
+function removeComment(id, json) {
   var el = document.getElementById('comment_' + id);
   if (!el) return;
   
@@ -54,6 +55,7 @@ window.removeComment = function removeComment(id, json) {
     el.parentNode.removeChild(el);
   }, 500);
 };
+Callbacks.register('removeComment', removeComment);
 
 function scrollToAndHighlightElement(comment) {
   if (comment) {
@@ -122,20 +124,20 @@ function replyTo(sender) {
   textarea.focus();
 }
 
-// app/views/thread/_view_reverse.erb
-window.reportState = function reportState(sender) {
+function reportState(sender) {
   sender = sender.parentNode;
   if (sender.querySelector('input[name="resolve"]:checked')) return 'resolve';
   if (sender.querySelector('input[name="close"]:checked')) return 'close';
   if (sender.querySelector('input[name="unresolve"]:checked')) return 'open';
   return false;
-};
+}
 
 function revealSpoiler(target) {
   target.classList.toggle('revealed');
 }
 
 var targets = {
+  'button.post-submitter': postComment,
   '.comment .mention, .comment .comment-content a[data-link="2"]': findComment,
   '.reply-comment': replyTo,
   '.edit-comment-submit': editComment,
