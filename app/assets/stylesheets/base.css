@@ -880,6 +880,12 @@ div.page .positioner {
   box-shadow: none;
   margin: 0;
 }
+
+.wrapper.error-page-wrapper {
+  max-width: 500px;
+  padding: 50px 0;
+}
+
 .column-left.auto-wrap > .page {
   display: block;
   overflow: hidden;

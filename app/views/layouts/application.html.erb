@@ -130,7 +130,7 @@
 			</li>
 		</ul>
 	</header>
-	<main class="wrapper" style="<%= content_for?(:width) ? ' max-width:' + content_for(:width) + ';' : '' %>">
+	<main class="wrapper<% if content_for?(:wrapper) %> <%= content_for(:wrapper) %><% end %>" style="<%= content_for?(:width) ? ' max-width:' + content_for(:width) + ';' : '' %>">
 		<% flash.each do |key,value| %>
 			<p class="notice <%= key %>"><%= value %></p>
 		<% end %>

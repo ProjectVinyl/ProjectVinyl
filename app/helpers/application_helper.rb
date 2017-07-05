@@ -171,7 +171,11 @@ module ApplicationHelper
   def lim(page_width)
     content_for(:width) { page_width }
   end
-
+  
+  def wrapper(wrapper_class)
+    content_for(:wrapper) { wrapper_class }
+  end
+  
   def query
     @query || params[:tagquery]
   end
