@@ -2496,9 +2496,14 @@ span.active-icon {
   margin: 0px;
   opacity: 0;
 }
-.hidden {
+
+.hidden:not(.transitional) {
   display: none !important;
 }
+.hidden.transitional {
+  visibility: hidden !important;
+}
+
 .pop-out-shown .pop-out, .pop-out.shown {
   display: block !important;
 }
@@ -3781,11 +3786,15 @@ a.album {
   margin: 0;
   padding: 5px 0;
   min-width: 220px;
-  opacity: 0;
-  display: none;
+  opacity: 1;
+  display: table;
   z-index: 300;
   overflow-x: hidden;
-  transition: opacity .1s cubic-bezier(0.0,0.0,0.2,1);
+  transition: visibility .1s cubic-bezier(0,0,0.2,1),
+              opacity    .1s cubic-bezier(0,0,0.2,1);
+}
+.video .contextmenu.hidden {
+  opacity: 0;
 }
 .video .contextmenu li {
   display: table-row;

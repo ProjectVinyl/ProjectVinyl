@@ -178,7 +178,7 @@ Player.generate = function(holder) {
     </li>
   </ul>
 </div>
-<ul class="contextmenu"></ul>`);
+<ul class="contextmenu transitional hidden"></ul>`);
 };
 
 Player.onFullscreen(function() {
@@ -409,9 +409,8 @@ Player.prototype = {
     return this;
   },
   removeContext: function(ev) {
-    if (ev.which === 1 && this.contextmenu.style.display === 'table') {
-      this.contextmenu.style.opacity = '';
-      setTimeout(() => this.contextmenu.style.display = '', 100);
+    if (ev.which === 1 && !this.contextmenu.classList.contains('hidden')) {
+      this.contextmenu.classList.add('hidden');
       return 1;
     }
     return 0;
@@ -434,8 +433,7 @@ Player.prototype = {
     
     this.contextmenu.style.top = y + 'px';
     this.contextmenu.style.left = x + 'px';
-    this.contextmenu.style.display = 'table';
-    this.contextmenu.style.opacity = '1';
+    this.contextmenu.classList.remove('hidden');
     
     this.halt(ev);
   },
