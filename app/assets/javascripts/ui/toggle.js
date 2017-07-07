@@ -2,47 +2,54 @@ import { ajax } from '../utils/ajax';
 import { jSlim } from '../utils/jslim';
 
 function toggle(sender) {
-  var id = sender.dataset.id;
-  var action = sender.dataset.target + '/' + sender.dataset.action;
-  var data = sender.dataset.with;
-  var checkIcon = sender.dataset.checkedIcon || 'check';
-  var uncheckIcon = sender.dataset.uncheckedIcon;
-  var state = sender.dataset.state;
-
-  if (data) action += `?extra=${document.querySelector(data).value}`;
-
-  ajax.post(action, {
-    id: id, item: sender.dataset.item
-  }).json(function(json) {
-    const family = sender.dataset.family;
-    if (family) {
-      return jSlim.all(`.action.toggle[data-family="${family}"][data-id="${id}"]`, t => {
-        const uncheck = t.dataset.uncheckedIcon;
-        const check = t.dataset.checkedIcon || 'check';
-        t.querySelector('.icon').innerHTML = json[t.dataset.descriminator] ? `<i class="fa fa-${check}"></i>` : uncheck ? `<i class="fa fa-${uncheck}"></i>` : '';
+  var data = {
+    id: sender.dataset.id
+  };
+  
+  if (sender.dataset.item) {
+    data.item = sender.dataset.item;
+  }
+  if (sender.dataset.with) {
+    data.extra = document.querySelector(sender.dataset.with).value;
+  }
+  
+  ajax.post(sender.dataset.target + '/' + sender.dataset.action, data).json(function(json) {
+    if (sender.dataset.family) {
+      return jSlim.all('.action.toggle[data-family="' + sender.dataset.family + '"][data-id="' + data.id + '"]', function(t) {
+        updateCheck(t, json[t.dataset.descriminator]);
       });
     }
-
-    sender.querySelector('.icon').innerHTML = json.added ? `<i class="fa fa-${checkIcon}"></i>` : uncheckIcon ? `<i class="fa fa-${uncheckIcon}"></i>` : '';
-    if (state) {
-      sender.closest(sender.dataset.parent).classList[json.added ? 'add' : 'remove'](state);
+    
+    updateCheck(sender, json.added);
+    if (sender.dataset.state) {
+      sender.closest(sender.dataset.parent).classList.toggle(sender.dataset.state, json.added);
     }
   });
 }
 
-jSlim.on(document, 'click', '.action.toggle', function() {
+function updateCheck(element, state) {
+  var check = element.dataset.checkedIcon || 'check';
+  var uncheck = element.dataset.uncheckedIcon;
+  element.querySelector('.icon').innerHTML = state ? '<i class="fa fa-' + check + '"></i>' : uncheck ? '<i class="fa fa-' + uncheck + '"></i>' : '';
+}
+
+function toggleState(sender) {
+  var state = sender.dataset.state;
+  var parent = sender.dataset.parent;
+  
+  parent = parent ? sender.closest(parent) : sender.parentNode;
+  parent.classList.toggle(state);
+  
+  sender.textContext = sender.dataset[parent.classList.contains(state)];
+  sender.dispatchEvent(new CustomEvent('toggle', { bubbles: true }));
+}
+
+jSlim.on(document, 'click', '.action.toggle', function(ev) {
   toggle(this);
+  ev.preventDefault();
 });
 
 jSlim.on(document, 'click', '.state-toggle', function(ev) {
-  var state = this.dataset.state;
-  var parent = this.dataset.parent;
-
-  parent = parent ? this.closest(parent) : this.parentNode;
-  parent.classList.toggle(state);
-
-  this.textContext = this.dataset[parent.classList.contains(state)];
-  this.dispatchEvent(new CustomEvent('toggle', { bubbles: true }));
-
+  toggleState(this);
   ev.preventDefault();
 });
