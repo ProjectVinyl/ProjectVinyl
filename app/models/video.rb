@@ -591,7 +591,9 @@ class Video < ApplicationRecord
   end
 
   def rename_file(from, to)
-    File.rename(from, to) if File.exist?(from)
+    if File.exist?(from)
+      FileUtils.mv(from, to)
+    end
   end
 
   def compute_length

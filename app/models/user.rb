@@ -440,9 +440,11 @@ class User < ApplicationRecord
   private
 
   def rename_file(from, to)
-    File.rename(from, to) if File.exist?(from)
+    if File.exist?(from)
+      FileUtils.mv(from, to)
+    end
   end
-
+  
   def img(path, uploaded_io)
     if uploaded_io
       File.open(path, 'wb') do |file|
