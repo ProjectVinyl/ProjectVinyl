@@ -16,7 +16,7 @@ Eye.application 'ProjectVinyl' do
     chain grace: 2.seconds
     (1..resque_count).each do |i|
       process "resque-#{i}" do
-        env 'QUEUE' => '*'
+        env 'QUEUE' => 'default'
         pid_file "tmp/pids/resque-#{i}.pid"
         daemonize true
         start_command "rake environment resque:work"
