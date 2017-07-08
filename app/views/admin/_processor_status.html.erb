@@ -1,4 +1,5 @@
 <h1 class="title resize-target">Processor Status</h1>
+<% begin %>
 <div class="listing compact">
 	<div class="items">
 		<div class="row">
@@ -23,3 +24,8 @@
 <hr>
 <button class="confirm-button action blue" data-action="delete" data-url="admin/verify" data-title="Verify System Integrity" data-icon="warning" type="button">Verify System Integrity</button>
 <button class="confirm-button action blue" data-action="delete" data-url="admin/requeue" data-title="Rebuild Processing Queue" data-icon="" type=Button">Rebuild Processing Queue</button>
+<% rescue %>
+<p>
+Oops! Could not connect to Risque.
+</p>
+<% end %>
