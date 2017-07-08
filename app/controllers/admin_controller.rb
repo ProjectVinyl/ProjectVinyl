@@ -88,7 +88,7 @@ class AdminController < ApplicationController
     @page = params[:page].to_i
     @results = Pagination.paginate(Video.where(hidden: true), @page, 40, true)
     render json: {
-      content: render_to_string(partial: '/admin/report_thumb.html.erb', collection: @results.records),
+      content: render_to_string(partial: '/admin/video_thumb_h.html.erb', collection: @results.records),
       pages: @results.pages,
       page: @results.page
     }
@@ -106,9 +106,9 @@ class AdminController < ApplicationController
 
   def page_reports
     @page = params[:page].to_i
-    @result = Pagination.paginate(Report.includes(:video).where(resolved: nil), @page, 40, false)
+    @results = Pagination.paginate(Report.includes(:video).where(resolved: nil), @page, 40, false)
     render json: {
-      content: render_to_string(partial: '/admin/video_thumb_h.html.erb', collection: @results.records),
+      content: render_to_string(partial: '/admin/report_thumb.html.erb', collection: @results.records),
       pages: @results.pages,
       page: @results.page
     }

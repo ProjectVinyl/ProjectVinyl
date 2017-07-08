@@ -40,6 +40,7 @@ Rails.application.routes.draw do
   get 'ajax/admin/files' => 'admin#morefiles'
   get 'ajax/admin/videos/hidden' => 'admin#page_hidden'
   get 'ajax/admin/videos/unprocessed' => 'admin#page_unprocessed'
+  get 'ajax/admin/reports' => 'admin#page_reports'
   post 'ajax/admin/verify' => 'admin#verify_integrity'
   post 'ajax/admin/requeue' => 'admin#rebuild_queue'
   post 'ajax/admin/hidden/drop' => 'admin#batch_drop_videos'
