@@ -35,25 +35,21 @@ function removeComment(id, json) {
   var el = document.getElementById('comment_' + id);
   if (!el) return;
   
-  if (json.content) {
-    el.insertAdjacentHTML('afterend', json.content);
-    el.parentNode.removeChild(el);
-    return;
-  }
-  el.style.minHeight = '0';
-  el.style.height = el.offsetHeight;
-  el.style.overflow = 'hidden';
-  el.style.transition = '0.5s ease all';
-  
-  // Fade out (FIXME: do this in CSS)
+  el.style.height = el.offsetHeight + 'px';
   requestAnimationFrame(function() {
-    el.style.opacity = '0';
-    el.style.height = '0';
+    el.classList.add('hidden');
+    if (json.content) {
+      el.insertAdjacentHTML('afterend', json.content);
+      el.nextSibling.style.height = el.nextSibling.offsetHeight + 'px';
+      el.nextSibling.classList.add('hidden');
+      requestAnimationFrame(function() {
+        el.nextSibling.classList.remove('hidden');
+      });
+    }
+    setTimeout(function() {
+      el.parentNode.removeChild(el);
+    }, 500);
   });
-  
-  setTimeout(function() {
-    el.parentNode.removeChild(el);
-  }, 500);
 };
 Callbacks.register('removeComment', removeComment);
 

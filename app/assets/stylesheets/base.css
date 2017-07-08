@@ -1483,10 +1483,18 @@ label input[type=checkbox]:checked + i + i {
 .comments li.comment .content:not(.editing) textarea ~ * {
   display: none;
 }
-
+.comments li.comment.hidden {
+  min-height: 0;
+  height: 0 !important;
+  overflow: hidden;
+  opacity: 0;
+}
 
 .comment {
   min-height: 100px;
+  transition: visibility 0.5s ease,
+              height 0.5s ease,
+              opacity 0.5s ease;
 }
 
 .comment.deleted, .comment.deleted .content {
