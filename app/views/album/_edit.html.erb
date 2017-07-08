@@ -4,7 +4,7 @@
 		<label class=""<% if @album.hidden %> disabled<% end %>>
 			<span>Visibility</span>
 			<div>
-				<select id="privacy" name="album[privacy]" style="width:100%"<% if @album.hidden %> disabled<% end %>>
+				<select id="privacy" name="album[privacy]"<% if @album.hidden %> disabled<% end %>>
 					<option value="0"<% if !@album.hidden && @album.listing == 0 %> selected<% end %>>Public</option>
 					<option value="1"<% if !@album.hidden && @album.listing == 1 %> selected<% end %>>Unlisted</option>
 					<option value="2"<% if @album.hidden || @album.listing == 2 %> selected<% end %>>Private</option>
@@ -12,10 +12,10 @@
 			</div>
 		</label>
 		<hr>
-		<label class="">
+		<label>
 			<span>Sorting</span>
 			<div>
-				<select id="sorting" name="album[sorting]" style="width:100%">
+				<select id="sorting" name="album[sorting]">
 					<option value="0"<% if !@album.ordering || @album.ordering < 1 || @album.ordering > 3 %> selected<% end %> >Custom</option>
 					<option value="1"<% if @album.ordering == 1 %> selected<% end %>>Date Created</option>
 					<option value="2"<% if @album.ordering == 2 %> selected<% end %>>Date Added</option>
@@ -24,10 +24,10 @@
 			</div>
 		</label>
 		<hr>
-		<label class="">
+		<label>
 			<span>Direction</span>
 			<div>
-				<select id="direction" name="album[direction]" style="width:100%">
+				<select id="direction" name="album[direction]">
 					<option value="0"<% if !@album.reverse_ordering %> selected<% end %>>Ascending</option>
 					<option value="1"<% if @album.reverse_ordering %> selected<% end %>>Descending</option>
 				</select>

@@ -5,7 +5,7 @@
 	Control Panel
 </h1>
 <div class="wrapper column-left left">
-	<section style="width:100%" class="page resize-holder">
+	<section class="page full-width resize-holder">
 		<h1 class="title resize-target">Recent Activity</h1>
 		<table class="auto">
 			<thead>
@@ -32,12 +32,12 @@
 			</tbody>
 		</table>
 	</section>
-	<section style="width:100%" class="page resize-holder">
+	<section class="page full-width resize-holder">
 		<%= render partial: 'processor_status' %>
 	</section>
 </div>
 <div class="wrapper column-right right">
-	<section style="width:100%" class="page">
+	<section class="page full-width">
 		<div class="actions">
 			<a class="button" href="/users"><i class="fa fa-users"></i> Users</a
 			><a class="button" href="/admin/files?p=encoding"><i class="fa fa-file-code-o"></i> Encoding Folder</a
@@ -53,7 +53,7 @@
 		</div>
 		<% end %>
 	</section>
-	<section style="width:100%" class="page resize-holder">
+	<section class="page full-width resize-holder">
 		<h1>Videos & Tagging</h1>
 		<div class="actions">
 			<a class="button" href="/videos?unlisted=1"><i class="fa fa-eye-slash"></i> Unlisted Videos</a
@@ -63,7 +63,7 @@
 	</section>
 </div>
 <div class="wrapper column-span">
-	<section style="width:100%" class="page recent-uploads resize-holder">
+	<section class="page full-width recent-uploads resize-holder">
 		<h1 class="title resize-target">Unprocessed Videos (<%= number_with_delimiter @unprocessed.count %>)</h1>
 		<% if @unprocessed.count > 0 %>
 		<%= render layout: '/layouts/paginated', locals: {type: "admin/videos/unprocessed", paginated: @unprocessed, id: "unprocessed"} do %>

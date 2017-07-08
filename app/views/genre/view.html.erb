@@ -1,11 +1,11 @@
-<section style="width:100%" class="page artist-bio">
+<section class="page full-width genre-bio">
 	<div class="post">
 		<span class="genre-icon fa-stack fa-4x">
 			<i class="fa fa-circle fa-stack-2x"></i>
 			<i class="fa fa-tag fa-inverse fa-stack-1x"></i>
 		</span>
 		<div class="tag-header">
-			<h2 class="title" style="margin-left:0;">
+			<h2 class="title">
 				<a class="name" href="<%= @tag.link %>"><%= @tag.name %></a>
 			</h2>
 			<div class="tag-list subheading">
@@ -89,7 +89,7 @@
 	</div>
 </section>
 <% if @users.count > 0 %>
-<section class="page" style="width: 100%">
+<section class="page full-width">
 	<h1>Recent Users</h1>
 	<% if @users.length > 0 %>
 	<ul id="artists" class="horizontal artist-list">
@@ -105,7 +105,7 @@
 	<% end %>
 </section>
 <% end %>
-<section class="page" style="width: 100%">
+<section class="page full-width">
 	<h1>Recent Songs</h1>
 	<% if @videos.length > 0 %>
 	<ul id="songs" class="horizontal video-list">

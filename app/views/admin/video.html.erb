@@ -6,13 +6,13 @@
 	</h1>
 	<%= render partial: 'video/video' %>
 	<div class="wrapper column-right right">
-		<section class="page" style="width:100%">
+		<section class="page full-width">
 			<h1>Thumbnail Preview</h1>
 			<ul class="horizontal center">
 				<%= render partial: 'layouts/video_thumb_h', locals: {video_thumb_h: @video} %>
 			</ul>
 		</section>
-		<section class="page" style="width:100%">
+		<section class="page full-width">
 			<h1>Metadata</h1>
 			<%= form_for(@video, as: "video", url: "/admin/video/metadata", html: { method: :put }) do |f| %>
 				<%= f.text_field :id, hidden: true %>
@@ -39,7 +39,7 @@
 				</div>
 			<% end %>
 		</section>
-		<section class="page properties" style="width:100%">
+		<section class="page properties full-width">
 			<h1>Files</h1>
 			<table>
 				<tr>
@@ -73,7 +73,7 @@
 				</tr>
 			</table>
 		</section>
-    <section class="page properties" style="width:100%">
+    <section class="page full-width properties">
 			<h1>Actions</h1>
 			<table>
 				<tr class="actions">

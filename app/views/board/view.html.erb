@@ -31,7 +31,7 @@
 	</a>
 </div>
 <hr>
-<section class="page" style="width: 100%">
+<section class="page full-width">
 	<h1>Topics (<%= number_with_delimiter @threads.count %>)</h1>
 	<%= render layout: '/layouts/paginated', locals: {type: 'thread', paginated: @threads, id: "page"} do %>
 		<section class="search-result">

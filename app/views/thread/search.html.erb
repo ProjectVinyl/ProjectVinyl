@@ -1,5 +1,5 @@
 ﻿<% title "Forum Search" %>
-<div class="page resize-holder" style="width:100%;">
+<div class="page full-width resize-holder">
 	<section>
 		<h1 class="resize-target">
 			<a>Forum Search</a>
@@ -12,7 +12,7 @@
 				<label>
 					<span>Order</span>
 					<div>
-						<select name="order" style="width:100%">
+						<select name="order">
 							<option value="1"<% if @ascending %> selected<% end %>>Ascending</option>
 							<option value="0"<% if !@ascending %> selected<% end %>>Descending</option>
 						</select>
@@ -21,7 +21,7 @@
 				<label>
 					<span>Category</span>
 					<div>
-						<select name="board" style="width:100%">
+						<select name="board">
 							<option value="0"<% if @category == 0 %> selected<% end %>>Everywhere</option>
 						<% Board.listables.each do |d| %>
 							<option value="<%= d[0] %>"<% if @category == d[0] %> selected<% end %>><%= d[1] %></option>
@@ -36,7 +36,7 @@
 		</form>
 	</section>
 </div>
-<div class="page" style="width:100%;">
+<div class="page full-width">
 <% if @derpy %>
 		<h1>Searching for- Uh, oh!</h1>
 		<p class="center">

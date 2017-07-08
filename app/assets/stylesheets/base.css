@@ -872,6 +872,14 @@ div.page .positioner {
    margin-right: 0;
 }
 
+.full-width {
+  width: 100%;
+}
+.half-width {
+  width: 100%;
+  max-width: 300px;
+}
+
 .wrapper.auto-wrap,
 .page.column-left.auto-wrap {
   position: relative;
@@ -1049,6 +1057,10 @@ textarea, input[type=text]:not(.tag), input[type=email], input[type=password], l
   color: #444;
   border-radius: 2px;
   width: 300px;
+}
+
+.search-options label select {
+  width: 100%;
 }
 
 @media(max-width: 400px) {
@@ -3848,6 +3860,7 @@ i.fa.fa-volume-mid {
   position: relative;
   display: block;
   overflow: hidden;
+  clear: both;
   opacity: 0;
   background: #fff;
   transition: max-height 0.25s linear, min-height 0.25s linear, opacity 0.5s linear 0.25s, background 0.5s linear;
@@ -3888,9 +3901,19 @@ i.fa.fa-volume-mid {
   width: 100%;
 }
 
+.form.report input[type="text"] {
+  width: 100%;
+}
+
 .form.report input[data-required] + i:before {
   content: '*';
   font-weight: bold;
+}
+
+.form.report .progressor {
+  display: block;
+  padding-top: 0;
+  text-align: center;
 }
 
 .playlist-toggle {

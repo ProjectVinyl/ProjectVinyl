@@ -1,5 +1,5 @@
-<div class="wrapper" style="text-align: center">
-	<section style="width:100%;max-width:300px;" class="page modal">
+<div class="wrapper center">
+	<section class="page half-width modal">
 		<h1>Resend unlock instructions</h1>
 	<%= form_for(resource, as: resource_name, url: unlock_path(resource_name), html: { method: :post }) do |f| %>
 	<%= devise_error_messages! %>

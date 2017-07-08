@@ -3,7 +3,7 @@
 	<a href="/">Home</a> <i class="fa fa-chevron-right"></i> 
 	Video <i class="fa fa-chevron-right"></i> <a href="<%= @video.link %>">#<%= @video.id %></a> <i class="fa fa-chevron-right"></i> Tag Changes
 </h1>
-<section class="page" style="width:100%">
+<section class="page full-width">
 	<%= render layout: '/layouts/paginated', locals: {type: "history/" + @video.id.to_s, paginated: @history, id: "page"} do %>
 	<div class="listing compact">
 		<ul id="history-<%= @video.id %>" class="items history">

@@ -15,7 +15,7 @@
 	</a>
 </div>
 <hr>
-<section class="page" style="width: 100%">
+<section class="page full-width">
 	<h1>Categories (<%= number_with_delimiter @boards.count %>)</h1>
 	<%= render layout: '/layouts/paginated', locals: {type: 'boards', paginated: @boards, id: "page"} do %>
 		<section class="search-result">

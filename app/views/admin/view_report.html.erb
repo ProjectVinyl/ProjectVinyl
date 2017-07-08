@@ -1,6 +1,6 @@
 <% title "Report #" + @report.id.to_s %>
 <% lim "1100px" %>
-<section style="width:100%" class="page resize-holder">
+<section class="page full-width resize-holder">
 	<h1 class="title resize-target">Report #<%= @report.id %> <%= @report.comment_thread.title %></h1>
 <div class="comment<%= !@report.resolved.nil? ? (@report.resolved ? " resolved" : " closed") : "" %>" >
 	<% if !@report.resolved.nil? %>
@@ -91,6 +91,6 @@
 	</div>
 </div>
 </section>
-<section style="width:100%" class="page resize-holder">
+<section class="page full-width resize-holder">
 <%= render partial: 'thread/view_reverse' %>
 </section>

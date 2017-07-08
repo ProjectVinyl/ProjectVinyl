@@ -24,7 +24,7 @@
 				<td colspan="2">
 					<span>Please provide a link to where you believe this video may have come from. Must be older than the current report target.</span>
 					<br>
-					<%= f.text_field :source, style: "width:100%", placeholder: "Source" %>
+					<%= f.text_field :source, placeholder: "Source" %>
 				</td>
 			</tr>
 			<tr>
@@ -68,7 +68,7 @@
 			<tr>
 				<td colspan="2">
 					Name of copyright holder, entity, or organisation:
-					<%= f.text_field :copyright_holder, style: "width:100%" %>
+					<%= f.text_field :copyright_holder %>
 				</td>
 			</tr>
 			<tr>
@@ -95,7 +95,7 @@
 		<table>
 			<tr>
 				<td colspan="2">
-					<%= f.text_field :subject, style: "width:100%", placeholder: "Subject" %>
+					<%= f.text_field :subject, placeholder: "Subject" %>
 				</td>
 			</tr>
 			<tr>
@@ -130,12 +130,12 @@
 		<table>
 			<tr>
 				<td>
-					<%= f.text_field :name, style: "width:100%", placeholder: "Name" %>
+					<%= f.text_field :name, placeholder: "Name" %>
 				</td>
 			</tr>
 			<tr>
 				<td>
-					<%= f.text_field :contact, style: "width:100%", placeholder: "Email" %>
+					<%= f.text_field :contact, placeholder: "Email" %>
 				</td>
 			</tr>
 			<tr>
@@ -150,7 +150,7 @@
 		<table>
 			<tr>
 				<td>
-					<div class="progressor" style="display:block;padding-top:0;text-align:center;">
+					<div class="progressor">
 						<span class="message plain">Sending...</span>
 					</div>
 				</td>

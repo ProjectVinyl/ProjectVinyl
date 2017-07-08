@@ -1,6 +1,6 @@
 ﻿<div style="margin-left:-10px;width:23%" class="wrapper resize-holder column-right right column-mobile-fragmented wrap-around-fixed grid-root">
 	<% if @featured %>
-	<section style="width:100%" class="page featured column-mobile-shown">
+	<section class="page full-width featured column-mobile-shown">
 		<h1>Featured Video</h1>
 		<ul class="horizontal center">
 			<%= render partial: 'video_thumb_h', locals: {video_thumb_h: @featured} %>
@@ -27,11 +27,11 @@
 		</div>
 	</section>
 	<% end %>
-	<section style="width:100%" class="page">
+	<section class="page full-width">
 		<iframe class="twitter" src="/embeds/twitter"></iframe>
 	</section>
 	<% if @comments.length > 0 %>
-	<section style="width:100%" class="properties ribbed page">
+	<section class="properties ribbed page full-width">
 		<h1>Recent Activity</h1>
 		<table style="table-layout: auto">
 		<% @comments.each do |c| %>
@@ -59,7 +59,7 @@
 		</table>
 	</section>
 	<% end %>
-	<section style="width:100%" class="page donate">
+	<section class="page full-width donate">
 		<h1>
 			<a>Donate</a>
 		</h1>

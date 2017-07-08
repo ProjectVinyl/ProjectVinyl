@@ -1,4 +1,3 @@
-<% if @user %>
 <% title @user.username %>
 <% if @user.banner_set %>
 <style>
@@ -8,7 +7,7 @@ div#banner {
 }
 </style>
 <% end %>
-<section style="width:100%" class="page artist-bio">
+<section class="page full-width artist-bio">
 	<div class="post">
 		<div class="space-fix">
 			<span class="date registered right underline">Registered <span title="<%= @user.created_at %>"><%= since @user.created_at %></span></span>
@@ -63,7 +62,7 @@ div#banner {
 	</div>
 </section>
 <% if @art %>
-<section style="width:100%" class="page recent-uploads resize-holder">
+<section class="page full-width recent-uploads resize-holder">
 	<h1 class="title resize-target">Songs by <%= @user.username %><span> (<span class="count"><%= number_with_delimiter @art.count %></span>)</span></h1>
 	<ul id="songs" class="horizontal video-list">
 		<%= render partial: '/layouts/video_thumb_h', collection: @art.records %>
@@ -75,7 +74,7 @@ div#banner {
 	</div>
 </section>
 <% end %>
-<section style="width:100%" class="page recent-uploads resize-holder">
+<section class="page full-width recent-uploads resize-holder">
 	<h1 class="title resize-target">Recent Uploads<span> (<span class="count"><%= number_with_delimiter @videos.count %></span>)</span></h1>
 	<% if @modifications_allowed %><a class="button" href="/upload"><i class="fa fa-plus"></i> New</a><% end %>
 	<ul id="uploads" class="horizontal video-list">
@@ -87,7 +86,7 @@ div#banner {
 	<% end %>
 	</div>
 </section>
-<section style="width:100%" class="page recent-uploads resize-holder">
+<section class="page full-width recent-uploads resize-holder">
 	<h1 class="title resize-target">Recent Albums<span> (<span class="count"><%= number_with_delimiter @albums.count %></span>)</span></h1>
 	<% if @modifications_allowed %><button class="confirm-button" data-url="album/create" data-title="New Album" data-icon=""><i class="fa fa-plus"></i> New</button><% end %>
 	<ul id="albums" class="album-list horizontal">
@@ -99,14 +98,9 @@ div#banner {
 	<% end %>
 	</div>
 </section>
-<section style="width:100%" class="page recent-comments resize-holder">
+<section class="page full-width recent-comments resize-holder">
 	<h1 class="title resize-target">Recent Comments</h1>
 	<ul class="comments">
 	<%= render partial: 'thread/comment_set', locals: { thread: @comments, indirect: true } %>
 	</ul>
 </section>
-<% else %>
-<%= render layout: '/layouts/error', locals: { title: 'Nothing to see here!' } do %>
-If there was an artist here they're probably gone now. ... sorry.
-<% end %>
-<% end %>

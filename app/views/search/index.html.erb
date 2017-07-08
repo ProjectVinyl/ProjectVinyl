@@ -1,5 +1,5 @@
 ﻿<% title @query.length > 0 ? "Searching for " + @query : "Search" %>
-<div class="page" style="width:100%;">
+<div class="page full-width">
 <% if @derpy %>
 		<h1>Searching for- Uh, oh!</h1>
 		<p class="center">
@@ -45,7 +45,7 @@
 	<% end %>
 <% end %>
 </div>
-<div class="page resize-holder" style="width:100%;">
+<div class="page full-width resize-holder">
 	<section>
 		<h1 class="resize-target">
 			<a>Search</a>
@@ -105,7 +105,7 @@
 				<label>
 					<span>Type</span>
 					<div>
-						<select id="search_type" name="type" style="width:100%">
+						<select id="search_type" name="type">
 							<option value="0"<% if @type == 0 %> selected<% end %>>Song</option>
 							<option value="1"<% if @type == 1 %> selected<% end %>>Album</option>
 							<option value="2"<% if @type == 2 %> selected<% end %>>User</option>
@@ -116,7 +116,7 @@
 				<label>
 					<span>Order</span>
 					<div>
-						<select name="order" style="width:100%">
+						<select name="order">
 							<option value="1"<% if @ascending %> selected<% end %>>Ascending</option>
 							<option value="0"<% if !@ascending %> selected<% end %>>Descending</option>
 						</select>
@@ -125,7 +125,7 @@
 				<label>
 					<span>Order By</span>
 					<div>
-						<select name="orderby" style="width:100%">
+						<select name="orderby">
 							<option value="1"<% if @orderby == 1 %> selected<% end %>>Date</option>
 							<option value="2"<% if @orderby == 2 %> selected<% end %>>Rating</option>
 							<option value="3"<% if @orderby == 3 %> selected<% end %>>Length</option>
