@@ -23,11 +23,3 @@ jSlim.ready(function() {
     if (top <= 200) banner.style.backgroundPosition = 'top calc(50% + ' + (top * 0.5) + 'px) ' + (width > 1300 ? 'left' : 'center') + ', top calc(50% + ' + (top * 0.5) + 'px) right';
   }
 });
-
-jSlim.on(document, 'click', '#sign-out', function(e) {
-  e.preventDefault();
-  e.stopPropagation();
-  ajax.delete(this.href).text(function() {
-    document.location.href = document.location.href;
-  });
-});
