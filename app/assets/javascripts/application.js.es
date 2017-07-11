@@ -30,6 +30,7 @@ import './ui/form';
 import './ui/grid';
 import './ui/lazy';
 import './ui/reorder';
+import './ui/resizeinput';
 import './ui/slide';
 import './ui/subtable';
 import './ui/tabset';

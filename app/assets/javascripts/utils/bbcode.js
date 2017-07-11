@@ -77,7 +77,7 @@ function initEditable(holder, content, short) {
   if (!textarea) {
     if (short) {
       textarea = document.createElement('input');
-      textarea.className = 'input';
+      textarea.className = 'input js-auto-resize';
       textarea.style.height = `${content.clientHeight + 20}px`;
       textarea.style.width = `${content.clientWidth + 20}px`;
       content.insertAdjacentElement('afterend', textarea);
@@ -98,16 +98,6 @@ function initEditable(holder, content, short) {
     }
     textarea.addEventListener('keydown', changeHeight);
     textarea.addEventListener('keyup', changeHeight);
-  } else {
-    function changeWidth() {
-      const width = getComputedStyle(textarea).width;
-      textarea.style.width = 0;
-      textarea.style.marginLeft = width;
-      textarea.style.width = `${textarea.scrollWidth + 20}px`;
-      textarea.style.marginLeft = '';
-    }
-    textarea.addEventListener('keydown', changeWidth);
-    textarea.addEventListener('keyup', changeWidth);
   }
   textarea.addEventListener('change', () => holder.classList.add('dirty'));
   textarea.addEventListener('keydown', ev => {

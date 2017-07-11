@@ -173,10 +173,8 @@ function inputHandler(sender) {
     if (handleKey(key, e.ctrlKey)) {
       halt(e);
     }
-    sender.sizeInput();
   });
   sender.input.addEventListener('keyup', function() {
-    sender.sizeInput();
     handledBack = false;
   });
 }
@@ -365,13 +363,6 @@ TagEditor.prototype = {
       });
       self.dom.classList.toggle('pop-out-shown', !!json.results.length);
     });
-  },
-  sizeInput: function() {
-    var width = this.input.clientWidth;
-    this.input.style.width = '0px';
-    this.input.style.marginLeft = width + 'px';
-    this.input.style.width = this.input.scrollWidth + 20;
-    this.input.style.marginLeft = '';
   }
 };
 
