@@ -75,7 +75,7 @@ jSlim.on(document, 'submit', '.form.report form.async', function(e) {
 jSlim.on(document, 'change', '.avatar.file-select', function(event) {
   const { target, detail } = event;
   const form = target.closest('form');
-  const title = target.files.length ? target.files[0].split('.') : [];
+  const title = target.files.length ? target.files[0].name.split('.') : [];
   const fileSelect = this;
 
   ajax.form(form, {
