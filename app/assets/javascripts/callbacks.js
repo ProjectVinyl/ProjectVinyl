@@ -22,7 +22,7 @@ jSlim.on(document, 'loaded', '.confirm-button.js-banner-select', function(event)
   const banner = document.getElementById('banner');
   const basePath = me.dataset.path;
 
-  initFileSelect(me).addEventListener('accept', function(e) {
+  me.querySelector('input[type="file"]').addEventListener('change', function(e) {
     const form = this.closest('form');
     ajax.form(form, e, {
       success: function() {
@@ -72,15 +72,17 @@ jSlim.on(document, 'submit', '.form.report form.async', function(e) {
   e.stopImmediatePropagation(); // form.async
 });
 
-jSlim.on(document, 'accept', '.avatar.file-select', function(event) {
+jSlim.on(document, 'change', '.avatar.file-select', function(event) {
   const { target, detail } = event;
-  const form = event.target.closest('form');
+  const form = target.closest('form');
+  const title = target.files.length ? target.files[0].split('.') : [];
+  const fileSelect = this;
 
   ajax.form(form, {
     success: function() {
       form.classList.remove('uploading');
       jSlim.all('#login .avatar.small span, #avatar-upload .preview', function(el) {
-        el.style.backgroundImage = 'url(/avatar/' + target.dataset.id + '.' + detail.type + '?' + new Date().getTime() + ')';
+        el.style.backgroundImage = 'url(/avatar/' + fileSelect.dataset.id + '.' + title[title.length - 1] + '?' + new Date().getTime() + ')';
       });
     }
   });

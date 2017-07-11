@@ -1,6 +1,5 @@
 import { ajax } from '../utils/ajax';
 import { BBC } from '../utils/bbcode';
-import { initFileSelect } from './fileinput';
 import { TagEditor } from './tageditor';
 import { ThumbPicker } from './thumbnailpicker';
 import { resizeFont } from '../ui/resize';
@@ -81,9 +80,6 @@ function Validator(el) {
   this.video = this.el.querySelector('#video-upload');
   this.video.input = this.video.querySelector('input[type=file]');
   
-  initFileSelect(this.video);
-  initFileSelect(this.cover);
-  
   var self = this;
   
   var changeVideo = this.el.querySelector('.change-video');
@@ -93,12 +89,12 @@ function Validator(el) {
     });
   }
   
-  this.video.addEventListener('accept', event => {
-    self.needsCover = !!event.detail.mime.match(/audio\//);
+  this.video.input.addEventListener('change', event => {
+    self.needsCover = !!this.video.files[0].mime.match(/audio\//);
     self.accept(event.detail);
   });
   
-  this.cover.addEventListener('accept', function() {
+  this.cover.input.addEventListener('change', function() {
     self.hasCover = true;
     self.validateInput();
   });
