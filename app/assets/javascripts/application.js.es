@@ -4,8 +4,6 @@
 // It's not advisable to add code directly here, but if you do, it'll appear at the bottom of the
 // the compiled file.
 //
-//= require rails-ujs
-//
 //  Due to ERB parsing (this can be eliminated later)
 //= require data/all
 
@@ -13,6 +11,7 @@
 import './vendor/all';
 
 // Our code (this can be shortened to 1-2 imports later)
+import './ujs/all';
 import './pageload';
 import './callbacks';
 import './components/comments';
