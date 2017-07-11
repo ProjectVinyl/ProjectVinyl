@@ -1,4 +1,5 @@
 import { jSlim } from '../utils/jslim';
+import { ease } from '../utils/math';
 
 function animateScroll(elementX, elementY, viewport, duration) {
   const startingX = viewport.scrollLeft;
@@ -10,11 +11,11 @@ function animateScroll(elementX, elementY, viewport, duration) {
   requestAnimationFrame(function step(timestamp) {
     if (!start) start = timestamp;
     const time = timestamp - start;
-    // 0.5*(1-cosx) is the easing function used here,
-    // linear would be simply be Math.min(time / duration, 1)
-    const percent = (1 - Math.cos(Math.min(time / duration, 1) * Math.PI)) / 2;
+    const percent = ease(Math.min(time / duration, 1));
+
     viewport.scrollLeft = startingX + diffX * percent;
     viewport.scrollTop = startingY + diffY * percent;
+
     if (time < duration) requestAnimationFrame(step);
   });
 }
@@ -25,12 +26,10 @@ function scrollTo(me, container = document.documentElement) {
   const childOff = jSlim.offset(me);
   const containerOff = jSlim.offset(container);
   const viewX = container.clientWidth, viewY = container.clientHeight;
-  const elementX = (childOff.left - containerOff.left) - (viewX / 2),
-        elementY = (childOff.top - containerOff.top) - (viewY / 2);
+  const elementX = (childOff.left - containerOff.left) - (viewX / 2) + (me.offsetWidth / 2),
+        elementY = (childOff.top - containerOff.top) - (viewY / 2) + (me.offsetHeight / 2);
 
-  animateScroll(elementX, elementY, container, 500);
-
-  return me;
+  animateScroll(elementX, elementY, container, 250);
 }
 
 jSlim.ready(function() {
@@ -40,10 +39,10 @@ jSlim.ready(function() {
       scrollTo(target, el);
     }
     if (el.dataset.documentScrollY) {
-      document.scrollingElement.scrollTop = parseInt(el.dataset.documentScrollY);
+      document.documentElement.scrollTop = parseInt(el.dataset.documentScrollY, 10);
     }
     if (el.dataset.documentScrollX) {
-      document.scrollingElement.scrollLeft = parseInt(el.dataset.documentScrollX);
+      document.documentElement.scrollLeft = parseInt(el.dataset.documentScrollX, 10);
     }
   });
 });

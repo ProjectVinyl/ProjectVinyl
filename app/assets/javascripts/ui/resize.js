@@ -1,4 +1,5 @@
 import { jSlim } from '../utils/jslim';
+import { linearInterpolate } from '../utils/math';
 
 function sizeFont(el, targetWidth) {
   const div = document.createElement('div');
@@ -24,12 +25,8 @@ function sizeFont(el, targetWidth) {
   div.style.fontSize = (parseFloat(computed.fontSize) + 1) + 'px';
   computed = getComputedStyle(div);
   const x2 = div.clientWidth, y2 = parseFloat(computed.fontSize);
-  
-  // slope formula
-  const m = (y2 - y1) / (x2 - x1);
-  
-  // y = m(x - x1) + y1, point-slope form
-  let newSize = (m * (targetWidth - x1)) + y1;
+
+  let newSize = linearInterpolate({x1, y1}, {x2, y2}, targetWidth);
   
   // clamped minimum/maximum font sizes
   if (newSize < 5) newSize = 5;

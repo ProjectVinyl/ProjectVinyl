@@ -103,7 +103,7 @@ function findComment(sender) {
   
   ajax.get('comment/get', function(html) {
     container.parentNode.insertAdjacentHTML('afterbegin', html);
-    parentEl = scrollTo(parent);
+    scrollTo(parentEl);
     if (parentEl) {
       parentEl.classList.add('highlight');
       parentEl.classList.add('inline');
