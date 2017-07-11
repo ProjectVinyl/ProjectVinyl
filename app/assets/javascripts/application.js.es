@@ -24,6 +24,7 @@ import './components/vote';
 import './components/notifier';
 import './ui/infiniscroll';
 import './ui/confirmation';
+import './ui/dragtarget';
 import './ui/dropdown';
 import './ui/form';
 import './ui/grid';

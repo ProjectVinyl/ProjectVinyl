@@ -12,12 +12,12 @@
 		<%= form_for(user, as: "user", url: "/ajax/avatar/upload", "html": { "class": "async" }) do |f| %>
 			<%= f.text_field :id, hidden: true %>
 			<div class="file-select-container">
-				<div id="avatar-upload" class="avatar file-select image-selector uploaded-preview revertable" data-type="image" data-id="<%= user.id %>">
+				<div id="avatar-upload" class="avatar drag-target file-select image-selector uploaded-preview revertable" data-id="<%= user.id %>">
 					<span class="preview" style="background-image: url('<%= user.avatar %>');"></span>
 					<span class="drop-icon" style="box-shadow: none;">
 						<i class="fa fa-camera"></i>
 					</span>
-					<%= f.file_field :avatar %>
+					<%= f.file_field :avatar, accept: 'image/*' %>
 				</div>
 				<div class="buttons file-select-options">
 					<label class="link red">

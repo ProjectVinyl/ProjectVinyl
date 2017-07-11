@@ -23,21 +23,21 @@
 				<input class="playlist" id="time" type="text" name="video[time]" value="-1">-1</input>
 			</div>
 		<% end %>
-		<div data-tab="thumbupload" id="cover-upload" class="cover-block selected tab file-select image-selector" data-type="image">
+		<div data-tab="thumbupload" id="cover-upload" class="cover-block selected tab drag-target file-select image-selector">
 			<span class="preview" style="background-image:url('/cover/<%= @video.id %>.png');"></span>
 			<span class="drop-icon">
 				<i class="fa fa-picture-o"></i>
 				<div>Select Cover Art</div>
 			</span>
-			<%= f.file_field :cover %>
+			<%= f.file_field :cover, accept: 'image/*' %>
 		</div>
 		<% if current_user.is_staff? %>
-		<div id="video-upload" class="hidden cover-block file-select video-drop" data-type="a/v">
+		<div id="video-upload" class="hidden cover-block drag-target file-select video-drop">
 			<span class="drop-icon">
 				<i class="fa fa-upload"></i>
 				<div>Select an Audio/Video file to upload</div>
 			</span>
-			<%= f.file_field :file %>
+			<%= f.file_field :file, accept: 'audio/*,video/*' %>
 		</div>
 		<% end %>
 	</div>

@@ -1,11 +1,11 @@
 <%= form_for(@user, as: "user", url: "/ajax/banner/upload/" + @user.id.to_s, "html": { "class": "async" }) do |f| %>
 <div class="uploaded-preview">
-	<div id="banner-upload" class="banner file-select image-selector uploaded-preview" data-base-path="<%= @user.banner %>" data-type="image">
+	<div id="banner-upload" class="banner drag-target file-select image-selector uploaded-preview" data-base-path="<%= @user.banner %>">
 		<span class="preview" style="background-image: url('<%= @user.banner %>');"></span>
 		<span class="drop-icon" style="box-shadow: none;">
 			<i class="fa fa-camera"></i>
 		</span>
-		<%= f.file_field :banner %>
+		<%= f.file_field :banner, accept: 'image/*' %>
 	</div>
 	<div class="progressor">
 		<div class="cover-block">
