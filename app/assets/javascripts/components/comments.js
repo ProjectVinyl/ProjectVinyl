@@ -3,7 +3,6 @@ import { paginator } from './paginator';
 import { error } from './popup';
 import { scrollTo } from '../ui/scroll';
 import { jSlim } from '../utils/jslim';
-import { Callbacks } from '../callbacks';
 
 function postComment(sender) {
   var threadId = sender.dataset.threadId;
@@ -19,20 +18,18 @@ function postComment(sender) {
     order: order,
     comment: comment
   };
-  if (sender.hasClass('report-state')) data.report_state = reportState(sender);
+  if (sender.classList.contains('report-state')) data.report_state = reportState(sender);
   
   sender.classList.add('posting');
   ajax.post('comments/new', data).json(function(json) {
     sender.classList.remove('posting');
-    paginator.repaint(document.getElementById('#thread-' + threadId).closest('.paginator'), json);
+    paginator.repaint(document.getElementById('thread-' + threadId).closest('.paginator'), json);
     scrollTo(document.querySelector('#comment_' + json.focus));
     input.value = '';
-    input.change();
   });
 }
 
-function removeComment(id, json) {
-  var el = document.getElementById('comment_' + id);
+function removeComment(el, json) {
   if (!el) return;
   
   el.style.height = el.offsetHeight + 'px';
@@ -51,7 +48,10 @@ function removeComment(id, json) {
     }, 500);
   });
 };
-Callbacks.register('removeComment', removeComment);
+
+jSlim.on(document, 'ajax:complete', '.js-remove-comment', function(event) {
+  removeComment(this.closest('.comment'), event.detail.data);
+});
 
 function scrollToAndHighlightElement(comment) {
   if (comment) {

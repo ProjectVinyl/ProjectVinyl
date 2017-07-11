@@ -1,5 +1,4 @@
 import { ajax } from '../utils/ajax';
-import { Callbacks } from '../callbacks';
 import { jSlim } from '../utils/jslim';
 
 function slideOut(holder) {
@@ -58,9 +57,8 @@ jSlim.on(document, 'click', '.slider-toggle', function(e) {
   var holder = document.querySelector(this.dataset.target);
   if (this.classList.contains('loadable') && !this.classList.contains('loaded')) {
     this.classList.add('loaded');
-    ajax.get(url).json(function(json) {
+    ajax.get(url).json(json => {
       holder.innerHTML = json.content;
-      Callbacks.execute(callback);
       slideOut(holder);
     });
   } else {

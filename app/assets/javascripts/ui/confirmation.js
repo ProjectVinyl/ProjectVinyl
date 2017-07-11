@@ -2,11 +2,9 @@ import { ajax } from '../utils/ajax';
 import { paginator } from '../components/paginator';
 import { Popup } from '../components/popup';
 import { jSlim } from '../utils/jslim';
-import { Callbacks } from '../callbacks';
 
 function createPopup(me, action) {
   var id = me.dataset.id;
-  var callback = me.dataset.callback;
   var url = me.dataset.url;
   var msg = me.dataset.msg;
   
@@ -37,11 +35,16 @@ function createPopup(me, action) {
           }
           return;
         }
+
+        me.dispatchEvent(new CustomEvent('ajax:complete', {
+          detail: { data: json },
+          bubbles: true,
+          cancelable: true
+        }));
         
         if (json.ref) {
           return document.location.replace(json.ref);
         }
-        Callbacks.execute(callback, [id, json]);
       });
     };
     this.setPersistent();
@@ -78,7 +81,7 @@ function init(me) {
       popup.show();
     }
   } else {
-    popup = Popup.fetch(me.dataset.url, me.dataset.title, me.dataset.icon, me.classList.contains('confirm-button-thin'), me.dataset.eventLoaded);
+    popup = Popup.fetch(me.dataset.url, me.dataset.title, me.dataset.icon, me.classList.contains('confirm-button-thin'), me);
     popup.setPersistent();
   }
   if (popup && maxWidth) popup.setWidth(maxWidth);

@@ -1,7 +1,6 @@
 import { error } from './popup';
 import { toBool } from '../utils/misc';
 import { jSlim } from '../utils/jslim';
-import { Callbacks } from '../callbacks';
 
 function validateTypes(type, file) {
   switch (type) {
@@ -59,18 +58,16 @@ function initFileSelect(me) {
   me.addEventListener('dragleave', leaveDrag);
   me.addEventListener('drop', leaveDrag);
   
-  function despatchCallback(detail) {
-    if (!Callbacks.execute(me.dataset.callback, [me, detail])) {
-      me.dispatchEvent(new CustomEvent('accept', {
-        detail: detail,
-        bubbles: true
-      }));
-    }
+  function dispatchCallback(detail) {
+    me.dispatchEvent(new CustomEvent('accept', {
+      detail: detail,
+      bubbles: true
+    }));
   }
   
   jSlim.on(me, 'change', 'input', function() {
     handleFiles(this.files, allowMulti, type, function(f, title) {
-      despatchCallback({
+      dispatchCallback({
         title: title.splice(0, title.length - 1).join('.'),
         mime: f.type,
         type: title[title.length - 1],
@@ -87,7 +84,7 @@ function initFileSelect(me) {
           if (this.checked) {
             let input = me.querySelector('input');
             input.value = '';
-            despatchCallback({}); // Deletion is handled by the server when this checkbox is set, since we can't easily erase a fileinput's value
+            dispatchCallback({}); // Deletion is handled by the server when this checkbox is set, since we can't easily erase a fileinput's value
             this.checked = false;
           }
         }

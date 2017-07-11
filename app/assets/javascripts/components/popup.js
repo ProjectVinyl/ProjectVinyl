@@ -97,7 +97,7 @@ function Popup(title, icon, construct) {
   return this;
 }
 
-Popup.fetch = function(resource, title, icon, thin, loadedFunc) {
+Popup.fetch = function(resource, title, icon, thin, targetEl) {
   return new Popup(title, icon, function() {
     var self = this;
     
@@ -107,8 +107,11 @@ Popup.fetch = function(resource, title, icon, thin, loadedFunc) {
     ajax.get(resource).text(function(text) {
       self.content.innerHTML = text;
       self.center();
-      if (loadedFunc && typeof window[loadedFunc] === 'function') {
-        window[loadedFunc](self.content);
+      if (targetEl) {
+        targetEl.dispatchEvent(new CustomEvent('loaded', {
+          detail: { content: self.content },
+          bubbles: true
+        }));
       }
     });
     this.show();

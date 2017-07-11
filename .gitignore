@@ -25,7 +25,10 @@
 !/log/.keep
 /tmp
 /shared
+*.save
+*.swp
 
 .rake_tasks~
 .rbenv-vars
 .env
+.byebug_history

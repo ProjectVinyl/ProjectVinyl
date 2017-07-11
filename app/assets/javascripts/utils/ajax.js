@@ -1,7 +1,6 @@
 import { Duration } from './duration';
 import { extendObj } from './misc';
 import { error } from '../components/popup';
-import { Callbacks } from '../callbacks';
 
 function xhr(params) {
   var csrf = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
@@ -39,6 +38,7 @@ function request(method, resource, data, callback) {
     credentials: 'same-origin',
     headers: new Headers({
       'Content-Type': 'application/x-www-form-urlencoded',
+      'X-Requested-With': 'XMLHttpRequest',
       'X-CSRF-Token': csrf
     })
   };
@@ -113,8 +113,8 @@ function sendForm(form, e, callbacks) {
           } else {
             message.innerText = secondsRemaining.toString() + ' remaining (' + Math.floor(percentage) + '% )';
           }
-          fill.style.width = percentage + '%';
-          message.style.left = percentage + '%';
+          if (fill) fill.style.width = percentage + '%';
+          if (message) message.style.left = percentage + '%';
         }
         if (callbacks.update) {
           callbacks.update.apply(form, [e, percentage, secondsRemaining]);
@@ -137,10 +137,14 @@ function sendForm(form, e, callbacks) {
         return callbacks.success.apply(form, arguments);
       }
       
-      if (!Callbacks.execute(form.dataset.callback)) {
-        if (data.ref) {
-          document.location.href = data.ref;
-        }
+      form.dispatchEvent(new CustomEvent('ajax:complete', {
+        detail: { data },
+        bubbles: true,
+        cancelable: true
+      }));
+
+      if (data.ref) {
+        document.location.href = data.ref;
       }
     },
     error: function(msg) {

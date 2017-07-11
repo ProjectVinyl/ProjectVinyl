@@ -39,10 +39,10 @@ class ThreadController < ApplicationController
           thread.set_title(value)
           thread.save
         end
-        return render status: 200, nothing: true
+        head :ok
       end
     end
-    render status: 401, nothing: true
+    head 401
   end
 
   def move
@@ -55,7 +55,7 @@ class ThreadController < ApplicationController
         }
       end
     end
-    render status: 401, nothing: true
+    head 401
   end
 
   def search
@@ -110,16 +110,16 @@ class ThreadController < ApplicationController
         return @thread.bump(current_user, params, comment)
       end
     end
-    render status: 401, nothing: true
+    head 401
   end
 
   def edit_comment
     if user_signed_in? && (comment = Comment.where(id: params[:id]).first)
       comment.update_comment(params[:comment])
-      render status: 200, nothing: true
+      head :ok
       return
     end
-    render status: 401, nothing: true
+    head 401
   end
 
   def get_comment
@@ -127,7 +127,7 @@ class ThreadController < ApplicationController
       render partial: '/thread/comment', locals: { comment: comment, indirect: false }
       return
     end
-    render status: 404, nothing: true
+    head 404
   end
 
   def remove_comment
@@ -159,7 +159,7 @@ class ThreadController < ApplicationController
         return
       end
     end
-    render status: 401, nothing: true
+    head 401
   end
 
   def page
@@ -208,10 +208,10 @@ class ThreadController < ApplicationController
         item.destroy
         current_user.notification_count = current_user.notifications.where(unread: true).count
         current_user.save
-        return render status: 200, nothing: true
+        return head :ok
       end
-      return render status: 404, nothing: true
+      return head 404
     end
-    render status: 402, nothing: true
+    head 402
   end
 end

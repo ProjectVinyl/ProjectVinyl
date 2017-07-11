@@ -182,7 +182,7 @@ class AdminController < ApplicationController
         return redirect_to action: params[:type], id: params[:item][:id]
       end
     end
-    render status: 401, nothing: true
+    head 401
   end
 
   def delete_video
@@ -269,7 +269,7 @@ class AdminController < ApplicationController
       end
       return render json: { added: video.hidden }
     end
-    render status: 401, nothing: true
+    head 401
   end
 
   def reindex
@@ -314,7 +314,7 @@ class AdminController < ApplicationController
         }
       end
     end
-    render status: 401, nothing: true
+    head 401
   end
 
   def merge
@@ -348,7 +348,7 @@ class AdminController < ApplicationController
       end
       return
     end
-    render status: 401, nothing: true
+    head 401
   end
 
   def reporter
@@ -359,7 +359,7 @@ class AdminController < ApplicationController
       }
       return
     end
-    render status: 401, nothing: true
+    head 401
   end
 
   def verify_integrity
@@ -391,9 +391,9 @@ class AdminController < ApplicationController
       @report.save
       Notification.notify_admins(@report,
                                  "A new <b>Report</b> has been submitted for <b>" + @video.title + "</b>", @report.comment_thread.location)
-      render status: 200, nothing: true
+      head :ok
       return
     end
-    render status: 401, nothing: true
+    head 401
   end
 end

@@ -14,6 +14,7 @@ import './vendor/all';
 
 // Our code (this can be shortened to 1-2 imports later)
 import './pageload';
+import './callbacks';
 import './components/comments';
 import './components/search';
 import './components/share';
