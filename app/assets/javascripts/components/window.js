@@ -63,7 +63,6 @@ export function handleEvents(overlay, win) {
 
     overlay.addEventListener('click', () => resolveWith(false));
     overlay.addEventListener('keydown', e => {
-      if (e.which === Key.ENTER) resolveWith(true);
       if (e.which === Key.ESC) resolveWith(false);
     });
   });

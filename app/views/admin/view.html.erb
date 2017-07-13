@@ -47,9 +47,9 @@
 		<% if current_user.is_admin? %>
 		<hr>
 		<div class="actions">
-      <a data-confirm data-method="delete" href="/ajax/admin/reindex/video" data-title="Reindex Videos"><button class="action red">Recreate Video Index</button></a> 
-      <a data-confirm data-method="delete" href="/ajax/admin/reindex/user" data-title="Reindex Users"><button class="action red">Recreate User Index</button></a>
-      <a data-confirm data-method="delete" href="/ajax/admin/hidden/drop" data-title="Drop <%= @hiddenvideos.count %> Videos"><button class="action red">Delete Unlisted Videos</button></a>
+      <a class="button red" data-confirm data-method="post" href="/ajax/admin/reindex/video" data-title="Reindex Videos">Recreate Video Index</a> 
+      <a class="button red" data-confirm data-method="post" href="/ajax/admin/reindex/user" data-title="Reindex Users">Recreate User Index</a>
+      <a class="button red" data-confirm data-method="post" href="/ajax/admin/hidden/drop" data-title="Drop <%= @hiddenvideos.count %> Videos">Delete Unlisted Videos</a>
 		</div>
 		<% end %>
 	</section>

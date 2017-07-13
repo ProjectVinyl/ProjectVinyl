@@ -154,7 +154,7 @@
 						Delete Item
 					</td>
 					<td class="field">
-            <a data-confirm data-method="delete" href="/ajax/delete/video/<%= @video.id %>" data-title="Delete Video"><button class="action red"><i class="fa fa-trash"></i> Delete Video</button></a>
+            <a data-confirm data-method="post" href="/ajax/delete/video/<%= @video.id %>" data-title="Delete Video"><button class="action red"><i class="fa fa-trash"></i> Delete Video</button></a>
             <div>Removes this video and all related data from the system.
             <br><b>(Action cannot be reversed)</b></div>
 					</td>

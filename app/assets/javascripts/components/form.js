@@ -28,6 +28,8 @@ function createExternalForm({url, title}) {
 }
 
 jSlim.on(document, 'click', '[data-external-form]', function(event) {
+  if (event.button !== 0) return;
+
   event.preventDefault();
 
   const url   = this.dataset.externalForm;

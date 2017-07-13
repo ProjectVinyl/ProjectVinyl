@@ -60,7 +60,7 @@
 							Delete Item
 						</td>
 						<td class="field">
-              <a data-confirm data-method="delete" href="/album/<%= @album.id %>" data-title="Delete Album"><button class="action red"><i class="fa fa-trash"></i> Delete Album</button></a>
+              <a class="button red" data-confirm data-method="post" href="/ajax/delete/album/<%= @album.id %>" data-title="Delete Album"><i class="fa fa-trash"></i> Delete Album</a>
 						</td>
 					</tr>
 				</table>
