@@ -24,7 +24,7 @@
 				<tr class="actions">
 					<td class="label">
 					<td class="label">
-						<button type="button" class="confirm-button red action right" data-action="remove" data-url="badge/delete/<%= item.id %>" data-title="Delete Badge" data-msg="You are about to delete a badge." data-icon="warning"><i class="fa fa-trash"></i> Delete</button>
+            <a class="right" data-confirm data-method="delete" href="/ajax/badge/delete/<%= item.id %>" data-title="Delete Badge"><button class="red action"><i class="fa fa-trash"></i> Delete</button></a>
 						<button class="green left"><i class="fa fa-save"></i> Save</button>
 					</td>
 				</tr>

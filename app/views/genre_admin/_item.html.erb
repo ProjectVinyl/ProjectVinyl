@@ -45,7 +45,7 @@
 				<tr class="actions">
 					<td class="label">
 					<td class="label">
-						<button type="button" class="confirm-button red action right" data-action="remove" data-url="tagtype/delete/<%= item.id %>" data-title="Delete Tag Type" data-msg="You are about to delete a sag type. Any related tags will lose their typing information and may have to be reassigned should you want to undo this." data-icon="warning"><i class="fa fa-trash"></i> Delete</button>
+						<a class="button red action right" href="/ajax/tagtype/delete/<%= item.id %>" data-title="Delete Tag Type" data-confirm="You are about to delete a tag type. Any related tags will lose their typing information and may have to be reassigned should you want to undo this." data-icon="warning"><i class="fa fa-trash"></i> Delete</a>
 						<button class="green left"><i class="fa fa-save"></i> Save</button>
 					</td>
 				</tr>

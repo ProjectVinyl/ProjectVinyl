@@ -7,7 +7,7 @@ import { ajax } from './utils/ajax';
 import { jSlim } from './utils/jslim';
 import { initFileSelect } from './components/fileinput';
 import { slideAcross } from './ui/slide';
-import { error } from './components/popup';
+import { popupError } from './components/popup';
 
 jSlim.on(document, 'ajax:complete', 'form.js-edit-video', function(event) {
   const sender = this, data = event.detail.data;
@@ -17,7 +17,7 @@ jSlim.on(document, 'ajax:complete', 'form.js-edit-video', function(event) {
   source.innerText = source.href = data.source;
 });
 
-jSlim.on(document, 'loaded', '.confirm-button.js-banner-select', function(event) {
+jSlim.on(document, 'loaded', '.js-banner-select', function(event) {
   const me = document.getElementById('banner-upload');
   const banner = document.getElementById('banner');
   const basePath = me.dataset.path;
@@ -39,7 +39,7 @@ jSlim.on(document, 'click', '.form.report input[data-to], .form.report button.go
   if (required.length) {
     for (var i = 0; i < required.length; i++) {
       if (required.value != required.dataset.required && (required.getAttribute('type') !== 'checkbox' || !!required.checked != !!required.dataset.required)) {
-        error('One or more required fields need to be filled in.');
+        popupError('One or more required fields need to be filled in.');
         required.focus();
         return;
       }

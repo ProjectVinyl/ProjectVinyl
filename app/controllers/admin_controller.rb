@@ -196,7 +196,7 @@ class AdminController < ApplicationController
     else
       flash[:error] = "Access Denied: You can't do that right now."
     end
-    render json: { ref: url_for(action: "view") }
+    redirect_to url_for(action: 'view')
   end
 
   def delete_album
@@ -228,7 +228,7 @@ class AdminController < ApplicationController
     else
       flash[:error] = "Access Denied: You can't do that right now."
     end
-    render json: { ref: url_for(action: "view") }
+    redirect_to url_for(action: 'view')
   end
 
   def populate_video
@@ -248,7 +248,7 @@ class AdminController < ApplicationController
     else
       flash[:error] = "Access Denied: You can't do that right now."
     end
-    render json: { ref: url_for(action: "view") }
+    redirect_to url_for(action: 'view')
   end
 
   def extract_thumbnail
@@ -369,7 +369,7 @@ class AdminController < ApplicationController
     else
       flash[:notice] = "Access Denied: You do not have the required permissions."
     end
-    render json: { ref: url_for(action: "view") }
+    redirect_to url_for(action: 'view')
   end
 
   def report

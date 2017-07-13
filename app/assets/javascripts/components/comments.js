@@ -1,6 +1,6 @@
 import { ajax } from '../utils/ajax';
 import { paginator } from './paginator';
-import { error } from './popup';
+import { popupError } from './popup';
 import { scrollTo } from '../ui/scroll';
 import { jSlim } from '../utils/jslim';
 
@@ -11,7 +11,7 @@ function postComment(sender) {
   sender = sender.parentNode;
   let input = sender.querySelector('textarea, input.comment-content');
   let comment = input.value.trim();
-  if (!comment) return error('You have to type something to post');
+  if (!comment) return popupError('You have to type something to post');
   
   var data = {
     thread: threadId,
@@ -49,7 +49,7 @@ function removeComment(el, json) {
   });
 };
 
-jSlim.on(document, 'ajax:complete', '.js-remove-comment', function(event) {
+jSlim.on(document, 'fetch:complete', '.js-remove-comment', function(event) {
   removeComment(this.closest('.comment'), event.detail.data);
 });
 

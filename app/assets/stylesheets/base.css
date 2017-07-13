@@ -2064,6 +2064,35 @@ img.emoticon {
   background: linear-gradient(0deg, rgba(255,255,255,1) 30%, rgba(255,255,255,0) 100%);
 }
 
+.fade {
+  transition: opacity 0.25s linear;
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background: rgba(0,0,0,.2);
+  z-index: -1;
+}
+
+.popup-container.dialog {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  max-width: 100%;
+}
+
+.popup-container.dialog .popup {
+  display: inline-block;
+  min-width: 400px;
+  min-height: 150px;
+}
+
 .right {
   float: right;
 }

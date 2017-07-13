@@ -103,9 +103,7 @@ class AlbumController < ApplicationController
     if user_signed_in? && album = Album.where(id: params[:id]).first
       if !album.hidden && (current_user.is_staff? || album.user_id == current_user.id)
         album.destroy
-        render json: {
-          ref: url_for(action: "view", controller: "artist", id: album.user_id)
-        }
+        redirect_to url_for(action: "view", controller: "artist", id: album.user_id)
         return
       end
     end

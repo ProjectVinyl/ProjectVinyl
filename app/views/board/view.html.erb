@@ -15,12 +15,11 @@
 <div class="actions space-fix">
 <% if user_signed_in? %>
 	<% if current_user.is_contributor? %>
-	<button class="confirm-button action mobile-friendly red" data-action="delete" data-url="delete/board/<%= @board.id %>" data-msg="Any threads inside this board will be lost." data-title="Delete Board" data-icon="warning" type="button">
-		<i class="fa fa-trash"></i>
-		<span> Delete Board</span>
-	</button>
+  <a data-confirm="Any threads inside this board will be lost." data-title="Delete Board" data-method="delete" href="/ajax/delete/board/<%= @board.id %>">
+  	<button class="action mobile-friendly red" type="button"><i class="fa fa-trash"></i><span> Delete Board</span></button>
+  </a>
 	<% end %>
-	<button class="confirm-button action mobile-friendly green" data-action="create" data-url="thread/new?board=<%= @board.id %>" data-title="New Thread" data-icon="pencil" type="button">
+	<button class="action mobile-friendly green" data-external-form="/ajax/thread/new?board=<%= @board.id %>" data-title="New Thread" type="button">
 		<i class="fa fa-plus"></i>
 		<span> New Thread</span>
 	</button>

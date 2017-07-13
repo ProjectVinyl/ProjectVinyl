@@ -2,7 +2,7 @@
 	<div class="content">
 		Comment Hidden
 		<% if user_signed_in? && current_user.is_contributor? %>
-		<a title="Restore Comment" class="remove-comment confirm-button js-remove-comment" data-action="delete" data-url="comments/delete/<%= comment.id %><% if indirect %>?indirect=1<% end %>" data-id="<%= comment.get_open_id %>" data-title="Restore Comment" data-icon="warning"><i class="fa fa-trash"></i></a>
+		<a title="Restore Comment" class="remove-comment js-remove-comment" data-method="delete" data-confirm data-remote href="/ajax/comments/delete/<%= comment.id %><% if indirect %>?indirect=1<% end %>" data-id="<%= comment.get_open_id %>" data-title="Restore Comment" data-icon="warning"><i class="fa fa-trash"></i></a>
 		<% end %>
 	</div>
 <% else %>
@@ -28,7 +28,7 @@
 	<% end %>
 	<div<% if indirect && comment.comment_thread.owner_type == 'Video' %> style="margin-left:200px;"<% end %> class="content" data-id="<%= comment.id %>" data-o-id="<%= comment.get_open_id %>" data-comment="<%= comment.bbc_content %>">
 	<% if user_signed_in? && (current_user.is_contributor? || current_user.id == comment.user_id) %>
-		<a title="Delete" class="remove-comment confirm-button js-remove-comment" data-action="delete" data-url="comments/delete/<%= comment.id %><% if indirect %>?indirect=1<% end %>" data-id="<%= comment.get_open_id %>" data-title="Delete Comment" data-icon="warning"><i class="fa fa-trash"></i></a>
+		<a title="Delete" class="remove-comment js-remove-comment" data-confirm data-remote data-method="delete" href="/ajax/comments/delete/<%= comment.id %><% if indirect %>?indirect=1<% end %>" data-id="<%= comment.get_open_id %>" data-title="Delete Comment"><i class="fa fa-trash"></i></a>
 	<% end %>
 	<% if user_signed_in? && current_user.id == comment.user_id %>
 		<a title="Edit" class="edit-comment state-toggle" data-state="editing"><i class="fa fa-pencil"></i></a>

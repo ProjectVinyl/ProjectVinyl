@@ -1,6 +1,6 @@
 import { Duration } from './duration';
 import { extendObj } from './misc';
-import { error } from '../components/popup';
+import { popupError } from '../components/popup';
 
 function xhr(params) {
   var csrf = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
@@ -50,7 +50,7 @@ function request(method, resource, data, callback) {
     }
   }
   var promise = fetch(resource, params).catch(function(err) {
-    error(method + ' ' + resource + '\n\n' + err);
+    popupError(method + ' ' + resource + '\n\n' + err);
     console.error(err);
   });
   if (callback) {

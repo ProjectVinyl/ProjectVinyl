@@ -60,7 +60,7 @@
 							Delete Item
 						</td>
 						<td class="field">
-							<button class="confirm-button action red" data-action="delete" data-url="/delete/album/<%= @album.id %>" data-title="Delete Album" data-icon="warning"><i class=\"fa fa-trash\"></i> Delete Album</button>
+              <a data-confirm data-method="delete" href="/album/<%= @album.id %>" data-title="Delete Album"><button class="action red"><i class="fa fa-trash"></i> Delete Album</button></a>
 						</td>
 					</tr>
 				</table>

@@ -22,8 +22,8 @@
 	</div>
 </div>
 <hr>
-<button class="confirm-button action blue" data-action="delete" data-url="admin/verify" data-title="Verify System Integrity" data-icon="warning" type="button">Verify System Integrity</button>
-<button class="confirm-button action blue" data-action="delete" data-url="admin/requeue" data-title="Rebuild Processing Queue" data-icon="" type=Button">Rebuild Processing Queue</button>
+<a data-method="post" data-confirm href="/ajax/admin/verify" data-title="Verify System Integrity" type="button"><button class="action blue">Verify System Integrity</button></a>
+<a data-method="post" data-confirm href="/ajax/admin/requeue" data-title="Rebuild Processing Queue" type="button"><button class="action blue">Rebuild Processing Queue</button></a>
 <% rescue %>
 <p>
 Oops! Could not connect to Resque.
