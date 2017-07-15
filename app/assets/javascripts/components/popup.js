@@ -2,37 +2,27 @@
  * Fancy pop-ups.
  */
 
-import { createWindow, closeWindow, handleEvents } from './window';
-
-const confirmButtons = `
-  <button type="button" class="button-fw confirm green left" data-resolve="true">OK</button>
-  <button type="button" class="button-fw cancel blue right" data-resolve="false">Cancel</button>
-`;
-
-const errorButtons = `
-  <button type="button" class="button-fw confirm green left" data-resolve="true">OK</button>
-`;
+import { createWindow, closeWindow } from './window';
 
 function createPopup(ref) {
-  const win = createWindow(ref);
-  return handleEvents(win);
+  return createWindow(ref);
 }
 
-export function popupConfirm(msg, title = 'Confirm') {
+export function popupConfirm(msg, title) {
   return createPopup({
     icon: 'fa-warning',
-    title: title,
+    title: title || 'Confirm',
     content: msg,
-    foot: confirmButtons
+    foot: '<button type="button" class="button-fw confirm green left" data-resolve="true">OK</button>\
+           <button type="button" class="button-fw cancel blue right" data-resolve="false">Cancel</button>'
   });
 }
 
-export function popupError(msg, title = 'Error') {
-  closeWindow(); // kill anything already present
+export function popupError(msg, title) {
   return createPopup({
     icon: 'fa-warning',
-    title: title,
+    title: title || 'Error',
     content: msg,
-    foot: errorButtons
+    foot: '<button type="button" class="button-fw confirm green left" data-resolve="true">OK</button>'
   });
 }
