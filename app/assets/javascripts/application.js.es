@@ -28,6 +28,7 @@ import './ui/dropdown';
 import './ui/form';
 import './ui/grid';
 import './ui/lazy';
+import './ui/loadable';
 import './ui/reorder';
 import './ui/resizeinput';
 import './ui/slide';

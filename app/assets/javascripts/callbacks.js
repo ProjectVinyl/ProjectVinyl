@@ -5,7 +5,6 @@
 
 import { ajax } from './utils/ajax';
 import { jSlim } from './utils/jslim';
-import { initFileSelect } from './components/fileinput';
 import { slideAcross } from './ui/slide';
 import { popupError } from './components/popup';
 
