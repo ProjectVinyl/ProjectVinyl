@@ -3,7 +3,6 @@
  */
 
 import { createWindow, closeWindow, handleEvents } from './window';
-import { Key } from '../utils/misc';
 
 const confirmButtons = `
   <button type="button" class="button-fw confirm green left" data-resolve="true">OK</button>
@@ -15,8 +14,8 @@ const errorButtons = `
 `;
 
 function createPopup(ref) {
-  const [ overlay, win ] = createWindow(ref);
-  return handleEvents(overlay, win);
+  const win = createWindow(ref);
+  return handleEvents(win);
 }
 
 export function popupConfirm(msg, title = 'Confirm') {

@@ -10,21 +10,21 @@ const formButton = '<button type="button" class="button-fw cancel blue right" da
 const spinner    = '<div class="loader"><i class="fa fa-pulse fa-spinner"></i></div>';
 
 function createExternalForm({url, title}) {
-  const [ overlay, win ] = createWindow({
+  const win = createWindow({
     icon: 'fa-pencil',
     title: title,
     content: spinner,
     foot: formButton
   });
 
-  const promise = handleEvents(overlay, win);
-  const content = win.querySelector('.content');
+  handleEvents(win);
+
+  const content = win.dom.querySelector('.content');
 
   return fetch(url, { credentials: 'same-origin' })
     .then(handleError)
     .then(resp => resp.text())
-    .then(html => content.innerHTML = html)
-    .then(()   => promise);
+    .then(html => content.innerHTML = html);
 }
 
 jSlim.on(document, 'click', '[data-external-form]', function(event) {

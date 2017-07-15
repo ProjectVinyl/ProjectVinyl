@@ -23,15 +23,15 @@ const windowHtml = `
 </div>
 `;
 
-let win, overlay;
+let dom, overlay;
 
 export function closeWindow() {
   document.body.removeChild(overlay);
-  win = overlay = null;
+  dom = overlay = null;
 }
 
 export function createWindow({icon, title, content, foot}) {
-  if (win) throw new Error('Cannot have multiple windows open at once');
+  if (dom) throw new Error('Cannot have multiple windows open at once');
 
   const html = windowHtml
     .replace(/{icon}/, icon)
@@ -42,19 +42,19 @@ export function createWindow({icon, title, content, foot}) {
   document.body.insertAdjacentHTML('beforeend', html);
 
   overlay = document.querySelector('.popup-container');
-  win     = document.querySelector('.popup');
+  dom     = document.querySelector('.popup');
 
-  return [ overlay, win ];
+  return { overlay, dom };
 }
 
-export function handleEvents(overlay, win) {
+export function handleEvents({overlay, dom}) {
   return new Promise(resolve => {
     function resolveWith(val) {
       closeWindow();
       resolve(val);
     }
 
-    win.addEventListener('click', e => {
+    dom.addEventListener('click', e => {
       if (e.target.matches('[data-resolve]')) resolveWith(e.target.dataset.resolve === 'true');
 
       // Prevents the below listener from firing if the click was in the box
