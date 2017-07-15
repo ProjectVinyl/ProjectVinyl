@@ -40,3 +40,4 @@ gem 'foreman'
 gem 'eye'
 
 gem 'sprockets-rollup'
+gem 'kaminari'
