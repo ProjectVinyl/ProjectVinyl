@@ -6,7 +6,6 @@ import { createWindow, centerWindow } from './window';
 import { handleError } from '../utils/requests';
 import { jSlim } from '../utils/jslim';
 
-// TODO: Reimplement persistent popups so we don't have to keep reloading these. -_____-
 function createExternalForm(url, title, icon, maxWidth, thin) {
   const win = createWindow({
     icon: icon,
@@ -17,7 +16,7 @@ function createExternalForm(url, title, icon, maxWidth, thin) {
   if (thin) win.dom.classList.add('thin');
   if (maxWidth) win.content.style.maxWidth = maxWidth;
   
-  return fetch(url, {
+  fetch(url, {
     credentials: 'same-origin'
   }).then(handleError).then(function(resp) {
     return resp.text();
@@ -25,10 +24,17 @@ function createExternalForm(url, title, icon, maxWidth, thin) {
     win.setContent(html);
     centerWindow(win);
   });
+  
+  return win;
 }
 
 jSlim.on(document, 'click', '[data-external-form]', function(e) {
   if (e.button !== 0) return;
-  createExternalForm(this.dataset.externalForm, this.dataset.title, this.dataset.icon, this.dataset.maxWidth, this.dataset.thin);
+  
+  if (this.popup) {
+    this.popup.show();
+  } else {
+    this.popup = createExternalForm(this.dataset.externalForm, this.dataset.title, this.dataset.icon, this.dataset.maxWidth, this.dataset.thin);
+  }
   e.preventDefault();
 });
