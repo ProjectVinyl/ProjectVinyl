@@ -1,7 +1,7 @@
 import { jSlim } from '../utils/jslim';
 
 function grab(ev, sender, x, y, func, moveev, end) {
-  e.preventDefault(); // prevent text selection
+  ev.preventDefault(); // prevent text selection
   var off = jSlim.offset(sender);
   
   document.addEventListener(moveev, dragging);
