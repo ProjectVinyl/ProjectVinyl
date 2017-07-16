@@ -1,10 +1,10 @@
 import { popupConfirm } from '../components/popup';
 
 document.addEventListener('click', function(event) {
+  if (event.button !== 0 || event.handled) return;
+  
   const target = event.target.closest('a[data-confirm], button[data-confirm], input[data-confirm]');
   if (!target) return;
-  if (event.button !== 0) return;
-  if (event.handled) return;
   
   const message = target.dataset.confirm || 'Are you sure you want to continue?';
   const title = target.dataset.title || 'Confirm';
@@ -17,7 +17,7 @@ document.addEventListener('click', function(event) {
   const newEvent = new MouseEvent('click', event);
   newEvent.handled = true;
   
-  popupConfirm(message, title).accepted = function() {
+  popupConfirm(message, title).setOnAccept(function() {
     target.dispatchEvent(newEvent);
-  };
+  });
 });

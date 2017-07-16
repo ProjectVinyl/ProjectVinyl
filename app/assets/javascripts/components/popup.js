@@ -2,10 +2,12 @@
  * Fancy pop-ups.
  */
 
-import { createWindow, closeWindow } from './window';
+import { createWindow } from './window';
 
 function createPopup(ref) {
-  return createWindow(ref);
+  var win = createWindow(ref);
+  win.setFooter(ref.foot);
+  return win;
 }
 
 export function popupConfirm(msg, title) {
