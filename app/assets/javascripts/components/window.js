@@ -5,8 +5,7 @@ import { jSlim } from '../utils/jslim';
 import { Key } from '../utils/misc';
 import { initDraggable, move } from './draggable';
 
-var INSTANCES = [];
-var activeWindow = null;
+var openedWindows = [];
 
 function createPopupContent(params) {
   var dom = document.createElement('DIV');
@@ -28,48 +27,43 @@ function createPopupContent(params) {
 
 function PopupWindow(dom) {
   this.dom = dom;
+  this.dom.windowObj = this;
   this.content = this.dom.querySelector('.content');
-  this.foot = this.dom.querySelector('.foot');
-  this.fade = document.createElement('DIV');
-  this.fade.classList.add('hidden');
-  
-  this.id = INSTANCES.length;
-  INSTANCES.push(this);
+  this.foot = this.content.querySelector('.foot');
+  this.id = -1;
 }
 PopupWindow.prototype = {
   show: function() {
-    document.body.appendChild(this.dom);
-    document.querySelector('.fades').appendChild(this.fade);
-    
+    if (this.id < 0) {
+      this.id = openedWindows.length;
+      openedWindows.push(this);
+    }
+    document.querySelector('.fades').insertAdjacentElement('beforebegin', this.dom);
     requestAnimationFrame(() => {
-      this.dom.classList.remove('hidden');
-      this.fade.classList.remove('hidden');
       this.focus();
       centerWindow(this);
     });
   },
   close: function() {
-    INSTANCES.splice(this.id, 1);
-    if (activeWindow == this)  {
-      activeWindow = null;
-      if (INSTANCES.length) {
-        INSTANCES[INSTANCES.length - 1].focus();
+    openedWindows.splice(this.id, 1);
+    this.id = -1;
+    if (this.dom.classList.contains('focus'))  {
+      if (openedWindows.length) {
+        openedWindows[openedWindows.length - 1].focus();
       }
     }
     
     this.dom.classList.add('hidden');
-    this.fade.classList.add('hidden');
     setTimeout(() => {
       this.dom.parentNode.removeChild(this.dom);
-      this.fade.parentNode.removeChild(this.fade);
     }, 500);
   },
   focus: function() {
     jSlim.all(document, '.popup-container.focus', function(a) {
       a.classList.remove('focus');
     });
+    this.dom.classList.remove('hidden');
     this.dom.classList.add('focus');
-    activeWindow = this;
   },
   setContent: function(content) {
     this.content.innerHTML = content;
@@ -99,16 +93,23 @@ function handleEvents(win) {
 
 jSlim.ready(function() {
   document.addEventListener('keydown', function(e) {
+    var activeWindow = document.querySelector('.popup-container.focus');
     if (!activeWindow) return;
-    if (e.which === Key.ESC) resolveWith(activeWindow, false);
+    if (e.which === Key.ESC) resolveWith(activeWindow.windowObj, false);
     if (e.which === Key.ENTER) {
-      var accept = activeWindow.dom.querySelector('.confirm');
+      var accept = activeWindow.querySelector('.confirm');
       if (accept) {
         accept.dispatchEvent(new MouseEvent('click'));
       } else {
-        resolveWith(activeWindow, true);
+        resolveWith(activeWindow.windowObj, true);
       }
       e.preventDefault(); // hitting enter triggers the link again, let's stop that.
+    }
+  });
+  document.querySelector('.fades').addEventListener('click', function() {
+    var activeWindow = document.querySelector('.popup-container.focus');
+    if (activeWindow) {
+      resolveWith(activeWindow.windowObj, false);
     }
   });
 });

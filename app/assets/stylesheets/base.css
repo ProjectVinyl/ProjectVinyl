@@ -2046,17 +2046,10 @@ img.emoticon {
   border-bottom: 1px solid rgba(0,0,150, 0.3);
 }
 
-.fades div {
+.fades {
   transition: visibility 0.25s linear, opacity 0.25s linear !important;
-  opacity: 1;
-}
-.fades div.hidden {
-  display: block !important;
   visibility: hidden;
   opacity: 0;
-}
-
-.fades > div:first-child {
   position: fixed;
   top: 0;
   left: 0;
@@ -2064,6 +2057,11 @@ img.emoticon {
   right: 0;
   background: rgba(0,0,0,.2);
   z-index: 2000;
+}
+
+.popup-container:not(.hidden) ~ .fades {
+  visibility: visible;
+  opacity: 1;
 }
 
 .fade-away {
