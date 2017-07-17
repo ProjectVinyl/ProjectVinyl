@@ -5,8 +5,6 @@ import { jSlim } from '../utils/jslim';
 import { Key } from '../utils/misc';
 import { initDraggable, move } from './draggable';
 
-var openedWindows = [];
-
 function createPopupContent(params) {
   var dom = document.createElement('DIV');
   dom.setAttribute('class', 'popup-container focus transitional hidden');
@@ -30,14 +28,9 @@ function PopupWindow(dom) {
   this.dom.windowObj = this;
   this.content = this.dom.querySelector('.content');
   this.foot = this.content.querySelector('.foot');
-  this.id = -1;
 }
 PopupWindow.prototype = {
   show: function() {
-    if (this.id < 0) {
-      this.id = openedWindows.length;
-      openedWindows.push(this);
-    }
     document.querySelector('.fades').insertAdjacentElement('beforebegin', this.dom);
     requestAnimationFrame(() => {
       this.focus();
@@ -45,15 +38,13 @@ PopupWindow.prototype = {
     });
   },
   close: function() {
-    openedWindows.splice(this.id, 1);
-    this.id = -1;
+    this.dom.classList.add('hidden');
     if (this.dom.classList.contains('focus'))  {
-      if (openedWindows.length) {
-        openedWindows[openedWindows.length - 1].focus();
+      var others = document.querySelectorAll('.popup-container:not(.hidden)');
+      if (others.length) {
+        others[others.length - 1].windowObj.focus();
       }
     }
-    
-    this.dom.classList.add('hidden');
     setTimeout(() => {
       this.dom.parentNode.removeChild(this.dom);
     }, 500);
