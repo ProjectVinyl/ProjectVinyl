@@ -20,7 +20,7 @@ export function move(sender, x, y) {
   var scrollX = document.scrollingElement.scrollLeft;
   var scrollY = document.scrollingElement.scrollTop;
   if (x > document.body.offsetWidth - sender.offsetWidth + scrollX) x = document.body.offsetWidth - sender.offsetWidth + scrollX;
-  if (y > document.body.offsetheight - sender.offsetHeight + scrollY) y = document.body.offsetheight - sender.offsetHeight + scrollY;
+  if (y > document.body.offsetHeight - sender.offsetHeight + scrollY) y = document.body.offsetHeight - sender.offsetHeight + scrollY;
   if (y < 0) y = 0;
   if (x < 0) x = 0;
   sender.style.top = y + 'px';
