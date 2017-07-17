@@ -113,7 +113,8 @@ export function createWindow(params) {
 }
 
 export function centerWindow(win) {
-  var x = (document.body.offsetWidth - win.dom.offsetWidth) / 2 + document.scrollingElement.scrollLeft,
-      y = (document.body.offsetHeight - win.dom.offsetHeight) / 2 + document.scrollingElement.scrollTop;
+  const x = (document.body.offsetWidth - win.dom.offsetWidth) / 2;
+  const y = (document.body.offsetHeight - win.dom.offsetHeight) / 2;
+
   move(win.dom, x, y);
 }
