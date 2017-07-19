@@ -1,11 +1,11 @@
 import { jSlim } from '../utils/jslim';
 
 export function move(sender, x, y) {
-  var docWidth  = document.documentElement.scrollWidth;
-  var docHeight = document.documentElement.scrollHeight;
+  var maxX  = document.body.offsetWidth - sender.clientWidth;
+  var maxY = document.body.offsetHeight - sender.clientHeight;
   // Clamp to valid region on the page
-  if (x + sender.clientWidth  > docWidth)  x = docWidth  - sender.clientWidth;
-  if (y + sender.clientHeight > docHeight) y = docHeight - sender.clientHeight;
+  if (x > maxX)  x = maxX;
+  if (y > maxY) y = maxY;
   if (x < 0) x = 0;
   if (y < 0) y = 0;
   
@@ -18,8 +18,8 @@ export function initDraggable(sender) {
     start.preventDefault(); // prevent text selection
     
     const off  = jSlim.offset(sender);
-    const offX = off.left - start.clientX;
-    const offY = off.top  - start.clientY;
+    const offX = off.left - start.pageX;
+    const offY = off.top - start.pageY;
     
     function dragging(change) {
       change.preventDefault(); // ditto
