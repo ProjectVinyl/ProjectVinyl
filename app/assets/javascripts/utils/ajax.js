@@ -1,3 +1,7 @@
+/*
+ * Ajax
+ * A cleaner wrapper to hide the nastiness of fetch/xhr
+ */
 import { Duration } from './duration';
 import { extendObj } from './misc';
 import { popupError } from '../components/popup';
@@ -51,6 +55,11 @@ function request(method, resource, data) {
   }
   var promise = fetch(resource, params).catch(function(err) {
     popupError(method + ' ' + resource + '\n\n' + err);
+  }).then(function(response) {
+    if (!response.ok) {
+      throw new Error('Received error from server');
+    }
+    return response;
   });
   return {
     text: function(callback) {
