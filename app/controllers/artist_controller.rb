@@ -34,7 +34,7 @@ class ArtistController < ApplicationController
         user.set_description(input[:description])
         user.set_bio(input[:bio])
         user.set_tags(input[:tag_string])
-
+        
         user.save
         if current_user.is_staff? && params[:user_id]
           redirect_to action: "view", id: user.id
