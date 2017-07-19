@@ -1955,7 +1955,7 @@ img.emoticon {
 
 .popup-container {
   transition: visibility 0.5s ease, transform 0.5s ease, opacity 0.5s ease;
-  position: absolute;
+  position: fixed;
   min-width: 25%;
   max-width: 80%;
   text-align: left;
