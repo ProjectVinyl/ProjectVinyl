@@ -48,7 +48,7 @@ div#banner {
 						</a>
 					</li>
 				<% end %>
-					<li class="action js-banner-select" data-external-form="/ajax/artist/update/banner/<%= @user.id %>" data-title="Select Banner Image">
+					<li class="action js-banner-select" data-external-form="artist/update/banner/<%= @user.id %>" data-title="Select Banner Image">
 						<span class="icon"><i class="fa fa-pencil"></i></span>
 						<span class="label">Change Banner Image</span>
 					</li>
@@ -56,7 +56,7 @@ div#banner {
 			</div>
 		<% end %>
 		<% if user_signed_in? %>
-			<button data-external-form="/ajax/thread/new?user=<%= @user.id %>" data-title="New Message"><i class="fa fa-envelope"></i> Send Message</button>
+			<button data-external-form="thread/new?user=<%= @user.id %>" data-title="New Message"><i class="fa fa-envelope"></i> Send Message</button>
 		<% end %>
 		</div>
 	</div>
@@ -89,7 +89,7 @@ div#banner {
 <section class="page full-width recent-uploads resize-holder">
 	<h1 class="title resize-target">Recent Albums<span> (<span class="count"><%= number_with_delimiter @albums.count %></span>)</span></h1>
 	<% if @modifications_allowed %>
-    <button data-external-form="/ajax/album/create" data-title="New Album"><i class="fa fa-plus"></i> New</button>
+    <button data-external-form="album/create" data-title="New Album"><i class="fa fa-plus"></i> New</button>
   <% end %>
 	<ul id="albums" class="album-list horizontal">
 		<%= render partial: '/layouts/album_thumb_h', collection: @albums.records %>
