@@ -11,7 +11,7 @@ function createPopupContent(params) {
   dom.innerHTML = '\
   <div class="popup">\
     <h1 class="popup-header">\
-      <i class="fa ' + params.icon + '"></i>\
+      <i class="fa fa-' + params.icon + '"></i>\
       ' + params.title + '\
       <a class="close" data-resolve="false"></a>\
     </h1>\

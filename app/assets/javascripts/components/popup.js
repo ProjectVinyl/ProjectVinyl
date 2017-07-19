@@ -12,7 +12,7 @@ function createPopup(ref) {
 
 export function popupConfirm(msg, title) {
   return createPopup({
-    icon: 'fa-warning',
+    icon: 'warning',
     title: title || 'Confirm',
     content: msg,
     foot: '<button type="button" class="button-fw confirm green left" data-resolve="true">OK</button>\
@@ -23,7 +23,7 @@ export function popupConfirm(msg, title) {
 export function popupError(msg, title) {
   console.error(msg);
   return createPopup({
-    icon: 'fa-warning',
+    icon: 'warning',
     title: title || 'Error',
     content: msg,
     foot: '<button type="button" class="button-fw confirm green left" data-resolve="true">OK</button>'
