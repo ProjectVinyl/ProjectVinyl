@@ -19,8 +19,8 @@ function setPos(sender, x, y) {
   sender.style.left = x + 'px';
 }
 
-export function initDraggable(sender) {
-  jSlim.on(sender, 'mousedown', 'h1.popup-header', function(start) {
+export function initDraggable(sender, target) {
+  jSlim.on(sender, 'mousedown', target, function(start) {
     start.preventDefault(); // prevent text selection
     
     const off  = jSlim.offset(sender);
