@@ -97,12 +97,6 @@ jSlim.ready(function() {
       e.preventDefault(); // hitting enter triggers the link again, let's stop that.
     }
   });
-  document.querySelector('.fades').addEventListener('click', function() {
-    var activeWindow = document.querySelector('.popup-container.focus');
-    if (activeWindow) {
-      resolveWith(activeWindow.windowObj, false);
-    }
-  });
 });
 
 export function createWindow(params) {
