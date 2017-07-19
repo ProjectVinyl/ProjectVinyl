@@ -80,7 +80,7 @@ function editComment(sender) {
   ajax.post('comments/edit', {
     id: sender.dataset.id,
     comment: sender.querySelector('textarea, input.comment-content').value
-  }, function() {
+  }).text(function() {
     sender.classList.remove('editing');
   });
 }
@@ -101,16 +101,16 @@ function findComment(sender) {
     return scrollToAndHighlightElement(parentEl);
   }
   
-  ajax.get('comment/get', function(html) {
+  ajax.get('comment/get', {
+    id: sender.dataset.id || parseInt(parent.split('_')[1], 36)
+  }).text(function(html) {
     container.parentNode.insertAdjacentHTML('afterbegin', html);
     scrollTo(parentEl);
     if (parentEl) {
       parentEl.classList.add('highlight');
       parentEl.classList.add('inline');
     }
-  }, {
-    id: sender.dataset.id || parseInt(parent.split('_')[1], 36)
-  }, 1);
+  });
 }
 
 function replyTo(sender) {

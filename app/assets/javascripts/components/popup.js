@@ -21,6 +21,7 @@ export function popupConfirm(msg, title) {
 }
 
 export function popupError(msg, title) {
+  console.error(msg);
   return createPopup({
     icon: 'fa-warning',
     title: title || 'Error',

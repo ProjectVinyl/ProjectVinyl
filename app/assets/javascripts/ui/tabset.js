@@ -2,20 +2,20 @@ import { ajax } from '../utils/ajax';
 import { jSlim } from '../utils/jslim';
 
 function focusTab(me) {
-  if (!me || me.classList.contains('selected') || !me.dataset.target)
+  if (!me || me.classList.contains('selected') || !me.dataset.target) {
     return;
-
+  }
   // Unfocus other tab first
   const other = me.parentNode.querySelector('.selected');
   if (other) {
     other.classList.remove('selected');
-    const otherTab = document.querySelector(`div[data-tab="${other.dataset.target}"]`);
+    const otherTab = document.querySelector('div[data-tab="' + other.dataset.target + '"]');
     otherTab.classList.remove('selected');
     otherTab.dispatchEvent(new CustomEvent('tabblur', { bubbles: true }));
   }
 
   me.classList.add('selected');
-  const thisTab = document.querySelector(`div[data-tab="${me.dataset.target}"]`);
+  const thisTab = document.querySelector('div[data-tab="' + me.dataset.target + '"]');
   thisTab.classList.add('selected');
   thisTab.dispatchEvent(new CustomEvent('tabfocus', { bubbles: true }));
 }
@@ -26,7 +26,7 @@ jSlim.on(document, 'click', '.tab-set > li.button:not([data-disabled])', functio
 
 jSlim.on(document, 'click', '.tab-set > li.button i.fa-close',  function(e) {
   const tabset = this.parentNode;
-  const toRemove = document.querySelector(`div[data-tab="${tabset.dataset.target}"]`);
+  const toRemove = document.querySelector('div[data-tab="' + tabset.dataset.target + '"]');
 
   toRemove.parentNode.removeChild(toRemove);
   tabset.classList.add('hidden');
@@ -36,7 +36,7 @@ jSlim.on(document, 'click', '.tab-set > li.button i.fa-close',  function(e) {
   focusTab(tabset.parentNode.querySelector('li.button:not([data-disabled]):not(.hidden)[data-target]'));
 
   e.preventDefault();
-  e.stopPropagation(); //
+  e.stopPropagation();
 });
 
 jSlim.on(document, 'click', '.tab-set.async a.button:not([data-disabled])', function(e) {
@@ -45,7 +45,7 @@ jSlim.on(document, 'click', '.tab-set.async a.button:not([data-disabled])', func
 
   const parent = this.parentNode;
   const other = parent.querySelector('.selected');
-  const holder = document.querySelector(`.tab[data-tab="${parent.dataset.target}"]`);
+  const holder = document.querySelector('.tab[data-tab="' + parent.dataset.target + '"]');
 
   other.classList.remove('selected');
   this.classList.add('selected');

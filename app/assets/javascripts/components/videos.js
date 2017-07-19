@@ -3,7 +3,6 @@
  *
  * Copyright Project Vinyl Foundation 2017
 */
-
 import { ajax } from '../utils/ajax';
 import { scrollTo } from '../ui/scroll';
 import { Key } from '../utils/misc';
@@ -83,9 +82,7 @@ Player.createVideoElement = function(player) {
     return video;
   }
   
-  video.innerHTML = `
-    <source src="/stream/${player.source}.webm" type="video/webm"></source>
-    <source src="/stream/${player.source}${player.mime[0]}" type="${player.mime[1]}"></source>`;
+  video.innerHTML = '<source src="/stream/' + player.source + '.webm" type="video/webm"></source><source src="/stream/' + player.source + player.mime[0] + '" type="' + player.mime[1] + '"></source>';
   
   return video;
 };
@@ -222,7 +219,7 @@ Player.prototype = {
       this.source = el.dataset.audio;
       this.audioOnly = true;
       this.preview = document.createElement('img');
-      this.preview.src = `/cover/${this.source}-small.png`;
+      this.preview.src = '/cover/' + this.source + '-small.png';
     } else {
       this.preview = document.createElement('canvas');
     }
@@ -447,11 +444,11 @@ Player.prototype = {
     h1.style.display = '';
     
     link.target = '_blank';
-    link.href = `/view/${this.source}-${this.title}`;
+    link.href = '/view/' + this.source + '-' + this.title;
     
     link.addEventListener('mouseover', () => {
       if (this.video && this.video.currentTime > 0) {
-        link.href = `/view/${this.source}-${this.title}?resume=${this.video.currentTime}`;
+        link.href = '/view/' + this.source + '-' + this.title + '?resume=' + this.video.currentTime;
       }
     });
     
@@ -477,7 +474,7 @@ Player.prototype = {
     // FIXME: cookie parsing
     this.addContext('Autoplay', this.autoplay(!document.cookie.replace(/(?:(?:^|.*;\s*)autoplay\s*=\s*([^;]*).*$)|^.*$/, '$1')), val => {
       val(this.__autoplay = !this.__autoplay);
-      document.cookie = `autoplay=${this.__autoplay ? ';' : '1;'}`;
+      document.cookie = 'autoplay=' + (this.__autoplay ? ';' : '1;');
     });
     
     this.dom.playlist.addEventListener('click', ev => {
@@ -595,7 +592,7 @@ Player.prototype = {
     if (!this.video) this.start();
   },
   loadAttributesAndRestart: function(attr) {
-    this.dom.style.backgroundImage = `url('/cover/${attr.source}.png')`;
+    this.dom.style.backgroundImage = "url('/cover/" + attr.source + ".png')";
     this.dom.querySelector('h1 .title').textContent = this.title = attr.title;
     this.dom.querySelector('h1 .artist').textContent = this.artist = attr.artist;
     this.source = attr.source;
@@ -635,7 +632,7 @@ Player.prototype = {
     if (!this.video) {
       if (this.audioOnly && this.source) {
         video = document.createElement('audio');
-        video.src = `/stream/${this.source}${this.mime[0]}`;
+        video.src = '/stream/' + this.source + this.mime[0];
         video.type = this.mime[1];
       } else {
         video = Player.createVideoElement(this);

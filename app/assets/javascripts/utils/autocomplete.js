@@ -10,7 +10,7 @@ function lookup(sender, popout, action, input, validate) {
     popout.innerHTML = '';
     for (let i = 0; i < json.content.length; i++) {
       let item = document.createElement('li');
-      item.textContext = `${json.content[i][1]} (#${json.content[i][0]})`;
+      item.textContext = json.content[i][1] + ' (' + json.content[i][0] + ')';
       item.dataset.name = json.content[i][1];
       item.addEventListener('mousedown', () => {
         input.value = item.dataset.name;
@@ -32,12 +32,12 @@ jSlim.on(document, 'focusin', '.auto-lookup:not(.loaded) input', function() {
   let lastValue = null;
   
   me.classList.add('loaded');
-
+  
   input.addEventListener('blur', () => {
     clearInterval(autocomplete);
     autocomplete = null;
   });
-
+  
   input.addEventListener('focus', () => {
     if (!autocomplete) {
       autocomplete = setInterval(() => {

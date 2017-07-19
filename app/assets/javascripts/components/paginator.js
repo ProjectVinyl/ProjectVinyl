@@ -1,3 +1,4 @@
+import { ajax } from '../utils/ajax';
 import { fetchJson } from '../utils/requests';
 import { QueryParameters } from '../utils/queryparameters';
 import { jSlim } from '../utils/jslim';
@@ -23,7 +24,7 @@ function repaintPages(context, page, pages) {
   context = context.querySelector('.pages');
   
   while (index <= page + 4 && index <= pages) {
-    context.insertAdjacentHTML('beforeend', `<a class="button${index === page ? ' selected' : ''}" data-page-to="${index}" href="?${QueryParameters.current.clone(id, ++index).toString()}">${index}</a>`);
+    context.insertAdjacentHTML('beforeend', '<a class="button' + (index === page ? ' selected' : '') + '" data-page-to="' + index + '" href="?' + QueryParameters.current.clone(id, ++index).toString() + '">' + index + '</a>');
   }
   
   QueryParameters.current.setItem(id, page + 1);
@@ -35,7 +36,7 @@ function populatePage(context, json) {
   container.innerHTML = json.content;
   container.classList.remove('waiting');
   context.dataset.page = json.page;
-
+  
   jSlim.all(context, '.pagination', page => {
     repaintPages(page, json.page, json.pages);
   });
@@ -51,11 +52,9 @@ function requestPage(context, page) {
   context.querySelector('ul').classList.add('waiting');
   context.querySelector('.pagination .pages .button.selected').classList.remove('selected');
   
-  fetchJson('GET', `/ajax/${context.dataset.type}?page=${page}${context.dataset.args ? '&' + context.dataset.args : ''}`)
-    .then(response => response.json())
-    .then(json => {
-      populatePage(context, json);
-    });
+  ajax.get(context.dataset.type + '?page=' + page + (context.dataset.args ? '&' + context.dataset.args : '')).json(json => {
+    populatePage(context, json);
+  });
 }
 
 const paginator = {
@@ -74,7 +73,7 @@ jSlim.ready(function() {
     // Left-click only, no modifiers
     if (event.button !== 0) return;
     if (event.ctrlKey || event.shiftKey) return;
-
+    
     const target = event.target.closest('.pagination .pages .button, .pagination .button.left, .pagination .button.right');
     if (target) {
       paginator.go(target);

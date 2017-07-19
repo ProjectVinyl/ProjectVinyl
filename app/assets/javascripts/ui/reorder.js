@@ -14,13 +14,13 @@ function once(node, type, listener) {
 }
 
 function moveFloater(e) {
-  floater.style.top = `${e.pageY - jSlim.offset(floater.parentNode).top}px`;
+  floater.style.top = e.pageY - jSlim.offset(floater.parentNode).top + 'px';
 }
 
 function reorder(target, id, index) {
   ajax.post('update/' + target, {
     id: id, index: index
-  }, function() { });
+  }).text(function() { });
 }
 
 function grab(target, container, item) {
@@ -38,11 +38,11 @@ function grab(target, container, item) {
   const dstChilds = floater.children;
 
   for (let i = 0; i < srcChilds.length; ++i) {
-    dstChilds[i].style.width = `${srcChilds[i].clientWidth}px`;
+    dstChilds[i].style.width = srcChilds[i].clientWidth + 'px';
   }
 
   floater.classList.add('floater');
-  floater.style.top = `${jSlim.offset(item).top}px`;
+  floater.style.top = jSlim.offset(item).top + 'px';
 
   const notFloating = [].filter.call(container.children, c => c.matches(':not(.floater)'));
 
@@ -78,22 +78,20 @@ function grab(target, container, item) {
   notFloating.forEach(el => el.addEventListener('mouseover', childMouseover));
 }
 
-jSlim.ready(() => {
-  const reorderable = [].slice.call(document.querySelectorAll('.reorderable'));
-
-  reorderable.forEach(el => {
+jSlim.ready(function() {
+  jSlim.all('.reorderable', el => {
     const target = el.dataset.target;
     const handles = [].slice.call(el.querySelectorAll('.handle'));
-
+    
     handles.forEach(handle => {
       const grabber = () => grab(target, el, handle.parentNode);
-
+      
       handle.addEventListener('mousedown', e => {
         once(document, 'mousemove', grabber);
         e.preventDefault();
         e.stopPropagation();
       });
-
+      
       handle.addEventListener('mouseup', () => {
         document.removeEventListener('mousemove', grabber);
       });
@@ -103,19 +101,19 @@ jSlim.ready(() => {
 
 jSlim.on(document, 'click', '.removeable .remove', function(e) {
   var me = this.closest('.removeable');
-
+  
   if (me.classList.contains('repaintable')) {
     return ajax.post('delete/' + me.dataset.target, {
       id: me.dataset.id
-    }, function(json) {
+    }).json(function(json) {
       paginator.repaint(me.closest('.paginator'), json);
     });
   }
-
+  
   if (me.dataset.target) {
     ajax.post('delete/' + me.dataset.target, {
       id: me.dataset.id
-    }, function() {
+    }).text(function() {
       me.parentNode.removeChild(me);
     });
   } else {

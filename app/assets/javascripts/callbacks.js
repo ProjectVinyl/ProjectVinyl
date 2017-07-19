@@ -2,7 +2,6 @@
  * Callback methods executed after certain actions.
  * i.e. When the banner selection dialog is opened
  */
-
 import { ajax } from './utils/ajax';
 import { jSlim } from './utils/jslim';
 import { slideAcross } from './ui/slide';
@@ -11,7 +10,7 @@ import { popupError } from './components/popup';
 jSlim.on(document, 'ajax:complete', 'form.js-edit-video', function(event) {
   const sender = this, data = event.detail.data;
   const source = sender.parentNode.querySelector('.normal.tiny-link a');
-
+  
   sender.querySelector('.tag-editor').getTagEditorObj().reload(data.results);
   source.innerText = source.href = data.source;
 });
@@ -20,7 +19,7 @@ jSlim.on(document, 'loaded', '.js-banner-select', function(event) {
   const me = document.getElementById('banner-upload');
   const banner = document.getElementById('banner');
   const basePath = me.dataset.path;
-
+  
   me.querySelector('input[type="file"]').addEventListener('change', function(e) {
     const form = this.closest('form');
     ajax.form(form, e, {
@@ -76,7 +75,7 @@ jSlim.on(document, 'change', '.avatar.file-select', function(event) {
   const form = target.closest('form');
   const title = target.files.length ? target.files[0].name.split('.') : [];
   const fileSelect = this;
-
+  
   ajax.form(form, {
     success: function() {
       form.classList.remove('uploading');

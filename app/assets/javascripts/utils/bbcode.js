@@ -16,8 +16,9 @@ var specialActions = {
   },
   emoticons: function(sender) {
     sender.classList.remove('edit-action');
-    sender.querySelector('.pop-out').innerHTML =
-      emoticons.map(e => `<li class="edit-action" data-action="emoticon" title=":${e}:"><img title=":${e}:" alt=":${e}:" src="/emoticons/${e}.png"></li>`).join('');
+    sender.querySelector('.pop-out').innerHTML = emoticons.map(function(e) {
+      return '<li class="edit-action" data-action="emoticon" title=":' + e + ':"><img title=":' + e + ':" alt=":' + e + ':" src="/emoticons/' + e + '.png"></li>';
+    }).join('');
   },
   emoticon: function(sender, textarea) {
     insertTags(textarea, sender.title, '');
@@ -78,13 +79,13 @@ function initEditable(holder, content, short) {
     if (short) {
       textarea = document.createElement('input');
       textarea.className = 'input js-auto-resize';
-      textarea.style.height = `${content.clientHeight + 20}px`;
-      textarea.style.width = `${content.clientWidth + 20}px`;
+      textarea.style.height = (content.clientHeight + 20) + 'px';
+      textarea.style.width = (content.clientWidth + 20) + 'px';
       content.insertAdjacentElement('afterend', textarea);
     } else {
       textarea = document.createElement('textarea');
       textarea.className = 'input';
-      textarea.style.height = `${content.clientHeight + 20}px`;
+      textarea.style.height = (content.clientHeight + 20) + 'px';
       content.insertAdjacentElement('afterend', textarea);
     }
   }
@@ -93,7 +94,7 @@ function initEditable(holder, content, short) {
       const height = getComputedStyle(textarea).height;
       textarea.style.height = 0;
       textarea.style.marginBottom = height;
-      textarea.style.height = `${textarea.scrollHeight + 20}px`;
+      textarea.style.height = (textarea.scrollHeight + 20) + 'px';
       textarea.style.marginBottom = '';
     }
     textarea.addEventListener('keydown', changeHeight);
@@ -160,7 +161,7 @@ function save(action, id, field, holder) {
       id: id,
       field: field,
       value: poor(holder.querySelector('.input').value)
-    }, function() {
+    }).text(function() {
       holder.classList.remove('saving');
       holder.classList.remove('dirty');
     });

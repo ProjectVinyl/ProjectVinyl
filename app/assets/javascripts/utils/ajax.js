@@ -11,7 +11,7 @@ function xhr(params) {
         if (xhr.status >= 200 && xhr.status < 300) {
           if (params.success) {
             let data = xhr.responseXML || xhr.responseText;
-            try { data = JSON.parse(data) } catch(undefined) {} // try to unmarshal
+            try { data = JSON.parse(data) } catch(ignored) {} // try to unmarshal
             params.success(data, null, xhr);
           }
         } else if (xhr.responseText) {
@@ -31,7 +31,7 @@ function xhr(params) {
   xhr.send(params.data);
 }
 
-function request(method, resource, data, callback) {
+function request(method, resource, data) {
   var csrf = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
   var params = {
     method: method,
@@ -51,13 +51,7 @@ function request(method, resource, data, callback) {
   }
   var promise = fetch(resource, params).catch(function(err) {
     popupError(method + ' ' + resource + '\n\n' + err);
-    console.error(err);
   });
-  if (callback) {
-    return promise.then(function(response) {
-      response.text().then(callback);
-    });
-  }
   return {
     text: function(callback) {
       promise.then(function(response) {
@@ -68,6 +62,9 @@ function request(method, resource, data, callback) {
       promise.then(function(response) {
         response.json().then(callback);
       });
+    },
+    then: function(callback) {
+      return promise.then(callback);
     }
   };
 }
@@ -137,12 +134,12 @@ function sendForm(form, e, callbacks) {
         return callbacks.success.apply(form, arguments);
       }
       
-      form.dispatchEvent(new CustomEvent('ajax:complete', {
+      form.dispatchEvent(new CustomEvent('ajax:complete', { // wat
         detail: { data },
         bubbles: true,
         cancelable: true
       }));
-
+      
       if (data.ref) {
         document.location.href = data.ref;
       }
@@ -165,19 +162,15 @@ function sendForm(form, e, callbacks) {
   xhr(params);
 }
 
-function AjaxRequest(resource, callback, direct) {
-  AjaxRequest.get(resource, callback, {}, direct);
-}
-
-const ajax = Object.freeze(extendObj(AjaxRequest, {
-  get: function(resource, data, callback) {
-    return request('GET', '/ajax/' + sanitizeUrl(resource), data, callback);
+const ajax = Object.freeze({
+  get: function(resource, data) {
+    return request('GET', '/ajax/' + sanitizeUrl(resource), data);
   },
-  post: function(resource, data, callback) {
-    return request('POST', '/ajax/' + sanitizeUrl(resource), data || {}, callback);
+  post: function(resource, data) {
+    return request('POST', '/ajax/' + sanitizeUrl(resource), data || {});
   },
-  delete: function(resource, callback) {
-    return request('DELETE', resource, {}, callback);
+  delete: function(resource) {
+    return request('DELETE', resource, {});
   },
   form: function(form, e, callbacks) {
     if (!callbacks && !e.preventDefault) {
@@ -187,12 +180,6 @@ const ajax = Object.freeze(extendObj(AjaxRequest, {
     if (e) e.preventDefault();
     sendForm(form, e, callbacks || {});
   }
-}));
-
-// admin/files.html.erb
-// artist/_edit.html.erb
-// layouts/_reporter.html.erb
-// layouts/application.html.erb
-window.ajax = ajax;
+});
 
 export { ajax };
