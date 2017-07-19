@@ -32,28 +32,24 @@ const Popout = {
   }
 };
 
-// FIXME what a clusterfuck
-// Touch events. Uuuug... At least it works better than a certain other website that shall remain unnamed
-// The general advice it to keep them on a short a leash as possible, to prevent issues when scrolling on
-// a touch device.
 jSlim.on(document, 'touchstart', '.drop-down-holder:not(.hover), .mobile-touch-toggle:not(.hover)', function(e) {
-  if (e.relatedElement.matches('a, li')) {
-    return;
-  }
+  e.preventDefault();
   
   var self = this;
-  
   // ffs https://www.chromestatus.com/features/5093566007214080
   
-  ['touchstart', 'touchmove'].forEach(function(t) {
-    self.addEventListener(t, clos, { passive: false });
+  ['touchstart', 'touchmove'].forEach(t => {
+    this.addEventListener(t, clos, { passive: false });
     document.addEventListener(t, clos, { passive: false });
   });
   
   this.classList.add('hover');
-  e.preventDefault();
   
   function clos(e) {
+    if (e.target.closest('a')) {
+      return; // Links should only be triggered on touch when the drop-down is already open
+    }
+    
     self.classList.remove('hover');
     
     ['touchstart', 'touchmove'].forEach(function(t) {
