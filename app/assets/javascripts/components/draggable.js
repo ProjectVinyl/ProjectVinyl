@@ -1,6 +1,12 @@
 import { jSlim } from '../utils/jslim';
 
 export function move(sender, x, y) {
+  setPos(sender, x, y);
+  sender.prefX = x;
+  sender.prefY = y;
+}
+
+function setPos(sender, x, y) {
   var maxX  = document.body.offsetWidth - sender.clientWidth;
   var maxY = document.body.offsetHeight - sender.clientHeight;
   // Clamp to valid region on the page
@@ -32,3 +38,12 @@ export function initDraggable(sender) {
     });
   });
 }
+
+jSlim.ready(function() {
+  window.addEventListener('resize', function() {
+    jSlim.all('.ui-draggable', function(el) {
+      el.style.top = el.style.left = '0px'; // reposition element for size calculations
+      setPos(el, el.prefX, el.prefY); // try to get back to where the user left it (or as close as possible)
+    });
+  });
+});

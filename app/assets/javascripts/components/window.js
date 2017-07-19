@@ -7,7 +7,7 @@ import { initDraggable, move } from './draggable';
 
 function createPopupContent(params) {
   var dom = document.createElement('DIV');
-  dom.setAttribute('class', 'popup-container focus transitional hidden');
+  dom.setAttribute('class', 'popup-container focus transitional hidden ui-draggable');
   dom.innerHTML = '\
   <div class="popup">\
     <h1 class="popup-header">\
