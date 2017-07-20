@@ -1,3 +1,27 @@
+function getHandlers(el, event, bubble) {
+  var handlers = el.handlers || (el.handlers = {});
+  handlers = handlers[event] || (handlers[event] = []);
+  if (!handlers.length) {
+    el.addEventListener(event, function(e) {
+      triggerEvents(this, event, handlers, e);
+    }, bubble);
+  }
+  return handlers;
+}
+
+function triggerEvents(sender, event, eventHandlers, e) {
+  eventHandlers.forEach(function(handler) {
+    if (!handler.selector) {
+      return handler.callback.call(sender, e);
+    }
+    var target = e.target && e.target.closest && e.target.closest(handler.selector);
+    if (target) {
+      if ((event == 'mouseout' || event == 'mouseover') && target.contains(e.relatedTarget)) return;
+      handler.callback.call(target, e);
+    }
+  });
+}
+
 const jSlim = {
   dom: (function() {
     var div = document.createElement('DIV');
@@ -20,16 +44,16 @@ const jSlim = {
       }
     };
   })(),
+  bind: function(el, event, func, bubble) {
+    getHandlers(el, event, bubble).push({
+      callback: func
+    });
+  },
   on: function(el, event, selector, func, bubble) {
-    var k = function(e) {
-      var target = e.target && e.target.closest && e.target.closest(selector);
-      if (target) {
-        if ((event == 'mouseout' || event == 'mouseover') && target.contains(e.relatedTarget)) return;
-        return func.call(target, e);
-      }
-    };
-    el.addEventListener(event, k, bubble);
-    return k;
+    getHandlers(el, event, bubble).push({
+      selector: selector,
+      callback: func
+    });
   },
   each: function(arrLike, func, thisArg) {
     return Array.prototype.forEach.call(arrLike, func, thisArg);
@@ -44,7 +68,7 @@ const jSlim = {
     if (document.readyState !== 'loading') {
       return func();
     }
-    document.addEventListener('DOMContentLoaded', func);
+    jSlim.bind(document, 'DOMContentLoaded', func);
   },
   offset: function(element) {
     if (!element || !element.getClientRects().length) {
