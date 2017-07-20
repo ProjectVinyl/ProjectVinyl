@@ -1,4 +1,4 @@
-import { ajax } from '../utils/ajax';
+import { uploadForm } from '../utils/progressform';
 import { BBC } from '../utils/bbcode';
 import { TagEditor } from './tageditor';
 import { ThumbPicker } from './thumbnailpicker';
@@ -41,16 +41,16 @@ const uploadingQueue = {
     if (this.running) {
       uploader.tab.classList.add('loading');
       uploader.tab.classList.add('waiting');
-      ajax.form(uploader.form, {
+      uploadForm(uploader.form, {
         success: function(data) {
           uploader.complete(data.ref);
           if (next) next = self.tick(next);
         },
-        error: function(message, msg, response) {
+        error: function(message, error) {
           uploader.error();
-          message.text(response);
+          message.text(error);
         },
-        update: function(e, percentage) {
+        progress: function(message, fill, percentage) {
           uploader.update(percentage);
           if (next && percentage > 100) next = self.tick(next);
         },
@@ -84,7 +84,7 @@ function Validator(el) {
   
   var changeVideo = this.el.querySelector('.change-video');
   if (changeVideo) {
-    changeVideo.addEventListener('click', function(e) {
+    changeVideo.addEventListener('click', function() {
       self.video.input.click();
     });
   }
