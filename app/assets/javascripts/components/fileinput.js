@@ -9,3 +9,13 @@ jSlim.on(document, 'change', '.file-select-options input', function() {
     this.checked = false;
   }
 });
+
+jSlim.on(document, 'change', '.file-select input[type="file"]', function(event) {
+  const fileSelect = event.target.closest('.file-select');
+  const preview = fileSelect.querySelector('.preview');
+
+  if (!preview) return;
+  if (preview.src) URL.revokeObjectURL(preview.src);
+  preview.src = URL.createObjectURL(this.files[0]);
+  preview.style.backgroundImage = `url(${preview.src})`;
+});

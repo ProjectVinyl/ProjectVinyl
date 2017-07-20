@@ -89,9 +89,17 @@ function Validator(el) {
     });
   }
   
-  this.video.input.addEventListener('change', event => {
-    self.needsCover = !!this.video.files[0].mime.match(/audio\//);
-    self.accept(event.detail);
+  this.video.input.addEventListener('change', () => {
+    const file = this.video.input.files[0];
+    const title = file.name.split('.');
+
+    this.needsCover = !!file.type.match(/audio\//);
+    this.accept({
+      title: title.splice(0, title.length - 1).join('.'),
+      mime: file.type,
+      type: title[title.length - 1],
+      data: file
+    });
   });
   
   this.cover.input.addEventListener('change', function() {

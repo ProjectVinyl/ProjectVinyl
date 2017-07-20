@@ -15,6 +15,7 @@ import './ujs/all';
 import './pageload';
 import './callbacks';
 import './components/comments';
+import './components/fileinput';
 import './components/form';
 import './components/search';
 import './components/share';
