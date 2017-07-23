@@ -1,0 +1,101 @@
+ul.tab-set {
+  padding: 0;
+  list-style: none;
+}
+ul.tab-set li {
+  display: inline-block;
+}
+
+.tab-set > .tab-set.tabs {
+  overflow-y: hidden;
+  background: rgba(100,100,120,0.1);
+  padding: 15px 15px 0 15px;
+  margin: -20px -20px 20px -20px;
+}
+.page.properties.tab-set > .tab-set.tabs {
+  margin: 0 0 20px 0;
+}
+
+.tab-set > .tab-set.tabs .button {
+  position: relative;
+  border-bottom: none;
+  border-radius: 0 ;
+  box-shadow: 0 0 10px -5px rgba(0,0,0,0.3);
+  margin-right: 10px;
+}
+.tab-set > .tab-set.tabs .button span {
+  display: inline-block;
+  overflow: hidden;
+  white-space: nowrap;
+  max-width: 200px;
+  max-height: 1.3em;
+}
+.tab-set > .tab-set.tabs .button i.fa-close {
+  margin-left: 20px;
+}
+.tab-set > .tab-set.tabs .button[data-disabled] {
+  opacity: 0.3;
+}
+.tab-set > .tab-set.tabs .button::before,
+.tab-set > .tab-set.tabs .button::after {
+  content: '';
+  display: block;
+  position: absolute;
+  top: 0;
+  width: 0;
+  height: 0;
+  border: solid #f8f8f8;
+  border-bottom-width: 30px;
+  transition: border 0.5s ease;
+}
+
+.tab-set > .tab-set.tabs .button.selected::before,
+.tab-set > .tab-set.tabs .button:hover::before {
+  border-color: transparent #fff #fff transparent;
+}
+.tab-set > .tab-set.tabs .button.selected::after,
+.tab-set > .tab-set.tabs .button:hover::after {
+  border-color: transparent transparent #fff #fff;
+}
+.tab-set > .tab-set.tabs .button:active::before,
+.tab-set > .tab-set.tabs .button::before {
+  right: 100%;
+  border-color: transparent #f8f8f8 #f8f8f8 transparent;
+}
+.tab-set > .tab-set.tabs .button:active::after,
+.tab-set > .tab-set.tabs .button::after {
+  left: 100%;
+  border-color: transparent transparent #f8f8f8 #f8f8f8;
+}
+
+.tab-set > .tab-set.tabs .button span {
+  transition: background 0.5s ease, opacity 0.5s ease, max-width 0.5s ease, margin-right 0.5s ease;
+  max-width: 200px;
+  opacity: 1;
+}
+.tab-set > .tab-set.tabs .button.hidden {
+  display: inline-block !important;
+}
+.tab-set > .tab-set.tabs .button.hidden span {
+  transition: background 0.5s ease, opacity 0.25s linear, max-width 0.25s linear, margin-right 0.25s linear;
+  opacity: 0;
+  max-width: 0 !important;
+  margin-right: -20px;
+}
+
+.tab-set > .tab-set.tabs .button span.progress {
+  display: none;
+  position: absolute;
+  height: 3px;
+  width: 100%;
+  max-width: 100%;
+  top: 0px;
+  left: 0;
+  border-radius: 0 0 100% 100%;
+}
+.tab-set > .tab-set.tabs .button.uploading span.progress {
+  display: block;
+}
+.tab-set > .tab-set.tabs .button.uploading i {
+  display: none;
+}

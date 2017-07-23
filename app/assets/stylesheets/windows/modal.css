@@ -1,0 +1,25 @@
+.modal {
+  padding: 0px;
+  border-radius: 5px;
+  text-align: center;
+}
+.modal form, .tiny-foot {
+  padding: 20px;
+}
+.modal .label {
+  font-weight: bold;
+  line-height: 35px;
+}
+.modal input:not([type=checkbox]) {
+  width: 100%;
+}
+.modal .actions {
+  padding-top: 10px;
+}
+.tiny-foot {
+  background: #efefef;
+}
+.tiny-foot a {
+  text-decoration: none;
+  font-size: 0.85em;
+}

@@ -1,0 +1,15 @@
+table {
+  width: 100%;
+}
+
+table, tr, td {
+  table-layout: fixed;
+  border-collapse: collapse;
+  border-spacing: 0;
+  padding: 0;
+  margin: 0;
+}
+
+table.auto, table.auto tr, table.auto td {
+  table-layout: auto;
+}

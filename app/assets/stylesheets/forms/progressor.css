@@ -1,0 +1,65 @@
+form .progressor, form.uploading > :not(.uploaded-preview),
+form.uploading .uploaded-preview.preview-selective > :not(.preview-selective-selected),
+form.uploading .drop-icon, form.uploading input {
+  display: none;
+}
+
+form.uploading .progressor {
+  display: block !important;
+  width: 100%;
+  padding-top: 25%;
+  position: relative;
+}
+form.uploading .avatar ~ .progressor,
+form.uploading .uploaded-preview + .progressor {
+  padding-top: 0;
+}
+form.uploading .progressor + div {
+  display: block;
+  position: absolute;
+  width: 50%;
+  left: 50%;
+  top: 10%;
+  margin-left: -25%;
+}
+.progressor .progress {
+  position: relative;
+  background: #eee;
+  border-radius: 5px;
+  height: 10px;
+  margin-top: 10px;
+  overflow-x: hidden;
+}
+
+.progress .fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  background: orange;
+  width: 50%;
+  text-align: right;
+  vertical-align: top;
+  line-height: 0px;
+}
+.error .progress .fill {
+  background: red;
+}
+
+.waiting .progress .fill {
+  background: orange;
+  animation: 1s linear infinite intermediate;
+  background: repeating-linear-gradient(
+    45deg,
+    rgba(255, 165, 0, 0.6), rgba(255, 165, 0, 0.6) 30%,
+    rgba(255, 165, 0, 1) 30%, rgba(255, 165, 0, 1) 71%,
+    rgba(255, 165, 0, 0.6) 71%, rgba(255, 165, 0, 0.6) 100%
+  );
+  background: webkit-repeating-linear-gradient(
+    45deg,
+    rgba(255, 165, 0, 0.6), rgba(255, 165, 0, 0.6) 30%,
+    rgba(255, 165, 0, 1) 30%, rgba(255, 165, 0, 1) 71%,
+    rgba(255, 165, 0, 0.6) 71%, rgba(255, 165, 0, 0.6) 100%
+  );
+  background-size: 30px 100%;
+}

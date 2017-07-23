@@ -1,0 +1,57 @@
+.search-options {
+  display: block;
+}
+
+.search-options label {
+  display: inline-block;
+  border: 1px solid #ccc;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  color: #444;
+  border-radius: 2px;
+  width: 300px;
+}
+
+.search-options label select {
+  width: 100%;
+}
+
+@media(max-width: 400px) {
+  .search-options label {
+    width: 100%;
+  }
+}
+
+.search-options label, input[type=text]:focus, input[type=email]:focus, input[type=password]:focus, textarea:focus, label.text-input.focus {
+  transition: background 0.125s ease;
+}
+
+.search-options label.focus, input[type=text]:focus, input[type=email]:focus, input[type=password]:focus, textarea:focus, label.text-input.focus {
+  background: rgba(200,200,200,0.1);
+}
+
+.search-options label span:first-child {
+  width: 90px;
+  display: table-cell;
+  min-width: 90px;
+  padding: 10px;
+  background: rgba(200,200,200,0.1);
+  border-right: 1px solid #ccc;
+  font-size: 0.9em;
+  border-top-left-radius: 2px;
+  border-bottom-left-radius: 2px;
+}
+
+.search-options label div {
+  width: 100%;
+  display: table-cell;
+}
+
+.search-options input, .search-options select {
+  border: none;
+  background: none;
+  color: inherit;
+  outline: none;
+  padding: 11px;
+  width: 100%;
+}

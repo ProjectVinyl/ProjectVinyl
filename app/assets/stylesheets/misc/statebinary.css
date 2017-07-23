@@ -1,0 +1,4 @@
+.state-binary:not(.editing) .editing,
+.state-binary.editing .normal {
+  display: none !important;
+}

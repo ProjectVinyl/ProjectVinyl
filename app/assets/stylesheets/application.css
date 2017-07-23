@@ -11,6 +11,24 @@
  * file per style scope.
  *
  *= require font-awesome.min
- *= require base
+ *= require normalise
+ *= require compatability
+ *= require animations
+ *= require tables/all
+ *= require misc/all
+ *= require layout/all
+ *= require windows/all
+ *= require forums/all
+ *= require notices
+ *= require lists/all
+ *= require search/all
+ *= require thumbs/videos
+ *= require inputs/all
+ *= require buttons/all
+ *= require ui-elements/all
+ *= require forms/all
+ *= require videos/videos
+ *= require tags/tags
+ *= require tags/editor
  *= require_self
  */

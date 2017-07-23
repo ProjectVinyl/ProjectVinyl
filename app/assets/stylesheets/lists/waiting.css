@@ -1,0 +1,16 @@
+ul.waiting, .tab.waiting {
+  position: relative;
+  opacity: 0.2;
+  transition: opacity 0.5s ease;
+}
+ul.waiting::after, .tab.waiting::after {
+  content: '\f110';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin-top: -12px;
+  margin-left: -12px;
+  -webkit-animation: fa-spin 1s infinite steps(8);
+  animation: fa-spin 1s infinite steps(8);
+  font: normal normal normal 24px/1 FontAwesome;
+}

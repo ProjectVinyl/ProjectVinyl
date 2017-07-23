@@ -1,0 +1,38 @@
+.form.report form {
+  display: inline-block;
+}
+.form.report .group {
+  padding: 5px;
+  white-space: pre-line;
+}
+
+.form.report .group .foot button {
+  position: absolute;
+  bottom: 0;
+}
+.form.report .group .foot button.left {
+  left: 0;
+}
+.form.report .group .foot button.left {
+  right: 0;
+}
+.form.report textarea {
+  resize: vertical;
+  min-height: 100px;
+  width: 100%;
+}
+
+.form.report input[type="text"] {
+  width: 100%;
+}
+
+.form.report input[data-required] + i:before {
+  content: '*';
+  font-weight: bold;
+}
+
+.form.report .progressor {
+  display: block;
+  padding-top: 0;
+  text-align: center;
+}

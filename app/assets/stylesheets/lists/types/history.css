@@ -1,0 +1,13 @@
+.items.history .added, .items.history .removed, .items.history .altered {
+  border-left: solid 1px #eee;
+  border-right: solid 1px #eee;
+}
+.items.history .added {
+  background: rgba(0,255,0,0.3);
+}
+.items.history .removed {
+  background: rgba(255,0,0,0.3);
+}
+.items.history .altered {
+  background: rgba(0,0,255,0.3);
+}

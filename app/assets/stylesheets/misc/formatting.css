@@ -1,0 +1,31 @@
+.small {
+  font-size: 25%;
+}
+
+i.red {
+  color: #ec4848;
+}
+i.green {
+  color: #7bb042;
+}
+
+.tiny-link {
+  font-style: italic;
+  color: #aaa;
+  font-weight: normal;
+  font-size: 0.8em;
+  text-decoration: none;
+}
+
+.underline > span, .underline a {
+  border-bottom: dotted 1px #aaa;
+}
+
+a.source {
+  text-decoration: none;
+}
+
+h1.banned, h2.banned, a.banned, .banned a.user-link, .comment .name a.user-link.banned, .name.banned {
+  text-decoration: line-through !important;
+  color: #aaa !important;
+}

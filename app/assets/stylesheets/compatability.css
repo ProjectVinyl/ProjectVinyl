@@ -1,0 +1,44 @@
+/*Firefox Fix*/
+button::-moz-focus-inner {
+  border:0;
+  padding:0;
+}
+
+/*Opera Fix*/
+input:focus, textarea:focus, keygen:focus, select:focus {
+  outline-offset:0;
+}
+html.opera body + div[is-visible] {
+  display: none !important;
+}
+
+html.opera label div {
+  position: relative;
+}
+html.opera label select {
+  -webkit-appearance: none;
+}
+html.opera label div::after {
+   align-items: center;
+   pointer-events: none;
+   font-family: "FontAwesome";
+   content: '\f078';
+   position: absolute;
+   text-align: center;
+   vertical-align: middle;
+   line-height: inherit;
+   font-size: 0.8em;
+   top: 0;
+   right: 0;
+   bottom: 0;
+   width: 18px;
+   padding-top: 10px;
+}
+html.opera label:hover div::after {
+   background: rgba(0,0,120,0.1);
+}
+
+/*Opera/Chrome fix */
+:focus {
+    outline: none;
+}

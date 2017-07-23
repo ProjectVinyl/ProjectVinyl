@@ -1,0 +1,6 @@
+div.tab, #upload .cover-block.tab {
+  display: none;
+}
+div.tab.selected, #upload .cover-block.tab.selected {
+  display: block;
+}

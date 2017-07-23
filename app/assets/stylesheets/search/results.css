@@ -1,0 +1,7 @@
+.search-result {
+  min-height: 500px;
+  margin: 10px 0;
+}
+.search-results.pop-out li {
+  cursor: default;
+}

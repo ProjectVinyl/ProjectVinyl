@@ -1,0 +1,19 @@
+.donate div {
+  position: relative;
+  background: url('../images/index.gif') center / 100%;
+  padding-bottom: 100%;
+  image-rendering: crisp-edges;
+}
+.donate div::after {
+  transition: opacity 0.5s ease;
+  opacity: 0;
+  position: absolute;
+  padding: 5px;
+  font-size: 50%;
+  background: rgba(255,255,255,0.3);
+  content: 'Pssst, hey. Hey you. If you like what you see, maybe you should consider donating to keep this site running? kthanks.';
+  text-decoration: none;
+}
+.donate div:hover::after {
+  opacity: 1;
+}

@@ -1,0 +1,80 @@
+.tags {
+  display: inline;
+  margin: 0;
+  padding: 0;
+}
+
+.tag {
+  text-shadow: 1px 1px rgba(255,255,255,0.3);
+  margin: 2px;
+}
+.tag a {
+  text-decoration: none;
+  color: #000;
+  font-weight: initial;
+}
+
+.tags.artist-tags {
+  display: inline-block;
+  border-right: solid 1px rgba(0,0,150, 0.3);
+  padding-right: 10px;
+  margin-right: 5px;
+}
+.tags.artist-tags .tag {
+  border-color: rgba(0,0,150, 0.3);
+  float: initial;
+  display: inline-block;
+}
+
+.tag-artist {
+  background: #f2fdab;
+  border-color: #82ad2b;
+}
+.tag-artist a, .tag-artist span {
+  color: #82ad2b;
+}
+.tag-genre {
+  background: #a2a6d4;
+  border-color: #363b74;
+}
+.tag-genre a, .tag-genre span {
+  color: #363b74;
+}
+.tag-oc {
+  background: #b1cee2;
+  border-color: #4c90bd;
+}
+.tag-oc a, .tag-oc span {
+  color: #4c90bd;
+}
+.tag-spoiler {
+  background: #f8d2c0;
+  border-color: #e97136;
+}
+.tag-spoiler a, .tag-spoiler span {
+  color: #e97136;
+}
+.tag-character {
+    background: #e6eeef;
+    border-color: #46a0b4;
+}
+.tag-character a, .tag-character span {
+    color: #46a0b4;
+}
+
+.tag[data-slug="artist needed"], .tag[data-slug="source needed"] {
+  background: #f99;
+  border-color: #f80808;
+}
+.tag[data-slug="artist needed"] a, .tag[data-slug="source needed"] a,
+.tag[data-slug="artist needed"] span, .tag[data-slug="source needed"] span {
+  color: #d00;
+}
+
+.tag .pop-out {
+  margin-top: 0;
+  min-width: 100%;
+  max-width: auto !important;
+  width: auto !important;
+  border-radius: 0 0 5px 5px;
+}

@@ -1,0 +1,39 @@
+.page.properties {
+  padding: 0;
+}
+.page.properties h1 {
+  margin: 20px;
+}
+.properties table {
+  table-layout: auto;
+  width: 100%;
+}
+.properties tr td {
+  padding: 10px;
+  border-top: solid 1px #eee;
+}
+.properties td.label {
+  background: rgba(180,180,180,0.1);
+  width: 25%;
+  border-right: solid 1px #eee;
+}
+.properties td.field {
+  width: 75%;
+}
+.properties td.field textarea,
+.properties td.field input[type=text],
+.properties td.field input[type=email],
+.properties td.field input[type=password],
+.properties td.field label.text-input {
+  width: 100%;
+}
+.properties td.field textarea {
+  resize: vertical;
+}
+.properties .section {
+  font-weight: bold;
+}
+
+.properties.ribbed tr:nth-child(2n + 1) {
+  background: rgba(240,240,255,0.1);
+}

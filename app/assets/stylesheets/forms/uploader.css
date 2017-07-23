@@ -1,0 +1,20 @@
+#upload {
+  background: #fff;
+  transition: text-shadow 0.5s ease, background 0.5s ease;
+}
+#upload:hover {
+  background: #fef;
+  text-shadow: 0 0 50px #bbb;
+}
+
+#upload .controls {
+  opacity: 1;
+  margin-bottom: -50px;
+}
+#upload .track {
+  width: calc(100% - 20px);
+  background: rgba(0,0,0,0.1);
+}
+#upload .video {
+  margin-bottom: 50px;
+}

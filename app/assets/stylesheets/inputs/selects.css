@@ -1,0 +1,34 @@
+input, select {
+  border: none;
+}
+
+.select {
+  position: relative;
+  width: 100px;
+  overflow: hidden;
+}
+.select select {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 150%;
+  height: 100%;
+  background: none;
+  -webkit-appearance: none;
+}
+.select::before {
+  content: "\f078";
+  position: absolute;
+  top: 5px;
+  bottom: 5px;
+  right: 5px;
+  font-family: "FontAwesome";
+  line-height: 1.5em;
+  pointer-events: none;
+}
+
+select[disabled] {
+  background: #eee;
+  color: #aaa;
+}

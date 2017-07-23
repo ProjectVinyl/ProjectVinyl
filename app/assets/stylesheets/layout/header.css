@@ -1,0 +1,113 @@
+header {
+  position: relative;
+  margin-bottom: 10px;
+}
+header ul {
+  background: #fff;
+  color: #aaa;
+  font-weight: bold;
+  padding: 0px;
+  padding-left: 10px;
+  padding-right: 10px;
+  margin: 0px;
+  height: 40px;
+}
+header ul > li {
+  opacity: 0.6;
+}
+header ul > li:hover, header ul > li.selected {
+  opacity: 1;
+  transition: opacity 0.25s ease;
+}
+header ul li, header ul li a {
+  font-size: 20px;
+  display: inline-block;
+  line-height: 40px;
+  text-shadow: 0 0.05em 0.03em rgba(0,0,0,0.3);
+  text-decoration: none;
+  transition: color 0.05125s linear, background-color 0.05125s linear;
+  vertical-align: middle;
+  cursor: pointer;
+}
+header ul li {
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 0 10px;
+  color: #008;
+}
+
+header.header ul li a {
+  margin-top: -5px;
+  color: inherit;
+}
+header ul li:hover {
+  background: #eee;
+}
+header ul.drop-down li {
+  display: block;
+  margin: 0;
+  width: 100%;
+  padding: 0;
+}
+header ul.drop-down li a {
+  padding: 0 10px;
+  width: 100%;
+}
+header ul.drop-down {
+  padding: 0;
+}
+header .albums:hover:after, header .albums:hover,
+header .albums.selected, header .albums.selected:after {
+  background: #e6b91f;
+}
+header .artists:hover:after, header .artists:hover,
+header .artists.selected, header .artists.selected:after {
+  background: #e97135;
+}
+header .genres:hover:after, header .genres:hover,
+header .genres.selected, header .genres.selected:after {
+  background: #a66ebe;
+}
+header .forum:hover:after, header .forum:hover,
+header .forum.selected, header .forum.selected:after {
+  background: #6aaadd;
+}
+header ul li:hover, header ul li.selected {
+  color: #fff;
+}
+
+header ul li:after {
+  transition: opacity 0.5s linear;
+  z-index: 200;
+  opacity: 0;
+}
+header ul li:hover:after {
+  z-index: 300;
+}
+header ul li:hover:after, header ul li.selected:after {
+  opacity: 1;
+}
+
+header ul::before {
+  bottom: 0;
+}
+
+header > ul li a i {
+  display: none !important;
+}
+
+@media(max-width: 470px) {
+  header ul li, header ul li a {
+    font-size: 13px;
+  }
+}
+
+@media(max-width: 360px) {
+  header.header > ul li:hover a i + span,
+  header.header > ul li a i {
+    display: inline !important;
+  }
+  header.header > ul li a i + span {
+    display: none;
+  }
+}

@@ -1,0 +1,49 @@
+a.album {
+  text-decoration: none;
+}
+.stack {
+  background: none !important;
+  position: relative;
+  transition: margin 0.25s ease;
+}
+.stack .stack-item {
+  display: block;
+  position: absolute;
+  background: #000 center/contain no-repeat;
+  width: 90%;
+  height: 90%;
+  transform: rotate(5deg);
+  -ms-transform: rotate(5deg);
+  -webkit-transform: rotate(5deg);
+  -o-transform: rotate(5deg);
+  -moz-transform: rotate(5deg);
+  box-shadow: 0 0 10px -1px rgba(100,100,100,0.6);
+}
+.stack .stack-item .stack-item {
+  transform: rotate(-15deg);
+  -ms-transform: rotate(-15deg);
+  -webkit-transform: rotate(-15deg);
+  -moz-transform: rotate(-15deg);
+  width: 100%;
+  height: 100%;
+  opacity: 0.9;
+}
+.stack .stack-item {
+  top: 0;
+  left: 0;
+}
+.horizontal .stack:hover {
+  margin-bottom: 5px;
+  margin-top: -5px;
+}
+.stack:hover .stack-item {
+  box-shadow: 0 0 10px 0px rgba(100,100,100,0.6);
+}
+
+.album-list.horizontal {
+  padding-top: 20px;
+}
+.album-list > li .title {
+  font-weight: bold;
+  text-shadow: 0 0.05em 0.03em rgba(0,0,0,0.3);
+}

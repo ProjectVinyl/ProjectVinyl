@@ -1,0 +1,27 @@
+#files.loading-before::before,
+#files.loading-after::after {
+  position: absolute;
+  content: 'Loading...';
+  display: block;
+  padding: 5px;
+  line-height: 20px;
+  border-collapse: collapse;
+  border-top: solid 1px rgba(0,0,0,0.1);
+  text-align: center;
+  left: 0;
+  right: 0;
+  
+}
+#files.loading-after {
+  padding-bottom: 30px;
+}
+#files.loading-before {
+  padding-top: 30px;
+}
+
+.row[data-stack-size="0"] {
+  background: #eee;
+}
+.row[data-type="Folder"] {
+  background: #efe;
+}

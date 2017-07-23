@@ -1,0 +1,44 @@
+ul.notifications {
+  list-style: none;
+  padding: 20px;
+}
+.notification {
+  border: solid 1px rgba(0,0,0,0.1);
+}
+.notification + .notification {
+  border-top: none;
+}
+.notification a {
+  display: inline-block;
+  padding: 10px;
+  text-decoration: none;
+  font-weight: initial;
+}
+.notification .remove {
+  color: #e00;
+}
+.notification .action {
+  color: #88e;
+}
+.notification:hover {
+  background: rgb(250,250,250);
+}
+.notification.unread {
+  background: rgba(200,250,200,0.6);
+}
+.notification::before {
+  font: normal normal normal 14px/1 FontAwesome;
+  display: block;
+  float: left;
+  padding: 10px;
+  color: #337287;
+}
+.notification[class*=comments_]::before {
+  content: "\f064";
+}
+.notification[class*=reports_]::before {
+  content: "\f11e";
+}
+.notification[class*=comment_threads_]::before {
+  content: "\f075";
+}

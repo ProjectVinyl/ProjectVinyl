@@ -1,0 +1,74 @@
+.playlist .controls {
+  border-top: solid 1px rgba(0,0,0,0.1);
+  white-space: nowrap;
+}
+.playlist .controls a {
+  display: inline-block;
+  width: 25%;
+  text-align: center;
+  float: left;
+  color: #000;
+}
+.listing.compact.playlist .controls a {
+  padding: 10px;
+}
+.playlist .controls .slide-right {
+  border-left: solid 1px rgba(0,0,0,0.1);
+}
+.playlist .controls .slide-left {
+  border-right: solid 1px rgba(0,0,0,0.1);
+}
+.playlist .controls .title {
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  -o-text-overflow: ellipsis;
+}
+.playlist .controls .slide-left + .title,
+.playlist .controls .title.buff-right {
+  width: 75%;
+}
+.playlist .controls .slide-left + .title.buff-right {
+  width: 50%;
+}
+.playlist .scroll-container {
+  box-shadow: 0 0px 3px 0 #bbb inset;
+}
+
+.listing.compact.playlist {
+  position: relative;
+  text-align: left;4:36 PM 2016/06/30
+}
+.listing.compact.playlist .scroll-container {
+  position: relative;
+  min-height: 100px;
+  max-height: 500px;
+  width: 100%;
+  overflow-y: auto;
+}
+.listing.compact.playlist .row:not(.selected, .grabbed) {
+  opacity: 0.6;
+}
+
+.listing.compact.playlist.virtual .row.selected + .row {
+  opacity: 0.5;
+}
+.listing.compact.playlist.virtual .row.selected + .row + .row {
+  opacity: 0.25;
+}
+.listing.compact.playlist.virtual .row.selected + .row + .row + .row {
+  opacity: 0.125;
+}
+.listing.compact.playlist.virtual .row.selected + .row + .row + .row + .row {
+  opacity: 0.05125;
+}
+.listing.compact.playlist.virtual .row.selected + .row + .row + .row + .row + .row {
+  opacity: 0;
+}
+
+.playlist .controls a,
+.listing.compact .row {
+  display: table-row;
+  padding: 5px 30px;
+  transition: background 0.25s ease, transition border-color 0.25s ease;
+}

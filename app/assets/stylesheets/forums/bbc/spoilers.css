@@ -1,0 +1,47 @@
+.spoiler {
+  padding: 1px;
+  display: inline-block;
+  background: #858585;
+  color: #858585;
+  text-shadow: none;
+}
+.spoiler * {
+  opacity: 0;
+}
+.spoiler .img {
+  background: #fff;
+  position: relative;
+  padding: 0;
+  margin: 0;
+  display: inline-block;
+  opacity: 0.1;
+}
+.spoiler .img::after {
+  font-family: 'FontAwesome';
+  position: absolute;
+  display: block;
+  top: 45%;
+  left: 0;
+  content: '\f071';
+  color: #000;
+  text-align: center;
+  width: 100%;
+  line-height: 100%;
+  font-size: 40px;
+}
+
+.spoiler:hover .img::after, .spoiler.revealed .img::after {
+  display: none;
+}
+.spoiler:hover .img, .spoiler.revealed .img,
+.spoiler:hover, .spoiler.revealed {
+  text-shadow: inherit;
+  color: inherit;
+  background: none;
+}
+.spoiler:hover *, .spoiler.revealed * {
+  opacity: 1;
+}
+.spoiler.revealed {
+  background: #e5e5e5;
+}

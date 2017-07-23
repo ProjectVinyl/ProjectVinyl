@@ -1,0 +1,428 @@
+.video, #upload .cover-block {
+  display: block;
+  width: 100%;
+  padding-bottom: 45%;
+  position: relative;
+}
+
+.video {
+  background: #000 center/contain no-repeat;
+  -ms-touch-action: pan-x pan-y;
+  touch-action: pan-x pan-y;
+}
+
+.video .player, .video .player h1 a {
+  color: #fff;
+  text-decoration: none;
+}
+.video .player video {
+  pointer-events: none;
+}
+.video .player h1, .video .player::after {
+  transition: opacity 0.25s linear, transform 0.25s ease, -ms-transform 0.25s ease, -o-transform 0.25s ease, -webkit-transform 0.25s ease, -moz-transform 0.25s ease;
+}
+.video .player.playing::after {
+  transition: opacity 0.125s linear, transform 0.25s ease, -ms-transform 0.25s ease, -o-transform 0.25s ease, -webkit-transform 0.25s ease, -moz-transform 0.25s ease;
+}
+.video:not(.unplayable) .player::after {
+  cursor: pointer;
+  content: "\f04b";
+  display: block;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  border-radius: 100%;
+  background: red;
+  width: 100px;
+  height: 100px;
+  margin: -50px 0 0 -50px;
+  text-align: center;
+  line-height: 100px;
+  font-size: 4em;
+  font-family: 'FontAwesome';
+  text-indent: 3px;
+  opacity: 0.6;
+}
+.video:not(.unplayable) .player.paused::after {
+  content: "\f04c";
+}
+.video:not(.unplayable) .player.paused.stopped::after {
+  content: "\f01e";
+}
+.video:not(:hover) .player.error::after,
+.video:not(.unplayable) .player.playing::after {
+  cursor: default;
+  transform: scale(0.5,0.5);
+  -ms-transform: scale(0.5,0.5);
+  -webkit-transform: scale(0.5,0.5);
+  -o-transform: scale(0.5,0.5);
+  -moz-transform: scale(0.5,0.5);
+  opacity: 0;
+}
+
+.video .player h1 {
+  white-space: nowrap;
+  opacity: 0.7;
+  border: none;
+  pointer-events: none;
+}
+
+.video .player:hover h1, .video .player:hover::after {
+  opacity: 0.99;
+}
+
+.video .player span.pause {
+  display: inline-block;
+  padding: 5px;
+  width: 100%;
+  overflow-x: hidden;
+}
+
+.video .player.playing span.pause {
+  opacity: 0;
+}
+.video .player span.playing {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+.video .player.playing span.playing, .video.audio-only .player span.pause {
+  opacity: 1;
+}
+
+.video .player.stopped span.playing {
+  display: none;
+}
+
+.video .player span.playing video {
+  background: #000;
+}
+
+.video span.playing video {
+  width: 100%;
+  height: 100%;
+}
+
+.video .player .suspend {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100px;
+  height: 100px;
+  margin: -50px 0 0 -50px;
+  line-height: 100px;
+  font-size: 4em;
+  opacity: 0.3;
+  text-align: center;
+}
+
+.playback-controls {
+  display: none;
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 0;
+  opacity: 0;
+  transition: opacity 0.5s linear;
+}
+.playback-controls ul {
+  margin: 0 15px 15px 15px;
+}
+.video:hover .playback-controls, .video.hover .playback-controls, .video.audio-only .playback-controls {
+  opacity: 1;
+}
+.video .playback-controls:hover {
+  opacity: 1 !important;
+}
+
+.video .player.playing + .playback-controls,
+.video .player.paused + .playback-controls {
+  display: block;
+}
+
+.video .player.paused + .playback-controls {
+  opacity: 1 !important;
+}
+
+.video .player.paused + .playback-controls {
+  opacity: 1;
+}
+
+.video .player .error {
+  display: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #000;
+  text-align: center;
+  vertical-align: middle;
+}
+.video .player .error .error-message {
+  font-size: 30px;
+  margin: 0 auto;
+  color: #fff;
+  opacity: 0.8;
+}
+.video .player.error .error {
+  display: inline;
+}
+.video .player .error .error-message {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  display: block;
+  transform: translate(-50%, -50%);
+  font-weight: bold;
+}
+.video .player .error canvas {
+  width: 100%;
+  height: 100%;
+  background: #777;
+}
+
+.playback-controls li {
+  display: inline-block;
+}
+
+.playback-controls .track {
+  transition: background 0.5s ease;
+  position: relative;
+  width: calc(100% - 70px);
+  margin-left: 5px;
+  height: 10px;
+  cursor: pointer;
+  border-radius: 4px;
+}
+.playback-controls .track:hover {
+  background: rgba(0,0,0,0.1);
+}
+.video.audio-only .playback-controls .track {
+  background: rgba(8, 8, 8, 0.125);
+  border-radius: 4px;
+}
+
+.playback-controls .bob {
+  position: absolute;
+  background: #f00;
+  box-shadow: 0 0 3px 5px #f00 inset;
+  border-radius: 100%;
+  width: 20px;
+  height: 20px;
+}
+
+.playback-controls .fill {
+  position: absolute;
+  background: grey;
+  border-radius: 4px;
+  opacity: 0.5;
+  bottom: 0;
+  left: 0;
+}
+
+.playback-controls .track .bob {
+  top: 0;
+  left: 0;
+  margin: -5px 0 0 -10px;
+  transition: left 0.25s linear;
+}
+
+.playback-controls .track .fill {
+  top: 0;
+  right: 100%;
+  transition: right 0.25s linear;
+}
+
+.video .previewer {
+  transition: opacity 0.1s linear;
+  position: absolute;
+  width: 70px;
+  height: 50px;
+  background: rgba(28,28,28,0.9);
+  bottom: 20px;
+  margin-left: -35px;
+  border-radius: 3px;
+  opacity: 0;
+}
+
+.video .previewer:before {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  content: attr(data-time);
+  z-index: 3;
+  text-align: center;
+  color: #fff;
+  font-weight: bold;
+  text-shadow: 0 0 3px #000;
+  opacity: 0.6;
+}
+.video .previewer::after {
+  content: '';
+  position: absolute;
+  bottom: -20px;
+  left: 25px;
+  border: solid 10px transparent;
+  border-top-color: rgba(28,28,28,0.9);
+}
+.video .previewer canvas,
+.video .previewer img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 3px;
+}
+.video .track:hover .previewer, .video.hover .track .previewer {
+  opacity: 1
+}
+
+.playback-controls .icon {
+  position: relative;
+  width: 20px;
+  height: 100%;
+  cursor: pointer;
+  float: right;
+}
+.playback-controls .icon + .icon {
+  margin-right: 5px;
+}
+
+.playback-controls .icon .indicator {
+  color: #fff;
+  font-size: 1.5em;
+}
+
+.playback-controls .volume:hover .slider, .video .controls .volume.hover .slider,
+.video.voluming .playback-controls .volume .slider {
+  opacity: 1;
+  transition: height 0.25s linear, opacity 0.5s linear;
+  height: 100px;
+}
+
+.playback-controls .volume .slider {
+  opacity: 0;
+  position: absolute;
+  bottom: 20px;
+  right: 50%;
+  height: 0;
+  width: 10px;
+  margin-bottom: 10px;
+  margin-right: -5px;
+  background: rgba(0,0,0,0.2);
+  transition: height 0.25s linear 0.5s, opacity 0.5s linear 0.5s;
+  border-radius: 4px;
+}
+
+.playback-controls .volume .bob {
+  bottom: 0;
+  left: 0;
+  margin: 0 0 -10px -5px;
+  transition: bottom 0.25s linear;
+}
+
+.playback-controls .volume .fill {
+  top: 100%;
+  right: 0;
+  transition: top 0.25s linear;
+}
+
+.video .contextmenu {
+  position: absolute;
+  background: rgba(28,28,28,0.9);
+  text-shadow: 0 0 2px rgba(0,0,0,.5);
+  color: #eee;
+  white-space: nowrap;
+  list-style: none;
+  border-radius: 2px;
+  margin: 0;
+  padding: 5px 0;
+  min-width: 220px;
+  opacity: 1;
+  display: table;
+  z-index: 300;
+  overflow-x: hidden;
+  transition: visibility .1s cubic-bezier(0,0,0.2,1),
+              opacity    .1s cubic-bezier(0,0,0.2,1);
+}
+.video .contextmenu.hidden {
+  opacity: 0;
+}
+.video .contextmenu li {
+  display: table-row;
+  cursor: pointer;
+  margin: 0;
+}
+.video .contextmenu div {
+  padding: 5px;
+  display: table-cell;
+  white-space: nowrap;
+}
+.video .contextmenu .value {
+  text-align: right;
+}
+.video .contextmenu .label {
+  width: 75%;
+}
+.video .contextmenu li:hover {
+  background: rgba(255,255,255,0.2);
+}
+
+i.fa.fa-restore {
+  display: inline-block;
+  background: transparent url("../fonts/restore-icon.svg") no-repeat scroll center center / 100% auto;
+  width: 18px;
+  height: 18px;
+  margin-bottom: -2px;
+}
+i.fa.fa-volume-mid {
+  display: inline-block;
+  background: transparent url("../fonts/vol-mid-icon.svg") no-repeat scroll center center / 100% auto;
+  width: 16px;
+  height: 18px;
+  margin-bottom: -2px;
+}
+
+.video:-webkit-full-screen {
+  width: 100%;
+  height: 100%;
+}
+
+.playlist-toggle {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  cursor: pointer;
+  transition: opacity 0.25s linear;
+  color: #fff;
+  font-size: 1.5em;
+}
+
+.video .player.playing ~ .playlist-toggle {
+  opacity: 0;
+}
+
+.video:hover .player.playing ~ .playlist-toggle {
+  opacity: 0.2;
+}
+
+.video .player.playing ~ .playlist-toggle:hover {
+  opacity: 1;
+}
+
+.uploading #video .controls,
+.uploading ul.tab-set {
+  display: none;
+}
+.uploading #video {
+  height: 0 !important;
+}
+.uploading #video {
+  margin: 0;
+}

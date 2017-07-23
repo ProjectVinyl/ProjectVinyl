@@ -1,0 +1,50 @@
+.drop-icon {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  margin-top: -3em;
+  transition: color 0.25s ease;
+  color: rgba(102,102,184,0.6);
+  line-height: 30px;
+}
+.drop-icon div {
+  transition: font-size 0.25s ease
+}
+
+.drag .drop-icon {
+  color: rgba(0,0,255,0.1);
+}
+.drag .drop-icon div {
+  font-size: 0;
+}
+.drag .drop-icon i {
+  color: #fff;
+}
+.drop-icon i {
+  position: relative;
+  font-size: 60px;
+}
+.drop-icon div {
+  font-weight: bold;
+  margin-top: 10px;
+}
+.drop-icon::before {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  display: block;
+  opacity: 0;
+  content: '';
+  border-radius: 100%;
+  width: 100px;
+  height: 100px;
+  margin-left: -50px;
+  margin-top: -50px;
+  background: rgba(102,102,184,0.6);
+  transition: transform 0.25s ease, opacity 0.25s ease;
+}
+.drag .drop-icon::before {
+  opacity: 1;
+  transform: scale(1.5,1.5);
+}

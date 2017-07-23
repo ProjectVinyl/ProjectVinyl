@@ -1,0 +1,9 @@
+.auto-lookup.invalid input {
+  position: relative;
+  background: #fcc !important;
+  border-color: #a88;
+}
+.auto-lookup.invalid::after {
+  content: 'Error: Invalid input';
+  content: attr(data-message);
+}

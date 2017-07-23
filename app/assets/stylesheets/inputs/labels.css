@@ -1,0 +1,36 @@
+.link {
+  cursor: pointer;
+  color: #f05;
+}
+.link:hover {
+  text-decoration: underline;
+}
+
+label input[type=radio] {
+  display: none;
+}
+label input[type=radio] + i::before {
+  content: '\f10c';
+  background: #fff;
+  border-radius: 100%;
+  font-size: 110%;
+  color: rgba(0,0,150, 0.3);
+}
+label input[type=radio]:checked + i::before {
+  content: '\f192';
+}
+
+.link input[type=checkbox],
+label.button input[type=checkbox] {
+  display: none;
+}
+label input[type=checkbox]:not(:checked) + i,
+label input[type=checkbox]:checked + i + i {
+  display: none;
+}
+
+label[disabled] span::after {
+  content: '\f023';
+  font-family: 'FontAwesome';
+  padding-left: 5px;
+}

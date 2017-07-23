@@ -1,0 +1,35 @@
+/* Used for genres (tags) and user tiles */
+
+li.bio, li.genre {
+  float: left;
+  margin: 10px;
+  width: 200px;
+  text-align: center;
+  min-height: 320px;
+  overflow: hidden;
+}
+li.bio > *, li.genre {
+  vertical-align: middle;
+  
+}
+li.bio, li.genre {
+  background: #fff;
+  border: solid 1px #ccc;
+  box-shadow: 1px 1px 1px 0 #ccc;
+  padding: 10px;
+}
+
+.bio a, .genre a {
+  text-decoration: none;
+}
+li.bio h2, li.genre h2 {
+  text-decoration: none;
+  text-overflow: ellipsis;
+  -o-text-overflow: ellipsis;
+  overflow: hidden;
+  line-height: 25px;
+}
+
+.bio.short {
+  vertical-align: top;
+}

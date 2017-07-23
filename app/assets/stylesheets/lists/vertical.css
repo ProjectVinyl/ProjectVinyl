@@ -1,0 +1,5 @@
+.queue > li {
+  display: block;
+  position: relative;
+  padding: 0;
+}

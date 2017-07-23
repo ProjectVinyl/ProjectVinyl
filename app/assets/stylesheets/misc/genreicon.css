@@ -1,0 +1,8 @@
+.genre-icon {
+  float: left;
+  color: #a66ebe;
+}
+
+.post .genre-icon {
+  margin-right: 10px;
+}

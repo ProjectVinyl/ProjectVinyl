@@ -1,0 +1,56 @@
+.featured .scoring {
+  display: table;
+  width: 100%;
+  border-spacing: 5px;
+  border-collapse: separate;
+  text-align: center;
+  margin-top: 5px;
+}
+.featured .scoring span,
+.featured .scoring a {
+  display: table-cell;
+  padding: 5px;
+  border-radius: 3px;
+  margin-top: 5px;
+  vertical-align: middle;
+}
+.featured .scoring .score {
+  color: #000;
+  border: 1px solid #d6d6d6;
+  border-bottom-color: #cacaca;
+  border-top-color: #e2e2e2;
+  background: #f8f8f8;
+}
+.featured .scoring .like {
+  color: #fff;
+  border: 1px solid #699739;
+  border-bottom-color: #638f36;
+  border-top-color: #6fa03c;
+  text-shadow: -1px -1px #699739;
+  background: #7bb042 !important;
+}
+.featured .scoring .dislike {
+  color: #fff;
+  border: 1px solid #a73535;
+  border-bottom-color: #9d3232;
+  border-top-color: #b03838;
+  text-shadow: -1px -1px #a73535;
+  background: rgb(236, 72, 72) !important;
+}
+.featured .scoring .comments {
+  color: #fff;
+  border: 1px solid #3480b5;
+  border-bottom-color: #3179ab;
+  border-top-color: #3787bf;
+  text-shadow: -1px -1px #3480b5;
+  background: #3d95d3 !important;
+}
+
+.featured .description {
+  overflow: hidden;
+  max-height: 200px;
+}
+.featured .description img,
+.featured .description div {
+  display: none;
+}

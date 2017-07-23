@@ -1,0 +1,82 @@
+.progressor div.message, .bobber {
+  position: absolute;
+  background: #fff;
+  box-shadow: 0 0 3px 0px #aaa;
+  border-radius: 10px;
+  text-align: center;
+  font-weight: bold;
+  color: #888;
+  padding: 10px;
+  bottom: 20px;
+  left: 50%;
+  margin-left: -54px;
+  z-index: 20;
+  white-space: nowrap;
+}
+.bobber::after {
+  position: absolute;
+  content: '';
+  display: block;
+  border: solid 10px;
+  border-color: #fff transparent transparent transparent;
+  bottom: -20px;
+  left: 50%;
+  margin-left: -10px;
+}
+.bobber::before {
+  position: absolute;
+  content: '';
+  display: block;
+  border: solid 10px;
+  border-color: #bbb transparent transparent transparent;
+  bottom: -21px;
+  left: 50%;
+  margin-left: -10px;
+}
+.bob-holder {
+  position: relative;
+  display: block;
+  float: right;
+}
+.bob-holder .bobber {
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.5s ease, margin-bottom 0.5s ease;
+  bottom: 100%;
+  left: 0;
+  margin-left: -120px;
+  margin-bottom: 10px;
+  white-space: nowrap;
+}
+.bobber.bob-left {
+  left: auto;
+  right: 0;
+}
+.bobber.bob-left:before,
+.bobber.bob-left:after {
+  left: auto;
+  right: 30px;
+}
+.bobber.bob-right {
+  left: 0;
+  margin-left: 0;
+}
+.bobber.bob-right:before,
+.bobber.bob-right:after {
+  left: 30px;
+}
+.bob-holder:hover .bobber {
+  opacity: 1;
+  margin-bottom: 16px;
+}
+
+.bob-holder.notify .bobber {
+  display: none;
+}
+.bob-holder.notify.shown input {
+  opacity: 0.5;
+  pointer-events: none;
+}
+.bob-holder.notify.shown .bobber {
+  display: block;
+}

@@ -1,0 +1,34 @@
+.drop-down {
+  margin-top: -1px;
+  position: absolute;
+  right: 0;
+  top: 100%;
+  min-width: 130px;
+  display: none;
+  text-align: left;
+  height: initial;
+}
+.drop-down-holder:hover .drop-down,
+.drop-down-holder.hover .drop-down {
+  display: block;
+}
+
+.drop-down.pop-out {
+  min-width: 100%;
+  width: auto;
+  right: auto;
+}
+.drop-down.pop-out span {
+  color: inherit;
+}
+
+.drop-down li {
+  opacity: 1;
+  background: #fff;
+}
+.drop-down li a {
+  font-size: 13px;
+}
+.drop-down li:hover {
+  color: #008;
+}

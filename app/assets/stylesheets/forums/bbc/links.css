@@ -1,0 +1,11 @@
+.user-link {
+  position: relative;
+}
+.description .user-link, .comment-content .user-link, .comment-content a[data-link="2"] {
+  color: #000;
+  text-decoration: none;
+  font-weight: bold;
+}
+.description .user-link:before, .comment-content .user-link:before {
+  content: '@';
+}

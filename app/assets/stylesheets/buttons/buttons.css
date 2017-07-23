@@ -1,0 +1,97 @@
+button, .button, input[type=submit], .tag {
+  display: inline-block;
+  background: #f8f8f8;
+  padding: 5px 15px;
+  border: 1px solid #d6d6d6;
+  border-bottom-color: #cacaca;
+  border-top-color: #e2e2e2;
+  border-radius: 2px;
+  box-shadow: 0px 1px rgba(255,255,255,0.3) inset;
+  text-shadow: 1px 1px #fafafa;
+  text-decoration: none;
+  color: #333;
+  font-weight: initial;
+  line-height: 20px;
+  transition: background 0.5s ease, border 0.5s ease, color 0.5s ease, text-shadow 0.5s ease;
+}
+
+/* fake buttons, for show only*/
+.foobar {
+  display: inline-block;
+  border: solid 1px #aaa;
+  padding: 5px 15px;
+  text-decoration: none;
+  border-radius: 2px;
+  border: 1px solid #e6e6e6;
+  color: #303030;
+  background: #e6e6e6;
+  color: #303030;
+  font-weight: initial;
+  line-height: 20px;
+  opacity: 0.3;
+  pointer-events: none;
+}
+
+button, .button, .foobar, input[type=submit] {
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+}
+button.right, .foobar.right, .button.right, input[type=submit].right {
+  margin-left: 5px;
+}
+
+button:hover, .button:hover, button.selected, .button.selected, input[type=submit].selected {
+   background: #fff;
+}
+
+button:active, .button:active, input[type=submit]:active {
+   background: #f8f8f8;
+   box-shadow: 0 0 5px 0 rgba(0,0,0,0.1) inset;
+}
+
+button.disable, .button.disable, button.working, .button.working {
+  opacity: 0.6;
+  pointer-events: none;
+  box-shadow: 0 0 2px 0 rgba(0,0,0,0.1) inset;
+}
+
+.button-fw {
+  min-width: 80px;
+}
+
+.split-button {
+  display: inline-block;
+  vertical-align: top;
+}
+
+.split-button > .action {
+  display: block;
+  float: left;
+  line-height: inherit;
+  padding-bottom: 6px;
+}
+.split-button .split-icon {
+  border-radius: 2px 0 0 2px;
+  border-right: none !important;
+}
+.split-action {
+  border-radius: 0 2px 2px 0;
+  padding-left: 6px;
+}
+
+.actions > .button, .actions > button, .actions > .split-button {
+  margin-right: 4px;
+  margin-top: 4px;
+}
+.actions > .button:last-child, .actions > button:last-child, .actions > .split-button:last-child {
+  margin-right: 0px;
+}
+
+@media(max-width:430px) {
+  button.mobile-friendly span,
+  .button.mobile-friendly span {
+    display: none;
+  }
+}

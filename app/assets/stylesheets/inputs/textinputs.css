@@ -1,0 +1,35 @@
+textarea, input[type=text]:not(.tag), input[type=email], input[type=password], label.text-input {
+  transition: background 0.5s ease;
+  padding: 10px;
+  border: 1px solid rgb(204, 204, 204);
+  border-radius: 5px;
+  box-shadow: 0px 0px 12px rgba(0, 0, 0, 0.07) inset;
+  background: rgb(255, 255, 250);
+  text-shadow: 1px 1px rgba(255, 255, 255, 0.8);
+  vertical-align: middle;
+  font-family: MS Shell Dlg \32, monospace;
+  font-size: 13.3333px;
+}
+
+label.text-input {
+  display: block;
+  white-space: nowrap;
+  max-width: 100%;
+  overflow: hidden;
+}
+
+label[data-prefix]::before {
+  content: attr(data-prefix);
+}
+
+label.text-input input[type=text] {
+  background: none;
+  border: none;
+  box-shadow: none;
+  padding: 0;
+  margin: 0;
+  vertical-align: top;
+  display: inline;
+  width: auto;
+  line-height: inherit;
+}

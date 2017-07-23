@@ -1,0 +1,39 @@
+label.check-box {
+  background: rgba(200,200,200,0.1);
+  padding: 10px;
+  border-radius: 5px;
+  border: solid 2px #ddd;
+  display: inline-block;
+  text-align: left;
+  transition: color 0.1s ease;
+  color: #444;
+  box-shadow: 0 0 7px -4px #fff inset;
+}
+label.check-box:hover, label.check-box.focus {
+  background: rgba(200,200,255,0.2);
+}
+label.check-box input {
+  display: none;
+}
+label.check-box span {
+  vertical-align: bottom;
+  line-height: 1.3em;
+  pointer-events: none;
+}
+label.check-box span::before {
+  font-family: 'FontAwesome';
+  content: '\f096';
+  display: inline-block;
+  padding-right: 10px;
+  width: 1em;
+  height: 1em;
+  text-align: left;
+  font-size: 1.3em;
+  vertical-align: bottom;
+}
+label.check-box input:checked + span::before {
+  content: '\f046';
+}
+label.check-box:hover {
+  color: rgba(0,0,110,0.6);
+}

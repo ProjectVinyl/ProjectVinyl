@@ -1,0 +1,34 @@
+.fa-bit, .fa-goldbit, .fa-silverbit, .fa-duck, .fa-gem, .fa-tom {
+  position: relative;
+}
+.fa-bit::before,
+.fa-duck::before,
+.fa-goldbit::before,
+.fa-silverbit::before,
+.fa-gem::before,
+.fa-tom::before {
+  content: '';
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  margin-bottom: -0.1em;
+  background: no-repeat center/cover;
+}
+.fa-duck::before {
+  background-image: url('/badges/duck.png');
+}
+.fa-bit::before {
+    background-image: url('/badges/bronzebit.svg');
+}
+.fa-silverbit::before {
+    background-image: url('/badges/silverbit.svg');
+}
+.fa-goldbit::before {
+    background-image: url('/badges/goldbit.svg');
+}
+.fa-gem::before {
+    background-image: url('/badges/gem.png');
+}
+.fa-tom::before {
+    background-image: url('/badges/tom.png');
+}

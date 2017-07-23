@@ -1,0 +1,15 @@
+.toolbar {
+  border-bottom: solid 1px #ccc;
+  margin-top: -5px;
+}
+
+.toolbar .button-group {
+  display: inline-block;
+  padding: 0;
+  margin: 5px;
+}
+.toolbar .button-group + .button-group {
+  border-left: 1px solid rgba(0,0,255,0.1);
+  padding-left: 5px;
+  margin-left: 0;
+}

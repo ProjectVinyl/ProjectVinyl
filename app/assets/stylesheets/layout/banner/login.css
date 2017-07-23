@@ -1,0 +1,119 @@
+#login {
+   border-radius: 0 0 0 10px;
+   z-index: 1000;
+}
+
+#login ul, #login ul li, #login ul li a {
+  color: #337287;
+  text-shadow: none;
+}
+#login img {
+   max-height: 30px;
+   border-radius: 100%;
+}
+#login .username {
+  text-decoration: none;
+  line-height: 33px;
+  float: left;
+  margin-right: 20px;
+  font-size: 1.25em;
+  max-width: 300px;
+  max-height: 33px;
+  overflow: hidden;
+}
+#login .notices-bell {
+  position: relative;
+  line-height: 33px;
+  text-decoration: none;
+  font-size: 1.25em;
+  margin-right: 20px;
+  float: left;
+}
+#login .notices-bell span {
+  position: absolute;
+  top: -3px;
+  left: 60%;
+  display: block;
+  background: #f00;
+  box-shadow: 2px 2px 3px rgba(0, 0, 0, 0.1);
+  color: #fff;
+  border-radius: 4px;
+  font-size: 10px;
+  padding: 3px;
+  line-height: 1em;
+  vertical-align: middle;
+  animation: 1s bobben 0s 1;
+  -webkit-animation: 1s bobben 0s 1;
+}
+#login .notices-bell span[data-count="0"] {
+  display: none;
+}
+#login .notices-bell span.invert {
+  top: auto;
+  bottom: -3px;
+  margin-bottom: 0 !important;
+  animation-delay: 0.1s;
+  -webkit-animation-delay: 0.1s;
+}
+#login .notices-bell span.vert {
+  left: auto;
+  right: 60%;
+  animation-delay: 0.15s;
+  -webkit-animation-delay: 0.15s;
+}
+#login .notices-bell span.invert.vert {
+  animation-delay: 0.2s;
+  -webkit-animation-delay: 0.2s;
+}
+
+#login .drop-down::before {
+  content: '';
+  border: solid 10px #fff;
+  border-bottom: none;
+  display: block;
+  width: 0;
+  height: 0;
+  border-radius: 15px;
+  margin-top: -10px;
+}
+.logged-out #login {
+  min-width: 120px;
+}
+.logged-out #login a {
+  text-decoration: none;
+  font-size: 1.25em;
+  line-height: 34px;
+}
+
+@media(max-width:820px) {
+  #login .username {
+    max-width: 200px;
+  }
+}
+@media(max-width:750px) {
+  #login .username {
+    display: none;
+  }
+}
+
+@media(max-width: 510px) {
+  #login {
+    position: absolute;
+    top: 0;
+    border-radius: 0 !important;
+    margin: 0;
+  }
+  #login {
+    right: 0;
+  }
+}
+
+@media(max-width: 360px) {
+  #login {
+    left: 0;
+  }
+  #login .username {
+    display: inline;
+    width: 50%;
+  }
+}

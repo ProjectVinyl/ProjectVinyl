@@ -1,0 +1,42 @@
+
+.post .actions .liked, .post .actions .starred {
+  color: #fff;
+}
+
+.post .actions .dislike.liked,
+button.red, .button.red, input[type=submit].red {
+  color: #fff;
+  border: 1px solid #a73535;
+  border-bottom-color: #9d3232;
+  border-top-color: #b03838;
+  text-shadow: -1px -1px #a73535;
+  background: rgb(236, 72, 72) !important;
+}
+
+.post .actions .like.liked,
+button.green, .button.green, input[type=submit].green {
+  color: #fff;
+  border: 1px solid #699739;
+  border-bottom-color: #638f36;
+  border-top-color: #6fa03c;
+  text-shadow: -1px -1px #699739;
+  background: #7bb042 !important;
+}
+
+button.blue, .button.blue, input.blue[type="submit"] {
+    color: #fff;
+    border: 1px solid #3480b5;
+    border-bottom-color: #3179ab;
+    border-top-color: #3787bf;
+    text-shadow: -1px -1px #3480b5;
+    background: #3d95d3 !important;
+}
+
+.post .actions .star.starred,
+button.yellow, .button.yellow, input.yellow[type="submit"] {
+  border: 1px solid #c7c739;
+  border-bottom-color: #b7b736;
+  border-top-color: #c7c73c;
+  text-shadow: -1px -1px #c7c739;
+  background: #e0e046;
+}

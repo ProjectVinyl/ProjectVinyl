@@ -1,0 +1,33 @@
+.button.button-bub, .toolbar .button {
+  line-height: 27px;
+  border: none;
+  background: none;
+  border-radius: 100%;
+  padding: 5px;
+  width: 37px;
+  height: 37px;
+  text-align: center;
+  color: #333;
+}
+
+.button.button-bub.bub {
+  border-radius: 20px/20px;
+  width: auto;
+  padding: 5px 10px;
+}
+
+.toolbar .button:hover, .toolbar .button.pop-out-shown,
+.button.button-bub:hover, .button.button-bub.pop-out-shown {
+  background: #eee;
+}
+
+.button.button-bub.subscribe {
+  margin-top: -10px;
+  color: #ccc;
+}
+.button.button-bub.subscribe .fa.fa-check {
+  color: #00f;
+}
+.button.button-bub.subscribe .fa.fa-bell-slash {
+  color: #f00;
+}
