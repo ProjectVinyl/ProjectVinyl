@@ -2,11 +2,16 @@
  * Ajax
  * A cleaner wrapper to hide the nastiness of fetch/xhr
  */
+import { jSlim } from './jslim';
 import { popupError } from '../components/popup';
 
-function request(method, resource, data) {
-  var csrf = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-  var params = {
+var csrf = '';
+jSlim.ready(function() {
+  csrf = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+});
+
+function requestHeaders(method) {
+  return {
     method: method,
     credentials: 'same-origin',
     headers: new Headers({
@@ -15,59 +20,57 @@ function request(method, resource, data) {
       'X-CSRF-Token': csrf
     })
   };
-  if (data) {
-    if (method === 'GET') {
-      resource += '?' + queryPars(data);
-    } else {
-      params.body = queryPars(data);
-    }
-  }
-  var promise = fetch(resource, params).catch(function(err) {
-    popupError(method + ' ' + resource + '\n\n' + err);
-  }).then(function(response) {
-    if (!response.ok) {
-      throw new Error('Received error from server');
-    }
-    return response;
-  });
-  
-  return {
-    text: function(callback) {
-      promise.then(function(response) {
-        response.text().then(callback);
-      });
-    },
-    json: function(callback) {
-      promise.then(function(response) {
-        response.json().then(callback);
-      });
-    }
-  };
+}
+
+function sanitizeUrl(url) {
+  return url.replace(/^[\/]*/g, '');
 }
 
 function queryPars(data) {
-  if (!data) return null;
   if (typeof data === 'string') return data;
   return Object.keys(data).map(function(key) {
     return encodeURIComponent(key) + '=' + encodeURIComponent(data[key]);
   }).join('&');
 }
 
-function sanitizeUrl(url) {
-  while (url.indexOf('/') == 0) url = url.substring(1, url.length);
-  return url;
+function request(resource, params) {
+  const promise = fetch(resource, params).catch(function(err) {
+    popupError(params.method + ' ' + domain + path + '\n\n' + err);
+  }).then(function(response) {
+    if (!response.ok) {
+      throw new Error('Received error from server');
+    }
+    return response;
+  });
+  return {
+    text: function(callback) {
+      return promise.then(function(response) {
+        return response.text();
+      }).then(callback);
+    },
+    json: function(callback) {
+      return promise.then(function(response) {
+        return response.json();
+      }).then(callback);
+    }
+  };
 }
 
-const ajax = Object.freeze({
+export const ajax = {
   get: function(resource, data) {
-    return request('GET', '/ajax/' + sanitizeUrl(resource), data);
+    if (data) {
+      resource += '?' + queryPars(data);
+    }
+    return request('/ajax/' + sanitizeUrl(resource), requestHeaders('GET'));
   },
   post: function(resource, data) {
-    return request('POST', '/ajax/' + sanitizeUrl(resource), data || {});
+    const params = requestHeaders('POST');
+    if (data) {
+      params.body = queryPars(data);
+    }
+    return request('/ajax/' + sanitizeUrl(resource), params);
   },
   delete: function(resource) {
-    return request('DELETE', resource, {});
+    return request('/' + sanitizeUrl(resource), requestHeaders('DELETE'));
   }
-});
-
-export { ajax };
+};
