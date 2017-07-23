@@ -25,7 +25,7 @@ function xhr(method, url, data, callbacks) {
   xhr.send(data);
 }
 
-var defaultCallbacks = {
+const defaultCallbacks = {
   progress: function(e, message, fill, percentage, secondsRemaining) {
     if (percentage >= 100) {
       this.classList.add('waiting');
@@ -103,12 +103,6 @@ function sendForm(form, callbacks) {
   });
 }
 
-export function uploadForm(form, e, callbacks) {
-  if (!callbacks && !e.preventDefault) {
-    callbacks = e;
-    e = null;
-  }
-  if (e) e.preventDefault();
-  callbacks = unionObj(defaultCallbacks, callbacks);
-  sendForm(form, callbacks);
+export function uploadForm(form, callbacks) {
+  sendForm(form, unionObj(defaultCallbacks, callbacks || {}));
 }
