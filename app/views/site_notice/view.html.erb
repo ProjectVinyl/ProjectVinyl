@@ -1,0 +1,22 @@
+<h1 class="title">
+	<a href="/">Home</a> <i class="fa fa-chevron-right"></i> <a href="/admin">Admin</a> <i class="fa fa-chevron-right"></i> 
+	Site Notices
+</h1>
+<section class="page full-width listing compact">
+	<p>
+		All the messages that appear on the site can be defined from here.
+	</p>
+	<div class="items">
+		<span class="row heads">
+			<div></div>
+			<div>Message</div>
+			<div class="center" style="width:0">Active</div>
+		</span>
+		<%= render partial: 'item', collection: @notices %>
+	</div>
+	<span class="row foot">
+		<a class="button button-bub bub" title="add" data-title="Add Notice" data-external-form="sitenotice/new">
+			<i class="fa fa-plus"></i> Add New
+		</a>
+	</span>
+</section>

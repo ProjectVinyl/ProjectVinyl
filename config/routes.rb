@@ -29,7 +29,8 @@ Rails.application.routes.draw do
   get 'admin/artist/:id' => 'admin#artist'
   get 'admin/tag/:id' => 'admin#tag'
   get 'admin/tags' => 'genre_admin#view'
-
+  get 'admin/sitenotices' => 'site_notice#view'
+  
   put 'admin/video/reprocess' => 'admin#reprocess_video'
   put 'admin/video/resetthumb' => 'admin#extract_thumbnail'
   put 'admin/video/merge' => 'admin#merge'
@@ -54,7 +55,12 @@ Rails.application.routes.draw do
   post 'ajax/tagtype/create' => 'genre_admin#create'
   post 'ajax/tagtype/delete/:id' => 'genre_admin#delete'
   get 'ajax/tagtype/new' => 'genre_admin#new'
-
+  
+  post 'ajax/sitenotice/update' => 'site_notice#update'
+  post 'ajax/sitenotice/create' => 'site_notice#create'
+  post 'ajax/sitenotice/delete/:id' => 'site_notice#delete'
+  get 'ajax/sitenotice/new' => 'site_notice#new'
+  
   constraints CanAccessJobs do
     mount Resque::Server.new, at: "/admin/resque"
   end

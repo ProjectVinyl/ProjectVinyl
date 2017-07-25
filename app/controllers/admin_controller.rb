@@ -10,7 +10,7 @@ class AdminController < ApplicationController
     @users = User.where('last_sign_in_at > ? OR updated_at > ?', Time.zone.now.beginning_of_month, Time.zone.now.beginning_of_month).limit(100).order(:last_sign_in_at).reverse_order
     @reports = Pagination.paginate(Report.includes(:video).where(resolved: nil), params[:reports].to_i, 40, false)
   end
-
+  
   def files
     render_path(params, false)
   end
@@ -136,8 +136,7 @@ class AdminController < ApplicationController
 
   def artist
     if !user_signed_in? || !current_user.is_contributor?
-      render 'layouts/error', locals: { title: 'Access Denied', description: "You can't do that right now." }
-      return
+      return render 'layouts/error', locals: { title: 'Access Denied', description: "You can't do that right now." }
     end
     @user = User.find(params[:id])
   end

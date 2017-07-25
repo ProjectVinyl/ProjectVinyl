@@ -1,0 +1,30 @@
+<%= form_for(@notice, as: 'notice', url: '/ajax/sitenotice/create', method: 'post') do |f| %>
+	<div class="message_content">
+		<div class="properties">
+			<table>
+				<tr>
+					<td class="label"><%= f.label :message %></td>
+					<td class="field">
+						<%= render layout: 'thread/description_box' do %>
+							<%= f.text_area :message, class: "comment-content" %>
+						<% end %>
+					</td>
+				</tr>
+				<tr>
+					<td class="label"><%= f.label :active %></td>
+					<td class="field">
+						<label class="button blue">
+							<%= f.check_box :active %>
+								<i class="fa fa-check"></i>
+								Is Active
+						</label>
+					</td>
+				</tr>
+			</table>
+		</div>
+	</div>
+	<div class="foot">
+		<%= f.submit "Save", class: "green" %>
+		<button class="right cancel" type="button" data-resolve="false">Cancel</button>
+	</div>
+<% end %>

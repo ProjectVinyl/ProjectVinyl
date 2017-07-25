@@ -109,10 +109,10 @@
 }
 
 .comment .content.editing .preview, .comment .content textarea {
-  display: none;
+  display: none !important;
 }
 .comment .content.editing textarea {
-  display: block;
+  display: block !important;
 }
 .comment .edit-comment, .comment .remove-comment, .comment .reply-comment {
   float: right;

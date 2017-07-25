@@ -1,0 +1,48 @@
+<%= form_for(item, as: 'notice', url: '/ajax/sitenotice/update', method: 'post', html: {class: "row row-group removeable state-binary"}) do |f| %>
+	<%= f.text_field :id, hidden: true %>
+	<div class="row">
+		<div style="width:30px">
+			<a class="button button-bub state-toggle" data-state="editing" data-parent="form">
+				<i class="fa fa-pencil"></i>
+			</a>
+		</div>
+		<div>
+			<%= raw item.message %>
+		</div>
+		<div class="center">
+			<i title="<%= !item.active %>" class="fa fa-<%= item.active ? "check" : "times" %>"></i>
+		</div>
+		<div>
+		</div>
+	</div>
+	<div class="editing row row-spanned">
+		<div class="content properties">
+			<table>
+				<tr>
+					<td class="label"><%= f.label :message %></td>
+					<td class="field">
+						<%= render layout: 'thread/description_box' do %>
+							<%= f.text_area :message, class: "comment-content" %>
+						<% end %>
+					</td>
+				</tr>
+				<tr>
+					<td class="label"><%= f.label :active %></td>
+					<td class="field">
+						<label class="button blue">
+							<%= f.check_box :active %>
+								<i class="fa fa-check"></i>
+								Is Active
+						</label>
+					</td>
+				</tr>
+				<tr class="actions">
+					<td class="label">
+            <a class="button red right" data-confirm data-method="post" href="/ajax/sitenotice/delete/<%= item.id %>" data-title="Remove Notice"><i class="fa fa-trash"></i> Delete</a>
+						<button class="green left"><i class="fa fa-save"></i> Save</button>
+					</td>
+				</tr>
+			</table>
+		</div>
+	</div>
+<% end %>
