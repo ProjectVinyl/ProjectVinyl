@@ -17,7 +17,7 @@ var specialActions = {
   emoticons: function(sender) {
     sender.classList.remove('edit-action');
     sender.querySelector('.pop-out').innerHTML = emoticons.map(function(e) {
-      return '<li class="edit-action" data-action="emoticon" title=":' + e + ':"><img title=":' + e + ':" alt=":' + e + ':" src="/emoticons/' + e + '.png"></li>';
+      return '<li class="edit-action" data-action="emoticon" title=":' + e + ':"><span class="emote ' + e + '" title=":' + e + ':" alt=":' + e + ':"></span></li>';
     }).join('');
   },
   emoticon: function(sender, textarea) {
@@ -221,7 +221,7 @@ jSlim.on(document, 'mouseup', '.edit-action', function() {
   if (type) type(this, textarea);
 });
 
-jSlim.on(document, 'dragstart', '#emoticons img[title]', function(event) {
+jSlim.on(document, 'dragstart', '#emoticons .emote[title]', function(event) {
   let data = event.dataTransfer.getData('Text/plain');
   if (data && data.trim().indexOf('[') == 0) {
     data = data.split('\n');

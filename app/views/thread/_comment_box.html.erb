@@ -12,17 +12,16 @@
 			<%= render partial: 'badge/badges', locals: {user: current_user} %>
 		</div>
 		<div class="comment-content preview"></div>
-			<textarea class="comment-content"></textarea>
-			<hr>
-			<button class="green post-submitter" data-thread-id="<%= @thread.id %>" data-order="<%= @order %>">
-				<span>Post Comment</span>
-				<i class="posting-spinner fa fw fa-spinner fa-spin"></i>
-			</button>
-			<button class="blue state-toggle button-fw" data-state="editing" data-true="Preview" data-false="Edit">Preview</button>
-			<a class="popper button button-bub right pop-out-toggle edit-action<% if invert %> invert<% end %>" data-action="emoticons" title="Emoticons">
-				<i class="fa fa-smile-o"></i>
-				<ul class="pop-out" id="emoticons"></ul>
-			</a>
-		</div>
+		<textarea class="comment-content"></textarea>
+		<hr>
+		<button class="green post-submitter" data-thread-id="<%= @thread.id %>" data-order="<%= @order %>">
+			<span>Post Comment</span>
+			<i class="posting-spinner fa fw fa-spinner fa-spin"></i>
+		</button>
+		<button class="blue state-toggle button-fw" data-state="editing" data-true="Preview" data-false="Edit">Preview</button>
+		<a class="popper button button-bub right pop-out-toggle edit-action<% if invert %> invert<% end %>" data-action="emoticons" title="Emoticons">
+			<i class="fa fa-smile-o"></i>
+			<ul class="pop-out" id="emoticons"></ul>
+		</a>
 	</div>
 </div>
