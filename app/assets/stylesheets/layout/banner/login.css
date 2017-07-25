@@ -66,6 +66,18 @@
   -webkit-animation-delay: 0.2s;
 }
 
+#login .drop-down li {
+  display: block;
+  margin: 0;
+  width: 100%;
+  padding: 0;
+}
+#login .drop-down li a {
+  padding: 0 10px;
+  width: 100%;
+}
+
+
 #login .drop-down::before {
   content: '';
   border: solid 10px #fff;
@@ -76,6 +88,7 @@
   border-radius: 15px;
   margin-top: -10px;
 }
+
 .logged-out #login {
   min-width: 120px;
 }

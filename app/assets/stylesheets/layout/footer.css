@@ -39,8 +39,8 @@ footer > div a, footer span {
 }
 
 /*Gradients*/
-header ul li:after, header ul li.selected:after,
-footer:before, header ul:after {
+.header ul li:after, .header ul li.selected:after,
+footer:before, .header ul:after {
   content: '';
   position: absolute;
   display: block;
@@ -50,7 +50,7 @@ footer:before, header ul:after {
   pointer-events: none;
 }
 
-footer::before, header ul::after {
+footer::before, .header ul::after {
   background: -webkit-linear-gradient(90deg, #6aaadd 0, #e6b91f 33%, #e97135 66%, #a66ebe 100%);
   background: -moz-linear-gradient(90deg, #6aaadd 0, #e6b91f 33%, #e97135 66%, #a66ebe 100%);
   background: -o-linear-gradient(90deg, #6aaadd 0, #e6b91f 33%, #e97135 66%, #a66ebe 100%);

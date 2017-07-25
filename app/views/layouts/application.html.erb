@@ -15,100 +15,100 @@
 </head>
 <body<% if !user_signed_in? %> class="logged-out"<% end %>>
 	<div class="context-3d">
+		<header class="header banner-overlay">
+			<div id="login" <% if user_signed_in? %>class="drop-down-holder"<% end %>>
+				<% if user_signed_in? %>
+				<a href="<%= current_user.link %>" class="username">
+					<%= current_user.username %>
+				</a>
+				<a class="notices-bell feeds" href="/feed">
+					<i class="fa fa-globe"></i>
+					<span data-count="<%= current_user.feed_count %>" class="feed-count count"><%= safe_to_display current_user.feed_count, 999 %></span>
+				</a>
+				<a class="notices-bell notices" href="/notifications">
+					<i class="fa fa-bell"></i>
+						<span data-count="<%= current_user.notification_count %>" class="notification-count count"><%= safe_to_display current_user.notification_count, 999 %></span>
+						<span data-count="<%= current_user.message_count %>" class="message-count count invert"><%= safe_to_display current_user.message_count, 999 %></span>
+				</a>
+				<ul class="drop-down" style="z-index:300;">
+					<% if current_user.is_contributor? %>
+					<li>
+						<a href="/admin" rel="nofollow">
+							<span class="icon"><i class="fa fa-fw fa-gavel"></i></span>
+							<span class="label">Admin</span>
+						</a>
+					</li>
+					<% end %>
+					<li>
+						<a href="<%= current_user.link %>" rel="nofollow" title="settings">
+							<span class="icon"><i class="fa fa-fw fa-user"></i></span>
+							<span class="label">Profile</span>
+						</a>
+					</li>
+					<li>
+						<a href="/messages" rel="nofollow" title="messages">
+							<span class="icon"><i class="fa fa-fw fa-envelope"></i></span>
+							<span class="label">Messages</span>
+						</a>
+					</li>
+					<li>
+						<a href="/upload" rel="nofollow" title="upload">
+							<span class="icon"><i class="fa fa-fw fa-upload"></i></span>
+							<span class="label">Upload</span>
+						</a>
+					</li>
+					<li>
+						<a href="/stars">
+							<span class="icon"><i class="fa fa-fw fa-star" ></i></span>
+							<span class="label">Stars</span>
+						</a>
+					</li>
+					<li>
+						<a href="/users/edit" rel="nofollow">
+							<span class="icon"><i class="fa fa-fw fa-cog"></i></span>
+							<span class="label">Settings</span>
+						</a>
+					</li>
+					<li>
+						<a id="sign-out" href="/users/sign_out" rel="nofollow" data-method="delete">
+							<span class="icon"><i class="fa fa-fw fa-sign-out"></i></span>
+							<span class="label">Sign Out</span>
+						</a>
+					</li>
+				</ul>
+				<a href="/users/edit" rel="nofollow" title="settings">
+					<span class="avatar small">
+						<span style="background-image:url('<%= current_user.small_avatar %>');"></span>
+					</span>
+				</a>
+				<% else %>
+				<a data-external-form="login" data-icon="sign-in" data-title="Sign In" data-thin="true" href="/users/sign_in"><i class="fa fa-sign-in"></i> Sign-in</a>
+				<% end %>
+			</div>
+			<div id="search">
+				<form action="/search" method="get">
+					<input type="search" name="tagquery" placeholder="Tag Search" value="<%= query %>"></input>
+					<label class="select">
+						<select name="type">
+							<option value="0" <% if search_type == 0 %>selected<% end %>>Song</option>
+							<option value="1" <% if search_type == 1 %>selected<% end %>>Album</option>
+							<option value="2" <% if search_type == 2 %>selected<% end %>>User</option>
+							<option value="3" <% if search_type == 3 %>selected<% end %>>Tag</option>
+						</select>
+					</label>
+					<button type="submit"><i class="fa fa-search" ></i></button>
+				</form>
+			</div>
+		</header>
 		<div id="banner" class="layer-background">
 			<div class="banner-background far"></div>
-			<div class="banner-overlay">
-				<div id="login" <% if user_signed_in? %>class="drop-down-holder"<% end %>>
-					<% if user_signed_in? %>
-					<a href="<%= current_user.link %>" class="username">
-						<%= current_user.username %>
-					</a>
-					<a class="notices-bell feeds" href="/feed">
-						<i class="fa fa-globe"></i>
-						<span data-count="<%= current_user.feed_count %>" class="feed-count count"><%= safe_to_display current_user.feed_count, 999 %></span>
-					</a>
-					<a class="notices-bell notices" href="/notifications">
-						<i class="fa fa-bell"></i>
-							<span data-count="<%= current_user.notification_count %>" class="notification-count count"><%= safe_to_display current_user.notification_count, 999 %></span>
-							<span data-count="<%= current_user.message_count %>" class="message-count count invert"><%= safe_to_display current_user.message_count, 999 %></span>
-					</a>
-					<ul class="drop-down" style="z-index:300;">
-						<% if current_user.is_contributor? %>
-						<li>
-							<a href="/admin" rel="nofollow">
-								<span class="icon"><i class="fa fa-fw fa-gavel"></i></span>
-								<span class="label">Admin</span>
-							</a>
-						</li>
-						<% end %>
-						<li>
-							<a href="<%= current_user.link %>" rel="nofollow" title="settings">
-								<span class="icon"><i class="fa fa-fw fa-user"></i></span>
-								<span class="label">Profile</span>
-							</a>
-						</li>
-						<li>
-							<a href="/messages" rel="nofollow" title="messages">
-								<span class="icon"><i class="fa fa-fw fa-envelope"></i></span>
-								<span class="label">Messages</span>
-							</a>
-						</li>
-						<li>
-							<a href="/upload" rel="nofollow" title="upload">
-								<span class="icon"><i class="fa fa-fw fa-upload"></i></span>
-								<span class="label">Upload</span>
-							</a>
-						</li>
-						<li>
-							<a href="/stars">
-								<span class="icon"><i class="fa fa-fw fa-star" ></i></span>
-								<span class="label">Stars</span>
-							</a>
-						</li>
-						<li>
-							<a href="/users/edit" rel="nofollow">
-								<span class="icon"><i class="fa fa-fw fa-cog"></i></span>
-								<span class="label">Settings</span>
-							</a>
-						</li>
-						<li>
-							<a id="sign-out" href="/users/sign_out" rel="nofollow" data-method="delete">
-								<span class="icon"><i class="fa fa-fw fa-sign-out"></i></span>
-								<span class="label">Sign Out</span>
-							</a>
-						</li>
-					</ul>
-					<a href="/users/edit" rel="nofollow" title="settings">
-						<span class="avatar small">
-							<span style="background-image:url('<%= current_user.small_avatar %>');"></span>
-						</span>
-					</a>
-					<% else %>
-					<a data-external-form="login" data-icon="sign-in" data-title="Sign In" data-thin="true" href="/users/sign_in"><i class="fa fa-sign-in"></i> Sign-in</a>
-					<% end %>
-				</div>
-				<div id="search">
-					<form action="/search" method="get">
-						<input type="search" name="tagquery" placeholder="Tag Search" value="<%= query %>"></input>
-						<label class="select">
-							<select name="type">
-								<option value="0" <% if search_type == 0 %>selected<% end %>>Song</option>
-								<option value="1" <% if search_type == 1 %>selected<% end %>>Album</option>
-								<option value="2" <% if search_type == 2 %>selected<% end %>>User</option>
-								<option value="3" <% if search_type == 3 %>selected<% end %>>Tag</option>
-							</select>
-						</label>
-						<button type="submit"><i class="fa fa-search" ></i></button>
-					</form>
-				</div>
-			</div>
 			<a href="/" class="home-link">
 			</a>
 			<span class="title near">
 				<img src="/images/logo.svg"></img>
 			</span>
 		</div>
-		<header class="header layer-foreground">
+		<nav class="header layer-foreground">
 			<ul>
 				<li class="albums<%= selected_path? 'albums' %>">
 					<a href="/albums">
@@ -135,7 +135,7 @@
 					</a>
 				</li>
 			</ul>
-		</header>
+		</nav>
 		<div class="layer-foreground body">
 			<main class="wrapper<% if content_for?(:wrapper) %> <%= content_for(:wrapper) %><% end %>" style="<%= content_for?(:width) ? ' max-width:' + content_for(:width) + ';' : '' %>">
 				<% flash.each do |key,value| %>
