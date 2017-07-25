@@ -1,6 +1,7 @@
 header {
-  position: relative;
+  margin-top: 200px;
   margin-bottom: 10px;
+  height: 40px;
 }
 header ul {
   background: #fff;
@@ -36,7 +37,7 @@ header ul li {
   color: #008;
 }
 
-header.header ul li a {
+header ul li a {
   margin-top: -5px;
   color: inherit;
 }
@@ -103,11 +104,11 @@ header > ul li a i {
 }
 
 @media(max-width: 360px) {
-  header.header > ul li:hover a i + span,
-  header.header > ul li a i {
+  header > ul li:hover a i + span,
+  header > ul li a i {
     display: inline !important;
   }
-  header.header > ul li a i + span {
+  header > ul li a i + span {
     display: none;
   }
 }

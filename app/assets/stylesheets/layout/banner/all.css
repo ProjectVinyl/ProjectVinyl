@@ -1,5 +1,7 @@
 /*
- *=require ./banners
- *=require ./login
- *=require ./search
+ *= require ./banners
+ *= require ./overlays
+ *= require ./login
+ *= require ./search
  */
+ 

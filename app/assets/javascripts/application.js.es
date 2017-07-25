@@ -12,7 +12,6 @@ import './vendor/all';
 
 // Our code (this can be shortened to 1-2 imports later)
 import './ujs/all';
-import './pageload';
 import './callbacks';
 import './components/comments';
 import './components/fileinput';
@@ -38,5 +37,3 @@ import './ui/tabset';
 import './ui/toggle';
 import './utils/autocomplete';
 import './utils/jslim';
-
-import './callbacks';

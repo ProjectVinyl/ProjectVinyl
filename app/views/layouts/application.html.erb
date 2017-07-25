@@ -13,9 +13,10 @@
   <%= stylesheet_link_tag "application" %>
   <%= javascript_include_tag "application" %>
 </head>
-<body>
-	<header class="header<% if !user_signed_in? %> logged-out<% end %>">
-		<div id="banner">
+<body<% if !user_signed_in? %> class="logged-out"<% end %>>
+	<div class="context-3d">
+		<div id="banner" class="layer-background">
+			<div class="banner-background far"></div>
 			<div class="banner-overlay">
 				<div id="login" <% if user_signed_in? %>class="drop-down-holder"<% end %>>
 					<% if user_signed_in? %>
@@ -101,53 +102,61 @@
 					</form>
 				</div>
 			</div>
-			<a href="/" class="title"><img src="/images/logo.svg"></img></a>
+			<a href="/" class="home-link">
+			</a>
+			<span class="title near">
+				<img src="/images/logo.svg"></img>
+			</span>
 		</div>
-		<ul>
-			<li class="albums<%= selected_path? 'albums' %>">
-				<a href="/albums">
-					<i class="fa fa-fw fa-picture-o"></i>
-					<span> Albums</span>
-				</a>
-			</li>
-			<li class="artists<%= selected_path? 'videos' %>">
-				<a href="/videos">
-					<i class="fa fa-fw fa-play"></i>
-					<span> Videos</span>
-				</a>
-			</li>
-			<li class="genres<%= selected_path? 'tags' %>">
-				<a href="/tags">
-					<i class="fa fa-fw fa-tags"></i>
-					<span> Tags</span>
-				</a>
-			</li>
-			<li class="forum<%= selected_path? 'forum' %>">
-				<a href="/forum">
-					<i class="fa fa-fw fa-users"></i>
-					<span> Forums</span>
-				</a>
-			</li>
-		</ul>
-	</header>
-	<main class="wrapper<% if content_for?(:wrapper) %> <%= content_for(:wrapper) %><% end %>" style="<%= content_for?(:width) ? ' max-width:' + content_for(:width) + ';' : '' %>">
-		<% flash.each do |key,value| %>
-			<p class="notice <%= key %>"><%= value %></p>
-		<% end %>
-		<%= yield %>
-		<span class="push"></span>
-	</main>
-	<footer>
-		<a title="Home" href="/">projectvinyl.net</a>
-		<div>
-			<a href="/staff">Staff</a>
-			<a href="/policy">Policy</a>
-			<a href="/copyright">Copyright</a>
+		<header class="header layer-foreground">
+			<ul>
+				<li class="albums<%= selected_path? 'albums' %>">
+					<a href="/albums">
+						<i class="fa fa-fw fa-picture-o"></i>
+						<span> Albums</span>
+					</a>
+				</li>
+				<li class="artists<%= selected_path? 'videos' %>">
+					<a href="/videos">
+						<i class="fa fa-fw fa-play"></i>
+						<span> Videos</span>
+					</a>
+				</li>
+				<li class="genres<%= selected_path? 'tags' %>">
+					<a href="/tags">
+						<i class="fa fa-fw fa-tags"></i>
+						<span> Tags</span>
+					</a>
+				</li>
+				<li class="forum<%= selected_path? 'forum' %>">
+					<a href="/forum">
+						<i class="fa fa-fw fa-users"></i>
+						<span> Forums</span>
+					</a>
+				</li>
+			</ul>
+		</header>
+		<div class="layer-foreground body">
+			<main class="wrapper<% if content_for?(:wrapper) %> <%= content_for(:wrapper) %><% end %>" style="<%= content_for?(:width) ? ' max-width:' + content_for(:width) + ';' : '' %>">
+				<% flash.each do |key,value| %>
+					<p class="notice <%= key %>"><%= value %></p>
+				<% end %>
+				<%= yield %>
+				<span class="push"></span>
+			</main>
+			<footer>
+				<a title="Home" href="/">projectvinyl.net</a>
+				<div>
+					<a href="/staff">Staff</a>
+					<a href="/policy">Policy</a>
+					<a href="/copyright">Copyright</a>
+				</div>
+				<span>© 2016 Project Vinyl Foundation</span>
+				<div class="date">Page generated in <span><%= load_time %> seconds</span></div>
+				<div class="date"><span>Powered by Muffins</span></div>
+			</footer>
 		</div>
-		<span>© 2016 Project Vinyl Foundation</span>
-		<div class="date">Page generated in <span><%= load_time %> seconds</span></div>
-		<div class="date"><span>Powered by Muffins</span></div>
-	</footer>
+	</div>
 	<div class="fades"></div>
 </body>
 </html>

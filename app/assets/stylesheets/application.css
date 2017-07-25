@@ -16,6 +16,7 @@
  *= require animations
  *= require tables/all
  *= require misc/all
+ *= require 3d/all
  *= require layout/all
  *= require windows/all
  *= require forums/all
