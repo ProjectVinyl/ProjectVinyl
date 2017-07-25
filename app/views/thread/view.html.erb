@@ -88,16 +88,15 @@
 </h1>
 <% end %>
 <%= render layout: '/layouts/paginated', locals: {type: "comments/" + @thread.id.to_s + "/" + @order, paginated: @comments, id: "page"} do %>
-<ul id="thread-<%= @thread.id %>" class="comments">
-	<%= render partial: '/thread/comment_set', locals: {thread: @comments.records, indirect: false} %>
-</ul>
+	<ul id="thread-<%= @thread.id %>" class="comments">
+		<%= render partial: '/thread/comment_set', locals: {thread: @comments.records, indirect: false} %>
+	</ul>
 <% end %>
 <% if user_signed_in? %>
-<hr>
-<% if @thread.locked %>
-Thread locked
-<% else %>
-<%= render partial: "thread/comment_box", locals: {invert: true} %>
+	<hr>
+	<% if @thread.locked %>
+		Thread locked
+	<% else %>
+		<%= render partial: "thread/comment_box", locals: {invert: true} %>
+	<% end %>
 <% end %>
-<% end %>
-</div>
