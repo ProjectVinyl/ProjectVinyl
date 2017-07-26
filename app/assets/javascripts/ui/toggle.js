@@ -40,16 +40,18 @@ function toggleState(sender) {
   parent = parent ? sender.closest(parent) : sender.parentNode;
   parent.classList.toggle(state);
   
-  sender.textContext = sender.dataset[parent.classList.contains(state)];
+  sender.innerText = sender.dataset[parent.classList.contains(state)];
   sender.dispatchEvent(new CustomEvent('toggle', { bubbles: true }));
 }
 
-jSlim.on(document, 'click', '.action.toggle', function(ev) {
+jSlim.on(document, 'click', '.action.toggle', function(e) {
+  if (e.which != 1 && e.button != 0) return;
   toggle(this);
-  ev.preventDefault();
+  e.preventDefault();
 });
 
-jSlim.on(document, 'click', '.state-toggle', function(ev) {
+jSlim.on(document, 'click', '.state-toggle', function(e) {
+  if (e.which != 1 && e.button != 0) return;
   toggleState(this);
-  ev.preventDefault();
+  e.preventDefault();
 });
