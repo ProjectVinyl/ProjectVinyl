@@ -97,16 +97,16 @@ function toggleEdit(editing, holder, content, textarea, short) {
   if (!editing) {
     const hovercard = content.querySelector('.hovercard');
     if (hovercard) hovercard.parentNode.removeChild(hovercard);
-    textarea.value = BBCode.fromHtml(content.innerHTML).outerBbc();
+    textarea.value = BBCode.fromHTML(content.innerHTML).outerBBC();
     holder.classList.add('editing');
   } else {
     if (!text || !text.length || text === emptyMessage.toLowerCase()) {
       content.textContent = emptyMessage;
     }
     if (short) {
-      content.textContent = BBCode.fromHtml(textarea.value).outerBbc();
+      content.textContent = BBCode.fromHTML(textarea.value).outerBBC();
     } else {
-      content.innerHTML = BBCode.fromBbc(textarea.value).outerHtml();
+      content.innerHTML = BBCode.fromBBC(textarea.value).outerHTML();
     }
     holder.classList.remove('editing');
     holder.dispatchEvent(new Event('change'));
@@ -120,7 +120,7 @@ function save(action, id, field, holder) {
     ajax.post(action, {
       id: id,
       field: field,
-      value: BBCode.fromBbc(holder.querySelector('.input').value).outerBbc()
+      value: BBCode.fromBBC(holder.querySelector('.input').value).outerBBC()
     }).text(function() {
       holder.classList.remove('saving');
       holder.classList.remove('dirty');
@@ -162,7 +162,7 @@ document.addEventListener('click', () => {
 
 jSlim.on(document, 'change', 'textarea.comment-content', function() {
   const preview = this.parentNode.querySelector('.comment-content.preview');
-  if (preview) preview.innerHTML = BBCode.fromBbc(this.value).outerHtml();
+  if (preview) preview.innerHTML = BBCode.fromBBC(this.value).outerHTML();
 });
 
 jSlim.on(document, 'keydown', 'textarea.comment-content', function(ev) {
