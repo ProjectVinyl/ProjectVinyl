@@ -60,8 +60,10 @@ class ArtistController < ApplicationController
         user = User.where(id: params[:id]).first
       end
       if user
-        user.set_banner(params[:erase] ? false : params[:user][:banner])
-        user.save
+        if params[:erase] || params[:user]
+          user.set_banner(params[:erase] ? false : params[:user][:banner])
+          user.save
+        end
         if params[:async]
           render json: { result: "success" }
         else
