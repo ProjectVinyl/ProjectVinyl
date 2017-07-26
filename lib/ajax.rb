@@ -53,7 +53,6 @@ class Ajax
     end
   end
 end
-Ajax.get('https://www.fimfiction.net/user/Sollace') { |body| @body = body }
 
 class TextNode
   def initialize(text)
