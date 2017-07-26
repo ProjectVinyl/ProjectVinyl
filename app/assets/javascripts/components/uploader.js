@@ -1,5 +1,5 @@
 import { uploadForm } from '../utils/progressform';
-import { BBC } from '../utils/bbcode';
+import { setupEditable } from '../ui/editable';
 import { TagEditor } from './tageditor';
 import { ThumbPicker } from './thumbnailpicker';
 import { resizeFont } from '../ui/resize';

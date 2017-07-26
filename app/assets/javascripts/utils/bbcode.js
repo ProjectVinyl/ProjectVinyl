@@ -1,250 +1,441 @@
-import { ajax } from './ajax';
-import { jSlim } from './jslim';
-
-var active = null;
-var emptyMessage = 'A description has not been written yet.';
-
-var keyEvents = {
-  66: 'b', 85: 'u', 73: 'i', 83: 's', 80: 'spoiler'
-};
-
-var specialActions = {
-  tag: function(sender, textarea) {
-    var tag = sender.dataset.tag;
-    insertTags(textarea, '[' + tag + ']', '[/' + tag + ']');
-    textarea.dispatchEvent(new Event('change'));
+function TextNode(content) {
+  this.text = content;
+}
+TextNode.prototype = {
+  innerText: function() {
+    return escapeHtml(this.text);
   },
-  emoticons: function(sender) {
-    sender.classList.remove('edit-action');
-    sender.querySelector('.pop-out').innerHTML = emoticons.map(function(e) {
-      return '<li class="edit-action" data-action="emoticon" title=":' + e + ':"><span class="emote ' + e + '" title=":' + e + ':" alt=":' + e + ':"></span></li>';
-    }).join('');
+  outerHtml: function() {
+    var result = this.innerText();
+    result = result.replace(/\n/g, '<br>');
+    return result;
   },
-  emoticon: function(sender, textarea) {
-    insertTags(textarea, sender.title, '');
-    textarea.dispatchEvent(new Event('change'));
+  outerBbc: function() {
+    return this.innerText();
   }
 };
 
-function handleSpecialKeys(key, callback) {
-  var k = keyEvents[key];
-  if (k) return callback(k);
-  if (key == 13) deactivate(active);
+function Node(parent) {
+  this.tagName = '';
+  this.children = [];
+  this.attributes = {};
+  this.classes = [];
+  this.parent = parent;
 }
 
-function rich(text) {
-  text = text.replace(/</g, '&lt;').replace(/>/g, '&gt;');
-  text = text.replace(/@([^\s\[<]+)/, '<a class="user-link" data-id="0" href="/">$1</a>');
-  text = text.replace(/\[icon\]([^\[]+)\[\/icon\]/g, '<i class="fa fa-fw fa-$1"></i>');
-  text = text.replace(/\n/g, '<br>').replace(/\[([/]?([buis]|sup|sub|hr))\]/g, '<$1>').replace(/\[([/]?)q\]/g, '<$1blockquote>');
-  text = text.replace(/\[url=([^\]]+)]/g, '<a href="$1">').replace(/\[\/url]/g, '</a>');
-  text = text.replace(/\[spoiler\]/g, '<div class="spoiler">').replace(/\[\/spoiler\]/g, '</div>');
-  text = text.replace(/\[img\]([^\[]+)\[\/img\]/g, '<span class="img"><img src="$1"></span>');
-  text = text.replace(/([^">]|[\s]|<[/]?br>|^)(http[s]?:\/\/[^\s\n<]+)([^"<]|[\s\n]|<br>|$)/g, '$1<a data-link="1" href="$2">$2</a>$3');
-  text = text.replace(/([^">]|[\s]|<[/]?br>|^)(>>|&gt;&gt;)([0-9a-z]+)([^"<]|[\s\n]|<br>|$)/g, '$1<a data-link="2" href="#comment_$3">$2$3</a>$4');
-  
-  var i = emoticons.length;
-  while (i--) {
-    text = text.replace(new RegExp(':' + emoticons[i] + ':', 'g'), '<img class="emoticon" src="/emoticons/' + emoticons[i] + '.png">');
-  }
-  
-  text = text.replace(/\[([0-9]+)\]/, '<iframe class="embed" src="/embed/$1" allowfullscreen></iframe>');
-  text = text.replace(/\[yt([^\]]+)\]/, '<iframe class="embed" src="https://www.youtube.com/embed/$1" allowfullscreen></iframe>');
-  return text;
+Node.parse = function(text, open, close) {
+  var result = new Node();
+  result.tagName = 'Document';
+  result.parse(open + result.tagName + close + text + open + '/' + result.tagName + close, open, close);
+  return result;
 }
 
-function poor(text) {
-  text = text.replace(/<i class="fa fa-fw fa-([^"]+)"><\/i>/g, '[icon]$1[/icon]');
-  text = text.replace(/<a class="user-link" data-id="[0-9]+" href="[^"]+">([^<]+)<\/a>/g, '@$1');
-  text = text.replace(/<br>/g, '\n').replace(/<([/]?([buis]|sup|sub|hr))>/g, '[$1]').replace(/<([/]?)blockquote>/g, '[$1q]');
-  text = text.replace(/<a data-link="1" href="([^"]+)">[^<]*<\/a>/g, '$1');
-  text = text.replace(/<a data-link="2" href="[^"]+">([^<]*)<\/a>/g, '$1');
-  text = text.replace(/<\/img>/g, '').replace(/<span class="img"><img src="([^"]+)"><\/span>/g, '[img]$1[/img]');
-  text = text.replace(/<a href="([^"]+)">/g, '[url=$1]').replace(/<\/a>/g, '[/url]');
-  text = text.replace(/<div class="spoiler">/g, '[spoiler]').replace(/<\/div>/g, '[/spoiler]');
-  
-  var i = emoticons.length;
-  while (i--) {
-    text = text.replace(new RegExp('<img class="emoticon" src="/emoticons/' + emoticons[i] + '.png">', 'g'), ':' + emoticons[i] + ':');
-  }
-  
-  text = text.replace(/<iframe class="embed" src="\/embed\/([0-9+])" allowfullscreen><\/iframe>/, '[$1]');
-  text = text.replace(/<iframe class="embed" src="https:\/\/www.youtube.come\/embed\/([^&"]+)[^"]*" allowfullscreen><\/iframe>/, '[yt$1]');
-  return text;
-}
-
-function initEditable(holder, content, short) {
-  var textarea = holder.querySelector('.input');
-  if (!textarea) {
-    if (short) {
-      textarea = document.createElement('input');
-      textarea.className = 'input js-auto-resize';
-      textarea.style.height = (content.clientHeight + 20) + 'px';
-      textarea.style.width = (content.clientWidth + 20) + 'px';
-      content.insertAdjacentElement('afterend', textarea);
-    } else {
-      textarea = document.createElement('textarea');
-      textarea.className = 'input';
-      textarea.style.height = (content.clientHeight + 20) + 'px';
-      content.insertAdjacentElement('afterend', textarea);
+Node.prototype = {
+  parse: function(content, open, close) {
+    var index = -1;
+    var state = -1;
+    var tagName = '';
+    var text = '';
+    var quote = null;
+    
+    while (index < content.length - 1) {
+      index++;
+      
+      if (state == 1) {
+        if (this.tagName == 'br' || this.tagName == 'img') {
+          if (content[index] == '/') index++;
+          if (content[index] == close) index++;
+          return content.substring(index, content.length);
+        }
+        
+        if (content.indexOf('/' + close) == 0) {
+          return content.substring(3, content.length);
+        }
+        
+        if (content.indexOf(open + '/' + this.tagName + close) == index) {
+          if (text.length) this.appendText(text);
+          return content.substring(index + (open + '/' + this.tagName + close).length, content.length);
+        }
+        
+        if (content[index] == '@' || content[index] == ':' || content[index] == open) {
+          if (text.length) {
+            this.appendText(text);
+            text = '';
+          }
+          if (content[index] == '@') {
+            content = this.parseAtTag(content.substring(index + 1, content.length));
+          } else if (content[index] == ':') {
+            content = this.parseEmoticonAlias(content.substring(index, content.length));
+          } else if (content[index] == open) {
+            var child = new Node(this);
+            this.children.push(child);
+            content = child.parse(content.substring(index, content.length), open, close);
+          }
+          index = -1;
+          continue;
+        }
+        text += content[index];
+      }
+      
+      if (state == 0) {
+        if (quote != null) {
+          if (content[index] == quote) {
+            quote = null;
+            continue;
+          }
+          tagName += content[index];
+          continue;
+        }
+        
+        if (content[index] == '"' || content[index] == "'") {
+          quote = content[index];
+          continue;
+        }
+        
+        if (tagName.length && (content[index] == close || content[index] == '/' || content[index] == ' ')) {
+          if (content[index] == close || content[index] == '/') {
+            this.parseTagName(tagName);
+          }
+          
+          if (content[index] == ' ') {
+            content = this.parseAttributes(content.substring(index + 1, content.length), close);
+            index = -1;
+          }
+          
+          state = 1;
+        } else {
+          tagName += content[index];
+        }
+      }
+      
+      if (state == -1) {
+        if (content[index] == open) {
+          state = 0;
+        }
+      }
     }
-  }
-  if (!short) {
-    function changeHeight() {
-      const height = getComputedStyle(textarea).height;
-      textarea.style.height = 0;
-      textarea.style.marginBottom = height;
-      textarea.style.height = (textarea.scrollHeight + 20) + 'px';
-      textarea.style.marginBottom = '';
+    
+    if (text.length) this.appendText(text);
+    return content.substring(index + 1, content.length);
+  },
+  appendNode: function(tagName) {
+    var tag = new Node(this);
+    tag.tagName = tagName;
+    this.children.append(tag);
+    return tag;
+  },
+  appendText: function(text) {
+    if (text.length) this.children.push(new TextNode(text));
+  },
+  parseTagName: function(tag) {
+    this.tagName = tag.split('=')[0].trim();
+    if (tag.indexOf('=') > -1) {
+      this.equalsPar = tag.replace(this.tagName + '=', '');
     }
-    textarea.addEventListener('keydown', changeHeight);
-    textarea.addEventListener('keyup', changeHeight);
-  }
-  textarea.addEventListener('change', () => holder.classList.add('dirty'));
-  textarea.addEventListener('keydown', ev => {
-    if (ev.ctrlKey) {
-      handleSpecialKeys(ev.keyCode, function(tag) {
-        insertTags(textarea, '[' + tag + ']', '[/' + tag + ']');
-        ev.preventDefault();
-      });
+    if (this.tagName.replace(/[^a-zA-Z0-9]/g, '') != this.tagName) {
+      this.tagName = '';
     }
-  });
-  return textarea;
-}
-
-function insertTags(textarea, open, close) {
-  var start = textarea.selectionStart;
-  if (!start && start != 0) return;
-  var end = textarea.selectionEnd;
-  var before = textarea.value.substring(0, start);
-  var after = textarea.value.substring(end, textarea.value.length);
-  var selected = end - start > 0 ? textarea.value.substring(start, end) : '';
-  
-  if (selected.indexOf(open) > -1 || (selected.indexOf(close) > -1 && close)) {
-    selected = selected.replace(open, '').replace(close, '');
-  } else {
-    selected = open + selected + close;
-  }
-  
-  textarea.value = before + selected + after;
-  textarea.selectionStart = start;
-  textarea.selectionEnd = start + selected.length;
-  textarea.focus();
-}
-
-function toggleEdit(editing, holder, content, textarea, short) {
-  const text = content.textContent.toLowerCase().trim();
-  if (!editing) {
-    const hovercard = content.querySelector('.hovercard');
-    if (hovercard) hovercard.parentNode.removeChild(hovercard);
-    textarea.value = poor(content.innerHTML);
-    holder.classList.add('editing');
-  } else {
-    if (!text || !text.length || text === emptyMessage.toLowerCase()) {
-      content.textContent = emptyMessage;
+  },
+  parseAtTag: function(content) {
+    var atTag = content.split(/[\s\[\<]/)[0];
+    this.appendNode('@').appendText(atTag);
+    return content.replace(atTag, '');
+  },
+  parseEmoticonAlias: function(content) {
+    var emote = content.split(':');
+    if (emote.length > 1) {
+      emote = emote[1];
+      if (emoticons.indexOf(emote) > -1) {
+        this.appendNode('emote').appendText(emote);
+      }
     }
-    if (short) {
-      content.textContent = poor(textarea.value);
-    } else {
-      content.innerHTML = rich(textarea.value);
+    return content;
+  },
+  parseAttributes: function(content, close) {
+    var index = -1;
+    var quote = null;
+    var name = '';
+    var value = '';
+    var inValue = false;
+    while (index < content.length - 1) {
+      index++;
+      if (!inValue || quote == null) {
+        if (content[index] == '/' && index < content.length - 1 && content[index + 1] == close) {
+          return content.substring(index, content.length);
+        }
+        if (content[index] == close) {
+          if (name.length) this.attributes[name.trim()] = value;
+          return content.substring(index + 1, content.length);
+        }
+      }
+      if (!inValue) {
+        if (content[index] == '=') {
+          inValue = true;
+          continue;
+        }
+        name += content[index];
+      } else {
+        if (quote == null) {
+          if (content[index] == '"' || content[index] == "'") {
+            quote = content[index];
+            continue;
+          }
+          if (content[index] == ' ') {
+            this.setAttribute(name.trim(), value);
+            name = '';
+            value = '';
+            inValue = false;
+            continue;
+          }
+        } else if (content[index] == quote) {
+          quote = null;
+          this.setAttribute(name, value);
+          name = '';
+          value = '';
+          inValue = false;
+          continue;
+        }
+        value += content[index];
+      }
     }
-    holder.classList.remove('editing');
-    holder.dispatchEvent(new Event('change'));
-  }
-  return !editing;
-}
-
-function save(action, id, field, holder) {
-  if (holder.classList.contains('dirty')) {
-    holder.classList.add('saving');
-    ajax.post(action, {
-      id: id,
-      field: field,
-      value: poor(holder.querySelector('.input').value)
-    }).text(function() {
-      holder.classList.remove('saving');
-      holder.classList.remove('dirty');
+    return content.substring(index + 1, content.length);
+  },
+  setAttribute: function(name, value) {
+    name = name.trim();
+    this.attributes[name] = value;
+    if (name == 'class') {
+      this.classes = value.split(/\s/);
+    }
+  },
+  innerText: function(tag) {
+    var text = '';
+    this.children.forEach(function(child) {
+      text += child.innerText();
     });
-  }
-}
-
-function deactivate(button) {
-  active = null;
-  button.click();
-}
-
-function setupEditable(sender) {
-  var editing = false;
-  var id = sender.dataset.id;
-  var member = sender.dataset.member;
-  var target = sender.dataset.target;
-  var short = sender.classList.contains('short');
-  var content = sender.querySelector('.content');
-  var button = sender.querySelector('.edit');
-  var textarea = initEditable(sender, content, short);
-  
-  button.addEventListener('click', function() {
-    if (active && active != button) deactivate(active);
-    editing = toggleEdit(editing, sender, content, textarea, short);
-    active = editing ? button : null;
-    if (!editing && target) {
-      save('update/' + target, id, member, sender);
-    }
-  });
-  sender.addEventListener('click', function(ev) {
-    ev.stopPropagation();
-  });
-}
-
-document.addEventListener('click', () => {
-  if (active && !active.closest('.editable').matches(':hover')) deactivate(active);
-});
-
-jSlim.on(document, 'change', 'textarea.comment-content', function() {
-  const preview = this.parentNode.querySelector('.comment-content.preview');
-  if (preview) preview.innerHTML = rich(this.value);
-});
-
-jSlim.on(document, 'keydown', 'textarea.comment-content', function(ev) {
-  if (ev.ctrlKey) {
-    handleSpecialKeys(ev.keyCode, tag => {
-      insertTags(this, '[' + tag + ']', '[/' + tag + ']');
-      this.dispatchEvent(new Event('change'));
-      ev.preventDefault();
+    return text;
+  },
+  innerHtml: function(tag) {
+    var html = '';
+    this.children.forEach(function(child) {
+      html += child.outerHtml();
     });
+    return html;
+  },
+  innerBbc: function(tag) {
+    var html = '';
+    this.children.forEach(function(child) {
+      html += child.outerBbc();
+    });
+    return html;
+  },
+  outerHtml: function() {
+    var gen = getTagGenerator(this.tagName, 'html');
+    return gen ? gen(this) : '';
+  },
+  outerBbc: function() {
+    var gen = getTagGenerator(this.tagName, 'bbc');
+    return gen ? gen(this) : '';
+  },
+  depth: function() {
+    if (!this.parent) return 0;
+    return this.parent.depth() + 1;
+  },
+  odd: function() {
+    return this.depth() % 2 == 1;
   }
-});
+};
+  
+function ytId(url) {
+  if (url.indexOf('v=')) return url.split('v=')[1].split('&')[0];
+  return url.split('?')[0].split('/').reverse()[0];
+}
 
-jSlim.on(document, 'mouseup', '.edit-action', function() {
-  const textarea = this.closest('.content.editing').querySelector('textarea, input.comment-content');
-  const type = specialActions[this.dataset.action];
-  if (type) type(this, textarea);
-});
+function escapeHtml(string) {
+  return string.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
 
-jSlim.on(document, 'dragstart', '#emoticons .emote[title]', function(event) {
-  let data = event.dataTransfer.getData('Text/plain');
-  if (data && data.trim().indexOf('[') == 0) {
-    data = data.split('\n');
-    for (var i = data.length; i--;) {
-      data[i] = data[i].trim().replace(/\[/g, '').replace(/\]/g, '');
+function getTagGenerator(tag, type) {
+  var result = null;
+  if (!tag.length) {
+    return tagGenerators.default[type];
+  }
+  tagGenerators[type].forEach(function(item) {
+    if (item.match.indexOf(tag) > -1) {
+      result = item.func;
     }
-    event.dataTransfer.setData('Text/plain', data.join(''));
-  } else {
-    event.dataTransfer.setData('Text/plain', this.title);
-  }
-});
-
-jSlim.ready(() => {
-  jSlim.all('.editable', e => setupEditable(e));
-  jSlim.all('.post-box textarea.comment-content, .post-box input.comment-content', c => {
-    c.dispatchEvent(new Event('change'));
   });
-});
+  return result || tagGenerators.default[type];
+}
 
-const BBC = Object.freeze({
-  rich: rich,
-  poor: poor,
-  init: setupEditable
-});
+var tagGenerators = {
+  default: {
+    bbc: function(tag) {
+      return tag.innerBbc();
+    },
+    html: function(tag) {
+      if (tag.tagName == '@') {
+        return '<a class="user-link data-id="0" href="/">' + tag.innerText() + '</a>';
+      }
+      if (tag.tagName.indexOf('yt') == 0 && !tag.tagName.replace('yt', '').match(/[^a-zA-z0-9\-_]/)) {
+        return '<iframe allowfullscreen class="embed" src="https://www.youtube.com/embed/' + tag.tagName.replace('yt', '') + '"></iframe>' + tag.innerHtml();
+      }
+      if (tag.tagName.length && !tag.tagName.match(/[^0-9]/)) {
+        return '<iframe allowfullscreen class="embed" src="/embed/' + tag.tagName + '"></iframe>' + tag.innerHtml();
+      }
+      return tag.innerHtml();
+    }
+  },
+  bbc: [
+    {
+      match: ['br'],
+      func: function(tag) {
+        return '\n' + tag.innerBbc();
+      }
+    },
+    {
+      match: ['hr'],
+      func: function(tag) {
+        return '[hr]' + tag.innerBbc();
+      }
+    },
+    {
+      match: ['b','u','s','sup','sub'],
+      func: function(tag) {
+        return '[' + tag.tagName + ']' + tag.innerBbc() + '[/' + tag.tagName + ']';
+      }
+    },
+    {
+      match: ['i'],
+      func: function(tag) {
+        if (tag.attributes.class && tag.attributes.class.indexOf('fa fa-fw fa-') == 0) {
+          return '[icon]' + tag.attributes.class.replace('fa fa-fw fa-', '').split(/[^a-zA-Z0-9]/)[0] + '[/icon]';
+        }
+        return '[' + tag.tagName + ']' + tag.innerBbc() + '[/' + tag.tagName + ']';
+      }
+    },
+    {
+      match: ['blockquote'],
+      func: function(tag) {
+        return '[q]' + tag.innerBbc() + '[/q]';
+      }
+    },
+    {
+      match: ['@'],
+      func: function(tag) {
+        return tag.tagName + tag.innerText();
+      }
+    },
+    {
+      match: ['a'],
+      func: function(tag) {
+        if (!tag.attributes.href) {
+          return tag.innerBbc();
+        }
+        if (tag.classes.indexOf('user-link') > -1) {
+          return '@' + tag.innerText();
+        }
+        if (tag.attributes['data-link']) {
+          if (tag.attributes['data-link'] == '1') {
+            return tag.attributes['href'];
+          }
+          if (tag.attributes['data-link'] == '2') {
+            return '&gt;&gt;' + tag.attributes.href.replace('#comment_', '');
+          }
+        }
+        return '[url=' + tag.attributes.href + ']' + tag.innerBbc() + '[/url]';
+      }
+    },
+    {
+      match: ['div'],
+      func: function(tag) {
+        if (tag.classes.indexOf('spoiler') < 0) {
+          return tag.innerBbc();
+        }
+        return '[spoiler]' + tag.innerBbc() + '[/spoiler]';
+      }
+    },
+    {
+      match: ['img'],
+      func: function(tag) {
+        if (tag.attributes.class == 'emoticon' && tag.attributes.src) {
+          return ':' + tag.attributes.src.replace('/emoticons/([^a-zA-Z0-9]+).png', '$1') + ':';
+        }
+        return '[img]' + (tag.attributes.src || '') + '[img]' + innerBbc(tag);
+      }
+    },
+    {
+      match: ['emote'],
+      func: function(tag) {
+        return ':' + tag.innerText() + ':';
+      }
+    },
+    {
+      match: ['iframe'],
+      func: function(tag) {
+        if (tag.attributes.src && tag.attributes.class == 'embed') {
+          if (tag.attributes.src.indexOf('youtube') > -1) {
+            return '[yt' + ytId(tag.attributes.src) + ']' + innerBbc(tag);
+          }
+          return '[' + tag.attributes.src.replace(/[^0-9]/g,'') + ']' + innerBbc(tag);
+        }
+        return innerBbc(tag);
+      }
+    }
+  ],
+  html: [
+    {
+      match: ['b','i','u','s','sup','sub','hr'],
+      func: function(tag) {
+        return '<' + tag.tagName + '>' + tag.innerHtml() + '</' + tag.tagName + '>';
+      }
+    },
+    {
+      match: ['icon'],
+      func: function(tag) {
+        return '<i class="fa fa-fw fa-' + tag.innerText().split(/[^a-zA-Z0-9]/)[0] + '"></' + tag.tagName + '>';
+      }
+    },
+    {
+      match: ['q'],
+      func: function(tag) {
+        return '<blockquote' + (!tag.odd() ? ' class="even"' : '') + '>' + tag.innerHtml() + '</blockquote>';
+      }
+    },
+    {
+      match: ['url'],
+      func: function(tag) {
+        if (tag.equalsPar) {
+          return '<a href="' + tag.equalsPar + '">' + tag.innerHtml() + '</a>';
+        }
+        return '<a href="' + tag.innerText() + '">' + tag.innerText() + '</a>';
+      }
+    },
+    {
+      match: ['spoiler'],
+      func: function(tag) {
+        return '<div class="spoiler">' + tag.innerHtml() + '</div>';
+      }
+    },
+    {
+      match: ['img'],
+      func: function(tag) {
+        return '<img src="' + tag.innerText().replace(/['"]/g,'') + '"></img>';
+      }
+    },
+    {
+      match: ['emote'],
+      func: function(tag) {
+        return '<img src="/emoticons/' + tag.innerText() + '.png"></img>';
+      }
+    }
+  ]
+};
 
-export { BBC };
+export const BBCode = {
+  fromHtml: function(html) {
+    return Node.parse(html, '<', '>');
+  },
+  fromBbc: function(bbc) {
+    return Node.parse(bbc, '[', ']');
+  }
+};
