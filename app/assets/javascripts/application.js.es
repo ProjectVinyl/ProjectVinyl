@@ -1,5 +1,5 @@
 //  Due to ERB parsing (this can be eliminated later)
-//= require data/all
+//= require ./data/all
 
 // Not part of the codebase
 import './vendor/all';

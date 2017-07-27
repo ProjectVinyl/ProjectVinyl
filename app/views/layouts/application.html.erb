@@ -10,8 +10,8 @@
 	<meta name="theme-color" content="#a66ebe">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<%= content_for(:metadata) %>
-  <%= stylesheet_link_tag "application" %>
-  <%= javascript_include_tag "application" %>
+	<%= stylesheet_link_tag "application" %>
+	<%= javascript_include_tag "application" %>
 </head>
 <body<% if !user_signed_in? %> class="logged-out"<% end %>>
 	<div class="context-3d">
