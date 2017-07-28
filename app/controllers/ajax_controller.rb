@@ -36,10 +36,10 @@ class AjaxController < ApplicationController
           mail: current_user.message_count
         }
       else
-        return render status: 204, nothing: true
+        return head 204
       end
     end
-    render status: 401, nothing: true
+    head 401
   end
 
   def upvote
@@ -48,7 +48,7 @@ class AjaxController < ApplicationController
         return render json: { count: video.upvote(current_user, params[:incr]) }
       end
     end
-    render status: 401, nothing: true
+    head 401
   end
 
   def downvote
@@ -57,7 +57,7 @@ class AjaxController < ApplicationController
         return render json: { count: video.downvote(current_user, params[:incr]) }
       end
     end
-    render status: 401, nothing: true
+    head 401
   end
 
   def star
@@ -66,7 +66,7 @@ class AjaxController < ApplicationController
         return render json: { added: video.star(current_user) }
       end
     end
-    render status: 401, nothing: true
+    head 401
   end
 
   def like
@@ -75,7 +75,7 @@ class AjaxController < ApplicationController
         return render json: { added: comment.upvote(current_user, params[:incr]) }
       end
     end
-    render status: 401, nothing: true
+    head 401
   end
 
   def toggle_album
@@ -86,7 +86,7 @@ class AjaxController < ApplicationController
         end
       end
     end
-    render status: 401, nothing: true
+    head 401
   end
 
   def toggle_subscribe
@@ -95,7 +95,7 @@ class AjaxController < ApplicationController
         return render json: { added: thread.toggle_subscribe(current_user) }
       end
     end
-    render status: 401, nothing: true
+    head 401
   end
 
   def toggle_pin
@@ -107,7 +107,7 @@ class AjaxController < ApplicationController
         return
       end
     end
-    render status: 401, nothing: true
+    head 401
   end
 
   def toggle_lock
@@ -119,7 +119,7 @@ class AjaxController < ApplicationController
         return
       end
     end
-    render status: 401, nothing: true
+    head 401
   end
 
   def toggle_feature
@@ -133,7 +133,7 @@ class AjaxController < ApplicationController
         return
       end
     end
-    render status: 401, nothing: true
+    head 401
   end
 
   def toggle_album_feature
@@ -146,7 +146,7 @@ class AjaxController < ApplicationController
         return
       end
     end
-    render status: 401, nothing: true
+    head 401
   end
 
   def donate

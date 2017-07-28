@@ -77,27 +77,25 @@ class GenreController < ApplicationController
   def videos
     if @tag = Tag.where(id: params[:id]).first
       @results = Pagination.paginate(@tag.videos.where(hidden: false).includes(:tags).order(:created_at), params[:page].to_i, 8, true)
-      render json: {
+      return render json: {
         content: render_to_string(partial: '/layouts/video_thumb_h.html.erb', collection: @results.records),
         pages: @results.pages,
         page: @results.page
       }
-    else
-      render status: 404, nothing: true
     end
+    head 404
   end
 
   def users
     if @tag = Tag.where(id: params[:id]).first
       @results = Pagination.paginate(@tag.users.order(:updated_at_at), params[:page].to_i, 8, true)
-      render json: {
+      return render json: {
         content: render_to_string(partial: '/layouts/artist_thumb_h.html.erb', collection: @results.records),
         pages: @results.pages,
         page: @results.page
       }
-    else
-      render status: 404, nothing: true
     end
+    head 404
   end
 
   def find
@@ -120,7 +118,7 @@ class GenreController < ApplicationController
         watch: subscription.watch
       }
     end
-    render status: 401, nothing: true
+    head 401
   end
 
   def spoiler
@@ -137,7 +135,7 @@ class GenreController < ApplicationController
         watch: subscription.watch
       }
     end
-    render status: 401, nothing: true
+    head 401
   end
 
   def watch
@@ -154,6 +152,6 @@ class GenreController < ApplicationController
         spoiler: subscription.spoiler
       }
     end
-    render status: 401, nothing: true
+    head 401
   end
 end

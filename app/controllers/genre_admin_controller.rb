@@ -8,7 +8,9 @@ class GenreAdminController < ApplicationController
 
   def update
     if !user_signed_in? || !current_user.is_contributor?
-      return render status: 403, nothing: true if params[:ajax]
+      if params[:ajax]
+        return head 403
+      end
       return render file: '/public/403.html', layout: false
     end
 
@@ -26,7 +28,7 @@ class GenreAdminController < ApplicationController
 
   def new
     if !user_signed_in? || !current_user.is_contributor?
-      return render status: 403, nothing: true
+      return head 403
     end
 
     @tagtype = TagType.new
@@ -35,7 +37,7 @@ class GenreAdminController < ApplicationController
 
   def create
     if !user_signed_in? || !current_user.is_contributor?
-      return render status: 403, nothing: true
+      return head 403
     end
     prefix = Tag.sanitize_name(params[:tag_type][:prefix])
     if !ApplicationHelper.valid_string?(prefix)
@@ -54,7 +56,7 @@ class GenreAdminController < ApplicationController
 
   def delete
     if !user_signed_in? || !current_user.is_contributor?
-      return render status: 403, nothing: true
+      return head 403
     end
     if tagtype = TagType.where(id: params[:id]).first
       Tag.where(tag_type_id: tagtype.id).update_all('tag_type_id = 0')

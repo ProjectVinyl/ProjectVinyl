@@ -25,7 +25,7 @@ class BoardController < ApplicationController
 
   def page_threads
     if !(@board = Board.find_board(params[:id]))
-      return render status: 404, nothing: true
+      return head 404
     end
     @page = params[:page].to_i
     @results = Pagination.paginate(@board.threads, @page, 50, false)
@@ -67,8 +67,8 @@ class BoardController < ApplicationController
       board.title = params[:board][:title]
       board.description = params[:board][:description]
       board.save
-      return render status: 200, nothing: true
+      return head 200
     end
-    render status: 401, nothing: true
+    head 401
   end
 end

@@ -75,7 +75,7 @@ class VideoController < ApplicationController
         end
       end
     end
-    render status: 404, nothing: true
+    head 404
   end
 
   def upload
@@ -187,7 +187,7 @@ class VideoController < ApplicationController
     if @video = Video.where(id: params[:id]).first && (!@video.hidden || (user_signed_in? && current_user.is_contributor?))
       return render json: @video.json
     end
-    render status: 404, nothing: true
+    head 404
   end
 
   def video_update
@@ -212,7 +212,7 @@ class VideoController < ApplicationController
         }
       end
     end
-    render satus: 401, nothing: true
+    head 401
   end
 
   def update
@@ -222,14 +222,14 @@ class VideoController < ApplicationController
           TagHistory.record_changes(current_user, video, changes[0], changes[1])
         end
         video.save
-        return render status: 200, nothing: true
+        return head 200
       elsif params[:field] == 'source'
         if video.source != params[:value]
           video.set_source(params[:value])
           video.save
           TagHistory.record_source_change(current_user, video, video.source)
         end
-        return render status: 200, nothing: true
+        return head 200
       end
       if video.user_id == current_user.id || current_user.is_contributor?
         value = ApplicationHelper.demotify(params[:value])
@@ -240,10 +240,10 @@ class VideoController < ApplicationController
           video.set_title(value)
           video.save
         end
-        return render status: 200, nothing: true
+        return head 200
       end
     end
-    render status: 401, nothing: true
+    head 401
   end
 
   def edit

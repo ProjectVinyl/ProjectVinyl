@@ -72,7 +72,7 @@ class ArtistController < ApplicationController
         return
       end
     end
-    render status: 401, nothing: true
+    head 401
   end
   
   def setavatar
@@ -101,7 +101,7 @@ class ArtistController < ApplicationController
     if user = User.with_badges.where(id: params[:id]).first
       return render partial: '/layouts/artist_thumb_h', locals: { artist_thumb_h: user }
     end
-    render status: 404, nothing: true
+    head 404
   end
 
   def banner
@@ -113,7 +113,7 @@ class ArtistController < ApplicationController
       end
       return render partial: 'banner'
     end
-    render status: 404, nothing: true
+    head 404
   end
   
   def list

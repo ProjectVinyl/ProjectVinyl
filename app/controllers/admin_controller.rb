@@ -21,7 +21,9 @@ class AdminController < ApplicationController
 
   def render_path(params, ajax)
     if !user_signed_in? || !current_user.is_contributor?
-      return render status: 403, nothing: true if ajax
+      if ajax
+        return head 403
+      end
       return render file: '/public/403.html', layout: false
     end
     @location = (params[:p] || "public/stream").strip
@@ -35,12 +37,16 @@ class AdminController < ApplicationController
     end
     if @location.length > 1 && @location[1] != 'stream' && @location[1] != 'cover' && @location[1] != 'avatar' && @location[1] != 'banner'
       if @location[0] != 'encoding'
-        return render status: 403, nothing: true if ajax
+        if ajax
+          return head 403
+        end
         return render file: '/public/403.html', layout: false
       end
     end
     if @location[0] != 'public' && @location[0] != 'private' && @location[0] != 'encoding'
-      return render status: 403, nothing: true if ajax
+      if ajax
+        return head 403
+      end
       return render file: '/public/403.html', layout: false
     end
     begin
@@ -72,7 +78,9 @@ class AdminController < ApplicationController
         end
       end
     rescue Exception => e
-      return render status: 404, nothing: true if ajax
+      if ajax
+        return head 404
+      end
       return render file: '/public/404.html', layout: false
     end
     if ajax
@@ -353,10 +361,9 @@ class AdminController < ApplicationController
   def reporter
     @video = Video.where(id: params[:id]).first
     if @video
-      render json: {
+      return render json: {
         content: render_to_string(partial: '/layouts/reporter', locals: { video: @video, report: Report.new })
       }
-      return
     end
     head 401
   end
@@ -390,8 +397,7 @@ class AdminController < ApplicationController
       @report.save
       Notification.notify_admins(@report,
                                  "A new <b>Report</b> has been submitted for <b>" + @video.title + "</b>", @report.comment_thread.location)
-      head :ok
-      return
+      return head :ok
     end
     head 401
   end

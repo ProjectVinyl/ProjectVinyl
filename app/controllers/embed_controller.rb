@@ -45,7 +45,11 @@ class EmbedController < ActionController::Base
       if @video && @video.duplicate_id > 0
         @video = Video.where(id: @video.duplicate_id).first
       end
-      render status: 401, nothing: true if @video.hidden
+      
+      if @video.hidden
+        return head 401
+      end
+      
       if @video
         width = 560
         if params[:maxwidth] && width > (mw = params[:maxwidth].to_i)
@@ -70,11 +74,15 @@ class EmbedController < ActionController::Base
           height: height,
           title: @video.title
         }
-        return render xml: @result, root: 'oembed' if params[:format] == 'xml'
+        
+        if params[:format] == 'xml'
+          return render xml: @result, root: 'oembed'
+        end
+        
         return render json: @result
       end
     end
-    render status: 404, nothing: true
+    head 404
   end
 
   private
