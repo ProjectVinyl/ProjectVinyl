@@ -35,20 +35,18 @@ function slideAcross(me, direction) {
   }
   
   to.classList.add('active');
+  form.classList.add('animating');
   
-  setTimeout(function() {
-    var diffH = form.offsetHeight - (from.offsetHeight - to.offsetHeight);
-    
-    form.style.maxHeight = form.style.minHeight = diffH + 'px';
-    form.classList.add('animating');
+  requestAnimationFrame(function() {
+    form.style.maxHeight = form.style.minHeight = to.offsetHeight + 'px';
     jSlim.all(form, '.group', function(el) {
-      el.style.transform = 'translate(' + (-100 * form.dataset.offset) + '%,0)';
+      el.style.transform = 'translate(-' + (100 * form.dataset.offset) + '%,0)';
     });
     setTimeout(function() {
       form.classList.remove('animating');
       form.style.maxHeight = '';
     }, 500);
-  }, 1);
+  });
 }
 
 jSlim.on(document, 'click', '.slider-toggle', function(e) {
