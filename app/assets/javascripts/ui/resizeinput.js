@@ -4,12 +4,20 @@
 
 import { jSlim } from '../utils/jslim';
 
-jSlim.on(document, 'keyup', 'input.js-auto-resize', function() {
-  const input = this;
-  const width = input.clientWidth;
+jSlim.on(document, 'keyup', 'textarea.js-auto-resize', function() {
+  const height = this.clientHeight;
+  
+  this.style.height = '0px';
+  this.style.marginTop = height + 'px';
+  this.style.height = (this.scrollHeight + 20) + 'px';
+  this.style.marginTop = '';
+});
 
-  input.style.width = '0px';
-  input.style.marginLeft = `${width}px`
-  input.style.width = `${input.scrollWidth + 20}px`;
-  input.style.marginLeft = '';
+jSlim.on(document, 'keyup', 'input.js-auto-resize', function() {
+  const width = this.clientWidth;
+  
+  this.style.width = '0px';
+  this.style.marginLeft = width + 'px';
+  this.style.width = (this.scrollWidth + 20) + 'px';
+  this.style.marginLeft = '';
 });

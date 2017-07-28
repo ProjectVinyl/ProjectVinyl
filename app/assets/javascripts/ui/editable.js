@@ -34,32 +34,14 @@ function handleSpecialKeys(key, callback) {
 function initEditable(holder, content, short) {
   var textarea = holder.querySelector('.input');
   if (!textarea) {
-    if (short) {
-      textarea = document.createElement('input');
-      textarea.className = 'input js-auto-resize';
-      textarea.style.height = (content.clientHeight + 20) + 'px';
-      textarea.style.width = (content.clientWidth + 20) + 'px';
-      content.insertAdjacentElement('afterend', textarea);
-    } else {
-      textarea = document.createElement('textarea');
-      textarea.className = 'input';
-      textarea.style.height = (content.clientHeight + 20) + 'px';
-      content.insertAdjacentElement('afterend', textarea);
-    }
+    textarea = document.createElement(short ? 'input' : 'textarea');
+    textarea.className = 'input js-auto-resize';
+    content.insertAdjacentElement('afterend', textarea);
   }
-  if (!short) {
-    function changeHeight() {
-      const height = getComputedStyle(textarea).height;
-      textarea.style.height = 0;
-      textarea.style.marginBottom = height;
-      textarea.style.height = (textarea.scrollHeight + 20) + 'px';
-      textarea.style.marginBottom = '';
-    }
-    textarea.addEventListener('keydown', changeHeight);
-    textarea.addEventListener('keyup', changeHeight);
-  }
-  textarea.addEventListener('change', () => holder.classList.add('dirty'));
-  textarea.addEventListener('keydown', ev => {
+  textarea.addEventListener('change', function() {
+    holder.classList.add('dirty');
+  });
+  textarea.addEventListener('keydown', function(ev) {
     if (ev.ctrlKey) {
       handleSpecialKeys(ev.keyCode, function(tag) {
         insertTags(textarea, '[' + tag + ']', '[/' + tag + ']');
@@ -98,6 +80,7 @@ function toggleEdit(editing, holder, content, textarea, short) {
     if (hovercard) hovercard.parentNode.removeChild(hovercard);
     textarea.value = BBCode.fromHTML(content.innerHTML).outerBBC();
     holder.classList.add('editing');
+    textarea.dispatchEvent(new Event('keyup'));
   } else {
     if (!text || !text.length || text === emptyMessage.toLowerCase()) {
       content.textContent = emptyMessage;
@@ -108,7 +91,7 @@ function toggleEdit(editing, holder, content, textarea, short) {
       content.innerHTML = BBCode.fromBBC(textarea.value).outerHTML();
     }
     holder.classList.remove('editing');
-    holder.dispatchEvent(new Event('change'));
+    updatePreview(textarea);
   }
   return !editing;
 }
@@ -172,7 +155,6 @@ jSlim.on(document, 'keydown', 'textarea.comment-content', function(ev) {
   if (ev.ctrlKey) {
     handleSpecialKeys(ev.keyCode, tag => {
       insertTags(this, '[' + tag + ']', '[/' + tag + ']');
-      this.dispatchEvent(new Event('change'));
       ev.preventDefault();
     });
   }
