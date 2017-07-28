@@ -13,7 +13,6 @@ var specialActions = {
   tag: function(sender, textarea) {
     var tag = sender.dataset.tag;
     insertTags(textarea, '[' + tag + ']', '[/' + tag + ']');
-    textarea.dispatchEvent(new Event('change'));
   },
   emoticons: function(sender) {
     sender.classList.remove('edit-action');
@@ -23,7 +22,6 @@ var specialActions = {
   },
   emoticon: function(sender, textarea) {
     insertTags(textarea, sender.title, '');
-    textarea.dispatchEvent(new Event('change'));
   }
 };
 
@@ -90,6 +88,7 @@ function insertTags(textarea, open, close) {
   textarea.selectionStart = start;
   textarea.selectionEnd = start + selected.length;
   textarea.focus();
+  updatePreview(textarea);
 }
 
 function toggleEdit(editing, holder, content, textarea, short) {
@@ -160,9 +159,13 @@ document.addEventListener('click', () => {
   if (active && !active.closest('.editable').matches(':hover')) deactivate(active);
 });
 
+function updatePreview(sender) {
+  const preview = sender.parentNode.querySelector('.comment-content.preview');
+  if (preview) preview.innerHTML = BBCode.fromBBC(sender.value).outerHTML();
+}
+
 jSlim.on(document, 'change', 'textarea.comment-content', function() {
-  const preview = this.parentNode.querySelector('.comment-content.preview');
-  if (preview) preview.innerHTML = BBCode.fromBBC(this.value).outerHTML();
+  updatePreview(this);
 });
 
 jSlim.on(document, 'keydown', 'textarea.comment-content', function(ev) {
@@ -194,9 +197,7 @@ jSlim.on(document, 'dragstart', '#emoticons .emote[title]', function(event) {
   }
 });
 
-jSlim.ready(() => {
-  jSlim.all('.editable', e => setupEditable(e));
-  jSlim.all('.post-box textarea.comment-content, .post-box input.comment-content', c => {
-    c.dispatchEvent(new Event('change'));
-  });
+jSlim.ready(function() {
+  jSlim.all('.editable', setupEditable);
+  jSlim.all('.post-box textarea.comment-content, .post-box input.comment-content', updatePreview);
 });

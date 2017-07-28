@@ -67,9 +67,7 @@ Node.prototype = {
           } else if (content[index] == ':') {
             content = this.parseEmoticonAlias(content.substring(index, content.length));
           } else if (content[index] == open) {
-            var child = new Node(this);
-            this.children.push(child);
-            content = child.parse(content.substring(index, content.length), open, close);
+            this.appendNode().parse(content.substring(index, content.length), open, close);
           }
           index = -1;
           continue;
@@ -92,7 +90,10 @@ Node.prototype = {
           continue;
         }
         
-        if (tagName.length && (content[index] == close || content[index] == '/' || content[index] == ' ')) {
+        if (tagName.length && content[index] == '=') {
+          content = this.parseEqualsPar(content.substring(index + 1, content.length), close);
+          index = -1;
+        } else if (tagName.length && (content[index] == close || content[index] == '/' || content[index] == ' ')) {
           if (content[index] == close || content[index] == '/') {
             this.parseTagName(tagName);
           }
@@ -121,7 +122,7 @@ Node.prototype = {
   appendNode: function(tagName) {
     var tag = new Node(this);
     tag.tagName = tagName;
-    this.children.append(tag);
+    this.children.push(tag);
     return tag;
   },
   appendTEXT: function(text) {
@@ -129,12 +130,44 @@ Node.prototype = {
   },
   parseTagName: function(tag) {
     this.tagName = tag.split('=')[0].trim();
-    if (tag.indexOf('=') > -1) {
-      this.equalsPar = tag.replace(this.tagName + '=', '');
-    }
     if (this.tagName.replace(/[^a-zA-Z0-9]/g, '') != this.tagName) {
       this.tagName = '';
     }
+  },
+  parseEqualsPar(content, close) {
+    var index = -1;
+    var quote = null;
+    var par = '';
+    
+    while (index < content.length - 1) {
+      index++;
+      
+      if (quote != null) {
+        if (content[index] == quote) {
+          quote = null;
+          continue;
+        }
+      } else {
+        if (content[index] == '"' || content[index] == "'") {
+          quote = content[index];
+          continue;
+        }
+          
+        if (content[index] == ' ' || content[index] == close) {
+          if (par.length) {
+            this.equalsPar = par;
+          }
+          return content.substring(index, content.length);
+        }
+      }
+      
+      par += content[index];
+    }
+    
+    if (par.length) {
+      this.equalsPar = par;
+    }
+    return content.substring(index, content.length);
   },
   parseAtTag: function(content) {
     var atTag = content.split(/[\s\[\<]/)[0];
@@ -147,6 +180,7 @@ Node.prototype = {
       emote = emote[1];
       if (emoticons.indexOf(emote) > -1) {
         this.appendNode('emote').appendTEXT(emote);
+        return content.replace(':' + emote + ':', '');
       }
     }
     return content;
