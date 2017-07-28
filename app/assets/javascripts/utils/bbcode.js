@@ -65,7 +65,13 @@ Node.prototype = {
           if (content[index] == '@') {
             content = this.parseAtTag(content.substring(index + 1, content.length));
           } else if (content[index] == ':') {
-            content = this.parseEmoticonAlias(content.substring(index, content.length));
+            var result;
+            if (result = this.parseEmoticonAlias(content.substring(index, content.length))) {
+              content = result;
+            } else {
+              text += content[index];
+              continue;
+            }
           } else if (content[index] == open) {
             this.appendNode().parse(content.substring(index, content.length), open, close);
           }
@@ -183,7 +189,6 @@ Node.prototype = {
         return content.replace(':' + emote + ':', '');
       }
     }
-    return content;
   },
   parseAttributes: function(content, close) {
     var index = -1;
