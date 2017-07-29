@@ -13,11 +13,11 @@
    version="1.1"
    viewBox="0 0 187.49845 187.50189"
    id="svg2"
-   inkscape:version="0.92.0 r15299"
+   inkscape:version="0.92.1 r15371"
    sodipodi:docname="discord.svg"
    inkscape:export-filename="C:\Users\Chris Albers\Documents\railsprojects\projectvinyl\public\images\discord.png"
-   inkscape:export-xdpi="480"
-   inkscape:export-ydpi="480">
+   inkscape:export-xdpi="192"
+   inkscape:export-ydpi="192">
   <metadata
      id="metadata22">
     <rdf:RDF>
@@ -26,7 +26,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -60,9 +60,9 @@
      inkscape:window-height="837"
      id="namedview18"
      showgrid="false"
-     inkscape:zoom="0.62729422"
-     inkscape:cx="498.25458"
-     inkscape:cy="207.41888"
+     inkscape:zoom="1.2545884"
+     inkscape:cx="210.80269"
+     inkscape:cy="49.266199"
      inkscape:window-x="-8"
      inkscape:window-y="-8"
      inkscape:window-maximized="1"
