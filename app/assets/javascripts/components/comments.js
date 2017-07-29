@@ -21,7 +21,7 @@ function postComment(sender) {
   if (sender.classList.contains('report-state')) data.report_state = reportState(sender);
   
   sender.classList.add('posting');
-  ajax.post('comments/new', data).json(function(json) {
+  ajax.post('comments', data).json(function(json) {
     sender.classList.remove('posting');
     paginator.repaint(document.getElementById('thread-' + threadId).closest('.paginator'), json);
     scrollTo(document.querySelector('#comment_' + json.focus));
@@ -77,8 +77,7 @@ function lookupComment(commentId) {
 
 function editComment(sender) {
   sender = sender.parentNode;
-  ajax.post('comments/edit', {
-    id: sender.dataset.id,
+  ajax.patch('comments/' + sender.dataset.id, {
     comment: sender.querySelector('textarea, input.comment-content').value
   }).text(function() {
     sender.classList.remove('editing');
@@ -101,7 +100,7 @@ function findComment(sender) {
     return scrollToAndHighlightElement(parentEl);
   }
   
-  ajax.get('comment/get', {
+  ajax.get('find/comments', {
     id: sender.dataset.id || parseInt(parent.split('_')[1], 36)
   }).text(function(html) {
     container.parentNode.insertAdjacentHTML('afterbegin', html);

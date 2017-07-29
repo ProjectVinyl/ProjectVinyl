@@ -89,7 +89,7 @@
 <section class="page full-width recent-uploads resize-holder">
 	<h1 class="title resize-target">Recent Albums<span> (<span class="count"><%= number_with_delimiter @albums.count %></span>)</span></h1>
 	<% if @modifications_allowed %>
-    <button data-external-form="album/create" data-title="New Album"><i class="fa fa-plus"></i> New</button>
+    <button data-external-form="albums/new" data-title="New Album"><i class="fa fa-plus"></i> New</button>
   <% end %>
 	<ul id="albums" class="album-list horizontal">
 		<%= render partial: '/layouts/album_thumb_h', collection: @albums.records %>

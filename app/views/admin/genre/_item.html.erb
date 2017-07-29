@@ -1,4 +1,4 @@
-<%= form_for(item, as: 'tag_type', url: '/ajax/tagtype/update', method: 'post', html: {class: "row row-group removeable state-binary tag-#{item.prefix}"}) do |f| %>
+<%= form_for(item, as: 'tag_type', url: '/admin/tagtypes', method: 'patch', html: {class: "row row-group removeable state-binary tag-#{item.prefix}"}) do |f| %>
 	<%= f.text_field :id, hidden: true %>
 	<div class="row">
 		<div style="width:30px">
@@ -45,7 +45,7 @@
 				<tr class="actions">
 					<td class="label">
 					<td class="label">
-						<a class="button red action right" href="/ajax/tagtype/delete/<%= item.id %>" data-title="Delete Tag Type" data-confirm="You are about to delete a tag type. Any related tags will lose their typing information and may have to be reassigned should you want to undo this." data-icon="warning"><i class="fa fa-trash"></i> Delete</a>
+            <a class="button red right" data-title="Delete Tag Type" data-icon="warning" data-confirm="You are about to delete a tag type. Any related tags will lose their typing information and may have to be reassigned should you want to undo this." data-method="delete" href="/admin/tagtypes/<%= item.id %>" data-title="Remove Notice"><i class="fa fa-trash"></i> Delete</a>
 						<button class="green left"><i class="fa fa-save"></i> Save</button>
 					</td>
 				</tr>

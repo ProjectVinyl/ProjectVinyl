@@ -9,7 +9,7 @@
 			Avatar
 		</td>
 		<td class="field center">
-		<%= form_for(user, as: "user", url: "/ajax/avatar/upload", "html": { "class": "async" }) do |f| %>
+		<%= form_for(user, as: "user", url: "/user/avatar", method: "patch", "html": { "class": "async" }) do |f| %>
 			<%= f.text_field :id, hidden: true %>
 			<div class="file-select-container">
 				<div id="avatar-upload" class="avatar drag-target file-select image-selector uploaded-preview revertable" data-id="<%= user.id %>">
@@ -40,7 +40,7 @@
 		</td>
 	</tr>
 </table>
-<%= form_for(user, as: "user", url: url) do |f| %>
+<%= form_for(user, as: "user", url: url, method: method) do |f| %>
 	<%= f.text_field :id, hidden: true %>
 <table>
 	<tr class="section">

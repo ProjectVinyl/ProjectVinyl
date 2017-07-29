@@ -22,20 +22,7 @@ class BoardController < ApplicationController
       page: @boards.page
     }
   end
-
-  def page_threads
-    if !(@board = Board.find_board(params[:id]))
-      return head 404
-    end
-    @page = params[:page].to_i
-    @results = Pagination.paginate(@board.threads, @page, 50, false)
-    render json: {
-      content: render_to_string(partial: '/thread/thread_thumb.html.erb', collection: @results.records),
-      pages: @results.pages,
-      page: @results.page
-    }
-  end
-
+  
   def new
     @board = Board.new
     render partial: 'new'

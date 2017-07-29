@@ -80,7 +80,20 @@ class ThreadController < ApplicationController
     end
     @results = Pagination.paginate(@results, @page, 20, !@ascending)
   end
-
+  
+  def page_threads
+    if !(@board = Board.where(id: params[:id]).first)
+      return head 404
+    end
+    @page = params[:page].to_i
+    @results = Pagination.paginate(@board.threads, @page, 50, false)
+    render json: {
+      content: render_to_string(partial: '/thread/thread_thumb.html.erb', collection: @results.records),
+      pages: @results.pages,
+      page: @results.page
+    }
+  end
+  
   def page_search
     search
     render json: {

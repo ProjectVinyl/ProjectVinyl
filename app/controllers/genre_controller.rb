@@ -61,7 +61,7 @@ class GenreController < ApplicationController
   def list
     @page = params[:page].to_i
     @results = Pagination.paginate(Tag.includes(:videos, :tag_type).where('alias_id IS NULL').order(:name), @page, 100, false)
-    render template: '/view/listing', locals: { type_id: 3, type: 'genres', type_label: 'Tag', items: @results }
+    render template: '/view/listing', locals: { type_id: 3, type: 'tags', type_label: 'Tag', items: @results }
   end
 
   def page

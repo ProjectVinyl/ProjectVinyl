@@ -4,7 +4,7 @@
 </h1>
 <div class="actions space-fix">
 	<% if user_signed_in? && current_user.is_contributor? %>
-		<button class="action mobile-friendly green" data-external-form="board/new" data-title="Create Category" type="button">
+		<button class="action mobile-friendly green" data-external-form="/boards/new" data-title="Create Category" type="button">
 			<i class="fa fa-plus"></i>
 			<span> New Category</span>
 		</button>

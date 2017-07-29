@@ -47,7 +47,7 @@
 					<% end %>
 					<% if @modifications_allowed && !@album.hidden %>
 						<li class="action">
-							<a id="delete_album" data-confirm data-title="Delete Album" data-method="post" href="/ajax/delete/album/<%= @album.id %>">
+							<a id="delete_album" data-confirm data-title="Delete Album" data-method="delete" href="/albums/<%= @album.id %>">
 								<span class="icon"><i class="fa fa-trash"></i></span>
 								<span class="label">Remove Album</span>
 							</a>
@@ -55,7 +55,7 @@
 					<% end %>
 					<% if @modifications_allowed %>
 						<li class="action">
-							<a data-confirm data-title="Album Settings" href="/ajax/album/update/<%= @album.id %>">
+							<a data-confirm data-title="Album Settings" href="/albums/<%= @album.id %>/edit">
 								<span class="icon"><i class="fa fa-cog"></i></span>
 								<span class="label">Settings</span>
 							</a>

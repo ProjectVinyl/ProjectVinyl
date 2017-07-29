@@ -1,11 +1,11 @@
-<%= form_for(@thread, as: "thread", url: "/ajax/create/message") do |f| %>
+<%= form_for(@thread, as: "thread", url: "messages", method: "post") do |f| %>
 <div class="properties">
 	<table>
 		<tr>
 			<td class="label">
 				<%= f.label "To" %>
 			</td>
-			<td class="field popper auto-lookup validate" data-action="artist">
+			<td class="field popper auto-lookup validate" data-action="users">
 				<%= f.text_field "recipient", value: @user ? @user.username : "", autocomplete: "off" %>
 				<ul class="pop-out"></ul>
 			</td>

@@ -22,7 +22,7 @@
 	<% if @tags && @tags.length > 0 %>
 		<%= render partial: '/genre/set', locals: {tags: @tags} %>
 	<% end %>
-	<%= render layout: '/layouts/paginated', locals: {type: 'search',paginated: @results, id: "page"} do %>
+	<%= render layout: '/layouts/paginated', locals: {type: 'search', paginated: @results, id: "page"} do %>
 		<section class="search-result">
 			<% if @type == 0 %>
 			<ul id="videos" class="horizontal video-list">

@@ -1,4 +1,5 @@
-<%= form_for(@user, as: "user", url: "/ajax/banner/upload/" + @user.id.to_s) do |f| %>
+<%= form_for(@user, as: "user", url: "/user/banner", method: "patch") do |f| %>
+<%= f.text_field :id, hidden: true %>
 <div class="uploaded-preview">
 	<div id="banner-upload" class="banner drag-target file-select image-selector uploaded-preview" data-base-path="<%= @user.banner %>">
 		<span class="preview" style="background-image: url('<%= @user.banner %>');"></span>

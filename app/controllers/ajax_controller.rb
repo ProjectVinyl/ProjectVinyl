@@ -135,20 +135,7 @@ class AjaxController < ApplicationController
     end
     head 401
   end
-
-  def toggle_album_feature
-    if user_signed_in? && current_user.is_staff?
-      if album = Album.where(id: params[:id]).first
-        Album.where('featured > 0').update_all(featured: 0)
-        album.featured = album.featured > 0 ? 0 : 1
-        album.save
-        render json: { added: album.featured > 0 }
-        return
-      end
-    end
-    head 401
-  end
-
+  
   def donate
     render partial: "staff/donate"
   end

@@ -99,8 +99,7 @@ function toggleEdit(editing, holder, content, textarea, short) {
 function save(action, id, field, holder) {
   if (holder.classList.contains('dirty')) {
     holder.classList.add('saving');
-    ajax.post(action, {
-      id: id,
+    ajax.patch(action + ',' + id, {
       field: field,
       value: BBCode.fromBBC(holder.querySelector('.input').value).outerBBC()
     }).text(function() {

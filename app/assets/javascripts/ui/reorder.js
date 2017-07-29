@@ -25,27 +25,27 @@ function reorder(target, id, index) {
 
 function grab(target, container, item) {
   const originalIndex = parseInt(item.dataset.index, 10);
-
+  
   container.classList.add('ordering');
   let grabbed = container.querySelector('.grabbed');
   if (grabbed) item.classList.remove('grabbed');
-
+  
   floater = item.cloneNode(true);
   item.classList.add('grabbed');
   container.appendChild(floater);
-
+  
   const srcChilds = item.children;
   const dstChilds = floater.children;
-
+  
   for (let i = 0; i < srcChilds.length; ++i) {
     dstChilds[i].style.width = srcChilds[i].clientWidth + 'px';
   }
-
+  
   floater.classList.add('floater');
   floater.style.top = jSlim.offset(item).top + 'px';
-
+  
   const notFloating = [].filter.call(container.children, c => c.matches(':not(.floater)'));
-
+  
   function childMouseover(event) {
     const child = event.currentTarget;
     let index = parseInt(child.dataset.index, 10);
@@ -54,7 +54,7 @@ function grab(target, container, item) {
     if (index <= originalIndex) ++index;
     item.dataset.index = index;
   }
-
+  
   once(document, 'mouseup', e => {
     floater.parentNode.removeChild(floater);
     floater = null;
@@ -62,14 +62,14 @@ function grab(target, container, item) {
     container.classList.remove('ordering');
     grabbed = container.querySelector('.grabbed');
     if (grabbed) item.classList.remove('grabbed');
-
+    
     notFloating.forEach(el => el.removeEventListener('mouseover', childMouseover));
-
+    
     document.removeEventListener('mousemove', moveFloater);
     for (let i = 0; i < container.children.length; ++i) {
       container.children[i].dataset.index = i;
     }
-
+    
     e.preventDefault();
     e.stopPropagation();
   });
@@ -97,28 +97,4 @@ jSlim.ready(function() {
       });
     });
   });
-});
-
-jSlim.on(document, 'click', '.removeable .remove', function(e) {
-  var me = this.closest('.removeable');
-  
-  if (me.classList.contains('repaintable')) {
-    return ajax.post('delete/' + me.dataset.target, {
-      id: me.dataset.id
-    }).json(function(json) {
-      paginator.repaint(me.closest('.paginator'), json);
-    });
-  }
-  
-  if (me.dataset.target) {
-    ajax.post('delete/' + me.dataset.target, {
-      id: me.dataset.id
-    }).text(function() {
-      me.parentNode.removeChild(me);
-    });
-  } else {
-    me.parentNode.removeChild(me);
-  }
-  e.preventDefault();
-  e.stopPropagation();
 });

@@ -56,21 +56,32 @@ function request(resource, params) {
   };
 }
 
-export const ajax = {
-  get: function(resource, data) {
-    if (data) {
+export function AjaxRequest(method, resource, data) {
+  const params = requestHeaders(method);
+  if (data) {
+    if (method == 'GET') {
       resource += '?' + queryPars(data);
-    }
-    return request('/ajax/' + sanitizeUrl(resource), requestHeaders('GET'));
-  },
-  post: function(resource, data) {
-    const params = requestHeaders('POST');
-    if (data) {
+    } else {
       params.body = queryPars(data);
     }
-    return request('/ajax/' + sanitizeUrl(resource), params);
+  }
+  return request('/' + sanitizeUrl(resource), params);
+}
+
+export const ajax = {
+  get: function(resource, data) {
+    return AjaxRequest('GET', resource, data);
+  },
+  post: function(resource, data) {
+    return AjaxRequest('POST', resource, data);
+  },
+  put: function(resource, data) {
+    return AjaxRequest('PUT', resource, data);
+  },
+  patch: function(resource, data) {
+    return AjaxRequest('PATCH', resource, data);
   },
   delete: function(resource) {
-    return request('/' + sanitizeUrl(resource), requestHeaders('DELETE'));
+    return AjaxRequest('DELETE', resource);
   }
 };

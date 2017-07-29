@@ -1,4 +1,4 @@
-<%= form_for(@board, as: "board", url: "/ajax/create/board") do |f| %>
+<%= form_for(@board, as: "board", url: "/boards"), method: "post" do |f| %>
 <div class="properties">
 	<table>
 		<tr>

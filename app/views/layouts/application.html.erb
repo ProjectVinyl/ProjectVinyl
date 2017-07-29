@@ -138,7 +138,7 @@
 		</nav>
 		<div class="layer-foreground body">
 			<main class="wrapper<% if content_for?(:wrapper) %> <%= content_for(:wrapper) %><% end %>" style="<%= content_for?(:width) ? ' max-width:' + content_for(:width) + ';' : '' %>">
-				<%= render partial: "site_notice/notices" %>
+				<%= render partial: "admin/site_notice/notices" %>
 				<%= yield %>
 				<span class="push"></span>
 			</main>

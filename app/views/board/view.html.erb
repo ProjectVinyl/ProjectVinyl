@@ -15,11 +15,11 @@
 <div class="actions space-fix">
 <% if user_signed_in? %>
 	<% if current_user.is_contributor? %>
-  <a class="button mobile-friendly red" data-confirm="Any threads inside this board will be lost." data-title="Delete Board" data-method="post" href="/ajax/delete/board/<%= @board.id %>">
+  <a class="button mobile-friendly red" data-confirm="Any threads inside this board will be lost." data-title="Delete Board" data-method="delete" href="/boards/<%= @board.id %>">
     <i class="fa fa-trash"></i><span> Delete Board</span>
   </a>
 	<% end %>
-	<button class="action mobile-friendly green" data-external-form="thread/new?board=<%= @board.id %>" data-title="New Thread" type="button">
+	<button class="action mobile-friendly green" data-external-form="/thread/new?board=<%= @board.id %>" data-title="New Thread" type="button">
 		<i class="fa fa-plus"></i>
 		<span> New Thread</span>
 	</button>
@@ -32,7 +32,7 @@
 <hr>
 <section class="page full-width">
 	<h1>Topics (<%= number_with_delimiter @threads.count %>)</h1>
-	<%= render layout: '/layouts/paginated', locals: {type: 'thread', paginated: @threads, id: "page"} do %>
+	<%= render layout: '/layouts/paginated', locals: {type: 'threads/' + @board.id.to_s, paginated: @threads, id: "page"} do %>
 		<section class="search-result">
 			<div class="listing thread-list">
 				<ul class="items">
