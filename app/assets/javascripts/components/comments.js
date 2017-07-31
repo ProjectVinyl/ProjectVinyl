@@ -1,6 +1,6 @@
 import { ajax } from '../utils/ajax';
 import { paginator } from './paginator';
-import { popupError } from './popup';
+import { popupConfirm, popupError } from './popup';
 import { scrollTo } from '../ui/scroll';
 import { jSlim } from '../utils/jslim';
 
@@ -29,25 +29,30 @@ function postComment(sender) {
   });
 }
 
-function removeComment(el, json) {
-  if (!el) return;
-  
-  el.style.height = el.offsetHeight + 'px';
-  requestAnimationFrame(function() {
-    el.classList.add('hidden');
-    if (json.content) {
-      el.insertAdjacentHTML('afterend', json.content);
-      el.nextSibling.style.height = el.nextSibling.offsetHeight + 'px';
-      el.nextSibling.classList.add('hidden');
+function removeComment(sender) {
+  popupConfirm("Are you sure you want to continue?", sender.dataset.title).setOnAccept(function() {
+    
+    ajax.delete(sender.getAttribute('href')).json(function(json) {
+      var el = sender.closest('.comment')
+      el.style.height = el.offsetHeight + 'px';
       requestAnimationFrame(function() {
-        el.nextSibling.classList.remove('hidden');
+        el.classList.add('hidden');
+        if (json.content) {
+          el.insertAdjacentHTML('afterend', json.content);
+          el.nextSibling.style.height = el.nextSibling.offsetHeight + 'px';
+          el.nextSibling.classList.add('hidden');
+          requestAnimationFrame(function() {
+            el.nextSibling.classList.remove('hidden');
+          });
+        }
+        
+        setTimeout(function() {
+          el.parentNode.removeChild(el);
+        }, 500);
       });
-    }
-    setTimeout(function() {
-      el.parentNode.removeChild(el);
-    }, 500);
+    });
   });
-};
+}
 
 function scrollToAndHighlightElement(comment) {
   if (comment) {
@@ -130,6 +135,7 @@ function revealSpoiler(target) {
 var targets = {
   'button.post-submitter': postComment,
   '.comment .mention, .comment .comment-content a[data-link="2"]': findComment,
+  '.comment .remove-comment': removeComment,
   '.reply-comment': replyTo,
   '.edit-comment-submit': editComment,
   '.spoiler': revealSpoiler
