@@ -1,7 +1,7 @@
 <% if user_signed_in? %>
 <button title="<% if @subscribed = @thread.subscribed?(current_user) %>Unsubscribe<% else %>Subscribe<% end %>" class="action button button-bub subscribe right toggle"
 		data-action="subscribe"
-		data-target="thread"
+		data-target="threads"
 		data-id="<%= @thread.id %>"
 		data-unchecked-icon="bell-slash">
 	<span class="icon">

@@ -37,7 +37,7 @@ jSlim.on(document, 'mouseover', '.user-link', function(e) {
       ev.stopPropagation();
     });
     var self = this;
-    ajax.get('/user/' + id + '/hovercard').text(function(text) {
+    ajax.get('/users/' + id + '/hovercard').text(function(text) {
       usercard.innerHTML = text;
       openUsercard(self, usercard);
     });

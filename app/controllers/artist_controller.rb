@@ -1,7 +1,7 @@
 class ArtistController < ApplicationController
   def view
     if !(@user = User.where(id: params[:id]).first)
-      return render '/layouts/error', locals: { title: 'Nothing to see here!', description: 'If there was an artist here they\'re probably gone now. ... sorry.' }
+      return render 'layouts/error', locals: { title: 'Nothing to see here!', description: 'If there was an artist here they\'re probably gone now. ... sorry.' }
     end
     
     @tags = @user.tags.includes(:tag_type)
@@ -99,7 +99,7 @@ class ArtistController < ApplicationController
   
   def card
     if user = User.with_badges.where(id: params[:id]).first
-      return render partial: '/layouts/artist_thumb_h', locals: { artist_thumb_h: user }
+      return render partial: 'user/thumb_h', locals: { thumb_h: user }
     end
     head 404
   end
@@ -119,14 +119,14 @@ class ArtistController < ApplicationController
   def index
     @page = params[:page].to_i
     @results = Pagination.paginate(User.all.order(:created_at), @page, 50, true)
-    render template: '/view/listing', locals: { type_id: 2, type: 'users', type_label: 'User', items: @results }
+    render template: 'pagination/listing', locals: { type_id: 2, type: 'users', type_label: 'User', items: @results }
   end
   
   def page
     @page = params[:page].to_i
     @results = Pagination.paginate(User.all.order(:created_at), @page, 50, true)
     render json: {
-      content: render_to_string(partial: 'layouts/artist_thumb_h', collection: @results.records),
+      content: render_to_string(partial: 'user/thumb_h', collection: @results.records),
       pages: @results.pages,
       page: @results.page
     }

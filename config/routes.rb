@@ -128,7 +128,7 @@ Rails.application.routes.draw do
   
   get 'threads/:id/page' => 'thread#page'
   get 'threads/new' => 'thread#new'
-  post 'threads/:id/subscribe' => 'thread#subscribe'
+  put 'threads/:id/subscribe' => 'thread#subscribe'
   post 'threads' => 'thread#create'
   patch 'threads/:id' => 'thread#update'
   
