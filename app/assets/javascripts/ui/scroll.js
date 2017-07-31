@@ -7,7 +7,7 @@ function animateScroll(elementX, elementY, viewport, duration) {
   const diffX = elementX - startingX;
   const diffY = elementY - startingY;
   let start;
-
+  
   requestAnimationFrame(function step(timestamp) {
     if (!start) start = timestamp;
     const time = timestamp - start;
@@ -22,14 +22,21 @@ function animateScroll(elementX, elementY, viewport, duration) {
 
 // me: The element you want to find
 // container: The container whose scroll position changes
-function scrollTo(me, container = document.documentElement) {
-  const childOff = jSlim.offset(me);
-  const containerOff = jSlim.offset(container);
-  const viewX = container.clientWidth, viewY = container.clientHeight;
-  const elementX = (childOff.left - containerOff.left) - (viewX / 2) + (me.offsetWidth / 2),
-        elementY = (childOff.top - containerOff.top) - (viewY / 2) + (me.offsetHeight / 2);
-
-  animateScroll(elementX, elementY, container, 250);
+function scrollTo(me, container) {
+  if (!container) {
+    container = me.closest('.context-3d') || document.documentElement;
+  }
+  
+  var childOff = jSlim.offset(me);
+  var containerOff = jSlim.offset(container);
+  
+  var viewX = container.clientWidth;
+  var viewY = container.clientHeight;
+  
+  var elementX = (childOff.left - containerOff.left) - (viewX / 2) + (me.offsetWidth / 2);
+  var elementY = (childOff.top - containerOff.top) - (viewY / 2) + (me.offsetHeight / 2);
+  
+  animateScroll(container.scrollLeft + elementX, container.scrollTop + elementY, container, 250);
 }
 
 jSlim.ready(function() {

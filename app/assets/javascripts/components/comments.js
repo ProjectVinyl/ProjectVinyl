@@ -31,7 +31,6 @@ function postComment(sender) {
 
 function removeComment(sender) {
   popupConfirm("Are you sure you want to continue?", sender.dataset.title).setOnAccept(function() {
-    
     ajax.delete(sender.getAttribute('href')).json(function(json) {
       var el = sender.closest('.comment')
       el.style.height = el.offsetHeight + 'px';
@@ -86,8 +85,8 @@ function editComment(sender) {
 }
 
 function findComment(sender) {
-  var container = sender.closest('comment');
-  var parent = sender.href;
+  var container = sender.closest('.comment');
+  var parent = sender.getAttribute('href');
   var parentEl = document.querySelector(parent);
   // This is begging for a refactor.
   if (parentEl) {
@@ -95,8 +94,8 @@ function findComment(sender) {
       // Prepend
       container.parentNode.insertBefore(parentEl, container.parentNode.firstChild);
     }
-    jSlim.all('.comment.highlight', function() {
-      this.classList.remove('highlight');
+    jSlim.all('.comment.highlight', function(a) {
+      a.classList.remove('highlight');
     });
     return scrollToAndHighlightElement(parentEl);
   }
