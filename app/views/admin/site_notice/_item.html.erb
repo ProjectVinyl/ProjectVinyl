@@ -1,4 +1,4 @@
-<%= form_for(item, as: 'notice', url: '/admin/sitenotices', method: 'patch', html: {class: "row row-group removeable state-binary"}) do |f| %>
+<%= form_for(item, as: 'notice', url: '/admin/sitenotices/' + item.id.to_s, html: {method: :patch, class: "row row-group removeable state-binary"}) do |f| %>
 	<%= f.text_field :id, hidden: true %>
 	<div class="row">
 		<div style="width:30px">

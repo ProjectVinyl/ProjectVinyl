@@ -10,4 +10,8 @@ class StaffController < ApplicationController
 
   def donate
   end
+  
+  def ajax_donate
+    render partial: "staff/donate"
+  end
 end

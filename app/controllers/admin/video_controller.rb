@@ -41,7 +41,7 @@ module Admin
       redirect_to action: "view", id: params[:video][:id]
     end
     
-    def delete
+    def destroy
       if user_signed_in? && current_user.is_contributor?
         if video = Video.where(id: params[:id]).first
           video.remove_self
@@ -107,5 +107,19 @@ module Admin
       end
       redirect_to action: "video", id: params[:video][:id]
     end
+    
+    def toggle_featured
+      if user_signed_in? && current_user.is_staff?
+        if video = Video.where(id: params[:id]).first
+          Video.where(featured: true).update_all(featured: false)
+          video.featured = !video.featured
+          Tag.add_tag('featured video', video) if video.featured
+          video.save
+          return render json: { added: video.featured }
+        end
+      end
+      head 401
+    end
+    
   end
 end

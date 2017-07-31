@@ -2,10 +2,18 @@ module Admin
   class AlbumController < ApplicationController
     def view
       if !user_signed_in? || !current_user.is_contributor?
-        return render 'layouts/error', locals: { title: 'Access Denied', description: "You can't do that right now." }
+        return render 'layouts/error', locals: {
+          title: 'Access Denied',
+          description: "You can't do that right now."
+        }
+      end
+      if !(@album = Album.find(params[:id]))
+        return render 'layouts/error', locals: {
+          title: 'Nothing to see here!',
+          description: 'This album appears to have been  moved or deleted.'
+        }
       end
       @modifications_allowed = true
-      @album = Album.find(params[:id])
       @items = Pagination.paginate(@album.ordered(@album.album_items.includes(:direct_user)), 0, 50, false)
       @user = @album.user
     end

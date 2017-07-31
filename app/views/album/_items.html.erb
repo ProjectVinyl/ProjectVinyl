@@ -11,7 +11,7 @@
 	</div>
 	<div class="load-more">
 	<% if @items.pages > 0 %>
-		<button data-page="0" data-url="albums/items" data-id="<%= @album.id %>" data-target="items">Load More</button>
+		<button data-page="0" data-url="albums/<%= @album.id %>/items" data-target="items">Load More</button>
 	<% end %>
 	</div>
 </section>

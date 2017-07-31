@@ -88,7 +88,7 @@
 		<div class="group feed auto-wrap-contents">
 			<h1><a href="/videos/watched">Watched Videos (<%= number_with_delimiter @feed.length %>)</a></h1>
 			<ul class="horizontal latest">
-				<%= render partial: '/layouts/video_thumb_h', collection: @feed %>
+				<%= render partial: 'video/thumb_h', collection: @feed %>
 			</ul>
 		</div>
 	</section>

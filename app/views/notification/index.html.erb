@@ -1,0 +1,17 @@
+<% title "Notifications" %>
+<% lim "900px" %>
+<section class="page full-width properties">
+	<h1 class="title">Notifications (<%= current_user.notifications.length %>)</h1>
+	<ul class="notifications">
+	<% if @all.length > 0 %>
+		<% @all.group_by(&:period).each do |week, n| %>
+			<b><%= week %></b>
+			<p>
+				<%= render partial: "notification/notification", collection: n %>
+			</p>
+		<% end %>
+	<% else %>
+		<div class="center">You have no unread notifications</div>
+	<% end %>
+	</ul>
+</section>

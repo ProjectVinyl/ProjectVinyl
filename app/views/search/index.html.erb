@@ -20,9 +20,9 @@
 	<% if @query.length == 0 %>Showing all <%= @type_label %>s<% else %>Searching for <%= @type_label %>s matching '<%= @query %>'<% end %>
 	 found <%= number_with_delimiter @results.count %> match<% if @results.count != 1 %>es<% end %></h1>
 	<% if @tags && @tags.length > 0 %>
-		<%= render partial: '/genre/set', locals: {tags: @tags} %>
+		<%= render partial: 'genre/set', locals: {tags: @tags} %>
 	<% end %>
-	<%= render layout: '/layouts/paginated', locals: {type: 'search', paginated: @results, id: "page"} do %>
+	<%= render layout: 'pagination/paginated', locals: {type: 'search', paginated: @results, id: "page"} do %>
 		<section class="search-result">
 			<% if @type == 0 %>
 			<ul id="videos" class="horizontal video-list">

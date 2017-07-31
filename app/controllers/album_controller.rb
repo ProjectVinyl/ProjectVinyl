@@ -1,7 +1,7 @@
 class AlbumController < ApplicationController
   def view
     if !(@album = Album.where(id: params[:id].split(/-/)[0]).first)
-      return render '/layouts/error', locals: { title: 'Nothing to see here!', description: 'This album appears to have been  moved or deleted.' }
+      return render 'layouts/error', locals: { title: 'Nothing to see here!', description: 'This album appears to have been  moved or deleted.' }
     end
     if @album.hidden
       return render 'layouts/error', locals: { title: 'Access Denied', description: "You can't do that right now." }
@@ -34,7 +34,7 @@ class AlbumController < ApplicationController
       @items = Pagination.paginate(@album.ordered(@album.album_items.includes(:direct_user)), 0, 50, false)
       @modifications_allowed = true
     end
-    render template: '/album/view'
+    render template: 'album/view'
   end
   
   def new
@@ -97,7 +97,7 @@ class AlbumController < ApplicationController
     head 401
   end
   
-  def delete
+  def destroy
     if user_signed_in? && album = Album.where(id: params[:id]).first
       if !album.hidden && (current_user.is_staff? || album.user_id == current_user.id)
         album.destroy
@@ -107,48 +107,10 @@ class AlbumController < ApplicationController
     head 401
   end
   
-  def arrange
-    if user_signed_in?
-      if item = AlbumItem.where(id: params[:id]).first
-        if item.album.owned_by(current_user)
-          item.move(params[:index].to_i)
-          return head 200
-        end
-      end
-    end
-    head 401
-  end
-  
-  def remove_item
-    if user_signed_in?
-      if item = AlbumItem.where(id: params[:id]).first
-        if item.album.owned_by(current_user)
-          item.remove_self
-          return head 200
-        end
-      end
-    end
-    head 401
-  end
-  
-  def add_item
-    if user_signed_in?
-      if album = Album.where(id: params[:id]).first
-        if album.owned_by(current_user)
-          if video = Video.where(id: params[:videoId]).first
-            album.add_item(video)
-            return head 200
-          end
-        end
-      end
-    end
-    head 401
-  end
-  
-  def list
+  def index
     @page = params[:page].to_i
     @results = Pagination.paginate(Album.where('hidden = false AND listing = 0').order(:created_at), @page, 50, true)
-    render template: '/view/listing', locals: { type_id: 1, type: 'albums', type_label: 'Album', items: @results }
+    render template: 'pagination/listing', locals: { type_id: 1, type: 'albums', type_label: 'Album', items: @results }
   end
   
   def page
@@ -162,22 +124,9 @@ class AlbumController < ApplicationController
       @results = Pagination.paginate(@results.order(:created_at), @page, 8, true)
     end
     render json: {
-      content: render_to_string(partial: '/layouts/album_thumb_h.html.erb', collection: @results.records),
+      content: render_to_string(partial: 'album/thumb_h.html.erb', collection: @results.records),
       pages: @results.pages,
       page: @results.page
     }
-  end
-  
-  def items
-    if @album = Album.where(id: params[:id]).first
-      @page = params[:page].to_i
-      @items = Pagination.paginate(@album.ordered(@album.album_items.includes(:direct_user)), @page, 50, false)
-      @modifications_allowed = user_signed_in? && @album.owned_by(current_user)
-      render json: {
-        content: render_to_string(partial: '/album/item', collection: @items.records),
-        pages: @items.pages,
-        page: @items.page
-      }
-    end
   end
 end

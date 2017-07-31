@@ -62,10 +62,10 @@
 <% else %>
 		<h1>Searching for Posts found <%= number_with_delimiter @results.count %> match<% if @results.count != 1 %>es<% end %></h1>
 	<% @data = URI.encode_www_form({title_query: @title_query, poster_query: @poster_query, text_query: @text_query, order: @ascending ? "1" : "0", board: @board}) %>
-	<%= render layout: '/layouts/paginated', locals: {type: 'forum/search',paginated: @results, id: "page"} do %>
+	<%= render layout: 'pagination/paginated', locals: {type: 'forum/search',paginated: @results, id: "page"} do %>
 		<section class="search-result">
 			<ul id="thread" class="comments">
-				<%= render partial: '/thread/comment_set', locals: {thread: @results.records, indirect: true} %>
+				<%= render partial: 'comment/set', locals: {thread: @results.records, indirect: true} %>
 			</ul>
 		</section>
 	<% end %>

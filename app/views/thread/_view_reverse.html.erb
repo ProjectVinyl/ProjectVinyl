@@ -1,0 +1,10 @@
+<h1 class="title">
+	Comments
+	<%= render partial: 'thread/watch_options' %>
+</h1>
+<%= render partial: 'thread/comments' %>
+<% if user_signed_in? %>
+<hr>
+<%= render partial: 'comment/new', locals: {invert: true} %>
+<% end %>
+</div>

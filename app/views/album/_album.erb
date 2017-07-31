@@ -5,7 +5,7 @@
 			</span>
 		</div>
 		<% if @modifications_allowed %>
-			<h1 class="editable short title" data-target="album" data-member="title" data-id="<%= @album.id %>">
+			<h1 class="editable short title" data-target="albums" data-member="title" data-id="<%= @album.id %>">
 			<% if (@album.hidden || @album.listing == 2) && @album.user_id == current_user.id %>
 				<span title="Private - Only you can see this album" class="icon"><i class="fa fa-lock"></i></span>
 			<% elsif @album.listing == 1 %>
@@ -14,7 +14,7 @@
 				<span class="content"><%= @album.title %></span>
 				<span class="edit"><i class="fa fa-pencil"></i></span>
 			</h1>
-			<div class="editable content description" data-target="album" data-member="description" data-id="<%= @album.id %>">
+			<div class="editable content description" data-target="albums" data-member="description" data-id="<%= @album.id %>">
 				<span class="content"><%= raw @album.html_description %></span>
 				<span class="edit"><i class="fa fa-pencil" ></i></span>
 			</div>
@@ -39,7 +39,7 @@
 					<ul class="pop-out">
 					<% if current_user.is_contributor? %>
 						<li class="action">
-							<a href="/admin/album/<%= @album.id %>">
+							<a href="/admin/albums/<%= @album.id %>">
 								<span class="icon"><i class="fa fa-gavel"></i></span>
 								<span class="label">Admin</span>
 							</a>

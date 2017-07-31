@@ -52,7 +52,7 @@ class ArtistController < ApplicationController
     redirect_to action: "edit", controller: "devise/registrations"
   end
   
-  def setbanner
+  def set_banner
     if user_signed_in? && (current_user.is_staff? || current_user.id == params[:id])
       if current_user.id == params[:id]
         user = current_user
@@ -75,7 +75,7 @@ class ArtistController < ApplicationController
     head 401
   end
   
-  def setavatar
+  def set_avatar
     input = params[:user]
     if user_signed_in?
       if current_user.is_staff? && params[:user][:id]
@@ -116,7 +116,7 @@ class ArtistController < ApplicationController
     head 404
   end
   
-  def list
+  def index
     @page = params[:page].to_i
     @results = Pagination.paginate(User.all.order(:created_at), @page, 50, true)
     render template: '/view/listing', locals: { type_id: 2, type: 'users', type_label: 'User', items: @results }

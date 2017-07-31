@@ -1,0 +1,64 @@
+<% if indirect && comment.comment_thread.owner_type == 'Video' %>
+<div class="artist-bio bio">
+	<%= render partial: 'layouts/video_thumb_i', locals: {video_thumb_i: comment.comment_thread.owner, comment: comment.get_open_id} %>
+</div>
+<% else %>
+	<% if indirect %>
+<div>
+	<p>
+	In <a href="<%= comment.comment_thread.owner.link %>"><%= comment.comment_thread.owner.title %></a> - <a href="<%= comment.comment_thread.link %>"><%= comment.comment_thread.get_title %></a>
+	</p>
+</div>
+	<% end %>
+<div class="artist-bio bio">
+	<a <% if !comment.user.is_dummy %>class="user-link" data-id="<%= comment.user_id %>" href="<%= comment.user.link %>"<% end %>>
+		<span class="avatar medium">
+			<span style="background-image:url('<%= comment.user.avatar %>');"></span>
+		</span>
+	</a>
+</div>
+<% end %>
+<div<% if indirect && comment.comment_thread.owner_type == 'Video' %> style="margin-left:200px;"<% end %> class="content" data-id="<%= comment.id %>" data-o-id="<%= comment.get_open_id %>" data-comment="<%= comment.bbc_content %>">
+<% if user_signed_in? && (current_user.is_contributor? || current_user.id == comment.user_id) %>
+	<a title="Delete" class="remove-comment js-remove-comment" data-confirm data-remote data-method="delete" href="/comments/<%= comment.id %><% if indirect %>?indirect=1<% end %>" data-id="<%= comment.get_open_id %>" data-title="Delete Comment"><i class="fa fa-trash"></i></a>
+<% end %>
+<% if user_signed_in? && current_user.id == comment.user_id %>
+	<a title="Edit" class="edit-comment state-toggle" data-state="editing"><i class="fa fa-pencil"></i></a>
+<% end %>
+<% if user_signed_in? %>
+	<% if !indirect %>
+	<a title="Reply" class="reply-comment" ><i class="fa fa-reply"></i></a>
+	<% end %>
+	<button title="Like" class="action like<% if comment.is_upvoted_by(current_user) %> liked<% end %>" data-count="<%= comment.score %>" data-action="comments/like" data-id="<%= comment.id %>">
+		<span>
+		<% if comment.score && comment.score > 0 %>
+			<span class="count"><%= comment.score %></span>
+		<% end %>
+		</span>
+		<i class="fa fa-thumbs-up"></i>
+	</button>
+<% end %>
+	<div class="name<% if comment.user.banned? %> banned<% end %>">
+		<a <% if !comment.user.is_dummy %>class="user-link" data-id="<%= comment.user_id %>" href="<%= comment.user.link %>"<% end %>>
+			<%= comment.user.username %>
+		</a>
+		<%= render partial: 'badge/badges', locals: {user: comment.user} %>
+<% comment.mentions.each do |mention| %>
+	<a href="#comment_<%= Comment.encode_open_id(mention.parent_id) %>" data-comment-id="<%= mention.parent_id %>" class="mention">
+		&gt;&gt;<%= Comment.encode_open_id(mention.parent_id) %>
+	</a>
+<% end %>
+	</div>
+	<div class="comment-content preview">
+		<%= raw comment.html_content %>
+	</div>
+<% if user_signed_in? && current_user.id == comment.user_id %>
+	<textarea name="comment_<%= comment.id %>" class="comment-content"><%= raw comment.bbc_content %></textarea>
+	<hr>
+	<button class="green edit-comment-submit">Edit Comment</button>
+	<a class="popper button button-bub right pop-out-toggle edit-action" data-action="emoticons" title="Emoticons">
+		<i class="fa fa-smile-o"></i>
+		<ul class="pop-out" id="emoticons"></ul>
+	</a>
+<% end %>
+</div>

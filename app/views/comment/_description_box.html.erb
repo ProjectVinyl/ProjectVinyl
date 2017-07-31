@@ -1,0 +1,9 @@
+<div class="comment basic post-box">
+	<div class="content editing">
+		<%= render partial: "comment/edit_toolbar" %>
+		<div class="comment-content preview"></div>
+		<%= yield %>
+		<hr>
+		<button class="state-toggle button-fw" data-state="editing" data-true="Preview" data-false="Edit">Preview</button>
+	</div>
+</div>

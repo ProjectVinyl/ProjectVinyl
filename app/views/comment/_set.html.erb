@@ -1,0 +1,5 @@
+<% if thread.length > 0 %>
+<%= render partial: 'comment/comment', collection: thread, locals: { level: 0, indirect: indirect } %>
+<% else %>
+<div class="center">No comments posted yet</div>
+<% end %>

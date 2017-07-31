@@ -82,21 +82,21 @@
 	</ul>
 	<div class="load-more">
 	<% if @videos.pages > 0 %>
-		<button data-page="0" data-url="videos" data-id="<%= @user.id %>" data-target="uploads">Load More</button>
+		<button data-page="0" data-url="videos/page" data-id="<%= @user.id %>" data-target="uploads">Load More</button>
 	<% end %>
 	</div>
 </section>
 <section class="page full-width recent-uploads resize-holder">
 	<h1 class="title resize-target">Recent Albums<span> (<span class="count"><%= number_with_delimiter @albums.count %></span>)</span></h1>
 	<% if @modifications_allowed %>
-    <button data-external-form="albums/new" data-title="New Album"><i class="fa fa-plus"></i> New</button>
+    <button data-external-form="/albums/new" data-title="New Album"><i class="fa fa-plus"></i> New</button>
   <% end %>
 	<ul id="albums" class="album-list horizontal">
 		<%= render partial: '/layouts/album_thumb_h', collection: @albums.records %>
 	</ul>
 	<div class="load-more">
 	<% if @albums.pages > 0 %>
-		<button data-page="0" data-url="albums" data-id="<%= @user.id %>" data-target="albums">Load More</button>
+		<button data-page="0" data-url="albums/page" data-id="<%= @user.id %>" data-target="albums">Load More</button>
 	<% end %>
 	</div>
 </section>

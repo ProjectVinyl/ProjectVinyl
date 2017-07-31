@@ -1,27 +1,9 @@
 <h1 class="title">
 	Comments
-	<% if user_signed_in? %>
-	<button title="<% if @subscribed = @thread.subscribed?(current_user) %>Unsubscribe<% else %>Subscribe<% end %>" class="action button button-bub subscribe right toggle"
-			data-action="subscribe"
-			data-target="thread"
-			data-id="<%= @thread.id %>"
-			data-unchecked-icon="bell-slash">
-		<span class="icon">
-			<i class="fa fa-<% if @subscribed %>check<% else %>bell<% end %>"></i>
-		</span>
-	</button>
-	<% end %>
+	<%= render partial: 'thread/watch_options' %>
 </h1>
 <% if user_signed_in? %>
-<% if @thread.locked %>
-Thread locked
-<% else %>
-<%= render partial: "thread/comment_box", locals: {invert: false} %>
+<%= render partial: "comment/new", locals: {invert: false} %>
 <hr>
 <% end %>
-<% end %>
-<%= render layout: '/layouts/paginated', locals: {type: "comments/" + @thread.id.to_s + "/" + @order, paginated: @comments, id: "page"} do %>
-<ul id="thread-<%= @thread.id %>" class="comments">
-	<%= render partial: '/thread/comment_set', locals: {thread: @comments.records, indirect: false} %>
-</ul>
-<% end %>
+<%= render partial: 'thread/comments' %>

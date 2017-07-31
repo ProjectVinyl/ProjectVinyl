@@ -1,6 +1,6 @@
 module Admin
   class SiteNoticeController < ApplicationController
-    def view
+    def index
       if !user_signed_in? || !current_user.is_contributor?
         return render 'layouts/error', locals: { title: 'Access Denied', description: "You can't do that right now." }
       end
@@ -29,7 +29,7 @@ module Admin
           message: text, html_message: ApplicationHelper.emotify(text)
       )
       
-      return redirect_to action: "view"
+      return redirect_to action: "index"
     end
     
     def update

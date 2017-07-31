@@ -2,9 +2,7 @@ import { ajax } from '../utils/ajax';
 import { jSlim } from '../utils/jslim';
 
 function toggle(sender) {
-  var data = {
-    id: sender.dataset.id
-  };
+  var data = {};
   
   if (sender.dataset.item) {
     data.item = sender.dataset.item;
@@ -13,9 +11,9 @@ function toggle(sender) {
     data.extra = document.querySelector(sender.dataset.with).value;
   }
   
-  ajax.post(sender.dataset.target + '/' + sender.dataset.action, data).json(function(json) {
+  ajax.put(sender.dataset.target + '/' + sender.dataset.id + '/' + sender.dataset.action, data).json(function(json) {
     if (sender.dataset.family) {
-      return jSlim.all('.action.toggle[data-family="' + sender.dataset.family + '"][data-id="' + data.id + '"]', function(t) {
+      return jSlim.all('.action.toggle[data-family="' + sender.dataset.family + '"][data-id="' + sender.dataset.id + '"]', function(t) {
         updateCheck(t, json[t.dataset.descriminator]);
       });
     }

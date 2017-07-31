@@ -1,5 +1,5 @@
 <li class="generic thumb<% if video_thumb_h.processed == false %> working<% end %>">
-	<a class="thumb" href="/admin/video/<%= video_thumb_h.id %>">
+	<a class="thumb" href="/admin/videos/<%= video_thumb_h.id %>">
 		<div class="tile" style="background-image:url('<%= video_thumb_h.tiny_thumb(current_user) %>');">
 			<span class="tag-list duration">
 				<%= duration video_thumb_h.get_duration %>

@@ -1,0 +1,40 @@
+<li class="thread">
+	<div class="thumb">
+		<div class="avatar medium">
+			<span style="background-image:url('<%= thumb.user.avatar %>');"></span>
+		</div>
+	</div>
+	<div class="info">
+		<div class="title">
+			<% if thumb.locked %>
+				<i class="fa fa-lock" title="Thread Locked"></i>
+			<% end %>
+			<% if thumb.pinned %>
+				<i class="fa fa-thumb-tack"></i>
+			<% end %>
+			<a href="<%= thumb.link %>">
+				<%= thumb.get_title %>
+			</a>
+		</div>
+		<div>
+			posted 
+			<span title="<%= thumb.created_at %>">
+				<%= since thumb.created_at %>
+			</span>
+			by 
+			<a class="user-link" data-id="<%= thumb.user.id %>" href="<%= thumb.user.link %>">
+				<%= thumb.user.username %>
+			</a>
+		</div>
+	</div>
+	<div class="replies">
+		<span><%= number_with_delimiter thumb.total_comments %> replies</span>
+	</div>
+	<div class="activity">
+		<span>
+			<% if thumb.last_comment %>
+			active <%= since thumb.last_comment.updated_at %>
+			<% end %>
+		</span>
+	</div>
+</li>

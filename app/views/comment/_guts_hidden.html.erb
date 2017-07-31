@@ -1,0 +1,6 @@
+<div class="content">
+	Comment Hidden
+	<% if user_signed_in? && current_user.is_contributor? %>
+	<a title="Restore Comment" class="remove-comment js-remove-comment" data-method="delete" data-confirm data-remote href="/comments/<%= comment.id %><% if indirect %>?indirect=1<% end %>" data-id="<%= comment.get_open_id %>" data-title="Restore Comment" data-icon="warning"><i class="fa fa-trash"></i></a>
+	<% end %>
+</div>

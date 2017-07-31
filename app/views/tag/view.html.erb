@@ -1,0 +1,122 @@
+<section class="page full-width genre-bio">
+	<div class="post">
+		<span class="genre-icon fa-stack fa-4x">
+			<i class="fa fa-circle fa-stack-2x"></i>
+			<i class="fa fa-tag fa-inverse fa-stack-1x"></i>
+		</span>
+		<div class="tag-header">
+			<h2 class="title">
+				<a class="name" href="<%= @tag.link %>"><%= @tag.name %></a>
+			</h2>
+			<div class="tag-list subheading">
+				<span>Used by <%= @total_videos %> videos and <%= @total_users %> users</span>
+				<% if @user %>
+				<span class="right">
+					Associated User:
+					<span class="user-link" data-id="<%= @user.id %>">
+						<a href="<%= @user.link %>"><%= @user.username %></a>
+					</span>
+				</span>
+				<% end %>
+			</div>
+			<span class="content bio"><%= @tag.get_description %></span>
+		</div>
+		<% if @implies.length > 0 %>
+		<div>
+			<h1>Implies</h1>
+			<ul class="tags">
+				<%= render partial: "layouts/genre_thumb_h", collection: @implies %>
+			</ul>
+		</div>
+		<% end %>
+		<% if @implied.length > 0 %>
+		<div>
+			<h1>Implied by</h1>
+			<ul class="tags">
+				<%= render partial: "layouts/genre_thumb_h", collection: @implied %>
+			</ul>
+		</div>
+		<% end %>
+		<% if @aliases.length > 0 %>
+		<div>
+			<h1>Aliases</h1>
+			<ul class="tags">
+				<%= render partial: "layouts/genre_thumb_h", collection: @aliases %>
+			</ul>
+		</div>
+		<% end %>
+		<div class="actions">
+			<% if @modifications_allowed %>
+			<div class="split-button popper">
+				<button class="action options pop-out-toggle"><i class="fa fa-gear"></i> Options</button>
+				<ul class="pop-out">
+					<li class="action">
+						<a href="/admin/tag/<%= @tag.id %>">
+							<span class="icon"><i class="fa fa-gavel"></i></span>
+							<span class="label">Admin</span>
+						</a>
+					</li>
+				</ul>
+			</div>
+			<% end %>
+			<% if user_signed_in? %>
+			<button class="action toggle blue" data-family="tag-flags" data-descriminator="hide" data-action="hide" data-target="tag" data-id="<%= @tag.id %>">
+				<span class="icon">
+					<% if current_user.hides([@tag.id]) %>
+						<i class="fa fa-check"></i>
+					<% end %>
+				</span>
+				<span class="label">Hide Tag</span>
+			</button>
+			<button class="action toggle blue" data-family="tag-flags" data-descriminator="spoiler" data-action="spoiler" data-target="tag" data-id="<%= @tag.id %>">
+				<span class="icon">
+					<% if current_user.spoilers([@tag.id]) %>
+						<i class="fa fa-check"></i>
+					<% end %>
+				</span>
+				<span class="label">Spoiler Tag</span>
+			</button>
+			<button class="action toggle blue" data-family="tag-flags" data-descriminator="watch" data-action="watch" data-target="tag" data-id="<%= @tag.id %>">
+				<span class="icon">
+					<% if current_user.watches(@tag) %>
+						<i class="fa fa-check"></i>
+					<% end %>
+				</span>
+				<span class="label">Watch Tag</span>
+			</button>
+			<% end %>
+		</div>
+	</div>
+</section>
+<% if @users.count > 0 %>
+<section class="page full-width">
+	<h1>Recent Users</h1>
+	<% if @users.length > 0 %>
+	<ul id="artists" class="horizontal artist-list">
+		<%= render partial: 'layouts/artist_thumb_h', collection: @users.records %>
+	</ul>
+	<div class="load-more">
+	<% if @users.pages > 0 %>
+		<button data-page="0" data-url="tags/users" data-id="<%= @tag.id %>" data-target="artists">Load More</button>
+	<% end %>
+	</div>
+	<% else %>
+	No activity for this section
+	<% end %>
+</section>
+<% end %>
+<section class="page full-width">
+	<h1>Recent Songs</h1>
+	<% if @videos.length > 0 %>
+	<ul id="songs" class="horizontal video-list">
+		<%= render partial: 'layouts/video_thumb_h', collection: @videos.records %>
+	</ul>
+	<div class="load-more">
+	<% if @videos.pages > 0 %>
+		<button data-page="0" data-url="tags/videos" data-id="<%= @tag.id %>" data-target="songs">Load More</button>
+	<% end %>
+	</div>
+	<% else %>
+	No activity for this section
+	<% end %>
+</section>

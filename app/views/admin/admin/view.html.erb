@@ -47,9 +47,9 @@
 		<% if current_user.is_admin? %>
 		<hr>
 		<div class="actions">
-      <a class="button red" data-confirm data-method="post" href="/ajax/admin/reindex/video" data-title="Reindex Videos">Recreate Video Index</a> 
-      <a class="button red" data-confirm data-method="post" href="/ajax/admin/reindex/user" data-title="Reindex Users">Recreate User Index</a>
-      <a class="button red" data-confirm data-method="post" href="/ajax/admin/hidden/drop" data-title="Drop <%= @hiddenvideos.count %> Videos">Delete Unlisted Videos</a>
+      <a class="button red" data-confirm data-method="post" href="/admin/videos/reindex" data-title="Reindex Videos">Recreate Video Index</a> 
+      <a class="button red" data-confirm data-method="post" href="/admin/users/reindex" data-title="Reindex Users">Recreate User Index</a>
+      <a class="button red" data-confirm data-method="post" href="/admin/videos/hidden/drop" data-title="Drop <%= @hiddenvideos.count %> Videos">Delete Unlisted Videos</a>
 		</div>
 		<% end %>
 	</section>
@@ -67,7 +67,7 @@
 	<section class="page full-width recent-uploads resize-holder">
 		<h1 class="title resize-target">Unprocessed Videos (<%= number_with_delimiter @unprocessed.count %>)</h1>
 		<% if @unprocessed.count > 0 %>
-		<%= render layout: '/layouts/paginated', locals: {type: "admin/videos/unprocessed", paginated: @unprocessed, id: "unprocessed"} do %>
+		<%= render layout: 'pagination/paginated', locals: {type: "admin/videos/unprocessed", paginated: @unprocessed, id: "unprocessed"} do %>
 			<ul id="videos" class="horizontal video-list">
 				<%= render partial: 'admin/video/video_thumb_h', collection: @unprocessed.records %>
 			</ul>
@@ -75,7 +75,7 @@
 		<% end %>
 		<h1 class="title resize-target">Open Reports (<%= number_with_delimiter @reports.count %>)</h1>
 		<% if @reports.count > 0 %>
-		<%= render layout: '/layouts/paginated', locals: {type: "admin/reports", paginated: @reports, id: "reports"} do %>
+		<%= render layout: 'pagination/paginated', locals: {type: "admin/reports", paginated: @reports, id: "reports"} do %>
 		<ul id="reports" class="report-list">
 			<%= render partial: 'admin/report/report_thumb', collection: @reports.records %>
 		</ul>
@@ -83,7 +83,7 @@
 		<% end %>
 		<h1 class="title resize-target">Hidden Videos (<%= number_with_delimiter @hiddenvideos.count %>)</h1>
 		<% if @hiddenvideos.count > 0 %>
-		<%= render layout: '/layouts/paginated', locals: {type: "admin/videos/hidden", paginated: @hiddenvideos, id: "hidden"} do %>
+		<%= render layout: 'pagination/paginated', locals: {type: "admin/videos/hidden", paginated: @hiddenvideos, id: "hidden"} do %>
 			<ul id="videos" class="horizontal video-list">
 				<%= render partial: 'admin/video/video_thumb_h', collection: @hiddenvideos.records %>
 			</ul>

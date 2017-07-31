@@ -14,7 +14,7 @@
 		</section>
 		<section class="page full-width">
 			<h1>Metadata</h1>
-			<%= form_for(@video, as: "video", url: "/admin/video/metadata", html: { method: :put }) do |f| %>
+			<%= form_for(@video, as: "video", url: "/admin/videos/metadata", html: { method: :put }) do |f| %>
 				<%= f.text_field :id, hidden: true %>
 				<label class="text-input" data-prefix="https://www.youtube.com/watch?v=">
 					<input type="text" name="source" placeholder="source"></input>
@@ -81,7 +81,7 @@
 						Visibility
 					</td>
 					<td class="field">
-						<button class="action toggle blue" data-action="hide" data-target="video" data-id="<%= @video.id %>">
+						<button class="action toggle blue" data-url="/admin/videos/<%= @video.id %>/hide">
 							<span class="icon">
 								<% if @video.hidden %>
 									<i class="fa fa-check"></i>
@@ -96,7 +96,7 @@
 						Featured
 					</td>
 					<td class="field">
-						<button class="action toggle blue" data-action="feature" data-target="video" data-id="<%= @video.id %>">
+						<button class="action toggle blue" data-url="/admin/videos/<%= @video.id %>/feature">
 							<span class="icon">
 								<% if @video.featured %>
 									<i class="fa fa-check"></i>
@@ -109,7 +109,7 @@
 				<tr>
 					<td class="label">Disable Comments</td>
 					<td class="field">
-						<button class="action toggle blue" data-action="lock" data-target="thread" data-id="<%= @video.comment_thread.id %>">
+						<button class="action toggle blue" data-url="/admin/threads/<%= @video.comment_thread.id %>/lock">
 							<span class="icon">
 								<% if @video.comment_thread.locked %>
 									<i class="fa fa-check"></i>
@@ -124,7 +124,7 @@
 						Processed (<%= (@video.processed ? "Yes" : @video.processed.nil? ? "No" : "In Progress") %>)
 					</td>
 					<td class="field">
-          <%= form_for(@video, as: "video", url: "/admin/video/reprocess", html: { method: :put }) do |f| %>
+          <%= form_for(@video, as: "video", url: "/admin/videos/reprocess", html: { method: :put }) do |f| %>
             <%= f.text_field :id, hidden: true %>
 						<%= f.submit "Restart" %>
           <% end %>
@@ -133,7 +133,7 @@
 				<tr class="actions">
 					<td class="label">Reset Thumbnail</td>
 					<td class="field">
-          <%= form_for(@video, as: "video", url: "/admin/video/resetthumb", html: { method: :put }) do |f| %>
+          <%= form_for(@video, as: "video", url: "/admin/videos/resetthumb", html: { method: :put }) do |f| %>
             <%= f.text_field :id, hidden: true %>
 						<%= f.submit "Restart" %>
 						<div>Thumbnail will be regenerated from source</div>
@@ -143,7 +143,7 @@
 				<tr class="actions">
 					<td class="label">Reindex Video</td>
 					<td class="field">
-					<%= form_for(@video, as: "video", url: "/admin/video/reindex", html: { method: :put }) do |f| %>
+					<%= form_for(@video, as: "video", url: "/admin/videos/reindex", html: { method: :put }) do |f| %>
 						<%= f.text_field :id, hidden: true %>
 						<%= f.submit "Reindex" %>
 					<% end %>
@@ -154,7 +154,7 @@
 						Delete Item
 					</td>
 					<td class="field">
-            <a data-confirm data-method="delete" href="/video/<%= @video.id %>" data-title="Delete Video"><button class="action red"><i class="fa fa-trash"></i> Delete Video</button></a>
+            <a data-confirm data-method="delete" href="/admin/videos/<%= @video.id %>" data-title="Delete Video"><button class="action red"><i class="fa fa-trash"></i> Delete Video</button></a>
             <div>Removes this video and all related data from the system.
             <br><b>(Action cannot be reversed)</b></div>
 					</td>
@@ -194,7 +194,7 @@
   </section>
   <section class="page properties column-left">
 		<h1>Duplication Status</h1>
-    <%= form_for(@video, as: "video", url: "/admin/video/merge", html: { method: :put }) do |f| %>
+    <%= form_for(@video, as: "video", url: "/admin/videos/merge", html: { method: :put }) do |f| %>
       <%= f.text_field :id, hidden: true %>
     <table>
 			<tr>

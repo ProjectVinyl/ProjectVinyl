@@ -49,10 +49,6 @@ function removeComment(el, json) {
   });
 };
 
-jSlim.on(document, 'fetch:complete', '.js-remove-comment', function(event) {
-  removeComment(this.closest('.comment'), event.detail.data);
-});
-
 function scrollToAndHighlightElement(comment) {
   if (comment) {
     scrollTo(comment);
@@ -139,20 +135,28 @@ var targets = {
   '.spoiler': revealSpoiler
 };
 
-jSlim.ready(function() {
-  document.addEventListener('click', function(event) {
-    // Left-click only
-    if (event.which !== 1 && event.button !== 0) return;
-    
-    for (const target in targets) {
-      var el = event.target.closest(target);
-      if (el) {
-        event.preventDefault();
-        return targets[target](el);
-      }
-    }
+jSlim.on(document, 'accept', '.remove-comment', function(event) {
+  var self = this;
+  ajax.delete(self.getAttribute('href')).json(function(json) {
+    removeComment(self.closest('.comment'), json);
   });
+});
+
+document.addEventListener('click', function(event) {
+  // Left-click only
+  if (event.which !== 1 && event.button !== 0) return;
   
+  for (const target in targets) {
+    var el = event.target.closest(target);
+    if (el) {
+      event.preventDefault();
+      return targets[target](el);
+    }
+  }
+});
+
+
+jSlim.ready(function() {
   if (document.location.hash.indexOf('#comment_') == 0) {
     lookupComment(document.location.hash.split('_')[1]);
   }

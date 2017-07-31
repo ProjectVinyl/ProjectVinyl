@@ -2,151 +2,23 @@ require 'resque/server'
 
 Rails.application.routes.draw do
   devise_for :users
-  put 'users/prefs' => 'artist#update_prefs'
-  get 'ajax/login' => 'ajax#login'
   
   get 'stars' => 'album#starred'
-  get 'search/page' => 'search#page'
-  get 'search' => 'search#index'
   
   get 'staff' => 'staff#index'
-  
   get 'copyright' => 'staff#copyright'
   get 'fairuse' => 'staff#copyright'
   get 'policy' => 'staff#policy'
   get 'terms' => 'staff#policy'
-  
-  get 'badges' => 'badge#index'
-  
   get 'donate' => 'staff#donate'
-  get 'ajax/donate' => 'ajax#donate'
   
-  # Admin Actions #
-  namespace :admin do
-    get 'files/page' => 'admin#morefiles'
-    get 'files' => 'admin#files'
-    
-    get 'album/:id' => 'admin#album'
-    
-    post 'album/feature' => 'album#toggle_featured'
-    
-    get 'artist/:id' => 'admin#artist'
-    get 'tag/:id' => 'admin#tag'
-    
-    put 'transfer' => 'admin#transfer_item'
-    put 'reindex/:table' => 'admin#reindex'
-    
-    get 'video/:id' => 'video#view'
-    
-    put 'video/reprocess' => 'video#reprocess'
-    put 'video/resetthumb' => 'video#extract_thumbnail'
-    put 'video/merge' => 'video#merge'
-    put 'video/metadata' => 'video#populate'
-    
-    get 'videos/hidden/page' => 'video#hidden'
-    get 'videos/unprocessed/page' => 'video#unprocessed'
-    
-    post 'verify' => 'admin#verify_integrity'
-    post 'requeue' => 'video#rebuild_queue'
-    
-    post 'hidden/drop' => 'admin#batch_drop_videos'
-    
-    get 'tagtypes' => 'genre#view'
-    get 'tagtypes/new' => 'genre#new'
-    post 'tagtype/create' => 'genre#create'
-    patch 'tagtypes' => 'genre#update'
-    delete 'tagtypes/:id' => 'genre#delete'
-    
-    get 'sitenotices' => 'site_notice#view'
-    get 'sitenotices/new' => 'site_notice#new'
-    post 'sitenotices' => 'site_notice#create'
-    patch 'sitenotices' => 'site_notice#update'
-    delete 'sitenotices/:id' => 'site_notice#delete'
-    
-    post 'video/hide' => 'admin#visibility'
-    
-    post 'user/togglebadge/:badge_id' => 'admin#togglebadge'
-    post 'user/role/:role' => 'admin#role'
-    
-    # Reporting #
-    get 'reports/page' => 'report#page'
-    get 'reports/:id' => 'report#view'
-    get 'report/:id/new' => 'report#new'
-    post 'report/:id' => 'report#create'
-    post 'report/:id/:async' => 'report#create'
-    
-    post ':table/reindex' => 'admin#reindex'
-    
-    root 'admin#view'
+  # Popup Windows #
+  namespace :ajax do
+    get 'login' => 'session#login'
+    get 'donate' => 'staff#donate'
   end
   
-  constraints CanAccessJobs do
-    mount Resque::Server.new, at: "/admin/resque"
-  end
-  
-  # Filters #
-  get 'filters' => 'feed#edit'
-  patch 'filters' => 'feed#update'
-  
-  # Videos #
-  get 'videos/page' => 'video#page'
-  get 'videos' => 'video#list'
-  
-  get 'feed/page' => 'feed#page'
-  get 'feed' => 'feed#view'
-  
-  namespace :embed do
-    get 'twitter' => 'twitter#view'
-    get ':id' => 'video#view'
-  end
-  get 'oembed' => 'embed/video#oembed'
-  
-  get 'download/:id' => 'video#download'
-  
-  post 'star/:id' => 'ajax#star'
-  post 'report/:id' => 'ajax#report'
-  
-  get 'history/:id' => 'history#page'
-  
-  get 'view/:id' => 'video#view', constraints: { id: /([0-9]+).*/ }
-  get 'ajax/view/:id' => 'video#go_next'
-  
-  get 'video/:id/edit' => 'video#edit'
-  get 'video/:id/changes' => 'history#view'
-  
-  get 'upload' => 'video#upload'
-  
-  post 'like/:id(/:incr)' => 'ajax#upvote'
-  post 'dislike/:id(/:incr)' => 'ajax#downvote'
-  post 'video/togglealbum' => 'ajax#toggle_album'
-  post 'video/feature' => 'ajax#toggle_feature'
-  
-  post 'video/:async' => 'video#create'
-  post 'video' => 'video#create'
-  patch 'video/:id/cover/:async' => 'video#update_cover'
-  patch 'video/:id/cover' => 'video#update_cover'
-  patch 'video/:id/:async' => 'video#video_update'
-  patch 'video/:id' => 'video#video_update'
-  patch 'video/:id' => 'video#update'
-  delete 'video/:id' => 'admin#delete_video'
-  
-  # Users #
-  get 'users/page' => 'artist#page'
-  get 'users' => 'artist#list'
-  
-  get 'profile/:id' => 'artist#view', constraints: { id: /([0-9]+).*/ }
-  get 'user/:id/hovercard' => 'artist#card'
-  
-  get 'user/:id/banner' => 'artist#banner'
-  
-  patch 'user/avatar/:async' => 'artist#setavatar'
-  patch 'user/avatar' => 'artist#setavatar'
-  patch 'user/banner/:async' => 'artist#setbanner'
-  patch 'user/banner' => 'artist#setbanner'
-  patch 'user/:id' => 'artist#update'
-  
-  post 'find/users' => 'search#autofill_artist'
-  
+  # Asset Fallbacks #
   get 'cover/:id-small' => 'imgs#thumb'
   get 'cover/:id' => 'imgs#cover'
   get 'avatar/:id-small' => 'imgs#avatar', constraints: { id: /[0-9]+/ }
@@ -154,98 +26,230 @@ Rails.application.routes.draw do
   get 'banner/:id' => 'imgs#banner'
   get 'stream/:id' => 'imgs#stream', constraints: { id: /.*/ }
   
+  # Filters #
+  get 'filters' => 'feed#edit'
+  patch 'filters' => 'feed#update'
+  
+  # Feeds #
+  get 'feed/page' => 'feed#page'
+  get 'feed' => 'feed#view'
+  
+  # Badges #
+  get 'badges' => 'badge#index'
+  
+  # Videos #
+  get 'videos/page' => 'video#page'
+  get 'videos' => 'video#index'
+  
+  get 'view/:id' => 'video#view', constraints: { id: /([0-9]+).*/ }
+  get 'ajax/view/:id' => 'video#go_next'
+  
+  get 'upload' => 'video#new'
+  get 'download/:id' => 'video#download'
+  
+  get 'videos/:id/edit' => 'video#edit'
+  get 'videos/:id/changes/page' => 'history#page'
+  get 'videos/:id/changes' => 'history#index'
+  
+  post 'videos/:id/star' => 'video#star'
+  post 'videos/:id/like(/:incr)' => 'video#upvote'
+  post 'videos/:id/dislike(/:incr)' => 'video#downvote'
+  post 'videos/:id/add' => 'album_item#toggle'
+  
+  patch 'videos/:id/cover/:async' => 'video#update_cover'
+  patch 'videos/:id/cover' => 'video#update_cover'
+  patch 'videos/:id/details' => 'video#patch'
+  patch 'videos/:id/:async' => 'video#update'
+  patch 'videos/:id' => 'video#update'
+  
+  post 'videos/:async' => 'video#create'
+  post 'videos' => 'video#create'
+  
+  # Users #
+  get 'profile/:id' => 'artist#view', constraints: { id: /([0-9]+).*/ }
+  
+  get 'users/page' => 'artist#page'
+  put 'users/prefs' => 'artist#update_prefs'
+  get 'users/:id/hovercard' => 'artist#card'
+  get 'users/:id/banner' => 'artist#banner'
+  get 'users' => 'artist#index'
+  
+  patch 'users/avatar/:async' => 'artist#set_avatar'
+  patch 'users/avatar' => 'artist#set_avatar'
+  patch 'users/banner/:async' => 'artist#set_banner'
+  patch 'users/banner' => 'artist#set_banner'
+  patch 'users/:id' => 'artist#update'
+  
   # Albums #
   get 'album/:id' => 'album#view'
   
   get 'albums/page' => 'album#page'
-  get 'albums' => 'album#list'
-  
+  get 'albums' => 'album#index'
   get 'albums/new' => 'album#new'
   get 'albums/:id/edit' => 'album#edit'
-  
+  get 'albums/:id/items' => 'album_item#index'
   post 'albums' => 'album#create'
-  patch 'albums/:id/order' => 'album#update_ordering'
-  patch 'albums/:id' => 'album#update'
-  delete 'albums/:id' => 'album#delete'
+  patch 'albums/:id' => 'album#update_ordering'
+  put 'albums/:id' => 'album#update'
+  delete 'albums/:id' => 'album#destroy'
   
-  get 'albumitems' => 'album#items'
-  post 'albumitems' => 'album#add_item'
-  patch 'albumitems/:id' => 'album#arrange'
-  delete 'albumitems/:id' => 'album#removeItem'
+  post 'albumitems' => 'album_item#create'
+  patch 'albumitems/:id' => 'album_item#update'
+  delete 'albumitems/:id' => 'album_item#destroy'
   
   # Tags #
-  get 'tags' => 'genre#list'
-  get 'tags/page' => 'genre#page'
+  get 'tags' => 'tag#index'
+  get 'tags/page' => 'tag#page'
   
-  get 'tags/videos' => 'genre#videos'
-  get 'tags/users' => 'genre#users'
+  get 'tags/:name', to: 'tag#view', constraints: { name: /.*/ }
   
-  get 'tags/:name', to: 'genre#view', constraints: { name: /.*/ }
+  get 'tags/:id/videos' => 'tag#videos'
+  get 'tags/:id/users' => 'tag#users'
   
-  patch 'tag/hide' => 'genre#hide'
-  patch 'tag/spoiler' => 'genre#spoiler'
-  patch 'tag/watch' => 'genre#watch'
-  patch 'tags/:id' => 'genre#update'
-  
-  get 'find/tags' => 'genre#find'
+  put 'tags/:id/hide' => 'tag#hide'
+  put 'tags/:id/spoiler' => 'tag#spoiler'
+  put 'tags/:id/watch' => 'tag#watch'
   
   # Forums #
-  get 'forum' => 'board#list'
+  get 'forum' => 'board#index'
   get 'forum/search' => 'thread#search'
   get 'forum/search/page' => 'thread#page_search'
-  get 'forum/:id' => 'board#view'
   
   # Boards/Categories #
+  get 'forum/:id' => 'board#view'
+  
   get 'boards/page' => 'board#page'
   get 'boards/new' => 'board#new'
   post 'boards' => 'board#create'
-  delete 'boards/:id' => 'board#delete'
+  delete 'boards/:id' => 'board#destroy'
   
   # Threads #
   get 'thread/:id' => 'thread#view', constraints: { id: /([0-9]+).*/ }
   
-  get 'threads/:id/page' => 'thread#page_threads'
+  get 'threads/:id/page' => 'thread#page'
   get 'threads/new' => 'thread#new'
+  post 'threads/:id/subscribe' => 'thread#subscribe'
   post 'threads' => 'thread#create'
   patch 'threads/:id' => 'thread#update'
   
-  post 'thread/pin' => 'ajax#toggle_pin'
-  post 'thread/lock' => 'ajax#toggle_lock'
-  post 'thread/move' => 'thread#move'
-  post 'thread/subscribe' => 'ajax#toggle_subscribe'
+  # Comment #
+  post 'comments' => 'comment#create'
+  patch 'comments/:id' => 'comment#update'
+  delete 'comments/:id' => 'comment#destroy'
   
-  post 'comments' => 'thread#post_comment'
-  patch 'comments/:id' => 'thread#edit_comment'
-  delete 'comments/:id' => 'thread#remove_comment'
-  
-  post 'comments/like/:id(/:incr)' => 'ajax#like'
-  get 'comments/:thread_id/:order/page' => 'thread#page'
-  get 'find/comments' => 'thread#get_comment'
+  post 'comments/like/:id(/:incr)' => 'comment#like'
+  get 'comments/:thread_id/:order/page' => 'comment#page'
   
   # Private Messages #
-  get 'messages' => 'pm#list'
-  get 'messages/page' => 'pm#page_threads'
-  get 'messages/tab' => 'pm#tab'
-  get 'messages/:type' => 'pm#list'
-  post 'messages' => 'pm#create'
+  get 'messages/:type/tab' => 'pm#tab'
+  get 'messages/:type/page' => 'pm#page'
+  get 'messages/:type' => 'pm#index'
+  get 'messages' => 'pm#index'
   
   get 'message/:id' => 'pm#view'
   get 'message/new' => 'pm#new'
-  patch 'message/markread' => 'pm#mark_read'
-  delete 'message/:type/:id' => 'pm#delete_pm'
+  post 'message' => 'pm#create'
+  patch 'message/:id/markread' => 'pm#mark_read'
+  delete 'message/:id/:type' => 'pm#destroy'
   
   # Notifications #
-  get 'notifications' => 'thread#notifications'
-  get 'ajax/notifications' => 'ajax#notifications'
+  get 'notifications' => 'notification#index'
+  get 'ajax/notifications' => 'ajax/notification#view'
   
-  get 'review' => 'thread#mark_read'
-  delete 'notifications/:id' => 'thread#delete_notification'
+  # Technically shouldn't be a get since it has a side-effect, but eh.
+  # A bit of a trick to get notifications to mark themselves read when you click on them.
+  get 'review' => 'notification#view'
+  delete 'notifications/:id' => 'notification#destroy'
+  
+  # Main Search #
+  namespace :search do
+    get 'page' => 'search#page'
+    root 'search#index'
+  end
+  
+  # Lookup Actions #
+  namespace :find do
+    get 'users' => 'user#find'
+    get 'comments' => 'comment#find'
+    get 'tags' => 'tag#find'
+  end
+  
+  # Admin Actions #
+  namespace :admin do
+    put 'transfer' => 'admin#transfer_item'
+    
+    get 'files/page' => 'files#page'
+    get 'files' => 'files#index'
+    
+    get 'albums/:id' => 'admin#album'
+    post 'albums/:id/feature' => 'album#toggle_featured'
+    
+    get 'videos/hidden/page' => 'video#hidden'
+    get 'videos/unprocessed/page' => 'video#unprocessed'
+    get 'videos/:id' => 'video#view'
+    post 'videos/hidden/drop' => 'video#batch_drop'
+    post 'videos/:id/hide' => 'video#visibility'
+    post 'videos/:id/feature' => 'video#toggle_featured'
+    put 'videos/merge' => 'video#merge'
+    put 'videos/reprocess' => 'video#reprocess'
+    put 'videos/resetthumb' => 'video#extract_thumbnail'
+    put 'videos/metadata' => 'video#populate'
+    delete 'videos/:id' => 'video#destroy'
+    
+    post 'verify' => 'admin#verify_integrity'
+    post 'requeue' => 'video#rebuild_queue'
+    
+    get 'tags/:id' => 'tag#view'
+    patch 'tags/:id' => 'tag#update'
+    
+    get 'tagtypes' => 'tag_type#index'
+    get 'tagtypes/new' => 'tag_type#new'
+    post 'tagtype/create' => 'tag_type#create'
+    patch 'tagtypes/:id' => 'tag_type#update'
+    delete 'tagtypes/:id' => 'tag_type#destroy'
+    
+    get 'sitenotices' => 'site_notice#index'
+    get 'sitenotices/new' => 'site_notice#new'
+    post 'sitenotices' => 'site_notice#create'
+    patch 'sitenotices/:id' => 'site_notice#update'
+    delete 'sitenotices/:id' => 'site_notice#delete'
+    
+    get 'users/:id' => 'user#view'
+    post 'users/:id/badges/:badge' => 'user#toggle_badge'
+    post 'users/:id/roles/:role' => 'user#role'
+    
+    # Reporting #
+    get 'reports/page' => 'report#page'
+    get 'reports/:id/new' => 'report#new'
+    get 'reports/:id' => 'report#view'
+    post 'reports/:id/:async' => 'report#create'
+    post 'reports/:id' => 'report#create'
+    
+    post 'threads/:id/pin' => 'thread#pin'
+    post 'threads/:id/lock' => 'thread#lock'
+    post 'threads/:id/move' => 'thread#move'
+    
+    put ':table/reindex' => 'admin#reindex'
+    
+    root 'admin#view'
+  end
+  
+  # Embeds #
+  namespace :embed do
+    get 'twitter' => 'twitter#view'
+    get ':id' => 'video#view'
+  end
+  get 'oembed' => 'embed/video#oembed'
+  
+  constraints CanAccessJobs do
+    mount Resque::Server.new, at: "/admin/resque"
+  end
   
   namespace :api do
     # API #
     get 'videos' => 'video#find'
-    get 'video/get/:id' => 'video#details'
-    post 'video/set/:id' => 'video#update'
+    get 'videos/:id' => 'video#details'
+    post 'videos/:id' => 'video#update'
   end
   
   # Short link #

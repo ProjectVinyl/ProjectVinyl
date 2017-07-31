@@ -1,5 +1,5 @@
 class HistoryController < ApplicationController
-  def view
+  def index
     if !(@video = Video.where(id: params[:id]).first)
       return render '/layouts/error', locals: { title: 'Nothing to see here!', description: "This is not the video you are looking for." }
     end

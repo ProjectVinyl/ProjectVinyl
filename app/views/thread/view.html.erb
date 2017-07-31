@@ -1,70 +1,4 @@
 <% title @thread.get_title + " - Forum" %>
-<% if @modifications_allowed %>
-<h1>
-	<a href="/">Home</a> <i class="fa fa-chevron-right"></i> <a href="/forum">Forum</a> <i class="fa fa-chevron-right"></i> <a href="<%= @thread.owner.link %>"><%= @thread.owner.title %></a> <i class="fa fa-chevron-right"></i> 
-	<% if @thread.locked %>
-		<i class="fa fa-lock" title="Thread Locked"></i>
-	<% end %>
-	<% if @thread.pinned %>
-		<i class="fa fa-thumb-tack"></i>
-	<% end %>
-	<span class="editable short inline title" data-target="thread" data-member="title" data-id="<%= @thread.id %>">
-		<span class="content"><%= @thread.get_title %></span>
-		<span class="edit"><i class="fa fa-pencil"></i></span>
-	</span>
-	<button title="<% if @subscribed = @thread.subscribed?(current_user) %>Unsubscribe<% else %>Subscribe<% end %>" class="action button button-bub subscribe right toggle"
-			data-action="subscribe"
-			data-target="thread"
-			data-id="<%= @thread.id %>"
-			data-unchecked-icon="bell-slash">
-		<span class="icon">
-			<i class="fa fa-<% if @subscribed %>check<% else %>bell<% end %>"></i>
-		</span>
-	</button>
-</h1>
-<% if current_user.is_contributor? %>
-<div class="actions">
-	<% if @thread.owner_type == 'Board' %>
-	<button class="action toggle blue" data-action="pin" data-target="thread" data-id="<%= @thread.id %>">
-		<span class="icon">
-		<% if @thread.pinned %>
-			<i class="fa fa-check"></i>
-		<% end %>
-		</span>
-		<span class="label">Pin Thread</span>
-	</button>
-	<% end %>
-	<button class="action toggle blue" data-action="lock" data-target="thread" data-id="<%= @thread.id %>">
-		<span class="icon">
-		<% if @thread.locked %>
-			<i class="fa fa-check"></i>
-		<% end %>
-		</span>
-		<span class="label">Lock Thread</span>
-	</button>
-	<% if @thread.owner_type == 'Board' %>
-	<div class="split-button popper">
-		<button class="action options pop-out-toggle blue">
-			<span>Move Thread</span>
-		</button>
-		<ul class="pop-out">
-		<% Board.listables.each do |b| %>
-			<li class="action toggle" data-family="categories"  data-descriminator="<%= b[0] %>" data-action="move" data-descriminator="<%= b[0] %>" data-target="thread" data-id="<%= @thread.id %>" data-item="<%= b[0] %>">
-				<span class="icon">
-				<% if b[0] == @thread.owner_id %>
-					<i class="fa fa-check"></i>
-				<% end %>
-				</span>
-				<span class="label"><%= b[1] %></span>
-			</li>
-		<% end %>
-		</ul>
-	</div>
-	<% end %>
-</div>
-<hr>
-<% end %>
-<% else %>
 <h1 class="title">
 	<a href="/">Home</a> <i class="fa fa-chevron-right"></i> <a href="/forum">Forum</a> <i class="fa fa-chevron-right"></i> <a href="<%= @thread.owner.link %>"><%= @thread.owner.title %></a> <i class="fa fa-chevron-right"></i> 
 	<% if @thread.locked %>
@@ -73,30 +7,21 @@
 	<% if @thread.pinned %>
 		<i class="fa fa-thumb-tack"></i>
 	<% end %>
-	<%= @thread.title.nil? || @thread.title.length == 0 ? "Comments" : @thread.title %>
-	<% if user_signed_in? %>
-	<button title="<% if @subscribed = @thread.subscribed?(current_user) %>Unsubscribe<% else %>Subscribe<% end %>" class="action button button-bub subscribe right toggle"
-			data-action="subscribe"
-			data-target="thread"
-			data-id="<%= @thread.id %>"
-			data-unchecked-icon="bell-slash">
-		<span class="icon">
-			<i class="fa fa-<% if @subscribed %>check<% else %>bell<% end %>"></i>
+	<% if @modifications_allowed %>
+		<span class="editable short inline title" data-target="thread" data-member="title" data-id="<%= @thread.id %>">
+			<span class="content"><%= @thread.get_title %></span>
+			<span class="edit"><i class="fa fa-pencil"></i></span>
 		</span>
-	</button>
+	<% else %>
+		<%= @thread.get_title %>
 	<% end %>
+	<%= render partial: 'thread/watch_options' %>
 </h1>
+<% if user_signed_in? && current_user.is_contributor? %>
+	<%= render partial: 'thread/actions' %>
 <% end %>
-<%= render layout: '/layouts/paginated', locals: {type: "comments/" + @thread.id.to_s + "/" + @order, paginated: @comments, id: "page"} do %>
-	<ul id="thread-<%= @thread.id %>" class="comments">
-		<%= render partial: '/thread/comment_set', locals: {thread: @comments.records, indirect: false} %>
-	</ul>
-<% end %>
+<%= render partial: 'thread/comments' %>
 <% if user_signed_in? %>
 	<hr>
-	<% if @thread.locked %>
-		Thread locked
-	<% else %>
-		<%= render partial: "thread/comment_box", locals: {invert: true} %>
-	<% end %>
+	<%= render partial: "comment/new", locals: {invert: true} %>
 <% end %>
