@@ -1,22 +1,36 @@
 import { jSlim } from '../utils/jslim';
 import { ajax } from '../utils/ajax';
 
+function throttledScroll(func) {
+  var scheduled;
+  return function() {
+    if (!scheduled) scheduled = setTimeout(function() {
+      func();
+      scheduled = false;
+    }, 200);
+  }
+}
+
 function initInfinitePage(target) {
-  var path = target.dataset.path;
+  var path = target.dataset.url + '/page';
   var startFrom = target.dataset.ref;
   var endWith = target.dataset.startRef;
+  var scrollingContext = target.closest('.context-3d') || document.scrollingElement;
   
   var loadingBefore = false;
   var loadingAfter = false;
   
-  window.addEventListener('scroll', updateInfinitePage);
+  scrollingContext.addEventListener('scroll', throttledScroll(updateInfinitePage));
   
   function updateInfinitePage() {
-    if (endWith && document.scrollingElement.scrollTop == 0) {
+    if (endWith && scrollingContext.scrollTop == 0) {
       if (!loadingBefore) {
         loadingBefore = true;
         target.classList.add('loading-before');
-        ajax.get(path + '&end=' + endWith).json(function(json) {
+        ajax.get(path, {
+          path: target.dataset.path,
+          end: endWith
+        }).json(function(json) {
           if (json.start) {
             if (json.start== endWith) {
               endWith = null;
@@ -31,11 +45,14 @@ function initInfinitePage(target) {
       }
       return;
     }
-    if (document.scrollingElement.scrollTop + window.innerHeight == document.body.offsetHeight) {
+    if (scrollingContext.scrollHeight - scrollingContext.scrollTop == scrollingContext.clientHeight) {
       if (!loadingAfter) {
         loadingAfter = true;
         target.classList.add('loading-after');
-        ajax.get(path + '&start=' + startFrom).json(function(json) {
+        ajax.get(path, {
+          path: target.dataset.path,
+          start: startFrom
+        }).json(function(json) {
           if (json.content) {
             startFrom = json.end;
             target.insertAdjacentHTML('beforeend', json.content);

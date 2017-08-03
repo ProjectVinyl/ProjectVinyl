@@ -32,14 +32,14 @@ module Admin
           if ajax
             return head 403
           end
-          return render file: '/public/403.html', layout: false
+          return render file: 'public/403.html', layout: false
         end
       end
       if @location[0] != 'public' && @location[0] != 'private' && @location[0] != 'encoding'
         if ajax
           return head 403
         end
-        return render file: '/public/403.html', layout: false
+        return render file: 'public/403.html', layout: false
       end
       begin
         @location = @location.join('/')
@@ -73,11 +73,11 @@ module Admin
         if ajax
           return head 404
         end
-        return render file: '/public/404.html', layout: false
+        return render file: 'public/404.html', layout: false
       end
       if ajax
         render json: {
-          content: render_to_string(partial: '/admin/file.html.erb', collection: @public.items),
+          content: render_to_string(partial: 'admin/files/file.html.erb', collection: @public.items),
           start: @public.start_ref,
           end: @public.end_ref
         }
