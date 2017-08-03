@@ -39,7 +39,7 @@ class ThreadController < ApplicationController
           thread.set_title(value)
           thread.save
         end
-        head :ok
+        return head :ok
       end
     end
     head 401
@@ -75,7 +75,7 @@ class ThreadController < ApplicationController
     @page = params[:page].to_i
     @results = Pagination.paginate(@board.threads, @page, 50, false)
     render json: {
-      content: render_to_string(partial: '/thread/thread_thumb.html.erb', collection: @results.records),
+      content: render_to_string(partial: 'thread/thumb.html.erb', collection: @results.records),
       pages: @results.pages,
       page: @results.page
     }
@@ -84,7 +84,7 @@ class ThreadController < ApplicationController
   def page_search
     search
     render json: {
-      content: render_to_string(partial: '/thread/comment_set', locals: { thread: @results.records, indirect: true }),
+      content: render_to_string(partial: 'comment/set', locals: { thread: @results.records, indirect: true }),
       pages: @results.pages,
       page: @results.page
     }

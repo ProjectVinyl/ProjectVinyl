@@ -99,7 +99,7 @@ function toggleEdit(editing, holder, content, textarea, short) {
 function save(action, id, field, holder) {
   if (holder.classList.contains('dirty')) {
     holder.classList.add('saving');
-    ajax.patch(action + ',' + id, {
+    ajax.patch(action + '/' + id, {
       field: field,
       value: BBCode.fromBBC(holder.querySelector('.input').value).outerBBC()
     }).text(function() {
@@ -116,8 +116,6 @@ function deactivate(button) {
 
 export function setupEditable(sender) {
   var editing = false;
-  var id = sender.dataset.id;
-  var member = sender.dataset.member;
   var target = sender.dataset.target;
   var short = sender.classList.contains('short');
   var content = sender.querySelector('.content');
@@ -129,7 +127,7 @@ export function setupEditable(sender) {
     editing = toggleEdit(editing, sender, content, textarea, short);
     active = editing ? button : null;
     if (!editing && target) {
-      save('update/' + target, id, member, sender);
+      save(target, sender.dataset.id, sender.dataset.member, sender);
     }
   });
   sender.addEventListener('click', function(ev) {

@@ -225,9 +225,9 @@ Rails.application.routes.draw do
     post 'reports/:id/:async' => 'report#create'
     post 'reports/:id' => 'report#create'
     
-    post 'threads/:id/pin' => 'thread#pin'
-    post 'threads/:id/lock' => 'thread#lock'
-    post 'threads/:id/move' => 'thread#move'
+    put 'threads/:id/pin' => 'thread#pin'
+    put 'threads/:id/lock' => 'thread#lock'
+    put 'threads/:id/move' => 'thread#move'
     
     put ':table/reindex' => 'admin#reindex'
     

@@ -1,7 +1,7 @@
 import { ajax } from '../utils/ajax';
 import { jSlim } from '../utils/jslim';
 
-function toggle(sender) {
+function toggle(sender, options, callback) {
   var data = {};
   
   if (sender.dataset.item) {
@@ -11,10 +11,16 @@ function toggle(sender) {
     data.extra = document.querySelector(sender.dataset.with).value;
   }
   
-  ajax.put(sender.dataset.target + '/' + sender.dataset.id + '/' + sender.dataset.action, data).json(function(json) {
+  ajax.put(options.dataset.target + '/' + options.dataset.id + '/' + options.dataset.action, data).json(function(json) {
+    callback(json, options);
+  });
+}
+
+function toggleSingle(sender) {
+  toggle(sender, sender, function(json) {
     if (sender.dataset.family) {
-      return jSlim.all('.action.toggle[data-family="' + sender.dataset.family + '"][data-id="' + sender.dataset.id + '"]', function(t) {
-        updateCheck(t, json[t.dataset.descriminator]);
+      return jSlim.all('.action.toggle[data-family="' + sender.dataset.family + '"][data-id="' + sender.dataset.id + '"]', function(a) {
+        updateCheck(a, json[a.dataset.descriminator]);
       });
     }
     
@@ -22,6 +28,14 @@ function toggle(sender) {
     if (sender.dataset.state) {
       sender.closest(sender.dataset.parent).classList.toggle(sender.dataset.state, json.added);
     }
+  });
+}
+
+function toggleMulti(sender) {
+  toggle(sender, sender.closest('.action.multi-toggle'), function(json, options) {
+    jSlim.all(options, '[data-item]', function(a) {
+      updateCheck(a, json[a.dataset.descriminator]);
+    });
   });
 }
 
@@ -39,12 +53,20 @@ function toggleState(sender) {
   parent.classList.toggle(state);
   
   sender.innerText = sender.dataset[parent.classList.contains(state)];
-  sender.dispatchEvent(new CustomEvent('toggle', { bubbles: true }));
+  sender.dispatchEvent(new CustomEvent('toggle', {
+    bubbles: true
+  }));
 }
 
 jSlim.on(document, 'click', '.action.toggle', function(e) {
   if (e.which != 1 && e.button != 0) return;
-  toggle(this);
+  toggleSingle(this);
+  e.preventDefault();
+});
+
+jSlim.on(document, 'click', '.action.multi-toggle [data-item]', function(e) {
+  if (e.which != 1 && e.button != 0) return;
+  toggleMulti(this);
   e.preventDefault();
 });
 

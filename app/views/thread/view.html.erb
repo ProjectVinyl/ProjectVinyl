@@ -8,7 +8,7 @@
 		<i class="fa fa-thumb-tack"></i>
 	<% end %>
 	<% if @modifications_allowed %>
-		<span class="editable short inline title" data-target="thread" data-member="title" data-id="<%= @thread.id %>">
+		<span class="editable short inline title" data-target="threads" data-member="title" data-id="<%= @thread.id %>">
 			<span class="content"><%= @thread.get_title %></span>
 			<span class="edit"><i class="fa fa-pencil"></i></span>
 		</span>
