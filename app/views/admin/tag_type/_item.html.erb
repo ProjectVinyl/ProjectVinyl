@@ -13,7 +13,7 @@
 		<div class="center"><i title="<%= item.hidden %>" class="fa fa-<%= item.hidden ? "check" : "times" %>"></i></div>
 		<div>
 			<ul class="tags">
-				<%= render partial: "layouts/genre_thumb_h", collection: item.tags %>
+				<%= render partial: "tag/thumb_h", collection: item.tags %>
 			</ul>
 		</div>
 	</div>
@@ -37,7 +37,7 @@
 				<tr>
 					<td class="label">Implications</td>
 					<td class="field">
-						<%= render layout: 'layouts/tageditor', locals: { tags: item.tags } do %>
+						<%= render layout: 'tag/editor', locals: { tags: item.tags } do %>
 							<%= f.text_area :tag_string %>
 						<% end %>
 					</td>

@@ -6,7 +6,7 @@ module Admin
       end
       @types = TagType.includes(:tag_type_implications).all
     end
-
+    
     def update
       if !user_signed_in? || !current_user.is_contributor?
         if params[:ajax]
