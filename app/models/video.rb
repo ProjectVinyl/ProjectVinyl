@@ -1,4 +1,5 @@
 require 'elasticsearch/model'
+require 'projectvinyl/web/youtube'
 
 class Video < ApplicationRecord
   include Elasticsearch::Model
