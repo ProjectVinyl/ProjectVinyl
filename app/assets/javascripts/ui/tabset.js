@@ -1,5 +1,6 @@
 import { ajax } from '../utils/ajax';
 import { jSlim } from '../utils/jslim';
+import { pushUrl } from '../utils/history';
 
 function focusTab(me) {
   if (!me || me.classList.contains('selected') || !me.dataset.target) {
@@ -50,9 +51,10 @@ jSlim.on(document, 'click', '.tab-set.async a.button:not([data-disabled])', func
   other.classList.remove('selected');
   this.classList.add('selected');
   holder.classList.add('waiting');
-
-  ajax.get(parent.dataset.url, {
-    type: this.dataset.target, page: this.dataset.page || 0
+  
+  pushUrl(this.getAttribute('href'));
+  ajax.get(this.getAttribute('href') + '/tab', {
+    page: this.dataset.page || 0
   }).json(function(json) {
     holder.innerHTML = json.content;
     holder.classList.remove('waiting');

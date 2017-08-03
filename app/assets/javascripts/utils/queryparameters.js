@@ -1,3 +1,5 @@
+import { pushUrl } from './history';
+
 function encodeParamaters(queryPars) {
   return queryPars.keys.map(function(k) {
     return k + '=' + encodeURIComponent(queryPars.values[k]);
@@ -6,12 +8,7 @@ function encodeParamaters(queryPars) {
 
 function updateHistoryObj(queryPars) {
   if (queryPars.historyObj.pushState) {
-    var newUrl = document.location.href.split('?')[0] + '?' + queryPars.toString();
-    if (newUrl != document.location.href) {
-      window.history.pushState({
-        path: newUrl
-      }, '', newUrl);
-    }
+    pushUrl(document.location.href.split('?')[0] + '?' + queryPars.toString());
   }
 }
 
