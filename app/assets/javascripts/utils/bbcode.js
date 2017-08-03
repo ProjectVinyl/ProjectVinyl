@@ -73,7 +73,7 @@ Node.prototype = {
               continue;
             }
           } else if (content[index] == open) {
-            this.appendNode().parse(content.substring(index, content.length), open, close);
+            content = this.appendNode().parse(content.substring(index, content.length), open, close);
           }
           index = -1;
           continue;
