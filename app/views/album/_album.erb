@@ -55,7 +55,7 @@
 					<% end %>
 					<% if @modifications_allowed %>
 						<li class="action">
-							<a data-confirm data-title="Album Settings" href="/albums/<%= @album.id %>/edit">
+							<a data-title="Album Settings" data-external-form="/albums/<%= @album.id %>/edit">
 								<span class="icon"><i class="fa fa-cog"></i></span>
 								<span class="label">Settings</span>
 							</a>

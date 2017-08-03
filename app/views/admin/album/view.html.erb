@@ -1,8 +1,12 @@
 <% title @album.title %>
-<h1 class="title">
-	<a href="/">Home</a> <i class="fa fa-chevron-right"></i> <a href="/admin">Admin</a> <i class="fa fa-chevron-right"></i> 
-	Album <i class="fa fa-chevron-right"></i> <a href="<%= @album.link %>"><%= @album.title %></a>
-</h1>
+<%= render partial: 'view/breadcrumb', locals: {
+	stack: [
+		{ link: '/admin', title: 'Admin' },
+		{ title: 'Albums' },
+		{ link: @album.link, title: @album.id }
+	],
+	title: @album.title
+} %>
 <div class="wrapper full-width">
 	<section class="page resize-holder column-left left">
 		<%= render partial: 'album/album' %>
@@ -44,7 +48,7 @@
 						Featured
 					</td>
 					<td class="field">
-						<button class="action toggle blue" data-url="/admin/albums/<%= @album.id %>/feature">
+						<button class="action toggle blue" data-target="admin/albums" data-id="<%= @album.id %>" data-action="feature">
 							<span class="icon">
 								<% if @album.featured > 0 %>
 									<i class="fa fa-check"></i>
@@ -59,7 +63,7 @@
 						Delete Item
 					</td>
 					<td class="field">
-						<a class="button red" data-confirm data-method="delete" href="delete/albums/<%= @album.id %>" data-title="Delete Album"><i class="fa fa-trash"></i> Delete Album</a>
+						<a class="button red" data-confirm data-method="delete" href="admin/albums/<%= @album.id %>" data-title="Delete Album"><i class="fa fa-trash"></i> Delete Album</a>
 					</td>
 				</tr>
 			</table>

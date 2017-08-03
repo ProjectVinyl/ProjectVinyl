@@ -1,0 +1,6 @@
+<li class="generic">
+	<a href="/admin/reports/<%= thumb.id %>">Report #<%= thumb.id %></a>
+	<% if thumb.video %>
+		<%= render partial: 'admin/video/thumb_h', locals: {thumb_h: thumb.video } %>
+	<% end %>
+</li>

@@ -1,0 +1,27 @@
+<li class="generic thumb<% if thumb_h.processed == false %> working<% end %>">
+	<a class="thumb" href="/admin/videos/<%= thumb_h.id %>">
+		<div class="tile" style="background-image:url('<%= thumb_h.tiny_thumb(current_user) %>');">
+			<span class="tag-list duration">
+				<%= duration thumb_h.get_duration %>
+			</span>
+		</div>
+		<div class="title">
+			<% if thumb_h.hidden %>
+				<span title="Private - This item will not appear in public listings" class="icon"><i class="fa fa-lock"></i></span>
+			<% end %>
+			<%= thumb_h.title %>
+		</div>
+		<span class="date" title="<%= thumb_h.created_at %>">
+			<%= since thumb_h.created_at %>
+		</span>
+		<span class="tag-list right">
+			<% if thumb_h.is_downvoted_by(current_user) %>
+				<i class="fa fa-thumbs-down red"></i>
+			<% end %>
+			<% if thumb_h.is_upvoted_by(current_user) %>
+				<i class="fa fa-thumbs-up green"></i>
+			<% end %>
+			<%= number_with_delimiter thumb_h.views %> views
+		</span>
+	</a>
+</li>

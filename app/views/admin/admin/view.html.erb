@@ -1,9 +1,11 @@
 <% title "Admin" %>
 <% lim "1100px" %>
-<h1 class="title">
-	<a href="/">Home</a> <i class="fa fa-chevron-right"></i> <a href="/admin">Admin</a> <i class="fa fa-chevron-right"></i> 
-	Control Panel
-</h1>
+<%= render partial: 'view/breadcrumb', locals: {
+	stack: [
+		{ link: '/admin', title: 'Admin' }
+	],
+	title: "Control Panel"
+} %>
 <div class="wrapper column-left left">
 	<section class="page full-width resize-holder">
 		<h1 class="title resize-target">Recent Activity</h1>
@@ -69,7 +71,7 @@
 		<% if @unprocessed.count > 0 %>
 		<%= render layout: 'pagination/paginated', locals: {type: "admin/videos/unprocessed", paginated: @unprocessed, id: "unprocessed"} do %>
 			<ul id="videos" class="horizontal video-list">
-				<%= render partial: 'admin/video/video_thumb_h', collection: @unprocessed.records %>
+				<%= render partial: 'admin/video/thumb_h', collection: @unprocessed.records %>
 			</ul>
 		<% end %>
 		<% end %>
@@ -77,7 +79,7 @@
 		<% if @reports.count > 0 %>
 		<%= render layout: 'pagination/paginated', locals: {type: "admin/reports", paginated: @reports, id: "reports"} do %>
 		<ul id="reports" class="report-list">
-			<%= render partial: 'admin/report/report_thumb', collection: @reports.records %>
+			<%= render partial: 'admin/report/thumb', collection: @reports.records %>
 		</ul>
 		<% end %>
 		<% end %>
@@ -85,7 +87,7 @@
 		<% if @hiddenvideos.count > 0 %>
 		<%= render layout: 'pagination/paginated', locals: {type: "admin/videos/hidden", paginated: @hiddenvideos, id: "hidden"} do %>
 			<ul id="videos" class="horizontal video-list">
-				<%= render partial: 'admin/video/video_thumb_h', collection: @hiddenvideos.records %>
+				<%= render partial: 'admin/video/thumb_h', collection: @hiddenvideos.records %>
 			</ul>
 		<% end %>
 		<% end %>

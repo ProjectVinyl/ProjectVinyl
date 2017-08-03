@@ -89,8 +89,8 @@ Rails.application.routes.draw do
   get 'albums/:id/edit' => 'album#edit'
   get 'albums/:id/items' => 'album_item#index'
   post 'albums' => 'album#create'
-  patch 'albums/:id' => 'album#update_ordering'
-  put 'albums/:id' => 'album#update'
+  patch 'albums/:id/order' => 'album#update_ordering'
+  patch 'albums/:id' => 'album#update'
   delete 'albums/:id' => 'album#destroy'
   
   post 'albumitems' => 'album_item#create'
@@ -176,13 +176,13 @@ Rails.application.routes.draw do
   
   # Admin Actions #
   namespace :admin do
-    put 'transfer' => 'admin#transfer_item'
+    post 'transfer' => 'admin#transfer_item'
     
     get 'files/page' => 'files#page'
     get 'files' => 'files#index'
     
-    get 'albums/:id' => 'admin#album'
-    post 'albums/:id/feature' => 'album#toggle_featured'
+    get 'albums/:id' => 'album#view'
+    put 'albums/:id/feature' => 'album#toggle_featured'
     
     get 'videos/hidden/page' => 'video#hidden'
     get 'videos/unprocessed/page' => 'video#unprocessed'
