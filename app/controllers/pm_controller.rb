@@ -50,7 +50,7 @@ class PmController < ApplicationController
       }
     end
     render json: {
-      content: render_to_string(partial: '/pm/message_thumb.html.erb', collection: @results.records),
+      content: render_to_string(partial: '/pm/thumb.html.erb', collection: @results.records),
       pages: @results.pages,
       page: @results.page
     }
@@ -86,7 +86,7 @@ class PmController < ApplicationController
         }
       end
       return render json: {
-        content: render_to_string(partial: '/pm/message_thumb.html.erb', collection: @results.records),
+        content: render_to_string(partial: '/pm/thumb.html.erb', collection: @results.records),
         pages: @results.pages,
         page: @results.page
       }

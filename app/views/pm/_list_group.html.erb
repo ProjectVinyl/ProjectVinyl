@@ -1,10 +1,10 @@
 <% @data = 'type=' + type %>
-<%= render layout: '/layouts/paginated', locals: {type: "messages", paginated: paginated, id: type} do %>
+<%= render layout: 'pagination/paginated', locals: {type: "messages/" + type, paginated: paginated, id: type} do %>
 	<section class="search-result">
 		<div class="listing thread-list">
 			<ul class="items">
 				<% if paginated.count > 0 %>
-				<%= render partial: 'pm/message_thumb', collection: paginated.records %>
+				<%= render partial: 'pm/thumb', collection: paginated.records %>
 				<% else %>
 					<div class="mail_derpy">
 						<div class="derpy"></div>
