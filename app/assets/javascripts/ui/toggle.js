@@ -52,7 +52,9 @@ function toggleState(sender) {
   parent = parent ? sender.closest(parent) : sender.parentNode;
   parent.classList.toggle(state);
   
-  sender.innerText = sender.dataset[parent.classList.contains(state)];
+  var label = sender.dataset[parent.classList.contains(state)];
+  if (label) sender.innerText = label;
+  
   sender.dispatchEvent(new CustomEvent('toggle', {
     bubbles: true
   }));
