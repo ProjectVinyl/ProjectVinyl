@@ -10,7 +10,7 @@ export function tryUnmarshal(data, fallback) {
   try {
     return JSON.parse(data);
   } catch(ignored) {}
-  return fallback || data;
+  return fallback === undefined ? data : fallback;
 }
 
 export function extendObj(onto, overrides) {
