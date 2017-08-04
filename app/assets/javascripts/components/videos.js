@@ -7,6 +7,9 @@ import { ajax } from '../utils/ajax';
 import { scrollTo } from '../ui/scroll';
 import { Key } from '../utils/misc';
 import { jSlim } from '../utils/jslim';
+import { cookies } from '../utils/cookies';
+import { TapToggler } from './taptoggle';
+import { toHMS } from '../utils/duration';
 
 const VIDEO_ELEMENT = document.createElement('video');
 const aspect = 16 / 9;
@@ -28,12 +31,18 @@ function attachMessageListener(sender) {
   });
 }
 
+// FIXME: wtf
+// Secret identifier to prevent senders from responding to their own messages
+// (there is no gaurantee that the current window will not get a message it just dispatched.
+// There may also be other players on the same page that need to respond to each other)
+function getNextMessageSeed() {
+  var old = parseInt(localStorage['::activeplayer'] || '0');
+  return ((old + 1) % 3).toString();
+}
+
 function sendMessage(sender) {
   if (sender.__sendMessages) {
-    // FIXME: wtf
-    // Secret identifier to prevent senders from responding to their own messages
-    // (there is no gaurantee that the current window will not get a message it just dispatched. There may also be other players on the same page that need to respond to each other)
-    sender.__seed = '' + ((parseInt(localStorage['::activeplayer'] || '0', 10) + 1) % 3);
+    sender.__seed = getNextMessageSeed();
     localStorage.setItem('::activeplayer', sender.__seed);
   }
 }
@@ -51,13 +60,12 @@ function Player() { }
   Player.isFullscreen = function() {
     return document.fullScreen || document.mozFullScreen || document.webkitIsFullScreen;
   };
+  Player.onFullscreen = function(func) {
+    document.addEventListener('webkitfullscreenchange', func);
+    document.addEventListener('mozfullscreenchange', func);
+    document.addEventListener('fullscreenchange', func);
+  };
 })(Element.prototype);
-
-Player.onFullscreen = function(func) {
-  document.addEventListener('webkitfullscreenchange', func);
-  document.addEventListener('mozfullscreenchange', func);
-  document.addEventListener('fullscreenchange', func);
-};
 
 Player.canPlayType = function(mime) {
   return !!(mime = VIDEO_ELEMENT.canPlayType(mime)).length && mime !== 'no';
@@ -261,14 +269,14 @@ Player.prototype = {
     el.addEventListener('touchstart', ev => {
       if (Player.fullscreenPlayer === ev.target) {
         if (activeTouches.length > 0) {
-          this.halt(ev);
+          halt(ev);
           return;
         }
       }
       
       if (tapped) {
         this.fullscreen(!Player.isFullscreen());
-        this.halt(ev);
+        halt(ev);
         clearTimeout(tapped);
         tapped = null;
         return;
@@ -292,7 +300,7 @@ Player.prototype = {
     
     this.__loop = false;
     this.__speed = 3;
-    this.contextmenu.addEventListener('click', this.halt);
+    this.contextmenu.addEventListener('click', halt);
     this.addContext('Loop', false, val => {
       val(this.loop(!this.__loop));
     });
@@ -307,7 +315,7 @@ Player.prototype = {
         if (!document.querySelector('input:focus,textarea:focus')) {
           if (this.video) {
             this.toggleVideo();
-            this.halt(ev);
+            halt(ev);
           }
         }
       }
@@ -347,7 +355,7 @@ Player.prototype = {
       new TapToggler(this.controls.volume);
       this.controls.volume.addEventListener('touchstart', ev => {
         this.controls.volume.toggler.update(ev);
-        this.halt(ev);
+        halt(ev);
       });
       
       this.controls.volume.bob = this.controls.querySelector('.volume .bob');
@@ -371,11 +379,11 @@ Player.prototype = {
         if (ev.button !== 0) return;
         if (!this.removeContext(ev)) {
           this.fullscreen(!Player.isFullscreen());
-          this.halt(ev);
+          halt(ev);
         }
       });
-      this.controls.volume.slider.addEventListener('click', this.halt);
-      this.controls.querySelector('li').addEventListener('click', this.halt);
+      this.controls.volume.slider.addEventListener('click', halt);
+      jSlim.each(this.controls, 'li', a => a.addEventListener('click', halt));
     }
     
     attachMessageListener(this);
@@ -394,10 +402,9 @@ Player.prototype = {
     
     if (el.dataset.autoplay) {
       this.checkstart();
-      // FIXME: extract cookie fetch code to some util
-      this.addContext('Autoplay', this.autoplay(!document.cookie.replace(/(?:(?:^|.*;\s*)autoplay\s*=\s*([^;]*).*$)|^.*$/, '$1')), val => {
+      this.addContext('Autoplay', this.autoplay(!cookies.get('autoplay')), val => {
         val(this.__autoplay = !this.__autoplay);
-        document.cookie = 'autoplay=' + (this.__autoplay ? ';' : '1;');
+        cookies.set('autoplay', this.__autoplay ? '' : '1');
       });
     } else if (el.dataset.resume === 'true') {
       this.checkstart();
@@ -432,7 +439,7 @@ Player.prototype = {
     this.contextmenu.style.left = x + 'px';
     this.contextmenu.classList.remove('hidden');
     
-    this.halt(ev);
+    halt(ev);
   },
   setEmbed: function() {
     this.embedded = true;
@@ -468,13 +475,12 @@ Player.prototype = {
     
     this.dom.playlist.link.addEventListener('click', ev => {
       this.dom.playlist.classList.toggle('visible');
-      this.halt(ev);
+      halt(ev);
     });
     
-    // FIXME: cookie parsing
-    this.addContext('Autoplay', this.autoplay(!document.cookie.replace(/(?:(?:^|.*;\s*)autoplay\s*=\s*([^;]*).*$)|^.*$/, '$1')), val => {
+    this.addContext('Autoplay', this.autoplay(!cookies.get('autoplay')), val => {
       val(this.__autoplay = !this.__autoplay);
-      document.cookie = 'autoplay=' + (this.__autoplay ? ';' : '1;');
+      cookies.set('autoplay', this.__autoplay ? '' : '1');
     });
     
     this.dom.playlist.addEventListener('click', ev => {
@@ -482,7 +488,7 @@ Player.prototype = {
       
       const target = ev.target.closest('.items a, #playlist_next, #playlist_prev');
       this.navTo(target);
-      this.halt(ev);
+      halt(ev);
     });
   },
   navTo: function(sender) {
@@ -607,8 +613,6 @@ Player.prototype = {
   load: function(data) {
     if (data) this.loadURL(URL.createObjectURL(data));
   },
-  // FIXME: almost completely duplicated, likely can simply
-  // change client code to just use one or other
   loadURL: function(url) {
     this.audioOnly = false;
     if (this.source) {
@@ -738,11 +742,10 @@ Player.prototype = {
     console.log(e);
   },
   toggleVideo: function() {
-    if (!this.player.classList.contains('playing')) {
-      this.start();
-    } else {
-      this.pause();
+    if (this.player.classList.contains('playing')) {
+      return this.pause();
     }
+    this.start();
   },
   track: function(time, duration) {
     const percentFill = (time / duration) * 100;
@@ -752,7 +755,7 @@ Player.prototype = {
     
     if (this.dom.toggler.touching()) {
       this.controls.track.preview.style.left = percentFill + '%';
-      this.controls.track.preview.dataset.time = this.descriptive(time);
+      this.controls.track.preview.dataset.time = toHMS(time);
     }
     
     this.suspend.style.display = 'none';
@@ -771,7 +774,7 @@ Player.prototype = {
     if (ev.touches) {
       this.drawPreview(progress);
     }
-    this.halt(ev);
+    halt(ev);
   },
   evToProgress: function(ev) {
     let x = ev.pageX;
@@ -803,7 +806,7 @@ Player.prototype = {
     ['mouseup', 'touchend', 'touchcancel'].forEach(t => document.addEventListener(t, ender));
     ['mousemove', 'touchmove'            ].forEach(t => document.addEventListener(t, func));
     
-    this.halt(ev);
+    halt(ev);
   },
   changeVolume: function(ev) {
     const height = this.controls.volume.slider.clientHeight;
@@ -818,14 +821,7 @@ Player.prototype = {
     if (y > height) y = height;
     y = height - y;
     this.volume(y / height, y === 0);
-    this.halt(ev);
-  },
-  // FIXME: why is it necessary to also stopPropagation?
-  // FIXME: why is this function part of the prototype?
-  // Utility function, used all over the place. Move it if you like.
-  halt: function(ev) {
-    ev.preventDefault();
-    ev.stopPropagation();
+    halt(ev);
   },
   volume: function(volume, muted) {
     const indicator = this.dom.querySelector('.volume .indicator i');
@@ -841,19 +837,6 @@ Player.prototype = {
     this.video.muted = !this.video.muted;
     this.volume(this.video.volume, this.video.muted);
   },
-  // FIXME: Highly ironic name
-  //Convert a time to hh:mm:ss
-  descriptive: function(time) {
-    const times = [];
-    time = Math.floor(time);
-    while (time >= 60) {
-      times.push(time % 60);
-      time = Math.floor(time / 60);
-    }
-    times.push(time);
-    if (times.length < 2) times.push(0);
-    return times.reverse().join(':');
-  },
   drawPreview: function(progress) {
     if (!this.video) return;
     
@@ -861,7 +844,7 @@ Player.prototype = {
     let time = duration * progress;
     
     this.controls.track.preview.style.left = (time * 100 / duration) + '%';
-    this.controls.track.preview.dataset.time = this.descriptive(time);
+    this.controls.track.preview.dataset.time = toHMS(time);
     
     if (!this.audioOnly) {
       // TODO: wtf
@@ -893,33 +876,11 @@ Player.prototype = {
   }
 };
 
-function TapToggler(owner) {
-  let hoverTimeout = null;
-  let touching = false;
-  let hoverFlag = 0;
-
-  return owner.toggler = {
-    update: function() {
-      if (!touching) touching = true;
-      owner.classList.add('hover');
-      hoverFlag++;
-      if (hoverTimeout) {
-        clearTimeout(hoverTimeout);
-        hoverTimeout = null;
-      }
-      hoverTimeout = setTimeout(() => {
-        owner.classList.add('hover');
-        hoverTimeout = null;
-        hoverFlag = 0;
-      }, 1700);
-    },
-    touching: function() {
-      return touching;
-    },
-    interactable: function() {
-      return !touching || hoverFlag > 1;
-    }
-  };
+// FIXME: why is it necessary to also stopPropagation?
+// Utility function, used all over the place. Move it if you like.
+function halt(ev) {
+  ev.preventDefault();
+  ev.stopPropagation();
 }
 
 function resize(obj) {
@@ -942,9 +903,8 @@ jSlim.ready(() => {
   
   window.addEventListener('resize', () => {
     jSlim.all('.video', resize);
+    removeContext();
   });
-  
-  window.addEventListener('resize', removeContext);
   window.addEventListener('blur', removeContext);
   
   document.addEventListener('mousemove', () => {

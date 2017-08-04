@@ -3,7 +3,8 @@ function round(num, precision) {
   return Math.round(num * precision) / precision;
 }
 
-function Duration(seconds) {
+function Duration(seconds, delimiter) {
+  this.delimiter = delimiter || ' ';
   this.time = seconds || 0;
   this.seconds = this.time;
   this.minutes = 0;
@@ -26,16 +27,29 @@ function Duration(seconds) {
 
 Duration.prototype = {
   toString: function() {
-    var s = '';
-    if (this.days > 0) s += this.days + 'd ';
-    if (this.hours > 0) s += this.hours + 'h ';
-    if (this.minutes > 0) s += this.minutes + 'm ';
-    if (s.length == 0 || this.seconds > 0) s += this.seconds + 's';
-    return s.trim();
+    var s = [];
+    if (this.days) s.push(this.days + 'd');
+    if (this.hours) s.push(this.hours + 'h');
+    if (this.minutes) s.push(this.minutes + 'm');
+    if (this.seconds && !s.length) s.push(this.seconds + 's');
+    return s.join(this.delimiter);
   },
   valueOf: function() {
     return this.time;
   }
 };
 
-export { Duration };
+// converts a time integer to hh:mm:ss format
+function toHMS(time) {
+  const times = [];
+  time = Math.floor(time);
+  while (time >= 60) {
+    times.shift(time % 60);
+    time = Math.floor(time / 60);
+  }
+  times.shift(time);
+  if (times.length < 2) times.shift(0);
+  return times.join(':');
+}
+
+export { Duration, toHMS };
