@@ -47,13 +47,14 @@ jSlim.on(document, 'click', '.tab-set.async a.button:not([data-disabled])', func
   const parent = this.parentNode;
   const other = parent.querySelector('.selected');
   const holder = document.querySelector('.tab[data-tab="' + parent.dataset.target + '"]');
-
+  const url = this.getAttribute('href');
+  
   other.classList.remove('selected');
   this.classList.add('selected');
   holder.classList.add('waiting');
   
-  pushUrl(this.getAttribute('href'));
-  ajax.get(this.getAttribute('href') + '/tab', {
+  pushUrl(url);
+  ajax.get(url + '/tab', {
     page: this.dataset.page || 0
   }).json(function(json) {
     holder.innerHTML = json.content;
