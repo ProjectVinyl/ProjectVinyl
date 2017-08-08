@@ -10,7 +10,15 @@ class ApplicationController < ActionController::Base
   def content_page?
     !devise_controller? && controller_name != "ajax" && controller_name != "imgs" && action_name != "download" && request.fullpath.index('/ajax/').nil?
   end
-
+  
+  def render_pagination(partial, pagination)
+    render json: {
+      content: render_to_string(partial: partial, collection: pagination.records),
+      pages: pagination.pages,
+      page: pagination.page
+    }
+  end
+  
   protected
 
   def configure_permitted_parameters

@@ -32,37 +32,24 @@ class TagController < ApplicationController
     @results = Pagination.paginate(Tag.includes(:videos, :tag_type).where('alias_id IS NULL').order(:name), @page, 100, false)
     render template: 'pagination/listing', locals: { type_id: 3, type: 'tags', type_label: 'Tag', items: @results }
   end
-
+  
   def page
-    @page = params[:page].to_i
-    @results = Pagination.paginate(Tag.includes(:videos, :tag_type).where('alias_id IS NULL').order(:name), @page, 100, false)
-    render json: {
-      content: render_to_string(partial: 'tag/thumb_h.html.erb', collection: @results.records),
-      pages: @results.pages,
-      page: @results.page
-    }
+    @records = Tag.includes(:videos, :tag_type).where('alias_id IS NULL').order(:name)
+    render_pagination 'tag/thumb_h', Pagination.paginate(@records, params[:page].to_i, 100, false)
   end
-
+  
   def videos
     if @tag = Tag.where(id: params[:id]).first
-      @results = Pagination.paginate(@tag.videos.where(hidden: false).includes(:tags).order(:created_at), params[:page].to_i, 8, true)
-      return render json: {
-        content: render_to_string(partial: 'video/thumb_h.html.erb', collection: @results.records),
-        pages: @results.pages,
-        page: @results.page
-      }
+      @records = @tag.videos.where(hidden: false).includes(:tags).order(:created_at)
+      return render_pagination 'video/thumb_h', Pagination.paginate(@records, params[:page].to_i, 8, true)
     end
     head 404
   end
-
+  
   def users
     if @tag = Tag.where(id: params[:id]).first
-      @results = Pagination.paginate(@tag.users.order(:updated_at_at), params[:page].to_i, 8, true)
-      return render json: {
-        content: render_to_string(partial: 'user/thumb_h.html.erb', collection: @results.records),
-        pages: @results.pages,
-        page: @results.page
-      }
+      @records = @tag.users.order(:updated_at_at)
+      return render_pagination 'user/thumb_h', Pagination.paginate(@records, params[:page].to_i, 8, true)
     end
     head 404
   end

@@ -111,17 +111,19 @@ Rails.application.routes.draw do
   put 'tags/:id/watch' => 'tag#watch'
   
   # Forums #
-  get 'forum' => 'board#index'
-  get 'forum/search' => 'thread#search'
-  get 'forum/search/page' => 'thread#page_search'
+  namespace :forum do
+    get 'search' => 'search#index'
+    get 'search/page' => 'search#page'
+    get ':id' => 'board#view'
+    root 'board#index'
+  end
   
   # Boards/Categories #
-  get 'forum/:id' => 'board#view'
   
-  get 'boards/page' => 'board#page'
-  get 'boards/new' => 'board#new'
-  post 'boards' => 'board#create'
-  delete 'boards/:id' => 'board#destroy'
+  get 'boards/page' => 'forum/board#page'
+  get 'boards/new' => 'forum/board#new'
+  post 'boards' => 'forum/board#create'
+  delete 'boards/:id' => 'forum/board#destroy'
   
   # Threads #
   get 'thread/:id' => 'thread#view', constraints: { id: /([0-9]+).*/ }
@@ -162,10 +164,8 @@ Rails.application.routes.draw do
   delete 'notifications/:id' => 'notification#destroy'
   
   # Main Search #
-  namespace :search do
-    get 'page' => 'search#page'
-    root 'search#index'
-  end
+  get 'search/page' => 'search#page'
+  get 'search' => 'search#index'
   
   # Lookup Actions #
   namespace :find do

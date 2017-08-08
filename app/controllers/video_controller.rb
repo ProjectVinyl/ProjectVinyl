@@ -298,11 +298,8 @@ class VideoController < ApplicationController
       end
       @results = Pagination.paginate(@results.order(:created_at), @page, 50, true)
     end
-    render json: {
-      content: render_to_string(partial: merged ? 'admin/video/thumb_h.html' : 'video/thumb_h.html.erb', collection: @results.records),
-      pages: @results.pages,
-      page: @results.page
-    }
+    partial = merged ? 'admin/video/thumb_h.html.erb' : 'video/thumb_h.html.erb'
+    render_pagination partial, @results
   end
   
   def upvote

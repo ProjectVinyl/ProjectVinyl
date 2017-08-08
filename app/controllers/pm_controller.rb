@@ -12,7 +12,7 @@ class PmController < ApplicationController
   
   def view
     if !(user_signed_in? && @pm = Pm.find_for_user(params[:id], current_user))
-      return render '/layouts/error', locals: { title: 'Nothing to see here!', description: "Either the thread does not exist or you don't have the neccessary permissions to see it." }
+      return render 'layouts/error', locals: { title: 'Nothing to see here!', description: "Either the thread does not exist or you don't have the neccessary permissions to see it." }
     end
     @order = '0'
     @thread = @pm.comment_thread
@@ -46,21 +46,17 @@ class PmController < ApplicationController
     @results = Pagination.paginate(page_for_type(params[:type]), @page, 50, false)
     if @results.count == 0
       return render json: {
-        content: render_to_string(partial: '/pm/mailderpy.html.erb'), pages: 0, page: 0
+        content: render_to_string(partial: 'pm/mailderpy'), pages: 0, page: 0
       }
     end
-    render json: {
-      content: render_to_string(partial: '/pm/thumb.html.erb', collection: @results.records),
-      pages: @results.pages,
-      page: @results.page
-    }
+    render_pagination 'pm/thumb', @results
   end
   
   def tab
     @type = params[:type]
     @results = Pagination.paginate(page_for_type(@type), params[:page], 50, false)
     render json: {
-      content: render_to_string(partial: '/pm/list_group.html.erb', locals: { type: @type, paginated: @results, selected: true })
+      content: render_to_string(partial: 'pm/list_group', locals: { type: @type, paginated: @results, selected: true })
     }
   end
   
@@ -82,14 +78,12 @@ class PmController < ApplicationController
       @results = Pagination.paginate(page_for_type(@type), @page, 50, false)
       if @results.count == 0
         return render json: {
-          content: render_to_string(partial: '/pm/mailderpy.html.erb'), pages: 0, page: 0
+          content: render_to_string(partial: 'pm/mailderpy'),
+          pages: 0,
+          page: 0
         }
       end
-      return render json: {
-        content: render_to_string(partial: '/pm/thumb.html.erb', collection: @results.records),
-        pages: @results.pages,
-        page: @results.page
-      }
+      render_pagination 'pm/thumb', @results
     end
     head 403
   end
