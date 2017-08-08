@@ -3,7 +3,7 @@ export function TapToggler(owner) {
   let touching = false;
   let hoverFlag = 0;
   
-  return owner.toggler = {
+  const toggler = {
     update: function() {
       if (!touching) touching = true;
       owner.classList.add('hover');
@@ -25,4 +25,10 @@ export function TapToggler(owner) {
       return !touching || hoverFlag > 1;
     }
   };
+  
+  owner.addEventListener('touchstart', ev => {
+    toggler.update(ev);
+  });
+  
+  return owner.toggler = toggler;
 }

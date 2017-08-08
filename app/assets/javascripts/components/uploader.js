@@ -5,7 +5,7 @@ import { ThumbPicker } from './thumbnailpicker';
 import { resizeFont } from '../ui/resize';
 import { focusTab } from '../ui/tabset';
 import { toBool, extendObj } from '../utils/misc';
-import { Player } from './videos';
+import { canPlayType } from '../utils/videos';
 import { jSlim } from '../utils/jslim';
 
 const INSTANCES = [];
@@ -251,7 +251,7 @@ Uploader.prototype = extendObj({
       thumbUpload.click();
       thumbPick.dataset.disabled = '1';
     } else {
-      if (Player.canPlayType(file.mime)) {
+      if (canPlayType(file.mime)) {
         this.player.load(file.data);
         thumbPick.removeAttribute('data-disabled');
         thumbPick.click();
@@ -364,7 +364,7 @@ UploadChecker.prototype = extendObj({
     const thumbUpload = this.el.querySelector('li[data-target="thumbupload"]');
     
     if (this.needsCover && !this.player) this.initPlayer();
-    if (Player.canPlayType(file.mime)) {
+    if (canPlayType(file.mime)) {
       this.player.load(file.data);
       thumbPick.removeAttribute('data-disabled');
       thumbPick.click();

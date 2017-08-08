@@ -13,10 +13,26 @@ export function tryUnmarshal(data, fallback) {
   return fallback === undefined ? data : fallback;
 }
 
+
+// FIXME: why is it necessary to also stopPropagation?
+// Utility function, used all over the place. Move it if you like.
+export function halt(ev) {
+  ev.preventDefault();
+  ev.stopPropagation();
+}
+
 export function extendObj(onto, overrides) {
   let keys = Object.keys(overrides), i = keys.length;
   for (; i--;) onto[keys[i]] = overrides[keys[i]];
   return onto;
+}
+
+export function makeExtensible(Parent) {
+  Parent.extend = function(Child, overrides) {
+    Child.prototype = extendObj(new this(), overrides);
+    Child.Super = this.prototype;
+    Child.extend = this.extend;
+  };
 }
 
 export function copyOfObj(obj) {

@@ -5,30 +5,37 @@
 */
 import { ajax } from '../utils/ajax';
 import { scrollTo } from '../ui/scroll';
-import { Key } from '../utils/misc';
+import { ContextMenu } from '../ui/contextmenu';
+import { halt, Key, makeExtensible } from '../utils/misc';
+import { errorMessage, errorPresent } from '../utils/videos';
 import { jSlim } from '../utils/jslim';
 import { cookies } from '../utils/cookies';
 import { TapToggler } from './taptoggle';
 import { toHMS } from '../utils/duration';
+import { PlayerControls } from './playercontrols';
+import { setupNoise } from './noise';
 
-const VIDEO_ELEMENT = document.createElement('video');
-const aspect = 16 / 9;
 let fadeControl = null;
+let fullscreenPlayer = null;
 
 function controlsFade() {
-  if (Player.fullscreenPlayer) {
-    Player.fullscreenPlayer.controls.style.opacity = 0;
-    Player.fullscreenPlayer.player.querySelector('.playing').style.cursor = 'none';
+  if (fullscreenPlayer) {
+    fullscreenPlayer.controls.hide();
   }
   fadeControl = null;
 }
 
-function attachMessageListener(sender) {
-  window.addEventListener('storage', event => {
-    if (event.key === '::activeplayer' && event.newValue !== sender.__seed) {
-      sender.pause();
-    }
-  });
+function restartConstrolsFade() {
+  fullscreenPlayer.controls.show();
+  if (fadeControl === null) fadeControl = setTimeout(controlsFade, 1000);
+}
+
+Player.setFullscreen = function(sender) {
+  document.removeEventListener('mousemove', restartConstrolsFade);
+  if (sender) {
+    document.addEventListener('mousemove', restartConstrolsFade);
+  }
+  fullscreenPlayer = sender;
 }
 
 // FIXME: wtf
@@ -47,28 +54,28 @@ function sendMessage(sender) {
   }
 }
 
+function attachMessageListener(sender) {
+  window.addEventListener('storage', event => {
+    if (event.key === '::activeplayer' && event.newValue !== sender.__seed) {
+      sender.pause();
+    }
+  });
+}
+
 function canGen(child) {
   return !child || child.classList.contains('playlist');
 }
 
 function Player() { }
+makeExtensible(Player);
 
-/* Standardise fullscreen API */
-(function(p) {
-  Player.requestFullscreen = p.requestFullscreen || p.mozRequestFullScreen || p.msRequestFullscreen || p.webkitRequestFullscreen || function() {};
-  Player.exitFullscreen = document.exitFullscreen || document.mozCancelFullScreen || document.msExitFullscreen || document.webkitExitFullscreen || function() {};
-  Player.isFullscreen = function() {
-    return document.fullScreen || document.mozFullScreen || document.webkitIsFullScreen;
-  };
-  Player.onFullscreen = function(func) {
-    document.addEventListener('webkitfullscreenchange', func);
-    document.addEventListener('mozfullscreenchange', func);
-    document.addEventListener('fullscreenchange', func);
-  };
-})(Element.prototype);
-
-Player.canPlayType = function(mime) {
-  return !!(mime = VIDEO_ELEMENT.canPlayType(mime)).length && mime !== 'no';
+Player.isFullscreen = function() {
+  return document.fullScreen || document.mozFullScreen || document.webkitIsFullScreen;
+};
+Player.onFullscreen = function(func) {
+  document.addEventListener('webkitfullscreenchange', func);
+  document.addEventListener('mozfullscreenchange', func);
+  document.addEventListener('fullscreenchange', func);
 };
 
 Player.speeds = [
@@ -80,78 +87,6 @@ Player.speeds = [
   {name: '0.25x', value: 0.25}
 ];
 
-Player.createVideoElement = function(player) {
-  const video = document.createElement('video');
-  
-  if (!player.source || player.source === '0') return video;
-  
-  if (typeof player.source === 'string' && player.source.indexOf('blob') === 0) {
-    video.setAttribute('src', player.source);
-    return video;
-  }
-  
-  video.innerHTML = '<source src="/stream/' + player.source + '.webm" type="video/webm"></source><source src="/stream/' + player.source + player.mime[0] + '" type="' + player.mime[1] + '"></source>';
-  
-  return video;
-};
-
-Player.errorMessage = function(video) {
-  if (!video.error) {
-    switch (video.networkState) {
-      case HTMLMediaElement.NETWORK_NO_SOURCE:
-        return 'Network Error';
-    }
-    return 'Unknown Error';
-  }
-  switch (video.error.code) {
-    case video.error.MEDIA_ERR_ABORTED: return 'Playback Aborted';
-    case video.error.MEDIA_ERR_NETWORK: return 'Network Error';
-    case video.error.MEDIA_ERR_DECODE: return 'Feature not Supported';
-    case video.error.MEDIA_ERR_SRC_NOT_SUPPORTED: return 'Codec not supported';
-    default: return 'Unknown Error';
-  }
-};
-
-Player.errorPresent = function(video) {
-  return (video.error && video.error.code !== video.error.MEDIA_ERR_ABORTED) || (video.networkState === HTMLMediaElement.NETWORK_NO_SOURCE);
-};
-
-Player.isready = function(video) {
-  return video.readyState === 4;
-};
-
-Player.noise = (function() {
-  var canvas = null, ctx = null;
-  var toggle = true;
-  
-  function noise(ctx) {
-    var w = ctx.canvas.width,
-        h = ctx.canvas.height,
-        idata = ctx.createImageData(w, h),
-        buffer32 = new Uint32Array(idata.data.buffer),
-        len = buffer32.length,
-        i = 0;
-    for (; i < len;) buffer32[i++] = ((255 * Math.random()) | 0) << 24;
-    ctx.putImageData(idata, 0, 0);
-  }
-  
-  function loop() {
-    toggle = !toggle;
-    if (toggle) return requestAnimationFrame(loop);
-    noise(ctx);
-    requestAnimationFrame(loop);
-  }
-  
-  return function setupNoise() {
-    if (canvas !== null) return canvas;
-    canvas = document.createElement('canvas');
-    ctx = canvas.getContext('2d');
-    canvas.width = canvas.height = 256;
-    loop();
-    return canvas;
-  };
-})();
-
 //TODO: Move to server-side view
 Player.generate = function(holder) {
   holder.insertAdjacentHTML('afterbegin', `
@@ -161,7 +96,7 @@ Player.generate = function(holder) {
   <span class="suspend" style="display:none"><i class="fa fa-pulse fa-spinner"></i></span>
   <span class="pause resize-holder">
     <span class="playback"></span>
-    <h1 class="resize-target" style="display:none;"><a class="title"></a></h1>
+    <h1 class="resize-target" style="display:none;"><a target="_blank" href="'/view/${holder.dataset.source}-${holder.dataset.title}" class="title">${holder.dataset.title}</a></h1>
   </span>
 </div>
 <div class="controls playback-controls">
@@ -187,90 +122,135 @@ Player.generate = function(holder) {
 };
 
 Player.onFullscreen(function() {
-  if (Player.fullscreenPlayer) {
-    Player.fullscreenPlayer.fullscreen(Player.isFullscreen());
+  if (fullscreenPlayer) {
+    fullscreenPlayer.fullscreen(Player.isFullscreen());
   }
 });
 
-Player.extend = function(Child, overrides) {
-  var keys = Object.keys(overrides);
-  Child.prototype = new this();
-  Child.Super = this.prototype;
-  Child.extend = this.extend;
-  for (var i = keys.length; i--;) {
-    Child.prototype[keys[i]] = overrides[keys[i]];
+function readyVideo(sender) {
+  var video;
+  if (sender.audioOnly && sender.source) {
+    video = document.createElement('audio');
+    video.src = '/stream/' + sender.source + sender.mime[0];
+    video.type = sender.mime[1];
+  } else {
+    video = sender.createVideoElement();
   }
-};
+  
+  if (sender.time) {
+    if (player.isReady()) {
+      video.currentTime = sender.time;
+    } else {
+      const setTime = () => {
+        video.currentTime = sender.time;
+        video.removeEventListener('canplay', setTime);
+      };
+      video.addEventListener('canplay', setTime);
+    }
+  }
+  
+  const sources = video.querySelectorAll('source');
+  if (sources.length) sources[sources.length - 1].addEventListener('error', e => sender.error(e));
+  video.addEventListener('abort', e => sender.error(e));
+  video.addEventListener('error', e => sender.error(e));
+  
+  video.addEventListener('pause', () => sender.pause());
+  video.addEventListener('play', () => {
+    sender.player.classList.add('playing');
+    sender.player.classList.remove('stopped');
+    sender.player.classList.remove('paused');
+    sender.player.classList.remove('error');
+    video.loop = !!sender.__loop;
+    sendMessage(sender);
+    sender.volume(video.volume, video.muted);
+  });
+  
+  video.addEventListener('ended', () => {
+    if (sender.__autoplay) {
+      sender.navTo(document.querySelector('#playlist_next'));
+    } else if (sender.pause()) {
+      sender.player.classList.add('stopped');
+    }
+  });
+  
+  let suspendTimer = null;
+  const suspended = function() {
+    if (suspendTimer) return;
+    suspendTimer = setTimeout(() => this.style.display = 'block', 3000);
+  }
+  
+  video.addEventListener('suspend', suspended);
+  video.addEventListener('waiting', suspended);
+  
+  video.addEventListener('volumechange', () => {
+    sender.volume(video.volume, video.muted || video.volume === 0);
+  });
+  
+  video.addEventListener('timeupdate', () => {
+    if (suspendTimer) {
+      clearTimeout(suspendTimer);
+      suspendTimer = null;
+    }
+    sender.track(video.currentTime, parseFloat(video.duration) || 0);
+  });
+  
+  return video;
+}
 
 Player.prototype = {
   // FIXME: way too much happening here
   constructor: function(el, standalone) {
+    this.__sendMessages = !standalone;
+    
+    this.embedded = false;
+    this.audioOnly = !!el.dataset.audio;
+    this.source = el.dataset.video || el.dataset.audio;
+    this.video = null;
+    this.mime = (el.dataset.mime || '.mp4|video/m4v').split('|');
+    this.time = parseInt(el.dataset.time || '0') || 0;
+    this.title = el.dataset.title;
+    this.artist = el.dataset.artist;
+    
     if (canGen(el.firstElementChild)) Player.generate(el);
     
-    this.__sendMessages = !standalone;
-    this.embedded = false;
     this.dom = el;
+    this.suspend = el.querySelector('.suspend');
+    
     this.player = el.querySelector('.player');
     this.player.error = this.player.querySelector('.error');
     this.player.error.message = this.player.error.querySelector('.error-message');
-    this.suspend = el.querySelector('.suspend');
-    this.contextmenu = el.querySelector('.contextmenu');
-    this.contextmenu.unset = 1;
     this.player.getPlayerObj = () => this;
     
-    this.video = null;
-    this.mime = (el.dataset.mime || '.mp4|video/m4v').split('|');
+    this.heading = el.querySelector('h1 .artist');
+    
+    this.contextmenu = new ContextMenu(el.querySelector('.contextmenu'), this.dom);
+    
     this.controls = el.querySelector('.controls');
-    this.source = el.dataset.video;
-    
-    if (!this.source) {
-      this.source = el.dataset.audio;
-      this.audioOnly = true;
-      this.preview = document.createElement('img');
-      this.preview.src = '/cover/' + this.source + '-small.png';
-    } else {
-      this.preview = document.createElement('canvas');
+    if (this.controls) {
+      this.controls = new PlayerControls(this, this.controls);
     }
-    
-    this.time = el.dataset.time;
-    
-    // at the bottom
-    resize(el);
-    
-    const h1Title = el.querySelector('h1 .title');
-    const h1Artist = el.querySelector('h1 .artist');
-    
-    this.title = el.dataset.title;
-    if (h1Title) h1Title.textContent = this.title;
-    this.artist = el.dataset.artist;
-    if (this.artist && h1Artist) h1Artist.textContent = this.artist;
-    
-    new TapToggler(this.dom);
     
     el.addEventListener('click', ev => {
       if (ev.button !== 0) return;
-      
-      if (!this.removeContext(ev)) {
+      if (!this.contextmenu.hide(ev)) {
         if (!this.player.classList.contains('playing') || this.dom.toggler.interactable()) {
           if (this.dom.playlist && this.dom.playlist.classList.contains('visible')) {
             this.dom.playlist.classList.toggle('visible');
           } else {
-            this.toggleVideo();
+            this.togglePlayback();
           }
         }
       }
     });
     
-    el.addEventListener('contextmenu', ev => this.showContext(ev));
-    
     const activeTouches = [];
     let tapped = false;
+    new TapToggler(this.dom);
     
     el.addEventListener('touchstart', ev => {
-      if (Player.fullscreenPlayer === ev.target) {
+      if (fullscreenPlayer === ev.target) {
         if (activeTouches.length > 0) {
-          halt(ev);
-          return;
+          return halt(ev);
         }
       }
       
@@ -298,148 +278,56 @@ Player.prototype = {
     el.addEventListener('touchend', onTouchEvent);
     el.addEventListener('touchcancel', onTouchEvent);
     
-    this.__loop = false;
-    this.__speed = 3;
-    this.contextmenu.addEventListener('click', halt);
-    this.addContext('Loop', false, val => {
-      val(this.loop(!this.__loop));
-    });
-    this.addContext('Speed', this.speed(this.__speed), val => {
-      this.__speed = (this.__speed + 1) % Player.speeds.length;
-      val(this.speed(this.__speed));
-    });
-    
-    document.addEventListener('click', ev => { if (ev.button === 0) this.removeContext(ev); });
     document.addEventListener('keydown', ev => {
       if (ev.which === Key.SPACE) {
-        if (!document.querySelector('input:focus,textarea:focus')) {
+        if (!document.querySelector('input:focus, textarea:focus')) {
           if (this.video) {
-            this.toggleVideo();
+            this.togglePlayback();
             halt(ev);
           }
         }
       }
     });
     
-    if (this.controls) {
-      this.controls.track = this.controls.querySelector('.track');
-      this.controls.track.addEventListener('mousedown', ev => {
-        if (!this.removeContext(ev)) {
-          this.checkstart();
-          this.jump(ev);
-        }
-      });
-      this.controls.track.bob = this.controls.querySelector('.track .bob');
-      this.controls.track.fill = this.controls.querySelector('.track .fill');
-      this.controls.track.bob.addEventListener('mousedown', ev => {
-        if (!this.removeContext(ev)) this.startChange(ev);
-      });
-      this.controls.track.bob.addEventListener('touchstart', ev => {
-        this.removeContext(ev);
-        this.startChange(ev);
-      });
-      this.controls.track.preview = el.querySelector('.track .previewer');
-      this.controls.track.preview.appendChild(this.preview);
-      this.controls.track.addEventListener('mousemove', ev => {
-        this.drawPreview(this.evToProgress(ev));
-      });
-      this.controls.volume = this.controls.querySelector('.volume');
-      this.controls.volume.addEventListener('click', ev => {
-        if (ev.button !== 0) return;
-        if (!this.removeContext(ev)) {
-          if (this.controls.volume.toggler.interactable()) {
-            this.muteUnmute();
-          }
-        }
-      });
-      new TapToggler(this.controls.volume);
-      this.controls.volume.addEventListener('touchstart', ev => {
-        this.controls.volume.toggler.update(ev);
-        halt(ev);
-      });
-      
-      this.controls.volume.bob = this.controls.querySelector('.volume .bob');
-      this.controls.volume.fill = this.controls.querySelector('.volume .fill');
-      this.controls.volume.bob.addEventListener('mousedown', ev => {
-        if (!this.removeContext(ev)) this.startChangeVolume(ev);
-      });
-      this.controls.volume.bob.querySelector('touchstart', ev => {
-        this.removeContext(ev);
-        this.startChangeVolume(ev);
-      });
-      this.controls.volume.slider = this.controls.querySelector('.volume .slider');
-      this.controls.volume.slider.addEventListener('mousedown', ev => {
-        if (!this.removeContext(ev)) {
-          this.checkstart();
-          this.changeVolume(ev);
-        }
-      });
-      this.controls.fullscreen = this.controls.querySelector('.fullscreen .indicator');
-      this.controls.querySelector('.fullscreen').addEventListener('click', ev => {
-        if (ev.button !== 0) return;
-        if (!this.removeContext(ev)) {
-          this.fullscreen(!Player.isFullscreen());
-          halt(ev);
-        }
-      });
-      this.controls.volume.slider.addEventListener('click', halt);
-      jSlim.each(this.controls, 'li', a => a.addEventListener('click', halt));
-    }
+    this.contextmenu.addItem('Loop', this.setLoop(false), val => {
+      val(this.setLoop(!this.__loop));
+    });
     
-    attachMessageListener(this);
+    this.contextmenu.addItem('Speed', this.changeSpeed(3), val => {
+      val(this.changeSpeed(this.__speed + 1));
+    });
     
-    if (el.dataset.embed) {
-      this.setEmbed();
-      jSlim.ready(function() {
-        const selected = document.querySelector('.playlist a.selected');
-        if (selected) scrollTo(selected, document.querySelector('.playlist .scroll-container'));
-      });
-    }
+    this.contextmenu.addItem('Autoplay', this.setAutoplay(!!cookies.get('autoplay')), val => {
+      val(this.setAutoplay(!this.__autoplay));
+      cookies.set('autoplay', this.__autoplay);
+    });
+    
+    this.__autostart = !!cookies.get('autostart');
+    this.contextmenu.addItem('Autostart', this.__autostart, val => {
+      val(this.__autostart = !this.__autostart);
+      cookies.set('autostart', this.__autostart);
+    });
     
     if (el.dataset.playlistId) {
       this.setPlaylist(el.dataset.playlistId, el.dataset.playlistIndex);
     }
     
-    if (el.dataset.autoplay) {
-      this.checkstart();
-      this.addContext('Autoplay', this.autoplay(!cookies.get('autoplay')), val => {
-        val(this.__autoplay = !this.__autoplay);
-        cookies.set('autoplay', this.__autoplay ? '' : '1');
-      });
-    } else if (el.dataset.resume === 'true') {
+    if (el.dataset.embed) {
+      this.setEmbed();
+    }
+    
+    const selected = document.querySelector('.playlist a.selected');
+    if (selected) scrollTo(selected, document.querySelector('.playlist .scroll-container'));
+    
+    attachMessageListener(this);
+    // at the bottom
+    resize(el);
+    
+    if (this.__autostart || el.dataset.autoplay || el.dataset.resume === 'true') {
       this.checkstart();
     }
     
     return this;
-  },
-  removeContext: function(ev) {
-    if (ev.which === 1 && !this.contextmenu.classList.contains('hidden')) {
-      this.contextmenu.classList.add('hidden');
-      return 1;
-    }
-    return 0;
-  },
-  showContext: function(ev) {
-    
-    var x = ev.clientX;
-    var y = ev.clientY;
-    
-    if (x + this.contextmenu.offsetWidth >= document.body.clientWidth) {
-      x = document.body.clientWidth - this.contextmenu.offsetWidth;
-    }
-    if (y + this.contextmenu.offsetHeight >= document.body.clientHeight) {
-      y = document.body.clientHeight - this.contextmenu.offsetHeight;
-    }
-    
-    var off = jSlim.offset(this.dom);
-    x += document.scrollingElement.scrollLeft - off.left;
-    y += document.scrollingElement.scrollTop - off.top;
-    
-    this.contextmenu.style.top = y + 'px';
-    this.contextmenu.style.left = x + 'px';
-    this.contextmenu.classList.remove('hidden');
-    
-    halt(ev);
   },
   setEmbed: function() {
     this.embedded = true;
@@ -449,17 +337,12 @@ Player.prototype = {
     
     h1.style.pointerEvents = 'initial';
     h1.style.display = '';
-    
-    link.target = '_blank';
-    link.href = '/view/' + this.source + '-' + this.title;
-    
+    link.addEventListener('click', ev => ev.stopPropagation());
     link.addEventListener('mouseover', () => {
       if (this.video && this.video.currentTime > 0) {
         link.href = '/view/' + this.source + '-' + this.title + '?resume=' + this.video.currentTime;
       }
     });
-    
-    link.addEventListener('click', ev => ev.stopPropagation());
   },
   setPlaylist: function(albumId, albumIndex) {
     this.album = {
@@ -478,14 +361,8 @@ Player.prototype = {
       halt(ev);
     });
     
-    this.addContext('Autoplay', this.autoplay(!cookies.get('autoplay')), val => {
-      val(this.__autoplay = !this.__autoplay);
-      cookies.set('autoplay', this.__autoplay ? '' : '1');
-    });
-    
     this.dom.playlist.addEventListener('click', ev => {
       if (ev.button !== 0) return;
-      
       const target = ev.target.closest('.items a, #playlist_next, #playlist_prev');
       this.navTo(target);
       halt(ev);
@@ -531,39 +408,25 @@ Player.prototype = {
     
     document.location.href.replace(sender.href);
   },
-  addContext: function(title, initial, callback) {
-    const item = document.createElement('li');
-    item.innerHTML = '<div class="label">' + title + '</div>';
-    
-    const value = document.createElement('div');
-    value.classList.add('value');
-    item.appendChild(value);
-    
-    function val(s) {
-      value.innerHTML = typeof s === 'boolean' ? s ? '<i class="fa fa-check"></i>' : '' : s;
-    }
-    
-    val(initial);
-    item.addEventListener('click', () => callback(val));
-    this.contextmenu.appendChild(item);
-  },
-  speed: function(speed) {
+  changeSpeed: function(speed) {
+    this.__speed = speed % Player.speeds.length;
     speed = Player.speeds[speed] || Player.speeds[3];
     if (this.video) this.video.playbackRate = speed.value;
     return speed.name;
   },
   fullscreen: function(on) {
-    this.onfullscreen(on);
+    this.controls.fullscreen.innerHTML = '<i class="fa fa-' + (on ? 'restore' : 'arrows-alt') + '"></i>';
+    if (!on) this.player.querySelector('.playing').style.cursor = '';
     if (!Player.requestFullscreen) return false;
     if (fadeControl !== null) clearTimeout(fadeControl);
-    if (Player.fullscreenPlayer && Player.fullscreenPlayer !== this) {
-      Player.fullscreenPlayer.fullscreen(false);
+    if (fullscreenPlayer && fullscreenPlayer !== this) {
+      fullscreenPlayer.fullscreen(false);
     }
     if (on) {
       Player.requestFullscreen.apply(this.dom);
-      Player.fullscreenPlayer = this;
+      Player.setFullscreen(this);
       fadeControl = setTimeout(controlsFade, 1000);
-    } else if (Player.fullscreenPlayer) {
+    } else if (fullscreenPlayer) {
       if (this.redirect) {
         if (this.video) {
           this.redirect += (this.redirect.indexOf('?') >= 0 ? '&' : '?') + 't=' + this.video.currentTime;
@@ -571,25 +434,21 @@ Player.prototype = {
         document.location.replace(this.redirect);
         return;
       }
-      Player.fullscreenPlayer = null;
+      Player.setFullscreen(null);
       Player.exitFullscreen.apply(document);
-      this.controls.style.opacity = '';
+      this.controls.show();
     }
-    Player.fullscreenPlayer = on ? this : null;
+    Player.setFullscreen(on ? this : null);
     return on;
   },
-  onfullscreen: function(on) {
-    this.controls.fullscreen.innerHTML = on ? '<i class="fa fa-restore"></i>' : '<i class="fa fa-arrows-alt"></i>';
-    if (!on) this.player.querySelector('.playing').style.cursor = '';
-  },
-  autoplay: function(on) {
+  setAutoplay: function(on) {
     this.__autoplay = on;
     if (on) {
-      this.loop(false);
+      this.setLoop(false);
     }
     return on;
   },
-  loop: function(on) {
+  setLoop: function(on) {
     this.__loop = on;
     if (this.video) this.video.loop = on;
     return on;
@@ -599,8 +458,8 @@ Player.prototype = {
   },
   loadAttributesAndRestart: function(attr) {
     this.dom.style.backgroundImage = "url('/cover/" + attr.source + ".png')";
-    this.dom.querySelector('h1 .title').textContent = this.title = attr.title;
-    this.dom.querySelector('h1 .artist').textContent = this.artist = attr.artist;
+    this.heading.title.textContent = this.title = attr.title;
+    this.heading.artist.textContent = this.artist = attr.artist;
     this.source = attr.source;
     this.mime = attr.mime;
     this.audioOnly = attr.audioOnly;
@@ -630,80 +489,28 @@ Player.prototype = {
       this.video.load();
     }
   },
-  start: function() {
-    let video;
+  isReady: function() {
+    return this.video && this.video.readyState === 4;
+  },
+  createVideoElement: function() {
+    const video = document.createElement('video');
     
+    if (!this.source || this.source === '0') return video;
+    
+    if (typeof this.source === 'string' && this.source.indexOf('blob') === 0) {
+      video.setAttribute('src', this.source);
+      return video;
+    }
+    
+    video.innerHTML = '<source src="/stream/' + this.source + '.webm" type="video/webm"></source><source src="/stream/' + this.source + this.mime[0] + '" type="' + this.mime[1] + '"></source>';
+    
+    return video;
+  },
+  start: function() {
     if (!this.video) {
-      if (this.audioOnly && this.source) {
-        video = document.createElement('audio');
-        video.src = '/stream/' + this.source + this.mime[0];
-        video.type = this.mime[1];
-      } else {
-        video = Player.createVideoElement(this);
-      }
-      
-      this.video = video;
-      
-      if (this.time && this.time !== '0') {
-        if (Player.isready(this.video)) {
-          this.video.currentTime = parseInt(this.time, 10);
-        } else {
-          const t = parseInt(this.time, 10);
-          const setTime = () => {
-            this.currentTime = t;
-            this.removeEventListener('canplay', setTime);
-          };
-          this.video.addEventListener('canplay', setTime);
-        }
-      }
+      this.video = readyVideo(this);
       this.player.querySelector('.playing').appendChild(this.video);
-      
-      video.addEventListener('pause', () => this.pause());
-      video.addEventListener('play', () => {
-        this.player.classList.add('playing');
-        this.player.classList.remove('stopped');
-        this.player.classList.remove('paused');
-        this.player.classList.remove('error');
-        this.video.loop = !!this.__loop;
-        sendMessage(this);
-        this.volume(video.volume, video.muted);
-      });
-      video.addEventListener('abort', e => this.error(e));
-      video.addEventListener('error', e => this.error(e));
-      
-      const sources = video.querySelectorAll('source');
-      if (sources.length) sources[sources.length - 1].addEventListener('error', e => this.error(e));
-      
-      video.addEventListener('ended', () => {
-        if (this.__autoplay) {
-          this.navTo(document.querySelector('#playlist_next'));
-        } else {
-          if (this.pause()) this.player.classList.add('stopped');
-        }
-      });
-      
-      let suspendTimer = null;
-      function suspended() {
-        if (suspendTimer) return;
-        suspendTimer = setTimeout(() => this.style.display = 'block', 3000);
-      }
-      
-      video.addEventListener('suspend', suspended.bind(this));
-      video.addEventListener('waiting', suspended.bind(this));
-      
-      video.addEventListener('volumechange', () => {
-        this.volume(this.video.volume, this.video.muted || this.video.volume === 0);
-      });
-      
-      video.addEventListener('timeupdate', () => {
-        if (suspendTimer) {
-          clearTimeout(suspendTimer);
-          suspendTimer = null;
-        }
-        this.track(this.video.currentTime, parseFloat(this.video.duration) || 0);
-      });
-      
-      this.volume(this.video.volume, video.muted);
+      this.volume(this.video.volume, this.video.muted);
     }
     
     if (this.video.networkState === HTMLMediaElement.NETWORK_NO_SOURCE) {
@@ -714,7 +521,7 @@ Player.prototype = {
   },
   stop: function() {
     this.pause();
-    this.changetrack(0);
+    this.jump(0);
     this.video.parentNode.removeChild(this.video);
     this.video = null;
     this.suspend.style.display = 'none';
@@ -728,20 +535,20 @@ Player.prototype = {
   },
   error: function(e) {
     this.pause();
-    if (Player.errorPresent(this.video)) {
-      const message = Player.errorMessage(this.video);
+    if (errorPresent(this.video)) {
+      const message = errorMessage(this.video);
       this.player.classList.add('stopped');
       this.player.classList.add('error');
-      this.player.error.message.textContent = message;
+      this.player.error.message.innerText = message;
       if (!this.noise) {
-        this.noise = Player.noise();
+        this.noise = setupNoise();
         this.player.error.appendChild(this.noise);
       }
       console.warn(message);
     }
     console.log(e);
   },
-  toggleVideo: function() {
+  togglePlayback: function() {
     if (this.player.classList.contains('playing')) {
       return this.pause();
     }
@@ -753,14 +560,9 @@ Player.prototype = {
     this.controls.track.bob.style.left = percentFill + '%';
     this.controls.track.fill.style.right = (100 - percentFill) + '%';
     
-    if (this.dom.toggler.touching()) {
-      this.controls.track.preview.style.left = percentFill + '%';
-      this.controls.track.preview.dataset.time = toHMS(time);
-    }
-    
     this.suspend.style.display = 'none';
   },
-  changetrack: function(progress) {
+  jump: function(progress) {
     if (progress < 0) progress = 0;
     if (progress > 1) progress = 1;
     const duration = parseFloat(this.video.duration) || 0;
@@ -768,132 +570,31 @@ Player.prototype = {
     this.video.currentTime = time;
     this.track(time, duration);
   },
-  jump: function(ev) {
-    const progress = this.evToProgress(ev);
-    this.changetrack(progress);
-    if (ev.touches) {
-      this.drawPreview(progress);
-    }
-    halt(ev);
-  },
-  evToProgress: function(ev) {
-    let x = ev.pageX;
-    if (!x && ev.touches) {
-      x = ev.touches[0].pageX || 0;
-    }
-    
-    x -= this.controls.track.getBoundingClientRect().left + pageXOffset;
-    if (x < 0) x = 0;
-    if (x > this.controls.track.clientWidth) x = this.controls.track.clientWidth;
-    return x / this.controls.track.clientWidth;
-  },
-  startChange: function(ev) {
-    this.startChangeGeneric(ev, 'tracking', ev => this.jump(ev));
-  },
-  startChangeVolume: function(ev) {
-    this.startChangeGeneric(ev, 'voluming', ev => this.changeVolume(ev));
-  },
-  startChangeGeneric: function(ev, clazz, func) {
-    this.checkstart();
-    this.dom.classList.add(clazz);
-    
-    const ender = () => {
-      ['mouseup', 'touchend', 'touchcancel'].forEach(t => document.removeEventListener(t, ender));
-      ['mousemove', 'touchmove'            ].forEach(t => document.removeEventListener(t, func));
-      this.dom.classList.remove(clazz);
-    };
-    
-    ['mouseup', 'touchend', 'touchcancel'].forEach(t => document.addEventListener(t, ender));
-    ['mousemove', 'touchmove'            ].forEach(t => document.addEventListener(t, func));
-    
-    halt(ev);
-  },
-  changeVolume: function(ev) {
-    const height = this.controls.volume.slider.clientHeight;
-    if (height === 0) return;
-    
-    let y = ev.pageY;
-    if (!y && ev.touches) {
-      y = ev.touches[0].pageY || 0;
-    }
-    y -= this.controls.volume.slider.getBoundingClientRect().top + window.pageYOffset;
-    if (y < 0) y = 0;
-    if (y > height) y = height;
-    y = height - y;
-    this.volume(y / height, y === 0);
-    halt(ev);
-  },
   volume: function(volume, muted) {
-    const indicator = this.dom.querySelector('.volume .indicator i');
-    if (indicator) indicator.setAttribute('class', muted ? 'fa fa-volume-off' : volume < 0.33 ? 'fa fa-volume-down' : volume < 0.66 ? 'fa fa-volume-mid' : 'fa fa-volume-up');
+    if (this.controls.volume.indicator) this.controls.volume.indicator.setAttribute('class', 'fa fa-volume-' + getVolumeIcon(muted ? 0 : volume));
     if (this.video) this.video.volume = volume;
     if (muted) volume = 0;
     volume *= 100;
-    this.controls.volume.bob.style.bottom = volume + '%';
-    this.controls.volume.fill.style.top = (100 - volume) + '%';
+    this.controls.volume.slider.bob.style.bottom = volume + '%';
+    this.controls.volume.slider.fill.style.top = (100 - volume) + '%';
   },
   muteUnmute: function() {
     this.checkstart();
     this.video.muted = !this.video.muted;
     this.volume(this.video.volume, this.video.muted);
-  },
-  drawPreview: function(progress) {
-    if (!this.video) return;
-    
-    const duration = parseInt(this.video.duration, 10) || 0;
-    let time = duration * progress;
-    
-    this.controls.track.preview.style.left = (time * 100 / duration) + '%';
-    this.controls.track.preview.dataset.time = toHMS(time);
-    
-    if (!this.audioOnly) {
-      // TODO: wtf
-      time = time -= time % 5;
-      
-      if (this.preview && this.preview.time !== time) {
-        this.preview.time = time;
-        
-        if (!this.preview.video) {
-          const tempVid = this.preview.video = Player.createVideoElement(this);
-          const canvas = this.preview;
-          const context = this.preview.getContext('2d');
-          tempVid.addEventListener('loadeddata', function loadTime() {
-            tempVid.currentTime = time;
-            tempVid.removeEventListener('loadeddata', loadTime);
-          });
-          tempVid.addEventListener('seeked', () => {
-            context.drawImage(tempVid, 0, 0, canvas.width, canvas.height);
-          });
-        } else {
-          if (Player.isready(this.preview.video)) {
-            this.preview.video.currentTime = time;
-          }
-        }
-
-      }
-    }
-
   }
 };
 
-// FIXME: why is it necessary to also stopPropagation?
-// Utility function, used all over the place. Move it if you like.
-function halt(ev) {
-  ev.preventDefault();
-  ev.stopPropagation();
+function getVolumeIcon(level) {
+  if (level < 0) return 'off';
+  if (level < 0.33) return 'down';
+  if (level < 0.66) return 'mid';
+  return 'up';
 }
 
 function resize(obj) {
-  // aspect is defined at the top of the file
-  obj.style.marginBottom = '';
-  obj.style.height = (obj.clientWidth / aspect) + 'px';
-}
-
-function removeContext() {
-  const fakeEvent = { which: 1 };
-  jSlim.all('.player', p => {
-    if (p.getPlayerObj) p.getPlayerObj().removeContext(fakeEvent);
-  });
+  obj.style.marginBottom = '';          // 16/9 aspect ratio
+  obj.style.height = (obj.clientWidth * 9 / 16) + 'px';
 }
 
 jSlim.ready(() => {
@@ -903,16 +604,6 @@ jSlim.ready(() => {
   
   window.addEventListener('resize', () => {
     jSlim.all('.video', resize);
-    removeContext();
-  });
-  window.addEventListener('blur', removeContext);
-  
-  document.addEventListener('mousemove', () => {
-    if (Player.fullscreenPlayer) {
-      Player.fullscreenPlayer.controls.style.opacity = 1;
-      Player.fullscreenPlayer.player.querySelector('.playing').style.cursor = '';
-      if (fadeControl === null) fadeControl = setTimeout(controlsFade, 1000);
-    }
   });
 });
 
