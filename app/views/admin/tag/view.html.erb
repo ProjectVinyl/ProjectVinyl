@@ -1,11 +1,15 @@
 <% lim "900px" %>
-<h1 class="title">
-	<a href="/">Home</a> <i class="fa fa-chevron-right"></i> <a href="/admin">Admin</a> <i class="fa fa-chevron-right"></i> 
-	Tag <i class="fa fa-chevron-right"></i> <a href="<%= @tag.link %>"><%= @tag.name %></a>
-</h1>
+<%= render partial: 'view/breadcrumb', locals: {
+	stack: [
+		{ link: '/admin', title: 'Admin' },
+		{ title: 'Tags' },
+		{ link: @tag.link, title: @tag.id }
+	],
+	title: @tag.name
+} %>
 <section class="page full-width properties">
 	<h1>Editing Tag <%= @tag.name %></h1>
-	<%= form_for(@tag, as: "tag", url: "/admin/tags/" + @tag.id.to_s) do |f| %>
+	<%= form_for(@tag, as: "tag", url: "/admin/tags/" + @tag.id.to_s, html: {method: :patch}) do |f| %>
 	<table>
 		<tr>
 			<td class="label">Domain</td>
@@ -56,7 +60,7 @@
 		<tr>
 			<td class="label"><%= f.label :description %></td>
 			<td class="field">
-				<%= render layout: '/thread/description_box' do %>
+				<%= render layout: 'comment/description_box' do %>
 					<%= f.text_area :description, class: "comment-content" %>
 				<% end %>
 			</td>
@@ -66,7 +70,7 @@
 				<%= f.label :implications %>
 			</td>
 			<td class="field">
-			<%= render layout: 'layouts/tageditor', locals: { tags: @tag.implications } do %>
+			<%= render layout: 'tag/editor', locals: { tags: @tag.implications } do %>
 				<%= f.text_area :tag_string %>
 			<% end %>
 			</td>

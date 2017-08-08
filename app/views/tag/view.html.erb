@@ -25,7 +25,7 @@
 		<div>
 			<h1>Implies</h1>
 			<ul class="tags">
-				<%= render partial: "layouts/genre_thumb_h", collection: @implies %>
+				<%= render partial: "tag/thumb_h", collection: @implies %>
 			</ul>
 		</div>
 		<% end %>
@@ -33,7 +33,7 @@
 		<div>
 			<h1>Implied by</h1>
 			<ul class="tags">
-				<%= render partial: "layouts/genre_thumb_h", collection: @implied %>
+				<%= render partial: "tag/thumb_h", collection: @implied %>
 			</ul>
 		</div>
 		<% end %>
@@ -41,7 +41,7 @@
 		<div>
 			<h1>Aliases</h1>
 			<ul class="tags">
-				<%= render partial: "layouts/genre_thumb_h", collection: @aliases %>
+				<%= render partial: "tag/thumb_h", collection: @aliases %>
 			</ul>
 		</div>
 		<% end %>
@@ -51,7 +51,7 @@
 				<button class="action options pop-out-toggle"><i class="fa fa-gear"></i> Options</button>
 				<ul class="pop-out">
 					<li class="action">
-						<a href="/admin/tag/<%= @tag.id %>">
+						<a href="/admin/tags/<%= @tag.id %>">
 							<span class="icon"><i class="fa fa-gavel"></i></span>
 							<span class="label">Admin</span>
 						</a>
@@ -60,7 +60,7 @@
 			</div>
 			<% end %>
 			<% if user_signed_in? %>
-			<button class="action toggle blue" data-family="tag-flags" data-descriminator="hide" data-action="hide" data-target="tag" data-id="<%= @tag.id %>">
+			<button class="action toggle blue" data-family="tag-flags" data-descriminator="hide" data-target="tags" data-id="<%= @tag.id %>" data-action="hide">
 				<span class="icon">
 					<% if current_user.hides([@tag.id]) %>
 						<i class="fa fa-check"></i>
@@ -68,7 +68,7 @@
 				</span>
 				<span class="label">Hide Tag</span>
 			</button>
-			<button class="action toggle blue" data-family="tag-flags" data-descriminator="spoiler" data-action="spoiler" data-target="tag" data-id="<%= @tag.id %>">
+			<button class="action toggle blue" data-family="tag-flags" data-descriminator="spoiler" data-target="tags" data-id="<%= @tag.id %>" data-action="spoiler">
 				<span class="icon">
 					<% if current_user.spoilers([@tag.id]) %>
 						<i class="fa fa-check"></i>
@@ -76,7 +76,7 @@
 				</span>
 				<span class="label">Spoiler Tag</span>
 			</button>
-			<button class="action toggle blue" data-family="tag-flags" data-descriminator="watch" data-action="watch" data-target="tag" data-id="<%= @tag.id %>">
+			<button class="action toggle blue" data-family="tag-flags" data-descriminator="watch" data-target="tags" data-id="<%= @tag.id %>" data-action="watch">
 				<span class="icon">
 					<% if current_user.watches(@tag) %>
 						<i class="fa fa-check"></i>
@@ -93,7 +93,7 @@
 	<h1>Recent Users</h1>
 	<% if @users.length > 0 %>
 	<ul id="artists" class="horizontal artist-list">
-		<%= render partial: 'layouts/artist_thumb_h', collection: @users.records %>
+		<%= render partial: 'user/thumb_h', collection: @users.records %>
 	</ul>
 	<div class="load-more">
 	<% if @users.pages > 0 %>
@@ -109,7 +109,7 @@
 	<h1>Recent Songs</h1>
 	<% if @videos.length > 0 %>
 	<ul id="songs" class="horizontal video-list">
-		<%= render partial: 'layouts/video_thumb_h', collection: @videos.records %>
+		<%= render partial: 'video/thumb_h', collection: @videos.records %>
 	</ul>
 	<div class="load-more">
 	<% if @videos.pages > 0 %>
