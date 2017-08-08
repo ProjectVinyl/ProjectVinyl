@@ -4,8 +4,12 @@ module Admin
 
     def view
       if !user_signed_in? || !current_user.is_contributor?
-        return render 'layouts/error', locals: { title: 'Access Denied', description: "You can't do that right now." }
+        return render 'layouts/error', locals: {
+          title: 'Access Denied',
+          description: "You can't do that right now."
+        }
       end
+      
       @modifications_allowed = true
       @video = Video.where(id: params[:id]).first
       @user = @video.user
@@ -13,113 +17,118 @@ module Admin
     end
     
     def hidden
-      @page = params[:page].to_i
-      @results = Pagination.paginate(Video.where(hidden: true), @page, 40, true)
-      render json: {
-        content: render_to_string(partial: 'admin/video/video_thumb_h.html.erb', collection: @results.records),
-        pages: @results.pages,
-        page: @results.page
-      }
-    end
-
-    def unprocessed
-      @page = params[:page].to_i
-      @results = Pagination.paginate(Video.where("(processed IS NULL or processed = ?) AND hidden = false", false), @page, 40, false)
-      render json: {
-        content: render_to_string(partial: 'admin/video/video_thumb_h.html.erb', collection: @results.records),
-        pages: @results.pages,
-        page: @results.page
-      }
+      @records = Video.where(hidden: true)
+      render_pagination 'admin/video/thumb_h', Pagination.paginate(@records, params[:page].to_i, 40, true)
     end
     
-    def populate
-      if user_signed_in? && current_user.is_contributor?
-        if @video = Video.where(id: params[:video][:id]).first
-          @video.pull_meta(params[:source], params[:title], params[:description], params[:tags])
-        end
-      end
-      redirect_to action: "view", id: params[:video][:id]
+    def unprocessed
+      @records = Video.where("(processed IS NULL or processed = ?) AND hidden = false", false)
+      render_pagination 'admin/video/thumb_h', Pagination.paginate(@records, params[:page].to_i, 40, false)
     end
     
     def destroy
-      if user_signed_in? && current_user.is_contributor?
-        if video = Video.where(id: params[:id]).first
-          video.remove_self
-          flash[:notice] = "1 Item(s) deleted successfully"
-        else
-          flash[:error] = "Item could not be found"
+      badly_named_function do
+        if !(video = Video.where(id: params[:id]).first)
+          return flash[:error] = "Video not be found"
         end
-      else
-        flash[:error] = "Access Denied: You can't do that right now."
+        
+        video.remove_self
+        flash[:notice] = "1 Item(s) deleted successfully"
       end
-      redirect_to url_for(action: 'view')
     end
     
     def batch_drop
-      if user_signed_in? && current_user.is_admin?
+      badly_named_function do
         videos = Video.where(hidden: true)
         videos.each(&:remove_self)
-        flash[:notice] = videos.length.to_s + " Item(s) deleted successfully."
-      else
-        flash[:error] = "Access Denied: You can't do that right now."
+        flash[:notice] = "#{videos.length} Item(s) deleted successfully."
       end
-      redirect_to url_for(action: 'view')
+    end
+    
+    def rebuild_queue
+      badly_named_function do
+        flash[:notice] = Video.rebuild_queue.to_s + " videos in queue."
+      end
+    end
+    
+    def populate
+      try_and do
+        @video.pull_meta(params[:source], params[:title], params[:description], params[:tags])
+      end
     end
     
     def reprocess
-      if user_signed_in? && current_user.is_contributor?
-        if video = Video.where(id: params[:video][:id]).first
-          flash[:notice] = "Processing Video: " + video.generate_webm
-        end
+      try_and do
+        flash[:notice] = "Processing Video: " + @video.generate_webm
       end
-      redirect_to action: "view", id: params[:video][:id]
-    end
-
-    def rebuild_queue
-      if user_signed_in? && current_user.is_contributor?
-        flash[:notice] = Video.rebuild_queue.to_s + " videos in queue."
-      else
-        flash[:error] = "Access Denied: You can't do that right now."
-      end
-      redirect_to url_for(action: 'view')
     end
     
     def extract_thumbnail
-      if user_signed_in? && current_user.is_contributor?
-        if video = Video.where(id: params[:video][:id]).first
-          video.set_thumbnail(false)
-          flash[:notice] = "Thumbnail Reset."
-        end
+      try_and do
+        @video.set_thumbnail(false)
+        flash[:notice] = "Thumbnail Reset."
       end
-      redirect_to action: "view", id: params[:video][:id]
     end
     
     def merge
-      if user_signed_in? && current_user.is_staff?
-        if video = Video.where(id: params[:video][:id]).first
-          if other = Video.where(id: params[:video][:duplicate_id]).first
-            video.merge(current_user, other)
-          else
-            video.unmerge
-          end
-          flash[:notice] = "Changes Saved."
+      try_and do
+        if other = Video.where(id: params[:video][:duplicate_id]).first
+          @video.merge(current_user, other)
+        else
+          @video.unmerge
         end
+        
+        flash[:notice] = "Changes Saved."
       end
-      redirect_to action: "video", id: params[:video][:id]
     end
     
     def toggle_featured
-      if user_signed_in? && current_user.is_staff?
-        if video = Video.where(id: params[:id]).first
-          Video.where(featured: true).update_all(featured: false)
-          video.featured = !video.featured
-          Tag.add_tag('featured video', video) if video.featured
-          video.save
-          return render json: { added: video.featured }
-        end
+      if !current_user.is_staff?
+        return head 401
       end
-      head 401
+      
+      if !(video = Video.where(id: params[:id]).first)
+        return head 404
+      end
+      
+      Video.where(featured: true).update_all(featured: false)
+      video.featured = !video.featured
+      
+      if video.featured
+        video.save
+        Tag.add_tag('featured video', video)
+      end
+      
+      render json: {
+        added: video.featured
+      }
     end
     
+    private
+    def badly_named_function
+      redirect_to action: 'view', controller: 'admin/admin'
+      
+      if !current_user.is_contributor?
+        return flash[:error] = "Access Denied: You can't do that right now."
+      end
+      
+      yield
+    end
+    
+    def try_and
+      redirect_to action: "view", id: params[:video][:id]
+      
+      if current_user.is_contributor?
+        flash[:error] = "Error: Login required."
+        return
+      end
+      
+      if !(@video = Video.where(id: params[:video][:id]).first)
+        flash[:error] = "Error: Video not found."
+        return
+      end
+      
+      yield
+    end
   end
 end

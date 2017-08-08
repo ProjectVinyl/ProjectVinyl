@@ -108,8 +108,7 @@ class CommentThread < ApplicationRecord
         end
         @report.save
       end
-      Notification.notify_recievers(recievers, @report,
-                                    sender.username + " has posted a reply to <b>" + self.title + "</b>", self.location)
+      Notification.notify_recievers(recievers, @report, sender.username + " has posted a reply to <b>" + self.title + "</b>", self.location)
     elsif self.owner_type == 'Pm'
       self.owner.bump(sender, comment)
     else

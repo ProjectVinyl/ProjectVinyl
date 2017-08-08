@@ -1,42 +1,52 @@
 module Admin
   class ThreadController < ApplicationController
+    before_action :check_permission
+    
     def pin
-      if user_signed_in? && current_user.is_staff?
-        if thread = CommentThread.where(id: params[:id]).first
-          thread.pinned = !thread.pinned
-          thread.save
-          render json: { added: thread.pinned }
-          return
-        end
+      if !(@thread = CommentThread.where(id: params[:id]).first)
+        head 404
       end
-      head 401
+      
+      @thread.pinned = !@thread.pinned
+      @thread.save
+      render json: {
+        added: @thread.pinned
+      }
     end
 
     def lock
-      if user_signed_in? && current_user.is_contributor?
-        if thread = CommentThread.where(id: params[:id]).first
-          thread.locked = !thread.locked
-          thread.save
-          render json: { added: thread.locked }
-          return
-        end
+      if !(@thread = CommentThread.where(id: params[:id]).first)
+        head 404
       end
-      head 401
+      
+      @thread.locked = !@thread.locked
+      @thread.save
+      render json: {
+        added: @thread.locked
+      }
     end
     
     def move
-      if user_signed_in? && current_user.is_contributor?
-        if thread = CommentThread.where(owner_type: 'Board', id: params[:id]).first
-          if board = Board.where(id: params[:item]).first
-            thread.owner_id = board.id
-            thread.save
-            return render json: {
-              board.id => true
-            }
-          end
-        end
+      if !(@thread = CommentThread.where(id: params[:id], owner_type: 'Board').first)
+        head 404
       end
-      head 401
+      
+      if !(@board = Board.where(id: params[:item]).first)
+        head 404
+      end
+      
+      @thread.owner_id = @board.id
+      @thread.save
+      return render json: {
+        @board.id => true
+      }
+    end
+    
+    protected
+    def check_permission
+      if !user_signed_in? || !current_user.is_contributor?
+        head 401
+      end
     end
   end
 end

@@ -2,7 +2,10 @@ module Admin
   class TagTypeController < ApplicationController
     def index
       if !user_signed_in? || !current_user.is_contributor?
-        return render 'layouts/error', locals: { title: 'Access Denied', description: "You can't do that right now." }
+        return render 'layouts/error', locals: {
+          title: 'Access Denied',
+          description: "You can't do that right now."
+        }
       end
       @types = TagType.includes(:tag_type_implications).all
     end
@@ -14,17 +17,17 @@ module Admin
         end
         return render file: '/public/403.html', layout: false
       end
-
-      if tagtype = TagType.where(id: params[:tag_type][:id]).first
-        if error = tagtype.set_metadata(params[:tag_type][:prefix], params[:tag_type][:hidden] == '1')
-          flash[:error] = error
-        end
-        Tag.load_tags(params[:tag_type][:tag_string], tagtype)
-      else
+      
+      redirect_to action: 'index'
+      
+      if !(tagtype = TagType.where(id: params[:tag_type][:id]).first)
         flash[:error] = "Error: Record not be found."
       end
-
-      redirect_to action: 'index'
+      
+      if error = tagtype.set_metadata(params[:tag_type][:prefix], params[:tag_type][:hidden] == '1')
+        flash[:error] = error
+      end
+      Tag.load_tags(params[:tag_type][:tag_string], tagtype)
     end
 
     def new
@@ -37,37 +40,42 @@ module Admin
     end
 
     def create
-      if !user_signed_in? || !current_user.is_contributor?
-        return head 403
-      end
-      prefix = Tag.sanitize_name(params[:tag_type][:prefix])
-      if !ApplicationHelper.valid_string?(prefix)
-        flash[:error] = "Error: Prefix cannot be blank/null"
-      else
-        if TagType.where(prefix: prefix).count > 0
-          flash[:error] = "Error: A tagtype with that prefix already exists"
-        else
-          tagtype = TagType.create(prefix: prefix, hidden: params[:tag_type][:hidden] == '1')
-          Tag.load_tags(params[:tag_type][:tag_string], tagtype)
-          tagtype.find_and_assign
-        end
-      end
       redirect_to 'index'
+      
+      if !user_signed_in? || !current_user.is_contributor?
+        return flash[:error] = "Error: Login required."
+      end
+      
+      prefix = Tag.sanitize_name(params[:tag_type][:prefix])
+      
+      if !ApplicationHelper.valid_string?(prefix)
+        return flash[:error] = "Error: Prefix cannot be blank/null"
+      end
+      
+      if TagType.where(prefix: prefix).count > 0
+        return flash[:error] = "Error: A tagtype with that prefix already exists"
+      end
+      
+      tagtype = TagType.create(prefix: prefix, hidden: params[:tag_type][:hidden] == '1')
+      Tag.load_tags(params[:tag_type][:tag_string], tagtype)
+      tagtype.find_and_assign
     end
 
     def delete
       if !user_signed_in? || !current_user.is_contributor?
         return head 403
       end
-      if tagtype = TagType.where(id: params[:id]).first
-        Tag.where(tag_type_id: tagtype.id).update_all('tag_type_id = 0')
-        tagtype.destroy
-      else
+      
+      if !(tagtype = TagType.where(id: params[:id]).first)
         return render json: {
           error: "Error: Record not be found."
         }
       end
-      render json: {}
+      
+      Tag.where(tag_type_id: tagtype.id).update_all('tag_type_id = 0')
+      tagtype.destroy
+      render json: {
+      }
     end
   end
 end

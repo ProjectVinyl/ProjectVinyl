@@ -11,9 +11,9 @@ class ApplicationController < ActionController::Base
     !devise_controller? && controller_name != "ajax" && controller_name != "imgs" && action_name != "download" && request.fullpath.index('/ajax/').nil?
   end
   
-  def render_pagination(partial, pagination)
+  def render_pagination(partial, pagination, locals = {})
     render json: {
-      content: render_to_string(partial: partial, collection: pagination.records),
+      content: render_to_string(partial: partial, collection: pagination.records, locals: locals),
       pages: pagination.pages,
       page: pagination.page
     }

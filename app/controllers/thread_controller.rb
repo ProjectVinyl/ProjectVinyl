@@ -25,8 +25,7 @@ class ThreadController < ApplicationController
       comment = thread.comments.create(user_id: current_user.id)
       comment.update_comment(params[:thread][:description])
       thread.subscribe(current_user) if current_user.subscribe_on_thread?
-      redirect_to action: 'view', id: thread.id
-      return
+      return redirect_to action: 'view', id: thread.id
     end
     redirect_to action: "index", controller: "welcome"
   end
