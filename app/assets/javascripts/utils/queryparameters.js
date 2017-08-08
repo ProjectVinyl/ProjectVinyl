@@ -52,6 +52,11 @@ QueryPars.prototype = {
   }
 };
 
-QueryPars.current = new QueryPars(document.location.href.indexOf('?') < 0 ? '' : document.location.href.split('?')[1], window.history);
+function statePopped() {
+  QueryPars.current = new QueryPars(document.location.href.indexOf('?') < 0 ? '' : document.location.href.split('?')[1], window.history);
+}
+
+window.addEventListener('popstate', statePopped);
+statePopped();
 
 export { QueryPars as QueryParameters };

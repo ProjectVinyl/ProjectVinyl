@@ -26,8 +26,6 @@ function repaintPages(context, page, pages) {
   while (index <= page + 4 && index <= pages) {
     context.insertAdjacentHTML('beforeend', '<a class="button' + (index === page ? ' selected' : '') + '" data-page-to="' + index + '" href="?' + QueryParameters.current.clone(id, ++index).toString() + '">' + index + '</a>');
   }
-  
-  QueryParameters.current.setItem(id, page + 1);
 }
 
 function populatePage(context, json) {
@@ -54,6 +52,7 @@ function requestPage(context, page) {
   
   ajax.get(context.dataset.type + '?page=' + page + (context.dataset.args ? '&' + context.dataset.args : '')).json(json => {
     populatePage(context, json);
+    QueryParameters.current.setItem(context.dataset.id, json.page + 1);
   });
 }
 
@@ -61,6 +60,7 @@ const paginator = {
   repaint: function(context, json) {
     context.querySelector('.pagination .pages .button.selected').classList.remove('selected');
     populatePage(context, json);
+    QueryParameters.current.setItem(context.dataset.id, json.page + 1);
   },
   go: function(button) {
     requestPage(button.closest('.paginator'), button.dataset.pageTo);
@@ -71,14 +71,17 @@ const paginator = {
 jSlim.ready(function() {
   document.addEventListener('click', event => {
     // Left-click only, no modifiers
-    if (event.button !== 0) return;
-    if (event.ctrlKey || event.shiftKey) return;
-    
+    if (event.button !== 0 || event.ctrlKey || event.shiftKey) return;
     const target = event.target.closest('.pagination .pages .button, .pagination .button.left, .pagination .button.right');
     if (target) {
       paginator.go(target);
       event.preventDefault();
     }
+  });
+  window.addEventListener('popstate', event => {
+    jSlim.all('.paginator', context => {
+      requestPage(context, QueryParameters.current.getItem(context.dataset.id));
+    });
   });
 });
 
