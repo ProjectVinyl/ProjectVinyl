@@ -44,11 +44,11 @@ function toHMS(time) {
   const times = [];
   time = Math.floor(time);
   while (time >= 60) {
-    times.shift(time % 60);
+    times.unshift(time % 60);
     time = Math.floor(time / 60);
   }
-  times.shift(time);
-  if (times.length < 2) times.shift(0);
+  times.unshift(time);
+  if (times.length < 2) times.unshift(0);
   return times.join(':');
 }
 
