@@ -130,7 +130,7 @@
 						</span>
 					</li>
 					<% current_user.albums.each do |album| %>
-					<li class="action toggle" data-action="togglealbum" data-target="video" data-id="<%= @video.id %>" data-item="<%= album.id %>">
+					<li class="action toggle" data-action="add" data-target="videos" data-id="<%= @video.id %>" data-item="<%= album.id %>">
 						<span class="icon">
 						<% if album.album_items.where(video_id: @video.id).first %>
 							<i class="fa fa-check"></i>

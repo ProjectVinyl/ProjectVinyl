@@ -2,47 +2,48 @@ import { jSlim } from '../utils/jslim';
 import { ajax } from '../utils/ajax';
 
 function count(me, offset, save) {
-  var likes = me.dataset.count;
-  var count = me.querySelector('.count');
+  me.classList.toggle('liked', offset > 0);
   
+  let count = me.querySelector('.count');
   if (!count) {
     count = me.querySelector('span');
     count.innerHTML = '<span class="count"></span>';
     count = count.firstChild;
   }
   
-  likes = likes ? parseInt(likes) : 0;
-  likes += offset;
-  me.dataset.count = likes;
-  me.classList.toggle('liked', offset > 0);
-  count.innerText = likes;
-  count.classList.toggle('hidden', likes < 1);
+  const updateUI = state => {
+    me.dataset.count = state.count;
+    count.classList.toggle('hidden', state.count < 1);
+    count.innerText = state.count;
+  };
   
-  if (save) {
-    ajax.post(me.dataset.action + '/' + me.dataset.id + '/' + offset).json(function(json) {
-      if (count.length) count.innerText = json.count;
-    });
-  }
+  updateUI({ count: (parseInt(me.dataset.count || 0) || 0) + offset });
+  
+  return updateUI;
+}
+
+function save(sender, data) {
+  return ajax.put('videos/' + sender.dataset.id + '/' + sender.dataset.action, data);
 }
 
 jSlim.on(document, 'click', 'button.action.like, button.action.dislike', function(e) {
-  if (e.which != 1 && e.button != 0) return;
-  if (this.classList.contains('liked')) {
-    count(this, -1, true);
-  } else {
-    var other = this.parentNode.querySelector('.liked');
+  if (e.button) return;
+  if (!this.classList.contains('liked')) {
+    let other = this.parentNode.querySelector('.liked');
     if (other) {
-      count(other, -1, false);
+      count(other, -1);
     }
-    count(this, 1, true);
   }
+  const offset = this.classList.contains('liked') ? -1 : 1;
+  save(this, {
+    incr: offset
+  }).json(count(this, offset));
 });
 
-jSlim.on(document, 'click', 'button.action.star', function fave(e) {
-  if (e.which != 1 && e.button != 0) return;
+jSlim.on(document, 'click', 'button.action.star', function(e) {
+  if (e.button) return;
   this.classList.toggle('starred');
-  var self = this;
-  ajax.post(this.dataset.action + '/' + this.dataset.id).json(function(json) {
-    self.classList.toggle('starred', json.added);
+  save(this).json(json => {
+    this.classList.toggle('starred', json.added);
   });
 });

@@ -51,10 +51,10 @@ Rails.application.routes.draw do
   get 'videos/:id/changes/page' => 'history#page'
   get 'videos/:id/changes' => 'history#index'
   
-  post 'videos/:id/star' => 'video#star'
-  post 'videos/:id/like(/:incr)' => 'video#upvote'
-  post 'videos/:id/dislike(/:incr)' => 'video#downvote'
-  post 'videos/:id/add' => 'album_item#toggle'
+  put 'videos/:id/like' => 'video#upvote'
+  put 'videos/:id/dislike' => 'video#downvote'
+  put 'videos/:id/star' => 'video#star'
+  put 'videos/:id/add' => 'album_item#toggle'
   
   patch 'videos/:id/cover/:async' => 'video#update_cover'
   patch 'videos/:id/cover' => 'video#update_cover'
