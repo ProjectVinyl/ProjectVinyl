@@ -1,9 +1,7 @@
 <div class="row change">
 	<% if change.added.nil? %>
 	<div>
-		<div>
-			<%= change.value %>
-		</div>
+		<%= change.value %>
 	</div>
 	<% else %>
 	<div>
@@ -23,15 +21,17 @@
 			<% if change.user_id == 0 %>
 			System
 			<% else %>
-				<a href="<%= change.user.link %>">
-					<%= change.user.username %></span>
+				<a class="user-link" data-id="<%= change.user_id %>" href="<%= change.user.link %>">
+					<%= change.user.username %>
+					<sup>
+						<% if change.user_id == @video.user_id %>
+							<i title="Uploader" class="fa fa-user"></i>
+						<% end %>
+						<% if change.user.is_staff? %>
+							<i title="Staff" class="fa fa-gavel"></i>
+						<% end %>
+					</sup>
 				</a>
-				<% if change.user_id == @video.user_id %>
-					<b>(uploader)</b>
-				<% end %>
-				<% if change.user.is_staff? %>
-					<b>(staff)</b>
-				<% end %>
 			<% end %>
 		</span>
 	</div>

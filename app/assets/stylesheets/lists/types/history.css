@@ -11,3 +11,7 @@
 .items.history .altered {
   background: rgba(0,0,255,0.3);
 }
+.items.history .duration,
+.items.history .author {
+  white-space: nowrap;
+}

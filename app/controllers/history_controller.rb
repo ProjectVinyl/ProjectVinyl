@@ -14,13 +14,14 @@ class HistoryController < ApplicationController
 
   def page
     @video = Video.where(id: params[:id]).first
-    @page = params[:page].to_i
-    @results = TagHistory.where(video_id: params[:id]).order(:created_at)
-    @results = Pagination.paginate(@results, @page, 20, true)
+    @records = TagHistory.where(video_id: params[:id]).order(:created_at)
+    if @records.count > 0
+      return render_pagination 'history/change', Pagination.paginate(@records, params[:page].to_i, 20, true)
+    end
     render json: {
-      content: @results.count > 0 ? render_to_string(partial: '/history/change.html.erb', collection: @results.records) : render_to_string(partial: '/history/wardenderpy'),
-      pages: @results.pages,
-      page: @results.page
+      content: render_to_string(partial: '/history/wardenderpy'),
+      pages: 0,
+      page: 0
     }
   end
 end
