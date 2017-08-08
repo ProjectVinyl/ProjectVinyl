@@ -18,3 +18,11 @@
 .hovercard.shown {
   transform: scale(1,1);
 }
+
+.listing.compact .hovercard span {
+  padding: 0;
+  color: inherit;
+}
+.listing.compact .hovercard div {
+  display: block !important;
+}

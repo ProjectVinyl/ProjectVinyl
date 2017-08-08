@@ -11,6 +11,7 @@ function closeUsercard() {
 function openUsercard(sender, usercard) {
   closeUsercard();
   sender.appendChild(usercard);
+  
   if (hoverTimeout) {
     clearTimeout(hoverTimeout);
   }

@@ -15,3 +15,6 @@
 .items.history .author {
   white-space: nowrap;
 }
+.items.history .row .author {
+  overflow: visible;
+}
