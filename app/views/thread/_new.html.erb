@@ -1,4 +1,4 @@
-<%= form_for(@thread, as: "thread", url: "/threads"), method: "post" do |f| %>
+<%= form_for(@thread, as: "thread", url: "/threads", html: {method: :post}) do |f| %>
 <%= f.text_field :owner_id, hidden: true %>
 <div class="properties">
 	<table>
@@ -12,7 +12,7 @@
 		</tr>
 		<tr>
 			<td class="field" colspan="2">
-				<%= render layout: '/thread/description_box' do %>
+				<%= render layout: 'comment/description_box' do %>
 					<%= f.text_area :description, class: "comment-content" %>
 				<% end %>
 			</td>
