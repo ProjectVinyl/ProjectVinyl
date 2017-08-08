@@ -52,12 +52,14 @@
 .video:not(:hover) .player.error::after,
 .video:not(.unplayable) .player.playing::after {
   cursor: default;
-  transform: scale(0.5,0.5);
-  -ms-transform: scale(0.5,0.5);
-  -webkit-transform: scale(0.5,0.5);
-  -o-transform: scale(0.5,0.5);
-  -moz-transform: scale(0.5,0.5);
+  transform: scale(0.5);
   opacity: 0;
+}
+
+@media(max-width: 500px) {
+  .video:not(.unplayable) .player::after {
+    transform: scale(0.65);
+  }
 }
 
 .video .player h1 {
