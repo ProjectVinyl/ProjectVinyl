@@ -13,14 +13,14 @@ ContextMenu.prototype = {
     const item = this.dom.lastChild.querySelector('.value');
     
     function val(s) {
-      item.innerHTML = (typeof s !== 'boolean') ? s : (s ? '<i class="fa fa-check"></i>' : '');
+      item.innerHTML = s === true ? '<i class="fa fa-check"></i>' : (s || '');
+      return s;
     }
     
     val(initial);
   },
   show: function(ev) {
-    let x = ev.clientX;
-    let y = ev.clientY;
+    let x = ev.clientX, y = ev.clientY;
     
     if (x + this.dom.offsetWidth >= document.body.clientWidth) {
       x = document.body.clientWidth - this.dom.offsetWidth;
@@ -50,9 +50,7 @@ ContextMenu.prototype = {
 
 jSlim.ready(() => {
   function hideAll() {
-    jSlim.all('.contextmenu', p => {
-      p.classList.add('hidden');
-    });
+    jSlim.all('.contextmenu', p => p.classList.add('hidden'));
   }
   
   window.addEventListener('resize', hideAll);

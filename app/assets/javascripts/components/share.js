@@ -26,15 +26,15 @@ jSlim.on(document, 'click', '.share-buttons button', function(e) {
   }
 });
 
-function setupShares() {
-  var frame = document.querySelector('#embed_preview iframe');
+jSlim.ready(() => {
+  const frame = document.querySelector('#embed_preview iframe');
   if (!frame) return;
   
-  var shareField = document.getElementById('share_field');
+  const shareField = document.getElementById('share_field');
   
   // Only used on pages with a linked playlist
-  var shareToggle = document.getElementById('album_share_toggle');
-  var shareType = document.getElementById('album_share_type');
+  const shareToggle = document.getElementById('album_share_toggle');
+  const shareType = document.getElementById('album_share_type');
   //
   
   document.querySelector('.action.test').addEventListener('click', function() {
@@ -51,15 +51,15 @@ function setupShares() {
   }
   
   function updateShareIframe() {
-    var id = getVideoId();
-    var src = '/embed/' + id;
+    const id = getVideoId();
     
-    var htm = shareField.dataset.value;
+    let src = '/embed/' + id;
+    let htm = shareField.dataset.value;
     
     htm = htm.replace('{id}', id);
     
     if (shouldIncludeAlbum()) {
-      var extra = getAlbumParams();
+      let extra = getAlbumParams();
       htm = htm.replace('{extra}', extra);
       src += extra;
     } else {
@@ -81,6 +81,4 @@ function setupShares() {
     var index = shareType.value == 'beginning' ? 0 : shareField.dataset.albumIndex;
     return '?list=' + shareField.dataset.albumId + '&index=' + index;
   }
-}
-
-jSlim.ready(setupShares);
+});

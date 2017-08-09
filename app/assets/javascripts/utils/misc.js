@@ -21,18 +21,21 @@ export function halt(ev) {
   ev.stopPropagation();
 }
 
+export function stopPropa(ev) {
+  ev.stopPropagation();
+}
+
 export function extendObj(onto, overrides) {
   let keys = Object.keys(overrides), i = keys.length;
   for (; i--;) onto[keys[i]] = overrides[keys[i]];
   return onto;
 }
 
-export function makeExtensible(Parent) {
-  Parent.extend = function(Child, overrides) {
-    Child.prototype = extendObj(new this(), overrides);
-    Child.Super = this.prototype;
-    Child.extend = this.extend;
-  };
+export function extendFunc(Parent, overrides) {
+  function Child() {};
+  Child.prototype = extendObj(new Parent(), overrides);
+  Child.Super = Parent.prototype;
+  return Child;
 }
 
 export function copyOfObj(obj) {

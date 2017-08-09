@@ -1,18 +1,9 @@
 import { ajax } from '../utils/ajax';
-import { Key } from '../utils/misc';
+import { Key, halt, stopPropa } from '../utils/misc';
 import { jSlim } from '../utils/jslim';
 
 function namespace(name) {
   return name.indexOf(':') == -1 ? '' : name.split(':')[0];
-}
-
-function halt(ev) {
-  ev.preventDefault();
-  ev.stopPropagation();
-}
-
-function stopPropa(ev) {
-  ev.stopPropagation();
 }
 
 function createBaseItem(container, tag, content) {

@@ -204,7 +204,7 @@ function Uploader() {
     self.time.value = self.lastTime;
     self.validateInput();
   });
-
+  
   jSlim.all(this.el, 'h1.resize-target', function(t) {
     resizeFont(t);
   });
