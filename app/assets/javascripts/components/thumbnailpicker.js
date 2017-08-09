@@ -1,42 +1,32 @@
+import { extendFunc } from '../utils/misc';
 import { Player } from './videos';
 
-function ThumbPicker() {
-}
-
-Player.extend(ThumbPicker, {
+export const ThumbPicker = extendFunc(Player, {
   constructor: function(el) {
     ThumbPicker.Super.constructor.call(this, el, true);
     this.timeInput = el.querySelector('input');
-    const fullscreen = el.querySelector('.icon.fullscreen');
-    const volume = el.querySelector('.icon.volume');
-    fullscreen.parentNode.removeChild(fullscreen);
-    volume.parentNode.removeChild(volume);
+    this.controls.fullscreen.parentNode.removeChild(this.controls.fullscreen);
+    this.controls.volume.parentNode.removeChild(this.controls.volume);
   },
   pause: function() {
     if (this.video) this.video.pause();
     return false;
   },
-  start: function() {
-    if (!this.video) {
-      ThumbPicker.Super.start.call(this);
-      if (this.video) {
-        this.video.addEventListener('loadedmetadata', () => this.changetrack(0.5));
-      }
-    } else {
-      ThumbPicker.Super.start.call(this);
-    }
+  createMediaElement: function() {
+    let result = ThumbPicker.Super.createMediaElement.call(this);
+    result.addEventListener('loadedmetadata', () => this.jump(0.5));
+    return result;
+  },
+  play: function() {
+    ThumbPicker.Super.play.call(this);
     this.pause();
   },
-  changetrack: function(progress) {
-    ThumbPicker.Super.changetrack.call(this, progress);
-    this.timeInput.value = this.video.currentTime;
+  track: function(time, duration) {
+    ThumbPicker.Super.track.call(this, time, duration);
+    this.timeInput.value = time;
   },
-  load: function(d) {
-    this.start();
-    this.volume(0, !0);
-    ThumbPicker.Super.load.call(this, d);
-    this.start();
+  load: function(d, isVideo) {
+    ThumbPicker.Super.load.call(this, d, isVideo);
+    this.volume(0, true);
   }
 });
-
-export { ThumbPicker };

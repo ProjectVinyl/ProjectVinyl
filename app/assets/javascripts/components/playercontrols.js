@@ -25,7 +25,7 @@ function PlayerControls(player, dom) {
   
   Slider(this.track, ev => {
     if (!player.contextmenu.hide(ev)) {
-      player.checkstart();
+      if (!player.video) player.play();
       const progress = this.evToProgress(ev);
       if (ev.touches) {
         this.drawPreview(progress);
@@ -47,7 +47,7 @@ function PlayerControls(player, dom) {
   
   this.track.addEventListener('mousemove', ev => {
     this.drawPreview(this.evToProgress(ev));
-  })
+  });
   
   this.volume = dom.querySelector('.volume');
   this.volume.indicator = dom.querySelector('.volume .indicator i');
@@ -56,7 +56,8 @@ function PlayerControls(player, dom) {
     if (ev.button !== 0) return;
     if (!player.contextmenu.hide(ev)) {
       if (this.volume.toggler.interactable()) {
-        player.muteUnmute();
+        if (!player.video) player.play();
+        player.volume(player.video.volume, player.video.muted = !player.video.muted);
       }
     }
   });
@@ -103,15 +104,16 @@ PlayerControls.prototype = {
     this.player.player.querySelector('.playing').style.cursor = '';
   },
   evToProgress: function(ev) {
+    const width = this.track.clientWidth;
+    if (width === 0) return -1;
+    
     let x = ev.pageX;
     if (!x && ev.touches) {
       x = ev.touches[0].pageX || 0;
     }
     
     x -= this.track.getBoundingClientRect().left + window.pageXOffset;
-    if (x < 0) x = 0;
-    if (x > this.track.clientWidth) x = this.track.clientWidth;
-    return x / this.track.clientWidth;
+    return clampPercentage(x, width);
   },
   evToVolume: function(ev) {
     const height = this.volume.slider.clientHeight;
@@ -121,20 +123,41 @@ PlayerControls.prototype = {
     if (!y && ev.touches) {
       y = ev.touches[0].pageY || 0;
     }
-    y -= this.volume.slider.getBoundingClientRect().top + window.pageYOffset;
-    if (y < 0) y = 0;
-    if (y > height) y = height;
-    y = height - y;
     
-    return y / height;
+    y -= this.volume.slider.getBoundingClientRect().top + window.pageYOffset;
+    return clampPercentage(height - y, height);
   },
   drawPreview: function(progress) {
     if (!this.player.video) return;
     this.track.preview.style.left = (progress * 100) + '%';
-    const time = (parseInt(this.player.video.duration, 10) || 0) * progress;
+    const time = (parseInt(this.player.video.duration) || 0) * progress;
     this.track.preview.dataset.time = toHMS(time);
     if (!this.player.audioOnly) this.preview.draw(time);
+  },
+  repaintVolumeSlider: function(volume, muted) {
+    if (muted) volume = 0;
+    this.volume.indicator.setAttribute('class', 'fa fa-volume-' + getVolumeIcon(muted ? 0 : volume));
+    volume *= 100;
+    this.volume.slider.bob.style.bottom = volume + '%';
+    this.volume.slider.fill.style.top = (100 - volume) + '%';
+  },
+  repaintTrackBar: function(percentFill) {
+    this.track.bob.style.left = percentFill + '%';
+    this.track.fill.style.right = (100 - percentFill) + '%';
   }
 };
+
+function getVolumeIcon(level) {
+  if (level <= 0) return 'off';
+  if (level < 0.33) return 'down';
+  if (level < 0.66) return 'mid';
+  return 'up';
+}
+
+function clampPercentage(p, max) {
+  if (p < 0) return 0;
+  if (p > max) return 1;
+  return p / max;
+}
 
 export { PlayerControls };

@@ -19,13 +19,13 @@
 		</div>
 		<div class="scroll-container" data-document-scroll-y="200">
 			<div class="items<% if @album_editable %> reorderable<% end %>" data-target="albumitem">
-				<%= render partial: '/album/album_item', collection: @items %>
+				<%= render partial: 'album/album_item', collection: @items %>
 			</div>
 		</div>
 	</section>
 	<% end %>
-	<%= render partial: '/video/queue' %>
+	<%= render partial: 'video/queue' %>
 </div>
 <section class="page column-left">
-	<%= render partial: '/thread/view', locals: {identifier: @video.id, title: @video.get_title + " by " + @user.username } %>
+	<%= render partial: 'thread/view', locals: {identifier: @video.id, title: @video.get_title + " by " + @user.username } %>
 </section>

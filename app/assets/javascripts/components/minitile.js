@@ -12,7 +12,7 @@ export function createMiniTile(player) {
         lastTime = time;
         
         if (!video) {
-          video = player.createVideoElement();
+          video = player.createMediaElement();
           const context = canvas.getContext('2d');
           const loadTime = () => {
             video.removeEventListener('loadeddata', loadTime);

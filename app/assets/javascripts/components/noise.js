@@ -1,10 +1,6 @@
-var canvas = null;
-var context = null;
-let toggle = true;
-
-function noise(ctx) {
-  let w = ctx.canvas.width,
-      h = ctx.canvas.height,
+function noise(canvas, ctx) {
+  let w = canvas.width,
+      h = canvas.height,
       idata = ctx.createImageData(w, h),
       buffer32 = new Uint32Array(idata.data.buffer),
       len = buffer32.length;
@@ -12,18 +8,24 @@ function noise(ctx) {
   ctx.putImageData(idata, 0, 0);
 }
 
-function loop() {
-  toggle = !toggle;
-  if (!toggle) noise(context);
-  requestAnimationFrame(loop);
-}
-
-export function setupNoise() {
-  if (!canvas) {
-    canvas = document.createElement('canvas');
-    context = canvas.getContext('2d');
-    canvas.width = canvas.height = 256;
-    loop();
+export function setupNoise(parent) {
+  const canvas = document.createElement('canvas');
+  const ctx = canvas.getContext('2d');
+  
+  canvas.width = canvas.height = 256;
+  parent.appendChild(canvas);
+  
+  function loop() {
+    noise(canvas, ctx);
+    if (running) requestAnimationFrame(loop);
   }
-  return canvas;
+  
+  loop();
+  
+  return {
+    destroy: () => {
+      canvas.parentNode.removeChild(canvas);
+      running = false;
+    }
+  };
 };

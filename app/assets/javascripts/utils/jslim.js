@@ -12,17 +12,17 @@ function getHandlers(el, event, bubble) {
 function triggerEvents(sender, event, eventHandlers, e) {
   eventHandlers.forEach(function(handler) {
     if (!handler.selector) {
-      return handler.callback.call(sender, e);
+      return handler.callback.call(sender, e, sender);
     }
     var target = e.target && e.target.closest && e.target.closest(handler.selector);
     if (target) {
       if ((event == 'mouseout' || event == 'mouseover') && target.contains(e.relatedTarget)) return;
-      handler.callback.call(target, e);
+      handler.callback.call(target, e, target);
     }
   });
 }
 
-const jSlim = {
+export const jSlim = {
   dom: (function() {
     var div = document.createElement('DIV');
     function pull(input, push) {
@@ -85,4 +85,8 @@ const jSlim = {
   }
 };
 
-export { jSlim };
+export function bindAll(el, handlers, bubble) {
+  Object.keys(handlers).forEach(key => {
+    el.addEventListener(key, handlers[key], bubble);
+  });
+}

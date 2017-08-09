@@ -4,7 +4,7 @@
 	<% end %>
 <% end %>
 <section class="page column-left">
-	<div id="video" style="background-image: url('<%= @video.thumb %>');" data-time="<%= @time %>" data-resume="<%= @resume %>" data-title="<%= @video.get_title %>" data-artist="<%= @user.username %>" data-<% if @video.audio_only %>audio<% else %>video<% end %>="<%= @video.id %>" data-mime="<%= @video.file %>|<%= @video.mime %>" <%if @album %>data-autoplay="true"<% end %> class="video"></div>
+	<%= render partial: 'video_content', locals: {embed: false} %>
 	<span class="notices">
 	<% if !@video.processed %>
 		<div class="notice pending">This video is still being processed by our background ponies. If it does not play correctly try again later.</div>

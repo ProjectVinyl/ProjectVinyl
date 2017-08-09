@@ -1,0 +1,49 @@
+<div id="video" class="video" style="background-image: url('<%= @video.thumb %>');"
+	data-title="<%= @video.get_title %>"
+	data-time="<%= @time %>"
+	data-resume="<%= @resume %>"
+	data-<% if @video.audio_only %>audio<% else %>video<% end %>="<%= @video.id %>"
+	data-mime="<%= @video.file %>|<%= @video.mime %>"
+	<% if @album && embed %>
+		data-playlist-id="<%= @album.id %>"
+		data-playlist-index="<%= @index %>"
+	<% end %>
+	<% if @album && !embed %>
+		data-autoplay="true"
+	<% end %>
+>
+	<div class="player" data-state="ready">
+		<span class="playing"></span>
+		<span class="error"><span class="error-message"></span></span>
+		<span class="suspend" style="display:none"><i class="fa fa-pulse fa-spinner"></i></span>
+		<span class="pause resize-holder">
+			<span class="playback"></span>
+			<% if embed %>
+			<h1 class="resize-target">
+				<a target="_blank" href="'<%= @video.link %>" class="title"><%= @video.title %></a>
+			</h1>
+			<% end %>
+		</span>
+	</div>
+	<div class="controls playback-controls">
+		<ul>
+			<li class="track">
+				<span class="fill"></span>
+				<div class="previewer"></div>
+				<span class="bob"></span>
+			</li>
+			<li class="icon volume">
+				<span class="indicator"><i class="fa fa-volume-up"></i></span>
+				<div class="slider">
+					<span class="fill"></span>
+					<span class="bob"></span>
+				</div>
+			</li>
+			<li class="icon fullscreen">
+				<span class="indicator"><i class="fa fa-arrows-alt"></i></span>
+			</li>
+		</ul>
+	</div>
+	<ul class="contextmenu transitional hidden"></ul>
+	<%= yield %>
+</div>
