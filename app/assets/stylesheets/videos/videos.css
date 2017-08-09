@@ -43,14 +43,14 @@
   text-indent: 3px;
   opacity: 0.6;
 }
-.video:not(.unplayable) .player.paused::after {
+.video:not(.unplayable) .player[data-state=paused]::after {
   content: "\f04c";
 }
-.video:not(.unplayable) .player.paused.stopped::after {
+.video:not(.unplayable) .player[data-state=stopped]::after {
   content: "\f01e";
 }
 .video:not(:hover) .player.error::after,
-.video:not(.unplayable) .player.playing::after {
+.video:not(.unplayable) .player[data-state=playing]::after {
   cursor: default;
   transform: scale(0.5);
   opacity: 0;
@@ -79,7 +79,7 @@
   overflow-x: hidden;
 }
 
-.video .player.playing span.pause {
+.video .player[data-state=playing] span.pause {
   opacity: 0;
 }
 .video .player span.playing {
@@ -89,11 +89,11 @@
   width: 100%;
   height: 100%;
 }
-.video .player.playing span.playing, .video.audio-only .player span.pause {
+.video .player[data-state=playing] span.playing, .video.audio-only .player span.pause {
   opacity: 1;
 }
 
-.video .player.stopped span.playing {
+.video .player[data-state=stopped] span.playing {
   display: none;
 }
 
@@ -139,17 +139,13 @@
   opacity: 1 !important;
 }
 
-.video .player.playing + .playback-controls,
-.video .player.paused + .playback-controls {
+.video .player[data-state=playing] + .playback-controls,
+.video .player[data-state=paused] + .playback-controls {
   display: block;
 }
 
-.video .player.paused + .playback-controls {
+.video .player[data-state=paused] + .playback-controls {
   opacity: 1 !important;
-}
-
-.video .player.paused + .playback-controls {
-  opacity: 1;
 }
 
 .video .player .error {
@@ -169,7 +165,7 @@
   color: #fff;
   opacity: 0.8;
 }
-.video .player.error .error {
+.video .player[data-state=error] .error {
   display: inline;
 }
 .video .player .error .error-message {
@@ -405,15 +401,15 @@ i.fa.fa-volume-mid {
   font-size: 1.5em;
 }
 
-.video .player.playing ~ .playlist-toggle {
+.video .player[data-state=playing] ~ .playlist-toggle {
   opacity: 0;
 }
 
-.video:hover .player.playing ~ .playlist-toggle {
+.video:hover .player[data-state=playing] ~ .playlist-toggle {
   opacity: 0.2;
 }
 
-.video .player.playing ~ .playlist-toggle:hover {
+.video .player[data-state=playing] ~ .playlist-toggle:hover {
   opacity: 1;
 }
 

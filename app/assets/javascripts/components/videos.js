@@ -62,7 +62,7 @@ function attachMessageListener(sender) {
 }
 
 function readyVideo(sender) {
-  let sender.createMediaElement()
+  let video = sender.createMediaElement()
   
   if (sender.time) {
     if (player.isReady()) {
@@ -190,7 +190,7 @@ Player.prototype = {
             this.togglePlayback();
           }
         }
-      }
+      },
       touchstart: ev => {
         if (fullscreenPlayer === this && activeTouches.length) return halt(ev);
         
@@ -204,9 +204,9 @@ Player.prototype = {
         tapped = null;
         this.fullscreen(!isFullscreen());
         halt(ev);
-      }
+      },
       touchmove: onTouchEvent,
-      touchend, onTouchEvent,
+      touchend: onTouchEvent,
       touchcancel: onTouchEvent
     });
     
@@ -285,7 +285,7 @@ Player.prototype = {
     if (fullscreenPlayer && fullscreenPlayer !== this) fullscreenPlayer.fullscreen(false);
     if (fullscreenPlayer && !on) {
       document.exitFullscreen();
-      this.controls.show();
+      this.controls.dom.style.opacity = '';
       if (this.redirect) {
         if (this.video) {
           this.redirect += (this.redirect.indexOf('?') >= 0 ? '&' : '?') + 't=' + this.video.currentTime;
@@ -344,8 +344,8 @@ Player.prototype = {
   createMediaElement: function() {
     if (this.audioOnly && this.source) {
       let video = document.createElement('audio');
-      video.src = '/stream/' + sender.source + sender.mime[0];
-      video.type = sender.mime[1];
+      video.src = '/stream/' + this.source + this.mime[0];
+      video.type = this.mime[1];
       return video;
     }
     
@@ -412,7 +412,7 @@ Player.prototype = {
   },
   volume: function(volume, muted) {
     if (this.video) this.video.volume = volume;
-    this.controls.repaintVolumeSlider();
+    this.controls.repaintVolumeSlider(muted ? 0 : volume);
   }
 };
 

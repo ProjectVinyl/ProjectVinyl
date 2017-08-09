@@ -1,4 +1,5 @@
 import { halt } from '../utils/misc';
+import { isFullscreen } from '../utils/fullscreen';
 import { jSlim } from '../utils/jslim';
 import { TapToggler } from './taptoggle';
 import { toHMS } from '../utils/duration';
@@ -87,7 +88,7 @@ function PlayerControls(player, dom) {
   dom.querySelector('.fullscreen').addEventListener('click', ev => {
     if (ev.button !== 0) return;
     if (!player.contextmenu.hide(ev)) {
-      player.fullscreen(!Player.isFullscreen());
+      player.fullscreen(!isFullscreen());
       halt(ev);
     }
   });
@@ -134,9 +135,8 @@ PlayerControls.prototype = {
     this.track.preview.dataset.time = toHMS(time);
     if (!this.player.audioOnly) this.preview.draw(time);
   },
-  repaintVolumeSlider: function(volume, muted) {
-    if (muted) volume = 0;
-    this.volume.indicator.setAttribute('class', 'fa fa-volume-' + getVolumeIcon(muted ? 0 : volume));
+  repaintVolumeSlider: function(volume) {
+    this.volume.indicator.setAttribute('class', 'fa fa-volume-' + getVolumeIcon(volume));
     volume *= 100;
     this.volume.slider.bob.style.bottom = volume + '%';
     this.volume.slider.fill.style.top = (100 - volume) + '%';

@@ -3,8 +3,10 @@ import { bindAll } from './jslim';
 /* Standardise fullscreen API */
 (function(p) {
   p.requestFullscreen = p.requestFullscreen || p.mozRequestFullScreen || p.msRequestFullscreen || p.webkitRequestFullscreen || function() {};
-  p.exitFullscreen = document.exitFullscreen || document.mozCancelFullScreen || document.msExitFullscreen || document.webkitExitFullscreen || function() {};
 })(Element.prototype);
+(function(d) {
+  d.exitFullscreen = d.exitFullscreen || d.mozCancelFullScreen || d.msExitFullscreen || d.webkitExitFullscreen || function() {};
+})(document);
 
 export function isFullscreen() {
   return document.fullScreen || document.mozFullScreen || document.webkitIsFullScreen;
@@ -12,8 +14,8 @@ export function isFullscreen() {
 
 export function onFullscreenChange(func) {
   bindAll(document, {
-    webkitfullscreenchange: onFullscreen,
-    mozfullscreenchange: onFullscreen,
-    fullscreenchange: onFullscreen
+    webkitfullscreenchange: func,
+    mozfullscreenchange: func,
+    fullscreenchange: func
   });
 }
