@@ -27,8 +27,21 @@ jSlim.on(document, 'click', '.share-buttons button', function(e) {
 });
 
 jSlim.ready(() => {
-  const frame = document.querySelector('#embed_preview iframe');
-  if (!frame) return;
+  const embedPreview = document.querySelector('#embed_preview');
+  let frame;
+  
+  if (!embedPreview) return;
+  
+  document.querySelector('.action.test').addEventListener('click', function() {
+    embedPreview.style.display = '';
+    this.parentNode.removeChild(this);
+    embedPreview.innerHTML = '<iframe style="max-width:100%;" width="560px" height="100%" frameborder="0"></iframe>';
+    frame = embedPreview.firstChild;
+    updateShareIframe();
+    // Refresh container height - Kind of hacky, imo
+    // TODO: replace this
+    slideOut(slideOut(embedPreview.closest('.slideout')));
+  });
   
   const shareField = document.getElementById('share_field');
   
@@ -36,14 +49,6 @@ jSlim.ready(() => {
   const shareToggle = document.getElementById('album_share_toggle');
   const shareType = document.getElementById('album_share_type');
   //
-  
-  document.querySelector('.action.test').addEventListener('click', function() {
-    frame.parentNode.style.display = '';
-    updateShareIframe();
-    // Refresh container height - Kind of hacky, imo
-    // TODO: replace this
-    slideOut(slideOut(frame.closest('.slideout')));
-  });
   
   if (shareToggle) {
     shareToggle.addEventListener('change', updateShareIframe);
@@ -65,8 +70,9 @@ jSlim.ready(() => {
     } else {
       htm = htm.replace('{extra}', '');
     }
-    frame.src = src;
     shareField.value = htm;
+    
+    if (frame) frame.src = src;
   }
   
   function getVideoId() {
