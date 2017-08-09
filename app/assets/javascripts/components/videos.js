@@ -173,8 +173,10 @@ Player.prototype = {
         if (ev.button !== 0) return;
         if (!this.contextmenu.hide(ev)) {
           let target = ev.target.closest('.items a, #playlist_next, #playlist_prev');
-          if (target) return this.navTo(target);
-          
+          if (target) {
+            halt(ev);
+            return this.navTo(target);
+          }
           if (this.playlist && ev.target.closest('.playlist-toggle')) {
             this.playlist.classList.toggle('visible');
             return;
@@ -244,18 +246,18 @@ Player.prototype = {
     // at the bottom
     resize(el);
     
-    if (this.__autostart || el.dataset.autoplay || el.dataset.resume === 'true') {
+    if (!this.embedded && (this.__autostart || el.dataset.autoplay || el.dataset.resume === 'true')) {
       this.play();
     }
     
     return this;
   },
   navTo: function(sender) {
-    ajax.get('view' + sender.getAttribute('href')).json(json => {
+    ajax.get('ajax/view' + sender.getAttribute('href')).json(json => {
       const next = document.querySelector('#playlist_next');
       const prev = document.querySelector('#playlist_prev');
       
-      this.redirect = target.href;
+      this.redirect = sender.href;
       this.loadAttributesAndRestart(json);
       
       var selected = document.querySelector('.playlist a.selected');

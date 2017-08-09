@@ -35,7 +35,7 @@ function queryPars(data) {
 
 function request(resource, params) {
   const promise = fetch(resource, params).catch(function(err) {
-    popupError(params.method + ' ' + domain + path + '\n\n' + err);
+    popupError(params.method + ' ' + resource + '\n\n' + err);
   }).then(function(response) {
     if (!response.ok) {
       throw new Error('Received error from server');

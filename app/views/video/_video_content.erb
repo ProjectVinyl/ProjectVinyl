@@ -4,11 +4,10 @@
 	data-resume="<%= @resume %>"
 	data-<% if @video.audio_only %>audio<% else %>video<% end %>="<%= @video.id %>"
 	data-mime="<%= @video.file %>|<%= @video.mime %>"
-	<% if @album && embed %>
-		data-playlist-id="<%= @album.id %>"
-		data-playlist-index="<%= @index %>"
+	<% if embed %>
+		data-embed="true"
 	<% end %>
-	<% if @album && !embed %>
+	<% if @album %>
 		data-autoplay="true"
 	<% end %>
 >
