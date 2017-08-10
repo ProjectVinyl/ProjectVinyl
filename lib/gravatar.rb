@@ -4,7 +4,9 @@ module Gravatar
   def self.avatar_for(email, params)
     email = Digest::MD5.hexdigest((email || '').strip.downcase)
     params = params.to_param
-    query = '?' + params if params != ''
+    if params != ''
+      query = '?' + params
+    end
     "//www.gravatar.com/avatar/#{email}.png#{query}"
   end
 end

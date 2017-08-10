@@ -39,10 +39,10 @@ class CommentThread < ApplicationRecord
   end
 
   def get_comments(all)
-    result = comments.includes(
-      direct_user: [user_badges: [:badge]]
-    ).includes(:mentions)
-    return result.where(hidden: false) if !all
+    result = comments.includes(direct_user: [user_badges: [:badge]]).includes(:mentions)
+    if !all
+      return result.where(hidden: false)
+    end
     result
   end
 
