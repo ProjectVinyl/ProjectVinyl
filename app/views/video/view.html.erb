@@ -1,7 +1,6 @@
 <% title @video.title %>
 <%= render partial: 'video' %>
 <div class="page resize-holder column-right <% if @album %>column-mobile-fragmented<% end %> right center">
-	<%= render partial: 'artist/bio', locals: {user: @user } %>
 	<% if @album %>
 	<section class="listing compact playlist column-mobile-shown<% if @album.virtual? %> virtual<% end %>">
 		<div class="controls">
