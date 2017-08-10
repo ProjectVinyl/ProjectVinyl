@@ -41,6 +41,16 @@ module ProjectVinyl
               return content[(index + (open + '/' + node.tag_name + close).length)..content.length]
             end
             
+            if content.index('&gt;&gt;') == index || content.index('>>') == index
+              if text.length > 0
+                node.append_text(text)
+                text = ''
+              end
+              content = self.parse_reply_tag(node, content[index..content.length).sub(/&gt;&gt;|>>/,''))
+              index = -1
+              next
+            end
+            
             if content[index] == '@' || content[index] == ':' || content[index] == open
               if text.length > 0
                 node.append_text(text)
@@ -146,6 +156,12 @@ module ProjectVinyl
         at_tag = content.split(/[\s\[\<]/)[0]
         node.append_node('at').append_text(at_tag)
         return content.gsub(at_tag, '')
+      end
+      
+      def parse_reply_tag(node, content)
+        reply_tag = content.split(/[^a-z0-9A-Z]/)[0]
+        node.append_node('reply').append_text(reply_tag)
+        return content.gsub(reply_tag, '')
       end
       
       def parse_emoticon_alias(node, content)

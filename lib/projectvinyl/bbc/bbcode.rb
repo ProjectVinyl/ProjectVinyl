@@ -27,6 +27,9 @@ module ProjectVinyl
       TagGenerator.register(:bbc, [:at]) do |tag|
         "@#{tag.inner_text}"
       end
+      TagGenerator.register(:html, [:reply]) do |tag|
+        "&gt;&gt#{tag.inner_text}"
+      end
       TagGenerator.register(:bbc, [:a]) do |tag|
         if !tag.attributes[:href]
           return tag.inner_bbc
@@ -80,6 +83,9 @@ module ProjectVinyl
       end
       TagGenerator.register(:html, [:url]) do |tag|
         "<a href=\"#{tag.equals_par  || tag.inner_text}\">#{tag.inner_html}</a>}"
+      end
+      TagGenerator.register(:html, [:reply]) do |tag|
+        "<a data-link=\"2\" href=\"#comment_#{tag.inner_text}\">&gt;&gt;#{tag.inner_text}</a>"
       end
       TagGenerator.register(:html, [:spoiler]) do |tag|
         "<div class=\"spoiler\">#{tag.inner_html}</div>"
