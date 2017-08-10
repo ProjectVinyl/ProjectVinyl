@@ -1,5 +1,5 @@
 require 'projectvinyl/web/ajax'
-require 'projectvinyl/web/htm_node'
+require 'projectvinyl/bbc/bbcode'
 
 module ProjectVinyl
   module Web
@@ -22,16 +22,16 @@ module ProjectVinyl
         if Youtube.flag_set(wanted_data, :description)
           Ajax.get(url) do |body|
             if desk = Youtube.description_from_html(body)
-              desc_node = HTMNode.Parse("<div>" + desk + "</div>")
+              desc_node = Bbcode.from_html(desk)
               desc_node.getElementsByTagName('a').each do |a|
                 if a.attributes['href'].index('//www.youtube.com/redirect?')
                   a.attributes['href'] = HTMNode.extract_uri_parameter(a.attributes['href'], 'q')
                 end
-                a.innerText = a.attributes['href']
+                a.inner_text = a.attributes['href']
               end
               wanted_data[:description] = {
-                html: desc_node.innerHTML,
-                bbc: desc_node.innerBBC
+                html: desc_node.outer_html,
+                bbc: desc_node.outer_bbc
               }
             end
           end

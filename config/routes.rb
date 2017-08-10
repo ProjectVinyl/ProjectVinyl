@@ -250,6 +250,9 @@ Rails.application.routes.draw do
     get 'videos' => 'video#find'
     get 'videos/:id' => 'video#details'
     post 'videos/:id' => 'video#update'
+    
+    get 'bbcode' => 'bbcode#html_to_bbcode'
+    get 'html' => 'bbcode#bbcode_to_html'
   end
   
   # Short link #
