@@ -7,6 +7,8 @@
   left: 50%;
   z-index: 200;
   margin: -20px;
+  font-style: initial;
+  font-size: 13px;
 }
 .post .hovercard .avatar {
   float: none;

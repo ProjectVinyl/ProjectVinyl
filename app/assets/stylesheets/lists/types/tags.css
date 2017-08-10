@@ -6,7 +6,7 @@ li.genre {
   min-height: 150px;
 }
 
-.tag-list, .date, .source, .tag-list a {
+.tag-list, .date, .source {
   font-size: 0.8em;
 }
 .tag-list > .overflow {
@@ -16,8 +16,10 @@ li.genre {
 .tag-list.show-all > .overflow {
   display: inline;
 }
-.tag-list, .date, .source, .tag-list a, .underline a {
+.tag-list, .date, .source, .underline a {
   font-style: italic;
+}
+.tag-list, .date, .source, .underline a, .tag-list a {
   color: #aaa;
   text-decoration: none;
   font-weight: normal;

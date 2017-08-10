@@ -26,7 +26,12 @@
 		</h2>
 	<% end %>
 		<div class="tag-list subheading">
-			<span class="uploaded">Uploaded on <%= @video.created_at.to_time.strftime('%e %B %Y') %> by <%= @user.username %></span>
+			<span class="uploaded">
+				Uploaded on
+				<%= @video.created_at.to_time.strftime('%e %B %Y') %>
+				by
+				<a class="user-link link" data-id="<%= @user.id %>" href="<%= @user.link %>"><%= @user.username %></a>
+			</span>
 			<span class="views right"><%= number_with_delimiter @video.views %> views</span>
 		</div>
 	<% if @modifications_allowed %>
