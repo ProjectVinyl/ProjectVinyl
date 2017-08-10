@@ -5,8 +5,13 @@
   width: 34px;
   height: 32px;
   background: url(/emoticons/all.png);
+  font-size: 0;
+  vertical-align: bottom;
 }
-.emote:hover {
+i.emote {
+	display: inline-block;
+}
+#emoticons .emote:hover {
   transform: rotate(15deg);
   filter: blur(0);
 }
@@ -14,7 +19,7 @@
 <% ApplicationHelper.emoticons.each_with_index do |emoticon,index| %>
 <% x = index % 7 %>
 <% y = (index / 7).floor %>
-.emote.<%= emoticon %> {
+.emote[data-emote="<%= emoticon %>"] {
 	background-position: top -<%= y * 32 %>px left -<%= x * 34 %>px;
 }
 <% end %>

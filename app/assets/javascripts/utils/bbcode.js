@@ -5,13 +5,18 @@ TextNode.prototype = {
   innerTEXT: function() {
     return escapeHTML(this.text);
   },
+  inner: function(type) {
+    return this.outer(type);
+  },
+  outer: function(type) {
+    if (type == 'html') this.innerTEXT().replace(/\n/g, '<br>');
+    return this.innerTEXT();
+  },
   outerHTML: function() {
-    var result = this.innerTEXT();
-    result = result.replace(/\n/g, '<br>');
-    return result;
+    return this.outer('html');
   },
   outerBBC: function() {
-    return this.innerTEXT();
+    return this.outer('bbc');
   }
 };
 
@@ -53,7 +58,7 @@ Node.prototype = {
         }
         
         if (content.indexOf(open + '/' + this.tagName + close) == index) {
-          if (text.length) this.appendTEXT(text);
+          this.appendTEXT(text);
           return content.substring(index + (open + '/' + this.tagName + close).length, content.length);
         }
         
@@ -100,9 +105,7 @@ Node.prototype = {
           content = this.parseEqualsPar(content.substring(index + 1, content.length), close);
           index = -1;
         } else if (tagName.length && (content[index] == close || content[index] == '/' || content[index] == ' ')) {
-          if (content[index] == close || content[index] == '/') {
-            this.parseTagName(tagName);
-          }
+          this.parseTagName(tagName);
           
           if (content[index] == ' ') {
             content = this.parseAttributes(content.substring(index + 1, content.length), close);
@@ -115,14 +118,12 @@ Node.prototype = {
         }
       }
       
-      if (state == -1) {
-        if (content[index] == open) {
-          state = 0;
-        }
+      if (state == -1 && content[index] == open) {
+        state = 0;
       }
     }
     
-    if (text.length) this.appendTEXT(text);
+    this.appendTEXT(text);
     return content.substring(index + 1, content.length);
   },
   appendNode: function(tagName) {
@@ -170,9 +171,7 @@ Node.prototype = {
       par += content[index];
     }
     
-    if (par.length) {
-      this.equalsPar = par;
-    }
+    if (par.length) this.equalsPar = par;
     return content.substring(index, content.length);
   },
   parseAtTag: function(content) {
@@ -203,7 +202,7 @@ Node.prototype = {
           return content.substring(index, content.length);
         }
         if (content[index] == close) {
-          if (name.length) this.attributes[name.trim()] = value;
+          if (name.length) this.setAttribute(name, value);
           return content.substring(index + 1, content.length);
         }
       }
@@ -220,7 +219,7 @@ Node.prototype = {
             continue;
           }
           if (content[index] == ' ') {
-            this.setAttribute(name.trim(), value);
+            this.setAttribute(name, value);
             name = '';
             value = '';
             inValue = false;
@@ -246,41 +245,34 @@ Node.prototype = {
       this.classes = value.split(/\s/);
     }
   },
-  innerTEXT: function(tag) {
-    var text = '';
-    this.children.forEach(function(child) {
-      text += child.innerTEXT();
-    });
-    return text;
+  inner: function(type) {
+    return this.children.map(child => child.outer(type)).join('');
   },
-  innerHTML: function(tag) {
-    var html = '';
-    this.children.forEach(function(child) {
-      html += child.outerHTML();
-    });
-    return html;
+  outer: function(type) {
+    if (type === 'text') return innerText();
+    return getTagGenerator(this, type);
   },
-  innerBBC: function(tag) {
-    var html = '';
-    this.children.forEach(function(child) {
-      html += child.outerBBC();
-    });
-    return html;
+  innerTEXT: function() {
+    return this.inner('text');
+  },
+  innerHTML: function() {
+    return this.inner('html');
+  },
+  innerBBC: function() {
+    return this.inner('bbc');
   },
   outerHTML: function() {
-    var gen = getTagGenerator(this.tagName, 'html');
-    return gen ? gen(this) : '';
+    return this.outer('html');
   },
   outerBBC: function() {
-    var gen = getTagGenerator(this.tagName, 'bbc');
-    return gen ? gen(this) : '';
+    return this.outer('bbc');
   },
   depth: function() {
     if (!this.parent) return 0;
     return this.parent.depth() + 1;
   },
-  odd: function() {
-    return this.depth() % 2 == 1;
+  even: function() {
+    return !(this.depth() % 2);
   }
 };
   
@@ -295,15 +287,16 @@ function escapeHTML(string) {
 
 function getTagGenerator(tag, type) {
   var result = null;
-  if (!tag.length) {
-    return tagGenerators.default[type];
+  if (tag.tagName.length) {
+    tagGenerators[type].forEach(function(item) {
+      if (item.match.indexOf(tag.tagName) > -1) {
+        result = item.func;
+      }
+    });
   }
-  tagGenerators[type].forEach(function(item) {
-    if (item.match.indexOf(tag) > -1) {
-      result = item.func;
-    }
-  });
-  return result || tagGenerators.default[type];
+  if (!result) result = tagGenerators.default[type];
+  if (result) return result(tag);
+  return '';
 }
 
 var tagGenerators = {
@@ -327,25 +320,28 @@ var tagGenerators = {
   bbc: [
     {
       match: ['br'],
-      func: function(tag) {
+      func: tag => {
         return '\n' + tag.innerBBC();
       }
     },
     {
       match: ['hr'],
-      func: function(tag) {
+      func: tag => {
         return '[hr]' + tag.innerBBC();
       }
     },
     {
-      match: ['b','u','s','sup','sub'],
-      func: function(tag) {
+      match: ['b','u','s','sup','sub','spoiler'],
+      func: tag => {
         return '[' + tag.tagName + ']' + tag.innerBBC() + '[/' + tag.tagName + ']';
       }
     },
     {
       match: ['i'],
-      func: function(tag) {
+      func: tag => {
+        if (tag.classes.indexOf('emote') != -1) {
+          return ':' + tag.attributes['data-emote'] + ':';
+        }
         if (tag.attributes.class && tag.attributes.class.indexOf('fa fa-fw fa-') == 0) {
           return '[icon]' + tag.attributes.class.replace('fa fa-fw fa-', '').split(/[^a-zA-Z0-9]/)[0] + '[/icon]';
         }
@@ -359,14 +355,14 @@ var tagGenerators = {
       }
     },
     {
-      match: ['@'],
-      func: function(tag) {
+      match: ['at'],
+      func: tag => {
         return tag.tagName + tag.innerTEXT();
       }
     },
     {
       match: ['a'],
-      func: function(tag) {
+      func: tag => {
         if (!tag.attributes.href) {
           return tag.innerBBC();
         }
@@ -386,31 +382,28 @@ var tagGenerators = {
     },
     {
       match: ['div'],
-      func: function(tag) {
-        if (tag.classes.indexOf('spoiler') < 0) {
-          return tag.innerBBC();
+      func: tag => {
+        if (tag.classes.indexOf('spoiler') > -1) {
+          return '[spoiler]' + tag.innerBBC() + '[/spoiler]';
         }
-        return '[spoiler]' + tag.innerBBC() + '[/spoiler]';
+        return tag.innerBBC();
       }
     },
     {
       match: ['img'],
-      func: function(tag) {
-        if (tag.attributes.class == 'emoticon' && tag.attributes.src) {
-          return ':' + tag.attributes.src.replace('/emoticons/([^a-zA-Z0-9]+).png', '$1') + ':';
-        }
+      func: tag => {
         return '[img]' + (tag.attributes.src || '') + '[img]' + tag.innerBBC();
       }
     },
     {
       match: ['emote'],
-      func: function(tag) {
+      func: tag => {
         return ':' + tag.innerTEXT() + ':';
       }
     },
     {
       match: ['iframe'],
-      func: function(tag) {
+      func: tag => {
         if (tag.attributes.src && tag.attributes.class == 'embed') {
           if (tag.attributes.src.indexOf('youtube') > -1) {
             return '[yt' + ytId(tag.attributes.src) + ']' + tag.innerBBC();
@@ -424,47 +417,44 @@ var tagGenerators = {
   html: [
     {
       match: ['b','i','u','s','sup','sub','hr'],
-      func: function(tag) {
+      func: tag => {
         return '<' + tag.tagName + '>' + tag.innerHTML() + '</' + tag.tagName + '>';
       }
     },
     {
       match: ['icon'],
-      func: function(tag) {
+      func: tag => {
         return '<i class="fa fa-fw fa-' + tag.innerTEXT().split(/[^a-zA-Z0-9]/)[0] + '"></' + tag.tagName + '>';
       }
     },
     {
       match: ['q'],
-      func: function(tag) {
-        return '<blockquote' + (!tag.odd() ? ' class="even"' : '') + '>' + tag.innerHTML() + '</blockquote>';
+      func: tag => {
+        return '<blockquote' + (tag.even() ? ' class="even"' : '') + '>' + tag.innerHTML() + '</blockquote>';
       }
     },
     {
       match: ['url'],
-      func: function(tag) {
-        if (tag.equalsPar) {
-          return '<a href="' + tag.equalsPar + '">' + tag.innerHTML() + '</a>';
-        }
-        return '<a href="' + tag.innerTEXT() + '">' + tag.innerTEXT() + '</a>';
+      func: tag => {
+        return '<a href="' + (tag.equalsPar || tag.innerTEXT()) + '">' + tag.innerHTML() + '</a>';
       }
     },
     {
       match: ['spoiler'],
-      func: function(tag) {
+      func: tag => {
         return '<div class="spoiler">' + tag.innerHTML() + '</div>';
       }
     },
     {
       match: ['img'],
-      func: function(tag) {
+      func: tag => {
         return '<img src="' + tag.innerTEXT().replace(/['"]/g,'') + '"></img>';
       }
     },
     {
       match: ['emote'],
-      func: function(tag) {
-        return '<img src="/emoticons/' + tag.innerTEXT() + '.png"></img>';
+      func: tag => {
+        return '<i class="emote" data-emote="' + tag.innerTEXT() + '">:' + tag.innerTEXT() + ':</i>';
       }
     }
   ]

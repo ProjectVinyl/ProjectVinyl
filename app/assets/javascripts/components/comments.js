@@ -3,6 +3,7 @@ import { paginator } from './paginator';
 import { popupConfirm, popupError } from './popup';
 import { scrollTo } from '../ui/scroll';
 import { jSlim } from '../utils/jslim';
+import { insertTags } from '../ui/editable';
 
 function postComment(sender) {
   var threadId = sender.dataset.threadId;
@@ -114,9 +115,10 @@ function findComment(sender) {
 
 function replyTo(sender) {
   sender = sender.parentNode;
-  var textarea = sender.closest('.page, body').querySelector('.post-box textarea');
-  textarea.value = '>>' + sender.dataset.oId + ' [q]\n' + jSlim.dom.decodeEntities(sender.dataset.comment) + '\n[/q]' + textarea.value;
-  textarea.focus();
+  const textarea = sender.closest('.page, body').querySelector('.post-box textarea');
+  insertTags(textarea, '\n>>' + sender.dataset.oId + ' [q]\n' + jSlim.dom.decodeEntities(sender.dataset.comment) + '\n[/q]\n\n', '');
+  let height = parseFloat(textarea.style.height) || 0;
+  textarea.style.height = Math.max(height, textarea.scrollHeight) + 'px';
 }
 
 function reportState(sender) {

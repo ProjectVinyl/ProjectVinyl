@@ -17,7 +17,7 @@ var specialActions = {
   emoticons: function(sender) {
     sender.classList.remove('edit-action');
     sender.querySelector('.pop-out').innerHTML = emoticons.map(function(e) {
-      return '<li class="edit-action" data-action="emoticon" title=":' + e + ':"><span class="emote ' + e + '" title=":' + e + ':" alt=":' + e + ':"></span></li>';
+      return '<li class="edit-action" data-action="emoticon" title=":' + e + ':"><span class="emote" data-emote="' + e + '" title=":' + e + ':"></span></li>';
     }).join('');
   },
   emoticon: function(sender, textarea) {
@@ -38,10 +38,10 @@ function initEditable(holder, content, short) {
     textarea.className = 'input js-auto-resize';
     content.insertAdjacentElement('afterend', textarea);
   }
-  textarea.addEventListener('change', function() {
+  textarea.addEventListener('change', () => {
     holder.classList.add('dirty');
   });
-  textarea.addEventListener('keydown', function(ev) {
+  textarea.addEventListener('keydown', ev => {
     if (ev.ctrlKey) {
       handleSpecialKeys(ev.keyCode, function(tag) {
         insertTags(textarea, '[' + tag + ']', '[/' + tag + ']');
@@ -52,7 +52,7 @@ function initEditable(holder, content, short) {
   return textarea;
 }
 
-function insertTags(textarea, open, close) {
+export function insertTags(textarea, open, close) {
   var start = textarea.selectionStart;
   if (!start && start != 0) return;
   var end = textarea.selectionEnd;
@@ -158,7 +158,7 @@ jSlim.on(document, 'keydown', 'textarea.comment-content', function(ev) {
 });
 
 jSlim.on(document, 'mouseup', '.edit-action', function() {
-  const textarea = this.closest('.content.editing').querySelector('textarea, input.comment-content');
+  const textarea = this.closest('.content').querySelector('textarea, input.comment-content');
   const type = specialActions[this.dataset.action];
   if (type) type(this, textarea);
 });
