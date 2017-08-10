@@ -6,10 +6,8 @@ class CommentController < ApplicationController
     else
       @page = params[:page].to_i
     end
-    @results = Pagination.paginate(@thread.get_comments(user_signed_in? && current_user.is_contributor?), @page, 10, params[:order] == '1')
-    
-    render_pagination 'comment/set', @results, {
-      thread: @results.records,
+    @records = @thread.get_comments(user_signed_in? && current_user.is_contributor?)
+    render_pagination 'comment/comment', Pagination.paginate(@records, @page, 10, params[:order] == '1'), {
       indirect: false
     }
   end
