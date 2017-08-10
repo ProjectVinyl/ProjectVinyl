@@ -1,5 +1,5 @@
 module Ajax
-  class LoginController < ApplicationController
+  class SessionController < ApplicationController
     def login
       render partial: "devise/sessions/new"
     end
