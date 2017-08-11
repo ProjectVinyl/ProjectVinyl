@@ -1,6 +1,6 @@
 <% if indirect && comment.comment_thread.owner_type == 'Video' %>
 <div class="artist-bio bio">
-	<%= render partial: 'layouts/video_thumb_i', locals: {video_thumb_i: comment.comment_thread.owner, comment: comment.get_open_id} %>
+	<%= render partial: 'video/thumb_i', locals: {thumb_i: comment.comment_thread.owner, comment: comment.get_open_id} %>
 </div>
 <% else %>
 	<% if indirect %>

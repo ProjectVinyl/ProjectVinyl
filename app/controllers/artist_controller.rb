@@ -52,8 +52,8 @@ class ArtistController < ApplicationController
   end
   
   def set_banner
-    check_then do
-      if params[:erase] || params[:user]
+    check_then do |user|
+      if params[:erase] || params[:user][:banner]
         user.set_banner(params[:erase] ? false : params[:user][:banner])
         user.save
       end

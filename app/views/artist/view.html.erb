@@ -27,11 +27,11 @@
 			<h1>Associated Tags</h1>
 			<% if @user.tag_id %>
 			<ul class="tags artist-tags">
-			<%= render partial: 'layouts/genre_thumb_h', locals: {genre_thumb_h: @user.tag} %>
+			<%= render partial: 'tag/thumb_h', locals: {thumb_h: @user.tag} %>
 			</ul>
 			<% end %>
 			<ul class="tags">
-			<%= render partial: 'layouts/genre_thumb_h', collection: @tags.includes(:tag_type) %>
+			<%= render partial: 'tag/thumb_h', collection: @tags.includes(:tag_type) %>
 			</ul>
 		</div>
 		<% end %>
@@ -48,7 +48,7 @@
 						</a>
 					</li>
 				<% end %>
-					<li class="action js-banner-select" data-external-form="artist/update/banner/<%= @user.id %>" data-title="Select Banner Image">
+					<li class="action js-banner-select" data-external-form="users/<%= @user.id %>/banner" data-title="Select Banner Image">
 						<span class="icon"><i class="fa fa-pencil"></i></span>
 						<span class="label">Change Banner Image</span>
 					</li>
@@ -56,7 +56,7 @@
 			</div>
 		<% end %>
 		<% if user_signed_in? %>
-			<button data-external-form="thread/new?user=<%= @user.id %>" data-title="New Message"><i class="fa fa-envelope"></i> Send Message</button>
+			<button data-external-form="threads/new?user=<%= @user.id %>" data-title="New Message"><i class="fa fa-envelope"></i> Send Message</button>
 		<% end %>
 		</div>
 	</div>
@@ -65,7 +65,7 @@
 <section class="page full-width recent-uploads resize-holder">
 	<h1 class="title resize-target">Songs by <%= @user.username %><span> (<span class="count"><%= number_with_delimiter @art.count %></span>)</span></h1>
 	<ul id="songs" class="horizontal video-list">
-		<%= render partial: '/layouts/video_thumb_h', collection: @art.records %>
+		<%= render partial: 'video/thumb_h', collection: @art.records %>
 	</ul>
 	<div class="load-more">
 	<% if @art.pages > 1 %>
@@ -78,7 +78,7 @@
 	<h1 class="title resize-target">Recent Uploads<span> (<span class="count"><%= number_with_delimiter @videos.count %></span>)</span></h1>
 	<% if @modifications_allowed %><a class="button" href="/upload"><i class="fa fa-plus"></i> New</a><% end %>
 	<ul id="uploads" class="horizontal video-list">
-		<%= render partial: '/layouts/video_thumb_h', collection: @videos.records %>
+		<%= render partial: 'video/thumb_h', collection: @videos.records %>
 	</ul>
 	<div class="load-more">
 	<% if @videos.pages > 0 %>
@@ -89,10 +89,10 @@
 <section class="page full-width recent-uploads resize-holder">
 	<h1 class="title resize-target">Recent Albums<span> (<span class="count"><%= number_with_delimiter @albums.count %></span>)</span></h1>
 	<% if @modifications_allowed %>
-    <button data-external-form="/albums/new" data-title="New Album"><i class="fa fa-plus"></i> New</button>
+    <button data-external-form="albums/new" data-title="New Album"><i class="fa fa-plus"></i> New</button>
   <% end %>
 	<ul id="albums" class="album-list horizontal">
-		<%= render partial: '/layouts/album_thumb_h', collection: @albums.records %>
+		<%= render partial: 'album/thumb_h', collection: @albums.records %>
 	</ul>
 	<div class="load-more">
 	<% if @albums.pages > 0 %>
@@ -103,6 +103,6 @@
 <section class="page full-width recent-comments resize-holder">
 	<h1 class="title resize-target">Recent Comments</h1>
 	<ul class="comments">
-	<%= render partial: 'thread/comment_set', locals: { thread: @comments, indirect: true } %>
+	<%= render partial: 'comment/set', locals: { thread: @comments, indirect: true } %>
 	</ul>
 </section>
