@@ -4,7 +4,7 @@
 	<% end %>
 <% end %>
 <section class="page column-left">
-	<%= render partial: 'video_content', locals: {embed: false} %>
+	<%= render partial: 'video/video_content', locals: {embed: false} %>
 	<span class="notices">
 	<% if !@video.processed %>
 		<div class="notice pending">This video is still being processed by our background ponies. If it does not play correctly try again later.</div>

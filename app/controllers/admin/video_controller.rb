@@ -50,7 +50,7 @@ module Admin
     
     def rebuild_queue
       badly_named_function do
-        flash[:notice] = Video.rebuild_queue.to_s + " videos in queue."
+        flash[:notice] = "#{Video.rebuild_queue} videos in queue."
       end
     end
     
@@ -62,7 +62,7 @@ module Admin
     
     def reprocess
       try_and do
-        flash[:notice] = "Processing Video: " + @video.generate_webm
+        flash[:notice] = "Processing Video: #{@video.generate_webm}"
       end
     end
     
@@ -90,20 +90,37 @@ module Admin
         return head 401
       end
       
-      if !(video = Video.where(id: params[:id]).first)
+      if !(@video = Video.where(id: params[:id]).first)
         return head 404
       end
       
       Video.where(featured: true).update_all(featured: false)
-      video.featured = !video.featured
+      @video.featured = !@video.featured
       
-      if video.featured
-        video.save
-        Tag.add_tag('featured video', video)
+      if @video.featured
+        @video.save
+        Tag.add_tag('featured video', @video)
       end
       
       render json: {
-        added: video.featured
+        added: @video.featured
+      }
+    end
+    
+    def toggle_visibility
+      if !current_user.is_staff?
+        return head 401
+      end
+      
+      if !(@video = Video.where(id: params[:id]).first)
+        return head 404
+      end
+      
+      @video.set_hidden(!@video.hidden)
+      @video.save
+      
+      render json: {
+        added: @video.hidden
       }
     end
     
@@ -121,7 +138,7 @@ module Admin
     def try_and
       redirect_to action: "view", id: params[:video][:id]
       
-      if current_user.is_contributor?
+      if !current_user.is_contributor?
         return flash[:error] = "Error: Login required."
       end
       

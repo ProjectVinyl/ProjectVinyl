@@ -84,7 +84,7 @@
 					Visibility
 				</td>
 				<td class="field">
-					<button class="action toggle blue" data-url="/admin/videos/<%= @video.id %>/hide">
+					<button class="action toggle blue" data-target="admin/videos" data-id="<%= @video.id %>" data-action="hide">
 						<span class="icon">
 							<% if @video.hidden %>
 								<i class="fa fa-check"></i>
@@ -99,7 +99,7 @@
 					Featured
 				</td>
 				<td class="field">
-					<button class="action toggle blue" data-url="/admin/videos/<%= @video.id %>/feature">
+					<button class="action toggle blue" data-target="admin/videos" data-id="<%= @video.id %>" data-action="feature">
 						<span class="icon">
 							<% if @video.featured %>
 								<i class="fa fa-check"></i>
@@ -112,7 +112,7 @@
 			<tr>
 				<td class="label">Disable Comments</td>
 				<td class="field">
-					<button class="action toggle blue" data-url="/admin/threads/<%= @video.comment_thread.id %>/lock">
+					<button class="action toggle blue" data-target="admin/threads" data-id="<%= @video.comment_thread.id %>" data-action="lock">
 						<span class="icon">
 							<% if @video.comment_thread.locked %>
 								<i class="fa fa-check"></i>
