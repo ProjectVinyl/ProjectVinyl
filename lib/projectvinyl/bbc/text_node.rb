@@ -14,10 +14,6 @@ module ProjectVinyl
       end
       
       def outer(type)
-        if type == :html
-          return inner_text.gsub(/\n/, '<br>')
-        end
-        
         inner_text
       end
       

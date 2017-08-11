@@ -70,7 +70,11 @@ module ProjectVinyl
       end
       
       def inner(type)
-        (@children.map {|child|child.outer(type)}).join
+        ans = (@children.map {|child|child.outer(type)}).join
+        if type != :html
+          return ans
+        end
+        ans.strip.gsub(/\n/, '<br>')
       end
       
       def outer(type)

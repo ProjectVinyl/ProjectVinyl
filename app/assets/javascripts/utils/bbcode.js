@@ -9,7 +9,6 @@ TextNode.prototype = {
     return this.outer(type);
   },
   outer: function(type) {
-    if (type == 'html') this.innerTEXT().replace(/\n/g, '<br>');
     return this.innerTEXT();
   },
   outerHTML: function() {
@@ -261,7 +260,9 @@ Node.prototype = {
     }
   },
   inner: function(type) {
-    return this.children.map(child => child.outer(type)).join('');
+    let ans = this.children.map(child => child.outer(type)).join('');
+    if (type != 'html') return ans;
+    return ans.trim().replace(/\n/g, '<br>');
   },
   outer: function(type) {
     if (type === 'text') return innerText();
