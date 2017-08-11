@@ -4,10 +4,7 @@ module Admin
 
     def view
       if !current_user.is_contributor?
-        return render 'layouts/error', locals: {
-          title: 'Access Denied',
-          description: "You can't do that right now."
-        }
+        return render_access_denied
       end
       
       @hiddenvideos = Pagination.paginate(Video.where(hidden: true), params[:hidden].to_i, 40, true)
@@ -42,11 +39,13 @@ module Admin
     
     def reindex
       if !current_user.is_contributor?
-        return flash[:notice] = "Access Denied: You do not have the required permissions."
+        flash[:notice] = "Access Denied: You do not have the required permissions."
+        return redirect_to action: "view"
       end
       
       if !(table = params[:table] == 'user' ? User : params[:table] == 'video' ? Video : nil)
-        return flash[:notice] = "Error: Table #{params[:table]} was not found."
+        flash[:notice] = "Error: Table #{params[:table]} was not found."
+        return redirect_to action: "view"
       end
       
       if params[params[:table]]

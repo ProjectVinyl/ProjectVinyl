@@ -1,244 +1,238 @@
-<% if @video %>
-	<% title "Admin" %>
-	<%= render partial: 'view/breadcrumb', locals: {
-		stack: [
-			{ link: '/admin', title: 'Admin' },
-			{ title: 'Videos' },
-			{ link: @video.link, title: @video.id }
-		],
-		title: @video.title
-	} %>
-	<%= render partial: 'video/video' %>
-	<div class="wrapper column-right right">
-		<section class="page full-width">
-			<h1>Thumbnail Preview</h1>
-			<ul class="horizontal center">
-				<%= render partial: 'video/thumb_h', locals: {thumb_h: @video} %>
-			</ul>
-		</section>
-		<section class="page full-width">
-			<h1>Metadata</h1>
-			<%= form_for(@video, as: "video", url: "/admin/videos/metadata", html: { method: :put }) do |f| %>
-				<%= f.text_field :id, hidden: true %>
-				<label class="text-input" data-prefix="https://www.youtube.com/watch?v=">
-					<input type="text" name="source" placeholder="source"></input>
+<% title "Admin" %>
+<%= render partial: 'view/breadcrumb', locals: {
+	stack: [
+		{ link: '/admin', title: 'Admin' },
+		{ title: 'Videos' },
+		{ link: @video.link, title: @video.id }
+	],
+	title: @video.title
+} %>
+<%= render partial: 'video/video' %>
+<div class="wrapper column-right right">
+	<section class="page full-width">
+		<h1>Thumbnail Preview</h1>
+		<ul class="horizontal center">
+			<%= render partial: 'video/thumb_h', locals: {thumb_h: @video} %>
+		</ul>
+	</section>
+	<section class="page full-width">
+		<h1>Metadata</h1>
+		<%= form_for(@video, as: "video", url: "/admin/videos/metadata", html: { method: :put }) do |f| %>
+			<%= f.text_field :id, hidden: true %>
+			<label class="text-input" data-prefix="https://www.youtube.com/watch?v=">
+				<input type="text" name="source" placeholder="source"></input>
+			</label>
+			<br>
+			<div class="post">
+				<label class="button blue">
+					<input name="title" type="checkbox"></input>
+					<i class="fa fa-check"></i> Title
 				</label>
-				<br>
-				<div class="post">
-					<label class="button blue">
-						<input name="title" type="checkbox"></input>
-						<i class="fa fa-check"></i> Title
-					</label>
-					<label class="button blue">
-						<input name="description" type="checkbox"></input>
-						<i class="fa fa-check"></i> Description
-					</label>
-					<label class="button blue">
-						<input name="tags" type="checkbox"></input>
-						<i class="fa fa-check"></i> Tags
-					</label>
-					<div class="actions">
-						<%= f.submit %>
-					</div>
+				<label class="button blue">
+					<input name="description" type="checkbox"></input>
+					<i class="fa fa-check"></i> Description
+				</label>
+				<label class="button blue">
+					<input name="tags" type="checkbox"></input>
+					<i class="fa fa-check"></i> Tags
+				</label>
+				<div class="actions">
+					<%= f.submit %>
 				</div>
-			<% end %>
-		</section>
-		<section class="page properties full-width">
-			<h1>Files</h1>
-			<table>
-				<tr>
-					<td class="label">Audio</td>
-					<td class="field"><%= @video.audio_only ? "Yes" : "No" %></td>
-					<td></td>
-				<tr>
-					<td class="label">Source</td>
-					<td class="field"><%= File.exist?(@video.video_path) ? "Yes" : "No" %></td>
-					<td>
-						<a class="button" href="/admin/files?p=<% if @video.hidden %>private<% else %>public<% end %>/stream&start=<%= @video.id.to_s + @video.file %>&offset=-5#<%= @video.id %>">View</a>
-					</td>
-				<tr>
-					<td class="label">Webm</td>
-					<% if @video.audio_only %>
-					<td class="field">N/A</td>
-					<td></td>
-					<% else %>
-					<td class="field"><%= File.exist?(@video.webm_path) ? "Yes" : "No" %></td>
-					<td>
-						<a class="button" href="/admin/files?p=<% if @video.hidden %>private<% else %>public<% end %>/stream&start=<%= @video.id %>.webm&offset=-5#<%= @video.id %>">View</a>
-					</td>
-					<% end %>
-				</tr>
-				<tr>
-					<td class="label">Cover</td>
-					<td class="field"><%= File.exist?(Rails.root.join('public', 'cover', @video.id.to_s + '.png')) ? 'Yes' : 'No' %></td>
-					<td>
-						<a class="button" href="/admin/files?p=public/cover&start=<%= @video.id %>.png&offset=-5#<%= @video.id %>">View</a>
-					</td>
-				</tr>
-			</table>
-		</section>
-    <section class="page full-width properties">
-			<h1>Actions</h1>
-			<table>
-				<tr class="actions">
-					<td class="label">
-						Visibility
-					</td>
-					<td class="field">
-						<button class="action toggle blue" data-url="/admin/videos/<%= @video.id %>/hide">
-							<span class="icon">
-								<% if @video.hidden %>
-									<i class="fa fa-check"></i>
-								<% end %>
-							</span>
-							<span class="label">Unlist Video</span>
-						</button>
-					</td>
-				</tr>
-				<tr class="actions">
-					<td class="label">
-						Featured
-					</td>
-					<td class="field">
-						<button class="action toggle blue" data-url="/admin/videos/<%= @video.id %>/feature">
-							<span class="icon">
-								<% if @video.featured %>
-									<i class="fa fa-check"></i>
-								<% end %>
-							</span>
-							<span class="label">Feature Video</span>
-						</button>
-					</td>
-				</tr>
-				<tr>
-					<td class="label">Disable Comments</td>
-					<td class="field">
-						<button class="action toggle blue" data-url="/admin/threads/<%= @video.comment_thread.id %>/lock">
-							<span class="icon">
-								<% if @video.comment_thread.locked %>
-									<i class="fa fa-check"></i>
-								<% end %>
-							</span>
-							<span class="label">Disable Comments</span>
-						</button>
-					</td>
-				</tr>
-				<tr class="actions">
-					<td class="label">
-						Processed (<%= (@video.processed ? "Yes" : @video.processed.nil? ? "No" : "In Progress") %>)
-					</td>
-					<td class="field">
-          <%= form_for(@video, as: "video", url: "/admin/videos/reprocess", html: { method: :put }) do |f| %>
-            <%= f.text_field :id, hidden: true %>
-						<%= f.submit "Restart" %>
-          <% end %>
-					</td>
-				</tr>
-				<tr class="actions">
-					<td class="label">Reset Thumbnail</td>
-					<td class="field">
-          <%= form_for(@video, as: "video", url: "/admin/videos/resetthumb", html: { method: :put }) do |f| %>
-            <%= f.text_field :id, hidden: true %>
-						<%= f.submit "Restart" %>
-						<div>Thumbnail will be regenerated from source</div>
-          <% end %>
-					</td>
-				</tr>
-				<tr class="actions">
-					<td class="label">Reindex Video</td>
-					<td class="field">
-					<%= form_for(@video, as: "video", url: "/admin/videos/reindex", html: { method: :put }) do |f| %>
-						<%= f.text_field :id, hidden: true %>
-						<%= f.submit "Reindex" %>
-					<% end %>
-					</td>
-				</tr>
-				<tr class="actions">
-					<td class="label">
-						Delete Item
-					</td>
-					<td class="field">
-            <a data-confirm data-method="delete" href="/admin/videos/<%= @video.id %>" data-title="Delete Video"><button class="action red"><i class="fa fa-trash"></i> Delete Video</button></a>
-            <div>Removes this video and all related data from the system.
-            <br><b>(Action cannot be reversed)</b></div>
-					</td>
-				</tr>
-			</table>
-		</section>
-	</div>
-  <section class="page properties column-left">
-		<h1>Ownership</h1>
-    <%= form_for(@video, as: "item", url: "/admin/transfer?type=video", html: { method: :put }) do |f| %>
-      <%= f.text_field :id, hidden: true %>
-    <table>
-      <tr>
-        <td class="label">
-          <%= f.label "Current Owner" %>
-        </td>
-        <td class="field" colspan="2">
-          <a class="user-link" data-id="<%= @user.id %>" href="<%= @user.link %>">
-            <%= @user.username %> (<%= @user.id %>)
-          </a>
-        </td>
-      </tr>
-      <tr>
-        <td class="label">
-          <%= f.label "New Owner" %>
-        </td>
-        <td class="field popper auto-lookup" data-action="artist">
-          <%= f.text_field :user_id, autocomplete: "off" %>
-          <ul class="pop-out"></ul>
-        </td>
-        <td class="field">
-          <%= f.submit "Transfer Ownership", class: "green" %>
-        </td>
-      </tr>
-    </table>
-    <% end %>
-  </section>
-  <section class="page properties column-left">
-		<h1>Duplication Status</h1>
-    <%= form_for(@video, as: "video", url: "/admin/videos/merge", html: { method: :put }) do |f| %>
-      <%= f.text_field :id, hidden: true %>
-    <table>
+			</div>
+		<% end %>
+	</section>
+	<section class="page properties full-width">
+		<h1>Files</h1>
+		<table>
 			<tr>
-				<td class="label">Unique Hash</td>
-				<td class="field"><%= @video.checksum %></td>
+				<td class="label">Audio</td>
+				<td class="field"><%= @video.audio_only ? "Yes" : "No" %></td>
+				<td></td>
+			<tr>
+				<td class="label">Source</td>
+				<td class="field"><%= File.exist?(@video.video_path) ? "Yes" : "No" %></td>
+				<td>
+					<a class="button" href="/admin/files?p=<% if @video.hidden %>private<% else %>public<% end %>/stream&start=<%= @video.id.to_s + @video.file %>&offset=-5#<%= @video.id %>">View</a>
+				</td>
+			<tr>
+				<td class="label">Webm</td>
+				<% if @video.audio_only %>
+				<td class="field">N/A</td>
+				<td></td>
+				<% else %>
+				<td class="field"><%= File.exist?(@video.webm_path) ? "Yes" : "No" %></td>
+				<td>
+					<a class="button" href="/admin/files?p=<% if @video.hidden %>private<% else %>public<% end %>/stream&start=<%= @video.id %>.webm&offset=-5#<%= @video.id %>">View</a>
+				</td>
+				<% end %>
 			</tr>
 			<tr>
-				<td class="label">Duplicate Hash</td>
+				<td class="label">Cover</td>
+				<td class="field"><%= File.exist?(Rails.root.join('public', 'cover', @video.id.to_s + '.png')) ? 'Yes' : 'No' %></td>
+				<td>
+					<a class="button" href="/admin/files?p=public/cover&start=<%= @video.id %>.png&offset=-5#<%= @video.id %>">View</a>
+				</td>
+			</tr>
+		</table>
+	</section>
+	<section class="page full-width properties">
+		<h1>Actions</h1>
+		<table>
+			<tr class="actions">
+				<td class="label">
+					Visibility
+				</td>
 				<td class="field">
-					<% if @video.duplicate_id > 0 %>
-					<%= Video.where(id: @video.duplicate_id).first.checksum %>
-					<% end %>
-					</td>
+					<button class="action toggle blue" data-url="/admin/videos/<%= @video.id %>/hide">
+						<span class="icon">
+							<% if @video.hidden %>
+								<i class="fa fa-check"></i>
+							<% end %>
+						</span>
+						<span class="label">Unlist Video</span>
+					</button>
+				</td>
 			</tr>
-      <tr class="actions">
-        <td class="label">
-          Merging
-        </td>
-        <td class="field">
-          <% if @video.duplicate_id > 0 %>
-            <%= f.submit "Unmerge Video", class: "blue" %>
-          <% else %>
-          <%= f.text_field :duplicate_id %>
-        </td>
-        <td class="field">
-            <%= f.submit "Merge Video", class: "green" %>
-          <% end %>
-        </td>
-      </tr>
-    </table>
-    <p>All data from this video (exclusing description, source, and title) will be combined 
-    with that of the destination video.
-    This video will remain on the system but any attempts to access it will result in a redirect
-    to the new video.
-    <br><b>(Action can be reversed)</b>
-    </p>
-    <% end %>
-  </section>
-<% else %>
-<%= render layout: 'layouts/error', locals: { title: 'Nothing to see here!' } do %>
-This is not the video you are looking for.
-<% end %>
-<% end %>
+			<tr class="actions">
+				<td class="label">
+					Featured
+				</td>
+				<td class="field">
+					<button class="action toggle blue" data-url="/admin/videos/<%= @video.id %>/feature">
+						<span class="icon">
+							<% if @video.featured %>
+								<i class="fa fa-check"></i>
+							<% end %>
+						</span>
+						<span class="label">Feature Video</span>
+					</button>
+				</td>
+			</tr>
+			<tr>
+				<td class="label">Disable Comments</td>
+				<td class="field">
+					<button class="action toggle blue" data-url="/admin/threads/<%= @video.comment_thread.id %>/lock">
+						<span class="icon">
+							<% if @video.comment_thread.locked %>
+								<i class="fa fa-check"></i>
+							<% end %>
+						</span>
+						<span class="label">Disable Comments</span>
+					</button>
+				</td>
+			</tr>
+			<tr class="actions">
+				<td class="label">
+					Processed (<%= (@video.processed ? "Yes" : @video.processed.nil? ? "No" : "In Progress") %>)
+				</td>
+				<td class="field">
+				<%= form_for(@video, as: "video", url: "/admin/videos/reprocess", html: { method: :put }) do |f| %>
+					<%= f.text_field :id, hidden: true %>
+					<%= f.submit "Restart" %>
+				<% end %>
+				</td>
+			</tr>
+			<tr class="actions">
+				<td class="label">Reset Thumbnail</td>
+				<td class="field">
+				<%= form_for(@video, as: "video", url: "/admin/videos/resetthumb", html: { method: :put }) do |f| %>
+					<%= f.text_field :id, hidden: true %>
+					<%= f.submit "Restart" %>
+					<div>Thumbnail will be regenerated from source</div>
+				<% end %>
+				</td>
+			</tr>
+			<tr class="actions">
+				<td class="label">Reindex Video</td>
+				<td class="field">
+				<%= form_for(@video, as: "video", url: "/admin/videos/reindex", html: { method: :put }) do |f| %>
+					<%= f.text_field :id, hidden: true %>
+					<%= f.submit "Reindex" %>
+				<% end %>
+				</td>
+			</tr>
+			<tr class="actions">
+				<td class="label">
+					Delete Item
+				</td>
+				<td class="field">
+					<a data-confirm data-method="delete" href="/admin/videos/<%= @video.id %>" data-title="Delete Video"><button class="action red"><i class="fa fa-trash"></i> Delete Video</button></a>
+					<div>Removes this video and all related data from the system.
+					<br><b>(Action cannot be reversed)</b></div>
+				</td>
+			</tr>
+		</table>
+	</section>
+</div>
+<section class="page properties column-left">
+	<h1>Ownership</h1>
+	<%= form_for(@video, as: "item", url: "/admin/transfer?type=video", html: { method: :put }) do |f| %>
+		<%= f.text_field :id, hidden: true %>
+	<table>
+		<tr>
+			<td class="label">
+				<%= f.label "Current Owner" %>
+			</td>
+			<td class="field" colspan="2">
+				<a class="user-link" data-id="<%= @user.id %>" href="<%= @user.link %>">
+					<%= @user.username %> (<%= @user.id %>)
+				</a>
+			</td>
+		</tr>
+		<tr>
+			<td class="label">
+				<%= f.label "New Owner" %>
+			</td>
+			<td class="field popper auto-lookup" data-action="artist">
+				<%= f.text_field :user_id, autocomplete: "off" %>
+				<ul class="pop-out"></ul>
+			</td>
+			<td class="field">
+				<%= f.submit "Transfer Ownership", class: "green" %>
+			</td>
+		</tr>
+	</table>
+	<% end %>
+</section>
+<section class="page properties column-left">
+	<h1>Duplication Status</h1>
+	<%= form_for(@video, as: "video", url: "/admin/videos/merge", html: { method: :put }) do |f| %>
+		<%= f.text_field :id, hidden: true %>
+	<table>
+		<tr>
+			<td class="label">Unique Hash</td>
+			<td class="field"><%= @video.checksum %></td>
+		</tr>
+		<tr>
+			<td class="label">Duplicate Hash</td>
+			<td class="field">
+				<% if @video.duplicate_id > 0 %>
+				<%= Video.where(id: @video.duplicate_id).first.checksum %>
+				<% end %>
+				</td>
+		</tr>
+		<tr class="actions">
+			<td class="label">
+				Merging
+			</td>
+			<td class="field">
+				<% if @video.duplicate_id > 0 %>
+					<%= f.submit "Unmerge Video", class: "blue" %>
+				<% else %>
+				<%= f.text_field :duplicate_id %>
+			</td>
+			<td class="field">
+					<%= f.submit "Merge Video", class: "green" %>
+				<% end %>
+			</td>
+		</tr>
+	</table>
+	<p>All data from this video (exclusing description, source, and title) will be combined 
+	with that of the destination video.
+	This video will remain on the system but any attempts to access it will result in a redirect
+	to the new video.
+	<br><b>(Action can be reversed)</b>
+	</p>
+	<% end %>
+</section>

@@ -1,8 +1,10 @@
 module Admin
   class TagController < ApplicationController
+    before_action :authenticate_user!
+    
     def view
-      if !user_signed_in? || !current_user.is_contributor?
-        return render 'layouts/error', locals: { title: 'Access Denied', description: "You can't do that right now." }
+      if !current_user.is_contributor?
+        return render_access_denied
       end
       
       @tag = Tag.find(params[:id])
@@ -11,14 +13,11 @@ module Admin
     end
     
     def update
-      if !user_signed_in? || !current_user.is_staff?
-        return render 'layouts/error', locals: {
-          title: 'Access Denied',
-          description: "You can't do that right now."
-        }
+      if !current_user.is_staff?
+        return render_access_denied
       end
       
-      return redirect_to action: "view"
+      redirect_to action: "view"
       
       if !(@tag = Tag.where(id: params[:id]).first)
         return flash[:error] = "Error: Record not found."

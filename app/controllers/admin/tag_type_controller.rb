@@ -1,17 +1,16 @@
 module Admin
   class TagTypeController < ApplicationController
+    before_action :authenticate_user!
+    
     def index
-      if !user_signed_in? || !current_user.is_contributor?
-        return render 'layouts/error', locals: {
-          title: 'Access Denied',
-          description: "You can't do that right now."
-        }
+      if !current_user.is_contributor?
+        return render_access_denied
       end
       @types = TagType.includes(:tag_type_implications).all
     end
     
     def update
-      if !user_signed_in? || !current_user.is_contributor?
+      if !current_user.is_contributor?
         if params[:ajax]
           return head 403
         end
@@ -31,7 +30,7 @@ module Admin
     end
 
     def new
-      if !user_signed_in? || !current_user.is_contributor?
+      if !current_user.is_contributor?
         return head 403
       end
 
@@ -42,7 +41,7 @@ module Admin
     def create
       redirect_to 'index'
       
-      if !user_signed_in? || !current_user.is_contributor?
+      if !current_user.is_contributor?
         return flash[:error] = "Error: Login required."
       end
       
@@ -62,7 +61,7 @@ module Admin
     end
 
     def delete
-      if !user_signed_in? || !current_user.is_contributor?
+      if !current_user.is_contributor?
         return head 403
       end
       

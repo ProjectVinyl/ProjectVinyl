@@ -7,11 +7,10 @@ class FeedController < ApplicationController
     current_user.feed_count = 0
     current_user.save
     
-    render template: 'pagination/listing', locals: {
-      type_id: 0,
-      type: 'feed',
-      type_label: 'Feed',
-      items: Pagination.paginate(TagSubscription.get_feed_items(current_user), params[:page].to_i, 30, false)
+    @records = TagSubscription.get_feed_items(current_user)
+    
+    render_listing @records, params[:page].to_i, 30, false, {
+      id: 0, table: 'feed', label: 'Feed'
     }
   end
   
@@ -70,9 +69,7 @@ class FeedController < ApplicationController
   end
   
   def page
-    @page = params[:page].to_i
     @results = TagSubscription.get_feed_items(current_user)
-    @results = Pagination.paginate(@results, @page, 30, false)
-    render_pagination 'video/thumb_h', @results
+    render_pagination 'video/thumb_h', @results, params[:page].to_i, 30, false
   end
 end

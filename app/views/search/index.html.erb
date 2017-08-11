@@ -20,25 +20,25 @@
 	<% if @query.length == 0 %>Showing all <%= @type_label %>s<% else %>Searching for <%= @type_label %>s matching '<%= @query %>'<% end %>
 	 found <%= number_with_delimiter @results.count %> match<% if @results.count != 1 %>es<% end %></h1>
 	<% if @tags && @tags.length > 0 %>
-		<%= render partial: 'genre/set', locals: {tags: @tags} %>
+		<%= render partial: 'tag/set', locals: {tags: @tags} %>
 	<% end %>
 	<%= render layout: 'pagination/paginated', locals: {type: 'search', paginated: @results, id: "page"} do %>
 		<section class="search-result">
 			<% if @type == 0 %>
 			<ul id="videos" class="horizontal video-list">
-				<%= render partial: 'layouts/video_thumb_h', collection: @results.records %>
+				<%= render partial: 'video/thumb_h', collection: @results.records %>
 			</ul>
 			<% elsif @type == 1 %>
 			<ul id="albums" class="horizontal album-list">
-				<%= render partial: 'layouts/album_thumb_h', collection: @results.records %>
+				<%= render partial: 'album/thumb_h', collection: @results.records %>
 			</ul>
 			<% elsif @type == 2 %>
 			<ul id="artists" class="horizontal artist-list">
-				<%= render partial: 'layouts/artist_thumb_h', collection: @results.records %>
+				<%= render partial: 'user/thumb_h', collection: @results.records %>
 			</ul>
 			<% elsif @type == 3 %>
-			<ul id="genres" class="horizontal genre-list">
-				<%= render partial: 'layouts/genre_thumb_h', collection: @results.records %>
+			<ul id="tags" class="horizontal tag-list">
+				<%= render partial: 'tag/thumb_h', collection: @results.records %>
 			</ul>
 			<% end %>
 		</section>
@@ -106,10 +106,7 @@
 					<span>Type</span>
 					<div>
 						<select id="search_type" name="type">
-							<option value="0"<% if @type == 0 %> selected<% end %>>Song</option>
-							<option value="1"<% if @type == 1 %> selected<% end %>>Album</option>
-							<option value="2"<% if @type == 2 %> selected<% end %>>User</option>
-							<option value="3"<% if @type == 3 %> selected<% end %>>Tag</option>
+							<%= sensible_options_for_select %w[ Song Album User Tag ], @type %>
 						</select>
 					</div>
 				</label>
@@ -117,8 +114,7 @@
 					<span>Order</span>
 					<div>
 						<select name="order">
-							<option value="1"<% if @ascending %> selected<% end %>>Ascending</option>
-							<option value="0"<% if !@ascending %> selected<% end %>>Descending</option>
+							<%= sensible_options_for_select %w[ Descending Ascending ], @ascending ? 1 : 0 %>
 						</select>
 					</div>
 				</label>
@@ -126,11 +122,7 @@
 					<span>Order By</span>
 					<div>
 						<select name="orderby">
-							<option value="1"<% if @orderby == 1 %> selected<% end %>>Date</option>
-							<option value="2"<% if @orderby == 2 %> selected<% end %>>Rating</option>
-							<option value="3"<% if @orderby == 3 %> selected<% end %>>Length</option>
-							<option value="4"<% if @orderby == 4 %> selected<% end %>>Random</option>
-							<option value="5"<% if @orderby == 5 %> selected<% end %>>Relevance</option>
+							<%= sensible_options_for_select %w[ - Date Rating Length Random Relevance ], @orderby %>
 						</select>
 					</div>
 				</label>

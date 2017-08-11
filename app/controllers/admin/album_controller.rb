@@ -4,17 +4,14 @@ module Admin
     
     def view
       if !current_user.is_staff?
-        return render 'layouts/error', locals: {
-          title: 'Access Denied',
-          description: "You can't do that right now."
-        }
+        return render_access_denied
       end
       
       if !(@album = Album.find(params[:id]))
-        return render 'layouts/error', locals: {
+        return render_error(
           title: 'Nothing to see here!',
           description: 'This album appears to have been moved or deleted.'
-        }
+        )
       end
       
       @modifications_allowed = true

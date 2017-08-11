@@ -3,27 +3,30 @@ module Admin
     before_action :authenticate_user!
 
     def view
-      if !user_signed_in? || !current_user.is_contributor?
-        return render 'layouts/error', locals: {
-          title: 'Access Denied',
-          description: "You can't do that right now."
-        }
+      if !current_user.is_contributor?
+        return render_access_denied
+      end
+      
+      if !(@video = Video.where(id: params[:id]).first)
+        return render_error(
+          title: 'Nothing to see here!',
+          description: 'This is not the video you are looking for.'
+        )
       end
       
       @modifications_allowed = true
-      @video = Video.where(id: params[:id]).first
       @user = @video.user
       @tags = @video.tags
     end
     
     def hidden
       @records = Video.where(hidden: true)
-      render_pagination 'admin/video/thumb_h', Pagination.paginate(@records, params[:page].to_i, 40, true)
+      render_pagination 'admin/video/thumb_h', @records, params[:page].to_i, 40, true
     end
     
     def unprocessed
       @records = Video.where("(processed IS NULL or processed = ?) AND hidden = false", false)
-      render_pagination 'admin/video/thumb_h', Pagination.paginate(@records, params[:page].to_i, 40, false)
+      render_pagination 'admin/video/thumb_h', @records, params[:page].to_i, 40, false
     end
     
     def destroy
@@ -119,13 +122,11 @@ module Admin
       redirect_to action: "view", id: params[:video][:id]
       
       if current_user.is_contributor?
-        flash[:error] = "Error: Login required."
-        return
+        return flash[:error] = "Error: Login required."
       end
       
       if !(@video = Video.where(id: params[:video][:id]).first)
-        flash[:error] = "Error: Video not found."
-        return
+        return flash[:error] = "Error: Video not found."
       end
       
       yield

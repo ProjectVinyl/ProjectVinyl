@@ -3,17 +3,14 @@ module Admin
     before_action :authenticate_user!
     
     def view
-      if !user_signed_in? || !current_user.is_contributor?
-        return render 'layouts/error', locals: {
-          title: 'Access Denied',
-          description: "You can't do that right now."
-        }
+      if !current_user.is_contributor?
+        return render_access_denied
       end
       @user = User.find(params[:id])
     end
     
     def role
-      if current_user.is_staff?
+      if !current_user.is_staff?
         return head 401
       end
       
@@ -38,7 +35,7 @@ module Admin
     end
     
     def toggle_badge
-      if current_user.is_contributor?
+      if !current_user.is_contributor?
         return head 401
       end
       

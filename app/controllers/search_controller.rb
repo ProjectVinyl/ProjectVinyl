@@ -24,7 +24,11 @@ class SearchController < ApplicationController
       @query = @title_query = params[:query] || ""
     end
     
-    @data = URI.encode_www_form(type: @type, order: @ascending ? '1' : '0', orderby: @orderby, query: @query)
+    @data = URI.encode_www_form(
+      type: @type,
+      order: @ascending ? '1' : '0',
+      orderby: @orderby, query: @query
+    )
     
     if @type == 1
       @type_label = 'Album'
@@ -77,7 +81,7 @@ class SearchController < ApplicationController
         @results = ProjectVinyl::ElasticSearch::ElasticSelector.new(current_user, @query).query(@page, 20).videos.order(session, @orderby, @ascending).exec
         @type = 'video'
       end
-      render_pagination @type + '/thumb_h', @results
+      render_pagination_json @type + '/thumb_h', @results
     end
   end
   

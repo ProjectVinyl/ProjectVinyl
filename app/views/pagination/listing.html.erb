@@ -1,25 +1,11 @@
-<% title type_label + "s" %>
+<% title label + "s" %>
 <section class="page full-width">
-	<h1>All <%= type_label %>s (<%= number_with_delimiter items.count %>)</h1>
-	<%= render layout: 'pagination/paginated', locals: {type: type, paginated: items, id: "page"} do %>
+	<h1>All <%= label %>s (<%= number_with_delimiter items.count %>)</h1>
+	<%= render layout: 'pagination/paginated', locals: { type: table, paginated: items, id: "page" } do %>
 		<section class="search-result">
-			<% if type_id <= 0 %>
-			<ul id="videos" class="horizontal video-list">
-				<%= render partial: type_id == -1 ? 'admin/video/thumb_h.html' : 'video/thumb_h', collection: items.records %>
+			<ul id="<%= table %>" class="horizontal <%= label.underscore %>-list">
+				<%= render partial: partial, collection: items.records %>
 			</ul>
-			<% elsif type_id == 1 %>
-			<ul id="albums" class="horizontal album-list">
-				<%= render partial: 'album/thumb_h', collection: items.records %>
-			</ul>
-			<% elsif type_id == 2 %>
-			<ul id="artists" class="horizontal artist-list">
-				<%= render partial: 'user/thumb_h', collection: items.records %>
-			</ul>
-			<% elsif type_id == 3 %>
-			<ul id="genres" class="horizontal genre-list">
-				<%= render partial: 'tag/thumb_h', collection: items.records %>
-			</ul>
-			<% end %>
 		</section>
 	<% end %>
 </section>

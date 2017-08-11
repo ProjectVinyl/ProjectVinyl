@@ -7,7 +7,7 @@ class CommentController < ApplicationController
       @page = params[:page].to_i
     end
     @records = @thread.get_comments(user_signed_in? && current_user.is_contributor?)
-    render_pagination 'comment/comment', Pagination.paginate(@records, @page, 10, params[:order] == '1'), {
+    render_pagination 'comment/comment', @records, @page, 10, params[:order] == '1', {
       indirect: false
     }
   end
@@ -17,10 +17,10 @@ class CommentController < ApplicationController
       return head 401
     end
     
-    comment = @thread.comments.create({
+    comment = @thread.comments.create(
       user_id: current_user.id,
       o_comment_thread_id: @thread.id
-    })
+    )
     @thread.total_comments = @thread.comments.count
     @thread.save
     comment.update_comment(params[:comment])

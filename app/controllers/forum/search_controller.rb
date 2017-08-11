@@ -35,9 +35,7 @@ module Forum
     end
     
     def page
-      search
-      render_pagination 'comment/set', @results, {
-        thread: @results.records,
+      render_pagination_json 'comment/comment', index, {
         indirect: true
       }
     end

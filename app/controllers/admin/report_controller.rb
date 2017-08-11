@@ -4,17 +4,14 @@ module Admin
     
     def view
       if !(@report = Report.where(id: params[:id]).first)
-        return render 'layouts/error', locals: {
+        return render_error(
           title: 'Not Found',
           description: "This is not the report you are looking for."
-        }
+        )
       end
       
       if !current_user.is_contributor? && current_user.id != @report.user_id
-        return render 'layouts/error', locals: {
-          title: 'Access Denied',
-          description: "You can't do that right now."
-        }
+        return render_access_denied
       end
       
       @thread = @report.comment_thread
@@ -28,7 +25,7 @@ module Admin
     
     def page
       @records = Report.includes(:video).where(resolved: nil)
-      render_pagination 'thumb', Pagination.paginate(@records, params[:page].to_i, 40, false)
+      render_pagination 'thumb', @records, params[:page].to_i, 40, false
     end
     
     def new
@@ -50,7 +47,7 @@ module Admin
       end
       
       @report = params[:report]
-      @report = Report.create({
+      @report = Report.create(
         video_id: @video.id,
         first: @report[:first],
         source: @report[:source],
@@ -62,14 +59,14 @@ module Admin
         subject: @report[:subject],
         other: @report[:other],
         name: @report[:name] || (user_signed_in? ? current_user.username : "")
-      })
+      )
       if user_signed_in?
         @report.user_id = current_user.id
       end
-      @report.comment_thread = CommentThread.create({
+      @report.comment_thread = CommentThread.create(
         user_id: @report.user_id,
         title: "Report: " + @video.title
-      })
+      )
       @report.save
       Notification.notify_admins(@report, "A new <b>Report</b> has been submitted for <b>" + @video.title + "</b>", @report.comment_thread.location)
       head :ok

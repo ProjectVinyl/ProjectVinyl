@@ -4,75 +4,35 @@ class AlbumItemController < ApplicationController
       return head 404
     end
     
-    @page = params[:page].to_i
-    @items = Pagination.paginate(@album.ordered(@album.album_items.includes(:direct_user)), @page, 50, false)
+    @items = @album.ordered(@album.album_items.includes(:direct_user))
     @modifications_allowed = user_signed_in? && @album.owned_by(current_user)
     
-    render_pagination 'album/item', @items
+    render_pagination 'album/item', @items, params[:page].to_i, 50, false
   end
   
   def create
-    if !user_signed_in?
-      return head 401
+    check_then(Album) do |album|
+      if !(video = Video.where(id: params[:videoId]).first)
+        return head 404
+      end
+      
+      album.add_item(video)
     end
-    
-    if !(album = Album.where(id: params[:id]).first)
-      return head 404
-    end
-    
-    if !album.owned_by(current_user)
-      return head 401
-    end
-    
-    if !(video = Video.where(id: params[:videoId]).first)
-      return head 404
-    end
-    
-    album.add_item(video)
-    head 200
   end
   
   def update
-    if !user_signed_in?
-      return head 401
+    check_then(AlbumItem) do |item|
+      item.move(params[:index].to_i)
     end
-    if !(item = AlbumItem.where(id: params[:id]).first)
-      return head 404
-    end
-    
-    if !item.album.owned_by(current_user)
-      return head 401
-    end
-    
-    item.move(params[:index].to_i)
-    head 200
   end
   
   def destroy
-    if !user_signed_in?
-      return head 401
+    check_then(AlbumItem) do |item|
+      item.remove_self
     end
-    
-    if !(item = AlbumItem.where(id: params[:id]).first)
-      return head 404
-    end
-    
-    if item.album.owned_by(current_user)
-      return head 401
-    end
-    
-    item.remove_self
-    head 200
   end
   
   def toggle
-    if !user_signed_in?
-      return head 401
-    end
-    
-    if !(album = Album.where(id: params[:item]).first) || !album.owned_by(current_user)
-      return head 401
-    end
     
     if !(video = Video.where(id: params[:id]).first)
       return head 404
@@ -81,5 +41,23 @@ class AlbumItemController < ApplicationController
     render json: {
       added: album.toggle(video)
     }
+  end
+  
+  private
+  def check_then(table)
+    if !user_signed_in?
+      return head 401
+    end
+    
+    if !(item = table.where(id: params[:id]).first)
+      return head 404
+    end
+    
+    if !item.owned_by(current_user)
+      return head 401
+    end
+    
+    yield(item)
+    head 200
   end
 end

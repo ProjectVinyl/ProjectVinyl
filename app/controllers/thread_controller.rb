@@ -1,7 +1,10 @@
 class ThreadController < ApplicationController
   def view
     if !(@thread = CommentThread.where('id = ? AND (owner_type = "Board" OR owner_type = "Video")', params[:id]).first)
-      return render '/layouts/error', locals: { title: 'Nothing to see here!', description: "Either the thread does not exist or you don't have the neccessary permissions to see it." }
+      return render_error(
+        title: 'Nothing to see here!',
+        description: "Either the thread does not exist or you don't have the neccessary permissions to see it."
+      )
     end
     @order = '0'
     @modifications_allowed = user_signed_in? && (current_user.id == @thread.user_id || current_user.is_contributor?)
@@ -45,18 +48,19 @@ class ThreadController < ApplicationController
   end
   
   def page
-    if !(@board = Board.where(id: params[:id]).first)
+    if !(board = Board.where(id: params[:id]).first)
       return head 404
     end
-    render_pagination 'thread/thumb.html.erb', Pagination.paginate(@board.threads, params[:page].to_i, 50, false)
+    render_pagination 'thread/thumb', board.threads, params[:page].to_i, 50, false
   end
   
   def subscribe
-    if user_signed_in?
-      if thread = CommentThread.where(id: params[:id]).first
-        return render json: { added: thread.toggle_subscribe(current_user) }
-      end
+    if !user_signed_in? || !(thread = CommentThread.where(id: params[:id]).first)
+      head 401
     end
-    head 401
+    
+    return render json: {
+      added: thread.toggle_subscribe(current_user)
+    }
   end
 end

@@ -8,8 +8,7 @@ class ImgsController < ApplicationController
     png = Rails.root.join('public', 'cover', params[:id]).to_s
     if File.exist?(png + '.png')
       Ffmpeg.extract_tiny_thumb_from_existing(png)
-      serve_raw(png, 'png', 'image')
-      return
+      return serve_raw(png, 'png', 'image')
     end
     serve_raw(Rails.root.join('public', 'images', 'default-cover-small'), 'png', 'image')
   end

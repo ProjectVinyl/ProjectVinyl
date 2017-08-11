@@ -6,11 +6,15 @@ class AlbumItem < ApplicationRecord
   def tiny_thumb(user)
     self.video.tiny_thumb(user)
   end
-
+  
+  def owned_by(user)
+    self.album.owned_by(user)
+  end
+  
   def user
     self.direct_user || @dummy || (@dummy = User.dummy(self.video.user_id))
   end
-
+  
   def remove_self
     old_index = self.index
     self.destroy

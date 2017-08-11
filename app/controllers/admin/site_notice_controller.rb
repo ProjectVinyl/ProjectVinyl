@@ -4,10 +4,7 @@ module Admin
     
     def index
       if !current_user.is_contributor?
-        return render 'layouts/error', locals: {
-          title: 'Access Denied',
-          description: "You can't do that right now."
-        }
+        return render_access_denied
       end
       
       @page = params[:page].to_i
@@ -21,10 +18,7 @@ module Admin
     
     def create
       if !current_user.is_contributor?
-        return render 'layouts/error', locals: {
-          title: 'Access Denied',
-          description: "You can't do that right now."
-        }
+        return render_access_denied
       end
       
       redirect_to action: "index"
@@ -42,10 +36,7 @@ module Admin
     
     def update
       if !current_user.is_contributor?
-        return render 'layouts/error', locals: {
-          title: 'Access Denied',
-          description: "You can't do that right now."
-        }
+        return render_access_denied
       end
       
       redirect_to action: "index"

@@ -1,7 +1,10 @@
 class HistoryController < ApplicationController
   def index
     if !(@video = Video.where(id: params[:id]).first)
-      return render '/layouts/error', locals: { title: 'Nothing to see here!', description: "This is not the video you are looking for." }
+      return render_error(
+        title: 'Nothing to see here!',
+        description: "This is not the video you are looking for."
+      )
     end
     if @video.duplicate_id > 0
       flash[:alert] = 'The video you are looking for has been marked as a duplicate of the one below.'
@@ -15,13 +18,10 @@ class HistoryController < ApplicationController
   def page
     @video = Video.where(id: params[:id]).first
     @records = TagHistory.where(video_id: params[:id]).order(:created_at)
-    if @records.count > 0
-      return render_pagination 'history/change', Pagination.paginate(@records, params[:page].to_i, 20, true)
+    @records = Pagination.paginate(@records, params[:page].to_i, 20, true)
+    if @records.count == 0
+      return render_empty_pagination 'history/wardenderpy'
     end
-    render json: {
-      content: render_to_string(partial: '/history/wardenderpy'),
-      pages: 0,
-      page: 0
-    }
+    render_pagination_json 'history/change', @records
   end
 end

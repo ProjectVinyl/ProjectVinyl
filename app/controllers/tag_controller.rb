@@ -2,7 +2,10 @@ class TagController < ApplicationController
   def view
     name = params[:name].downcase
     if !(@tag = Tag.where("short_name = ? OR name = ? OR id = ?", name, name, name).first)
-      return render 'layouts/error', locals: { title: 'Nothing to see here but us Fish!', description: 'This This tag does not exist.' }
+      return render_error(
+        title: 'Nothing to see here but us Fish!',
+        description: 'This This tag does not exist.'
+      )
     end
     
     if @tag.alias_id
@@ -29,79 +32,68 @@ class TagController < ApplicationController
   
   def index
     @page = params[:page].to_i
-    @results = Pagination.paginate(Tag.includes(:videos, :tag_type).where('alias_id IS NULL').order(:name), @page, 100, false)
-    render template: 'pagination/listing', locals: { type_id: 3, type: 'tags', type_label: 'Tag', items: @results }
+    @results = Tag.includes(:videos, :tag_type).where('alias_id IS NULL').order(:name)
+    render_listing @results, @page, 100, false, {
+      id: 3, table: 'tags', label: 'Tag'
+    }
   end
   
   def page
     @records = Tag.includes(:videos, :tag_type).where('alias_id IS NULL').order(:name)
-    render_pagination 'tag/thumb_h', Pagination.paginate(@records, params[:page].to_i, 100, false)
+    render_pagination 'tag/thumb_h', @records, params[:page].to_i, 100, false
   end
   
   def videos
-    if @tag = Tag.where(id: params[:id]).first
-      @records = @tag.videos.where(hidden: false).includes(:tags).order(:created_at)
-      return render_pagination 'video/thumb_h', Pagination.paginate(@records, params[:page].to_i, 8, true)
+    if !(@tag = Tag.where(id: params[:id]).first)
+      return head 404
     end
-    head 404
+    @records = @tag.videos.where(hidden: false).includes(:tags).order(:created_at)
+    render_pagination 'video/thumb_h', @records, params[:page].to_i, 8, true
   end
   
   def users
-    if @tag = Tag.where(id: params[:id]).first
-      @records = @tag.users.order(:updated_at_at)
-      return render_pagination 'user/thumb_h', Pagination.paginate(@records, params[:page].to_i, 8, true)
+    if !(@tag = Tag.where(id: params[:id]).first)
+      return head 404
     end
-    head 404
+    @records = @tag.users.order(:updated_at_at)
+    render_pagination 'user/thumb_h', @records, params[:page].to_i, 8, true
   end
   
   def hide
-    if user_signed_in?
-      if params[:id].to_i.to_s != params[:id]
-        params[:id] = Tag.where(name: params[:id]).first.id
-      end
-      if !subscription = TagSubscription.where(user_id: current_user.id, tag_id: params[:id]).first
-        subscription = TagSubscription.create(user_id: current_user.id, tag_id: params[:id], hide: false, spoiler: false, watch: false)
-      end
-      return render json: {
-        hide: subscription.toggle_hidden,
-        spoiler: subscription.spoiler,
-        watch: subscription.watch
-      }
-    end
-    head 401
+    toggle_action {|subscription| subscription.toggle_hidden }
   end
 
   def spoiler
-    if user_signed_in?
-      if params[:id].to_i.to_s != params[:id]
-        params[:id] = Tag.where(name: params[:id]).first.id
-      end
-      if !subscription = TagSubscription.where(user_id: current_user.id, tag_id: params[:id]).first
-        subscription = TagSubscription.create(user_id: current_user.id, tag_id: params[:id], hide: false, spoiler: false, watch: false)
-      end
-      return render json: {
-        spoiler: subscription.toggle_spoilered,
-        hide: subscription.hide,
-        watch: subscription.watch
-      }
-    end
-    head 401
+    toggle_action {|subscription| subscription.toggle_spoilered }
   end
 
   def watch
-    if user_signed_in?
-      if params[:id].to_i.to_s != params[:id]
-        params[:id] = Tag.where(name: params[:id]).first.id
-      end
-      if !subscription = TagSubscription.where(user_id: current_user.id, tag_id: params[:id]).first
-        subscription = TagSubscription.create(user_id: current_user.id, tag_id: params[:id], hide: false, spoiler: false, watch: false)
-      end
-      return render json: {
-        watch: subscription.toggle_watched,
-        hide: subscription.hide,
-        spoiler: subscription.spoiler
-      }
+    toggle_action {|subscription| subscription.toggle_watched }
+  end
+  
+  private
+  def toggle_action
+    if !user_signed_in?
+      return head 401
     end
-    head 401
+    
+    if params[:id].to_i.to_s != params[:id]
+      params[:id] = Tag.where(name: params[:id]).first.id
+    end
+    if !(subscription = TagSubscription.where(user_id: current_user.id, tag_id: params[:id]).first)
+      subscription = TagSubscription.new(
+        user_id: current_user.id,
+        tag_id: params[:id],
+        hide: false,
+        spoiler: false,
+        watch: false
+      )
+    end
+    yield(subscription)
+    render json: {
+      hide: subscription.hide,
+      spoiler: subscription.spoiler,
+      watch: subscription.watch
+    }
   end
 end
