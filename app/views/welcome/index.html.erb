@@ -5,7 +5,7 @@
 		<ul class="horizontal center">
 			<%= render partial: 'video_thumb_h', locals: {video_thumb_h: @featured} %>
 		</ul>
-		<div class="scoring tag-list">
+		<div class="scoring tag-set">
 			<span title="Likes" class="like">
 				<%= safe_to_display @featured.upvotes, 9999 %>
 				<i class="fa fa-thumbs-up"></i>

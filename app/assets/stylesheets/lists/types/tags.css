@@ -1,4 +1,4 @@
-ul.horizontal.genre-list {
+ul.horizontal.tag-list {
   overflow: visible;
 }
 
@@ -6,20 +6,20 @@ li.genre {
   min-height: 150px;
 }
 
-.tag-list, .date, .source {
+.tag-set, .date, .source {
   font-size: 0.8em;
 }
-.tag-list > .overflow {
+.tag-set > .overflow {
   display: none;
   border-bottom: none;
 }
-.tag-list.show-all > .overflow {
+.tag-set.show-all > .overflow {
   display: inline;
 }
-.tag-list, .date, .source, .underline a {
+.tag-set, .date, .source, .underline a {
   font-style: italic;
 }
-.tag-list, .date, .source, .underline a, .tag-list a {
+.tag-set, .date, .source, .underline a, .tag-set a {
   color: #aaa;
   text-decoration: none;
   font-weight: normal;

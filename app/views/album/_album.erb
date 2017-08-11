@@ -27,7 +27,7 @@
 			</h1>
 			<div class="content description"><%= raw @album.html_description %></div>
 		<% end %>
-			<span class="tag-list underline">
+			<span class="tag-set underline">
 				By <a href="<%= @user.link %>"><%= @user.username %></a>
 				| <%= number_with_delimiter @items.count %> videos
 				| last updated <%= since @album.updated_at %>

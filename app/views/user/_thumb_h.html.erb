@@ -6,11 +6,11 @@
 		<h2<% if thumb_h.banned? %> class="banned"<% end %>>
 			<%= thumb_h.username %>
 		</h2>
-		<span class="tag-list">
+		<span class="tag-set">
 			<%= render partial: 'badge/badges', locals: {user: thumb_h} %>
 		</span>
 	</a>
-	<div class="tag-list">
+	<div class="tag-set">
 		<%= number_with_delimiter thumb_h.videos.length %> video<%= thumb_h.videos.length == 1 ? "" : "s" %>
 		| 
 		<%= number_with_delimiter thumb_h.albums.length %> album<%= thumb_h.albums.length == 1 ? "" : "s" %>

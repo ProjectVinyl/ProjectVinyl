@@ -139,4 +139,10 @@ module ApplicationHelper
   def email_escape(email)
     html_escape(email).gsub(/@/, '<i class="fa fa-at"></i>').html_safe
   end
+  
+  def sensible_option_for_select(options, selected)
+    raw (options.map.with_index { |label,value|
+      "<option value=\"#{value}\"#{value == selected ? " selected" : ""}>#{label}</option>"
+    }).join
+  end
 end

@@ -1,7 +1,7 @@
 <% if !thumb_h.is_hidden_by(current_user) %><li class="generic thumb">
 	<a class="thumb<% if thumb_h.hidden %> thumb-hidden<% end %>" href="<%= thumb_h.link %>">
 		<div class="tile" style="background-image:url('<%= thumb_h.tiny_thumb(current_user) %>');">
-			<span class="tag-list duration">
+			<span class="tag-set duration">
 				<%= duration thumb_h.get_duration %>
 			</span>
 		</div>
@@ -14,7 +14,7 @@
 		<span class="date" title="<%= thumb_h.created_at %>">
 			<%= since thumb_h.created_at %>
 		</span>
-		<span class="tag-list right">
+		<span class="tag-set right">
 			<% if thumb_h.is_downvoted_by(current_user) %>
 				<i class="fa fa-thumbs-down red"></i>
 			<% end %>

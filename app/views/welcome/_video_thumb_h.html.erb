@@ -1,7 +1,7 @@
 <li class="generic thumb">
 	<a class="thumb" href="/view/<%= video_thumb_h.id %>-<%= video_thumb_h.safe_title %>">
 		<div class="tile" style="background-image:url('<%= video_thumb_h.is_hidden_by(current_user) ? 'images/default-cover' : video_thumb_h.tiny_thumb(current_user) %>');">
-			<span class="tag-list duration">
+			<span class="tag-set duration">
 				<%= duration video_thumb_h.get_duration %>
 			</span>
 		</div>
@@ -9,7 +9,7 @@
 		<span class="date" title="<%= video_thumb_h.created_at %>">
 			<%= since video_thumb_h.created_at %>
 		</span>
-		<span class="tag-list right">
+		<span class="tag-set right">
 			<% if video_thumb_h.is_downvoted_by(current_user) %>
 				<i class="fa fa-thumbs-down red"></i>
 			<% end %>
