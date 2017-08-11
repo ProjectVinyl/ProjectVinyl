@@ -42,7 +42,7 @@
 				<ul class="pop-out">
 				<% if user_signed_in? && current_user.is_contributor? %>
 					<li class="action">
-						<a href="/admin/artist/<%= @user.id %>">
+						<a href="/admin/users/<%= @user.id %>">
 							<span class="icon"><i class="fa fa-gavel"></i></span>
 							<span class="label">Admin</span>
 						</a>

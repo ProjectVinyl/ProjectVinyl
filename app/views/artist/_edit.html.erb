@@ -9,7 +9,7 @@
 			Avatar
 		</td>
 		<td class="field center">
-		<%= form_for(user, as: "user", url: "/user/avatar", method: "patch", "html": { "class": "async" }) do |f| %>
+		<%= form_for(user, as: "user", url: "/user/avatar", html: { class: "async", method: :patch }) do |f| %>
 			<%= f.text_field :id, hidden: true %>
 			<div class="file-select-container">
 				<div id="avatar-upload" class="avatar drag-target file-select image-selector uploaded-preview revertable" data-id="<%= user.id %>">
@@ -40,7 +40,7 @@
 		</td>
 	</tr>
 </table>
-<%= form_for(user, as: "user", url: url, method: method) do |f| %>
+<%= form_for(user, as: "user", url: url, html: {method: method}) do |f| %>
 	<%= f.text_field :id, hidden: true %>
 <table>
 	<tr class="section">
@@ -72,7 +72,7 @@
 		<%= f.label "Description" %>
 		</td>
 		<td class="field">
-		<%= render layout: '/thread/description_box' do %>
+		<%= render layout: 'comment/description_box' do %>
 			<%= f.text_area :description, class: "comment-content", autocomplete: "off" %>
 		<% end %>
 		</td>
@@ -82,7 +82,7 @@
 		<%= f.label "Short Bio" %>
 		</td>
 		<td class="field">
-		<%= render layout: '/thread/description_box' do %>
+		<%= render layout: 'comment/description_box' do %>
 			<%= f.text_area :bio, class: "comment-content", autocomplete: "off" %>
 		<% end %>
 		</td>
@@ -92,7 +92,7 @@
 		<%= f.label :associated_tags %>
 		</td>
 		<td class="field">
-		<%= render layout: 'layouts/tageditor', locals: { tags: user.tags } do %>
+		<%= render layout: 'tag/editor', locals: { tags: user.tags } do %>
 			<%= f.text_area :tag_string, autocomplete: "off" %>
 		<% end %>
 		</td>

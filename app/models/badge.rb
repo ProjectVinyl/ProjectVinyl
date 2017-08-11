@@ -13,7 +13,6 @@ class BadgeInstance
   end
 
   attr_reader :title
-
   attr_reader :icon
 
   attr_reader :colour

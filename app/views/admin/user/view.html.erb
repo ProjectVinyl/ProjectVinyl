@@ -4,7 +4,7 @@
 </h1>
 <section class="page properties column-left">
 	<h1>Edit Profile</h1>
-	<%= render partial: 'artist/edit', locals: { user: @user, url: "/users/" + @user.id.to_s } %>
+	<%= render partial: 'artist/edit', locals: { user: @user, url: "/users/" + @user.id.to_s, method: :patch } %>
 </section>
 <section class="page properties column-right right">
 	<table>
@@ -16,7 +16,7 @@
 				<% if current_user.id == @user.id %>
 				<p style="color:red">You cannot change your own role.</p>
 				<% else %>
-				<button class="action toggle blue<% if !current_user.is_admin? %> disable" disabled<% else %>"<% end %> data-family="role-flags" data-url="/admin/users/<%= @user.id %>/roles" data-value="admin">
+				<button class="action toggle blue<% if !current_user.is_admin? %> disable" disabled<% else %>"<% end %> data-family="role-flags" data-target="admin/users" data-id="<%= @user.id %>" data-action="roles" data-value="admin">
 					<span class="icon">
 						<% if @user.admin? %>
 						<i class="fa fa-check"></i>
@@ -25,7 +25,7 @@
 					<span class="label">Administrator</span>
 				</button>
 				<br><br>
-				<button class="action toggle blue<% if !current_user.is_contributor? %> disable" disabled<% else %>"<% end %> data-family="role-flags" data-url="/admin/users/<%= @user.id %>/roles" data-value="contributor">
+				<button class="action toggle blue<% if !current_user.is_contributor? %> disable" disabled<% else %>"<% end %> data-family="role-flags" data-target="admin/users" data-id="<%= @user.id %>" data-action="roles" data-value="contributor">
 					<span class="icon">
 						<% if @user.contributor? %>
 						<i class="fa fa-check"></i>
@@ -34,7 +34,7 @@
 					<span class="label">Moderator</span>
 				</button>
 				<br><br>
-				<button class="action toggle blue<% if !current_user.is_staff? %> disable" disabled<% else %>"<% end %> data-family="role-flags" data-url="/admin/users/<%= @user.id %>/roles" data-value="staff">
+				<button class="action toggle blue<% if !current_user.is_staff? %> disable" disabled<% else %>"<% end %> data-family="role-flags" data-target="admin/users" data-id="<%= @user.id %>" data-action="roles"  data-value="staff">
 					<span class="icon">
 						<% if @user.staff? %>
 						<i class="fa fa-check"></i>
@@ -43,7 +43,7 @@
 					<span class="label">Staff</span>
 				</button>
 				<br><br>
-				<button class="action toggle blue" data-family="role-flags" data-url="/admin/users/<%= @user.id %>/roles" data-value="normal">
+				<button class="action toggle blue" data-family="role-flags" data-target="admin/users" data-id="<%= @user.id %>" data-action="roles"  data-value="normal">
 					<span class="icon">
 						<% if @user.role == 0 %>
 						<i class="fa fa-check"></i>
@@ -62,7 +62,7 @@
 				<% if current_user.id == @user.id %>
 				<p style="color:red">You cannot ban yourself.</p>
 				<% else %>
-				<button class="action toggle red" data-family="role-flags" data-url="/admin/users/<%= @user.id %>/roles" data-value="banned">
+				<button class="action toggle red" data-family="role-flags" data-target="admin/users" data-id="<%= @user.id %>" data-action="roles"  data-value="banned">
 					<span class="icon">
 						<% if @user.banned? %>
 						<i class="fa fa-check"></i>
@@ -77,49 +77,15 @@
 				Badges
 			</td>
 			<td>
-				<table>
-				<% had_badges = [] %>
-				<% @user.user_badges.includes(:badge).each do |i| %>
-					<% had_badges << i.badge.id %>
-					<tr>
-						<td>
-							<div style="margin-bottom: 10px">
-								<button class="action toggle blue" data-url="/admin/users/<%= @user.id %>/badges" data-value="<%= i.badge.id %>">
-									<span class="icon">
-										<i class="fa fa-check"></i>
-									</span>
-									<span class="label"><%= i.badge.title %></span>
-								</button>
-								<div class="right" style="color:<%= i.colour %>"<% if i.badge.badge_type > 0 %> title="<%= i.custom_title %>"<% end %>>
-									<i class="fa fa-3x fa-<%= i.icon %>"></i>
-								</div>
-								<% if i.badge.badge_type > 0 %>
-								<div><%= i.custom_title %></div>
-								<% end %>
-							</div>
-						</td>
-					</tr>
-				<% end %>
-					<tr><td><hr></td></tr>
-				<% (had_badges.length > 0 ? Badge.where.not('id IN (?)', had_badges) : Badge.all).each do |i| %>
-					<tr>
-						<td>
-							<div style="margin-bottom: 10px">
-								<button class="action toggle blue" data-url="/admin/users/<%= @user.id %>/badges" data-value="<%= i.id %>" data-with="#reason_<%= i.id %>">
-									<span class="icon"></span>
-									<span class="label"><%= i.title %></span>
-								</button>
-								<% if i.badge_type > 0 %>
-									<input id="reason_<%= i.id %>" type="text"></input>
-								<% end %>
-								<div class="right" style="color:<%= i.colour %>" title="<%= i.title %>">
-									<i class="fa fa-3x fa-<%= i.icon %>"></i>
-								</div>
-							</div>
-						</td>
-					</tr>
-				<% end %>
-				</table>
+			<% had_badges = [] %>
+			<% @user.user_badges.includes(:badge).each do |i| %>
+				<% had_badges << i.badge.id %>
+				<%= render partial: 'admin/user/badge_toggle', locals: {badge_toggle: i, checked: true} %>
+			<% end %>
+				<hr>
+			<% (had_badges.length > 0 ? Badge.where.not('id IN (?)', had_badges) : Badge.all).each do |i| %>
+				<%= render partial: 'admin/user/badge_toggle', locals: {badge_toggle: i, checked: false} %>
+			<% end %>
 			</td>
 		</tr>
 		<tr class="actions">

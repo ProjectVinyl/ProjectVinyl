@@ -1,0 +1,23 @@
+<div style="margin-bottom: 10px">
+	<button class="action toggle blue"
+			data-target="admin/users"
+			data-id="<%= @user.id %>"
+			data-action="badges/<%= badge_toggle.id %>"
+			<% if !checked && badge_toggle.badge_type > 0 %>
+			data-with="#reason_<%= badge_toggle.id %>"
+			<% end %>
+		>
+		<span class="icon">
+			<% if checked %>
+			<i class="fa fa-check"></i>
+			<% end %>
+		</span>
+		<span class="label"><%= badge_toggle.title %></span>
+	</button>
+	<% if !checked && badge_toggle.badge_type > 0 %>
+		<input id="reason_<%= badge_toggle.id %>" type="text"></input>
+	<% end %>
+	<div class="right" style="color:<%= badge_toggle.colour %>" title="<%= badge_toggle.title %>">
+		<i class="fa fa-3x fa-<%= badge_toggle.icon %>"></i>
+	</div>
+</div>

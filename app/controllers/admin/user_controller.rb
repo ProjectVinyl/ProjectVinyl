@@ -43,14 +43,14 @@ module Admin
         return head 404
       end
       
-      if existing = user.user_badges.where(badge_id: params[:badge_id]).first
+      if existing = user.user_badges.where(badge_id: params[:badge]).first
         existing.destroy
         return render json: {
           added: false
         }
       end
       
-      if !(badge = Badge.where(id: params[:badge_id]).first)
+      if !(badge = Badge.where(id: params[:badge]).first)
         return head 404
       end
       

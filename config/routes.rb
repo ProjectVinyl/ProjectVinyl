@@ -215,8 +215,8 @@ Rails.application.routes.draw do
     delete 'sitenotices/:id' => 'site_notice#delete'
     
     get 'users/:id' => 'user#view'
-    post 'users/:id/badges/:badge' => 'user#toggle_badge'
-    post 'users/:id/roles/:role' => 'user#role'
+    put 'users/:id/badges/:badge' => 'user#toggle_badge'
+    put 'users/:id/roles/:role' => 'user#role'
     
     # Reporting #
     get 'reports/page' => 'report#page'
