@@ -26,6 +26,7 @@ import './ui/loadable';
 import './ui/reorder';
 import './ui/resizeinput';
 import './ui/slide';
+import './ui/removeable';
 import './ui/subtable';
 import './ui/tabset';
 import './ui/toggle';

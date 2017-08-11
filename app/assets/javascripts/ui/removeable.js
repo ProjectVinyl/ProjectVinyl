@@ -20,6 +20,7 @@ jSlim.on(document, 'click', '.removeable .remove', function(e) {
   } else {
     me.parentNode.removeChild(me);
   }
+  
   e.preventDefault();
   e.stopPropagation();
 });
