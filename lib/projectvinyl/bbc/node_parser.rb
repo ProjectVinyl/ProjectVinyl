@@ -46,7 +46,7 @@ module ProjectVinyl
                 node.append_text(text)
                 text = ''
               end
-              content = self.parse_reply_tag(node, content[index..content.length).sub(/&gt;&gt;|>>/,''))
+              content = self.parse_reply_tag(node, content[index..content.length].sub(/&gt;&gt;|>>/,''))
               index = -1
               next
             end

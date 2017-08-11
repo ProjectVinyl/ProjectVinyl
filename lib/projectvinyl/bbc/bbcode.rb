@@ -27,8 +27,8 @@ module ProjectVinyl
       TagGenerator.register(:bbc, [:at]) do |tag|
         "@#{tag.inner_text}"
       end
-      TagGenerator.register(:html, [:reply]) do |tag|
-        "&gt;&gt#{tag.inner_text}"
+      TagGenerator.register(:bbc, [:reply]) do |tag|
+        ">>#{tag.inner_text}"
       end
       TagGenerator.register(:bbc, [:a]) do |tag|
         if !tag.attributes[:href]
