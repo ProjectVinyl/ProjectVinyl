@@ -13,6 +13,9 @@ ul.horizontal > li.generic {
   min-height: 140px;
   width: 100%;
 }
+ul.horizontal > li.generic:hover {
+  background: #fcfcfc;
+}
 
 ul.horizontal.center > li {
   text-align: left;
