@@ -38,7 +38,9 @@ const defaultCallbacks = {
   },
   success: function(data) {
     this.dispatchEvent(new CustomEvent('ajax:complete', {
-      detail: { data },//???
+      detail: {
+        data: data
+      },
       bubbles: true,
       cancelable: true
     }));
