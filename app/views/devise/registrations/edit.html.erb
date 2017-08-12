@@ -10,7 +10,7 @@
 	</ul>
 	<div data-tab="profile" class="tab selected">
 		<h1>Profile Information</h1>
-		<%= render partial: "/artist/edit", locals: { user: current_user, url: "/ajax/update/artist" } %>
+		<%= render partial: "/artist/edit", locals: { user: current_user, url: "/users/#{current_user.id}", method: :patch } %>
 	</div>
 	<div data-tab="account" class="tab">
 		<h1>Account Settings</h1>
@@ -78,7 +78,10 @@
 					Careful! This can not be undone.
 				</td>
 				<td class="field">
-					<a class="button red" href="<%= registration_path(resource_name) %>" data-method="delete" data-confirm="Your account will be permanently deleted. This includes any starred videos. Are you really sure about that?" data-title="Here be dragons"><button class="red">Cancel my account</button></a>
+					<a class="button red" href="<%= registration_path(resource_name) %>"
+						data-method="delete"
+						data-confirm="Your account will be permanently deleted. This includes any starred videos. Are you really sure about that?"
+						data-title="Here be dragons">Cancel my account</a>
 				</td>
 			</tr>
 		</table>
