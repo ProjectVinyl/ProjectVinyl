@@ -84,6 +84,30 @@ module ProjectVinyl
         TagGenerator.generate(self, type)
       end
       
+      def set_resolver(&block)
+        @resolver = block
+      end
+      
+      def resolver(trace, fallback)
+        if !trace.include?(tag_name.to_sym)
+          trace << tag_name.to_sym
+        end
+        if !@resolver.nil?
+          return @resolver
+        end
+        
+        if @parent.nil? 
+          return fallback
+        end
+        
+        @parent.resolver(trace, fallback)
+      end
+      
+      def resolve_dynamically(&fallback)
+        trace = []
+        resolver(trace, fallback).call(trace, self.tag_name.to_sym, self, fallback)
+      end
+      
       def inner_text
         inner(:text)
       end

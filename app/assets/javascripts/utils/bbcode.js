@@ -321,9 +321,6 @@ var tagGenerators = {
       return tag.innerBBC();
     },
     html: function(tag) {
-      if (tag.tagName == 'at') {
-        return '<a class="user-link" data-id="0" href="/">' + tag.innerTEXT() + '</a>';
-      }
       if (tag.tagName.indexOf('yt') == 0 && !tag.tagName.replace('yt', '').match(/[^a-zA-z0-9\-_]/)) {
         return '<iframe allowfullscreen class="embed" src="https://www.youtube.com/embed/' + tag.tagName.replace('yt', '') + '"></iframe>' + tag.innerHTML();
       }
@@ -373,13 +370,13 @@ var tagGenerators = {
     {
       match: ['at'],
       func: tag => {
-        return tag.tagName + tag.innerTEXT();
+        return '@' + tag.innerTEXT();
       }
     },
     {
       match: ['reply'],
       func: tag => {
-        return '&gt;&gt' + tag.innerTEXT();
+        return '>>' + tag.innerTEXT();
       }
     },
     {
@@ -396,7 +393,7 @@ var tagGenerators = {
             return tag.attributes['href'];
           }
           if (tag.attributes['data-link'] == '2') {
-            return '&gt;&gt;' + tag.attributes.href.replace('#comment_', '');
+            return '>>' + tag.attributes.href.replace('#comment_', '');
           }
         }
         return '[url=' + tag.attributes.href + ']' + tag.innerBBC() + '[/url]';
@@ -462,9 +459,15 @@ var tagGenerators = {
       }
     },
     {
+      match: ['at'],
+      func: tag => {
+        return '<a class="user-link" data-id="0" href="/">' + tag.innerTEXT() + '</a>';
+      }
+    },
+    {
       match: ['reply'],
       func: tag => {
-        return '<a data-link="2" href="#comment_' + tag.innerTEXT() + '">&gt;&gt;' + tag.innerTEXT() + '</a>';
+        return '<a data-link="2" href="#comment_' + tag.innerTEXT() + '">' + tag.innerTEXT() + '</a>';
       }
     },
     {

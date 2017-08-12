@@ -1,17 +1,19 @@
-<div class="pagination" data-id="<%= pagination_id %>">
-	<% query_hash = request.query_parameters.clone %>
-	<% query_hash[pagination_id] = 1 %>
-	<a class="button left" data-page-to="0" href="?<%= query_hash.to_query %>">First</a>
-	<span class="pages mobile-touch-toggle">
-		<% i = results.page > 4 ? results.page - 4 : 0 %>
-		<% while i <= results.page + 4 && i <= results.pages do %>
-		<% query_hash[pagination_id] = i + 1 %>
-		<a class="button<% if i == results.page %> selected<% end %>" data-page-to="<%= i %>" href="?<%= query_hash.to_query %>">
-			<%= i + 1 %>
-		</a>
-		<% i = i + 1 %>
-		<% end %>
-	</span>
-	<% query_hash[pagination_id] = -1 %>
-	<a class="button right" data-page-to="-1" href="?<%= query_hash.to_query %>">Last</a>
-</div>
+<% query_hash = request.query_parameters.except(:page) %>
+<% query_hash[pagination_id] = 1 %>
+<a class="button" data-page-to="0" href="?<%= query_hash.to_query %>">
+	<i class="fa fa-chevron-left"></i>
+</a>
+<span class="pages mobile-touch-toggle"
+	<% i = results.page > 4 ? results.page - 4 : 0 %>
+	<% while i <= results.page + 4 && i <= results.pages do %>
+	<% query_hash[pagination_id] = i + 1 %>
+	><a class="button<% if i == results.page %> selected<% end %>" data-page-to="<%= i %>" href="?<%= query_hash.to_query %>">
+		<%= i + 1 %>
+	</a
+	<% i += 1 %>
+	<% end %>
+	<% query_hash[pagination_id] = -1 %>>
+</span>
+<a class="button" data-page-to="-1" href="?<%= query_hash.to_query %>">
+	<i class="fa fa-chevron-right"></i>
+</a>

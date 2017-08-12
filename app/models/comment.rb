@@ -21,22 +21,48 @@ class Comment < ApplicationRecord
   def user
     self.direct_user || @dummy_user || (@dummy_user = User.dummy(self.user_id))
   end
-
+  
   def update_comment(bbc)
     self.bbc_content = ApplicationHelper.demotify(bbc)
-    bbc = Comment.extract_mentions(self.bbc_content, self.comment_thread, self.comment_thread.get_title, self.comment_thread.location)
-    self.html_content = ApplicationHelper.emotify(bbc)
-    self.extract_reply_tos(bbc)
+    CommentReply.where(parent_id: self.id).delete_all
+    bbc = Comment.parse_bbc_with_replies_and_mentions(bbc, self.comment_thread)
+    self.html_content = bbc[:html]
     self.save
+    self.send_reply_tos(bbc[:replies])
+    Comment.send_mentions(bbc[:mentions], self.comment_thread, self.comment_thread.get_title, self.comment_thread.location)
     self.html_content
   end
-
-  def extract_reply_tos(bbc)
-    CommentReply.where(parent_id: self.id).delete_all
-    items = []
-    bbc.gsub(QUOTED_TEXT, '').scan(REPLY_MATCHER) do |match|
-      items << Comment.decode_open_id(match)
+  
+  def self.parse_bbc_with_replies_and_mentions(bbc, sender)
+    mentions = []
+    replies = []
+    nodes = ProjectVinyl::Bbc::Bbcode.from_bbc(bbc)
+    nodes.set_resolver do |trace, tag_name, tag, fallback|
+      if tag_name == :at
+        if user = User.find_for_mention(tag.inner_text)
+          if !trace.include?(:q) && (!sender.private_message? || sender.contributing?(user))
+            mentions << user.id
+          end
+          next "<a class=\"user-link\" data-id=\"#{user.id}\" href=\"#{user.link}\">#{user.username}</a>"
+        end
+      end
+      
+      if tag_name == :reply && !trace.include?(:q)
+        replies << Comment.decode_open_id(tag.inner_text)
+      end
+      
+      fallback.call
     end
+    
+    return {
+      html: nodes.outer_html,
+      mentions: mentions,
+      replies: replies
+    }
+  end
+  
+  def send_reply_tos(items)
+    CommentReply.where(parent_id: self.id).delete_all
     items = items.uniq
     if !items.empty?
       recievers = []
@@ -47,35 +73,18 @@ class Comment < ApplicationRecord
       recievers = recievers.uniq - [self.user_id]
       if !replied_to.empty?
         Notification.notify_recievers(recievers, self,
-                                      self.user.username + " has <b>replied</b> to your comment on <b>" + self.comment_thread.get_title + "</b>",
-                                      self.comment_thread.location)
+          self.user.username + " has <b>replied</b> to your comment on <b>" + self.comment_thread.get_title + "</b>",
+          self.comment_thread.location)
         ApplicationRecord.connection.execute('INSERT INTO comment_replies (`comment_id`,`parent_id`) VALUES ' + replied_to)
       end
     end
   end
-
-  def self.extract_mentions(bbc, sender, title, location)
-    recievers = []
-    bbc.scan(MENTION_MATCHER) do |match|
-      match_two = ApplicationHelper.url_safe(match)
-      match_four = ApplicationHelper.url_safe(match.underscore)
-      if sender.private_message?
-        if user = User.where('LOWER(username) = ? OR LOWER(safe_name) = ? OR LOWER(safe_name) = ?', match, match_two, match_four).first
-          recievers << user.id if sender.contributing?(user)
-          bbc = bbc.sub('@' + match, '<a class="user-link" data-id="' + user.id.to_s + '" href="' + user.link + '">' + match + '</a>')
-        end
-      else
-        if user = User.where('LOWER(username) = ? OR LOWER(safe_name) = ? OR LOWER(safe_name) = ?', match, match_two, match_four).first
-          recievers << user.id
-          bbc = bbc.sub('@' + match, '<a class="user-link" data-id="' + user.id.to_s + '" href="' + user.link + '">' + match + '</a>')
-        end
-      end
-    end
-    recievers = recievers.uniq - [sender.user_id]
-    Notification.notify_recievers(recievers, sender, "You have been <b>mentioned</b> on <b>" + title + "</b>", location)
-    bbc
+  
+  def self.send_mentions(receivers, sender, title, location)
+    receivers = receivers.uniq - [sender.user_id]
+    Notification.notify_recievers(receivers, sender, "You have been <b>mentioned</b> on <b>" + title + "</b>", location)
   end
-
+  
   def get_open_id
     Comment.encode_open_id(self.id)
   end

@@ -11,12 +11,19 @@ module Paginateable
     render_pagination_json(partial, Pagination.paginate(records, page, page_size, reverse), locals)
   end
   
-  def render_pagination_json(partial, pagination, locals = {})
-    render json: {
+  def pagination_json_for_render(partial, pagination, locals = {})
+    {
+      paginate: render_to_string(partial: 'pagination/numbering', locals: {
+        results: pagination, pagination_id: '{page}'
+      }),
       content: render_to_string(partial: partial, collection: pagination.records, locals: locals),
       pages: pagination.pages,
       page: pagination.page
     }
+  end
+  
+  def render_pagination_json(partial, pagination, locals = {})
+    render json: pagination_json_for_render(partial, pagination, locals)
   end
   
   def render_listing(records, page, page_size, reverse, locals)

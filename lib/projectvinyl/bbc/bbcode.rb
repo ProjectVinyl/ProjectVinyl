@@ -44,7 +44,7 @@ module ProjectVinyl
             return tag.attributes[:href]
           end
           if tag.attributes[:data_link] == '2'
-            return "&gt;&gt#{tag.attributes[:href].sub('#comment_', '')}"
+            return ">>#{tag.attributes[:href].sub('#comment_', '')}"
           end
         end
         
@@ -84,8 +84,15 @@ module ProjectVinyl
       TagGenerator.register(:html, [:url]) do |tag|
         "<a href=\"#{tag.equals_par  || tag.inner_text}\">#{tag.inner_html}</a>}"
       end
+      TagGenerator.register(:html, [:at]) do |tag|
+        tag.resolve_dynamically do
+          "<a class=\"user-link\" data-id=\"0\">#{tag.inner_text}</a>"
+        end
+      end
       TagGenerator.register(:html, [:reply]) do |tag|
-        "<a data-link=\"2\" href=\"#comment_#{tag.inner_text}\">&gt;&gt;#{tag.inner_text}</a>"
+        tag.resolve_dynamically do
+          "<a data-link=\"2\" href=\"#comment_#{tag.inner_text}\">#{tag.inner_text}</a>"
+        end
       end
       TagGenerator.register(:html, [:spoiler]) do |tag|
         "<div class=\"spoiler\">#{tag.inner_html}</div>"

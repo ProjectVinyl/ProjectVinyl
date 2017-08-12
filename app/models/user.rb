@@ -151,7 +151,13 @@ class User < ApplicationRecord
       where(conditions.to_hash).first
     end
   end
-
+  
+  def self.find_for_mention(match)
+    match_two = ApplicationHelper.url_safe(match)
+    match_four = ApplicationHelper.url_safe(match.underscore)
+    where('LOWER(username) = ? OR LOWER(safe_name) = ? OR LOWER(safe_name) = ?', match, match_two, match_four).first
+  end
+  
   attr_writer :login
 
   def login

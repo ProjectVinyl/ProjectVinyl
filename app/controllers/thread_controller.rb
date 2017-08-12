@@ -13,21 +13,26 @@ class ThreadController < ApplicationController
 
   def new
     @thread = CommentThread.new
-    if params[:user] && @user = User.where(id: params[:user]).first
-      return render partial: 'pm/new'
-    end
     @thread.owner_id = (params[:board] || 0).to_i
     render partial: 'new'
   end
 
   def create
     if user_signed_in?
-      thread = CommentThread.create(user_id: current_user.id, total_comments: 1, owner_type: 'Board', owner_id: params[:thread][:owner_id])
+      thread = CommentThread.create(
+        user_id: current_user.id,
+        total_comments: 1,
+        owner_type: 'Board',
+        owner_id:
+        params[:thread][:owner_id]
+      )
       thread.set_title(params[:thread][:title])
       thread.save
       comment = thread.comments.create(user_id: current_user.id)
       comment.update_comment(params[:thread][:description])
-      thread.subscribe(current_user) if current_user.subscribe_on_thread?
+      if current_user.subscribe_on_thread?
+        thread.subscribe(current_user)
+      end
       return redirect_to action: 'view', id: thread.id
     end
     redirect_to action: "index", controller: "welcome"

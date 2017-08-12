@@ -2,48 +2,24 @@
   text-align: center;
 }
 
-@media (max-width: 500px) {
-  .paginator .pagination .pages {
-    position: relative;
-    display: inline-block;
-    overflow-y: visible;
-    transition: max-height 0.5s ease;
-    height: 35px;
-  }
-  .paginator .pagination .pages .button {
-    display: block;
-    float: left;
-    clear: both;
-    margin-bottom: -36px;
-    transition: margin-bottom 0.5s ease 0.4s, transform 0.5s ease 0.4s, opacity 0.5s ease 0.4s;
-    opacity: 0;
-  }
-  .paginator .pagination .pages .button.selected {
-    opacity: 1;
-    z-index: 1000;
-    padding-right: 3px;
-  }
-  .paginator .pagination .pages .button.selected::after {
-    display: inline-block;
-    margin: 0 5px;
-    padding: 0 5px;
-    content: ' \f063';
-    font-family: 'FontAwesome';
-    transition: transform 0.5s ease-in 0.4s, -webkit-transform 0.5s ease-in 0.4s;
-    transform: rotate(0deg);
-    -webkit-transform: rotate(0deg);
-  }
-  .paginator .pagination .pages.hover .button,
-  .paginator .pagination .pages:hover .button {
-    margin-bottom: 3px;
-    opacity: 1;
-    transform: translatey(-440%);
-    -webkit-transform: translatey(-440%);
-  }
-  .paginator .pagination .pages.hover .button.selected::after,
-  .paginator .pagination .pages:hover .button.selected::after {
-    transform: rotate(180deg);
-    -webkit-transform: rotate(180deg);
-  }
-  
+.pagination .pages {
+  border-radius: 3px;
+  border: 1px solid #ccc;
+  display: inline-block;
+  vertical-align: bottom;
+}
+.pagination .pages .button {
+  border: none;
+  border-radius: 0;
+}
+.pagination .pages .button:first-child {
+  border-top-left-radius: 3px;
+  border-bottom-left-radius: 3px;
+}
+.pagination .pages .button:last-child {
+  border-top-right-radius: 3px;
+  border-bottom-right-radius: 3px;
+}
+.pagination .pages .button ~ .button {
+  border-left: solid 1px #ccc;
 }

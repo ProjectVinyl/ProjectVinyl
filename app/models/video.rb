@@ -481,7 +481,6 @@ class Video < ApplicationRecord
 
   def set_title(title)
     title = ApplicationHelper.check_and_trunk(title, self.title || "Untitled Video")
-    title = ApplicationHelper.demotify(title)
     self.title = title
     self.safe_title = ApplicationHelper.url_safe(title)
     if self.comment_thread_id
@@ -491,10 +490,10 @@ class Video < ApplicationRecord
   end
 
   def set_description(text)
-    text = ApplicationHelper.demotify(text)
     self.description = text
-    text = Comment.extract_mentions(text, self.comment_thread, self.get_title, '/view/' + self.id.to_s)
-    self.html_description = ApplicationHelper.emotify(text)
+    text = Comment.parse_bbc_with_replies_and_mentions(text, self.comment_thread)
+    self.html_description = text[:html]
+    Comment.send_mentions(text[:mentions], self.comment_thread, self.get_title, '/view/' + self.id.to_s)
     self
   end
 
