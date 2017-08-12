@@ -143,16 +143,17 @@ Rails.application.routes.draw do
   get 'comments/:thread_id/:order/page' => 'comment#page'
   
   # Private Messages #
+  get 'message/new' => 'pm#new'
+  get 'message/:id' => 'pm#view'
+  
   get 'messages/:type/tab' => 'pm#tab'
   get 'messages/:type/page' => 'pm#page'
   get 'messages/:type' => 'pm#index'
   get 'messages' => 'pm#index'
   
-  get 'message/:id' => 'pm#view'
-  get 'message/new' => 'pm#new'
-  post 'message' => 'pm#create'
-  patch 'message/:id/markread' => 'pm#mark_read'
-  delete 'message/:id/:type' => 'pm#destroy'
+  post 'messages' => 'pm#create'
+  put 'messages/:id/markread' => 'pm#mark_read'
+  delete 'messages/:id/:type' => 'pm#destroy'
   
   # Notifications #
   get 'notifications' => 'notification#index'

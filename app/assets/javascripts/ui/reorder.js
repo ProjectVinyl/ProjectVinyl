@@ -18,8 +18,8 @@ function moveFloater(e) {
 }
 
 function reorder(target, id, index) {
-  ajax.post('update/' + target, {
-    id: id, index: index
+  ajax.patch(target + '/' + id, {
+    index: index
   }).text(function() { });
 }
 

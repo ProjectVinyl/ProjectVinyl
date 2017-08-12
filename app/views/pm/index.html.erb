@@ -2,15 +2,20 @@
 <h1>Private Messages</h1>
 <section class="page tab-set full-width">
 	<div class="tab-set tabs async" data-target="messages">
-		<a href="/messages/new" class="button<% if @type == 'new' %> selected<% end %>"><i class="fa fa-star"></i> Unread<% if @new > 0 %> (<%= number_with_delimiter @new %>)<% end %></a>
-		<a href="/messages/received" class="button<% if @type == 'received' %> selected<% end %>"><i class="fa fa-inbox"></i> Inbox</a>
-		<a href="/messages/sent" class="button<% if @type == 'sent' %> selected<% end %>"><i class="fa fa-reply"></i> Sent</a>
-		<a href="/messages/deleted" class="button<% if @type == 'deleted' %> selected<% end %>"><i class="fa fa-trash"></i> Deleted</a>
+		<a href="/messages/new" data-live-tab="new" class="button<% if @type == "new" %> selected<% end %>">
+			<i class="fa fa-star"></i> Unread
+			<span class="count"><% if @counts[:new] > 0 %>(<%= number_with_delimiter @counts[:new] %>)<% end %></span>
+		</a>
+		<a href="/messages/received" class="button<% if @type == "received" %> selected<% end %>"><i class="fa fa-inbox"></i> Inbox</a>
+		<a href="/messages/sent" class="button<% if @type == "sent" %> selected<% end %>"><i class="fa fa-reply"></i> Sent</a>
+		<a href="/messages/deleted" class="button<% if @type == "deleted" %> selected<% end %>"><i class="fa fa-trash"></i> Deleted</a>
 	</div>
-	<div class="actions">
-		<button class="action green" data-external-form="/message/new" data-title="New PM" type="button"><i class="fa fa-plus"></i> New</button>
+	<div class="actions space-fix">
+		<button class="action green right" data-external-form="/message/new" data-title="New PM" type="button">
+			<i class="fa fa-plus"></i> New Message
+		</button>
 	</div>
-	<br>
+	<hr>
 	<div class="tab selected" data-tab="messages">
 		<%= render partial: "list_group", locals: {type: @type, paginated: @result, selected: true} %>
 	</div>

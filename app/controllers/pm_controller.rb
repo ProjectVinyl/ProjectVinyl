@@ -2,7 +2,7 @@ class PmController < ApplicationController
   def index
     @type = params[:type] || 'new'
     @result = paginate_for_type(@type)
-    @new = @type == 'new' ? @result.count : page_for_type('new').count
+    @counts = tab_changes
   end
   
   def view
@@ -23,6 +23,9 @@ class PmController < ApplicationController
   
   def new
     @thread = CommentThread.new
+    if params[:user]
+      @user = User.where(id: params[:user]).first
+    end
     render partial: 'new'
   end
   
@@ -34,29 +37,36 @@ class PmController < ApplicationController
   end
   
   def page
-    @results = paginate_for_type(params[:type])
+    @type = params[:type]
+    @results = paginate_for_type(@type)
     if @results.count == 0
       return render_empty_pagination 'pm/mailderpy'
     end
-    render_pagination_json 'pm/thumb', @results
+    @json = pagination_json_for_render 'pm/thumb', @results
+    @json[:tabs] = tab_changes
+    render json: @json
   end
   
   def tab
+    @type = params[:type]
     render json: {
       content: render_to_string(partial: 'pm/list_group', locals: {
-        type: params[:type],
-        paginated: paginate_for_type(params[:type]),
+        type: @type,
+        paginated: paginate_for_type(@type),
         selected: true
-      })
+      }),
+      tabs: tab_changes
     }
   end
   
   def mark_read
-    check_then do
-      render json: {
-        added: pm.unread = !pm.unread
-      }
+    check_then do |pm|
+      pm.unread = !pm.unread
       pm.save
+      render json: {
+        added: pm.unread,
+        tabs: tab_changes
+      }
     end
   end
   
@@ -64,16 +74,22 @@ class PmController < ApplicationController
     check_then do |pm|
       pm.toggle_deleted
       
-      @results = paginate_for_type(params[:type])
-      if @results.count == 0
-        return render_empty_pagination 'pm/mailderpy'
-      end
+      @type = params[:type]
+      @results = paginate_for_type(@type)
       
-      render_pagination_json 'pm/thumb', @results
+      @json = pagination_json_for_render 'pm/thumb', @results
+      @json[:tabs] = tab_changes
+      render json: @json
     end
   end
   
   private
+  def tab_changes(type = nil, results = nil)
+    {
+      new: count_for_type('new')
+    }
+  end
+  
   def check_then
     if !user_signed_in?
       return head 403
@@ -84,6 +100,10 @@ class PmController < ApplicationController
     end
     
     yield(pm)
+  end
+  
+  def count_for_type(type)
+    Pm.find_for_tab_counter(type, current_user).count
   end
   
   def page_for_type(type)

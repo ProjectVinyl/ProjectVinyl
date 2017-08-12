@@ -8,9 +8,28 @@ class Pm < ApplicationRecord
   def self.find_for_user(id, user)
     self.eager_load(:comment_thread).includes(:new_comment).where('`pms`.id = ? AND `pms`.user_id = ?', id, user.id).first
   end
-
+  
+  def self.find_for_tab_counter(type, user)
+    listing_selector = self.where(user_id: user.id)
+    if type == 'received'
+      return listing_selector.where(state: 0, receiver: user)
+    elsif type == 'sent'
+      return listing_selector.where(state: 0, sender: user)
+    elsif type == 'new'
+      return listing_selector.where(state: 0, unread: true)
+    elsif type == 'deleted'
+      return listing_selector.where(state: 1)
+    end
+    listing_selector
+  end
+  
   def self.find_for_tab(type, user)
-    listing_selector = self.includes(:sender).includes(new_comment: [:direct_user]).eager_load(:comment_thread).order('`comment_threads`.created_at DESC').where(user_id: user.id)
+    listing_selector = self
+      .includes(:sender)
+      .includes(new_comment: [:direct_user])
+      .eager_load(:comment_thread)
+      .order('`comment_threads`.created_at DESC')
+      .where(user_id: user.id)
     if type == 'received'
       return listing_selector.where(state: 0, receiver: user)
     elsif type == 'sent'
@@ -70,7 +89,9 @@ class Pm < ApplicationRecord
 
   def toggle_deleted
     if self.state == 0
-      self.unread = false if self.unread
+      if self.unread
+        self.unread = false
+      end
       self.state = 1
     else
       self.state = 0

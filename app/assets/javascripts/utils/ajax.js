@@ -6,7 +6,7 @@ import { jSlim } from './jslim';
 import { popupError } from '../components/popup';
 
 var csrf = '';
-jSlim.ready(function() {
+jSlim.ready(() => {
   csrf = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 });
 
@@ -28,32 +28,36 @@ function sanitizeUrl(url) {
 
 function queryPars(data) {
   if (typeof data === 'string') return data;
-  return Object.keys(data).map(function(key) {
-    return encodeURIComponent(key) + '=' + encodeURIComponent(data[key]);
-  }).join('&');
+  return Object.keys(data).map(key => encodeURIComponent(key) + '=' + encodeURIComponent(data[key])).join('&');
 }
 
 function request(resource, params) {
-  const promise = fetch(resource, params).catch(function(err) {
+  const promise = fetch(resource, params).catch(err => {
     popupError(params.method + ' ' + resource + '\n\n' + err);
-  }).then(function(response) {
-    if (!response.ok) {
+  }).then(r => {
+    if (!r.ok) {
       throw new Error('Received error from server');
     }
-    return response;
+    return r;
   });
   return {
     text: function(callback) {
-      return promise.then(function(response) {
-        return response.text();
-      }).then(callback);
+      return promise.then(r => r.text()).then(ajaxComplete).then(callback);
     },
     json: function(callback) {
-      return promise.then(function(response) {
-        return response.json();
-      }).then(callback);
+      return promise.then(r => r.json()).then(ajaxComplete).then(callback);
     }
   };
+}
+
+function ajaxComplete(data) {
+  document.dispatchEvent(new CustomEvent('ajax:complete', {
+    detail: {
+      data: data
+    },
+    cancelable: true
+  }));
+  return data;
 }
 
 export function AjaxRequest(method, resource, data) {

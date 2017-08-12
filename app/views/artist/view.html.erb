@@ -56,7 +56,7 @@
 			</div>
 		<% end %>
 		<% if user_signed_in? %>
-			<button data-external-form="threads/new?user=<%= @user.id %>" data-title="New Message"><i class="fa fa-envelope"></i> Send Message</button>
+			<button data-external-form="message/new?user=<%= @user.id %>" data-title="New Message"><i class="fa fa-envelope"></i> Send Message</button>
 		<% end %>
 		</div>
 	</div>

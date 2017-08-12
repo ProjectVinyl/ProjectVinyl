@@ -26,6 +26,7 @@ jSlim.on(document, 'click', '.tab-set > li.button:not([data-disabled])', functio
 });
 
 jSlim.on(document, 'click', '.tab-set > li.button i.fa-close',  function(e) {
+  if (e.button !== 0) return;
   const tabset = this.parentNode;
   const toRemove = document.querySelector('div[data-tab="' + tabset.dataset.target + '"]');
 
@@ -41,9 +42,10 @@ jSlim.on(document, 'click', '.tab-set > li.button i.fa-close',  function(e) {
 });
 
 jSlim.on(document, 'click', '.tab-set.async a.button:not([data-disabled])', function(e) {
-  e.preventDefault();
+  if (e.button !== 0) return;
   if (this.classList.contains('selected')) return;
-
+  e.preventDefault();
+  
   const parent = this.parentNode;
   const other = parent.querySelector('.selected');
   const holder = document.querySelector('.tab[data-tab="' + parent.dataset.target + '"]');
@@ -60,6 +62,16 @@ jSlim.on(document, 'click', '.tab-set.async a.button:not([data-disabled])', func
     holder.innerHTML = json.content;
     holder.classList.remove('waiting');
   });
+});
+
+jSlim.bind(document, 'ajax:complete', ev => {
+  const tabs = ev.detail.data.tabs;
+  if (tabs) {
+    Object.keys(tabs).forEach(key => {
+      const tab = document.querySelector('.tab-set a.button[data-live-tab="' + key + '"] .count');
+      if (tab) tab.innerText = tabs[key] ? ('(' + tabs[key] + ')') : '';
+    });
+  }
 });
 
 export { focusTab };

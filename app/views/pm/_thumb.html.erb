@@ -1,4 +1,4 @@
-<li class="thread removeable<% if thumb.unread %> unread<% end %>" data-id="<%= thumb.id %>" data-target="message/<%= @type %>">
+<li class="thread removeable<% if thumb.unread %> unread<% end %>" data-id="<%= @type %>" data-target="messages/<%= thumb.id %>">
 	<div class="thumb">
 		<div class="avatar medium">
 			<span style="background-image:url('<%= thumb.sender.avatar %>');"></span>
@@ -31,8 +31,8 @@
 			<% end %>
 		</span>
 	</div>
-	<div class="actions repaintable" data-id="<%= thumb.id %>" data-target="message/<%= @type %>">
-		<button title="Mark <% if thumb.unread %>Read<% else %>Unread<% end %>" class="action button button-bub toggle" data-state="unread" data-parent=".thread" data-action="markread" data-target="message" data-id="<%= thumb.id %>" data-checked-icon="star" data-unchecked-icon="star-o">
+	<div class="actions repaintable" data-id="<%= thumb.id %>">
+		<button title="Mark <% if thumb.unread %>Read<% else %>Unread<% end %>" class="action button button-bub toggle" data-state="unread" data-parent=".thread" data-action="markread" data-target="messages" data-id="<%= thumb.id %>" data-checked-icon="star" data-unchecked-icon="star-o">
 			<span class="icon">
 				<i class="fa fa-<% if thumb.unread %>star<% else %>star-o<% end %>"></i>
 			</span>
