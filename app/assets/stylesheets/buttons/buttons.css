@@ -5,8 +5,8 @@ button, .button, input[type=submit], .tag {
   border: 1px solid #d6d6d6;
   border-bottom-color: #cacaca;
   border-top-color: #e2e2e2;
-  border-radius: 2px;
-  box-shadow: 0px 1px rgba(255,255,255,0.3) inset;
+  border-radius: 3px;
+  box-shadow: 0 1px 0 rgba(255,255,255,0.2) inset;
   text-shadow: 1px 1px #fafafa;
   text-decoration: none;
   color: #333;
@@ -42,7 +42,11 @@ button.right, .foobar.right, .button.right, input[type=submit].right {
   margin-left: 5px;
 }
 
-button:hover, .button:hover, button.selected, .button.selected, input[type=submit].selected {
+button:hover, .button:hover {
+  background: #fcfcfc;
+}
+
+button.selected, .button.selected, input[type=submit].selected {
    background: #fff;
 }
 

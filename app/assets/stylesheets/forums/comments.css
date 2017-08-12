@@ -2,6 +2,15 @@
   min-height: 340px;
   padding: 0;
 }
+.comments .comments {
+  min-height: 0;
+  background: #fff;
+  padding: 5px;
+  margin-bottom: 5px;
+  border-radius: 5px;
+  border: solid 1px #ccc;
+  box-shadow: 0px 0px 12px #0000001a inset;
+}
 .comments li.comment {
   list-style: none;
   padding-bottom: 10px;
@@ -156,6 +165,11 @@
 .comment .name a.user-link {
   color: #337287;
 }
+.comment .artist-bio a.user-link::before,
+.comment .name a.user-link::before {
+  display: none;
+}
+
 .comment .name a.mention,
 .comment a.mention {
   color: #ccc;
