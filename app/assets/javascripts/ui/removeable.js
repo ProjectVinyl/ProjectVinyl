@@ -3,6 +3,8 @@ import { paginator } from '../components/paginator';
 import { jSlim } from '../utils/jslim';
 
 jSlim.on(document, 'click', '.removeable .remove', function(e) {
+  if (e.button !== 0) return;
+  
   var me = this.closest('.removeable');
   
   if (me.classList.contains('repaintable')) {
@@ -12,9 +14,7 @@ jSlim.on(document, 'click', '.removeable .remove', function(e) {
   }
   
   if (me.dataset.target) {
-    ajax.post('delete/' + me.dataset.target, {
-      id: me.dataset.id
-    }).text(function() {
+    ajax.delete(me.dataset.target + '/' + me.dataset.id).json(function() {
       me.parentNode.removeChild(me);
     });
   } else {
