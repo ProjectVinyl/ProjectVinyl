@@ -65,7 +65,7 @@ function readyVideo(sender) {
   let video = sender.createMediaElement()
   
   if (sender.time) {
-    if (player.isReady()) {
+    if (sender.isReady()) {
       video.currentTime = sender.time;
     } else {
       const setTime = () => {
@@ -181,6 +181,8 @@ Player.prototype = {
             this.playlist.classList.toggle('visible');
             return;
           }
+          
+          if (ev.target.closest('.action')) return;
           
           if (this.player.dataset.state != 'playing' || this.dom.toggler.interactable()) {
             

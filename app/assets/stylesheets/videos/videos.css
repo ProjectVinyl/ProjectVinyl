@@ -18,7 +18,8 @@
 .video .player video {
   pointer-events: none;
 }
-.video .player h1, .video .player::after {
+.video .player h1,
+.video .player::after {
   transition: opacity 0.25s linear, transform 0.25s ease, -ms-transform 0.25s ease, -o-transform 0.25s ease, -webkit-transform 0.25s ease, -moz-transform 0.25s ease;
 }
 .video .player.playing::after {
@@ -66,6 +67,7 @@
   white-space: nowrap;
   opacity: 0.7;
   border: none;
+  box-shadow: 0 50px 40px -40px #000 inset;
 }
 
 .video .player:hover h1, .video .player:hover::after {
@@ -128,6 +130,8 @@
   padding: 0;
   opacity: 0;
   transition: opacity 0.5s linear;
+  padding-top: 50px;
+  box-shadow: 0 -50px 40px -40px #000 inset;
 }
 .playback-controls ul {
   margin: 0 15px 15px 15px;
@@ -391,28 +395,6 @@ i.fa.fa-volume-mid {
   height: 100%;
 }
 
-.playlist-toggle {
-  position: absolute;
-  top: 15px;
-  right: 15px;
-  cursor: pointer;
-  transition: opacity 0.25s linear;
-  color: #fff;
-  font-size: 1.5em;
-}
-
-.video .player[data-state=playing] ~ .playlist-toggle {
-  opacity: 0;
-}
-
-.video:hover .player[data-state=playing] ~ .playlist-toggle {
-  opacity: 0.2;
-}
-
-.video .player[data-state=playing] ~ .playlist-toggle:hover {
-  opacity: 1;
-}
-
 .uploading #video .controls,
 .uploading ul.tab-set {
   display: none;
@@ -422,4 +404,36 @@ i.fa.fa-volume-mid {
 }
 .uploading #video {
   margin: 0;
+}
+
+.embed-actions {
+  margin: 0;
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    color: #fff;
+    font-size: 1.5em;
+}
+.embed-actions.horizontal > li {
+  opacity: 0.7;
+  transition: opacity 0.25s linear;
+  margin: 5px;
+  cursor: pointer;
+  float: right;
+  border: none;
+}
+.video:hover .embed-actions > li {
+  opacity: 1;
+}
+
+.video .player[data-state=playing] ~ .embed-actions > li {
+  opacity: 0;
+}
+
+.video:hover .player[data-state=playing] ~ .embed-actions > li {
+  opacity: 0.4;
+}
+
+.video .player[data-state=playing] ~ .embed-actions > li:hover {
+  opacity: 1;
 }

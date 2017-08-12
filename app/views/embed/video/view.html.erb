@@ -21,7 +21,7 @@
 		</div>
 	</div>
 	<% else %>
-		<%= render layout: 'video/video_content', locals: {embed: true} do %>
+		<%= render layout: "video/video_content", locals: {embed: true} do %>
 			<% if @album %>
 			<div class="listing compact playlist">
 				<div class="controls">
@@ -35,14 +35,32 @@
 				</div>
 				<div class="scroll-container">
 					<div class="items">
-						<%= render partial: 'album/album_item', collection: @items %>
+						<%= render partial: "album/album_item", collection: @items %>
 					</div>
 				</div>
 			</div>
-			<div class="playlist-toggle">
-				<i class="fa fa-list"></i>
-			</div>
 			<% end %>
+			<ul class="horizontal embed-actions">
+				<% if @album %>
+				<li class="playlist-toggle">
+					<i class="fa fa-list"></i>
+				</li>
+				<% end %>
+				<% if user_signed_in? %>
+				<li class="action toggle"
+					data-action="star"
+					data-target="videos"
+					data-id="<%= @video.id %>"
+					data-checked-icon="star"
+					data-unchecked-icon="star-o"
+					title="Star Video"
+				>
+					<span class="icon">
+						<i class="fa fa-star<% if !@video.is_starred_by(current_user) %>-o<% end %>"></i>
+					</span>
+				</li>
+				<% end %>
+			</ul>
 		<% end %>
 	<% end %>
 </body>
