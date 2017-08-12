@@ -6,49 +6,51 @@ import { jSlim } from '../utils/jslim';
 import { insertTags } from '../ui/editable';
 
 function postComment(sender) {
-  var threadId = sender.dataset.threadId;
-  var order = sender.dataset.order;
+  const input = sender.parentNode.querySelector('textarea, input.comment-content');
+  const comment = input.value.trim();
   
-  sender = sender.parentNode;
-  let input = sender.querySelector('textarea, input.comment-content');
-  let comment = input.value.trim();
   if (!comment) return popupError('You have to type something to post');
   
-  var data = {
-    thread: threadId,
-    order: order,
+  let data = {
+    thread: sender.dataset.threadId,
+    order: sender.dataset.order,
     comment: comment
   };
-  if (sender.classList.contains('report-state')) data.report_state = reportState(sender);
+  
+  sender = sender.parentNode;
+  
+  if (sender.classList.contains('report-state')) {
+    data.report_state = reportState(sender);
+  }
   
   sender.classList.add('posting');
+  
   ajax.post('comments', data).json(function(json) {
     sender.classList.remove('posting');
-    paginator.repaint(document.getElementById('thread-' + threadId).closest('.paginator'), json);
+    paginator.repaint(document.getElementById('thread-' + data.thread).closest('.paginator'), json);
     scrollTo(document.querySelector('#comment_' + json.focus));
     input.value = '';
   });
 }
 
 function removeComment(sender) {
-  popupConfirm("Are you sure you want to continue?", sender.dataset.title).setOnAccept(function() {
-    ajax.delete(sender.getAttribute('href')).json(function(json) {
-      var el = sender.closest('.comment')
+  popupConfirm("Are you sure you want to continue?", sender.dataset.title).setOnAccept(() => {
+    ajax.delete(sender.getAttribute('href')).json(json => {
+      const el = sender.closest('.comment');
+      
       el.style.height = el.offsetHeight + 'px';
-      requestAnimationFrame(function() {
+      requestAnimationFrame(() => {
         el.classList.add('hidden');
         if (json.content) {
           el.insertAdjacentHTML('afterend', json.content);
           el.nextSibling.style.height = el.nextSibling.offsetHeight + 'px';
           el.nextSibling.classList.add('hidden');
-          requestAnimationFrame(function() {
+          requestAnimationFrame(() => {
             el.nextSibling.classList.remove('hidden');
           });
         }
         
-        setTimeout(function() {
-          el.parentNode.removeChild(el);
-        }, 500);
+        setTimeout(() => el.parentNode.removeChild(el), 500);
       });
     });
   });
@@ -56,6 +58,9 @@ function removeComment(sender) {
 
 function scrollToAndHighlightElement(comment) {
   if (comment) {
+    jSlim.all('.comment.highlight', a => {
+      a.classList.remove('highlight');
+    });
     scrollTo(comment);
     comment.classList.add('highlight');
     return true;
@@ -69,7 +74,7 @@ function scrollToAndHighlight(commentId) {
 function lookupComment(commentId) {
   if (scrollToAndHighlight(commentId)) return;
   
-  var pagination = document.querySelector('.comments').parentNode;
+  const pagination = document.querySelector('.comments').parentNode;
   ajax.get(pagination.dataset.type, 'comment=' + commentId + '&' + pagination.dataset.args).json(function(json) {
     paginator.repaint(pagination, json);
     scrollToAndHighlight(commentId);
@@ -80,37 +85,55 @@ function editComment(sender) {
   sender = sender.parentNode;
   ajax.patch('comments/' + sender.dataset.id, {
     comment: sender.querySelector('textarea, input.comment-content').value
-  }).text(function() {
+  }).text(() => {
     sender.classList.remove('editing');
   });
 }
 
+function moveInlineComment(sender, container, type, commentEl) {
+  if (container.classList.contains('comment-content')) {
+    container = getSubCommentList(sender);
+    container['insertAdjacent' + type]('afterbegin', commentEl);
+  } else {
+    container['insertAdjacent' + type]('beforebegin', commentEl);
+  }
+  return container;
+}
+
+function focusComment(container, commentEl) {
+  if (!container.classList.contains('hidden')) {
+    scrollToAndHighlightElement(commentEl);
+  }
+}
+
 function findComment(sender) {
-  var container = sender.closest('.comment');
-  var parent = sender.getAttribute('href');
-  var parentEl = document.querySelector(parent);
-  // This is begging for a refactor.
-  if (parentEl) {
-    if (parentEl.classList.contains('inline')) {
-      // Prepend
-      container.parentNode.insertBefore(parentEl, container.parentNode.firstChild);
+  let container = sender.closest('.comment, .comment-content');
+  const comment = sender.getAttribute('href');
+  
+  let commentEl = document.querySelector(comment);
+  if (commentEl) {
+    if (commentEl.classList.contains('inline')) {
+      container = moveInlineComment(sender, container, 'Element', commentEl);
     }
-    jSlim.all('.comment.highlight', function(a) {
-      a.classList.remove('highlight');
-    });
-    return scrollToAndHighlightElement(parentEl);
+    return focusComment(container, commentEl);
   }
   
   ajax.get('find/comments', {
-    id: sender.dataset.id || parseInt(parent.split('_')[1], 36)
-  }).text(function(html) {
-    container.parentNode.insertAdjacentHTML('afterbegin', html);
-    scrollTo(parentEl);
-    if (parentEl) {
-      parentEl.classList.add('highlight');
-      parentEl.classList.add('inline');
-    }
+    id: sender.dataset.id || parseInt(comment.split('_')[1], 36)
+  }).text(html => {
+    container = moveInlineComment(sender, container, 'HTML', html);
+    commentEl = document.querySelector(comment);
+    commentEl.classList.add('inline');
+    focusComment(container, commentEl);
   });
+}
+
+function getSubCommentList(sender) {
+  if (!sender.nextElementSibling || !sender.nextElementSibling.classList.contains('comments')) {
+    sender.insertAdjacentHTML('afterend', '<ul class="comments hidden"></ul>');
+  }
+  sender.nextSibling.classList.toggle('hidden');
+  return sender.nextSibling;
 }
 
 function replyTo(sender) {
@@ -133,7 +156,7 @@ function revealSpoiler(target) {
   target.classList.toggle('revealed');
 }
 
-var targets = {
+const targets = {
   'button.post-submitter': postComment,
   '.comment .mention, .comment .comment-content a[data-link="2"]': findComment,
   '.comment .remove-comment': removeComment,
@@ -142,14 +165,7 @@ var targets = {
   '.spoiler': revealSpoiler
 };
 
-jSlim.on(document, 'accept', '.remove-comment', function(event) {
-  var self = this;
-  ajax.delete(self.getAttribute('href')).json(function(json) {
-    removeComment(self.closest('.comment'), json);
-  });
-});
-
-document.addEventListener('click', function(event) {
+document.addEventListener('click', event => {
   // Left-click only
   if (event.which !== 1 && event.button !== 0) return;
   
@@ -163,7 +179,7 @@ document.addEventListener('click', function(event) {
 });
 
 
-jSlim.ready(function() {
+jSlim.ready(() => {
   if (document.location.hash.indexOf('#comment_') == 0) {
     lookupComment(document.location.hash.split('_')[1]);
   }
