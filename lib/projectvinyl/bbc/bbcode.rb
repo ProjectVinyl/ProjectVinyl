@@ -14,10 +14,10 @@ module ProjectVinyl
       end
       TagGenerator.register(:bbc, [:i]) do |tag|
         if tag.classes.include?('emote')
-          return ":#{tag.attributes[:data_emote]}:"
+          next ":#{tag.attributes[:data_emote]}:"
         end
         if tag.attributes[:class] && tag.attributes[:class].index('fa fa-fw fa-')
-          return "[icon]#{tag.attributes[:class].sub('fa fa-fw fa-', '').split(/[^a-zA-Z0-9]/)[0]}[/icon]"
+          next "[icon]#{tag.attributes[:class].sub('fa fa-fw fa-', '').split(/[^a-zA-Z0-9]/)[0]}[/icon]"
         end
         "[#{tag.tag_name}]#{tag.inner_bbc}[/#{tag.tag_name}]"
       end
@@ -32,19 +32,19 @@ module ProjectVinyl
       end
       TagGenerator.register(:bbc, [:a]) do |tag|
         if !tag.attributes[:href]
-          return tag.inner_bbc
+          next tag.inner_bbc
         end
         
         if tag.classes.includes?('user-link')
-          return "@#{tag.inner_text}"
+          next "@#{tag.inner_text}"
         end
         
         if tag.attributes[:data_link]
           if tag.attributes[:data_link] == '1'
-            return tag.attributes[:href]
+            next tag.attributes[:href]
           end
           if tag.attributes[:data_link] == '2'
-            return ">>#{tag.attributes[:href].sub('#comment_', '')}"
+            next ">>#{tag.attributes[:href].sub('#comment_', '')}"
           end
         end
         
@@ -52,7 +52,7 @@ module ProjectVinyl
       end
       TagGenerator.register(:bbc, [:div]) do |tag|
         if tag.classes.include?('spoiler')
-          return "[spoiler]#{tag.inner_bbc}[/spoiler]"
+          next "[spoiler]#{tag.inner_bbc}[/spoiler]"
         end
         tag.inner_bbc
       end
@@ -60,14 +60,14 @@ module ProjectVinyl
         "[img]#{tag.attributes[:src]}[img]#{tag.inner_bbc}"
       end
       TagGenerator.register(:bbc, [:emote]) do |tag|
-        return ":#{tag.inner_text}:"
+        ":#{tag.inner_text}:"
       end
       TagGenerator.register(:bbc, [:iframe]) do |tag|
         if tag.attributes[:scr] && tag.attributes[:class] == 'embed'
           if Youtube.is_video_link(tag.attributes[:src])
-            return "[yt#{Youtube.video_id(tag.attributes[:src])}]#{tag.inner_bbc}"
+            next "[yt#{Youtube.video_id(tag.attributes[:src])}]#{tag.inner_bbc}"
           end
-          return "[#{tag.attributes[:src].gsub(/[^0-9]/,'')}]#{tag.inner_bbc}"
+          next "[#{tag.attributes[:src].gsub(/[^0-9]/,'')}]#{tag.inner_bbc}"
         end
         tag.inner_bbc
       end
