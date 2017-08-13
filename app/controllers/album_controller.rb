@@ -101,12 +101,11 @@ class AlbumController < ApplicationController
   
   def update
     check_then do |album|
-      value = ApplicationHelper.demotify(params[:value])
       if params[:field] == 'description'
-        album.set_description(value)
+        album.set_description(params[:value])
         album.save
       elsif params[:field] == 'title'
-        album.set_title(value)
+        album.set_title(params[:value])
       end
       head 200
     end

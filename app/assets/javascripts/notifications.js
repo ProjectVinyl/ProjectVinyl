@@ -1,49 +1,67 @@
-var feedCount = 0;
-var notificationsCount = 0;
-var messageCount = 0;
+const counters = {
+  feeds: 0,
+  notices: 0,
+  mail: 0
+};
+const keys = Object.keys(counters);
 
-var stepDelayIncrement = 15000;
-var stepDelay = 30000;
+const self = this;
+const stepDelayIncrement = 15000;
 
-var controlFlag = null;
-var ports = [];
+let stepDelay = 30000;
+let controlFlag = null;
+let ports = [];
+
+const recievers = {
+  connect: (port, msg) => {
+    keys.forEach(key => {
+      counters[key] = msg[key];
+    });
+    ports.push(port);
+    if (ports.length == 1) controlFlag = setTimeout(heartbeat, stepDelay * 2);
+  },
+  disconnect: (port, msg) => {
+    if (!ports.length) return;
+    ports.splice(ports.indexOf(port), 1);
+    if (!ports.length && controlFlag) {
+      clearTimeout(controlFlag);
+      self.close();
+    }
+  }
+};
 
 function heartbeat() {
-  var request = new XMLHttpRequest();
-  request.onreadystatechange = function() {
+  const request = new XMLHttpRequest();
+  request.onreadystatechange = () => {
     if (request.readyState == XMLHttpRequest.DONE) {
       if (request.status == 200) {
-        var json = JSON.parse(request.responseText);
-        sendMessage(json);
+        sendMessage(JSON.parse(request.responseText));
         if (stepDelay > 30000) stepDelay -= stepDelayIncrement;
       } else {
         stepDelay += stepDelayIncrement;
       }
-      if (ports.length > 0) {
+      if (ports.length) {
         controlFlag = setTimeout(heartbeat, stepDelay);
       }
     }
   };
-  var url = '/ajax/notifications?';
-  if (notificationsCount !== undefined) url += 'notes=' + notificationsCount;
-  if (feedCount !== undefined) url += '&feeds=' + feedCount;
-  if (messageCount !== undefined) url += '&mail=' + messageCount;
-  request.open('GET', url, true);
+  let url = [];
+  keys.forEach(key => {
+    if (counters[key] !== undefined) url.push(key + '=' + counters[key]);
+  });
+  request.open('GET', '/ajax/notifications?' + url.join('&'), true);
   request.send();
 }
 
 function sendMessage(msg) {
-  ports = ports.filter(function(port) {
+  ports = ports.filter(port => {
     try {
-      if (msg.feeds !== undefined && msg.feeds != feedCount) {
-        port.postMessage({ command: 'feeds', count: feedCount = msg.feeds });
-      }
-      if (msg.notices !== undefined && msg.notices != notificationsCount) {
-        port.postMessage({ command: 'notices', count: notificationsCount = msg.notices });
-      }
-      if (msg.mail !== undefined && msg.mail != messageCount) {
-        port.postMessage({ command: 'mail', count: messageCount = msg.mail });
-      }
+      keys.forEach(counter => {
+        if (msg[counter] !== undefined && msg[counter] != counters[counter]) {
+          port.postMessage({ command: counter, count: msg[counter] });
+          counters[counter] = msg[counter];
+        }
+      });
     } catch (ex) {
       return false;
     }
@@ -51,26 +69,10 @@ function sendMessage(msg) {
   });
 }
 
-function recieveMessage(e) {
-  if (e.data.command == 'connect') {
-    feedCount = e.data.feeds;
-    notificationsCount = e.data.notices;
-    ports.push(this);
-    if (ports.length == 1) {
-      controlFlag = setTimeout(heartbeat, stepDelay * 2);
-    }
-  } else if (e.data.command == 'disconnect' && ports.length > 0) {
-    ports.splice(ports.indexOf(this), 1);
-    if (this.chatId) this.chatId.remove();
-    if (ports.length == 0 && controlFlag) {
-      clearTimeout(controlFlag);
-      self.close();
-    }
-  }
-}
-
 self.addEventListener('connect', function(e) {
-  var port = e.ports[0];
-  port.addEventListener('message', recieveMessage);
+  const port = e.ports[0];
+  port.addEventListener('message', e => {
+    if (receivers[e.data.command]) receivers[e.data.command](port, e.data);
+  });
   port.start();
 });

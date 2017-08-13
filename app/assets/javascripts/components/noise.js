@@ -12,6 +12,8 @@ export function setupNoise(parent) {
   const canvas = document.createElement('canvas');
   const ctx = canvas.getContext('2d');
   
+  let running = true;
+  
   canvas.width = canvas.height = 256;
   parent.appendChild(canvas);
   

@@ -162,8 +162,6 @@ function Uploader() {
   this.source = this.el.querySelector('#video_source');
   this.srcNeeded = false;
   
-  BBC.init(this.videoTitle);
-  
   var self = this;
   
   // FIXME
@@ -252,7 +250,7 @@ Uploader.prototype = extendObj({
       thumbPick.dataset.disabled = '1';
     } else {
       if (canPlayType(file.mime)) {
-        this.player.load(file.data);
+        this.player.load(file.data, true);
         thumbPick.removeAttribute('data-disabled');
         thumbPick.click();
       } else {

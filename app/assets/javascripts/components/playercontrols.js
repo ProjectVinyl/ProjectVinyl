@@ -164,8 +164,8 @@ PlayerControls.prototype = {
     this.track.load.innerHTML = result.join('');
     this.buffer = {
       length: videoBuffer.length,
-      start: videoBuffer.start(0),
-      end: videoBuffer.end(videoBuffer.length - 1)
+      start: videoBuffer.length ? 0 : videoBuffer.start(0),
+      end: videoBuffer.length ? 0 : videoBuffer.end(videoBuffer.length - 1)
     };
   }
 };
