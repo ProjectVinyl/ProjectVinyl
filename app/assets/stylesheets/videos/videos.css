@@ -216,13 +216,32 @@
   height: 20px;
 }
 
+.playback-controls .load,
+.playback-controls .load span,
 .playback-controls .fill {
   position: absolute;
   background: grey;
-  border-radius: 4px;
-  opacity: 0.5;
   bottom: 0;
   left: 0;
+  opacity: 0.5;
+  overflow: hidden;
+}
+.playback-controls .load,
+.playback-controls .fill {
+  border-radius: 4px;
+}
+
+.playback-controls .load {
+  opacity: 0.2;
+}
+.playback-controls .load,
+.playback-controls .load span {
+  top: 0;
+  width: 100%;
+}
+.playback-controls .load span {
+  background: rgba(255,255,255,0.3);
+  box-shadow: -15px 0 15px -15px #ffe inset;
 }
 
 .playback-controls .track .bob {

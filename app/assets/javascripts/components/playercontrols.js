@@ -9,9 +9,11 @@ import { createMiniTile } from './minitile';
 function PlayerControls(player, dom) {
   this.dom = dom;
   this.player = player;
+  this.rangeEnd = 0;
   
   this.track = dom.querySelector('.track');
   this.track.bob = dom.querySelector('.track .bob');
+  this.track.load = dom.querySelector('.track .load');
   this.track.fill = dom.querySelector('.track .fill');
   this.track.preview = dom.querySelector('.track .previewer');
   
@@ -144,8 +146,33 @@ PlayerControls.prototype = {
   repaintTrackBar: function(percentFill) {
     this.track.bob.style.left = percentFill + '%';
     this.track.fill.style.right = (100 - percentFill) + '%';
+    if (didBufferChange(this.buffer, this.player.video.buffered)) {
+      this.repaintProgress(this.player.video);
+    }
+  },
+  repaintProgress: function(video) {
+    const duration = this.player.getDuration();
+    const videoBuffer = video.buffered;
+    const result = [];
+    
+    for (let range = 0; range < videoBuffer.length; range++) {
+      let start = videoBuffer.start(range) * 100 / duration;
+      let end = videoBuffer.end(range) * 100 / duration;
+      result.push('<span style="left:' + start + '%;width:' + end + '%"></span>');
+    }
+    
+    this.track.load.innerHTML = result.join('');
+    this.buffer = {
+      length: videoBuffer.length,
+      start: videoBuffer.start(0),
+      end: videoBuffer.end(videoBuffer.length - 1)
+    };
   }
 };
+
+function didBufferChange(old, neu) {
+  return !old || old.length != neu.length || old.start != neu.start(0) || old.end != neu.end(neu.length - 1);
+}
 
 function getVolumeIcon(level) {
   if (level <= 0) return 'off';

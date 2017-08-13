@@ -115,7 +115,10 @@ function readyVideo(sender) {
         clearTimeout(suspendTimer);
         suspendTimer = null;
       }
-      sender.track(video.currentTime, parseFloat(video.duration) || 0);
+      sender.track(video.currentTime, sender.getDuration());
+    },
+    progress: () => {
+      sender.controls.repaintProgress(video);
     }
   });
   
@@ -400,8 +403,11 @@ Player.prototype = {
     if (this.player.dataset.state == 'playing') return this.pause();
     this.play();
   },
+  getDuration: function() {
+    return parseFloat(this.video.duration) || 0;
+  },
   jump: function(progress) {
-    const duration = parseFloat(this.video.duration) || 0;
+    const duration = this.getDuration();
     const time = duration * progress;
     this.video.currentTime = time;
     this.track(time, duration);
