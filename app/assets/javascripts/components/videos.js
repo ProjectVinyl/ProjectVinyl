@@ -251,7 +251,7 @@ Player.prototype = {
     // at the bottom
     resize(el);
     
-    if (!this.embedded && (this.__autostart || el.dataset.autoplay || el.dataset.resume === 'true')) {
+    if (!this.embedded && (el.dataset.resume === 'true' || this.__autostart || (this.__autoplay && el.dataset.autoplay))) {
       this.play();
     }
     
