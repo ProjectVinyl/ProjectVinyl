@@ -1,3 +1,5 @@
+require 'projectvinyl/storage/video_directory'
+
 module Admin
   class FilesController < ApplicationController
     before_action :authenticate_user!
@@ -46,7 +48,7 @@ module Admin
       
       begin
         @location = @location.join('/')
-        @public = VideoDirectory.entries(@location).limit(50)
+        @public = ProjectVinyl::Storage::VideoDirectory.entries(@location).limit(50)
         if ajax
           if (params[:start] && !@public.start_from(params[:start], params[:offset]))
           || (params[:end] && !@public.end_with(params[:end]) && ajax)
