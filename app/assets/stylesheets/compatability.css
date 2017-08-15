@@ -4,6 +4,15 @@ button::-moz-focus-inner {
   padding:0;
 }
 
+/*Firefox(android) fix*/
+html.andoid-mozilla .context-3d {
+  perspective: none !important;
+}
+html.andoid-mozilla .layer-background .far,
+html.andoid-mozilla .layer-background .near {
+  transform: none !important;
+}
+
 /*Opera Fix*/
 input:focus, textarea:focus, keygen:focus, select:focus {
   outline-offset:0;
