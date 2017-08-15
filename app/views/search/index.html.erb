@@ -24,8 +24,8 @@
 	<% end %>
 	<%= render layout: 'pagination/paginated', locals: { type: 'search', paginated: @results, id: "page"} do %>
 		<section class="search-result">
-			<ul id="<%= @table %>" class="horizontal <%= @type.underscore %>-list">
-				<%= render partial: partial, collection: @results.records %>
+			<ul id="<%= @table %>" class="horizontal <%= @type_label.underscore %>-list">
+				<%= render partial: @partial, collection: @results.records %>
 			</ul>
 		</section>
 	<% end %>

@@ -127,7 +127,11 @@ module ProjectVinyl
       end
 
       def records
-        @search.records
+        if @type == 'user'
+          return @search.records
+        end
+        
+        @records || (@records = Video.includes(:tags).where('`videos`.id IN (?)', @search.records.ids).with_likes(@user))
       end
 
       attr_reader :page
@@ -149,7 +153,7 @@ module ProjectVinyl
       end
 
       def table
-        @type == 'user' ? User : Video.with_likes(@user)
+        @type == 'user' ? User : Video
       end
 
       def tags

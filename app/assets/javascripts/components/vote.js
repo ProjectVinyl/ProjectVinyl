@@ -44,6 +44,6 @@ jSlim.on(document, 'click', 'button.action.star', function(e) {
   if (e.button) return;
   this.classList.toggle('starred');
   save(this).json(json => {
-    this.classList.toggle('starred', json.added);
+    this.classList.toggle('starred', json.count);
   });
 });

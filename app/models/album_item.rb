@@ -57,7 +57,7 @@ class AlbumItem < ApplicationRecord
     self.album.virtual?
   end
   
-  private
+  protected
   def update_indices(items, op)
     items.update_all("`album_items`.index = `album_items`.index #{op} 1")
   end

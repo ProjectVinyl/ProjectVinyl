@@ -52,13 +52,15 @@ class SearchController < ApplicationController
             return redirect_to action: 'view', controller: 'embed', id: @results.first.id
           end
         end
-        @type_label = 'Song'
+        @type_label = 'Video'
         @results = ProjectVinyl::ElasticSearch::ElasticSelector.new(current_user, @query).query(@page, 20).videos.order(session, @orderby, @ascending).exec
       end
       if !@derpy
         @tags = @results.tags
       end
     end
+    
+    @partial = partial_for_type(@type_label)
   end
 
   def page
@@ -73,15 +75,15 @@ class SearchController < ApplicationController
         @type = 'album'
       elsif @type == 2
         @results = ProjectVinyl::ElasticSearch::ElasticSelector.new(current_user, @query).query(@page, 20).users.order(session, @orderby, @ascending).exec
-        @type= 'artist'
+        @type= 'user'
       elsif @type == 3
         @results = Pagination.paginate(orderBy(Tag.includes(:videos, :tag_type).where('name LIKE ?', "%#{@query}%"), @type, @orderby), @page, 100, !@ascending)
-        @type = 'genre'
+        @type = 'tag'
       else
         @results = ProjectVinyl::ElasticSearch::ElasticSelector.new(current_user, @query).query(@page, 20).videos.order(session, @orderby, @ascending).exec
         @type = 'video'
       end
-      render_pagination_json @type + '/thumb_h', @results
+      render_pagination_json partial_for_type(@type), @results
     end
   end
   

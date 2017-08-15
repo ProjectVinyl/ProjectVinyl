@@ -9,7 +9,7 @@ module Forum
       @q = []
       
       if @title_query || @poster_query || @text_query || (@category > 0)
-        @q = Comment.public.where('`comment_threads`.owner_type = "Board"').order(:updated_at, :created_at).with_likes(current_user)
+        @q = Comment.visible.where('`comment_threads`.owner_type = "Board"').order(:updated_at, :created_at).with_likes(current_user)
         
         if @title_query
           @q = @q.where('`comment_threads`.title LIKE ?', "%#{@title_query}%")

@@ -427,7 +427,7 @@ class VideoController < ApplicationController
     end
     
     return render json: {
-      added: yield(video)
+      count: yield(video)
     }
   end
 end
