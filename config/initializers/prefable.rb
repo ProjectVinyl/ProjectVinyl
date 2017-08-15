@@ -30,7 +30,6 @@ module Prefable
   end
 
   def set_option(key, val)
-    puts 'Called @owner.set_option with ' + { ket: key, value: val }.to_s
     key = key.to_sym
     if default_options.key?(key)
       ops = options
@@ -39,15 +38,10 @@ module Prefable
           val = val.downcase
           val = val == 'true' || val == '1'
         end
-        puts 'Assign ' + key.to_s + ' = ' + val.to_s
         ops[key] = val
-        puts 'Assigned ops[' + key.to_s + '] => ' + ops[key].to_s
       else
-        puts 'Assign ' + key.to_s + ' = "' + val.to_s + '"'
         ops[key] = val
       end
-      puts 'Assigned ops[' + key.to_s + '] => ' + ops[key].to_s
-      puts 'public_send ' + ops.to_s
       self.update_prefs_column(ops)
     end
   end
@@ -73,7 +67,6 @@ module Prefable
     end
 
     def save(hash)
-      puts 'Called Preferences.save with ' + hash.to_s
       hash.keys.each do |key|
         @owner.set_option(key, hash[key])
       end
