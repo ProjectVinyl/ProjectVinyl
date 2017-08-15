@@ -139,7 +139,7 @@ Rails.application.routes.draw do
   patch 'comments/:id' => 'comment#update'
   delete 'comments/:id' => 'comment#destroy'
   
-  post 'comments/like/:id(/:incr)' => 'comment#like'
+  put 'comments/:id/like(/:incr)' => 'comment#like'
   get 'comments/:thread_id/:order/page' => 'comment#page'
   
   # Private Messages #
@@ -248,10 +248,6 @@ Rails.application.routes.draw do
   
   namespace :api do
     # API #
-    get 'videos' => 'video#find'
-    get 'videos/:id' => 'video#details'
-    post 'videos/:id' => 'video#update'
-    
     get 'bbcode' => 'bbcode#html_to_bbcode'
     get 'html' => 'bbcode#bbcode_to_html'
   end
