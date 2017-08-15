@@ -23,7 +23,7 @@ function count(me, offset, save) {
 }
 
 function save(sender, data) {
-  return ajax.put('videos/' + sender.dataset.id + '/' + sender.dataset.action, data);
+  return ajax.put((sender.dataset.target || 'videos') + '/' + sender.dataset.id + '/' + sender.dataset.action, data);
 }
 
 jSlim.on(document, 'click', 'button.action.like, button.action.dislike', function(e) {
