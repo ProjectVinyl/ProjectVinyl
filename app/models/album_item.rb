@@ -2,7 +2,13 @@ class AlbumItem < ApplicationRecord
   belongs_to :album
   belongs_to :video
   has_one :direct_user, through: :video
-
+  
+  scope :discriminate, ->(comparitor, current, user) {
+    includes(:video).where('`album_items`.index ' + comparitor + ' ?', current).reject do |i|
+      (i.video.is_hidden_by(user) || i.video.hidden)
+    end
+  }
+  
   def tiny_thumb(user)
     self.video.tiny_thumb(user)
   end
@@ -18,7 +24,7 @@ class AlbumItem < ApplicationRecord
   def remove_self
     old_index = self.index
     self.destroy
-    self.album.album_items.where('`album_items`.index > ?', old_index).update_all('`album_items`.index = `album_items`.index - 1')
+    self.update_indices(self.album.album_items.where('`album_items`.index > ?', old_index), '-')
   end
 
   def move(new_index)
@@ -26,9 +32,9 @@ class AlbumItem < ApplicationRecord
     to = new_index
     if to != from
       if to < from
-        self.album.album_items.where('`album_items`.index >= ? AND `album_items`.index < ?', to, from).update_all('`album_items`.index = `album_items`.index + 1')
+        self.update_indices(self.album.album_items.where('`album_items`.index >= ? AND `album_items`.index < ?', to, from), '+')
       else
-        self.album.album_items.where('`album_items`.index > ? AND `album_items`.index <= ?', from, to).update_all('`album_items`.index = `album_items`.index - 1')
+        self.update_indices(self.album.album_items.where('`album_items`.index > ? AND `album_items`.index <= ?', from, to), '-')
       end
       if self.album.ordering && self.album.ordering > 0
         self.album.ordering = 0
@@ -40,14 +46,19 @@ class AlbumItem < ApplicationRecord
   end
 
   def link
-    self.video.link + "?" + self.ref
+    "#{self.video.link}?#{self.ref}"
   end
 
   def ref
-    'list=' + self.album_id.to_s + '&index=' + self.index.to_s
+    "list=#{self.album_id}&index=#{self.index}"
   end
 
   def virtual?
     self.album.virtual?
+  end
+  
+  private
+  def update_indices(items, op)
+    items.update_all("`album_items`.index = `album_items`.index #{op} 1")
   end
 end

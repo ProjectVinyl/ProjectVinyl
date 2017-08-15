@@ -14,8 +14,8 @@
 </ul>
 <div id="template" class="hidden">
 	<div data-tab="new[{id}]" class="tab selected">
-		<%= form_for(@video, as: "video", url: "ajax/upload", html: {class: "new_video async"}) do |f| %>
-			<section class="page tab-set column-left resize-holder uploaded-preview preview-selective">
+		<%= form_for(@video, as: "video", url: "videos", html: {class: "new_video async", method: :post}) do |f| %>
+			<section class="tab-set page full-width resize-holder uploaded-preview preview-selective">
 				<ul class="hidden tab-set tabs">
 					<li data-target="thumbpick_{id}" class="button selected">Pick Thumbnail</li>
 					<li data-target="thumbupload_{id}" class="button">Upload Image</li>
@@ -32,9 +32,14 @@
 				</div>
 				<div id="upload" class="preview-selective-selected">
 					<div class="hidden">
-						<div data-tab="thumbpick_{id}" id="video" data-pending="1" class="tab selected video" data-video="0">
+						<div id="video" class="tab selected video"
+							data-tab="thumbpick_{id}"
+							data-pending="1"
+							data-video="0"
+						>
+						<%= render partial: 'video/video_content', locals: {embed: false, header: false} do %>
 							<input class="playlist" id="time" type="text" name="video[time]" value="-1">-1</input>
-						</div>
+						<% end %>
 						<div data-tab="thumbupload_{id}" id="cover-upload" class="cover-block tab drag-target file-select image-selector">
 							<span class="preview"></span>
 							<span class="drop-icon">
@@ -59,11 +64,11 @@
 						<span class="edit"><i class="fa fa-pencil"></i></span>
 						<span style="display:none">11</span>
 					</h1>
-					<%= render layout: 'thread/description_box' do %>
+					<%= render layout: 'comment/description_box' do %>
 						<%= f.text_area :description, autofocus: true, class: "comment-content" %>
 					<% end %>
 					<div class="post-tags">
-						<%= render layout: 'layouts/tageditor', locals: {tags: nil} do %>
+						<%= render layout: 'tag/editor', locals: {tags: nil} do %>
 							<%= f.text_area :tag_string %>
 						<% end %>
 					</div>
@@ -73,7 +78,7 @@
 								<td class="label"><%= f.label :source %></td>
 								<td class="field">
 									<%= f.text_field :source, class: "input" %>
-									<span style="display:none;color:red;" class="info"></span>
+									<span style="color:red;" class="info hidden"></span>
 								</td>
 							</tr>
 						</table>
@@ -101,25 +106,6 @@
 					</div>
 					<div class="form report" data-offset="0"></div>
 				</div>
-			</section>
-			<section class="page resize-holder column-right right center uploaded-preview preview-selective">
-				<span class="preview-selective-selected">
-					<%= render partial: 'artist/bio', locals: {user: @user } %>
-				</span>
-				<section class="hidden">
-					<h1 class="resize-target" style="font-size: 16.25px;">
-						<a>Include in Albums</a>
-					</h1>
-					<ul class="queue">
-						<% @user.albums.each do |album| %></li class="generic">
-							<label class="button">
-								<input type="checkbox" name="albums[<%= album.id %>]"></input>
-								<i class="fa fa-check"></i>
-								<%= album.title %>
-							</label>
-							<li><% end %>
-					</ul>
-				</section>
 			</section>
 		<% end %>
 	</div>

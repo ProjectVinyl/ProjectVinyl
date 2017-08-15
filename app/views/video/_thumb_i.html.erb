@@ -1,11 +1,8 @@
 <a class="thumb<% if thumb_i.hidden %> thumb-hidden<% end %>" href="<%= thumb_i.link %>#comment_<%= comment %>">
 	<div class="tile" style="background-image:url('<%= thumb_i.tiny_thumb(current_user) %>');">
 		<span class="tag-set duration">
-			<% if thumb_i.is_downvoted_by(current_user) %>
-				<i class="fa fa-thumbs-down red"></i>
-			<% end %>
-			<% if thumb_i.is_upvoted_by(current_user) %>
-				<i class="fa fa-thumbs-up green"></i>
+			<% if thumb_i.is_liked %>
+				<i class="fa fa-thumbs-<% if thumb_i.is_downvoted %>down red<% else %>up green<% end %>"></i>
 			<% end %>
 			<%= duration thumb_i.get_duration %>
 		</span>

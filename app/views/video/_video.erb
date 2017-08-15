@@ -4,7 +4,7 @@
 	<% end %>
 <% end %>
 <section class="page column-left">
-	<%= render partial: 'video/video_content', locals: {embed: false} %>
+	<%= render partial: 'video/video_content', locals: {embed: false, header: true} %>
 	<span class="notices">
 	<% if !@video.processed %>
 		<div class="notice pending">This video is still being processed by our background ponies. If it does not play correctly try again later.</div>
@@ -148,7 +148,7 @@
 					<% end %>
 				</ul>
 			</div
-			><button class="action like<% if @video.is_upvoted_by(current_user) %> liked<% end %>" data-count="<%= @video.upvotes %>" data-action="like" data-id="<%= @video.id %>">
+			><button class="action like<% if @video.is_upvoted %> liked<% end %>" data-count="<%= @video.upvotes %>" data-action="like" data-id="<%= @video.id %>">
 				<i class="fa fa-thumbs-up"></i>
 				<span>
 					<% if @video.upvotes && @video.upvotes > 0 %>
@@ -156,7 +156,7 @@
 					<% end %>
 				</span>
 			</button
-			><button class="action dislike<% if @video.is_downvoted_by(current_user) %> liked<% end %>" data-count="<%= @video.downvotes %>" data-action="dislike" data-id="<%= @video.id %>">
+			><button class="action dislike<% if @video.is_downvoted %> liked<% end %>" data-count="<%= @video.downvotes %>" data-action="dislike" data-id="<%= @video.id %>">
 				<i class="fa fa-thumbs-down"></i>
 				<span>
 					<% if @video.downvotes && @video.downvotes > 0 %>

@@ -8,7 +8,7 @@ class ThreadController < ApplicationController
     end
     @order = '0'
     @modifications_allowed = user_signed_in? && (current_user.id == @thread.user_id || current_user.is_contributor?)
-    @comments = Pagination.paginate(@thread.get_comments(user_signed_in? && current_user.is_contributor?), (params[:page] || -1).to_i, 10, false)
+    @comments = Pagination.paginate(@thread.get_comments(user_signed_in? && current_user.is_contributor?).with_likes(current_user), (params[:page] || -1).to_i, 10, false)
   end
 
   def new
@@ -41,9 +41,8 @@ class ThreadController < ApplicationController
   def update
     if user_signed_in? && thread = CommentThread.where(id: params[:id]).first
       if thread.user_id == current_user.id || current_user.is_contributor?
-        value = ApplicationHelper.demotify(params[:value])
         if params[:field] == 'title'
-          thread.set_title(value)
+          thread.set_title(params[:value])
           thread.save
         end
         return head :ok

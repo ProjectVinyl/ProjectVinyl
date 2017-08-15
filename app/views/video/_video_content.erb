@@ -1,3 +1,4 @@
+<% if header %>
 <div id="video" class="video" style="background-image: url('<%= @video.thumb %>');"
 	data-title="<%= @video.get_title %>"
 	data-time="<%= @time %>"
@@ -11,10 +12,11 @@
 		data-autoplay="true"
 	<% end %>
 >
+<% end %>
 	<div class="player" data-state="ready">
 		<span class="playing"></span>
 		<span class="error"><span class="error-message"></span></span>
-		<span class="suspend" style="display:none"><i class="fa fa-pulse fa-spinner"></i></span>
+		<span class="suspend hidden"><i class="fa fa-pulse fa-spinner"></i></span>
 		<span class="pause resize-holder">
 			<span class="playback"></span>
 			<% if embed %>

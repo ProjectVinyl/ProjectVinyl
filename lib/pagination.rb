@@ -3,7 +3,7 @@ class Pagination
   attr_reader :page, :pages, :count, :page_size
   
   def self.paginate(records, page_number, page_size, reverse)
-    count = records.count
+    count = records.size
     if count == 0
       return Pagination.new(records, page_size, 0, 0, false, count)
     end

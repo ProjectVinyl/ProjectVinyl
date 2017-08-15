@@ -15,4 +15,37 @@ class Report < ApplicationRecord
   def write(msg)
     self.other << "<br>#{msg}"
   end
+  
+  def bump(sender, state)
+    if state.nil?
+      return
+    end
+    
+    @changed = nil
+    
+    if state == 'open'
+      if !self.resolved.nil?
+        self.resolved = nil
+        @changed = 'reopened'
+      end
+    elsif state == 'close'
+      if self.resolved != false
+        self.resolved = false
+        @changed = 'closed'
+      end
+    elsif state == 'resolve'
+      if !self.resolved
+        self.resolved = true
+        @changed = 'resolved'
+      end
+    end
+    
+    if @changed.nil?
+      return
+    end
+    
+    Notification.notify_admins(self,
+      "Report <b>#{sender.title}</b> has been #{changed}", sender.location)
+    self.save
+  end
 end

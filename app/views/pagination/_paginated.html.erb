@@ -1,6 +1,6 @@
 <div class="paginator" data-id="<%= id %>" data-type="<%= type %>/page" data-page="<%= paginated.page %>" data-args="<%= @data %>">
 	<div class="pagination" data-id="<%= id %>">
-		<%= numbering = render partial: 'pagination/numbering', locals: { results: paginated, pagination_id: id } %>
+		<%= numbering = render partial: 'pagination/numbering', locals: { page: pagination.page, pages: pagination.pages, id: id } %>
 	</div>
 	<%= yield %>
 	<div class="pagination" data-id="<%= id %>">

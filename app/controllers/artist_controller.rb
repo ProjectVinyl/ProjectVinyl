@@ -21,7 +21,7 @@ class ArtistController < ApplicationController
     @albums = @modifications_allowed ? @user.albums : @user.albums.where('`albums`.hidden = false AND `albums`.listing = 0')
     @albums = Pagination.paginate(@albums, 0, 8, true)
     
-    @comments = Comment.finder.joins(:comment_thread).select('`comments`.*').where("`comments`.user_id = ? AND `comment_threads`.id = comment_thread_id AND NOT `comment_threads`.owner_type = 'Report' AND NOT `comment_threads`.owner_type = 'Pm'", @user.id).order(:created_at).reverse_order.limit(3)
+    @comments = Comment.public.decorated.select('`comments`.*').where("`comments`.user_id = ? AND `comment_threads`.id = comment_thread_id", @user.id).order(:created_at).reverse_order.limit(3)
   end
   
   def update
@@ -72,19 +72,20 @@ class ArtistController < ApplicationController
     check_then do |user|
       user.set_avatar(params[:erase] ? false : params[:user][:avatar])
       user.save
-      if params[:async]
-        return render json: {
-          result: "success"
-        }
+      
+      if !params[:async]
+        return redirect_to action: "edit", controller: "devise/registrations"
       end
       
-      redirect_to action: "edit", controller: "devise/registrations"
+      render json: {
+        result: "success"
+      }
     end
   end
   
   def card
     if !(user = User.with_badges.where(id: params[:id]).first)
-      return head 404
+      return head :not_found
     end
     
     render partial: 'user/thumb_h', locals: {
@@ -94,7 +95,7 @@ class ArtistController < ApplicationController
 
   def banner
     if !current_user.is_staff? && current_user.id != params[:id]
-      return head 404
+      return head :not_found
     end
     
     if current_user.id == params[:id]
@@ -109,7 +110,7 @@ class ArtistController < ApplicationController
   def index
     @records = User.all.order(:created_at)
     render_listing @records, params[:page].to_i, 50, true, {
-      id: 2, table: 'users', label: 'User'
+      table: 'users', label: 'User'
     }
   end
   

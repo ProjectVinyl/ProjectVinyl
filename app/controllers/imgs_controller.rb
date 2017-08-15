@@ -1,53 +1,68 @@
 class ImgsController < ApplicationController
   # Fallback for assets that don't exist
+  
+  def avatar
+    serve_img('default-avatar')
+  end
+  
+  def banner
+    serve_img('banner')
+  end
+  
   def cover
-    serve_raw(Rails.root.join('public', 'images', 'default-cover'), 'png', 'image')
+    serve_img('default-cover')
   end
 
   def thumb
     png = Rails.root.join('public', 'cover', params[:id]).to_s
-    if File.exist?(png + '.png')
-      Ffmpeg.extract_tiny_thumb_from_existing(png)
-      return serve_raw(png, 'png', 'image')
+    
+    if !File.exist?(png + '.png')
+      return serve_img('default-cover-small')
     end
-    serve_raw(Rails.root.join('public', 'images', 'default-cover-small'), 'png', 'image')
+    
+    Ffmpeg.extract_tiny_thumb_from_existing(png)
+    serve_direct("#{png}.png", 'image/png')
   end
-
-  def avatar
-    serve_raw(Rails.root.join('public', 'images', 'default-avatar'), 'png', 'image')
-  end
-
-  def banner
-    serve_raw(Rails.root.join('public', 'images', 'banner'), 'png', 'image')
-  end
-
+  
   def stream
     id = params[:id].split('.')[0]
-    if (video = Video.where(id: id).first) && video.hidden
-      if user_signed_in? && current_user.is_contributor?
-        ext = video.file
-        ext = '.' + params[:id].split('.')[1] if params[:id].index('.')
-        serve_direct(ext == '.webm' ? video.webm_path : video.video_path, ext == '.webm' ? 'video/webm' : video.mime)
-      else
-        render file: 'public/403.html', status: 403, layout: false
+    
+    if !(video = Video.where(id: id).first)
+      not_found
+    end
+    
+    if video.hidden
+      if !user_signed_in? || !current_user.is_contributor?
+        return render file: 'public/403', status: :forbidden, layout: false
       end
-    else
-      render file: 'public/404.html', status: :not_found, layout: false
     end
+    
+    ext = video.file
+    if params[:id].index('.')
+      ext = '.' + params[:id].split('.')[1]
+    end
+    
+    file = ext == '.webm' ? video.webm_path : video.video_path
+    mime = ext == '.webm' ? 'video/webm' : video.mime
+    serve_direct file, mime
   end
-
+  
   private
-
-  def serve_raw(file, ext, type)
-    serve_direct(file.to_s + "." + ext, type + "/" + ext)
+  def serve_img(file_name)
+    serve_direct "#{Rails.root.join('public', 'images', file_name)}.png", 'image/png'
   end
-
+  
   def serve_direct(file, mime)
-    if File.exist?(file)
-      response.headers['Content-Length'] = File.size(file.to_s).to_s
-      send_file file.to_s, disposition: 'inline', type: mime, filename: File.basename(file).to_s, x_sendfile: true
-    else
-      render file: 'public/404.html', status: :not_found, layout: false
+    if !File.exist?(file)
+      not_found
     end
+    
+    response.headers['Content-Length'] = File.size(file.to_s).to_s
+    send_file file.to_s, {
+      disposition: 'inline',
+      type: mime,
+      filename: File.basename(file).to_s,
+      x_sendfile: true
+    }
   end
 end

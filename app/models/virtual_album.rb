@@ -1,39 +1,5 @@
 require 'projectvinyl/elasticsearch/elastic_selector'
 
-class VirtualAlbumItem < AlbumItem
-  def initialize(valbum, video, i)
-    @album = valbum
-    @video = video
-    @index = i
-  end
-
-  def id
-    0
-  end
-
-  attr_reader :album, :video, :index
-
-  def video_id
-    @video.id
-  end
-
-  def album_id
-    @album.id
-  end
-
-  def user
-    @album.user
-  end
-
-  def ref
-    'q=' + self.album.query + '&index=' + self.index.to_s
-  end
-
-  def virtual?
-    self.album.virtual?
-  end
-end
-
 class VirtualAlbum < Album
   def initialize(query, index)
     @index = index < 0 ? 0 : index
@@ -61,7 +27,7 @@ class VirtualAlbum < Album
   attr_reader :query, :videos
 
   def title
-    "Mix - " + @query
+    "Mix - #{@query}"
   end
 
   def safe_title

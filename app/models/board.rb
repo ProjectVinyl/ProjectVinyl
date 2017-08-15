@@ -1,10 +1,8 @@
 class Board < ApplicationRecord
   has_many :comment_threads, as: :owner, dependent: :destroy
-
-  def self.listables
-    Board.all.order(:title).pluck(:id, :title)
-  end
-
+  
+  scope :listables, -> { order(:title).pluck(:id, :title) }
+  
   def self.find_board(id)
     Board.where(title: id).first
   end
@@ -22,7 +20,7 @@ class Board < ApplicationRecord
   end
 
   def link
-    '/forum/' + self.title
+    "/forum/#{self.title}"
   end
 
   def last_comment

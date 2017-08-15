@@ -21,7 +21,7 @@
 		</div>
 	</div>
 	<% else %>
-		<%= render layout: "video/video_content", locals: {embed: true} do %>
+		<%= render layout: "video/video_content", locals: {embed: true, header: true} do %>
 			<% if @album %>
 			<div class="listing compact playlist">
 				<div class="controls">

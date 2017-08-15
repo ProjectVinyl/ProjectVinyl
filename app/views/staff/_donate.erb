@@ -1,10 +1,5 @@
 <div class="message_content">
-	<p>
-		Any donations can be forwarded through PayPal to ZizzyDizzyMC<i class="fa fa-at"></i>gmail.com. This is to help us pay for hosting.
-	</p>
-	<p>
-		Thank you for the support! Every little bit helps. <%= raw ApplicationHelper.emotify ":twilightblush:" %>
-		</p>
+	<%= render partial: 'donate_message' %>
 </div>
 <div class="foot">
 	<button class="right cancel" type="button" data-resolve="false">Close</button>

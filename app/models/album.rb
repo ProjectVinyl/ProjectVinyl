@@ -2,9 +2,12 @@ class Album < ApplicationRecord
   belongs_to :user
   has_many :album_items
   has_many :videos, through: :album_items
-
+  
+  CREATED = 1
+  ADDED = 2
+  SCORE = 3
+  
   def set_description(text)
-    test = ApplicationHelper.demotify(text)
     self.description = text
     self.html_description = ApplicationHelper.emotify(text)
     self
@@ -38,11 +41,10 @@ class Album < ApplicationRecord
   def toggle(video)
     if item = self.album_items.where(video_id: video.id).first
       item.remove_self
-      false
-    else
-      self.add_item(video)
-      true
+      return false
     end
+    self.add_item(video)
+    true
   end
 
   def all_items
@@ -52,11 +54,7 @@ class Album < ApplicationRecord
   def link
     "/album/#{self.id}-#{self.safe_title}"
   end
-
-  CREATED = 1
-  ADDED = 2
-  SCORE = 3
-
+  
   def set_ordering(order, direction)
     self.ordering = order.to_i
     self.reverse_ordering = direction == '1'
@@ -106,23 +104,13 @@ class Album < ApplicationRecord
     end
     items
   end
-
-  def discriminate(items, comparitor, current)
-    items.where('`album_items`.index ' + comparitor + ' ?', current)
-  end
-
+  
   def get_next(user, current)
-    potentials = discriminate(self.all_items, '>', current).reject do |i|
-      (i.video.is_hidden_by(user) || i.video.hidden)
-    end
-    potentials.first
+    self.all_items.discriminate('>', current, user).first
   end
 
   def get_prev(user, current)
-    potentials = discriminate(self.all_items, '<', current).reject do |i|
-      (i.video.is_hidden_by(user) || i.video.hidden)
-    end
-    potentials.last
+    self.all_items.discriminate('<', current, user).last
   end
 
   def virtual?

@@ -29,7 +29,7 @@
 	<% if !indirect %>
 	<a title="Reply" class="reply-comment" ><i class="fa fa-reply"></i></a>
 	<% end %>
-	<button title="Like" class="action like<% if comment.is_upvoted_by(current_user) %> liked<% end %>" data-count="<%= comment.score %>" data-action="comments/like" data-id="<%= comment.id %>">
+	<button title="Like" class="action like<% if comment.is_liked %> liked<% end %>" data-count="<%= comment.score %>" data-target="comments" data-action="like" data-id="<%= comment.id %>">
 		<span>
 		<% if comment.score && comment.score > 0 %>
 			<span class="count"><%= comment.score %></span>

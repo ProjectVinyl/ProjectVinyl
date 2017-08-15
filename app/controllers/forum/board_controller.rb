@@ -41,14 +41,14 @@ module Forum
       end
       
       if !(board = Board.find_board(params[:board][:id]))
-        return head 404
+        return head :not_found
       end
       
       board.title = params[:board][:title]
       board.description = params[:board][:description]
       board.save
       
-      head 200
+      head :ok
     end
     
     def destroy

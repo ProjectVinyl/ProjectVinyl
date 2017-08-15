@@ -101,7 +101,6 @@ class SearchController < ApplicationController
   end
   
   private
-  
   def try
     yield
   rescue ProjectVinyl::Search::LexerError => e

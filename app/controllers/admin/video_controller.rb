@@ -7,7 +7,7 @@ module Admin
         return render_access_denied
       end
       
-      if !(@video = Video.where(id: params[:id]).first)
+      if !(@video = Video.where(id: params[:id]).with_likes(current_user).first)
         return render_error(
           title: 'Nothing to see here!',
           description: 'This is not the video you are looking for.'
@@ -20,13 +20,11 @@ module Admin
     end
     
     def hidden
-      @records = Video.where(hidden: true)
-      render_pagination 'admin/video/thumb_h', @records, params[:page].to_i, 40, true
+      page(Video.where(hidden: true), true)
     end
     
     def unprocessed
-      @records = Video.where("(processed IS NULL or processed = ?) AND hidden = false", false)
-      render_pagination 'admin/video/thumb_h', @records, params[:page].to_i, 40, false
+      page(Video.where("(processed IS NULL or processed = ?) AND hidden = false", false)
     end
     
     def destroy
@@ -55,76 +53,78 @@ module Admin
     end
     
     def populate
-      try_and do
-        @video.pull_meta(params[:source], params[:title], params[:description], params[:tags])
+      try_and do |video|
+        video.pull_meta(params[:source], params[:title], params[:description], params[:tags])
       end
     end
     
     def reprocess
-      try_and do
-        flash[:notice] = "Processing Video: #{@video.generate_webm}"
+      try_and do |video|
+        flash[:notice] = "Processing Video: #{video.generate_webm}"
       end
     end
     
     def extract_thumbnail
-      try_and do
-        @video.set_thumbnail(false)
+      try_and do |video|
+        video.set_thumbnail(false)
         flash[:notice] = "Thumbnail Reset."
       end
     end
     
     def merge
-      try_and do
+      try_and do |video|
+        flash[:notice] = "Changes Saved."
+        
         if other = Video.where(id: params[:video][:duplicate_id]).first
-          @video.merge(current_user, other)
-        else
-          @video.unmerge
+          return video.merge(current_user, other)
         end
         
-        flash[:notice] = "Changes Saved."
+        video.unmerge
       end
     end
     
     def toggle_featured
-      if !current_user.is_staff?
-        return head 401
+      check_then do |video|
+        Video.where(featured: true).update_all(featured: false)
+        render json: {
+          added: video.featured = !video.featured
+        }
+        
+        if video.featured
+          video.save
+          Tag.add_tag('featured video', video)
+        end
       end
-      
-      if !(@video = Video.where(id: params[:id]).first)
-        return head 404
-      end
-      
-      Video.where(featured: true).update_all(featured: false)
-      @video.featured = !@video.featured
-      
-      if @video.featured
-        @video.save
-        Tag.add_tag('featured video', @video)
-      end
-      
-      render json: {
-        added: @video.featured
-      }
     end
     
     def toggle_visibility
+      check_then do |video|
+        video.set_hidden(!video.hidden)
+        video.save
+        
+        render json: {
+          added: video.hidden
+        }
+      end
+    end
+    
+    private
+    def page(records, reverse)
+      render_pagination 'admin/video/thumb_h', records.with_likes(current_user), params[:page].to_i, 40, reverse
+    end
+    
+    def check_then
       if !current_user.is_staff?
         return head 401
       end
       
-      if !(@video = Video.where(id: params[:id]).first)
-        return head 404
+      if !(video = Video.where(id: params[:id]).first)
+        return head :not_found
       end
       
-      @video.set_hidden(!@video.hidden)
-      @video.save
-      
-      render json: {
-        added: @video.hidden
-      }
+      yield(video)
     end
     
-    private
     def badly_named_function
       redirect_to action: 'view', controller: 'admin/admin'
       
@@ -142,11 +142,11 @@ module Admin
         return flash[:error] = "Error: Login required."
       end
       
-      if !(@video = Video.where(id: params[:video][:id]).first)
+      if !(video = Video.where(id: params[:video][:id]).first)
         return flash[:error] = "Error: Video not found."
       end
       
-      yield
+      yield(video)
     end
   end
 end

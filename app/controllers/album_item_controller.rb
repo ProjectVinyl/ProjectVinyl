@@ -1,7 +1,7 @@
 class AlbumItemController < ApplicationController
   def index
     if !(@album = Album.where(id: params[:id]).first)
-      return head 404
+      return head :not_found
     end
     
     @items = @album.ordered(@album.album_items.includes(:direct_user))
@@ -13,7 +13,7 @@ class AlbumItemController < ApplicationController
   def create
     check_then(Album) do |album|
       if !(video = Video.where(id: params[:videoId]).first)
-        return head 404
+        return head :not_found
       end
       
       album.add_item(video)
@@ -33,9 +33,8 @@ class AlbumItemController < ApplicationController
   end
   
   def toggle
-    
     if !(video = Video.where(id: params[:id]).first)
-      return head 404
+      return head :not_found
     end
     
     render json: {
@@ -50,7 +49,7 @@ class AlbumItemController < ApplicationController
     end
     
     if !(item = table.where(id: params[:id]).first)
-      return head 404
+      return head :not_found
     end
     
     if !item.owned_by(current_user)
@@ -58,6 +57,6 @@ class AlbumItemController < ApplicationController
     end
     
     yield(item)
-    head 200
+    head :ok
   end
 end

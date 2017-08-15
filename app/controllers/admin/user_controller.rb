@@ -40,7 +40,7 @@ module Admin
       end
       
       if !(user = User.where(id: params[:id]).first)
-        return head 404
+        return head :not_found
       end
       
       if existing = user.user_badges.where(badge_id: params[:badge]).first
@@ -51,7 +51,7 @@ module Admin
       end
       
       if !(badge = Badge.where(id: params[:badge]).first)
-        return head 404
+        return head :not_found
       end
       
       user.user_badges.create({

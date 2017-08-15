@@ -7,14 +7,23 @@
   text-shadow: 0 0 50px #bbb;
 }
 
-#upload .controls {
+#upload .playback-controls {
   opacity: 1;
+  margin: 0;
   margin-bottom: -50px;
+  box-shadow: none;
 }
-#upload .track {
-  width: calc(100% - 20px);
+
+#upload .playback-controls ul {
+    margin: 0 0 15px 0;
+}
+
+#upload .playback-controls .track {
+  margin: 0;
+  width: 100%;
   background: rgba(0,0,0,0.1);
 }
+
 #upload .video {
   margin-bottom: 50px;
 }

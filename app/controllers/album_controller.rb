@@ -107,7 +107,7 @@ class AlbumController < ApplicationController
       elsif params[:field] == 'title'
         album.set_title(params[:value])
       end
-      head 200
+      head :ok
     end
   end
   
@@ -123,9 +123,9 @@ class AlbumController < ApplicationController
   end
   
   def index
-    @records = Album.where('hidden = false AND listing = 0').order(:created_at)
+    @records = Album.where(hidden: false, listing: 0).order(:created_at)
     render_listing @records, params[:page].to_i, 50, true, {
-      id: 1, table: 'albums', label: 'Album'
+      table: 'albums', label: 'Album'
     }
   end
   
@@ -139,7 +139,7 @@ class AlbumController < ApplicationController
         @records = current_user.albums
       else
         if !(@user = User.where(id: params[:user]).first)
-          return head 404
+          return head :not_found
         end
         @records = @user.albums.where(listing: 0)
       end
@@ -155,7 +155,7 @@ class AlbumController < ApplicationController
     end
     
     if !(album = Album.where(id: params[:id]).first)
-      return head 404
+      return head :not_found
     end
     
     if !album.owned_by(current_user)

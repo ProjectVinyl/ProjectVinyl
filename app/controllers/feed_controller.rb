@@ -9,8 +9,8 @@ class FeedController < ApplicationController
     
     @records = TagSubscription.get_feed_items(current_user)
     
-    render_listing @records, params[:page].to_i, 30, false, {
-      id: 0, table: 'feed', label: 'Feed'
+    render_listing_partial @records, params[:page].to_i, 30, false, {
+      partial: 'video/thumb_h', table: 'feed', label: 'Feed'
     }
   end
   

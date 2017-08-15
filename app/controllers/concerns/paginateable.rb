@@ -14,7 +14,7 @@ module Paginateable
   def pagination_json_for_render(partial, pagination, locals = {})
     {
       paginate: render_to_string(partial: 'pagination/numbering', locals: {
-        results: pagination, pagination_id: '{page}'
+        page: pagination.page, pages: pagination.pages, id: '{page}'
       }),
       content: render_to_string(partial: partial, collection: pagination.records, locals: locals),
       pages: pagination.pages,
@@ -27,12 +27,16 @@ module Paginateable
   end
   
   def render_listing(records, page, page_size, reverse, locals)
-    if locals[:id] < 0
-      locals[:partial] = locals[:id] == -1 ? 'admin/video/thumb_h' : 'video/thumb_h'
-    else
-      locals[:partial] = locals[:label].underscore + '/thumb_h'
-    end
+    locals[:partial] = partial_for_type(locals[:label], locals[:is_admin])
+    render_listing_partial(records, page, page_size, reverse, locals)
+  end
+  
+  def render_listing_partial(records, page, page_size, reverse, locals)
     locals[:items] = Pagination.paginate(records, page, page_size, reverse)
     render template: 'pagination/listing', locals: locals
+  end
+  
+  def partial_for_type(type, is_admin)
+    "#{is_admin ? 'admin/' : '' }#{type.to_s.underscore}/thumb_h"
   end
 end

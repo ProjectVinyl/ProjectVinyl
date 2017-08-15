@@ -25,31 +25,33 @@ class Tag < ApplicationRecord
   end
 
   def self.tag_json(tags)
-    tags.map do |i|
-      (i.alias || i).to_json
-    end
+    tags.map(&:actual).uniq.map(&:to_json)
   end
-
+  
+  scope :actualise, -> { map(&:actual).uniq }
+  scope :jsons, -> { actualise.map(&:to_json) }
+  scope :pluck_actual_ids, -> { (pluck(:id, :alias_id).map {|t| t[1] || t[0] }).uniq }
+  
+  def actual
+    alias_id ? (self.alias || self) : self
+  end
+  
+  def actual_id
+    self.alias_id || self.id
+  end
+  
   def self.tag_string(tags)
-    result = ''
-    tags.each do |i|
-      result += ',' if !result.empty?
-      result += i.get_as_string
-    end
-    result
+    tags.map(&:get_as_string).join(',')
   end
-
+  
   def self.by_name_or_id(name)
     name.blank? ? [] : Tag.order(:video_count, :user_count).reverse_order.where('name = ? OR id = ? OR short_name = ?', name, name, name)
   end
 
   def self.find_matching_tags(name)
     name = name.downcase
-    tags = Tag.includes(:tag_type, :alias).where('name LIKE ? OR short_name LIKE ?', name + "%", ApplicationHelper.url_safe_for_tags(name) + "%").order(:video_count, :user_count).limit(10)
-    tags = tags.map do |tag|
-      tag.alias || tag
-    end
-    tags.uniq.map(&:to_json)
+    includes(:tag_type, :alias).where('name LIKE ? OR short_name LIKE ?', "#{name}%", "#{ApplicationHelper.url_safe_for_tags(name)}%")
+       .order(:video_count, :user_count).limit(10).jsons
   end
 
   def self.split_tag_string(tag_string)
@@ -62,22 +64,16 @@ class Tag < ApplicationRecord
 
   def self.get_tag_ids(names)
     return [] if names.blank?
-    result = Tag.where('name IN (?)', names.uniq).pluck(:id, :alias_id).map do |t|
-      t[1] || t[0]
-    end
-    result.uniq
+    Tag.where('name IN (?)', names.uniq).pluck_actual_ids
   end
-
+  
   def self.get_tags(names)
-    if !names || (names = names.uniq).empty?
+    if names.nil? || (names = names.uniq).empty?
       return []
     end
-    result = Tag.includes(:alias).where('name IN (?) OR short_name IN (?)', names, names).map do |t|
-      t.alias_id ? t.alias : t
-    end
-    result.uniq
+    Tag.includes(:alias).where('name IN (?) OR short_name IN (?)', names, names).actualise
   end
-
+  
   def self.get_name_mappings(names)
     return {} if names.blank?
     result = {}
@@ -147,13 +143,11 @@ class Tag < ApplicationRecord
   def self.expand_implications(tag_ids)
     tag_ids | TagImplication.where('tag_id IN (?)', tag_ids).pluck(:implied_id)
   end
-
+  
   def self.relation_to_ids(tags)
-    tags.pluck(:id, :alias_id).map do |o|
-      (o[1] | o[0])
-    end
+    tags.pluck_actual_ids
   end
-
+  
   def self.send_pickup_event(reciever, tags)
     tags = tags.uniq
     reciever = reciever.pick_up_tags(tags)
@@ -223,9 +217,11 @@ class Tag < ApplicationRecord
   end
 
   def suffex
-    if self.has_type
+    if !self.has_type
       prefix = self.tag_type.prefix
-      return self.name.sub(prefix + ":", '') if self.name.index(prefix) == 0
+      if self.name.index(prefix) == 0
+        return self.name.sub(prefix + ":", '')
+      end
     end
     self.name
   end
@@ -239,8 +235,7 @@ class Tag < ApplicationRecord
   end
 
   def namespace
-    return self.tag_type.prefix if self.has_type
-    ''
+    return self.has_type ? self.tag_type.prefix : ''
   end
 
   def identifier
@@ -263,10 +258,9 @@ class Tag < ApplicationRecord
   def set_name(name)
     name = Tag.sanitize_name(name)
     if self.has_type
-      if self.tag_type.hidden
-        name = name.sub(self.tag_type.prefix + ':', '').delete(':')
-      else
-        name = self.tag_type.prefix + ":" + name.sub(self.tag_type.prefix + ':', '').delete(':')
+      name = name.sub(self.tag_type.prefix + ':', '').delete(':')
+      if !self.tag_type.hidden
+        name = self.tag_type.prefix + ":" + name
       end
     else
       name = name.delete(':')
@@ -283,8 +277,7 @@ class Tag < ApplicationRecord
 
   def get_description
     if self.description.blank?
-      self.description = "No description Provided"
-      self.save
+      return "No description Provided"
     end
     self.description
   end
@@ -299,8 +292,8 @@ class Tag < ApplicationRecord
   end
 
   def set_alias(tag)
-    tag_o = tag.alias || tag
-    tag = (tag.alias_id || tag.id)
+    tag_o = tag.actual
+    tag = tag.actual_id
     if tag && tag != self.id
       self.alias_id = tag
       Tag.where(alias_id: self.id).update_all(alias_id: tag)
@@ -323,8 +316,7 @@ class Tag < ApplicationRecord
   end
 
   def alias_tag
-    return self.alias.name if self.alias_id
-    ""
+    self.alias_id ? self.alias.name : ""
   end
 
   def recount

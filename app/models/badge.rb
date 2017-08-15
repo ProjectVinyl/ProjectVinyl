@@ -14,7 +14,6 @@ class BadgeInstance
 
   attr_reader :title
   attr_reader :icon
-
   attr_reader :colour
 
   def adv_title(&block)
@@ -47,7 +46,7 @@ class Badge < ApplicationRecord
   end
 
   def self.all_badges(user)
-    return if !user || user.is_dummy
+    return if user.nil? || user.is_dummy
     Types.each do |o|
       yield(o) if o.matches(user)
     end

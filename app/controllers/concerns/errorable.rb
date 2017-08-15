@@ -10,8 +10,8 @@ module Errorable
     )
   end
   
-  def error(async, title, message)
-    if async
+  def error(title, message)
+    if params[:async]
       return render plain: title + ":" + message, status: 401
     end
     render_error title: title, description: message
@@ -22,5 +22,13 @@ module Errorable
       error(async, title, message)
     end
     return condition
+  end
+  
+  def not_found
+    raise ActionController::RoutingError.new('Not Found')
+  end
+  
+  def forbidden
+    render file: 'public/401.html', status: 401, layout: false
   end
 end

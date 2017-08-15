@@ -12,11 +12,8 @@
 				<div class="views detail"><%= number_with_delimiter thumb_v.views %> views</div>
 			</div>
 			<span class="tag-set duration">
-				<% if thumb_v.is_downvoted_by(current_user) %>
-					<i class="fa fa-thumbs-down red"></i>
-				<% end %>
-				<% if thumb_v.is_upvoted_by(current_user) %>
-					<i class="fa fa-thumbs-up green"></i>
+				<% if thumb_v.is_liked %>
+					<i class="fa fa-thumbs-<% if thumb_v.is_downvoted %>down red<% else %>up green<% end %>"></i>
 				<% end %>
 				<%= duration thumb_v.get_duration %>
 			</span>

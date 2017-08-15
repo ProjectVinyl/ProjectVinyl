@@ -1,7 +1,8 @@
 class TagType < ApplicationRecord
+  include Taggable
+  
   has_many :tag_type_implications, dependent: :destroy
   has_many :tags, through: :tag_type_implications, source: :implied
-
   has_many :referrers, class_name: "Tag"
 
   def set_metadata(s, h)
@@ -41,12 +42,5 @@ class TagType < ApplicationRecord
     end
     TagTypeImplication.create(ids)
     nil
-  end
-
-  def tags_changed
-  end
-
-  def tag_string
-    Tag.tag_string(self.tags)
   end
 end

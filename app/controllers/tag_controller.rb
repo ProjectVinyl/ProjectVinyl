@@ -34,7 +34,7 @@ class TagController < ApplicationController
     @page = params[:page].to_i
     @results = Tag.includes(:videos, :tag_type).where('alias_id IS NULL').order(:name)
     render_listing @results, @page, 100, false, {
-      id: 3, table: 'tags', label: 'Tag'
+      table: 'tags', label: 'Tag'
     }
   end
   

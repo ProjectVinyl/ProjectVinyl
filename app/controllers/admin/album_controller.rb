@@ -25,14 +25,17 @@ module Admin
       end
       
       if !(album = Album.where(id: params[:id]).first)
-        return head 404
+        return head :not_found
       end
       
       Album.where('featured > 0').update_all(featured: 0)
       album.featured = album.featured > 0 ? 0 : 1
-      album.save
+      if album.featured > 0
+        album.save
+      end
+      
       render json: {
-        added: album.featured > 0
+        added: () > 0
       }
     end
   end

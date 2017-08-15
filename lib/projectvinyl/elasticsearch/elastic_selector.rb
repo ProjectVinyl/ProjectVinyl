@@ -149,7 +149,7 @@ module ProjectVinyl
       end
 
       def table
-        @type == 'user' ? User : Video
+        @type == 'user' ? User : Video.with_likes(@user)
       end
 
       def tags

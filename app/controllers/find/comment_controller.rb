@@ -2,7 +2,7 @@ module Find
   class CommentController < ApplicationController
     def find
       if !(comment = Comment.where(id: params[:id]).first)
-        return head 404
+        return head :not_found
       end
       
       render partial: 'comment/comment', locals: {

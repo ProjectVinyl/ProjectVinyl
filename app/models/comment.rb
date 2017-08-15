@@ -1,30 +1,31 @@
 class Comment < ApplicationRecord
-  REPLY_MATCHER = /(?<=\>\>|&gt;&gt;)[1234567890abcdefghijklmnopqrstuvwxyz]+(?= |\s|\n|$)/
-  MENTION_MATCHER = /(?<=@)[^\s\[\<]+(?= |\s|\s|$)/
-  QUOTED_TEXT = /\[q\].*\[\/q\]?/m
-
   belongs_to :comment_thread
   belongs_to :direct_user, class_name: "User", foreign_key: "user_id"
-
+  
   has_many :comment_replies, dependent: :destroy
   has_many :mentions, class_name: "CommentReply", foreign_key: "comment_id"
   has_many :likes, class_name: "CommentVote", foreign_key: "comment_id"
-
-  def self.searchable
-    Comment.joins(:comment_thread).where('`comments`.hidden = false AND (`comment_threads`.owner_type != "Report" AND `comment_threads`.owner_type != "Pm")')
-  end
-
-  def self.finder
-    Comment.where(hidden: false).includes(:direct_user, :mentions)
-  end
-
+  
+  scope :decorated, -> {
+    includes(:likes, :direct_user, :mentions)
+  }
+  scope :public, -> {
+    joins(:comment_thread).where('`comment`.hidden = false AND `comment_threads`.owner_type != "Report" AND `comment_threads`.owner_type != "Pm"')
+  }
+  scope :with_likes, ->(user) { 
+    user.nil? ? self : joins("LEFT JOIN `comment_votes` ON `comment_votes`.comment_id = `comments`.id AND `comment_votes`.user_id = #{user.id}")
+                        .select('`comments`.*, `comment_votes`.user_id AS is_liked')
+  }
+  
+  scope :encode_open_id, ->(i) { i.to_s(36) }
+  scope :decode_open_id, ->(s) { s.to_i(36) }
+  
   def user
     self.direct_user || @dummy_user || (@dummy_user = User.dummy(self.user_id))
   end
   
   def update_comment(bbc)
-    self.bbc_content = ApplicationHelper.demotify(bbc)
-    CommentReply.where(parent_id: self.id).delete_all
+    self.bbc_content = bbc
     bbc = Comment.parse_bbc_with_replies_and_mentions(bbc, self.comment_thread)
     self.html_content = bbc[:html]
     self.save
@@ -68,21 +69,21 @@ class Comment < ApplicationRecord
       recievers = []
       replied_to = (Comment.where('id IN (?) AND comment_thread_id = ?', items, self.comment_thread_id).map do |i|
         recievers << i.user_id
-        '(' + i.id.to_s + ',' + self.id.to_s + ')'
+        "(#{i.id},#{self.id})"
       end).join(', ')
       recievers = recievers.uniq - [self.user_id]
       if !replied_to.empty?
         Notification.notify_recievers(recievers, self,
-          self.user.username + " has <b>replied</b> to your comment on <b>" + self.comment_thread.get_title + "</b>",
+          "#{self.user.username} has <b>replied</b> to your comment on <b>#{self.comment_thread.get_title}</b>",
           self.comment_thread.location)
-        ApplicationRecord.connection.execute('INSERT INTO comment_replies (`comment_id`,`parent_id`) VALUES ' + replied_to)
+        ApplicationRecord.connection.execute("INSERT INTO comment_replies (`comment_id`,`parent_id`) VALUES #{replied_to}")
       end
     end
   end
   
   def self.send_mentions(receivers, sender, title, location)
     receivers = receivers.uniq - [sender.user_id]
-    Notification.notify_recievers(receivers, sender, "You have been <b>mentioned</b> on <b>" + title + "</b>", location)
+    Notification.notify_recievers(receivers, sender, "You have been <b>mentioned</b> on <b>#{title}</b>", location)
   end
   
   def get_open_id
@@ -90,29 +91,17 @@ class Comment < ApplicationRecord
   end
 
   def page(order = :id, per_page = 30, reverse = false)
-    position = Comment.where('comment_thread_id = ? AND ' + order.to_s + ' ' + (reverse ? '>' : '<') + '= ?', self.comment_thread_id, self.send(order)).count
+    position = Comment.where("comment_thread_id = ? AND #{rder} #{reverse ? '>' : '<'}= ?", self.comment_thread_id, self.send(order)).count
     (position.to_f / per_page).ceil
   end
-
-  def self.encode_open_id(i)
-    i.to_s(36)
-  end
-
-  def self.decode_open_id(s)
-    s.to_i(36)
-  end
-
-  def is_upvoted_by(user)
-    user && self.likes.where(user_id: user.id).count > 0
-  end
-
+  
   def upvote(user, incr)
     incr = incr.to_i
     vote = self.likes.where(user_id: user.id).first
     if vote.nil? && incr > 0
       vote = self.likes.create(user_id: user.id)
-    else
-      vote.destroy if incr < 0
+    elsif incr < 0
+      vote.destroy
     end
     self.score = self.likes.count
     self.save

@@ -5,7 +5,7 @@ module Ajax
         return head 401
       end
       
-      if current_user.notification_count != params[:notes].to_i
+      if current_user.notification_count != params[:notices].to_i
       || current_user.feed_count         != params[:feeds].to_i
       || current_user.message_count      != params[:mail].to_i
         return render json: {
@@ -15,7 +15,7 @@ module Ajax
         }
       end
       
-      return head 204
+      head 204
     end
   end
 end

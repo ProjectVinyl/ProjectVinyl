@@ -22,16 +22,16 @@ module ApplicationHelper
     ProjectVinyl::Bbc::Bbcode.from_bbc(text).outer_html
   end
   
+  def emotify(text)
+    ApplicationHelper.emotify(text)
+  end
+  
   def self.demotify(text)
     if text.blank?
       return ""
     end
     
     ProjectVinyl::Bbc::Bbcode.from_html(text).outer_bbc
-  end
-  
-  def demotify(text)
-    ApplicationHelper.demotify(text)
   end
   
   def since(date)
@@ -42,32 +42,23 @@ module ApplicationHelper
     if length == 0
       return '--:--'
     end
+    
     length = length.to_f
-    hours = 0
+    time = []
+    
     if length >= 3600
-      hours = (length / 3600).floor.to_i
+      time << (length / 3600).floor.to_i
       length = length % 3600
     end
-    minutes = 0
+    
     if length >= 60
-      minutes = (length / 60).floor.to_i
+      time << (length / 60).floor.to_i
       length = length % 60
     end
-    seconds = length.to_i
-    if seconds < 10
-      seconds = '0' + seconds.to_s
-    end
-    if minutes < 10
-      minutes = '0' + minutes.to_s
-    end
-    if hours == 0
-      return minutes.to_s + ':' + seconds.to_s
-    end
-    if hours < 10
-      hours = '0' + hours.to_s 
-    end
     
-    hours.to_s + ':' + minutes.to_s + ':' + seconds.to_s
+    time << length.to_i
+    
+    (time.map {|n| n.to_s.rjust(2, '0') }).join(':')
   end
   
   def selected_path?(type)

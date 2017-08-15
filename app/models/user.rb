@@ -1,80 +1,5 @@
 require 'elasticsearch/model'
 
-class UserDummy
-  include Roleable
-  include Queues
-
-  def initialize(id)
-    @id = id
-    if id
-      @username = 'Background Pony #' + id.to_s(36)
-    else
-      @username = 'Anonymous'
-    end
-  end
-
-  def videos
-    Video.where(user_id: @id)
-  end
-
-  attr_reader :id
-
-  def html_bio
-    ''
-  end
-
-  attr_reader :username
-
-  def avatar
-    '/images/default-avatar.png'
-  end
-
-  def link
-    ''
-  end
-
-  def admin?
-    self.is_admin?
-  end
-
-  def contributor?
-    false
-  end
-
-  def role
-    -1
-  end
-
-  def is_dummy
-    true
-  end
-end
-
-class Subscription
-  def initialize(user)
-    @user = user
-  end
-
-  def tags
-    @user.watched
-  end
-
-  def drop_tags(ids)
-    TagSubscription.where('user_id = ? AND tag_id IN (?)', @user.id, ids).delete_all
-  end
-
-  def pick_up_tags(ids)
-  end
-
-  def tags_changed
-    @user.update_index(defer: false)
-  end
-
-  def save
-    @user.save
-  end
-end
-
 class User < ApplicationRecord
   # Include default devise modules. Others available are:
   # :omniauth_providers, :omniauthable, :lockable and :timeoutable
@@ -87,7 +12,8 @@ class User < ApplicationRecord
   include Elasticsearch::Model
   include Indexable
   include Uncachable
-
+  include Taggable
+  
   prefs :preferences, subscribe_on_reply: true, subscribe_on_thread: true, subscribe_on_upload: true
 
   after_destroy :remove_assets
@@ -141,7 +67,9 @@ class User < ApplicationRecord
     json["tags"] = self.tags.pluck(:name)
     json
   end
-
+  
+  scope :by_name_or_id, ->(id) { where('id = ? OR username = ?', id, id).first }
+  
   def self.find_for_database_authentication(warden_conditions)
     conditions = warden_conditions.dup
     if login = conditions.delete(:login)
@@ -182,52 +110,36 @@ class User < ApplicationRecord
     return false if !(name.present? && !name.strip.empty?)
     !name.gsub(SANITIZE, '').empty?
   end
-
-  def self.with_badges
-    includes(user_badges: [:badge])
-  end
-
+  
+  scope :with_badges, -> { includes(user_badges: [:badge]) }
+  
   def self.dummy(id)
     UserDummy.new(id)
   end
 
-  def self.verify_integrity
-    result = [0, 0]
+  def self.verify_integrity(report)
+    avatars_reset = 0
+    banners_reset = 0
+    
     User.all.find_each do |u|
-      if File.exist?(Rails.root.join('public', 'avatar', u.id.to_s))
-        if !u.mime
-          u.mime = 'png'
-          u.save
-          result[0] += 1
-        end
-      else
-        if u.mime
-          u.mime = nil
-          u.save
-          result[0] += 1
-        end
+      avatar_exists = File.exist?(u.avatar_path)
+      if u.mime.nil? != avatar_exists
+        u.mime = avatar_exists ? 'png' : nil
+        u.save
+        avatars_reset += 1
       end
-      if File.exist?(Rails.root.join('public', 'banner', u.id.to_s + '.png'))
-        if !u.banner_set
-          u.banner_set = true
-          u.save
-          result[1] += 1
-        end
-      else
-        if u.banner_set
-          u.set_banner(false)
-          u.save
-          result[1] += 1
-        end
+      banner_exists = File.exist?(u.banner_path)
+      if u.banner_set != banner_exists
+        u.banner_set = banner_exists
+        u.save
+        banners_reset += 1
       end
     end
-    result
+    
+    report.write("User avatars reset: #{avatars_reset}")
+    report.write("User banners reset: #{banners_reset}")
   end
-
-  def self.by_name_or_id(id)
-    User.where('id = ? OR username = ?', id, id).first
-  end
-
+  
   def self.tag_for(user)
     return user.tag if user.tag_id
     if !(tag = Tag.where(short_name: user.username, tag_type_id: 1).first)
@@ -239,30 +151,24 @@ class User < ApplicationRecord
   def albums
     self.all_albums.where(hidden: false)
   end
-
+  
+  # Overrides Taggable
   def drop_tags(ids)
     Tag.where('id IN (?) AND user_count > 0', ids).update_all('user_count = user_count - 1')
     ArtistGenre.where('user_id = ? AND tag_id IN (?)', self.id, ids).delete_all
   end
-
+  
   def pick_up_tags(ids)
     Tag.where('id IN (?)', ids).update_all('user_count = user_count + 1')
     self.artist_genres
   end
-
-  def tags_changed
-    self.update_index(defer: false)
-  end
-
+  # ####################
+  
   def remove_self
     self.all_albums.each(&:remove_self)
     self.destroy
   end
-
-  def tag_string
-    Tag.tag_string(self.tags)
-  end
-
+  
   def hidden_tag_string
     Tag.tag_string(self.hidden_tags_actual)
   end
@@ -290,28 +196,21 @@ class User < ApplicationRecord
   end
 
   def taglist
-    return "Admin" if self.is_admin
-    "User"
+    self.is_admin ? "Admin" : "User"
   end
 
   def hides(tags)
-    @hidden_tag_ids ||= self.hidden_tags_actual.pluck(:id, :alias_id).map do |t|
-      t[1] || t[0]
-    end
+    @hidden_tag_ids ||= self.hidden_tags_actual.pluck_actual_ids
     !(tags & @hidden_tag_ids).empty?
   end
 
   def spoilers(tags)
-    @spoilered_tag_ids ||= self.spoilered_tags_actual.pluck(:id, :alias_id).map do |t|
-      t[1] || t[0]
-    end
+    @spoilered_tag_ids ||= self.spoilered_tags_actual.pluck_actual_ids
     !(tags & @spoilered_tag_ids).empty?
   end
 
   def watches(tag)
-    @watched_tag_ids ||= self.watched_tags_actual.pluck(:id, :alias_id).map do |t|
-      t[1] || t[0]
-    end
+    @watched_tag_ids ||= self.watched_tags_actual.pluck_actual_ids
     !([tag.id] & @watched_tag_ids).empty?
   end
 
@@ -321,15 +220,15 @@ class User < ApplicationRecord
 
   def set_avatar(avatar)
     self.uncache
-    del_file(avatar_path.to_s + '-small' + self.mime.to_s)
-    del_file(avatar_path.to_s + self.mime.to_s)
+    del_file(avatar_path_small)
+    del_file(avatar_path)
     if avatar && avatar.content_type.include?('image/')
       ext = File.extname(avatar.original_filename)
       ext = Mimes.ext(avatar.content_type) if ext == ''
-      if img(avatar_path.to_s + ext, avatar)
+      if img(avatar_path, avatar)
         self.mime = ext
-        Ffmpeg.crop_avatar(avatar_path.to_s + self.mime, avatar_path.to_s + self.mime)
-        Ffmpeg.scale(avatar_path.to_s + self.mime, avatar_path.to_s + '-small' + self.mime, 30)
+        Ffmpeg.crop_avatar(avatar_path, avatar_path)
+        Ffmpeg.scale(avatar_path, avatar_path_small, 30)
         # normal: 240
         # small: 30
       else
@@ -343,13 +242,17 @@ class User < ApplicationRecord
   def set_banner(banner)
     self.uncache
     if !banner || banner.content_type.include?('image/')
-      del_file(banner_path.to_s + '.png')
-      self.banner_set = img(banner_path.to_s + '.png', banner)
+      del_file(banner_path)
+      self.banner_set = img(banner_path, banner)
     end
   end
-
+  
+  def default_name
+    "Background Pony ##{self.id.to_s(32)}"
+  end
+  
   def set_name(name)
-    name = 'Background Pony #' + self.id.to_s(32) if !self.validate_name(name)
+    name = default_name if !self.validate_name(name)
     name = ApplicationHelper.check_and_trunk(name, self.username)
     self.username = name
     self.safe_name = ApplicationHelper.url_safe(name)
@@ -358,47 +261,43 @@ class User < ApplicationRecord
   end
 
   def set_description(text)
-    test = ApplicationHelper.demotify(text)
     self.description = text
     self.html_description = ApplicationHelper.emotify(text)
     self
   end
 
   def set_bio(text)
-    test = ApplicationHelper.demotify(text)
     self.bio = text
     self.html_bio = ApplicationHelper.emotify(text)
     self
   end
 
   def avatar_path
-    Rails.root.join('public', 'avatar', self.id.to_s)
+    Rails.root.join('public', 'avatar', "#{self.id}#{self.mime}")
   end
-
+  
+  def avatar_path_small
+    Rails.root.join('public', 'avatar', "#{self.id}-small#{self.mime}")
+  end
+  
   def banner_path
-    Rails.root.join('public', 'banner', self.id.to_s)
+    Rails.root.join('public', 'banner', "#{self.id}.png")
   end
 
   def avatar
-    if !self.mime
-      return Gravatar.avatar_for(self.email, s: 240, d: 'https://www.projectvinyl.net/images/default-avatar.png', r: 'pg')
-    end
-    self.cache_bust('/avatar/' + self.id.to_s + self.mime)
+    grab_avatar("/avatar/#{self.id}#{self.mime}", 240)
   end
 
   def small_avatar
-    if !self.mime
-      return Gravatar.avatar_for(self.email, s: 30, d: 'https://www.projectvinyl.net/images/default-avatar.png', r: 'pg')
-    end
-    self.cache_bust('/avatar/' + self.id.to_s + '-small' + self.mime)
+    grab_avatar("/avatar/#{self.id}-small#{self.mime}", 30)
   end
 
   def banner
-    self.cache_bust('/banner/' + self.id.to_s + '.png')
+    self.cache_bust("/banner/#{self.id}#{self.mime}")
   end
 
   def link
-    '/profile/' + self.id.to_s + '-' + (self.safe_name || ('Background Pony #' + self.id.to_s(32)))
+    "/profile/#{self.id}-#{self.safe_name || default_name}"
   end
 
   def is_dummy
@@ -407,7 +306,7 @@ class User < ApplicationRecord
 
   def send_notification(message, source)
     self.notifications.create(message: message, source: source)
-    self.notification_count = self.notification_count + 1
+    self.notification_count += 1
     self.save
   end
 
@@ -430,34 +329,20 @@ class User < ApplicationRecord
   protected
 
   def remove_assets
-    del_file(banner_path.to_s + '.png')
-    del_file(avatar_path.to_s + self.mime.to_s)
-    del_file(avatar_path.to_s + '-small' + self.mime.to_s)
+    del_file(banner_path)
+    del_file(avatar_path)
+    del_file(avatar_path_small)
   end
 
   def init_name
     self.set_name(self.username)
   end
-
-  def del_file(path)
-    File.delete(path) if File.exist?(path)
-  end
-
-  private
-
-  def rename_file(from, to)
-    if File.exist?(from)
-      FileUtils.mv(from, to)
-    end
-  end
   
-  def img(path, uploaded_io)
-    if uploaded_io
-      File.open(path, 'wb') do |file|
-        file.write(uploaded_io.read)
-        return true
-      end
+  private
+  def grab_avatar(url, size)
+    if self.mime
+      self.cache_bust(url)
     end
-    false
+    Gravatar.avatar_for(self.email, s: size, d: 'https://www.projectvinyl.net/images/default-avatar.png', r: 'pg')
   end
 end

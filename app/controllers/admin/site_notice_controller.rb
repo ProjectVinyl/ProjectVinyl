@@ -27,10 +27,10 @@ module Admin
         flash[:error] = "Error: Message field is required.";
       end
       
-      text = ApplicationHelper.demotify(params[:notice][:message])
       @notice = SiteNotice.create({
           active: params[:notice][:active],
-          message: text, html_message: ApplicationHelper.emotify(text)
+          message: text,
+          html_message: ApplicationHelper.emotify(text)
       })
     end
     
