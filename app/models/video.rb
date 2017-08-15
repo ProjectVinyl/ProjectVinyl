@@ -26,7 +26,7 @@ class Video < ApplicationRecord
     joins("LEFT JOIN `votes` ON `votes`.video_id = `videos`.id AND `votes`.user_id = #{user.id}")
     .select('`videos`.*, `votes`.user_id AS is_liked, `votes`.negative = 1 AS is_like_negative')
   }
-  scope :random_videos, ->(limit) {
+  scope :random, ->(limit) {
     selection = pluck(:id)
     return { ids: [], videos: [] } if selection.blank?
     if selection.length < limit
@@ -36,7 +36,7 @@ class Video < ApplicationRecord
     end
     {
       ids: selected,
-      videos: Video.finder.where('id IN (?)', selected)
+      videos: finder.where("`#{self.table_name}`.id IN (?)", selected)
     }
   }
   

@@ -49,7 +49,7 @@ class TagSubscription < ApplicationRecord
     self.watch
   end
   
-  private
+  protected
   def update_users(op, tags, preserved_receivers)
     if !tags.empty?
       User.joins('INNER JOIN `tag_subscriptions` ON user_id = `users`.id')

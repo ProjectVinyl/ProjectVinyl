@@ -36,7 +36,7 @@ module Paginateable
     render template: 'pagination/listing', locals: locals
   end
   
-  def partial_for_type(type, is_admin)
+  def partial_for_type(type, is_admin = false)
     "#{is_admin ? 'admin/' : '' }#{type.to_s.underscore}/thumb_h"
   end
 end

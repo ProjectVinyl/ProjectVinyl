@@ -10,18 +10,18 @@ class ArtistController < ApplicationController
     @tags = @user.tags.includes(:tag_type)
     
     if @user.tag_id
-      @art = Pagination.paginate(@user.tag.videos.listable, 0, 8, true)
+      @art = Pagination.paginate(@user.tag.videos.listable.with_likes(current_user), 0, 8, true)
     end
     
     @modifications_allowed = user_signed_in? && (current_user.id == @user.id || current_user.is_staff?)
     
     @videos = @modifications_allowed ? @user.videos.includes(:tags).where(duplicate_id: 0) : @user.videos.listable
-    @videos = Pagination.paginate(@videos, 0, 8, true)
+    @videos = Pagination.paginate(@videos.with_likes(current_user), 0, 8, true)
     
     @albums = @modifications_allowed ? @user.albums : @user.albums.where('`albums`.hidden = false AND `albums`.listing = 0')
     @albums = Pagination.paginate(@albums, 0, 8, true)
     
-    @comments = Comment.public.decorated.select('`comments`.*').where("`comments`.user_id = ? AND `comment_threads`.id = comment_thread_id", @user.id).order(:created_at).reverse_order.limit(3)
+    @comments = Comment.visible.decorated.with_likes(current_user).select('`comments`.*').where("`comments`.user_id = ? AND `comment_threads`.id = comment_thread_id", @user.id).order(:created_at).reverse_order.limit(3)
   end
   
   def update

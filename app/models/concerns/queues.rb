@@ -6,13 +6,13 @@ module Queues
     {
       user: user_queue[:videos].with_likes(sender),
       global: Video.listable
-        .where.not('id = ? OR id IN (?)', excluded, user_queue[:ids])
-        .random_videos(7)[:videos].with_likes(sender)
+        .where.not('`videos`.id = ? OR `videos`.id IN (?)', excluded, user_queue[:ids])
+        .random(7)[:videos].with_likes(sender)
     }
   end
   
-  private
+  protected
   def get_queue(excluded)
-    self.videos.listable.where.not(id: excluded).random_videos(7)
+    self.videos.listable.where.not(id: excluded).random(7)
   end
 end

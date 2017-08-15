@@ -21,6 +21,7 @@ class VideoController < ApplicationController
     
     load_album
     
+    @order = '1'
     @time = (params[:t] || params[:resume] || 0).to_i
     @resume = !params[:resume].nil?
     
@@ -128,7 +129,7 @@ class VideoController < ApplicationController
       return error("Error", "Cover is empty")
     end
     
-    if !file.content_type.include?('video/') && (!cover || !cover.content_type.include?('image/')
+    if !file.content_type.include?('video/') && (!cover || !cover.content_type.include?('image/'))
       return error("Error", "Cover art is required for audio files.")
     end
     
@@ -404,11 +405,12 @@ class VideoController < ApplicationController
       if params[:merged]
         @results = Video.where.not(duplicate_id: 0)
         @data = 'merged=1'
+        return true
       elsif params[:unlisted]
         @results = Video.where(hidden: true)
         @data = 'unlisted=1'
+        return true
       end
-      return true
     end
     
     @results = Video.finder

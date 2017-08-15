@@ -341,7 +341,7 @@ class User < ApplicationRecord
   private
   def grab_avatar(url, size)
     if self.mime
-      self.cache_bust(url)
+      return self.cache_bust(url)
     end
     Gravatar.avatar_for(self.email, s: size, d: 'https://www.projectvinyl.net/images/default-avatar.png', r: 'pg')
   end

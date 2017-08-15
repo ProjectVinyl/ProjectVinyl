@@ -48,27 +48,15 @@ class CommentController < ApplicationController
     render json: @json
   end
   
-  def check_then
-    if !user_signed_in?
-      return head 401
-    end
-    
-    if !(comment = Comment.where(id: params[:id]).first)
-      return head :not_found
-    end
-    
-    yield(comment)
-  end
-  
   def update
-    check_then do
+    check_then do |comment|
       comment.update_comment(params[:comment])
       head :ok
     end
   end
   
   def like
-    check_then do
+    check_then do |comment|
       render json: {
         count: comment.upvote(current_user, params[:incr])
       }
@@ -76,7 +64,7 @@ class CommentController < ApplicationController
   end
   
   def destroy
-    check_then do
+    check_then do |comment|
       if !current_user.is_contributor? && current_user.id != comment.user_id
         return head 401
       end
@@ -100,5 +88,19 @@ class CommentController < ApplicationController
         })
       }
     end
+  end
+  
+  
+  private
+  def check_then
+    if !user_signed_in?
+      return head 401
+    end
+    
+    if !(comment = Comment.where(id: params[:id]).first)
+      return head :not_found
+    end
+    
+    yield(comment)
   end
 end

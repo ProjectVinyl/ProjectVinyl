@@ -9,8 +9,8 @@ class Comment < ApplicationRecord
   scope :decorated, -> {
     includes(:likes, :direct_user, :mentions)
   }
-  scope :public, -> {
-    joins(:comment_thread).where('`comment`.hidden = false AND `comment_threads`.owner_type != "Report" AND `comment_threads`.owner_type != "Pm"')
+  scope :visible, -> {
+    joins(:comment_thread).where('`comments`.hidden = false AND `comment_threads`.owner_type != "Report" AND `comment_threads`.owner_type != "Pm"')
   }
   scope :with_likes, ->(user) { 
     user.nil? ? self : joins("LEFT JOIN `comment_votes` ON `comment_votes`.comment_id = `comments`.id AND `comment_votes`.user_id = #{user.id}")
@@ -100,7 +100,7 @@ class Comment < ApplicationRecord
     vote = self.likes.where(user_id: user.id).first
     if vote.nil? && incr > 0
       vote = self.likes.create(user_id: user.id)
-    elsif incr < 0
+    elsif incr < 0 && !vote.nil?
       vote.destroy
     end
     self.score = self.likes.count
