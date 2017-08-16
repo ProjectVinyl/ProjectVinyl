@@ -10,7 +10,18 @@ button.red, .button.red, input[type=submit].red {
   border-bottom-color: #9d3232;
   border-top-color: #b03838;
   text-shadow: -1px -1px #a73535;
-  background: rgb(236, 72, 72) !important;
+  background: rgb(236, 72, 72);
+}
+
+.post .actions .dislike.liked:hover,
+button.red:hover, .button.red:hover, input[type=submit].red:hover {
+  background: rgb(252, 87, 87);
+}
+
+.post .actions .dislike.liked:active,
+button.red:active, .button.red:active, input[type=submit].red:active {
+   background: rgb(236, 72, 72);
+   box-shadow: 0 0 5px 0 rgba(0,0,0,0.2) inset;
 }
 
 .post .actions .like.liked,
@@ -20,16 +31,36 @@ button.green, .button.green, input[type=submit].green {
   border-bottom-color: #638f36;
   border-top-color: #6fa03c;
   text-shadow: -1px -1px #699739;
-  background: #7bb042 !important;
+  background: #7bb042;
+}
+
+.post .actions .like.liked:hover,
+button.green:hover, .button.green:hover, input[type=submit].green:hover {
+  background: #8bc052;
+}
+
+.post .actions .like.liked:active,
+button.green:active, .button.green:active, input[type=submit].green:active {
+   background: #7bb042;
+   box-shadow: 0 0 5px 0 rgba(0,0,0,0.2) inset;
 }
 
 button.blue, .button.blue, input.blue[type="submit"] {
-    color: #fff;
-    border: 1px solid #3480b5;
-    border-bottom-color: #3179ab;
-    border-top-color: #3787bf;
-    text-shadow: -1px -1px #3480b5;
-    background: #3d95d3 !important;
+  color: #fff;
+  border: 1px solid #3480b5;
+  border-bottom-color: #3179ab;
+  border-top-color: #3787bf;
+  text-shadow: -1px -1px #3480b5;
+  background: #3d95d3;
+}
+
+button.blue:hover, .button.blue:hover, input[type=submit].blue:hover {
+  background: #4da5e3;
+}
+
+button.blue:active, .button.blue:active, input[type=submit].blue:active {
+   background: #3d95d3;
+   box-shadow: 0 0 5px 0 rgba(0,0,0,0.2) inset;
 }
 
 .post .actions .star.starred,
@@ -39,4 +70,15 @@ button.yellow, .button.yellow, input.yellow[type="submit"] {
   border-top-color: #c7c73c;
   text-shadow: -1px -1px #c7c739;
   background: #e0e046;
+}
+
+.post .actions .star.starred:hover,
+button.yellow:hover, .button.yellow:hover, input[type=submit].yellow:hover {
+  background: #f0f056;
+}
+
+.post .actions .star.starred:active,
+button.yellow:active, .button.yellow:active, input[type=submit].yellow:active {
+   background: #e0e046;
+   box-shadow: 0 0 5px 0 rgba(0,0,0,0.2) inset;
 }

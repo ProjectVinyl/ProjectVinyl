@@ -1,12 +1,47 @@
 <% title "Admin" %>
-<% lim "1100px" %>
+<% lim "1300px" %>
 <%= render partial: 'view/breadcrumb', locals: {
 	stack: [
 		{ link: '/admin', title: 'Admin' }
 	],
 	title: "Control Panel"
 } %>
-<div class="wrapper column-left left">
+<section class="page tab-bar column-right column-mobile-shown right">
+	<h1>Navigation</h1>
+	<div class="actions">
+		<a class="button" href="/users"><i class="fa fa-users"></i> Users</a
+		><a class="button" href="/admin/files?p=encoding">
+			<i class="fa fa-fw fa-file-code-o"></i> Encoding Folder</a
+		><a class="button" href="/admin/files?p=public">
+			<i class="fa fa-fw fa-file-video-o"></i> Public Storage Folder</a
+		><a class="button" href="/admin/files?p=private">
+			<i class="fa fa-fw fa-file-video-o"></i> Private Storage Folder</a>
+	</div>
+	<% if current_user.is_admin? %>
+	<hr>
+	<div class="actions">
+		<a class="button red" data-confirm data-method="post" href="/admin/videos/reindex" data-title="Reindex Videos">
+			<i class="fa fa-fw fa-refresh"></i> Recreate Video Index</a> 
+		<a class="button green" data-confirm data-method="post" href="/admin/users/reindex" data-title="Reindex Users">
+			<i class="fa fa-fw fa-refresh"></i> Recreate User Index</a>
+		<a class="button blue" data-confirm data-method="post" href="/admin/videos/hidden/drop" data-title="Drop <%= @hiddenvideos.count %> Videos">
+			<i class="fa fa-fw fa-trash-o"></i> Delete Unlisted Videos</a>
+	</div>
+	<% end %>
+	<hr>
+	<div class="actions">
+		<a class="button" href="/videos?unlisted=1">
+			<i class="fa fa-fw fa-eye-slash"></i> Unlisted Videos</a
+		><a class="button" href="/videos?merged=1">
+			<i class="fa fa-fw fa-compress"></i> Merged Videos</a
+		><a class="button" href="/admin/tagtypes">
+			<i class="fa fa-fw fa-tags"></i> Tag Types</a
+		><a class="button" href="/admin/sitenotices">
+			<i class="fa fa-fw fa-info"></i> Site Notices</a>
+	</div>
+</section>
+
+<div class="wrapper column-left left tab-bar-beside">
 	<section class="page full-width resize-holder">
 		<h1 class="title resize-target">Recent Activity</h1>
 		<table class="auto">
@@ -37,35 +72,6 @@
 	<section class="page full-width resize-holder">
 		<%= render partial: 'processor_status' %>
 	</section>
-</div>
-<div class="wrapper column-right right">
-	<section class="page full-width">
-		<div class="actions">
-			<a class="button" href="/users"><i class="fa fa-users"></i> Users</a
-			><a class="button" href="/admin/files?p=encoding"><i class="fa fa-file-code-o"></i> Encoding Folder</a
-			><a class="button" href="/admin/files?p=public"><i class="fa fa-file-video-o"></i> Public Storage Folder</a
-			><a class="button" href="/admin/files?p=private"><i class="fa fa-file-video-o"></i> Private Storage Folder</a>
-		</div>
-		<% if current_user.is_admin? %>
-		<hr>
-		<div class="actions">
-      <a class="button red" data-confirm data-method="post" href="/admin/videos/reindex" data-title="Reindex Videos">Recreate Video Index</a> 
-      <a class="button red" data-confirm data-method="post" href="/admin/users/reindex" data-title="Reindex Users">Recreate User Index</a>
-      <a class="button red" data-confirm data-method="post" href="/admin/videos/hidden/drop" data-title="Drop <%= @hiddenvideos.count %> Videos">Delete Unlisted Videos</a>
-		</div>
-		<% end %>
-	</section>
-	<section class="page full-width resize-holder">
-		<h1>Videos & Tagging</h1>
-		<div class="actions">
-			<a class="button" href="/videos?unlisted=1"><i class="fa fa-eye-slash"></i> Unlisted Videos</a
-			><a class="button" href="/videos?merged=1"><i class="fa fa-compress"></i> Merged Videos</a
-			><a class="button" href="/admin/tagtypes"><i class="fa fa-tags"></i> Tag Types</a
-			><a class="button" href="/admin/sitenotices"><i class="fa fa-info"></i> Site Notices</a>
-		</div>
-	</section>
-</div>
-<div class="wrapper column-span">
 	<section class="page full-width recent-uploads resize-holder">
 		<h1 class="title resize-target">Unprocessed Videos (<%= number_with_delimiter @unprocessed.count %>)</h1>
 		<% if @unprocessed.count > 0 %>

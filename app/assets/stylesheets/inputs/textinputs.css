@@ -1,5 +1,10 @@
-textarea, input[type=text]:not(.tag), input[type=email], input[type=password], label.text-input {
-  transition: background 0.5s ease;
+textarea,
+input[type=text]:not(.tag),
+input[type=search],
+input[type=email],
+input[type=password],
+label.text-input {
+  transition: background 0.125s ease;
   padding: 10px;
   border: 1px solid rgb(204, 204, 204);
   border-radius: 5px;
@@ -9,6 +14,15 @@ textarea, input[type=text]:not(.tag), input[type=email], input[type=password], l
   vertical-align: middle;
   font-family: MS Shell Dlg \32, monospace;
   font-size: 13.3333px;
+}
+
+textarea:focus,
+input[type=text]:focus,
+input[type=search]:focus,
+input[type=email]:focus,
+input[type=password]:focus,
+label.text-input.focus {
+  background: rgba(200,200,200,0.1);
 }
 
 label.text-input {

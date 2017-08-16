@@ -22,11 +22,11 @@
   }
 }
 
-.search-options label, input[type=text]:focus, input[type=email]:focus, input[type=password]:focus, textarea:focus, label.text-input.focus {
+.search-options label {
   transition: background 0.125s ease;
 }
 
-.search-options label.focus, input[type=text]:focus, input[type=email]:focus, input[type=password]:focus, textarea:focus, label.text-input.focus {
+.search-options label.focus {
   background: rgba(200,200,200,0.1);
 }
 

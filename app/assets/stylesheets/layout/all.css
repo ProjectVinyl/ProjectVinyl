@@ -7,5 +7,6 @@
  *= require ./post
  *= require ./tabset
  *= require ./tabs
+ *= require ./tabbar
  *= require ./footer
  */

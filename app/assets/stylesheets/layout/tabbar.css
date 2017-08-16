@@ -1,0 +1,46 @@
+.wrapper .wrapper.column-right.tab-bar,
+.wrapper .page.column-right.tab-bar {
+  width: 250px;
+}
+.wrapper .wrapper.column-left.tab-bar-beside,
+.wrapper .page.column-left.tab-bar-beside {
+  width: calc(100% - 255px);
+}
+@media(max-width: 600px) {
+  .wrapper .wrapper.column-left.tab-bar-beside,
+  .wrapper .page.column-left.tab-bar-beside {
+    width: 100%;
+    float: none;
+  }
+}
+.tab-bar .actions {
+  border-radius: 5px;
+  border: solid 1px #eee;
+  padding: 5px;
+  margin: -5px;
+}
+.tab-bar .actions .button {
+  display: block;
+  margin: 0;
+  border-radius: 0;
+}
+.tab-bar .actions .button:first-child {
+  border-radius: 5px 5px 0 0;
+}
+.tab-bar .actions .button:last-child {
+  border-radius: 0 0 5px 5px;
+}
+.tab-bar .actions .button ~ .button {
+  border-top: none;
+}
+
+.tab-bar hr {
+  margin-left: -5px;
+  margin-right: -5px;
+}
+
+.tab-bar h1 {
+  font-size: 15px;
+  margin-left: -5px;
+  margin-right: -5px;
+}

@@ -42,7 +42,7 @@ button.right, .foobar.right, .button.right, input[type=submit].right {
   margin-left: 5px;
 }
 
-button:hover, .button:hover {
+button:hover, .button:hover, input[type=submit]:hover {
   background: #fcfcfc;
 }
 
@@ -51,7 +51,7 @@ button.selected, .button.selected, input[type=submit].selected {
 }
 
 button:active, .button:active, input[type=submit]:active {
-   background: #f8f8f8;
+   background: #f7f7f7;
    box-shadow: 0 0 5px 0 rgba(0,0,0,0.1) inset;
 }
 

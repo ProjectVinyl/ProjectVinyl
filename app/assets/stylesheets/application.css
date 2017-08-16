@@ -13,6 +13,7 @@
  *= require ./lists/all
  *= require ./search/all
  *= require ./thumbs/videos
+ *= require ./thumbs/comments
  *= require ./inputs/all
  *= require ./buttons/all
  *= require ./ui-elements/all

@@ -111,17 +111,14 @@ div.page .positioner {
   .wrapper .wrapper.right > .page {
     margin: 10px !important;
   }
-  .column-mobile-fragmented {
+  .column-mobile-fragmented, .column-right.column-mobile-shown {
     display: block !important;
     float: none;
     margin-right: 0 !important;
     margin-left: -5px !important;
   }
-  .column-mobile-fragmented > section {
-    display: none
-  }
-  .column-mobile-fragmented > section.column-mobile-shown {
-    display: block;
+  .column-mobile-fragmented > section:not(.column-mobile-shown) {
+    display: none;
   }
   .wrapper .wrapper.right.column-mobile-fragmented.wrap-around-fixed,
   .wrapper .wrapper.right.column-mobile-fragmented > section.column-mobile-shown {
