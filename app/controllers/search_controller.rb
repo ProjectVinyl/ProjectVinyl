@@ -30,80 +30,73 @@ class SearchController < ApplicationController
       orderby: @orderby, query: @query
     )
     
-    if @type == 1
-      @type_label = 'Album'
-      @results = Album.where('title LIKE ?', "%#{@query}%")
-      @results = Pagination.paginate(orderBy(@results, @type, @orderby), @page, 20, !@ascending)
-    elsif @type == 3
-      @type_label = 'Tag'
-      @results = Tag.includes(:videos, :tag_type).where('name LIKE ?', "%#{@query}%")
-      @results = Pagination.paginate(orderBy(@results, @type, @orderby), @page, 100, !@ascending)
+    if @type == 1 || @type == 3
+      @results = search_basic(@type, @page, @ascending)
+      @type_label = @type == 1 ? 'Album' : 'Tag'
     else
-      try do
-        if @type == 2
-          @type_label = 'User'
-          @results = ProjectVinyl::ElasticSearch::ElasticSelector.new(current_user, @query).query(@page, 20).users.order(session, @orderby, @ascending).exec
-          return
-        end
-        if params[:quick]
-          @results = ProjectVinyl::ElasticSearch::ElasticSelector.new(current_user, @query).query(0, 1).videos.order_by('v.id').offset(-1).exec
-          @tags = @results.tags
-          if @results.first
-            return redirect_to action: 'view', controller: 'embed', id: @results.first.id
+      handle_derps do
+        @results = ProjectVinyl::ElasticSearch::ElasticSelector.new(current_user, @query).videos
+        
+        if params[:quick] && @type == 2
+          if @single = @results.query(0, 1).order_by('v.id').exec.first
+            return redirect_to action: 'view', controller: 'embed', id: @single.id
           end
         end
+        
+        @results = @results.query(@page, 20)
         @type_label = 'Video'
-        @results = ProjectVinyl::ElasticSearch::ElasticSelector.new(current_user, @query).query(@page, 20).videos.order(session, @orderby, @ascending).exec
-      end
-      if !@derpy
+        
+        if @type == 2
+          @type_label = 'User'
+          @results = @results.users
+        end
+        
+        @results = @results.order(session, @orderby, @ascending).exec
         @tags = @results.tags
       end
     end
     
     @partial = partial_for_type(@type_label)
   end
-
+  
   def page
     @query = params[:query]
     @page = params[:page].to_i
     @type = params[:type].to_i
     @ascending = params[:order] == '1'
-    @orderby = params[:orderby].to_i
-    if @query
-      if @type == 1
-        @results = Pagination.paginate(orderBy(Album.where('title LIKE ?', "%#{@query}%"), @type, @orderby), @page, 20, !@ascending)
-        @type = 'album'
-      elsif @type == 2
-        @results = ProjectVinyl::ElasticSearch::ElasticSelector.new(current_user, @query).query(@page, 20).users.order(session, @orderby, @ascending).exec
-        @type= 'user'
-      elsif @type == 3
-        @results = Pagination.paginate(orderBy(Tag.includes(:videos, :tag_type).where('name LIKE ?', "%#{@query}%"), @type, @orderby), @page, 100, !@ascending)
-        @type = 'tag'
-      else
-        @results = ProjectVinyl::ElasticSearch::ElasticSelector.new(current_user, @query).query(@page, 20).videos.order(session, @orderby, @ascending).exec
-        @type = 'video'
-      end
-      render_pagination_json partial_for_type(@type), @results
+    
+    if !@query
+      return head 401
     end
+    
+    if @type == 1 || @type == 3
+      @results = search_basic(@type, @page, @ascending)
+      @type = @type == 1 ? :album : :tag
+    else
+      @results = ProjectVinyl::ElasticSearch::ElasticSelector.new(current_user, @query).query(@page, 20).videos
+      @type = :video
+      
+      if @type == 2
+        @results = @results.users
+        @type = :user
+      end
+      
+      @results = @results.order(session, params[:orderby].to_i, @ascending).exec
+    end
+    render_pagination_json partial_for_type(@type), @results
   end
   
-  def order_by(records, type, ordering)
-    if type == 0
-      if ordering == 1
-        return records.order(:created_at, :updated_at)
-      elsif ordering == 2
-        return records.order(:score, :created_at, :updated_at)
-      elsif ordering == 3
-        return records.order(:length, :created_at, :updated_at)
-      end
-    elsif type == 3
-      return records.order(:name)
+  def search_basic(type, page, ascending)
+    if type == 1
+      records = Album.where('title LIKE ?', "%#{@query}%").order(:created_at)
+    else
+      records = Tag.includes(:videos, :tag_type).where('name LIKE ?', "%#{@query}%").order(:name)
     end
-    records.order(:created_at)
+    Pagination.paginate(records, page, 20, !ascending)
   end
   
   private
-  def try
+  def handle_derps
     yield
   rescue ProjectVinyl::Search::LexerError => e
     @derpy = e

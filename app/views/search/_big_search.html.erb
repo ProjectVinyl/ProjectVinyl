@@ -1,0 +1,47 @@
+﻿<form action="search" method="get" id="big-search">
+	<span>
+		<input name="query" type="search" placeholder="Title"
+			class="full-width"
+			title="Search by title (alias for title:{search_term})"
+			value="<%= @title_query %>"
+		></input>
+	</span>
+	<span id="search_tags"<% if @type == 1 || @type == 3 %> class="hidden"<% end %>>
+		<input name="tagquery" type="search" placeholder="Tags"
+			class="full-width"
+			style="margin-top:10px;"
+			title="Search by one or more tags"
+			value="<%= @tag_query %>"
+		></input>
+		<%= render partial: 'search/big_search_explanation' %>
+	</span>
+	<span class="search-options">
+		<label>
+			<span>Type</span>
+			<div>
+				<select id="search_type" name="type">
+					<%= sensible_option_for_select %w[ Song Album User Tag ], @type %>
+				</select>
+			</div>
+		</label>
+		<label>
+			<span>Order</span>
+			<div>
+				<select name="order">
+					<%= sensible_option_for_select %w[ Descending Ascending ], @ascending ? 1 : 0 %>
+				</select>
+			</div>
+		</label>
+		<label>
+			<span>Order By</span>
+			<div>
+				<select name="orderby">
+					<%= sensible_option_for_select %w[ - Date Rating Length Random Relevance ], @orderby %>
+				</select>
+			</div>
+		</label>
+	</span>
+	<span>
+		<button type="submit"><i class="fa fa-search"></i> Search</button>
+	</span>
+</form>

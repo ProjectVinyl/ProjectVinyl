@@ -1,0 +1,15 @@
+<div id="search">
+	<form action="/search" method="get">
+		<input id="search_small" name="tagquery" type="search" placeholder="Tag Search"
+			value="<%= query %>"
+		></input>
+		<label class="select">
+			<select id="search_type_small" name="type">
+				<%= sensible_option_for_select %w[ Song Album User Tag ], search_type %>
+			</select>
+		</label>
+		<button type="submit">
+			<i class="fa fa-search" ></i>
+		</button>
+	</form>
+</div>

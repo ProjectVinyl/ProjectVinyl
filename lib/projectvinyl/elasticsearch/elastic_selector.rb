@@ -19,25 +19,20 @@ module ProjectVinyl
       end
 
       def videos
-        @type = "video"
+        @type = 'video'
         self
       end
 
       def users
-        @type = "user"
+        @type = 'user'
         self
       end
-
+      
       def order_by(ordering)
         @ordering = [ordering]
         self
       end
-
-      def offset(off)
-        @offset = off
-        self
-      end
-
+      
       def random_order(session, _ordering, possibles)
         if @page == 0
           session[:random_ordering] = possibles[rand(0..possibles.length)].to_s + ';' + possibles[rand(0..possibles.length)].to_s

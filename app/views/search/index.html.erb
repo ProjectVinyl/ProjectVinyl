@@ -1,121 +1,12 @@
 ﻿<% title @query.length > 0 ? "Searching for " + @query : "Search" %>
 <div class="page full-width">
-<% if @derpy %>
-		<h1>Searching for- Uh, oh!</h1>
-		<p class="center">
-			<img class="iconic" style="max-height:200px;" src="/images/derpy.png"></img>
-			<br>
-			<% if @ditzy %>
-			That wasn't me, I swear! D:
-			<% else %>
-			You searched for <u><%= @query %></u> but I don't know what that means. :'c
-			<% end %>
-		</p>
-		<hr>
-		<p class="center">
-			<%= @derpy.message %>
-		</p>
-<% else %>
-	<h1>
-	<% if @query.length == 0 %>Showing all <%= @type_label %>s<% else %>Searching for <%= @type_label %>s matching '<%= @query %>'<% end %>
-	 found <%= number_with_delimiter @results.count %> match<% if @results.count != 1 %>es<% end %></h1>
-	<% if @tags && @tags.length > 0 %>
-		<%= render partial: 'tag/set', locals: {tags: @tags} %>
-	<% end %>
-	<%= render layout: 'pagination/paginated', locals: { type: 'search', paginated: @results, id: "page"} do %>
-		<section class="search-result">
-			<ul id="<%= @table %>" class="horizontal <%= @type_label.underscore %>-list">
-				<%= render partial: @partial, collection: @results.records %>
-			</ul>
-		</section>
-	<% end %>
-<% end %>
+	<%= render partial: @derpy.nil? ? 'search/results' : 'search/warden_derpy' %>
 </div>
 <div class="page full-width resize-holder">
 	<section>
 		<h1 class="resize-target">
 			<a>Search</a>
 		</h1>
-		<form action="search" method="get" id="big-search">
-			<span>
-				<input title="Search by title (alias for title:{search_term})" type="text" name="query" placeholder="title" style="width:100%" value="<%= @title_query %>"></input>
-			</span>
-			<span title="Search by one or more tags" id="search_tags"<% if @type == 1 || @type == 3 %> style="display:none;"<% end %>>
-				<input type="text" name="tagquery" placeholder="tags" style="width:100%;margin-top:10px;" value="<%= @tag_query %>"></input>
-				<a class="tiny-link slider-toggle" href="#" data-target=".explanation">Search Syntax</a>
-				<div class="slideout explanation properties">
-					<div class="group active" style="padding:10px;white-space:normal;">
-						<p>ProjectVinyl's search function is designed to work similarly to that of Derpibooru. Searching for a single tag name returns all videos with that tag, a list of tags returns all videos that have all of those tags.</p>
-						<p>You can also combine results using the OR ( | ) and AND ( & ) operators. Note that they must have spacing on either side.</p>
-						<p>
-							Videos additionally have support for searching them by many of their special attributes.
-						</p>
-						<p>
-							System tags:
-							<ul>
-								<li>title:&lt;title&gt; - returns any videos with a matching name</li>
-								<li>source:&lt;source&gt; - returns any videos with a matching source</li>
-								<li>uploader:&lt;username&gt; - returns any videos posted by the named user</li>
-								<li>is:audio - returns videos only if they are an audio file</li>
-								<li>is:upvoted - returns videos only videos that have been liked by the current user (has no affect for anonymous users)</li>
-								<li>is:downvoted - equivalent to is:upvoted but for dislikes</li>
-							</ul>
-						</p>
-						<% if user_signed_in? && current_user.is_staff? %>
-						<p>
-							Moderation tags:
-							<ul>
-								<li>upvoted_by:&lt;username&gt;</li>
-								<li>downvoted_by:&lt;username&gt;</li>
-								<li>is:hidden</li>
-							</ul>
-						</p>
-						<% end %>
-						<p>
-							Ranged tags:
-							
-							<ul>
-								<li>length&lt;X - returns any videos with a length less than X where X is in the format of hh:mm:ss</li>
-								<li>score&lt;X- returns any videos with a score less than X</li>
-							</ul>
-							
-							The above tags may also be inverted by replacing the '&lt;' with a '&gt;'.
-							
-							eg length&gt;X - returns videos with a length <b>greater</b> than X.
-						</p>
-						<p>Parenthesis '(' and ')' may be used as well for additional control</p>
-					</div>
-				</div>
-			</span>
-			<span class="search-options">
-				<label>
-					<span>Type</span>
-					<div>
-						<select id="search_type" name="type">
-							<%= sensible_option_for_select %w[ Song Album User Tag ], @type %>
-						</select>
-					</div>
-				</label>
-				<label>
-					<span>Order</span>
-					<div>
-						<select name="order">
-							<%= sensible_option_for_select %w[ Descending Ascending ], @ascending ? 1 : 0 %>
-						</select>
-					</div>
-				</label>
-				<label>
-					<span>Order By</span>
-					<div>
-						<select name="orderby">
-							<%= sensible_option_for_select %w[ - Date Rating Length Random Relevance ], @orderby %>
-						</select>
-					</div>
-				</label>
-			</span>
-			<span>
-				<button type="submit"><i class="fa fa-search"></i> Search</button>
-			</span>
-		</form>
+		<%= render partial: 'search/big_search' %>
 	</section>
 </div>
