@@ -1,8 +1,10 @@
 module Admin
   class ReportController < ApplicationController
-    before_action :authenticate_user!
-    
     def show
+      if !user_signed_in?
+        return render_access_denied
+      end
+      
       if !(@report = Report.where(id: params[:id]).first)
         return render_error(
           title: 'Not Found',
@@ -24,12 +26,16 @@ module Admin
     end
     
     def page
+      if !user_signed_in?
+        return head 401
+      end
+      
       @records = Report.includes(:video).where(resolved: nil)
       render_pagination 'thumb', @records, params[:page].to_i, 40, false
     end
     
     def new
-      if !(@video = Video.where(id: params[:id]).first)
+      if !(@video = Video.where(id: params[:video_id]).first)
         return head 401
       end
       
