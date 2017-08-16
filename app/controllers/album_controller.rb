@@ -28,7 +28,7 @@ class AlbumController < ApplicationController
       title: @album.title,
       description: @album.description,
       tags: [],
-      url: "#{url_for(action: "view", controller: "album", id: @album.id, only_path: false)}-#{@album.safe_title}",
+      url: "#{url_for(action: :show, controller: :album, id: @album.id, only_path: false)}-#{@album.safe_title}",
       embed_url: url_for({
         action: "view",
         controller: "embed/video",

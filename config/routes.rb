@@ -83,10 +83,11 @@ Rails.application.routes.draw do
   end
   
   # Albums #
-  resources :albums, controller: :album do
+  resources :albums, except: [:show], controller: :album do
     get 'items' => 'album_item#index'
     patch 'order'
   end
+  get 'album/:id' => 'album#show', constraints: { id: /([0-9]+).*/ } # /
   get 'stars' => 'album#starred'
   get 'albums/page' => 'album#page'
   
