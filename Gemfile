@@ -40,4 +40,5 @@ gem 'foreman'
 gem 'eye'
 
 gem 'sprockets-rollup'
+# unused pagination gem
 gem 'kaminari'
