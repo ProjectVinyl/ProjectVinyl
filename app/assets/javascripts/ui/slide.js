@@ -50,6 +50,7 @@ function slideAcross(me, direction) {
 }
 
 jSlim.on(document, 'click', '.slider-toggle', function(e) {
+  if (e.button !== 0) return;
   var url = this.dataset.url;
   var callback = this.dataset.callback;
   var holder = document.querySelector(this.dataset.target);
@@ -65,11 +66,13 @@ jSlim.on(document, 'click', '.slider-toggle', function(e) {
   e.preventDefault();
 });
 
-jSlim.on(document, 'click', '.slide-holder .goto.slide-right', function() {
+jSlim.on(document, 'click', '.slide-holder .goto.slide-right', function(e) {
+  if (e.button !== 0) return;
   slideAcross(this, 1);
 });
 
-jSlim.on(document, 'click', '.slide-holder .goto.slide-left', function() {
+jSlim.on(document, 'click', '.slide-holder .goto.slide-left', function(e) {
+  if (e.button !== 0) return;
   slideAcross(this, -1);
 });
 
