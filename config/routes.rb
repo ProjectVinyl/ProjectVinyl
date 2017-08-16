@@ -3,14 +3,20 @@ require 'resque/server'
 Rails.application.routes.draw do
   devise_for :users
   
-  get 'stars' => 'album#starred'
-  
-  get 'staff' => 'staff#index'
-  get 'copyright' => 'staff#copyright'
-  get 'fairuse' => 'staff#copyright'
-  get 'policy' => 'staff#policy'
-  get 'terms' => 'staff#policy'
-  get 'donate' => 'staff#donate'
+  scope controller: :staff do
+    scope action: :copyright do
+      get 'copyright'
+      get 'fairuse'
+    end
+    
+    scope action: :policy do
+      get 'policy'
+      get 'terms'
+    end
+    
+    get 'donate'
+    get 'staff'
+  end
   
   # Popup Windows #
   namespace :ajax do
@@ -19,96 +25,86 @@ Rails.application.routes.draw do
   end
   
   # Asset Fallbacks #
-  get 'cover/:id-small' => 'imgs#thumb'
-  get 'cover/:id' => 'imgs#cover'
-  get 'avatar/:id-small' => 'imgs#avatar', constraints: { id: /[0-9]+/ }
-  get 'avatar/:id' => 'imgs#avatar', constraints: { id: /[0-9]+/ }
+  
+  get 'cover/:id(-:small)' => 'imgs#cover'
+  get 'avatar/:id(-:small)' => 'imgs#avatar', constraints: { id: /[0-9]+/ } #/
   get 'banner/:id' => 'imgs#banner'
-  get 'stream/:id' => 'imgs#stream', constraints: { id: /.*/ }
+  get 'stream/:id' => 'imgs#stream', constraints: { id: /.*/ } # /
   
   # Filters #
-  get 'filters' => 'feed#edit'
-  patch 'filters' => 'feed#update'
+  resource :filters, only: [:edit, :update], controller: :feed
   
   # Feeds #
-  get 'feed/page' => 'feed#page'
-  get 'feed' => 'feed#view'
+  resource :feed, only: [:show], controller: :feed do
+    get 'page'
+  end
   
   # Badges #
   get 'badges' => 'badge#index'
   
   # Videos #
-  get 'videos/page' => 'video#page'
-  get 'videos' => 'video#index'
-  
-  get 'view/:id' => 'video#view', constraints: { id: /([0-9]+).*/ }
-  get 'ajax/view/:id' => 'video#go_next'
-  
   get 'upload' => 'video#new'
   get 'download/:id' => 'video#download'
   
-  get 'videos/:id/edit' => 'video#edit'
-  get 'videos/:id/changes/page' => 'history#page'
-  get 'videos/:id/changes' => 'history#index'
-  
-  put 'videos/:id/like' => 'video#upvote'
-  put 'videos/:id/dislike' => 'video#downvote'
-  put 'videos/:id/star' => 'video#star'
-  put 'videos/:id/add' => 'album_item#toggle'
-  
-  patch 'videos/:id/cover/:async' => 'video#update_cover'
-  patch 'videos/:id/cover' => 'video#update_cover'
-  patch 'videos/:id/details' => 'video#patch'
-  patch 'videos/:id/:async' => 'video#update'
-  patch 'videos/:id' => 'video#update'
-  
-  post 'videos/:async' => 'video#create'
-  post 'videos' => 'video#create'
+  get 'view/:id' => 'video#view', constraints: { id: /([0-9]+).*/ } # /
+  get 'ajax/view/:id' => 'video#go_next'
+    
+  resources :videos, except: [:update, :new, :show, :destroy], controller: :video do
+    put 'like'
+    put 'dislike'
+    put 'star'
+    patch 'cover(/:async)' => 'video#cover'
+    patch 'details'
+    
+    get 'changes' => 'history#index'
+    get 'changes/page' => 'history#page'
+    
+    put 'add' => 'album_item#toggle'
+  end
+  scope 'videos', controller: :video do
+    get 'page'
+    patch ':id(/:async)', action: :update
+    put '(/:async)', action: :create
+    post '(/:async)', action: :create
+  end
   
   # Users #
-  get 'profile/:id' => 'artist#view', constraints: { id: /([0-9]+).*/ }
+  get 'profile/:id' => 'artist#view', constraints: { id: /([0-9]+).*/ } # /
   
-  get 'users/page' => 'artist#page'
-  put 'users/prefs' => 'artist#update_prefs'
-  get 'users/:id/hovercard' => 'artist#card'
-  get 'users/:id/banner' => 'artist#banner'
-  get 'users' => 'artist#index'
-  
-  patch 'users/avatar/:async' => 'artist#set_avatar'
-  patch 'users/avatar' => 'artist#set_avatar'
-  patch 'users/banner/:async' => 'artist#set_banner'
-  patch 'users/banner' => 'artist#set_banner'
-  patch 'users/:id' => 'artist#update'
+  resource :users, only: [], controller: :artist do
+    get 'page'
+    put 'prefs'
+    patch 'avatar(/:async)' => 'artist#set_avatar'
+    patch 'banner(/:async)' => 'artist#set_banner'
+  end
+  resources :users, only: [:index, :update], controller: :artist do
+    get 'hovercard'
+    get 'banner'
+  end
   
   # Albums #
-  get 'album/:id' => 'album#view'
-  
+  resources :albums, controller: :album do
+    get 'items' => 'album_item#index'
+    patch 'order'
+  end
+  get 'stars' => 'album#starred'
   get 'albums/page' => 'album#page'
-  get 'albums' => 'album#index'
-  get 'albums/new' => 'album#new'
-  get 'albums/:id/edit' => 'album#edit'
-  get 'albums/:id/items' => 'album_item#index'
-  post 'albums' => 'album#create'
-  patch 'albums/:id/order' => 'album#update_ordering'
-  patch 'albums/:id' => 'album#update'
-  delete 'albums/:id' => 'album#destroy'
   
-  post 'albumitems' => 'album_item#create'
-  patch 'albumitems/:id' => 'album_item#update'
-  delete 'albumitems/:id' => 'album_item#destroy'
+  resources :albumitems, only: [:create, :update, :destroy], controller: :album_item
   
   # Tags #
-  get 'tags' => 'tag#index'
-  get 'tags/page' => 'tag#page'
-  
-  get 'tags/:name', to: 'tag#view', constraints: { name: /.*/ }
-  
-  get 'tags/:id/videos' => 'tag#videos'
-  get 'tags/:id/users' => 'tag#users'
-  
-  put 'tags/:id/hide' => 'tag#hide'
-  put 'tags/:id/spoiler' => 'tag#spoiler'
-  put 'tags/:id/watch' => 'tag#watch'
+  resources :tags, only: [:index], controller: :tag do
+    get 'videos'
+    get 'users'
+    
+    put 'hide'
+    put 'spoiler'
+    put 'watch'
+  end
+  scope 'tags', controller: 'tag' do
+    get 'page'
+    get ':name' => 'tag#view', constraints: { name: /.*/ } # /
+  end
   
   # Forums #
   namespace :forum do
@@ -121,48 +117,40 @@ Rails.application.routes.draw do
   # Boards/Categories #
   
   get 'boards/page' => 'forum/board#page'
-  get 'boards/new' => 'forum/board#new'
-  post 'boards' => 'forum/board#create'
-  delete 'boards/:id' => 'forum/board#destroy'
+  resources :boards, only: [:new, :create, :destroy], controller: :board
   
   # Threads #
-  get 'thread/:id' => 'thread#view', constraints: { id: /([0-9]+).*/ }
+  get 'thread/:id' => 'thread#view', constraints: { id: /([0-9]+).*/ } # /
+  resources :threads, only: [:new, :create, :update], controller: :thread do
+    get 'page'
+    put 'subscribe'
+  end
   
-  get 'threads/:id/page' => 'thread#page'
-  get 'threads/new' => 'thread#new'
-  put 'threads/:id/subscribe' => 'thread#subscribe'
-  post 'threads' => 'thread#create'
-  patch 'threads/:id' => 'thread#update'
-  
-  # Comment #
-  post 'comments' => 'comment#create'
-  patch 'comments/:id' => 'comment#update'
-  delete 'comments/:id' => 'comment#destroy'
-  
-  put 'comments/:id/like(/:incr)' => 'comment#like'
+  # Comments #
+  resources :comments, only: [:create, :update, :destroy], controller: :comment do
+    put 'like(/:incr)', action: 'like'
+  end
   get 'comments/:thread_id/:order/page' => 'comment#page'
   
   # Private Messages #
-  get 'message/new' => 'pm#new'
-  get 'message/:id' => 'pm#view'
+  scope 'inbox', controller: :inbox do
+    get ':type/page', action: :page
+    get ':type/tab', action: :tab
+    get '(:type)', action: :show
+  end
   
-  get 'messages/:type/tab' => 'pm#tab'
-  get 'messages/:type/page' => 'pm#page'
-  get 'messages/:type' => 'pm#index'
-  get 'messages' => 'pm#index'
+  resources :message, only: [:create, :new, :show], controller: :pm do
+    put 'markread'
+    delete ':type', action: :destroy
+  end
   
-  post 'messages' => 'pm#create'
-  put 'messages/:id/markread' => 'pm#mark_read'
-  delete 'messages/:id/:type' => 'pm#destroy'
-  
-  # Notifications #
-  get 'notifications' => 'notification#index'
-  get 'ajax/notifications' => 'ajax/notification#view'
+  # Notifications #  
+  resources :notifications, only: [:index, :destroy], controller: :notification
   
   # Technically shouldn't be a get since it has a side-effect, but eh.
   # A bit of a trick to get notifications to mark themselves read when you click on them.
   get 'review' => 'notification#view'
-  delete 'notifications/:id' => 'notification#destroy'
+  get 'ajax/notifications' => 'ajax/notification#view'
   
   # Main Search #
   get 'search/page' => 'search#page'
@@ -176,61 +164,55 @@ Rails.application.routes.draw do
   end
   
   # Admin Actions #
-  namespace :admin do
-    post 'transfer' => 'admin#transfer_item'
+  namespace :admin, controller: :admin do
+    post 'transfer'
+    post 'verify'
     
     get 'files/page' => 'files#page'
     get 'files' => 'files#index'
     
-    get 'albums/:id' => 'album#view'
-    put 'albums/:id/feature' => 'album#toggle_featured'
+    resources :albums, only: [:show], controller: :album do
+      put 'feature'
+    end
     
-    get 'videos/hidden/page' => 'video#hidden'
-    get 'videos/unprocessed/page' => 'video#unprocessed'
-    get 'videos/:id' => 'video#view'
-    post 'videos/hidden/drop' => 'video#batch_drop'
-    put 'videos/:id/hide' => 'video#toggle_visibility'
-    put 'videos/:id/feature' => 'video#toggle_featured'
-    put 'videos/merge' => 'video#merge'
-    put 'videos/reprocess' => 'video#reprocess'
-    put 'videos/resetthumb' => 'video#extract_thumbnail'
-    put 'videos/metadata' => 'video#populate'
-    delete 'videos/:id' => 'video#destroy'
+    resources :videos, only: [:show, :destroy] do
+      put 'hide'
+      put 'feature'
+    end
     
-    post 'verify' => 'admin#verify_integrity'
-    post 'requeue' => 'video#rebuild_queue'
+    resource :videos, only: [], controller: :video do
+      get 'hidden/page', action: :hidden
+      get 'unprocessed/page', action: :unprocessed
+      
+      post 'hidden/drop', action: :batch_drop
+      post 'requeue'
+      
+      put 'merge'
+      put 'reprocess'
+      put 'resetthumb'
+      put 'metadata'
+    end
     
-    get 'tags/:id' => 'tag#view'
-    patch 'tags/:id' => 'tag#update'
-    
-    get 'tagtypes' => 'tag_type#index'
-    get 'tagtypes/new' => 'tag_type#new'
-    post 'tagtype/create' => 'tag_type#create'
-    patch 'tagtypes/:id' => 'tag_type#update'
-    delete 'tagtypes/:id' => 'tag_type#destroy'
-    
-    get 'sitenotices' => 'site_notice#index'
-    get 'sitenotices/new' => 'site_notice#new'
-    post 'sitenotices' => 'site_notice#create'
-    patch 'sitenotices/:id' => 'site_notice#update'
-    delete 'sitenotices/:id' => 'site_notice#delete'
-    
-    get 'users/:id' => 'user#view'
-    put 'users/:id/badges/:badge' => 'user#toggle_badge'
-    put 'users/:id/roles/:role' => 'user#role'
+    resources :tags, only: [:show, :update], controller: :tag
+    resources :tagtypes, except: [:show, :edit], controller: :tag_type
+    resources :sitenotices, except: [:show, :edit], controller: :site_notice
+    resources :users, only: [:show], controller: :user do
+      put 'badges/:id' => 'user#toggle_badge'
+      put 'roles/:id' => 'user#role'
+    end
     
     # Reporting #
+    resources :reports, only: [:new, :show], controller: :report
     get 'reports/page' => 'report#page'
-    get 'reports/:id/new' => 'report#new'
-    get 'reports/:id' => 'report#view'
-    post 'reports/:id/:async' => 'report#create'
-    post 'reports/:id' => 'report#create'
+    post 'reports/:id(/:async)' => 'report#create'
     
-    put 'threads/:id/pin' => 'thread#pin'
-    put 'threads/:id/lock' => 'thread#lock'
-    put 'threads/:id/move' => 'thread#move'
+    resources :threads, only: [], controller: :thread do
+      put 'pin'
+      put 'lock'
+      put 'move'
+    end
     
-    put ':table/reindex' => 'admin#reindex'
+    put ':table/reindex', action: :reindex
     
     root 'admin#view'
   end
@@ -243,7 +225,7 @@ Rails.application.routes.draw do
   get 'oembed' => 'embed/video#oembed'
   
   constraints CanAccessJobs do
-    mount Resque::Server.new, at: "/admin/resque"
+    mount Resque::Server.new, at: '/admin/resque'
   end
   
   namespace :api do
@@ -253,7 +235,7 @@ Rails.application.routes.draw do
   end
   
   # Short link #
-  get '/:id' => 'video#view', constraints: { id: /([0-9]+).*/ }
+  get '/:id' => 'video#view', constraints: { id: /([0-9]+).*/ } # /
   
   # Home #
   get '/' => 'welcome#index'

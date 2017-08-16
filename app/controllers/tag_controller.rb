@@ -44,7 +44,7 @@ class TagController < ApplicationController
   end
   
   def videos
-    if !(@tag = Tag.where(id: params[:id]).first)
+    if !(@tag = Tag.where(id: params[:tag_id]).first)
       return head 404
     end
     @records = @tag.videos.where(hidden: false).includes(:tags).order(:created_at)
@@ -52,7 +52,7 @@ class TagController < ApplicationController
   end
   
   def users
-    if !(@tag = Tag.where(id: params[:id]).first)
+    if !(@tag = Tag.where(id: params[:tag_id]).first)
       return head 404
     end
     @records = @tag.users.order(:updated_at_at)
@@ -77,13 +77,13 @@ class TagController < ApplicationController
       return head 401
     end
     
-    if params[:id].to_i.to_s != params[:id]
-      params[:id] = Tag.where(name: params[:id]).first.id
+    if params[:tag_id].to_i.to_s != params[:tag_id]
+      params[:tag_id] = Tag.where(name: params[:tag_id]).first.id
     end
-    if !(subscription = TagSubscription.where(user_id: current_user.id, tag_id: params[:id]).first)
+    if !(subscription = TagSubscription.where(user_id: current_user.id, tag_id: params[:tag_id]).first)
       subscription = TagSubscription.new(
         user_id: current_user.id,
-        tag_id: params[:id],
+        tag_id: params[:tag_id],
         hide: false,
         spoiler: false,
         watch: false

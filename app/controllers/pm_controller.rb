@@ -1,11 +1,5 @@
-class PmController < ApplicationController
-  def index
-    @type = params[:type] || 'new'
-    @result = paginate_for_type(@type)
-    @counts = tab_changes
-  end
-  
-  def view
+class PmController < InboxController
+  def show
     if !(user_signed_in? && @pm = Pm.find_for_user(params[:id], current_user))
       return render_error(
         title: 'Nothing to see here!',
@@ -36,30 +30,7 @@ class PmController < ApplicationController
     redirect_to action: 'view', id: Pm.send_pm(current_user, user, params[:thread][:title], params[:thread][:description]).id
   end
   
-  def page
-    @type = params[:type]
-    @results = paginate_for_type(@type)
-    if @results.count == 0
-      return render_empty_pagination 'pm/mailderpy'
-    end
-    @json = pagination_json_for_render 'pm/thumb', @results
-    @json[:tabs] = tab_changes
-    render json: @json
-  end
-  
-  def tab
-    @type = params[:type]
-    render json: {
-      content: render_to_string(partial: 'pm/list_group', locals: {
-        type: @type,
-        paginated: paginate_for_type(@type),
-        selected: true
-      }),
-      tabs: tab_changes
-    }
-  end
-  
-  def mark_read
+  def markread
     check_then do |pm|
       pm.unread = !pm.unread
       pm.save
@@ -83,34 +54,16 @@ class PmController < ApplicationController
     end
   end
   
-  private
-  def tab_changes(type = nil, results = nil)
-    {
-      new: count_for_type('new')
-    }
-  end
-  
+  protected
   def check_then
     if !user_signed_in?
       return head 403
     end
     
-    if !(pm = Pm.find_for_user(params[:id], current_user))
+    if !(pm = Pm.find_for_user(params[:message_id], current_user))
       return head 404
     end
     
     yield(pm)
-  end
-  
-  def count_for_type(type)
-    Pm.find_for_tab_counter(type, current_user).count
-  end
-  
-  def page_for_type(type)
-    Pm.find_for_tab(type, current_user)
-  end
-  
-  def paginate_for_type(type)
-    Pagination.paginate(page_for_type(type), params[:page].to_i, 50, false)
   end
 end

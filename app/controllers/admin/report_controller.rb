@@ -2,7 +2,7 @@ module Admin
   class ReportController < ApplicationController
     before_action :authenticate_user!
     
-    def view
+    def show
       if !(@report = Report.where(id: params[:id]).first)
         return render_error(
           title: 'Not Found',
@@ -42,8 +42,8 @@ module Admin
     end
     
     def create
-      if !(@video = Video.where(id: params[:id]).first)
-        head 401
+      if !(@video = Video.where(id: params[:video_id]).first)
+        head :not_found
       end
       
       @report = params[:report]

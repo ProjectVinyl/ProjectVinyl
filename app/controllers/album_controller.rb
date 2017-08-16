@@ -1,5 +1,5 @@
 class AlbumController < ApplicationController
-  def view
+  def show
     if !(@album = Album.where(id: params[:id].split(/-/)[0]).first)
       return render_error(
         title: 'Nothing to see here!',
@@ -84,13 +84,13 @@ class AlbumController < ApplicationController
   end
   
   def edit
-    check_then do |album|
+    check_then :id do |album|
       render partial: 'edit'
     end
   end
   
-  def update_ordering
-    check_then do |album|
+  def order
+    check_then :album_id do |album|
       album.set_ordering(params[:album][:sorting], params[:album][:direction])
       album.listing = params[:album][:privacy].to_i
       album.save
@@ -100,7 +100,7 @@ class AlbumController < ApplicationController
   end
   
   def update
-    check_then do |album|
+    check_then :id do |album|
       if params[:field] == 'description'
         album.set_description(params[:value])
         album.save
@@ -112,7 +112,7 @@ class AlbumController < ApplicationController
   end
   
   def destroy
-    check_then do |album|
+    check_then :id do |album|
       if album.hidden
         return head 401
       end
@@ -149,12 +149,12 @@ class AlbumController < ApplicationController
   end
   
   private
-  def check_then
+  def check_then(id)
     if !user_signed_in?
       return head 401
     end
     
-    if !(album = Album.where(id: params[:id]).first)
+    if !(album = Album.where(id: params[id]).first)
       return head :not_found
     end
     

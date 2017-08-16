@@ -2,7 +2,7 @@ module Admin
   class TagController < ApplicationController
     before_action :authenticate_user!
     
-    def view
+    def show
       if !current_user.is_contributor?
         return render_access_denied
       end
@@ -17,7 +17,7 @@ module Admin
         return render_access_denied
       end
       
-      redirect_to action: "view"
+      redirect_to action: :show
       
       if !(@tag = Tag.where(id: params[:id]).first)
         return flash[:error] = "Error: Record not found."

@@ -5,33 +5,26 @@ class Pm < ApplicationRecord
   belongs_to :comment_thread, dependent: :destroy
   belongs_to :new_comment, class_name: 'Comment'
   
-  def self.find_for_user(id, user)
-    self.eager_load(:comment_thread)
-      .includes(:new_comment)
-      .where('`pms`.id = ? AND `pms`.user_id = ?', id, user.id).first
-  end
+  scope :find_for_user, ->(id, user) { includes(:comment_thread, :new_comment).where('`pms`.id = ? AND `pms`.user_id = ?', id, user.id).first }
   
-  def self.find_for_tab_counter(type, user)
-    listing_selector = self.where(user_id: user.id)
+  scope :find_for_tab_counter, ->(type, user) {
+    listing_selector = where(user_id: user.id, state: type == 'deleted' ? 1 : 0)
     if type == 'received'
-      return listing_selector.where(state: 0, receiver: user)
+      return listing_selector.where(receiver: user)
     elsif type == 'sent'
-      return listing_selector.where(state: 0, sender: user)
+      return listing_selector.where(sender: user)
     elsif type == 'new'
-      return listing_selector.where(state: 0, unread: true)
-    elsif type == 'deleted'
-      return listing_selector.where(state: 1)
+      return listing_selector.where(unread: true)
     end
     listing_selector
-  end
+  }
   
-  def self.find_for_tab(type, user)
-    Pm.find_for_tab_counter(type, user)
-      .includes(:sender)
-      .includes(new_comment: [:direct_user])
-      .eager_load(:comment_thread)
+  scope :find_for_tab, ->(type, user) {
+    joins('LEFT JOIN `comment_threads` ON `comment_threads`.id = `pms`.comment_thread_id AND `comment_threads`.owner_type = "Pm"')
+      .select('`pms`.*').includes(:comment_thread, :sender, new_comment: [:direct_user])
+      .find_for_tab_counter(type, user)
       .order('`comment_threads`.created_at DESC')
-  end
+  }
 
   def self.send_pm(sender, receiver, subject, message)
     Pm.transaction do
@@ -65,7 +58,7 @@ class Pm < ApplicationRecord
       Notification.notify_recievers([t.user_id], self, sender.username + " has posted a reply on <b>" + self.comment_thread.title + "</b>", t.location)
     end
   end
-
+  
   def get_tab_type(user)
     if self.state == 0
       return 'sent' if self.sender_id == user.id

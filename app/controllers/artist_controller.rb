@@ -44,7 +44,7 @@ class ArtistController < ApplicationController
     end
   end
   
-  def update_prefs
+  def prefs
     if user_signed_in?
       current_user.prefs_cache.save(params[:settings])
     end
@@ -83,8 +83,8 @@ class ArtistController < ApplicationController
     end
   end
   
-  def card
-    if !(user = User.with_badges.where(id: params[:id]).first)
+  def hovercard
+    if !(user = User.with_badges.where(id: params[:user_id]).first)
       return head :not_found
     end
     
@@ -94,14 +94,14 @@ class ArtistController < ApplicationController
   end
 
   def banner
-    if !current_user.is_staff? && current_user.id != params[:id]
+    if !current_user.is_staff? && current_user.id != params[:user_id]
       return head :not_found
     end
     
-    if current_user.id == params[:id]
+    if current_user.id == params[:user_id]
       @user = current_user
     else
-      @user = User.where(id: params[:id]).first
+      @user = User.where(id: params[:user_id]).first
     end
     
     render partial: 'banner'

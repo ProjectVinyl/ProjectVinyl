@@ -1,5 +1,5 @@
 class FeedController < ApplicationController
-  def view
+  def show
     if !user_signed_in?
       return redirect_to action: "index", controller: "welcome"
     end

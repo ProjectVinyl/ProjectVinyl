@@ -2,7 +2,7 @@ module Admin
   class UserController < ApplicationController
     before_action :authenticate_user!
     
-    def view
+    def show
       if !current_user.is_contributor?
         return render_access_denied
       end
@@ -14,12 +14,12 @@ module Admin
         return head 401
       end
       
-      if params[:id].to_i == current_user.id
+      if params[:user_id].to_i == current_user.id
         return head 401
       end
       
-      user = User.where(id: params[:id]).first
-      role = Roleable.role_for(params[:role])
+      user = User.where(id: params[:user_id]).first
+      role = Roleable.role_for(params[:id])
       if role <= current_user.role
         user.role = role
         user.save
@@ -39,18 +39,18 @@ module Admin
         return head 401
       end
       
-      if !(user = User.where(id: params[:id]).first)
+      if !(user = User.where(id: params[:user_id]).first)
         return head :not_found
       end
       
-      if existing = user.user_badges.where(badge_id: params[:badge]).first
+      if existing = user.user_badges.where(badge_id: params[:id]).first
         existing.destroy
         return render json: {
           added: false
         }
       end
       
-      if !(badge = Badge.where(id: params[:badge]).first)
+      if !(badge = Badge.where(id: params[:id]).first)
         return head :not_found
       end
       

@@ -1,6 +1,6 @@
 class HistoryController < ApplicationController
   def index
-    if !(@video = Video.where(id: params[:id]).first)
+    if !(@video = Video.where(id: params[:video_id]).first)
       return render_error(
         title: 'Nothing to see here!',
         description: "This is not the video you are looking for."
@@ -16,8 +16,8 @@ class HistoryController < ApplicationController
   end
 
   def page
-    @video = Video.where(id: params[:id]).first
-    @records = TagHistory.where(video_id: params[:id]).order(:created_at)
+    @video = Video.where(id: params[:video_id]).first
+    @records = TagHistory.where(video_id: params[:video_id]).order(:created_at)
     @records = Pagination.paginate(@records, params[:page].to_i, 20, true)
     if @records.count == 0
       return render_empty_pagination 'history/wardenderpy'

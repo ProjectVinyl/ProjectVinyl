@@ -3,34 +3,24 @@ module Admin
     before_action :check_permission
     
     def pin
-      if !(@thread = CommentThread.where(id: params[:id]).first)
-        return head 404
+      toggle_action do |thread|
+        thread.pinned = !thread.pinned
       end
-      
-      render json: {
-        added: @thread.pinned = !@thread.pinned
-      }
-      @thread.save
     end
 
     def lock
-      if !(@thread = CommentThread.where(id: params[:id]).first)
-        return head 404
+      toggle_action do |thread|
+        thread.locked = !thread.locked
       end
-      
-      render json: {
-        added: @thread.locked = !@thread.locked
-      }
-      @thread.save
     end
     
     def move
-      if !(@thread = CommentThread.where(id: params[:id], owner_type: 'Board').first)
-        return head 404
+      if !(@thread = CommentThread.where(id: params[:thread_id], owner_type: 'Board').first)
+        return head :not_found
       end
       
       if !(@board = Board.where(id: params[:item]).first)
-        return head 404
+        return head :not_found
       end
       
       @thread.owner_id = @board.id
@@ -41,6 +31,17 @@ module Admin
     end
     
     protected
+    def toggle_action
+      if !(thread = CommentThread.where(id: params[:thread_id]).first)
+        return head :not_found
+      end
+      
+      render json: {
+        added: yield(thread)
+      }
+      thread.save
+    end
+    
     def check_permission
       if !user_signed_in? || !current_user.is_contributor?
         head 401

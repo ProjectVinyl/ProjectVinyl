@@ -2,7 +2,7 @@ module Admin
   class VideoController < ApplicationController
     before_action :authenticate_user!
 
-    def view
+    def show
       if !current_user.is_contributor?
         return render_access_denied
       end
@@ -46,13 +46,13 @@ module Admin
       end
     end
     
-    def rebuild_queue
+    def requeue
       badly_named_function do
         flash[:notice] = "#{Video.rebuild_queue} videos in queue."
       end
     end
     
-    def populate
+    def metadata
       try_and do |video|
         video.pull_meta(params[:source], params[:title], params[:description], params[:tags])
       end
@@ -64,7 +64,7 @@ module Admin
       end
     end
     
-    def extract_thumbnail
+    def resetthumb
       try_and do |video|
         video.set_thumbnail(false)
         flash[:notice] = "Thumbnail Reset."
@@ -83,7 +83,7 @@ module Admin
       end
     end
     
-    def toggle_featured
+    def feature
       check_then do |video|
         Video.where(featured: true).update_all(featured: false)
         render json: {
@@ -97,7 +97,7 @@ module Admin
       end
     end
     
-    def toggle_visibility
+    def hide
       check_then do |video|
         video.set_hidden(!video.hidden)
         video.save
@@ -118,7 +118,7 @@ module Admin
         return head 401
       end
       
-      if !(video = Video.where(id: params[:id]).first)
+      if !(video = Video.where(id: params[:video_id]).first)
         return head :not_found
       end
       

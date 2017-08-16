@@ -33,7 +33,7 @@ class AlbumItemController < ApplicationController
   end
   
   def toggle
-    if !(video = Video.where(id: params[:id]).first)
+    if !(video = Video.where(id: params[:video_id]).first)
       return head :not_found
     end
     

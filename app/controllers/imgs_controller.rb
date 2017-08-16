@@ -10,10 +10,10 @@ class ImgsController < ApplicationController
   end
   
   def cover
-    serve_img('default-cover')
-  end
-
-  def thumb
+    if !params[:small]
+      return serve_img('default-cover')
+    end
+    
     png = Rails.root.join('public', 'cover', params[:id]).to_s
     
     if !File.exist?(png + '.png')

@@ -2,7 +2,7 @@ module Admin
   class AlbumController < ApplicationController
     before_action :authenticate_user!
     
-    def view
+    def show
       if !current_user.is_staff?
         return render_access_denied
       end
@@ -19,12 +19,12 @@ module Admin
       @user = @album.user
     end
     
-    def toggle_featured
+    def feature
       if !current_user.is_staff?
         return head 401
       end
       
-      if !(album = Album.where(id: params[:id]).first)
+      if !(album = Album.where(id: params[:album_id]).first)
         return head :not_found
       end
       

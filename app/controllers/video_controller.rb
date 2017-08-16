@@ -214,12 +214,12 @@ class VideoController < ApplicationController
     redirect_to action: "view", id: @video.id
   end
   
-  def patch
+  def details
     if !user_signed_in?
       return head 401
     end
     
-    if !(video = Video.where(id: params[:id]).first)
+    if !(video = Video.where(id: params[:video_id]).first)
       return head :not_found
     end
     
@@ -264,12 +264,12 @@ class VideoController < ApplicationController
     @user = @video.user
   end
   
-  def update_cover
+  def cover
     if !user_signed_in?
       error(params[:async], "Access Denied", "You can't do that right now.")
     end
     
-    if !(video = Video.where(id: params[:video][:id]).first)
+    if !(video = Video.where(id: params[:video_id]).first)
       error(params[:async], "Nothing to see here!", "This is not the video you are looking for.")
     end
     
@@ -358,13 +358,13 @@ class VideoController < ApplicationController
     render_pagination partial_for_type(:video, merged), @results, params[:page].to_i, @page_size, true
   end
   
-  def upvote
+  def like
     check_then do |video|
       video.upvote(current_user, params[:incr])
     end
   end
   
-  def downvote
+  def dislike
     check_then do |video|
       video.downvote(current_user, params[:incr])
     end
@@ -422,7 +422,7 @@ class VideoController < ApplicationController
       return head 401
     end
     
-    if !(video = Video.where(id: params[:id]).first)
+    if !(video = Video.where(id: params[:video_id]).first)
       return head :not_found
     end
     

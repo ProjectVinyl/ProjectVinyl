@@ -52,14 +52,14 @@ class ThreadController < ApplicationController
   end
   
   def page
-    if !(board = Board.where(id: params[:id]).first)
+    if !(board = Board.where(id: params[:thread_id]).first)
       return head 404
     end
     render_pagination 'thread/thumb', board.threads, params[:page].to_i, 50, false
   end
   
   def subscribe
-    if !user_signed_in? || !(thread = CommentThread.where(id: params[:id]).first)
+    if !user_signed_in? || !(thread = CommentThread.where(id: params[:thread_id]).first)
       head 401
     end
     

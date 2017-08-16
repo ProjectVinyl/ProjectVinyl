@@ -13,7 +13,7 @@ module Admin
       @reports = Pagination.paginate(Report.includes(:video).where(resolved: nil), params[:reports].to_i, 40, false)
     end
     
-    def transfer_item
+    def transfer
       if !current_user.is_contributor?
         return head 401
       end
@@ -63,7 +63,7 @@ module Admin
       flash[:notice] = "Success! Indexes for table #{params[:table]} has been scheduled. Check back later for a completion report."
     end
     
-    def verify_integrity
+    def verify
       redirect_to url_for(action: 'view')
       
       if !current_user.is_admin?
