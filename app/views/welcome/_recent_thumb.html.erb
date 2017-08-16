@@ -1,0 +1,18 @@
+﻿<tr class="activity">
+	<td style="width:30px">
+	<span class="avatar small left">
+		<span style="background-image:url('<%= recent_thumb.comment_thread.user.avatar %>');"></span>
+	</span>
+	</td>
+	<td>
+	<div>
+		<a<% if !recent_thumb.user.is_dummy %><% if recent_thumb.user.banned? %> class="banned"<% end %> href="<%= recent_thumb.user.link %>"<% end %>>
+			<%= recent_thumb.user.username %></a> replied to
+		<a href="<%= recent_thumb.link %>"><%= recent_thumb.comment_thread.title %></a>
+	</div>
+	<div>
+		in 
+		<a href="<%= recent_thumb.comment_thread.owner.link %>"><%= recent_thumb.comment_thread.owner.title %></a>
+	</div>
+	</td>
+</tr>

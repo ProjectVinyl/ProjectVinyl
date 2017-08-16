@@ -27,38 +27,25 @@
 		</div>
 	</section>
 	<% end %>
-	<section class="page full-width">
-		<iframe class="twitter" src="/embed/twitter"></iframe>
-	</section>
-	<% if @comments.length > 0 %>
+	<% if @threads.length > 0 %>
 	<section class="properties ribbed page full-width">
-		<h1>Recent Activity</h1>
+		<h1>Recent Forum Activity</h1>
 		<table style="table-layout: auto">
-		<% @comments.each do |c| %>
-			<tr class="activity">
-				<td style="width:30px">
-				<span class="avatar small left">
-					<% if c.comment_thread.owner_type == "Video" %>
-						<span style="background-image:url('/cover/<%= c.comment_thread.owner_id %>-small.png');"></span>
-					<% else %>
-						<span style="background-image:url('<%= c.comment_thread.user.avatar %>');"></span>
-					<% end %>
-				</span>
-				</td>
-				<td>
-				<div>
-					<a href="<%= c.comment_thread.location %>#comment_<%= c.get_open_id %>">#<%= c.get_open_id %></a>
-					by <a<% if c.user.banned? %> class="banned"<% end %> href="<%= c.user.link %>"><%= c.user.username %></a>
-				</div>
-				<div>
-					<%= since c.updated_at %>
-				</div>
-				</td>
-			</tr>
-		<% end %>
+			<%= render partial: 'recent_thumb', collection: @threads %>
 		</table>
 	</section>
 	<% end %>
+	<% if @comments.length > 0 %>
+	<section class="properties ribbed page full-width">
+		<h1>Recent Comments</h1>
+		<table style="table-layout: auto">
+			<%= render partial: 'recent_comment_thumb', collection: @comments %>
+		</table>
+	</section>
+	<% end %>
+	<section class="page full-width">
+		<iframe class="twitter" src="/embed/twitter"></iframe>
+	</section>
 	<section class="page full-width donate">
 		<h1>
 			<a>Donate</a>
