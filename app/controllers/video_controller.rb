@@ -29,7 +29,7 @@ class VideoController < ApplicationController
     @user = @video.user
     @thread = @video.comment_thread
     @comments = @thread.get_comments(user_signed_in? && current_user.is_contributor?).with_likes(current_user)
-    @comments = Pagination.paginate(@comments, params[:page].to_i, 10, true)
+    @comments = Pagination.paginate(@comments, params[:page].to_i - 1, 10, true)
     @queue = @user.queue(@video.id, current_user)
     
     @metadata = {

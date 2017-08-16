@@ -43,22 +43,15 @@ module ApplicationHelper
       return '--:--'
     end
     
-    length = length.to_f
-    time = []
+    seconds = length % 60
+    minutes = (length / 60) % 60
+    hours = length / 3600
     
-    if length >= 3600
-      time << (length / 3600).floor.to_i
-      length = length % 3600
+    if hours > 0
+      return format("%02d:%02d:%02d", hours, minutes, seconds)
     end
     
-    if length >= 60
-      time << (length / 60).floor.to_i
-      length = length % 60
-    end
-    
-    time << length.to_i
-    
-    (time.map {|n| n.to_s.rjust(2, '0') }).join(':')
+    format("%02d:%02d", minutes, seconds)
   end
   
   def selected_path?(type)
@@ -135,5 +128,9 @@ module ApplicationHelper
     raw (options.map.with_index { |label,value|
       "<option value=\"#{value}\"#{value == selected ? " selected" : ""}>#{label}</option>"
     }).join
+  end
+  
+  def visitor
+    @visitor ||= user_signed_in? ? current_user : UserAnon.new(session)
   end
 end

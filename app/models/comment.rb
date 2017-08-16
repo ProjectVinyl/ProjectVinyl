@@ -13,14 +13,23 @@ class Comment < ApplicationRecord
     joins(:comment_thread).where('`comments`.hidden = false AND `comment_threads`.owner_type != "Report" AND `comment_threads`.owner_type != "Pm"')
   }
   scope :with_likes, ->(user) { 
-    user.nil? ? self : joins("LEFT JOIN `comment_votes` ON `comment_votes`.comment_id = `comments`.id AND `comment_votes`.user_id = #{user.id}")
-                        .select('`comments`.*, `comment_votes`.user_id AS is_liked')
+    if !user.nil?
+      return joins("LEFT JOIN `comment_votes` ON `comment_votes`.comment_id = `comments`.id AND `comment_votes`.user_id = #{user.id}")
+        .select('`comments`.*, `comment_votes`.user_id AS is_liked_flag')
+    end
   }
+  
+  def is_liked
+    (respond_to? :is_liked_flag) && is_liked_flag
+  end
   
   scope :encode_open_id, ->(i) { i.to_s(36) }
   scope :decode_open_id, ->(s) { s.to_i(36) }
   
   def user
+    if user_id < 0 
+      return @dummy_user || (@dummy_user = User.dummy(self.user_id))
+    end
     self.direct_user || @dummy_user || (@dummy_user = User.dummy(self.user_id))
   end
   
@@ -106,5 +115,9 @@ class Comment < ApplicationRecord
     self.score = self.likes.count
     self.save
     self.score
+  end
+  
+  def link
+    "#{comment_thread.location}#comment_#{get_open_id}"
   end
 end

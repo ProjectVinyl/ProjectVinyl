@@ -20,11 +20,13 @@ class Video < ApplicationRecord
   has_many :votes, dependent: :destroy
 
   scope :listable, -> { where(hidden: false, duplicate_id: 0) }
-  scope :finder, -> { includes(:tags).listable }
+  scope :finder, -> { listable.includes(:tags) }
   scope :popular, -> { finder.order(:heat).reverse_order.limit(4) }
-  scope :with_likes, ->(user) { user.nil? ? self :
-    joins("LEFT JOIN `votes` ON `votes`.video_id = `videos`.id AND `votes`.user_id = #{user.id}")
-    .select('`videos`.*, `votes`.user_id AS is_liked, `votes`.negative AS is_like_negative')
+  scope :with_likes, ->(user) {
+    if !user.nil? 
+      return joins("LEFT JOIN `votes` ON `votes`.video_id = `videos`.id AND `votes`.user_id = #{user.id}")
+        .select('`videos`.*, `votes`.user_id AS is_liked_flag, `votes`.negative AS is_like_negative_flag')
+    end
   }
   scope :random, ->(limit) {
     selection = pluck(:id)
@@ -39,6 +41,14 @@ class Video < ApplicationRecord
       videos: finder.where("`#{self.table_name}`.id IN (?)", selected)
     }
   }
+  
+  def is_liked
+    (respond_to? :is_liked_flag) && is_liked_flag
+  end
+  
+  def is_like_negative
+    (respond_to? :is_like_negative_flag) && is_like_negative_flag
+  end
   
   settings index: { number_of_shards: 1 } do
     mappings dynamic: 'true' do

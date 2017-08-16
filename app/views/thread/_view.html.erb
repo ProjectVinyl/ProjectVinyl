@@ -2,8 +2,6 @@
 	Comments
 	<%= render partial: 'thread/watch_options' %>
 </h1>
-<% if user_signed_in? %>
 <%= render partial: "comment/new", locals: {invert: false} %>
 <hr>
-<% end %>
 <%= render partial: 'thread/comments' %>

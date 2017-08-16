@@ -21,7 +21,5 @@
 	<%= render partial: 'thread/actions' %>
 <% end %>
 <%= render partial: 'thread/comments' %>
-<% if user_signed_in? %>
-	<hr>
-	<%= render partial: "comment/new", locals: {invert: true} %>
-<% end %>
+<hr>
+<%= render partial: "comment/new", locals: {invert: true} %>

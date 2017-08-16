@@ -103,7 +103,7 @@ class CommentThread < ApplicationRecord
     elsif self.owner_type == 'Pm'
       return self.owner.bump(sender, comment)
     else
-      if sender.subscribe_on_reply? && !self.subscribed?(sender)
+      if !sender.is_dummy && sender.subscribe_on_reply? && !self.subscribed?(sender)
         self.subscribe(sender)
       end
     end

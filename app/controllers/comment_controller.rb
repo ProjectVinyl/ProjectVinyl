@@ -15,16 +15,12 @@ class CommentController < ApplicationController
   end
   
   def create
-    if !user_signed_in?
-      return head 401
-    end
-    
     if !(@thread = CommentThread.where(id: params[:thread]).first) || @thread.locked
       return render :not_found
     end
     
     comment = @thread.comments.create(
-      user_id: current_user.id,
+      user_id: user_signed_in? ? current_user.id : UserAnon.anon_id(session),
       o_comment_thread_id: @thread.id
     )
     @thread.total_comments = @thread.comments.count
@@ -35,10 +31,10 @@ class CommentController < ApplicationController
       @thread.owner.compute_hotness.save
     end
     
-    @thread.bump(current_user, params, comment)
+    @thread.bump(user_signed_in? ? current_user : UserAnon.new(session), params, comment)
     
     @reverse = params[:order] == '1'
-    @records = @thread.get_comments(current_user.is_contributor?).with_likes(current_user)
+    @records = @thread.get_comments(user_signed_in? && current_user.is_contributor?).with_likes(current_user)
     @records = Pagination.paginate(@records, @reverse ? 0 : -1, 10, @reverse)
     
     @json = pagination_json_for_render 'comment/comment', @records, {

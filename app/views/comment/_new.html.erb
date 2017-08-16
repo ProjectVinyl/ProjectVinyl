@@ -3,16 +3,18 @@ Thread locked
 <% else %>
 <div class="comment post-box">
 	<div class="artist-bio bio">
-		<a class="user-link" data-id="<%= current_user.id %>" href="<%= current_user.link %>">
+		<a<% if !visitor.is_dummy %> class="user-link" data-id="<%= visitor.id %>" href="<%= visitor.link %>"<% end %>>
 			<span class="avatar medium">
-				<span style="background-image:url('<%= current_user.avatar %>');"></span>
+				<span style="background-image:url('<%= visitor.avatar %>');"></span>
 			</span>
 		</a>
 	</div>
 	<div class="content editing">
 		<div class="name">
-			<a class="user-link" data-id="<%= current_user.id %>" href="<%= current_user.link %>"><%= current_user.username %></a>
-			<%= render partial: 'badge/badges', locals: {user: current_user} %>
+			<a<% if !visitor.is_dummy %> class="user-link" data-id="<%= visitor.id %>" href="<%= visitor.link %>"<% end %>><%= visitor.username %></a>
+			<% if user_signed_in? %>
+				<%= render partial: 'badge/badges', locals: {user: current_user} %>
+			<% end %>
 		</div>
 		<div class="comment-content preview"></div>
 		<textarea class="comment-content"></textarea>
