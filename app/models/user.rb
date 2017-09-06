@@ -8,24 +8,24 @@ class User < ApplicationRecord
          authentication_keys: [:login]
   include Roleable
   include Queues
-
+  
   include Elasticsearch::Model
   include Indexable
   include Uncachable
   include Taggable
   
   prefs :preferences, subscribe_on_reply: true, subscribe_on_thread: true, subscribe_on_upload: true
-
+  
   after_destroy :remove_assets
   after_create :init_name
-
-  has_many :votes, dependent: :destroy
+  
+  has_many :votes
   has_many :notifications, dependent: :destroy
   has_many :thread_subscriptions, dependent: :destroy
-
+  
   belongs_to :album, foreign_key: "star_id"
   has_many :album_items, through: :album
-
+  
   has_many :videos
   has_many :all_albums, class_name: "Album", foreign_key: "user_id", dependent: :destroy
   has_many :artist_genres, dependent: :destroy

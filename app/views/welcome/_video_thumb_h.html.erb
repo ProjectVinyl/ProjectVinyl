@@ -1,5 +1,5 @@
 <li class="generic thumb">
-	<a class="thumb" href="/view/<%= video_thumb_h.id %>-<%= video_thumb_h.safe_title %>">
+	<a class="thumb" href="<%= thumb_h.link %>">
 		<div class="tile" style="background-image:url('<%= video_thumb_h.is_hidden_by(current_user) ? 'images/default-cover' : video_thumb_h.tiny_thumb(current_user) %>');">
 			<span class="tag-set duration">
 				<%= duration video_thumb_h.get_duration %>
