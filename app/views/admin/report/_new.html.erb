@@ -1,4 +1,4 @@
-﻿<%= form_for(report, as: "report", url: "/report/" + video.id.to_s, "html": { "class": "async" }) do |f| %>
+﻿<%= form_for(report, as: "report", url: "/report?video_id=#{video.id}", html: { class: "async", method: :post }) do |f| %>
 	<div class="group active" data-stage="start">
 		Please select the type of report you would like to submit.
 		<table>
