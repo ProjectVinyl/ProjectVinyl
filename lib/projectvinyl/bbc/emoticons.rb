@@ -66,6 +66,10 @@ module ProjectVinyl
       def self.all
         Emoticons
       end
+      
+      def self.emoticon_tag(name)
+        "<i class=\"emote\" data-emote=\"#{name}\">:#{name}:</i>"
+      end
     end
   end
 end

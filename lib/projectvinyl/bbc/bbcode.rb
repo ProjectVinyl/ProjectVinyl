@@ -1,4 +1,5 @@
 require 'projectvinyl/bbc/node_parser'
+require 'projectvinyl/bbc/emoticons'
 
 module ProjectVinyl
   module Bbc
@@ -101,7 +102,7 @@ module ProjectVinyl
         "<img src=\"#{tag.inner_text.gsub(/['"]/,'')}\"></img>"
       end
       TagGenerator.register(:html, [:emote]) do |tag|
-        "<i class=\"emote\" data-emote=\"#{tag.inner_text}\">:#{tag.inner_text}:</i>"
+        Emoticons.emoticon_tag(tag.inner_text)
       end
       
       def self.from_html(html)

@@ -10,8 +10,8 @@ module ApplicationHelper
     ProjectVinyl::Bbc::Emoticons.all
   end
   
-  def emoticons
-    ApplicationHelper.emoticons
+  def emoticon_tag(name)
+    raw (ProjectVinyl::Bbc::Emoticons.is_defined_emote(name) ? ProjectVinyl::Bbc::Emoticons.emoticon_tag(name) : '')
   end
   
   def self.emotify(text)
@@ -20,18 +20,6 @@ module ApplicationHelper
     end
     
     ProjectVinyl::Bbc::Bbcode.from_bbc(text).outer_html
-  end
-  
-  def emotify(text)
-    ApplicationHelper.emotify(text)
-  end
-  
-  def self.demotify(text)
-    if text.blank?
-      return ""
-    end
-    
-    ProjectVinyl::Bbc::Bbcode.from_html(text).outer_bbc
   end
   
   def since(date)
@@ -43,15 +31,11 @@ module ApplicationHelper
       return '--:--'
     end
     
-    seconds = length % 60
-    minutes = (length / 60) % 60
-    hours = length / 3600
-    
-    if hours > 0
-      return format("%02d:%02d:%02d", hours, minutes, seconds)
+    Ffmpeg.to_h_m_s(length) do |h, m, s|
+      if h == 0
+        return format("%02d:%02d", m, s)
+      end
     end
-    
-    format("%02d:%02d", minutes, seconds)
   end
   
   def selected_path?(type)
@@ -89,7 +73,7 @@ module ApplicationHelper
   end
   
   def search_type
-    (params[:type] || 0).to_i || 0
+    params[:type].to_i
   end
   
   def load_time
@@ -97,11 +81,11 @@ module ApplicationHelper
   end
   
   def self.check_and_trunk(str, defa)
-    if !str || (str = str.strip).empty?
+    if str.blank?
       return defa
     end
-    return str[0, 250] if str.length > 250
-    str
+    str = str.strip
+    str.length > 255 ? str[0, 255] : str
   end
   
   def self.valid_string?(s)
