@@ -1,7 +1,9 @@
-<h1 class="title">
-	<a href="/">Home</a> <i class="fa fa-chevron-right"></i> <a href="/admin">Admin</a> <i class="fa fa-chevron-right"></i> 
-	Site Notices
-</h1>
+<%= render partial: 'view/breadcrumb', locals: {
+	stack: [
+		{ link: '/admin', title: 'Admin' }
+	],
+	title: "Site Notices"
+} %>
 <section class="page full-width listing compact">
 	<p>
 		All the messages that appear on the site can be defined from here.
