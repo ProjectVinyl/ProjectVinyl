@@ -1,73 +1,48 @@
 import { jSlim } from '../utils/jslim';
 import { ajax } from '../utils/ajax';
 
-function throttledScroll(func) {
-  var scheduled;
-  return function() {
-    if (!scheduled) scheduled = setTimeout(function() {
+function throttleFunc(func, ms) {
+  let scheduled = null;
+  return () => {
+    if (!scheduled) scheduled = setTimeout(() => {
       func();
-      scheduled = false;
-    }, 200);
-  }
+      scheduled = null;
+    }, ms);
+  };
 }
 
-function initInfinitePage(target) {
-  var path = target.dataset.url + '/page';
-  var startFrom = target.dataset.ref;
-  var endWith = target.dataset.startRef;
-  var scrollingContext = target.closest('.context-3d') || document.scrollingElement;
-  
-  var loadingBefore = false;
-  var loadingAfter = false;
-  
-  scrollingContext.addEventListener('scroll', throttledScroll(updateInfinitePage));
-  
-  function updateInfinitePage() {
-    if (endWith && scrollingContext.scrollTop == 0) {
-      if (!loadingBefore) {
-        loadingBefore = true;
-        target.classList.add('loading-before');
-        ajax.get(path, {
-          path: target.dataset.path,
-          end: endWith
-        }).json(function(json) {
-          if (json.start) {
-            if (json.start== endWith) {
-              endWith = null;
-            } else {
-              endWith = json.start;
-            }
-            loadingBefore = false;
-          }
-          target.querySelector('.row.header').insertAdjacentHTML('afterend', json.content);
-          target.classList.remove('loading-before');
-        });
+function scrollListener(target, ref, position, test, data) {
+  const path = target.dataset.url + '/page';
+  let busy = false;
+  return () => {
+    if (busy || !test()) return false;
+    busy = true;
+    target.classList.add('loading-' + position);
+    ajax.get(path, {
+      path: target.dataset.path, end: target.dataset.startRef, start: target.dataset.ref, position: position
+    }).json(json => {
+      if (json.content) {
+        if (json.start) target.dataset.startRef = json.start;
+        if (json.end) target.dataset.ref = json.end;
+        ref.insertAdjacentHTML(position + 'end', json.content);
       }
-      return;
-    }
-    if (scrollingContext.scrollHeight - scrollingContext.scrollTop == scrollingContext.clientHeight) {
-      if (!loadingAfter) {
-        loadingAfter = true;
-        target.classList.add('loading-after');
-        ajax.get(path, {
-          path: target.dataset.path,
-          start: startFrom
-        }).json(function(json) {
-          if (json.content) {
-            startFrom = json.end;
-            target.insertAdjacentHTML('beforeend', json.content);
-            loadingAfter = false;
-          }
-          target.classList.remove('loading-after');
-        });
-      }
-    }
-  }
+      busy = false;
+      target.classList.remove('loading-' + position);
+    });
+    return true;
+  };
 }
 
-jSlim.ready(function() {
-  var target = document.querySelector('.infinite-page');
-  if (target) {
-    initInfinitePage(target);
-  }
+jSlim.ready(() => {
+  const target = document.querySelector('.infinite-page');
+  if (!target) return;
+  const context = target.closest('.context-3d') || document.scrollingElement;
+  const top = scrollListener(target, target.querySelector('.row.header'), 'before', () => context.scrollTop == 0);
+  const bottom = scrollListener(target, target, 'after', () => (context.scrollTop + context.offsetHeight) >= context.scrollHeight);
+  
+  context.addEventListener('scroll', throttleFunc(() => {
+    if (!top()) {
+      bottom();
+    }
+  }, 200));
 });
