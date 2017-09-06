@@ -1,9 +1,4 @@
-class UserAnon
-  include Roleable
-  include Queues
-  include WithFiles
-  include Taggable
-  
+class UserAnon << UserDummy
   def self.anon_id(session)
     if !session.has_key? :session_id
       # LAME we have to write to the session to get it to initialize itself
@@ -21,43 +16,10 @@ class UserAnon
   end
   
   def videos
-    
-  end
-
-  attr_reader :id, :username
-  
-  def html_bio
-    ''
+    Video.none
   end
   
-  def avatar
-    '/images/default-avatar.png'
-  end
-  
-  def tags_changed
-  end
-  
-  def tag_string
-    ''
-  end
-  
-  def link
-    ''
-  end
-
-  def admin?
-    self.is_admin?
-  end
-
-  def contributor?
-    false
-  end
-  
-  def role
-    -1
-  end
-
-  def is_dummy
-    true
+  def votes
+    Vote.none
   end
 end

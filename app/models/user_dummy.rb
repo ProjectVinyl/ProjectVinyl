@@ -12,7 +12,11 @@ class UserDummy
   def videos
     Video.where(user_id: @id)
   end
-
+  
+  def votes
+    Vote.where(user_id: @id)
+  end
+  
   attr_reader :id, :username
 
   def html_bio
