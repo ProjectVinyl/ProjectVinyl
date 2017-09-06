@@ -152,7 +152,7 @@ Player.prototype = {
     if (this.heading) {
       this.heading.addEventListener('mouseover', () => {
         if (this.video && this.video.currentTime) {
-          this.heading.href = '/view/' + this.source + '-' + this.title + '?resume=' + this.video.currentTime;
+          this.heading.href = '/videos/' + this.source + '-' + this.title + '?resume=' + this.video.currentTime;
         }
       });
     }
