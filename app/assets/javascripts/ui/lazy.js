@@ -6,8 +6,7 @@ function lazyLoad(button) {
   var page = parseInt(button.dataset.page) + 1;
   button.classList.add('working');
   ajax.get(button.dataset.url, {
-    page: page,
-    id: button.dataset.id
+    page: page
   }).json(function(json) {
     button.classList.remove('working');
     if (json.page == page) {
