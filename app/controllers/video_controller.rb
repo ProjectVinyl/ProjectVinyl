@@ -1,5 +1,5 @@
 class VideoController < ApplicationController
-  def view
+  def show
     if !(@video = Video.where(id: params[:id]).with_likes(current_user).first)
       return render_error(
         title: 'Nothing to see here!',
@@ -9,7 +9,7 @@ class VideoController < ApplicationController
     
     if @video.duplicate_id > 0
       flash[:alert] = 'The video you are looking for has been marked as a duplicate of the one below.'
-      return redirect_to action: 'view', id: @video.duplicate_id
+      return redirect_to action: 'show', id: @video.duplicate_id
     end
     
     if @video.hidden && (!user_signed_in? || !@video.owned_by(current_user))
@@ -22,14 +22,15 @@ class VideoController < ApplicationController
     load_album
     
     @order = '1'
-    @time = (params[:t] || params[:resume] || 0).to_i
+    @time = (params[:t] || params[:resume]).to_i
     @resume = !params[:resume].nil?
+    @page = params[:page] ? params[:page].to_i - 1 : 0
     
     @tags = @video.tags
     @user = @video.user
     @thread = @video.comment_thread
     @comments = @thread.get_comments(user_signed_in? && current_user.is_contributor?).with_likes(current_user)
-    @comments = Pagination.paginate(@comments, params[:page].to_i - 1, 10, true)
+    @comments = Pagination.paginate(@comments, @page, 10, true)
     @queue = @user.queue(@video.id, current_user)
     
     @metadata = {
@@ -37,9 +38,9 @@ class VideoController < ApplicationController
       mime: @video.mime,
       title: @video.title,
       description: @video.description,
-      url: url_for(action: "view", controller: "video", id: @video.id, only_path: false) + "-" + (@video.safe_title || "untitled-video"),
-      embed_url: url_for(action: "view", controller: "embed/video", only_path: false, id: @video.id),
-      cover: url_for(action: "cover", controller: "imgs", only_path: false, id: @video.id) + ".png",
+      url: url_for(action: :show, controller: :video, id: @video.id, only_path: false) + "-" + (@video.safe_title || "untitled-video"),
+      embed_url: url_for(action: :view, controller: "embed/video", only_path: false, id: @video.id),
+      cover: "#{url_for(action: :cover, controller: :imgs, only_path: false, id: @video.id)}.png",
       tags: @tags,
       oembed: @album ? {
         list: @album.id,
@@ -89,8 +90,8 @@ class VideoController < ApplicationController
     
     if ApplicationHelper.read_only && !current_user.is_contributor?
       return render_error(
-        title: 'Access Denied',
-        description: "That feature is currently disabled. Please wait whilst we fix our servers."
+        title: "Read Only",
+        description: "That feature is currently disabled."
       )
     end
     
@@ -104,7 +105,7 @@ class VideoController < ApplicationController
     end
     
     if ApplicationHelper.read_only && !current_user.is_contributor?
-      return error("Access Denied", "That feature is currently disabled.")
+      return error("Read Only", "That feature is currently disabled.")
     end
     
     if current_user.is_contributor? && params[:video][:user_id]
@@ -211,7 +212,7 @@ class VideoController < ApplicationController
         ref: @video.link
       }
     end
-    redirect_to action: "view", id: @video.id
+    redirect_to action: :view, id: @video.id
   end
   
   def details
@@ -320,42 +321,18 @@ class VideoController < ApplicationController
     end
     
     response.headers['Content-Length'] = File.size(file).to_s
-    send_file(
-      file,
+    send_file(file,
       filename: "#{@video.id}_#{@video.title}_by_#{@video.artists_string}#{@video.file}",
       type: @video.mime
     )
   end
   
   def index
-    is_admin = by_type
-    render_listing @results.with_likes(current_user).order(:created_at), params[:page].to_i, 50, true, {
-      is_admin: is_admin, table: 'videos', label: 'Video'
-    }
-  end
-  
-  def page
-    if @user = params[:id]
-      @results = User.find(@user.to_i).videos.includes(:tags)
-      if !user_signed_in? || current_user.id != @user.to_i
-        @results = @results.listable
-      else
-        @results = @results.where(duplicate_id: 0)
-      end
-      @page_size = 8
-    else
-      merged = user_signed_in? && current_user.is_contributor?
-      if (merged &= params[:merged])
-        @results = Video.where.not(duplicate_id: 0)
-      elsif (merged &= params[:unlisted])
-        @results = Video.where(hidden: true)
-      else
-        @results = Video.finder
-      end
-      @page_size = 50
+    by_type do |is_admin, results|
+      render_listing_total results.with_likes(current_user).order(:created_at), params[:page].to_i, 50, true, {
+        is_admin: is_admin, table: 'videos', label: 'Video'
+      }
     end
-    @results = @results.with_likes(current_user).order(:created_at)
-    render_pagination partial_for_type(:video, merged), @results, params[:page].to_i, @page_size, true
   end
   
   def like
@@ -377,6 +354,20 @@ class VideoController < ApplicationController
   end
   
   private
+  def by_type
+    if user_signed_in? && current_user.is_contributor?
+      if params[:merged]
+        @data = 'merged=1'
+        return yield(true, Video.where.not(duplicate_id: 0))
+      elsif params[:unlisted]
+        @data = 'unlisted=1'
+        return yield(true, Video.where(hidden: true))
+      end
+    end
+    
+    yield(false, Video.finder)
+  end
+  
   def load_album
     if params[:list] || params[:q]
       if params[:q]
@@ -398,23 +389,6 @@ class VideoController < ApplicationController
         @album_editable = user_signed_in? && @album.owned_by(current_user)
       end
     end
-  end
-  
-  def by_type
-    if user_signed_in? && current_user.is_contributor?
-      if params[:merged]
-        @results = Video.where.not(duplicate_id: 0)
-        @data = 'merged=1'
-        return true
-      elsif params[:unlisted]
-        @results = Video.where(hidden: true)
-        @data = 'unlisted=1'
-        return true
-      end
-    end
-    
-    @results = Video.finder
-    false
   end
   
   def check_then

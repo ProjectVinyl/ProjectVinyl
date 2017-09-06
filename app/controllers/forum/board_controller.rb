@@ -13,10 +13,9 @@ module Forum
     
     def index
       @boards = Pagination.paginate(Board.all, params[:page].to_i, 10, false)
-    end
-
-    def page
-      render_pagination_json 'thumb', index
+      if params[:ajax]
+        render_pagination_json 'thumb', @boards
+      end
     end
     
     def new

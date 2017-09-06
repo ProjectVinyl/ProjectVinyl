@@ -56,10 +56,10 @@ class CommentThread < ApplicationRecord
   
   def location
     if self.owner_type == 'Video'
-      return "/view/#{self.owner_id}"
+      return "/videos/#{self.owner_id}"
     end
     if self.owner_type == 'Report'
-      return "/admin/report/view/#{self.owner_id}"
+      return "/admin/report/#{self.owner_id}"
     end
     if self.owner_type == 'Pm'
       return "/message/#{self.id}"

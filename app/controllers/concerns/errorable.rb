@@ -3,6 +3,14 @@ module Errorable
     render 'layouts/error', locals: pars
   end
   
+  def render_error_file(code, ajax)
+    if ajax
+      return head code
+    end
+    
+    render file: "/public/#{code}", status: code, layout: false
+  end
+  
   def render_access_denied
     render_error(
       title: "Access Denied",
@@ -12,7 +20,7 @@ module Errorable
   
   def error(title, message)
     if params[:async]
-      return render plain: title + ":" + message, status: 401
+      return render plain: "#{title}:#{message}", status: 401
     end
     render_error title: title, description: message
   end
@@ -29,6 +37,6 @@ module Errorable
   end
   
   def forbidden
-    render file: 'public/401.html', status: 401, layout: false
+    render file: 'public/401', status: 401, layout: false
   end
 end

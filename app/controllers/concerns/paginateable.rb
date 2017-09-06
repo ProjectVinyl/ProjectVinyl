@@ -26,6 +26,16 @@ module Paginateable
     render json: pagination_json_for_render(partial, pagination, locals)
   end
   
+  def render_listing_total(records, page, page_size, reverse, locals)
+    locals[:partial] = partial_for_type(locals[:label], locals[:is_admin])
+    
+    if params[:ajax]
+      return render_pagination locals[:partial], records, page, page_size, reverse
+    end
+    
+    render_listing_partial records, page, page_size, reverse, locals
+  end
+  
   def render_listing(records, page, page_size, reverse, locals)
     locals[:partial] = partial_for_type(locals[:label], locals[:is_admin])
     render_listing_partial(records, page, page_size, reverse, locals)

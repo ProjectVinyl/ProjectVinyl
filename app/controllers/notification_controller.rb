@@ -1,7 +1,7 @@
 class NotificationController < ApplicationController
   def index
     if !user_signed_in?
-      return redirect_to action: "index", controller: "welcome"
+      return redirect_to action: :index, controller: :welcome
     end
     
     @all = current_user.notifications.order(:created_at).reverse_order.preload_comment_threads
@@ -13,11 +13,11 @@ class NotificationController < ApplicationController
   
   def view
     if !user_signed_in?
-      return redirect_to action: "index", controller: "welcome"
+      return redirect_to action: :index, controller: :welcome
     end
     
     if !(notification = current_user.notifications.where(id: params[:n]).first)
-      return redirect_to action: "index", controller: "welcome"
+      return redirect_to action: :index, controller: :welcome
     end
     
     if notification.unread
@@ -34,7 +34,7 @@ class NotificationController < ApplicationController
     end
     
     if !(notification = current_user.notifications.where(id: params[:id]).first)
-      return head 404
+      return head :not_found
     end
     
     notification.destroy

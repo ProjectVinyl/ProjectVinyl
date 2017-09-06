@@ -14,9 +14,9 @@ class ImgsController < ApplicationController
       return serve_img('default-cover')
     end
     
-    png = Rails.root.join('public', 'cover', params[:id]).to_s
+    png = Rails.root.join('public', 'cover', params[:id])
     
-    if !File.exist?(png + '.png')
+    if !File.exist?("#{png}.png")
       return serve_img('default-cover-small')
     end
     
@@ -28,18 +28,16 @@ class ImgsController < ApplicationController
     id = params[:id].split('.')[0]
     
     if !(video = Video.where(id: id).first)
-      not_found
+      return not_found
     end
     
-    if video.hidden
-      if !user_signed_in? || !current_user.is_contributor?
-        return render file: 'public/403', status: :forbidden, layout: false
-      end
+    if video.hidden && (!user_signed_in? || !current_user.is_contributor?)
+      return forbidden
     end
     
     ext = video.file
     if params[:id].index('.')
-      ext = '.' + params[:id].split('.')[1]
+      ext = ".#{params[:id].split('.')[1]}"
     end
     
     file = ext == '.webm' ? video.webm_path : video.video_path
@@ -57,7 +55,7 @@ class ImgsController < ApplicationController
       not_found
     end
     
-    response.headers['Content-Length'] = File.size(file.to_s).to_s
+    response.headers['Content-Length'] = File.size(file).to_s
     send_file file.to_s, {
       disposition: 'inline',
       type: mime,

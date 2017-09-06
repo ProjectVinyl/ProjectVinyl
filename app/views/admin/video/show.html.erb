@@ -7,18 +7,17 @@
 	],
 	title: @video.title
 } %>
-<%= render partial: 'video/video' %>
+<%= render partial: "video/video" %>
 <div class="wrapper column-right right">
 	<section class="page full-width">
 		<h1>Thumbnail Preview</h1>
 		<ul class="horizontal center">
-			<%= render partial: 'video/thumb_h', locals: {thumb_h: @video} %>
+			<%= render partial: "video/thumb_h", locals: {thumb_h: @video} %>
 		</ul>
 	</section>
 	<section class="page full-width">
 		<h1>Metadata</h1>
-		<%= form_for(@video, as: "video", url: "/admin/videos/metadata", html: { method: :put }) do |f| %>
-			<%= f.text_field :id, hidden: true %>
+		<%= form_for(@video, as: "video", url: "/admin/videos/#{@video.id}/metadata", html: { method: :put }) do |f| %>
 			<label class="text-input" data-prefix="https://www.youtube.com/watch?v=">
 				<input type="text" name="source" placeholder="source"></input>
 			</label>
@@ -69,7 +68,7 @@
 			</tr>
 			<tr>
 				<td class="label">Cover</td>
-				<td class="field"><%= File.exist?(Rails.root.join('public', 'cover', @video.id.to_s + '.png')) ? 'Yes' : 'No' %></td>
+				<td class="field"><%= File.exist?("#{@video.cover_path}.png")) ? "Yes" : "No" %></td>
 				<td>
 					<a class="button" href="/admin/files?p=public/cover&start=<%= @video.id %>.png&offset=-5#<%= @video.id %>">View</a>
 				</td>
@@ -127,17 +126,15 @@
 					Processed (<%= (@video.processed ? "Yes" : @video.processed.nil? ? "No" : "In Progress") %>)
 				</td>
 				<td class="field">
-				<%= form_for(@video, as: "video", url: "/admin/videos/reprocess", html: { method: :put }) do |f| %>
-					<%= f.text_field :id, hidden: true %>
-					<%= f.submit "Restart" %>
-				<% end %>
+					<%= form_for(@video, as: "video", url: "/admin/videos/#{@video.id}reprocess", html: { method: :put }) do |f| %>
+						<%= f.submit "Restart" %>
+					<% end %>
 				</td>
 			</tr>
 			<tr class="actions">
 				<td class="label">Reset Thumbnail</td>
 				<td class="field">
-				<%= form_for(@video, as: "video", url: "/admin/videos/resetthumb", html: { method: :put }) do |f| %>
-					<%= f.text_field :id, hidden: true %>
+				<%= form_for(@video, as: "video", url: "/admin/videos/#{@video.id}/resetthumb", html: { method: :put }) do |f| %>
 					<%= f.submit "Restart" %>
 					<div>Thumbnail will be regenerated from source</div>
 				<% end %>
@@ -157,9 +154,13 @@
 					Delete Item
 				</td>
 				<td class="field">
-					<a data-confirm data-method="delete" href="/admin/videos/<%= @video.id %>" data-title="Delete Video"><button class="action red"><i class="fa fa-trash"></i> Delete Video</button></a>
+					<a class="button red" data-confirm data-method="delete" href="/admin/videos/<%= @video.id %>" data-title="Delete Video">
+						<i class="fa fa-trash"></i> Delete Video
+					</a>
 					<div>Removes this video and all related data from the system.
-					<br><b>(Action cannot be reversed)</b></div>
+						<br>
+						<b>(Action cannot be reversed)</b>
+					</div>
 				</td>
 			</tr>
 		</table>
@@ -197,8 +198,7 @@
 </section>
 <section class="page properties column-left">
 	<h1>Duplication Status</h1>
-	<%= form_for(@video, as: "video", url: "/admin/videos/merge", html: { method: :put }) do |f| %>
-		<%= f.text_field :id, hidden: true %>
+	<%= form_for(@video, as: "video", url: "/admin/videos/#{@video.id}merge", html: { method: :put }) do |f| %>
 	<table>
 		<tr>
 			<td class="label">Unique Hash</td>

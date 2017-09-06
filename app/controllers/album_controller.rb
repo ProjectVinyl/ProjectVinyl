@@ -124,28 +124,9 @@ class AlbumController < ApplicationController
   
   def index
     @records = Album.where(hidden: false, listing: 0).order(:created_at)
-    render_listing @records, params[:page].to_i, 50, true, {
+    render_listing_total @records, params[:page].to_i, 50, true, {
       table: 'albums', label: 'Album'
     }
-  end
-  
-  def page
-    if !params[:user]
-      @page_size = 50
-      @records = Album.where(hidden: false, listing: 0)
-    else
-      @page_size = 8
-      if params[:user].to_i == current_user.id
-        @records = current_user.albums
-      else
-        if !(@user = User.where(id: params[:user]).first)
-          return head :not_found
-        end
-        @records = @user.albums.where(listing: 0)
-      end
-    end
-    
-    render_pagination 'album/thumb_h', @records.order(:created_at), params[:page].to_i, @page_size, true
   end
   
   private

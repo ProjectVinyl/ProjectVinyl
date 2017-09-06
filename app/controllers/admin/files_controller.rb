@@ -5,24 +5,9 @@ module Admin
     before_action :authenticate_user!
     
     def index
-      render_path(params, false)
-    end
-
-    def page
-      render_path(params, true)
-    end
-    
-    private
-    def render_error(code, ajax)
-      if ajax
-        return head code
-      end
-      return render file: "/public/#{code}.html", layout: false
-    end
-    
-    def render_path(params, ajax)
+      ajax = params[:ajax] == 'page'
       if !user_signed_in? || !current_user.is_contributor?
-        return render_error 403, ajax
+        return render_error_file 403, ajax
       end
       
       @location = (params[:p] || "public/stream").strip
@@ -38,12 +23,12 @@ module Admin
       
       if @location.length > 1 && @location[1] != 'stream' && @location[1] != 'cover' && @location[1] != 'avatar' && @location[1] != 'banner'
         if @location[0] != 'encoding'
-          return render_error 403, ajax
+          return render_error_file 403, ajax
         end
       end
       
       if @location[0] != 'public' && @location[0] != 'private' && @location[0] != 'encoding'
-        return render_error 403, ajax
+        return render_error_file 403, ajax
       end
       
       begin
@@ -78,7 +63,7 @@ module Admin
         end
         
       rescue Exception => e
-        return render_error 404, ajax
+        return render_error_file 404, ajax
       end
       
       if ajax

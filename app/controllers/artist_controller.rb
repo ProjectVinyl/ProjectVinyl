@@ -1,27 +1,25 @@
 class ArtistController < ApplicationController
   def view
-    if !(@user = User.where(id: params[:id]).first)
-      return render_error(
-        title: 'Nothing to see here!',
-        description: 'If there was someone here they\'re probably gone now. ... sorry.'
-      )
+    check_details_then do |user, edits_allowed|
+      @tags = @user.tags.includes(:tag_type)
+      @modifications_allowed = edits_allowed
+      
+      if @user.tag_id
+        @art = Pagination.paginate(@user.tag.videos.listable.with_likes(current_user), 0, 8, true)
+      end
+      
+      @videos = edits_allowed ? @user.videos.includes(:tags).where(duplicate_id: 0) : @user.videos.listable
+      @videos = Pagination.paginate(@videos.order(:created_at).with_likes(current_user), 0, 8, true)
+      
+      @albums = edits_allowed ? @user.albums : @user.albums.where(hidden: false, listing: 0)
+      @albums = Pagination.paginate(@albums.order(:created_at), 0, 8, true)
+      
+      @comments = Comment.visible.decorated.with_likes(current_user)
+                        .select('`comments`.*')
+                        .where("`comments`.user_id = ? AND `comment_threads`.id = comment_thread_id", @user.id)
+                        .order(:created_at)
+                        .reverse_order.limit(3)
     end
-    
-    @tags = @user.tags.includes(:tag_type)
-    
-    if @user.tag_id
-      @art = Pagination.paginate(@user.tag.videos.listable.with_likes(current_user), 0, 8, true)
-    end
-    
-    @modifications_allowed = user_signed_in? && (current_user.id == @user.id || current_user.is_staff?)
-    
-    @videos = @modifications_allowed ? @user.videos.includes(:tags).where(duplicate_id: 0) : @user.videos.listable
-    @videos = Pagination.paginate(@videos.with_likes(current_user), 0, 8, true)
-    
-    @albums = @modifications_allowed ? @user.albums : @user.albums.where('`albums`.hidden = false AND `albums`.listing = 0')
-    @albums = Pagination.paginate(@albums, 0, 8, true)
-    
-    @comments = Comment.visible.decorated.with_likes(current_user).select('`comments`.*').where("`comments`.user_id = ? AND `comment_threads`.id = comment_thread_id", @user.id).order(:created_at).reverse_order.limit(3)
   end
   
   def update
@@ -40,6 +38,7 @@ class ArtistController < ApplicationController
       if current_user.is_staff? && params[:user_id]
         return redirect_to action: "view", id: user.id
       end
+      
       redirect_to action: "edit", controller: "devise/registrations"
     end
   end
@@ -58,13 +57,13 @@ class ArtistController < ApplicationController
         user.save
       end
       
-      if params[:async]
-        return render json: {
-          result: "success"
-        }
+      if !params[:async]
+        return redirect_to action: "view", id: user.id
       end
       
-      redirect_to action: "view", id: user.id
+      render json: {
+        result: "success"
+      }
     end
   end
   
@@ -94,43 +93,89 @@ class ArtistController < ApplicationController
   end
 
   def banner
-    if !current_user.is_staff? && current_user.id != params[:user_id]
-      return head :not_found
+    check_then do |user|
+      @user = user
+      render partial: 'banner'
     end
-    
-    if current_user.id == params[:user_id]
-      @user = current_user
-    else
-      @user = User.where(id: params[:user_id]).first
-    end
-    
-    render partial: 'banner'
   end
   
   def index
-    @records = User.all.order(:created_at)
-    render_listing @records, params[:page].to_i, 50, true, {
+    render_listing_total User.all.order(:created_at), params[:page].to_i, 50, true, {
       table: 'users', label: 'User'
     }
   end
   
-  def page
-    render_pagination 'user/thumb_h', User.all.order(:created_at), params[:page].to_i, 50, true
+  def uploads
+    check_details_then do |user, edits_allowed|
+      @records = user.videos.order(:created_at).includes(:tags).where(duplicate_id: 0)
+      if !edits_allowed
+        @records = @records.listable
+      end
+      
+      @records = Pagination.paginate(@records, params[:page].to_i, 50, true)
+      
+      @label = 'Upload'
+      @table = 'Video'
+      @partial = partial_for_type(@table)
+      
+      if params[:ajax]
+        return render_pagination_json @partial, @records
+      end
+      render template: 'artist/listing'
+    end
+  end
+  
+  def albums
+    check_details_then do |user, edits_allowed|
+      @records = user.albums.order(:created_at).where(hidden: false)
+      if !edits_allowed
+        @records = @records.where(listing: 0)
+      end
+      
+      @records = Pagination.paginate(@records, params[:page].to_i, 50, true)
+      
+      @label = 'Album'
+      @table = 'Album'
+      @partial = partial_for_type(@table)
+      
+      if params[:ajax]
+        return render_pagination_json @partial, @records
+      end
+      render template: 'artist/listing'
+    end
   end
   
   private
-  def check_then
-    if user_signed_in?
-      if !current_user.is_staff? || !params[:user][:id]
-        return yield(current_user)
-      end
-      
-      if user = User.where(id: params[:user][:id]).first
-        return yield(user)
-      end
+  def check_details_then
+    if !(@user = User.where(id: params[:id] || params[:user_id]).first)
+      return render_error(
+        title: 'Nothing to see here!',
+        description: 'If there was someone here they\'re probably gone now. ... sorry.'
+      )
     end
     
-    render_access_denied
+    yield(@user, user_signed_in? && (current_user.id == @user.id || current_user.is_staff?))
   end
   
+  def check_then
+    if !user_signed_in?
+      return render_access_denied
+    end
+    
+    id = params[:id] || params[:user_id]
+    
+    if id == current_user.id
+      return yield(current_user)
+    end
+    
+    if !current_user.is_staff?
+      return render_access_denied
+    end
+    
+    if !(user = User.where(id: id).first)
+      return head :not_found
+    end
+    
+    yield(user)
+  end
 end

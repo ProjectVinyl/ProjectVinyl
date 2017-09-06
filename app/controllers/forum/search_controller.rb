@@ -29,12 +29,12 @@ module Forum
       end
       
       @results = Pagination.paginate(@q, params[:page].to_i, 20, params[:order] != '1')
-    end
-    
-    def page
-      render_pagination_json 'comment/comment', index, {
-        indirect: true
-      }
+      
+      if params[:ajax]
+        render_pagination_json 'comment/comment', index, {
+          indirect: true
+        }
+      end
     end
   end
 end

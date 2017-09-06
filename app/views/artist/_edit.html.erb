@@ -9,8 +9,7 @@
 			Avatar
 		</td>
 		<td class="field center">
-		<%= form_for(user, as: "user", url: "/user/avatar", html: { class: "async", method: :patch }) do |f| %>
-			<%= f.text_field :id, hidden: true %>
+		<%= form_for(user, as: "user", url: "/users/<%= user.id %>/avatar", html: { class: "async", method: :patch }) do |f| %>
 			<div class="file-select-container">
 				<div id="avatar-upload" class="avatar drag-target file-select image-selector uploaded-preview revertable" data-id="<%= user.id %>">
 					<span class="preview" style="background-image: url('<%= user.avatar %>');"></span>

@@ -18,7 +18,7 @@ class Video < ApplicationRecord
   has_many :video_genres, dependent: :destroy
   has_many :tags, through: :video_genres
   has_many :votes, dependent: :destroy
-
+  
   scope :listable, -> { where(hidden: false, duplicate_id: 0) }
   scope :finder, -> { listable.includes(:tags) }
   scope :popular, -> { finder.order(:heat).reverse_order.limit(4) }
@@ -345,7 +345,7 @@ class Video < ApplicationRecord
   end
   
   def ref
-    "/view/#{self.id}"
+    "/videos/#{self.id}"
   end
   
   def artists_string
@@ -474,7 +474,7 @@ class Video < ApplicationRecord
     self.description = text
     text = Comment.parse_bbc_with_replies_and_mentions(text, self.comment_thread)
     self.html_description = text[:html]
-    Comment.send_mentions(text[:mentions], self.comment_thread, self.get_title, "/view/#{self.id}")
+    Comment.send_mentions(text[:mentions], self.comment_thread, self.get_title, self.ref)
     self
   end
   

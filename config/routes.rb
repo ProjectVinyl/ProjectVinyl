@@ -45,11 +45,9 @@ Rails.application.routes.draw do
   # Videos #
   get 'upload' => 'video#new'
   get 'download/:id' => 'video#download'
+  get 'ajax/videos/:id' => 'video#go_next'
   
-  get 'view/:id' => 'video#view', constraints: { id: /([0-9]+).*/ } # /
-  get 'ajax/view/:id' => 'video#go_next'
-    
-  resources :videos, except: [:update, :new, :show, :destroy], controller: :video do
+  resources :videos, except: [:index, :create, :update, :new, :destroy], controller: :video, id: /([0-9]+).*/ do # /
     put 'like'
     put 'dislike'
     put 'star'
@@ -62,39 +60,40 @@ Rails.application.routes.draw do
     put 'add' => 'album_item#toggle'
   end
   scope 'videos', controller: :video do
-    get 'page'
-    patch ':id(/:async)', action: :update
+    get '(/:ajax)', action: :index
+    patch ':id(/:async)', action: :update # TODO: What uses this?
     put '(/:async)', action: :create
     post '(/:async)', action: :create
   end
   
   # Users #
-  get 'profile/:id' => 'artist#view', constraints: { id: /([0-9]+).*/ } # /
-  
-  resource :users, only: [], controller: :artist do
-    get 'page'
+  resources :users, only: [:update], controller: :artist do
+    get 'uploads(/:ajax)', action: :uploads
+    get 'videos(/:ajax)', action: :videos
+    get 'albums(/:ajax)', action: :albums
+    
+    get 'hovercard'
+    get 'banner'
     put 'prefs'
     patch 'avatar(/:async)' => 'artist#set_avatar'
     patch 'banner(/:async)' => 'artist#set_banner'
   end
-  resources :users, only: [:index, :update], controller: :artist do
-    get 'hovercard'
-    get 'banner'
-  end
+  get 'users(/:ajax)' => 'artist#index'
+  get 'profile/:id' => 'artist#view', constraints: { id: /([0-9]+).*/ } # /
   
   # Albums #
-  resources :albums, except: [:show], controller: :album do
+  resources :albums, except: [:index, :show], controller: :album do
     get 'items' => 'album_item#index'
     patch 'order'
   end
   get 'album/:id' => 'album#show', constraints: { id: /([0-9]+).*/ } # /
   get 'stars' => 'album#starred'
-  get 'albums/page' => 'album#page'
+  get 'albums(/:ajax)' => 'album#index'
   
   resources :albumitems, only: [:create, :update, :destroy], controller: :album_item
   
   # Tags #
-  resources :tags, only: [:index], controller: :tag do
+  resources :tags, only: [], controller: :tag, id: /([0-9]+).*/ do # /
     get 'videos'
     get 'users'
     
@@ -102,22 +101,21 @@ Rails.application.routes.draw do
     put 'spoiler'
     put 'watch'
   end
-  scope 'tags', controller: 'tag' do
-    get 'page'
-    get ':name' => 'tag#view', constraints: { name: /.*/ } # /
+  scope 'tags', controller: :tag do
+    get ':name', action: 'view', constraints: { name: /.*/ } # /
+    get '(/:ajax)', action: 'index'
   end
   
   # Forums #
   namespace :forum do
-    get 'search' => 'search#index'
-    get 'search/page' => 'search#page'
+    get 'search(/:ajax)' => 'search#index'
     get ':id' => 'board#view'
     root 'board#index'
   end
   
   # Boards/Categories #
   
-  get 'boards/page' => 'forum/board#page'
+  get 'boards(/:ajax)' => 'forum/board#index'
   resources :boards, only: [:new, :create, :destroy], controller: :board
   
   # Threads #
@@ -169,8 +167,7 @@ Rails.application.routes.draw do
     post 'transfer'
     post 'verify'
     
-    get 'files/page' => 'files#page'
-    get 'files' => 'files#index'
+    get 'files(/:ajax)' => 'files#index'
     
     resources :albums, only: [:show], controller: :album do
       put 'feature'
@@ -179,6 +176,10 @@ Rails.application.routes.draw do
     resources :videos, only: [:show, :destroy] do
       put 'hide'
       put 'feature'
+      put 'reprocess'
+      put 'resetthumb'
+      put 'merge'
+      put 'metadata'
     end
     
     resource :videos, only: [], controller: :video do
@@ -187,11 +188,6 @@ Rails.application.routes.draw do
       
       post 'hidden/drop', action: :batch_drop
       post 'requeue'
-      
-      put 'merge'
-      put 'reprocess'
-      put 'resetthumb'
-      put 'metadata'
     end
     
     resources :tags, only: [:show, :update], controller: :tag
@@ -204,8 +200,10 @@ Rails.application.routes.draw do
     
     # Reporting #
     resources :reports, only: [:new, :show], controller: :report
-    get 'reports/page' => 'report#page'
-    post 'reports/:id(/:async)' => 'report#create'
+    resource :reports, controller: :report do
+      get 'page'
+      post '(/:async)', action: :create
+    end
     
     resources :threads, only: [], controller: :thread do
       put 'pin'
@@ -236,7 +234,7 @@ Rails.application.routes.draw do
   end
   
   # Short link #
-  get '/:id' => 'video#view', constraints: { id: /([0-9]+).*/ } # /
+  get '/:id' => 'video#show', constraints: { id: /([0-9]+).*/ } # /
   
   # Home #
   get '/' => 'welcome#index'

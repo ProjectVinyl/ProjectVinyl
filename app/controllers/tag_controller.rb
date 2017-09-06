@@ -31,16 +31,10 @@ class TagController < ApplicationController
   end
   
   def index
-    @page = params[:page].to_i
-    @results = Tag.includes(:videos, :tag_type).where('alias_id IS NULL').order(:name)
-    render_listing @results, @page, 100, false, {
+    @records = Tag.includes(:videos, :tag_type).where('alias_id IS NULL').order(:name)
+    render_listing_total @records, params[:page].to_i, 100, false, {
       table: 'tags', label: 'Tag'
     }
-  end
-  
-  def page
-    @records = Tag.includes(:videos, :tag_type).where('alias_id IS NULL').order(:name)
-    render_pagination 'tag/thumb_h', @records, params[:page].to_i, 100, false
   end
   
   def videos
