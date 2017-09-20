@@ -1,12 +1,9 @@
-/*
- * TODO: Remove
- */
 
 export function csrfToken() {
   const  token = document.querySelector('meta[name="csrf-token"]');
   return token && token.content;
 }
-
+/*
 export function csrfParam() {
   const  param = document.querySelector('meta[name="csrf-param"]');
   return param && param.content;
@@ -20,9 +17,7 @@ function sameOrigin(url) {
 
 document.addEventListener('submit', e => {
   const form = e.target.closest('form');
-
-  // These need no further action
-  if (form.matches('form[data-remote]')) return;
+	
   if (!form.method || form.method.toUpperCase() === 'GET') return;
   if (!sameOrigin(form.action)) return;
 
@@ -38,3 +33,4 @@ document.addEventListener('submit', e => {
     form.appendChild(input);
   }
 }, true);
+*/
