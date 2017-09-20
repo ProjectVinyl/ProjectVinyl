@@ -2,8 +2,15 @@
  * Ajax - A cleaner wrapper to hide the nastiness of fetch/xhr
  */
 import { popupError } from '../components/popup';
-import { handleError, csrfToken } from 'requests';
+import { csrfToken } from '.../ujs/csrf';
 import { QueryParameters } from 'queryparameters';
+
+export function handleError(response) {
+  if (!response.ok) {
+    throw new Error('Received error from server');
+  }
+  return response;
+}
 
 export function AjaxRequest(method, resource, data) {
   const params = {
