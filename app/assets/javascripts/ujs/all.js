@@ -3,5 +3,5 @@
  */
 
 import './confirm';
-import './form';
+import './csrf';
 import './method';
