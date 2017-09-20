@@ -3,7 +3,6 @@
  */
 import { ajax} from '../utils/ajax';
 import { createWindow, centerWindow } from './window';
-import { handleError } from '../utils/requests';
 import { jSlim } from '../utils/jslim';
 
 function createExternalForm(url, title, icon, maxWidth, thin) {

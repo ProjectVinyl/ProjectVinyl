@@ -1,5 +1,4 @@
 import { ajax } from '../utils/ajax';
-import { fetchJson } from '../utils/requests';
 import { QueryParameters } from '../utils/queryparameters';
 import { jSlim } from '../utils/jslim';
 
