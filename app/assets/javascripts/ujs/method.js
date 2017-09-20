@@ -1,15 +1,14 @@
 /*
- * TODO: What the fuck / Remove
+ * Dirty hack
  */
 
 document.addEventListener('click', event => {
-  const a = event.target.closest('a[data-method]');
+  const a = event.target.closest('a[data-method], button[data-method]');
   
   // Only left click allowed
-  if (event.button !== 0) return;
-  if (!a) return;
+  if (!a || event.button !== 0) return;
   
-  const url = a.href;
+  const url = a.href || a.dataset.url;
   const method = a.dataset.method;
   
   const form = document.createElement('form');
@@ -20,8 +19,6 @@ document.addEventListener('click', event => {
   form.dataset.method = method;
   form.style.display = 'none';
   
-  if (a.dataset.remote) form.dataset.remote = 'true';
-  
   input.type = 'hidden';
   input.name = '_method';
   input.value = method;
@@ -31,5 +28,5 @@ document.addEventListener('click', event => {
   document.body.appendChild(form);
   event.preventDefault();
   
-  form.dispatchEvent(new Event('submit'));
+  form.submit();
 });
