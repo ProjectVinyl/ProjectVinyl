@@ -2,7 +2,7 @@
  * Request Utils
  */
 
-function csrfToken() {
+export function csrfToken() {
   const meta = document.querySelector('meta[name=csrf-token]');
   return meta && meta.content;
 }
@@ -13,12 +13,12 @@ function fetchInternal(verb, endpoint, body, headers) {
     credentials: 'same-origin',
     headers
   };
-
+	
   if (body) {
-    body._method = verb;
+    body._method = verb; //???
     data.body = JSON.stringify(body);
   }
-
+	
   return fetch(endpoint, data);
 }
 

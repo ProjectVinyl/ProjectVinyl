@@ -7,20 +7,20 @@ export function move(sender, x, y) {
 }
 
 function setPos(sender, x, y) {
-  var maxX  = document.body.offsetWidth - sender.clientWidth;
-  var maxY = document.body.offsetHeight - sender.clientHeight;
+  const maxX  = document.body.offsetWidth - sender.clientWidth;
+  const maxY = document.body.offsetHeight - sender.clientHeight;
   // Clamp to valid region on the page
   if (x > maxX)  x = maxX;
   if (y > maxY) y = maxY;
   if (x < 0) x = 0;
   if (y < 0) y = 0;
   
-  sender.style.top = y + 'px';
-  sender.style.left = x + 'px';
+  sender.style.top = `${y}px`;
+	sender.style.left = `${x}px`;
 }
 
 export function initDraggable(sender, target) {
-  jSlim.on(sender, 'mousedown', target, function(start) {
+  jSlim.on(sender, 'mousedown', target, start => {
     start.preventDefault(); // prevent text selection
     
     const off  = jSlim.offset(sender);
@@ -33,15 +33,15 @@ export function initDraggable(sender, target) {
     }
     
     document.addEventListener('mousemove', dragging);
-    document.addEventListener('mouseup', function() {
+    document.addEventListener('mouseup', () => {
       document.removeEventListener('mousemove', dragging);
     });
   });
 }
 
-jSlim.ready(function() {
-  window.addEventListener('resize', function() {
-    jSlim.all('.ui-draggable', function(el) {
+jSlim.ready(() => {
+  window.addEventListener('resize', () => {
+    jSlim.all('.ui-draggable', el => {
       el.style.top = el.style.left = '0px'; // reposition element for size calculations
       setPos(el, el.prefX, el.prefY); // try to get back to where the user left it (or as close as possible)
     });

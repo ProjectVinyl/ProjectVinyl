@@ -1,10 +1,10 @@
 import { bindAll } from './jslim';
 
 /* Standardise fullscreen API */
-(function(p) {
+(p => {
   p.requestFullscreen = p.requestFullscreen || p.mozRequestFullScreen || p.msRequestFullscreen || p.webkitRequestFullscreen || function() {};
 })(Element.prototype);
-(function(d) {
+(d => {
   d.exitFullscreen = d.exitFullscreen || d.mozCancelFullScreen || d.msExitFullscreen || d.webkitExitFullscreen || function() {};
 })(document);
 

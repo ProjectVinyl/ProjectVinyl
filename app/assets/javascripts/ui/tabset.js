@@ -2,33 +2,29 @@ import { ajax } from '../utils/ajax';
 import { jSlim } from '../utils/jslim';
 import { pushUrl } from '../utils/history';
 
-function focusTab(me) {
-  if (!me || me.classList.contains('selected') || !me.dataset.target) {
-    return;
-  }
+export function focusTab(me) {
+  if (!me || me.classList.contains('selected') || !me.dataset.target) return;
   // Unfocus other tab first
   const other = me.parentNode.querySelector('.selected');
   if (other) {
     other.classList.remove('selected');
-    const otherTab = document.querySelector('div[data-tab="' + other.dataset.target + '"]');
+    const otherTab = document.querySelector(`div[data-tab="${other.dataset.target}"]`);
     otherTab.classList.remove('selected');
     otherTab.dispatchEvent(new CustomEvent('tabblur', { bubbles: true }));
   }
 
   me.classList.add('selected');
-  const thisTab = document.querySelector('div[data-tab="' + me.dataset.target + '"]');
+  const thisTab = document.querySelector(`div[data-tab="${me.dataset.target}"]`);
   thisTab.classList.add('selected');
   thisTab.dispatchEvent(new CustomEvent('tabfocus', { bubbles: true }));
 }
 
-jSlim.on(document, 'click', '.tab-set > li.button:not([data-disabled])', function() {
-  focusTab(this);
-});
+jSlim.on(document, 'click', '.tab-set > li.button:not([data-disabled])', (e, target) => focusTab(target));
 
-jSlim.on(document, 'click', '.tab-set > li.button i.fa-close',  function(e) {
+jSlim.on(document, 'click', '.tab-set > li.button i.fa-close',  (e, target) => {
   if (e.button !== 0) return;
-  const tabset = this.parentNode;
-  const toRemove = document.querySelector('div[data-tab="' + tabset.dataset.target + '"]');
+  const tabset = target.parentNode;
+  const toRemove = document.querySelector(`div[data-tab="${tabset.dataset.target}"]`);
 
   toRemove.parentNode.removeChild(toRemove);
   tabset.classList.add('hidden');
@@ -48,7 +44,7 @@ jSlim.on(document, 'click', '.tab-set.async a.button:not([data-disabled])', func
   
   const parent = this.parentNode;
   const other = parent.querySelector('.selected');
-  const holder = document.querySelector('.tab[data-tab="' + parent.dataset.target + '"]');
+  const holder = document.querySelector(`.tab[data-tab="${parent.dataset.target}"]`);
   const url = this.getAttribute('href');
   
   other.classList.remove('selected');
@@ -56,9 +52,7 @@ jSlim.on(document, 'click', '.tab-set.async a.button:not([data-disabled])', func
   holder.classList.add('waiting');
   
   pushUrl(url);
-  ajax.get(url + '/tab', {
-    page: this.dataset.page || 0
-  }).json(function(json) {
+  ajax.get(`${url}/tab`, { page: this.dataset.page || 0 }).json(json => {
     holder.innerHTML = json.content;
     holder.classList.remove('waiting');
   });
@@ -66,12 +60,8 @@ jSlim.on(document, 'click', '.tab-set.async a.button:not([data-disabled])', func
 
 jSlim.bind(document, 'ajax:complete', ev => {
   const tabs = ev.detail.data.tabs;
-  if (tabs) {
-    Object.keys(tabs).forEach(key => {
-      const tab = document.querySelector('.tab-set a.button[data-live-tab="' + key + '"] .count');
-      if (tab) tab.innerText = tabs[key] ? ('(' + tabs[key] + ')') : '';
-    });
-  }
+  if (tabs) Object.keys(tabs).forEach(key => {
+		const tab = document.querySelector(`.tab-set a.button[data-live-tab="${key}"] .count`);
+		if (tab) tab.innerText = tabs[key] ? `(${tabs[key]})` : '';
+	});
 });
-
-export { focusTab };

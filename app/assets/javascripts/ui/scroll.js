@@ -27,24 +27,22 @@ function scrollTo(me, container) {
     container = me.closest('.context-3d') || document.documentElement;
   }
   
-  var childOff = jSlim.offset(me);
-  var containerOff = jSlim.offset(container);
+  const childOff = jSlim.offset(me);
+  const containerOff = jSlim.offset(container);
   
-  var viewX = container.clientWidth;
-  var viewY = container.clientHeight;
+  var viewX = container.clientWidth / 2;
+  var viewY = container.clientHeight / 2;
   
-  var elementX = (childOff.left - containerOff.left) - (viewX / 2) + (me.offsetWidth / 2);
-  var elementY = (childOff.top - containerOff.top) - (viewY / 2) + (me.offsetHeight / 2);
+  const elementX = (childOff.left - containerOff.left) - viewX + (me.offsetWidth / 2);
+  const elementY = (childOff.top - containerOff.top) - viewY + (me.offsetHeight / 2);
   
   animateScroll(container.scrollLeft + elementX, container.scrollTop + elementY, container, 250);
 }
 
-jSlim.ready(function() {
-  jSlim.all('.scroll-container', function(el) {
-    var target = el.querySelector('.scroll-focus');
-    if (target) {
-      scrollTo(target, el);
-    }
+jSlim.ready(() => {
+  jSlim.all('.scroll-container', el => {
+    const target = el.querySelector('.scroll-focus');
+    if (target) scrollTo(target, el);
     if (el.dataset.documentScrollY) {
       document.documentElement.scrollTop = parseInt(el.dataset.documentScrollY, 10);
     }

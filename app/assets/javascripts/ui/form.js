@@ -1,7 +1,7 @@
 import { uploadForm } from '../utils/progressform';
 import { jSlim } from '../utils/jslim';
 
-jSlim.on(document, 'submit', 'form.async', function(e) {
+jSlim.on(document, 'submit', 'form.async', (e, target) => {
   e.preventDefault();
-  uploadForm(this);
+  uploadForm(target);
 });

@@ -28,19 +28,19 @@ function Node(parent) {
 }
 
 Node.parse = function(text, open, close) {
-  var result = new Node();
+  const result = new Node();
   result.tagName = 'Document';
-  result.parse(open + result.tagName + close + text + open + '/' + result.tagName + close, open, close);
+  result.parse(`${open}${result.tagName}${close}${text}${open}/${result.tagName}${close}`, open, close);
   return result;
 }
 
 Node.prototype = {
   parse: function(content, open, close) {
-    var index = -1;
-    var state = -1;
-    var tagName = '';
-    var text = '';
-    var quote = null;
+    let index = -1;
+    let state = -1;
+    let tagName = '';
+    let text = '';
+    let quote = null;
     
     while (index < content.length - 1) {
       index++;
@@ -151,9 +151,9 @@ Node.prototype = {
     }
   },
   parseEqualsPar(content, close) {
-    var index = -1;
-    var quote = null;
-    var par = '';
+    let index = -1;
+    let quote = null;
+    let par = '';
     
     while (index < content.length - 1) {
       index++;
@@ -194,12 +194,12 @@ Node.prototype = {
     return content.replace(replyTag, '');
   },
   parseEmoticonAlias: function(content) {
-    var emote = content.split(':');
+    let emote = content.split(':');
     if (emote.length > 1) {
       emote = emote[1];
       if (emoticons.indexOf(emote) > -1) {
         this.appendNode('emote').appendTEXT(emote);
-        return content.replace(':' + emote + ':', '');
+        return content.replace(`:${emote}:`, '');
       }
     }
   },
@@ -302,200 +302,87 @@ function escapeHTML(string) {
 }
 
 function getTagGenerator(tag, type) {
-  var result = null;
+  let result = null;
   if (tag.tagName.length) {
-    tagGenerators[type].forEach(function(item) {
-      if (item.match.indexOf(tag.tagName) > -1) {
-        result = item.func;
-      }
-    });
+    result = tagGenerators[type].find(item => item.match.test(tag.tagName));
+		if (result) return result.func(tag);
   }
-  if (!result) result = tagGenerators.default[type];
-  if (result) return result(tag);
-  return '';
+  result = tagGenerators.default[type];
+  return result ? result(tag) : '';
 }
 
-var tagGenerators = {
+const tagGenerators = {
   default: {
-    bbc: function(tag) {
-      return tag.innerBBC();
-    },
-    html: function(tag) {
+    bbc: tag => tag.innerBBC(),
+    html: tag => {
       if (tag.tagName.indexOf('yt') == 0 && !tag.tagName.replace('yt', '').match(/[^a-zA-z0-9\-_]/)) {
-        return '<iframe allowfullscreen class="embed" src="https://www.youtube.com/embed/' + tag.tagName.replace('yt', '') + '"></iframe>' + tag.innerHTML();
+        return `<iframe allowfullscreen class="embed" src="https://www.youtube.com/embed/${tag.tagName.replace('yt', '')}"></iframe>${tag.innerHTML()}`;
       }
-      if (tag.tagName.length && !tag.tagName.match(/[^0-9]/)) {
-        return '<iframe allowfullscreen class="embed" src="/embed/' + tag.tagName + '"></iframe>' + tag.innerHTML();
-      }
+      if (tag.tagName.length && !tag.tagName.match(/[^0-9]/)) return `<iframe allowfullscreen class="embed" src="/embed/${tag.tagName}"></iframe>${tag.innerHTML()}`;
       return tag.innerHTML();
     }
   },
   bbc: [
-    {
-      match: ['br'],
-      func: tag => {
-        return '\n' + tag.innerBBC();
-      }
-    },
-    {
-      match: ['hr'],
-      func: tag => {
-        return '[hr]' + tag.innerBBC();
-      }
-    },
-    {
-      match: ['b','u','s','sup','sub','spoiler'],
-      func: tag => {
-        return '[' + tag.tagName + ']' + tag.innerBBC() + '[/' + tag.tagName + ']';
-      }
-    },
-    {
-      match: ['i'],
-      func: tag => {
+    { match: /br/, func: tag => `\n${tag.innerBBC()}` },
+    { match: /hr/, func: tag => `[hr]${tag.innerBBC()}` },
+    { match: /b|u|s|sup|sub|spoiler/, func: tag => `[${tag.tagName}]${tag.innerBBC()}[/${tag.tagName}]` },
+    { match: /blockquote/, func: tag => `[q]${tag.innerBBC()}[/q]` },
+    { match: /at/, func: tag => `@${tag.innerTEXT()}`},
+    { match: /reply/, func: tag => `>>${tag.innerTEXT()}` },
+    { match: /img/, func: tag => `[img]${tag.attributes.src || ''}[img]${tag.innerBBC()}` },
+    { match: /emote/, func: tag => `:${tag.innerTEXT()}:` },
+    { match: /i/, func: tag => {
         if (tag.classes.indexOf('emote') != -1) {
-          return ':' + tag.attributes['data-emote'] + ':';
+          return `:${tag.attributes['data-emote']}:`;
         }
         if (tag.attributes.class && tag.attributes.class.indexOf('fa fa-fw fa-') == 0) {
-          return '[icon]' + tag.attributes.class.replace('fa fa-fw fa-', '').split(/[^a-zA-Z0-9]/)[0] + '[/icon]';
+          return `[icon]${tag.attributes.class.replace('fa fa-fw fa-', '').split(/[^a-zA-Z0-9]/)[0]}[/icon]`;
         }
-        return '[' + tag.tagName + ']' + tag.innerBBC() + '[/' + tag.tagName + ']';
+        return `[${tag.tagName}]${tag.innerBBC()}[/${tag.tagName}]`;
       }
     },
-    {
-      match: ['blockquote'],
-      func: function(tag) {
-        return '[q]' + tag.innerBBC() + '[/q]';
-      }
-    },
-    {
-      match: ['at'],
-      func: tag => {
-        return '@' + tag.innerTEXT();
-      }
-    },
-    {
-      match: ['reply'],
-      func: tag => {
-        return '>>' + tag.innerTEXT();
-      }
-    },
-    {
-      match: ['a'],
-      func: tag => {
-        if (!tag.attributes.href) {
-          return tag.innerBBC();
-        }
-        if (tag.classes.indexOf('user-link') > -1) {
-          return '@' + tag.innerTEXT();
-        }
+    { match: /a/, func: tag => {
+        if (!tag.attributes.href) return tag.innerBBC();
+        if (tag.classes.indexOf('user-link') > -1) return `@${tag.innerTEXT()}`;
         if (tag.attributes['data-link']) {
-          if (tag.attributes['data-link'] == '1') {
-            return tag.attributes['href'];
-          }
-          if (tag.attributes['data-link'] == '2') {
-            return '>>' + tag.attributes.href.replace('#comment_', '');
-          }
+          if (tag.attributes['data-link'] == '1') return tag.attributes['href'];
+          if (tag.attributes['data-link'] == '2') return `>>${tag.attributes.href.replace('#comment_', '')}`;
         }
-        return '[url=' + tag.attributes.href + ']' + tag.innerBBC() + '[/url]';
+        return `[url=${tag.attributes.href}]${tag.innerBBC()}[/url]`;
       }
     },
-    {
-      match: ['div'],
-      func: tag => {
+    { match: /div/, func: tag => {
         if (tag.classes.indexOf('spoiler') > -1) {
           return '[spoiler]' + tag.innerBBC() + '[/spoiler]';
         }
         return tag.innerBBC();
       }
     },
-    {
-      match: ['img'],
-      func: tag => {
-        return '[img]' + (tag.attributes.src || '') + '[img]' + tag.innerBBC();
-      }
-    },
-    {
-      match: ['emote'],
-      func: tag => {
-        return ':' + tag.innerTEXT() + ':';
-      }
-    },
-    {
-      match: ['iframe'],
-      func: tag => {
+    { match: /iframe/, func: tag => {
         if (tag.attributes.src && tag.attributes.class == 'embed') {
           if (tag.attributes.src.indexOf('youtube') > -1) {
-            return '[yt' + ytId(tag.attributes.src) + ']' + tag.innerBBC();
+            return `[yt${ytId(tag.attributes.src)}]${tag.innerBBC()}`;
           }
-          return '[' + tag.attributes.src.replace(/[^0-9]/g,'') + ']' + tag.innerBBC();
+          return `[${tag.attributes.src.replace(/[^0-9]/g,'')}]${tag.innerBBC()"`;
         }
         return tag.innerBBC();
       }
-    }
+		}
   ],
   html: [
-    {
-      match: ['b','i','u','s','sup','sub','hr'],
-      func: tag => {
-        return '<' + tag.tagName + '>' + tag.innerHTML() + '</' + tag.tagName + '>';
-      }
-    },
-    {
-      match: ['icon'],
-      func: tag => {
-        return '<i class="fa fa-fw fa-' + tag.innerTEXT().split(/[^a-zA-Z0-9]/)[0] + '"></' + tag.tagName + '>';
-      }
-    },
-    {
-      match: ['q'],
-      func: tag => {
-        return '<blockquote' + (tag.even() ? ' class="even"' : '') + '>' + tag.innerHTML() + '</blockquote>';
-      }
-    },
-    {
-      match: ['url'],
-      func: tag => {
-        return '<a href="' + (tag.equalsPar || tag.innerTEXT()) + '">' + tag.innerHTML() + '</a>';
-      }
-    },
-    {
-      match: ['at'],
-      func: tag => {
-        return '<a class="user-link" data-id="0" href="/">' + tag.innerTEXT() + '</a>';
-      }
-    },
-    {
-      match: ['reply'],
-      func: tag => {
-        return '<a data-link="2" href="#comment_' + tag.innerTEXT() + '">' + tag.innerTEXT() + '</a>';
-      }
-    },
-    {
-      match: ['spoiler'],
-      func: tag => {
-        return '<div class="spoiler">' + tag.innerHTML() + '</div>';
-      }
-    },
-    {
-      match: ['img'],
-      func: tag => {
-        return '<img src="' + tag.innerTEXT().replace(/['"]/g,'') + '"></img>';
-      }
-    },
-    {
-      match: ['emote'],
-      func: tag => {
-        return '<i class="emote" data-emote="' + tag.innerTEXT() + '">:' + tag.innerTEXT() + ':</i>';
-      }
-    }
+    { match: /b|i|u|s|sup|sub|hr/, func: tag => `<${tag.tagName}>${tag.innerHTML()}</${tag.tagName}>` },
+    { match: /icon/, func: tag => `<i class="fa fa-fw fa-${tag.innerTEXT().split(/[^a-zA-Z0-9]/)[0]}"></i>` },
+    { match: /q/, func: tag => `<blockquote${tag.even() ? ' class="even"' : ''}>${tag.innerHTML()}</blockquote>` },
+    { match: /url/, func: tag => `<a href="${tag.equalsPar || tag.innerTEXT()}">${tag.innerHTML()}</a>` },
+    { match: /at/, func: tag => `<a class="user-link" data-id="0" href="/">${tag.innerTEXT()}</a>` },
+    { match: /reply/, func: tag => `<a data-link="2" href="#comment_${tag.innerTEXT()}">${tag.innerTEXT()}</a>` },
+    { match: /spoiler/, func: tag => `<div class="spoiler">${tag.innerHTML()}</div>` },
+    { match: /img/, func: tag => `<img src="${tag.innerTEXT().replace(/['"]/g,'')}"></img>` },
+    { match: /emote/, func: tag => `<i class="emote" data-emote="${tag.innerTEXT()}">:${tag.innerTEXT()}:</i>` }
   ]
 };
 
 export const BBCode = {
-  fromHTML: function(html) {
-    return Node.parse(html, '<', '>');
-  },
-  fromBBC: function(bbc) {
-    return Node.parse(bbc, '[', ']');
-  }
+  fromHTML: html => Node.parse(html, '<', '>'),
+  fromBBC: bbc => Node.parse(bbc, '[', ']')
 };

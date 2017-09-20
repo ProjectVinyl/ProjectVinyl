@@ -16,7 +16,7 @@ function createExternalForm(url, title, icon, maxWidth, thin) {
   if (thin) win.dom.classList.add('thin');
   if (maxWidth) win.content.style.maxWidth = maxWidth;
   
-  ajax.get(url).text(function(html) {
+  ajax.get(url).text(html => {
     win.setContent(html);
     centerWindow(win);
   });

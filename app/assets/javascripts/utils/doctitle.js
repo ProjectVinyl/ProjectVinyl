@@ -1,29 +1,22 @@
-function docTitle() {
-  var title = document.getElementById('document_title');
-  var me = {
-    get: function() {
-      return title.innerText;
-    },
-    set: function(text) {
-      title.innerText = text;
-    },
-    change: function(changerFunc) {
-      changerFunc(me.get(), me.set);
-    },
-    togglePrefix: function(on) {
-      if (on) {
-        return me.addPrefix();
-      }
+
+export function docTitle() {
+  const title = document.getElementById('document_title');
+  const me = {
+    get: _ => title.innerText,
+    set: text => title.innerText = text,
+    change: changerFunc => changerFunc(me.get(), me.set),
+    togglePrefix: on => {
+      if (on) return me.addPrefix();
       me.removePrefix();
     },
-    addPrefix: function() {
-      var text = me.get();
+    addPrefix: _ => {
+      const text = me.get();
       if (text.indexOf('*') != 0) {
-        me.set('* ' + text);
+        me.set(`* ${text}`);
       }
     },
-    removePrefix: function() {
-      var text = me.get();
+    removePrefix: _ => {
+      const text = me.get();
       if (text.indexOf('*') == 0) {
         me.set(text.replace('* ', ''));
       }
@@ -32,4 +25,3 @@ function docTitle() {
   return me;
 }
 
-export { docTitle };

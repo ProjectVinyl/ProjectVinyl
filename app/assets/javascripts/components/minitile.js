@@ -1,11 +1,11 @@
 
 export function createMiniTile(player) {
-  var canvas = document.createElement('canvas');
-  var video = null;
-  var lastTime = -1;
+  const canvas = document.createElement('canvas');
+  let video = null;
+  let lastTime = -1;
   return {
     dom: canvas,
-    draw: function(time) {
+    draw: time => {
       time -= (time % 5);
       
       if (lastTime !== time) {

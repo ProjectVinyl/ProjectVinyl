@@ -3,28 +3,7 @@ import { jSlim } from './jslim';
 
 let autocomplete = null;
 
-function lookup(sender, popout, action, input, validate) {
-  ajax.post(action + '/lookup', {
-    query: input.value, validate: validate ? 1 : 0
-  }).json(function(json) {
-    popout.innerHTML = '';
-    for (let i = 0; i < json.content.length; i++) {
-      let item = document.createElement('li');
-      item.textContext = json.content[i][1] + ' (' + json.content[i][0] + ')';
-      item.dataset.name = json.content[i][1];
-      item.addEventListener('mousedown', () => {
-        input.value = item.dataset.name;
-        sender.classList.remove('pop-out-shown');
-      });
-      popout.appendChild(item);
-    }
-    sender.classList[json.content.length ? 'add' : 'remove']('pop-out-shown');
-    sender.classList[json.reject ? 'add' : 'remove']('invalid');
-  });
-}
-
-jSlim.on(document, 'focusin', '.auto-lookup:not(.loaded) input', function() {
-  const input = this;
+jSlim.on(document, 'focusin', '.auto-lookup:not(.loaded) input', (e, input) => {
   const me = input.parentNode;
   const popout = me.querySelector('.pop-out');
   const action = me.dataset.action;
@@ -33,20 +12,27 @@ jSlim.on(document, 'focusin', '.auto-lookup:not(.loaded) input', function() {
   
   me.classList.add('loaded');
   
+	jSlim.on(popup, 'mousedown', '.auto-lookup li[data-name]', (e, sender) => {
+		input.value = sender.dataset.name;
+		me.classList.remove('pop-out-shown');
+	});
+	
   input.addEventListener('blur', () => {
-    clearInterval(autocomplete);
+    if (autocomplete) clearInterval(autocomplete);
     autocomplete = null;
   });
   
   input.addEventListener('focus', () => {
-    if (!autocomplete) {
-      autocomplete = setInterval(() => {
-        let value = input.value;
-        if (value != lastValue) {
-          lastValue = value;
-          lookup(me, popout, action, input, validate);
-        }
-      }, 1000);
-    }
+    if (!autocomplete) autocomplete = setInterval(() => {
+			if (input.value == lastValue) return;
+			lastValue = input.value;
+			ajax.post(`${action}/lookup`, {
+				query: input.value, validate: validate ? 1 : 0
+			}).json(json => {
+				popout.innerHTML = json.content.map(a => `<li data-name="${a[1]}">${a[1]} (${a[0]})</li>`).join('');
+				me.classList.toggle('pop-out-shown', json.content.length);
+				me.classList.toggle('invalid', json.reject);
+			});
+		}, 1000);
   });
 });

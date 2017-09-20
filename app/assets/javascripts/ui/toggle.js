@@ -1,79 +1,54 @@
 import { ajax } from '../utils/ajax';
 import { jSlim } from '../utils/jslim';
 
-function toggle(sender, options, callback) {
-  var data = {};
+function toggle(e, sender, options, callback) {
+	e.preventDefault();
+  const data = {};
+  if (sender.dataset.item) data.item = sender.dataset.item;
+  if (sender.dataset.with) data.extra = document.querySelector(sender.dataset.with).value;
   
-  if (sender.dataset.item) {
-    data.item = sender.dataset.item;
-  }
-  if (sender.dataset.with) {
-    data.extra = document.querySelector(sender.dataset.with).value;
-  }
-  
-  ajax.put(options.dataset.target + '/' + options.dataset.id + '/' + options.dataset.action, data).json(function(json) {
-    callback(json, options);
-  });
+  ajax.put(`${options.dataset.target}/${options.dataset.id}/${options.dataset.action}`, data).json(json => callback(json, options));
 }
 
-function toggleSingle(sender) {
-  toggle(sender, sender, function(json) {
-    if (sender.dataset.family) {
-      return jSlim.all('.action.toggle[data-family="' + sender.dataset.family + '"][data-id="' + sender.dataset.id + '"]', function(a) {
+function updateCheck(element, state) {
+  const check = element.dataset.checkedIcon || 'check';
+  const uncheck = element.dataset.uncheckedIcon;
+  element.querySelector('.icon').innerHTML = state ? `<i class="fa fa-${state}"></i>` : uncheck ? `<i class="fa fa-${uncheck}></i>` : '';
+}
+
+jSlim.on(document, 'click', '.action.toggle', (e, target) => {
+  if (e.which === 1 || e.button === 0) toggle(e, target, target, json => {
+    if (target.dataset.family) {
+      return jSlim.all(`.action.toggle[data-family="${target.dataset.family}"][data-id="${target.dataset.id}"]`, a => {
         updateCheck(a, json[a.dataset.descriminator]);
       });
     }
     
-    updateCheck(sender, json.added);
-    if (sender.dataset.state) {
-      sender.closest(sender.dataset.parent).classList.toggle(sender.dataset.state, json.added);
+    updateCheck(target, json.added);
+    if (target.dataset.state) {
+      target.closest(target.dataset.parent).classList.toggle(target.dataset.state, json.added);
     }
   });
-}
+});
 
-function toggleMulti(sender) {
-  toggle(sender, sender.closest('.action.multi-toggle'), function(json, options) {
-    jSlim.all(options, '[data-item]', function(a) {
-      updateCheck(a, json[a.dataset.descriminator]);
-    });
+jSlim.on(document, 'click', '.action.multi-toggle [data-item]', (e, target) => {
+  if (e.which === 1 || e.button === 0) toggle(e, target, target.closest('.action.multi-toggle'), (json, options) => {
+    jSlim.all(options, '[data-item]', a => updateCheck(a, json[a.dataset.descriminator]));
   });
-}
-
-function updateCheck(element, state) {
-  var check = element.dataset.checkedIcon || 'check';
-  var uncheck = element.dataset.uncheckedIcon;
-  element.querySelector('.icon').innerHTML = state ? '<i class="fa fa-' + check + '"></i>' : uncheck ? '<i class="fa fa-' + uncheck + '"></i>' : '';
-}
-
-function toggleState(sender) {
-  var state = sender.dataset.state;
-  var parent = sender.dataset.parent;
-  
-  parent = parent ? sender.closest(parent) : sender.parentNode;
-  parent.classList.toggle(state);
-  
-  var label = sender.dataset[parent.classList.contains(state)];
-  if (label) sender.innerText = label;
-  
-  sender.dispatchEvent(new CustomEvent('toggle', {
-    bubbles: true
-  }));
-}
-
-jSlim.on(document, 'click', '.action.toggle', function(e) {
-  if (e.which != 1 && e.button != 0) return;
-  toggleSingle(this);
-  e.preventDefault();
 });
 
-jSlim.on(document, 'click', '.action.multi-toggle [data-item]', function(e) {
+jSlim.on(document, 'click', '.state-toggle', (e, target) => {
   if (e.which != 1 && e.button != 0) return;
-  toggleMulti(this);
   e.preventDefault();
-});
-
-jSlim.on(document, 'click', '.state-toggle', function(e) {
-  if (e.which != 1 && e.button != 0) return;
-  toggleState(this);
-  e.preventDefault();
+	
+	let parent = target.dataset.parent;
+	parent = parent ? target.closest(parent) : target.parentNode;
+	
+	const state = target.dataset.state;
+	parent.classList.toggle(state);
+	
+	const label = target.dataset[parent.classList.contains(state)];
+	if (label) target.innerText = label;
+	
+	target.dispatchEvent(new CustomEvent('toggle', {bubbles: true}));
 });

@@ -25,7 +25,7 @@ function postComment(sender) {
   
   sender.classList.add('posting');
   
-  ajax.post('comments', data).json(function(json) {
+  ajax.post('comments', data).json(json => {
     sender.classList.remove('posting');
     paginator.repaint(document.getElementById('thread-' + data.thread).closest('.paginator'), json);
     scrollTo(document.querySelector('#comment_' + json.focus));
@@ -75,7 +75,7 @@ function lookupComment(commentId) {
   if (scrollToAndHighlight(commentId)) return;
   
   const pagination = document.querySelector('.comments').parentNode;
-  ajax.get(pagination.dataset.type, 'comment=' + commentId + '&' + pagination.dataset.args).json(function(json) {
+  ajax.get(pagination.dataset.type, `comment=${commentId}&${pagination.dataset.args}`).json(function(json) {
     paginator.repaint(pagination, json);
     scrollToAndHighlight(commentId);
   });
@@ -93,9 +93,9 @@ function editComment(sender) {
 function moveInlineComment(sender, container, type, commentEl) {
   if (container.classList.contains('comment-content')) {
     container = getSubCommentList(sender);
-    container['insertAdjacent' + type]('afterbegin', commentEl);
+    container[`insertAdjacent${type}`]('afterbegin', commentEl);
   } else {
-    container['insertAdjacent' + type]('beforebegin', commentEl);
+    container[`insertAdjacent${type}`]('beforebegin', commentEl);
   }
   return container;
 }
@@ -139,17 +139,14 @@ function getSubCommentList(sender) {
 function replyTo(sender) {
   sender = sender.parentNode;
   const textarea = sender.closest('.page, body').querySelector('.post-box textarea');
-  insertTags(textarea, '\n>>' + sender.dataset.oId + ' [q]\n' + jSlim.dom.decodeEntities(sender.dataset.comment) + '\n[/q]\n\n', '');
+  insertTags(textarea, `\n>>${sender.dataset.oId} [q]\n${jSlim.dom.decodeEntities(sender.dataset.comment)}\n[/q]\n\n`, '');
   let height = parseFloat(textarea.style.height) || 0;
   textarea.style.height = Math.max(height, textarea.scrollHeight) + 'px';
 }
 
 function reportState(sender) {
-  sender = sender.parentNode;
-  if (sender.querySelector('input[name="resolve"]:checked')) return 'resolve';
-  if (sender.querySelector('input[name="close"]:checked')) return 'close';
-  if (sender.querySelector('input[name="unresolve"]:checked')) return 'open';
-  return false;
+  sender = sender.parentNode.querySelector('input:checked').getAttribute('name');
+	return sender && (sender.getAttribute('name') || false);
 }
 
 function revealSpoiler(target) {

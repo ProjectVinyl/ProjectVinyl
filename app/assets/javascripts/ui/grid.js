@@ -1,12 +1,5 @@
 import { jSlim } from '../utils/jslim';
 
-// For utils
-function toEl(str) {
-  const div = document.createElement('div');
-  div.innerHTML = str;
-  return div.children[0];
-}
-
 function height(el) {
   const style = getComputedStyle(el);
   return el.clientHeight - parseFloat(style.paddingTop) - parseFloat(style.paddingBottom);
@@ -19,9 +12,9 @@ function width(el) {
 
 function calculateNewWidth(grid, beside) {
   // subtract any padding
-  var width = grid.parentNode.clientWidth - 195;
-  var calculatedWidth = width + 1;
-  var n = 10;
+  const width = grid.parentNode.clientWidth - 195;
+  let calculatedWidth = width + 1;
+  let n = 10;
 
   // 60 is the margins of the .page, 182 is the column width, and 45 is the column spacing
   do {
@@ -38,7 +31,6 @@ function calculateNewWidth(grid, beside) {
 // FIXME
 function calculatePageSplit(grid, beside) {
   const b = jSlim.offset(beside).top + height(beside) + 10;
-
   for (const page of grid.querySelectorAll('.page')) {
     const t = jSlim.offset(page).top;
     if (t < b && (t + page.offsetHeight) > b) {
@@ -46,12 +38,9 @@ function calculatePageSplit(grid, beside) {
         if (jSlim.offset(li).top > b) {
           li.classList.add('t');
           page.classList.add('split');
-
-          const nx = toEl('<section class="page virtual"><div class="group"><ul class="horizontal latest" /></div></section>');
-          const ul = nx.querySelector('ul');
-
+					page.insertAdjacentHTML('afterend', '<section class="page virtual"><div class="group"><ul class="horizontal latest"></ul></div></section>');
+          const ul = pagt.nextSibling.querySelector('ul');
           jSlim.all('.t, .t ~ li', t => ul.appendChild(t));
-          page.insertAdjacentElement('afterend', nx);
           li.classList.remove('t');
           return;
         }

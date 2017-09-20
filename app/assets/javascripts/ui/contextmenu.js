@@ -1,10 +1,11 @@
 import { jSlim } from '../utils/jslim';
 
-function ContextMenu(dom, container) {
+export function ContextMenu(dom, container) {
   this.dom = dom;
   this.container = container || document.body;
   this.container.addEventListener('contextmenu', e => this.show(e));
 }
+
 ContextMenu.prototype = {
   addItem: function(title, initial, callback) {
     this.dom.insertAdjacentHTML('beforeend', '<li><div class="label">' + title + '</div><div class="value"></div></li>');
@@ -59,5 +60,3 @@ jSlim.ready(() => {
     if (ev.button === 0) hideAll();
   });
 });
-
-export { ContextMenu };

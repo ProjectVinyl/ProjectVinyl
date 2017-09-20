@@ -2,9 +2,7 @@ import { jSlim } from '../utils/jslim';
 
 jSlim.ready(() => {
   function sizeSpannedBlocks() {
-    jSlim.all('.row.row-spanned > .content', el => {
-      el.parentNode.style.height = `${el.children[0].clientHeight}px`; // clientHeight not quite accurate
-    });
+    jSlim.all('.row.row-spanned > .content', el => el.parentNode.style.height = `${el.children[0].offsetHeight}px`);
   }
 
   if (document.querySelector('.row.row-spanned')) {
