@@ -1,3 +1,7 @@
+/*
+ * TODO: What the fuck / Remove
+ */
+
 import { csrfParam, csrfToken } from './csrf';
 import { fetchHtml, handleError } from '../utils/requests';
 

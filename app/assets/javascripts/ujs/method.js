@@ -1,3 +1,7 @@
+/*
+ * TODO: What the fuck / Remove
+ */
+
 document.addEventListener('click', event => {
   const a = event.target.closest('a[data-method]');
   
