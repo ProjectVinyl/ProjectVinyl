@@ -5,6 +5,11 @@
   cursor: pointer;
 }
 
+.fa-ahalfx {
+    font-size: 1.22em;
+    line-height: 1em;
+}
+
 span.active-icon {
   position: relative;
   padding: 0;

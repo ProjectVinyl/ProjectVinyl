@@ -3,12 +3,12 @@
 	<% if page > 1 %>
 	<% query_hash[id] = 1 %>
 	<a class="button" data-page-to="0" href="?<%= query_hash.to_query %>">
-		<i class="fa fa-chevron-left"></i><i class="fa fa-chevron-left"></i>
+		<i class="fa fa-ahalfx fa-angle-double-left"></i>
 	</a>
 	<% end %>
 <% query_hash[id] = page - 1 %>
 <a class="button" data-page-to="<%= page - 1 %>" href="?<%= query_hash.to_query %>">
-	<i class="fa fa-chevron-left"></i>
+	<i class="fa fa-ahalfx fa-angle-left"></i>
 </a>
 <% end %>
 <span class="pages mobile-touch-toggle"
@@ -22,12 +22,12 @@
 </span>
 <% if page < pages %>
 	<a class="button" data-page-to="<%= page + 1 %>" href="?<%= query_hash.to_query %>">
-		<i class="fa fa-chevron-right"></i>
+		<i class="fa fa-ahalfx fa-angle-right"></i>
 	</a>
 	<% if page < pages - 1 %>
 	<% query_hash[id] = -1 %>
 	<a class="button" data-page-to="-1" href="?<%= query_hash.to_query %>">
-		<i class="fa fa-chevron-right"></i><i class="fa fa-chevron-right"></i>
+		<i class="fa fa-ahalfx fa-angle-double-right"></i>
 	</a>
 	<% end %>
 <% end %>
