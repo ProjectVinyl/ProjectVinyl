@@ -1,5 +1,6 @@
 import { ajax } from '../utils/ajax';
 import { jSlim } from '../utils/jslim';
+import { checkFormPrerequisits } from '../components/form';
 
 export function slideOut(holder) {
   const h = holder.querySelector('.group.active').offsetHeight;
@@ -57,8 +58,16 @@ jSlim.on(document, 'click', '.slider-toggle', (e, target) => {
   e.preventDefault();
 });
 
+jSlim.on(document, 'click', '.slide-holder form input[data-to]', (e, target) => {
+	if (!checkFormPrerequisits(target.closest('.group'))) return;
+	const required = target.closest('.group').querySelectorAll('input[data-required]');
+  slideAcross(target, 1);
+});
+
 jSlim.on(document, 'click', '.slide-holder .goto.slide-right', (e, target) => {
-  if (e.button === 0) slideAcross(target, 1);
+  if (e.button !== 0) return;
+	if (target.closest('form') && !checkFormPrerequisits(target.closest('.group'))) return; 
+	slideAcross(target, 1);
 });
 
 jSlim.on(document, 'click', '.slide-holder .goto.slide-left', (e, target) => {

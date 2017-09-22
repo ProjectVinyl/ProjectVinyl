@@ -1,5 +1,6 @@
 import { Duration } from './duration';
 import { unionObj, tryUnmarshal } from './misc';
+import { jSlim } from './jslim';
 
 function xhr(method, url, data, callbacks) {
   const csrf = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
@@ -108,3 +109,8 @@ const defaultCallbacks = {
 export function uploadForm(form, callbacks) {
   sendForm(form, unionObj(defaultCallbacks, callbacks || {}));
 }
+
+jSlim.on(document, 'submit', 'form.async', (e, target) => {
+  e.preventDefault();
+  uploadForm(target);
+});

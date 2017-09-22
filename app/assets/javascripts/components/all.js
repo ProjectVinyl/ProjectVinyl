@@ -1,0 +1,9 @@
+import './comments';
+import './fileinput';
+import './form';
+import './search';
+import './share';
+import './uploader';
+import './usercard';
+import './vote';
+import './notifier';

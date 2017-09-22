@@ -5,13 +5,14 @@ function hide(sender) {
 }
 
 document.addEventListener('mousedown', () => jSlim.all('.pop-out-shown:not(:hover)', hide));
-jSlim.on(document, 'click', '.popper .pop-out-toggle', (e, target) => {
+jSlim.on(document, 'click', '.pop-out-toggle', (e, target) => {
   if (e.which != 1) return;
-	e.preventDefault();
 	
   target = target.closest('.popper');
+	if (!target) return;
+	e.preventDefault();
 	if (target.classList.contains('pop-out-shown')) {
-		return hide(sender);
+		return hide(target);
 	}
 	
 	const content = target.querySelector('.pop-out');

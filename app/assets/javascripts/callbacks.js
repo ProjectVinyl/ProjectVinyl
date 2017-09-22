@@ -31,24 +31,6 @@ jSlim.on(document, 'loaded', '.js-banner-select', () => {
   });
 });
 
-jSlim.on(document, 'click', '.form.report input[data-to], .form.report button.goto.right', function() {
-  var required = this.closest('.group').querySelectorAll('input[data-required]');
-  if (required.length) {
-    for (let i = 0; i < required.length; i++) {
-      if (required.value != required.dataset.required && (required.getAttribute('type') !== 'checkbox' || !!required.checked != !!required.dataset.required)) {
-        popupError('One or more required fields need to be filled in.');
-        required.focus();
-        return;
-      }
-    }
-  }
-  slideAcross(this, 1);
-});
-
-jSlim.on(document, 'click', '.form.report button.goto.left', function() {
-  slideAcross(this, -1);
-});
-
 jSlim.on(document, 'submit', '.form.report form.async', (e, sender) => {
   e.preventDefault();
   e.stopImmediatePropagation(); // form.async
@@ -64,7 +46,7 @@ jSlim.on(document, 'submit', '.form.report form.async', (e, sender) => {
     error: function(message, msg) {
       this.classList.remove('uploading');
       message.style.marginLeft = '';
-      message.innerHTML = '<i style="color: red; font-size: 50px;" class="fa fa-times"></i><br>Error: ' + msg + '<br>Please contact <a href="mailto://support@projectvinyl.net">support@projectvinyl.net</a> for assistance.';
+      message.innerHTML = `<i style="color: red; font-size: 50px;" class="fa fa-times"></i><br>Error: ${msg}<br>Please contact <a href="mailto://support@projectvinyl.net">support@projectvinyl.net</a> for assistance.`;
     }
   });
 });
@@ -76,7 +58,7 @@ jSlim.on(document, 'change', '.avatar.file-select', (e, target) => {
       const ext = e.target.files.length ? e.target.files[0].name.split('.').reverse()[0] : 'png';
       this.classList.remove('uploading');
       jSlim.all('#login .avatar.small span, #avatar-upload .preview', el => {
-        el.style.backgroundImage = 'url(/avatar/' + target.dataset.id + '.' + ext + '?' + new Date().getTime() + ')';
+        el.style.backgroundImage = `url(/avatar/${target.dataset.id}.${ext}?${new Date().getTime()})`;
       });
     }
   });

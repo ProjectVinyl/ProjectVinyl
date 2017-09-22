@@ -9,7 +9,7 @@ function postComment(sender) {
   const input = sender.parentNode.querySelector('textarea, input.comment-content');
   const comment = input.value.trim();
   
-  if (!comment) return popupError('You have to type something to post');
+  if (!comment) return popupError('You have to type something to post!');
   
   let data = {
     thread: sender.dataset.threadId,

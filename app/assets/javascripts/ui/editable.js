@@ -33,14 +33,6 @@ function initEditable(holder, content, short) {
     textarea.className = 'input js-auto-resize';
     content.insertAdjacentElement('afterend', textarea);
   }
-  textarea.addEventListener('change', () => holder.classList.add('dirty'));
-  textarea.addEventListener('keydown', ev => {
-    if (!ev.ctrlKey) return;
-		handleSpecialKeys(ev.keyCode, tag => {
-			insertTags(textarea, `[${tag}]`, `[/${tag}]`);
-			ev.preventDefault();
-		});
-  });
   return textarea;
 }
 
@@ -126,7 +118,7 @@ export function setupEditable(sender) {
 }
 
 document.addEventListener('click', () => {
-  if (active && !active.closest('.editable').matches(':hover')) deactivate(active);
+  if (active && !active.closest('.editable:hover')) deactivate(active);
 });
 
 function updatePreview(sender) {
@@ -134,15 +126,13 @@ function updatePreview(sender) {
   if (preview) preview.innerHTML = BBCode.fromBBC(sender.value).outerHTML();
 }
 
+jSlim.on(document, 'change', '.editable', (ev, target) => target.classList.add('dirty'));
 jSlim.on(document, 'change', 'textarea.comment-content', (e, target) => updatePreview(target));
-
-jSlim.on(document, 'keydown', 'textarea.comment-content', function(ev) {
-  if (!ev.ctrlKey) return;
-    handleSpecialKeys(ev.keyCode, tag => {
-      insertTags(textarea, `[${tag}]`, `[/${tag}]`);
-      ev.preventDefault();
-    });
-  }
+jSlim.on(document, 'keydown', 'textarea.comment-content, .editable textarea.input', (ev, target) => {
+  if (ev.ctrlKey) handleSpecialKeys(ev.keyCode, tag => {
+		insertTags(target, `[${tag}]`, `[/${tag}]`);
+		ev.preventDefault();
+	});
 });
 
 jSlim.on(document, 'mouseup', '.edit-action', (e, target) => {

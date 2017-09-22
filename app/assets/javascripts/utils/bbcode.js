@@ -363,7 +363,7 @@ const tagGenerators = {
           if (tag.attributes.src.indexOf('youtube') > -1) {
             return `[yt${ytId(tag.attributes.src)}]${tag.innerBBC()}`;
           }
-          return `[${tag.attributes.src.replace(/[^0-9]/g,'')}]${tag.innerBBC()"`;
+          return `[${tag.attributes.src.replace(/[^0-9]/g,'')}]${tag.innerBBC()}`;
         }
         return tag.innerBBC();
       }

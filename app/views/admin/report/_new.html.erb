@@ -1,4 +1,4 @@
-﻿<%= form_for(report, as: "report", url: "/report?video_id=#{video.id}", html: { class: "async", method: :post }) do |f| %>
+﻿<%= form_for(report, as: "report", url: "/admin/report?video_id=#{video.id}", html: { class: "async", method: :post }) do |f| %>
 	<div class="group active" data-stage="start">
 		Please select the type of report you would like to submit.
 		<table>
@@ -29,17 +29,17 @@
 			</tr>
 			<tr>
 				<td>
-					<button class="goto left" data-to="start" type="button">< Back</button>
+					<button class="goto left slide-left" data-to="start" type="button">< Back</button>
 				</td>
 				<td>
-					<button class="goto right" data-to="final" type="button">Next ></button>
+					<button class="goto right slide-right" data-to="final" type="button">Next ></button>
 				</td>
 			</tr>
 		</table>
 	</div>
 	<div class="group" data-stage="content">
 		Please select the option(s) that best describe the content in this video.
-		<table>
+		<table data-required>
 			<tr>
 				<td colspan="2"><label><%= f.check_box :content_type_unrelated %><i class="fa"></i> Unrelated content</label></td>
 			</tr>
@@ -54,10 +54,10 @@
 			</tr>
 			<tr>
 				<td>
-					<button class="goto left" data-to="start" type="button">< Back</button>
+					<button class="goto left slide-left" data-to="start" type="button">< Back</button>
 				</td>
 				<td>
-					<button class="goto right" data-to="final" type="button">Next ></button>
+					<button class="goto right slide-right" data-to="final" type="button">Next ></button>
 				</td>
 			</tr>
 		</table>
@@ -68,24 +68,24 @@
 			<tr>
 				<td colspan="2">
 					Name of copyright holder, entity, or organisation:
-					<%= f.text_field :copyright_holder %>
+					<%= f.text_field :copyright_holder, required: true %>
 				</td>
 			</tr>
 			<tr>
 				<td colspan="2">
 					Describe <b>exactly</b> where the offending content occurs in the video, and the conditions under which it is used.
-					<%= f.text_area :copyright_usage %>
+					<%= f.text_area :copyright_usage, required: true %>
 				</td>
 			</tr>
 			<tr>
-				<td colspan="2"><label><input type="checkbox" name="copyright_accept" data-required="true" value="copyright_accept"></input><i class="fa"></i> I am or represent the copyright holder for the identified content in this video</label></td>
+				<td colspan="2"><label><input type="checkbox" name="copyright_accept" required="true" value="copyright_accept"></input>* I am or represent the copyright holder for the identified content in this video</label></td>
 			</tr>
 			<tr>
 				<td>
-					<button class="goto left" data-to="start" type="button">< Back</button>
+					<button class="goto left slide-left" data-to="start" type="button">< Back</button>
 				</td>
 				<td>
-					<button class="goto right" data-to="final" type="button">Next ></button>
+					<button class="goto right slide-right" data-to="final" type="button">Next ></button>
 				</td>
 			</tr>
 		</table>
@@ -105,10 +105,10 @@
 			</tr>
 			<tr>
 				<td>
-					<button class="goto left" data-to="start" type="button">< Back</button>
+					<button class="goto left slide-left" data-to="start" type="button">< Back</button>
 				</td>
 				<td>
-					<button class="goto right" data-to="final" type="button">Next ></button>
+					<button class="goto right slide-right" data-to="final" type="button">Next ></button>
 				</td>
 			</tr>
 		</table>
@@ -121,7 +121,7 @@
 		<table>
 			<tr>
 				<td>
-					<button class="goto right send" data-to="end">Send</button>
+					<button class="goto right send slide-right" data-to="end">Send</button>
 				</td>
 			</tr>
 		</table>
@@ -129,18 +129,21 @@
 		Please enter your contact details, in case we need to get into contact with you.
 		<table>
 			<tr>
-				<td>
-					<%= f.text_field :name, placeholder: "Name" %>
+				<td colspan="2">
+					<%= f.text_field :name, placeholder: "Name", required: true %>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="2">
+					<%= f.text_field :contact, placeholder: "Email", required: true %>
 				</td>
 			</tr>
 			<tr>
 				<td>
-					<%= f.text_field :contact, placeholder: "Email" %>
+					<button class="goto left slide-left" data-to="start" type="button">< Back</button>
 				</td>
-			</tr>
-			<tr>
 				<td>
-					<button class="goto right send" data-to="end">Send</button>
+					<button class="goto right send slide-right" data-to="end">Send</button>
 				</td>
 			</tr>
 		</table>
