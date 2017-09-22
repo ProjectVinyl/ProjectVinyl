@@ -1,4 +1,4 @@
-class UserAnon << UserDummy
+class UserAnon < UserDummy
   def self.anon_id(session)
     if !session.has_key? :session_id
       # LAME we have to write to the session to get it to initialize itself
