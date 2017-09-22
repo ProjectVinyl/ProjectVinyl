@@ -2,8 +2,8 @@
  * Ajax - A cleaner wrapper to hide the nastiness of fetch/xhr
  */
 import { popupError } from '../components/popup';
-import { csrfToken } from '.../ujs/csrf';
-import { QueryParameters } from 'queryparameters';
+import { csrfToken } from '../ujs/csrf';
+import { QueryParameters } from './queryparameters';
 
 export function handleError(response) {
   if (!response.ok) {
@@ -17,7 +17,7 @@ export function AjaxRequest(method, resource, data) {
 		method: method,
 		credentials: 'same-origin',
 		headers: {
-			'Content-Type': 'application/json',
+			'Content-Type': 'application/x-www-form-urlencoded', //Has to be url-encoded to prevent rails form injecting ghost parameters
 			'X-Requested-With': 'XMLHttpRequest',
 			'X-CSRF-Token': csrfToken()
 		}
@@ -27,7 +27,7 @@ export function AjaxRequest(method, resource, data) {
     if (method == 'GET') {
       resource += `?${data}`;
     } else {
-      params.body = JSON.stringify(data.values);
+      params.body = data.toString();
     }
   }
   resource = `/${resource.replace(/^[\/]*/g, '')}`;
