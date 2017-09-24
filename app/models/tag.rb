@@ -25,13 +25,19 @@ class Tag < ApplicationRecord
   end
 
   def self.tag_json(tags)
-    tags.map(&:actual).uniq.map(&:to_json)
+    Tag.actualise(tags).map(&:to_json)
   end
   
-  scope :actualise, -> { map(&:actual).uniq }
-  scope :jsons, -> { actualise.map(&:to_json) }
   scope :pluck_actual_ids, -> { (pluck(:id, :alias_id).map {|t| t[1] || t[0] }).uniq }
   
+	def self.actualise(tags)
+		tags.map(&:actual).uniq
+	end
+	
+	def self.jsons(tags)
+		Tag.actualise(tags).map(&:to_json)
+	end
+	
   def actual
     alias_id ? (self.alias || self) : self
   end
@@ -50,8 +56,8 @@ class Tag < ApplicationRecord
 
   def self.find_matching_tags(name)
     name = name.downcase
-    includes(:tag_type, :alias).where('name LIKE ? OR short_name LIKE ?', "#{name}%", "#{ApplicationHelper.url_safe_for_tags(name)}%")
-       .order(:video_count, :user_count).limit(10).jsons
+    Tag.jsons(Tag.includes(:tag_type, :alias).where('name LIKE ? OR short_name LIKE ?', "#{name}%", "#{ApplicationHelper.url_safe_for_tags(name)}%")
+       .order(:video_count, :user_count).limit(10))
   end
 
   def self.split_tag_string(tag_string)
@@ -71,7 +77,7 @@ class Tag < ApplicationRecord
     if names.nil? || (names = names.uniq).empty?
       return []
     end
-    Tag.includes(:alias).where('name IN (?) OR short_name IN (?)', names, names).actualise
+    Tag.actualise(Tag.includes(:alias).where('name IN (?) OR short_name IN (?)', names, names))
   end
   
   def self.get_name_mappings(names)
@@ -237,7 +243,11 @@ class Tag < ApplicationRecord
   def namespace
     return self.has_type ? self.tag_type.prefix : ''
   end
-
+	
+	def slug
+		return self.name.sub(self.namespace + ':', '')
+	end
+	
   def identifier
     return self.name.split(':')[1] if self.name.index(':')
     self.name
@@ -329,7 +339,8 @@ class Tag < ApplicationRecord
       name: self.get_as_string,
       namespace: self.namespace,
       members: self.members,
-      link: self.short_name
+      link: self.short_name,
+			slug: self.slug
     }
   end
 end

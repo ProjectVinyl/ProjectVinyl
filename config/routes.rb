@@ -27,7 +27,7 @@ Rails.application.routes.draw do
   # Asset Fallbacks #
   
   get 'cover/:id(-:small)' => 'imgs#cover'
-  get 'avatar/:id(-:small)' => 'imgs#avatar', constraints: { id: /[0-9]+/ } #/
+  get 'avatar/:id(-:small)' => 'imgs#avatar', constraints: { id: /[0-9]+/ } # /
   get 'banner/:id' => 'imgs#banner'
   get 'stream/:id' => 'imgs#stream', constraints: { id: /.*/ } # /
   
@@ -47,21 +47,20 @@ Rails.application.routes.draw do
   get 'download/:id' => 'video#download'
   get 'ajax/videos/:id' => 'video#go_next'
   
-  resources :videos, except: [:index, :create, :update, :new, :destroy], controller: :video, id: /([0-9]+).*/ do # /
+  resources :videos, except: [:index, :create, :new, :destroy], controller: :video, id: /([0-9]+).*/ do # /
     put 'like'
     put 'dislike'
     put 'star'
     patch 'cover(/:async)' => 'video#cover'
-    patch 'details'
+    patch 'details(/:async)' => 'video#details'
     
     get 'changes' => 'history#index'
     get 'changes/page' => 'history#page'
     
     put 'add' => 'album_item#toggle'
   end
-  scope 'videos', controller: :video do
+  scope 'videos', controller: :video, id: /([0-9]+).*/ do # /
     get '(/:ajax)', action: :index
-    patch ':id(/:async)', action: :update # TODO: What uses this?
     put '(/:async)', action: :create
     post '(/:async)', action: :create
   end

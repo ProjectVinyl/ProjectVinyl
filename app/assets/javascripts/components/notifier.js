@@ -1,14 +1,12 @@
 import { docTitle } from '../utils/doctitle';
-import { jSlim } from '../utils/jslim';
+import { ready } from '../jslim/events';
 
 function updateCounter(counter, count) {
   counter.dataset.count = count;
   counter.innerText = count > 999 ? '999+' : count;
   // Kickstart the animation again
   counter.style.display = 'none';
-  setTimeout(function() {
-    counter.style.display = '';
-  }, 1);
+  requestAnimationFrame(() => counter.style.display = '');
 }
 
 function getCount(element) {
@@ -16,28 +14,28 @@ function getCount(element) {
 }
 
 function initWorker() {
-  var worker = new SharedWorker(window.notifierUrl);
-  var windowFocused = true;
+  const worker = new SharedWorker(window.notifierUrl);
+  let windowFocused = true;
   
-  var title = docTitle();
+  const title = docTitle();
   var messageHandlers = {
     feeds: document.querySelector('.notices-bell .feed-count'),
     notices: document.querySelector('.notices-bell .notification-count'),
     mail: document.querySelector('.notices-bell  .message-count')
   };
   
-  worker.port.addEventListener('message', function(e) {
+  worker.port.addEventListener('message', e => {
     notifyUser(e.data.command, e.data.count);
   });
   
-  window.addEventListener('focus', function() {
+  window.addEventListener('focus', () => {
     windowFocused = true;
   });
-  window.addEventListener('blur', function() {
+  window.addEventListener('blur', () => {
     windowFocused = false;
     title.removePrefix();
   });
-  window.onbeforeunload = function() {
+  window.onbeforeunload = () => {
     worker.port.postMessage({
       command: 'disconnect'
     });
@@ -62,16 +60,16 @@ function initWorker() {
   }
   // Testing purposes
   // > notifyUser('feeds', 1);
-  window.notifyUser = notifyUser;
+  //window.notifyUser = notifyUser;
 }
 
-jSlim.ready(function() {
-  var giveMeNotifications = document.getElementById('give_me_notifications');
+ready(() => {
+  const giveMeNotifications = document.getElementById('give_me_notifications');
   if (giveMeNotifications) {
     giveMeNotifications.checked = window.SharedWorker && !!localStorage.give_me_notification;
-    giveMeNotifications.addEventListener('change', function() {
-      if (this.checked) {
-        localStorage.give_me_notifications = this.checked;
+    giveMeNotifications.addEventListener('change', e => {
+      if (e.target.checked) {
+        localStorage.give_me_notifications = e.target.checked;
       } else {
         localStorage.removeItem('give_me_notifications');
       }

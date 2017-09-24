@@ -1,14 +1,14 @@
 import { ajax } from '../utils/ajax';
 import { QueryParameters } from '../utils/queryparameters';
-import { jSlim } from '../utils/jslim';
+import { ready } from '../jslim/events';
+import { all } from '../jslim/dom';
 
 function populatePage(context, json) {
   const container = context.querySelector('ul');
-  
   container.innerHTML = json.content;
   container.classList.remove('waiting');
   context.dataset.page = json.page;
-  jSlim.all(context, '.pagination', page => {
+  all(context, '.pagination', page => {
     page.innerHTML = json.paginate.replace(/%7Bpage%7D|{page}/g, context.dataset.id);
   });
 }
@@ -29,19 +29,13 @@ function requestPage(context, page) {
   });
 }
 
-const paginator = {
-  repaint: function(context, json) {
-    context.querySelector('.pagination .pages .button.selected').classList.remove('selected');
-    populatePage(context, json);
-    QueryParameters.current.setItem(context.dataset.id, json.page + 1);
-  },
-  go: function(button) {
-    requestPage(button.closest('.paginator'), button.dataset.pageTo);
-    if (!button.classList.contains('selected')) button.parentNode.classList.remove('hover');
-  }
-};
+export function repaintPagination(context, json) {
+	context.querySelector('.pagination .pages .button.selected').classList.remove('selected');
+	populatePage(context, json);
+	QueryParameters.current.setItem(context.dataset.id, json.page + 1);
+}
 
-jSlim.ready(function() {
+ready(() => {
   document.addEventListener('click', event => {
     // Left-click only, no modifiers
     if (event.button !== 0 || event.ctrlKey || event.shiftKey) return;
@@ -52,10 +46,8 @@ jSlim.ready(function() {
     }
   });
   window.addEventListener('popstate', event => {
-    jSlim.all('.paginator', context => {
+    all('.paginator', context => {
       requestPage(context, QueryParameters.current.getItem(context.dataset.id));
     });
   });
 });
-
-export { paginator };

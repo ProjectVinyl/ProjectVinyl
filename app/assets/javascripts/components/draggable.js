@@ -1,4 +1,5 @@
-import { jSlim } from '../utils/jslim';
+import { addDelegatedEvent, ready } from '../jslim/events';
+import { offset, all } from '../jslim/dom';
 
 export function move(sender, x, y) {
   setPos(sender, x, y);
@@ -20,10 +21,10 @@ function setPos(sender, x, y) {
 }
 
 export function initDraggable(sender, target) {
-  jSlim.on(sender, 'mousedown', target, start => {
+  addDelegatedEvent(sender, 'mousedown', target, start => {
     start.preventDefault(); // prevent text selection
     
-    const off  = jSlim.offset(sender);
+    const off  = offset(sender);
     const offX = off.left - start.pageX;
     const offY = off.top - start.pageY;
     
@@ -39,9 +40,9 @@ export function initDraggable(sender, target) {
   });
 }
 
-jSlim.ready(() => {
+ready(() => {
   window.addEventListener('resize', () => {
-    jSlim.all('.ui-draggable', el => {
+    all('.ui-draggable', el => {
       el.style.top = el.style.left = '0px'; // reposition element for size calculations
       setPos(el, el.prefX, el.prefY); // try to get back to where the user left it (or as close as possible)
     });

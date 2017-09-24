@@ -1,7 +1,4 @@
-function round(num, precision) {
-  precision = Math.pow(10, precision || 0);
-  return Math.round(num * precision) / precision;
-}
+import { round } from './math';
 
 export function Duration(seconds, delimiter) {
   this.delimiter = delimiter || ' ';

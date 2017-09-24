@@ -103,11 +103,12 @@ class AlbumController < ApplicationController
     check_then :id do |album|
       if params[:field] == 'description'
         album.set_description(params[:value])
-        album.save
+				render json: { content: album.html_description }
       elsif params[:field] == 'title'
         album.set_title(params[:value])
+				render json: { content: album.title }
       end
-      head :ok
+			album.save
     end
   end
   

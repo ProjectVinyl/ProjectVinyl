@@ -1,4 +1,5 @@
-import { jSlim } from '../utils/jslim';
+import { all, offset } from '../jslim/dom';
+import { ready } from '../jslim/events';
 
 export function ContextMenu(dom, container) {
   this.dom = dom;
@@ -30,7 +31,7 @@ ContextMenu.prototype = {
       y = document.body.clientHeight - this.dom.offsetHeight;
     }
     
-    const off = jSlim.offset(this.container);
+    const off = offset(this.container);
     x += document.scrollingElement.scrollLeft - off.left;
     y += document.scrollingElement.scrollTop - off.top;
     
@@ -49,9 +50,9 @@ ContextMenu.prototype = {
   }
 };
 
-jSlim.ready(() => {
+ready(() => {
   function hideAll() {
-    jSlim.all('.contextmenu', p => p.classList.add('hidden'));
+    all('.contextmenu', p => p.classList.add('hidden'));
   }
   
   window.addEventListener('resize', hideAll);

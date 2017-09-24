@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 	<meta charset="utf-8">
-	<title id="document_title"><% if content_for?(:title) %><%= content_for(:title) %> - Project Vinyl<% else %>Project Vinyl - Premium Pony Tunes<% end %></title>
+	<title id="document_title"><% if content_for?(:title) %><%= content_for(:title) %> - <% end %>Project Vinyl - My Little Pony: FiM Songs & Animation</title>
 	<% if user_signed_in? %>
 	<meta name="current_user" content="<%= { id: current_user.id }.to_json %>">
 	<% end %>

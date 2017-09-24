@@ -1,26 +1,25 @@
 /**
  * Windows
  */
-import { jSlim } from '../utils/jslim';
+import { addDelegatedEvent } from '../jslim/events';
+import { all, nodeFromHTML } from '../jslim/dom';
 import { Key } from '../utils/misc';
 import { initDraggable, move } from './draggable';
 
 function createPopupContent(params) {
-  var dom = document.createElement('DIV');
-  dom.setAttribute('class', 'popup-container focus transitional hidden ui-draggable');
-  dom.innerHTML = '\
-  <div class="popup">\
-    <h1 class="popup-header">\
-      <i class="fa fa-' + params.icon + '"></i>\
-      ' + params.title + '\
-      <a class="close" data-resolve="false"></a>\
-    </h1>\
-    <div class="content">\
-      <div class="message_content">' + params.content + '</div>\
-      <div class="foot center hidden"></div>\
-    </div>\
-  </div>';
-  return dom;
+	return nodeFromHTML(`<div class="popup-container focus transitional hidden ui-draggable">
+		<div class="popup">
+			<h1 class="popup-header">
+				<i class="fa fa-${params.icon}"></i>
+				${params.title}
+				<a class="close" data-resolve="false"></a>
+			</h1>
+			<div class="content">
+				<div class="message_content">${params.content}</div>
+				<div class="foot center hidden"></div>
+			</div>
+		</div>
+	</div>`);
 }
 
 function PopupWindow(dom) {
@@ -50,9 +49,7 @@ PopupWindow.prototype = {
     }, 500);
   },
   focus: function() {
-    jSlim.all(document, '.popup-container.focus', function(a) {
-      a.classList.remove('focus');
-    });
+    all(document, '.popup-container.focus', a => a.classList.remove('focus'));
     this.dom.classList.remove('hidden');
     this.dom.classList.add('focus');
   },
@@ -74,7 +71,7 @@ function resolveWith(win, result) {
 }
 
 function handleEvents(win) {
-  jSlim.on(win.dom, 'click', '[data-resolve]', function(e) {
+  addDelegatedEvent(win.dom, 'click', '[data-resolve]', e => {
     if (e.target.matches('[data-resolve]')) {
       resolveWith(win, e.target.dataset.resolve === 'true');
     }
@@ -82,25 +79,23 @@ function handleEvents(win) {
   initDraggable(win.dom, 'h1.popup-header');
 }
 
-jSlim.ready(function() {
-  document.addEventListener('keydown', function(e) {
-    var activeWindow = document.querySelector('.popup-container.focus');
-    if (!activeWindow) return;
-    if (e.which === Key.ESC) resolveWith(activeWindow.windowObj, false);
-    if (e.which === Key.ENTER) {
-      var accept = activeWindow.querySelector('.confirm');
-      if (accept) {
-        accept.dispatchEvent(new MouseEvent('click'));
-      } else {
-        resolveWith(activeWindow.windowObj, true);
-      }
-      e.preventDefault(); // hitting enter triggers the link again, let's stop that.
-    }
-  });
+document.addEventListener('keydown', e => {
+	const activeWindow = document.querySelector('.popup-container.focus');
+	if (!activeWindow) return;
+	if (e.which === Key.ESC) resolveWith(activeWindow.windowObj, false);
+	if (e.which === Key.ENTER) {
+		const accept = activeWindow.querySelector('.confirm');
+		if (accept) {
+			accept.dispatchEvent(new MouseEvent('click'));
+		} else {
+			resolveWith(activeWindow.windowObj, true);
+		}
+		e.preventDefault(); // hitting enter triggers the link again, let's stop that.
+	}
 });
 
 export function createWindow(params) {
-  var win = new PopupWindow(createPopupContent(params));
+  const win = new PopupWindow(createPopupContent(params));
   handleEvents(win);
   win.show();
   return win;

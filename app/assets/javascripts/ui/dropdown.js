@@ -1,11 +1,12 @@
-import { jSlim } from '../utils/jslim';
+import { all, offset } from '../jslim/dom';
+import { addDelegatedEvent } from '../jslim/events';
 
 function hide(sender) {
 	sender.classList.remove('pop-out-shown');
 }
 
-document.addEventListener('mousedown', () => jSlim.all('.pop-out-shown:not(:hover)', hide));
-jSlim.on(document, 'click', '.pop-out-toggle', (e, target) => {
+document.addEventListener('mousedown', () => all('.pop-out-shown:not(:hover)', hide));
+addDelegatedEvent(document, 'click', '.pop-out-toggle', (e, target) => {
   if (e.which != 1) return;
 	
   target = target.closest('.popper');
@@ -16,14 +17,14 @@ jSlim.on(document, 'click', '.pop-out-toggle', (e, target) => {
 	}
 	
 	const content = target.querySelector('.pop-out');
-	const left = jSlim.offset(content).left;
+	const left = offset(content).left;
 	
 	target.classList.add('pop-out-shown');
 	target.classList.toggle('pop-left', left + content.clientWidth > document.documentElement.clientWidth);
 	target.classList.toggle('pop-right', left < 0);
 });
 
-jSlim.on(document, 'touchstart', '.drop-down-holder:not(.hover), .mobile-touch-toggle:not(.hover)', (e, target) => {
+addDelegatedEvent(document, 'touchstart', '.drop-down-holder:not(.hover), .mobile-touch-toggle:not(.hover)', (e, target) => {
   e.preventDefault();
   target.classList.add('hover');
 	

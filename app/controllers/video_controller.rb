@@ -108,21 +108,15 @@ class VideoController < ApplicationController
       return error("Read Only", "That feature is currently disabled.")
     end
     
-    if current_user.is_contributor? && params[:video][:user_id]
-      user = User.by_name_or_id(params[:video][:user_id])
-    end
-    
-    if !user
-      user = current_user
-    end
+		user = current_user
     
     file = params[:video][:file]
     if !file || file.size == 0
       return check("Error", "File is empty")
     end
     
-    if !file.content_type.include?('video/') || !file.content_type.include?('audio/')
-      return error("Error", "Mismatched content type" )
+    if !file.content_type.include?('video/') && !file.content_type.include?('audio/')
+      return error("Error", "Mismatched content type: '#{file.content_type}'" )
     end
     
     cover = params[:video][:cover]
@@ -145,7 +139,7 @@ class VideoController < ApplicationController
     end
     
     data = file.read
-    if !(checksum = Video.ensure_uniq(data)[:valid])
+    if !(checksum = Video.ensure_uniq(data))[:valid]
       return error(params[:async], "Duplication Error", "The uploaded video already exists.")
     end
     
@@ -214,38 +208,55 @@ class VideoController < ApplicationController
     end
     redirect_to action: :view, id: @video.id
   end
-  
-  def details
+	
+  def update
     if !user_signed_in?
       return head 401
     end
     
-    if !(video = Video.where(id: params[:video_id]).first)
+    if !(video = Video.where(id: params[:id]).first)
       return head :not_found
     end
     
-    head :ok
-    
-    if params[:field] == 'tags'
-      if changes = Tag.load_tags(params[:value], video)
-        TagHistory.record_tag_changes(changes[0], changes[1], video.id, current_user.id)
-      end
-    elsif params[:field] == 'source'
-      if video.source != params[:value]
-        video.set_source(params[:value])
-        TagHistory.record_source_changes(video, current_user.id)
-      end
-    elsif video.owned_by(current_user)
-      if params[:field] == 'description'
-        video.set_description(params[:value])
-      elsif params[:field] == 'title'
-        video.set_title(params[:value])
-      end
-    end
+    if !video.owned_by(current_user)
+			return head 401
+		end
+		
+		if params[:field] == 'description'
+			video.set_description(params[:value])
+			render json: { content: video.html_description }
+		elsif params[:field] == 'title'
+			video.set_title(params[:value])
+			render json: { content: video.title }
+		end
     
     video.save
+		
   end
   
+	def details
+		if !user_signed_in?
+      return head 401
+    end
+		
+		if !(video = Video.where(id: params[:video_id]).first)
+      return head :not_found
+    end
+		
+		if changes = Tag.load_tags(params[:tags], video)
+			TagHistory.record_tag_changes(changes[0], changes[1], video.id, current_user.id)
+		end
+		
+		if video.source != params[:source]
+			video.set_source(params[:source])
+			TagHistory.record_source_changes(video, current_user.id)
+		end
+		
+		video.save
+		
+		head :ok
+	end
+	
   def edit
     if !user_signed_in?
       return render_access_denied

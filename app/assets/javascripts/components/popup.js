@@ -1,7 +1,6 @@
 /**
  * Fancy pop-ups.
  */
-
 import { createWindow } from './window';
 
 function createPopup(ref) {

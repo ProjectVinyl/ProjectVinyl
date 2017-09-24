@@ -1,5 +1,5 @@
 import { ajax } from '../utils/ajax';
-import { jSlim } from '../utils/jslim';
+import { addDelegatedEvent, bindEvent } from '../jslim/events';
 import { pushUrl } from '../utils/history';
 
 export function focusTab(me) {
@@ -19,9 +19,8 @@ export function focusTab(me) {
   thisTab.dispatchEvent(new CustomEvent('tabfocus', { bubbles: true }));
 }
 
-jSlim.on(document, 'click', '.tab-set > li.button:not([data-disabled])', (e, target) => focusTab(target));
-
-jSlim.on(document, 'click', '.tab-set > li.button i.fa-close',  (e, target) => {
+addDelegatedEvent(document, 'click', '.tab-set > li.button:not([data-disabled])', (e, target) => focusTab(target));
+addDelegatedEvent(document, 'click', '.tab-set > li.button i.fa-close',  (e, target) => {
   if (e.button !== 0) return;
   const tabset = target.parentNode;
   const toRemove = document.querySelector(`div[data-tab="${tabset.dataset.target}"]`);
@@ -36,8 +35,7 @@ jSlim.on(document, 'click', '.tab-set > li.button i.fa-close',  (e, target) => {
   e.preventDefault();
   e.stopPropagation();
 });
-
-jSlim.on(document, 'click', '.tab-set.async a.button:not([data-disabled])', function(e) {
+addDelegatedEvent(document, 'click', '.tab-set.async a.button:not([data-disabled])', function(e) {
   if (e.button !== 0) return;
   if (this.classList.contains('selected')) return;
   e.preventDefault();
@@ -58,7 +56,7 @@ jSlim.on(document, 'click', '.tab-set.async a.button:not([data-disabled])', func
   });
 });
 
-jSlim.bind(document, 'ajax:complete', ev => {
+bindEvent(document, 'ajax:complete', ev => {
   const tabs = ev.detail.data.tabs;
   if (tabs) Object.keys(tabs).forEach(key => {
 		const tab = document.querySelector(`.tab-set a.button[data-live-tab="${key}"] .count`);

@@ -1,100 +1,67 @@
 import { ajax } from '../utils/ajax';
-import { paginator } from '../components/paginator';
-import { jSlim } from '../utils/jslim';
+import { once, addDelegatedEvent } from '../jslim/events';
+import { offset, each } from '../jslim/dom';
 
-let floater = null;
-
-// For utils
-function once(node, type, listener) {
-  function wrapper() {
-    node.removeEventListener(type, wrapper);
-    return listener.apply(this, arguments);
-  }
-  node.addEventListener(type, wrapper);
+function reorder(container, item) {
+	each(container.children, (a, i) => a.dataset.index = (i - 1));
+  ajax.patch(`${container.dataset.target}/${item.dataset.id}`, { index: item.dataset.index }).text(e => e);
 }
 
-function moveFloater(e) {
-  floater.style.top = e.pageY - jSlim.offset(floater.parentNode).top + 'px';
-}
-
-function reorder(target, id, index) {
-  ajax.patch(target + '/' + id, {
-    index: index
-  }).text(function() { });
-}
-
-function grab(target, container, item) {
-  const originalIndex = parseInt(item.dataset.index, 10);
+function grab(container, item) {
+  const originalIndex = parseInt(item.dataset.index);
   
   container.classList.add('ordering');
-  let grabbed = container.querySelector('.grabbed');
-  if (grabbed) item.classList.remove('grabbed');
-  
-  floater = item.cloneNode(true);
-  item.classList.add('grabbed');
-  container.appendChild(floater);
-  
-  const srcChilds = item.children;
-  const dstChilds = floater.children;
-  
-  for (let i = 0; i < srcChilds.length; ++i) {
-    dstChilds[i].style.width = srcChilds[i].clientWidth + 'px';
-  }
-  
+	
+  const floater = item.cloneNode(true);
   floater.classList.add('floater');
-  floater.style.top = jSlim.offset(item).top + 'px';
+  floater.style.top = `${offset(item).top}px`;
+	each(item.children, (a, i) => {
+		floater.children[i].style.width = `${a.clientWidth}px`;
+	});
+	item.classList.add('grabbed');
+	container.appendChild(floater);
+	
+  const notFloating = Array.prototype.filter.call(container.children, c => !c.classList.contains('.floater'));
   
-  const notFloating = [].filter.call(container.children, c => c.matches(':not(.floater)'));
-  
-  function childMouseover(event) {
-    const child = event.currentTarget;
-    let index = parseInt(child.dataset.index, 10);
-
-    child.insertAdjacentElement('afterend', item);
-    if (index <= originalIndex) ++index;
-    item.dataset.index = index;
+  function childMouseover() {
+    this.insertAdjacentElement('afterend', item);
   }
   
-  once(document, 'mouseup', e => {
-    floater.parentNode.removeChild(floater);
-    floater = null;
-    reorder(target, item.dataset.id, item.dataset.index);
-    container.classList.remove('ordering');
-    grabbed = container.querySelector('.grabbed');
-    if (grabbed) item.classList.remove('grabbed');
-    
-    notFloating.forEach(el => el.removeEventListener('mouseover', childMouseover));
-    
-    document.removeEventListener('mousemove', moveFloater);
-    for (let i = 0; i < container.children.length; ++i) {
-      container.children[i].dataset.index = i;
-    }
-    
-    e.preventDefault();
-    e.stopPropagation();
-  });
-
-  document.addEventListener('mousemove', moveFloater);
+	function moveFloater(e) {
+		floater.style.top = `${e.pageY - offset(container).top}px`;
+	}
+	
+	document.addEventListener('mousemove', moveFloater);
   notFloating.forEach(el => el.addEventListener('mouseover', childMouseover));
+  once(document, 'mouseup', e => {
+		e.preventDefault();
+		
+		container.classList.remove('ordering');
+    item.classList.remove('grabbed');
+		
+		notFloating.forEach(el => el.removeEventListener('mouseover', childMouseover));
+    document.removeEventListener('mousemove', moveFloater);
+    floater.parentNode.removeChild(floater);
+		
+    reorder(container, item);
+  });
 }
 
-jSlim.ready(function() {
-  jSlim.all('.reorderable', el => {
-    const target = el.dataset.target;
-    const handles = [].slice.call(el.querySelectorAll('.handle'));
-    
-    handles.forEach(handle => {
-      const grabber = () => grab(target, el, handle.parentNode);
-      
-      handle.addEventListener('mousedown', e => {
-        once(document, 'mousemove', grabber);
-        e.preventDefault();
-        e.stopPropagation();
-      });
-      
-      handle.addEventListener('mouseup', () => {
-        document.removeEventListener('mousemove', grabber);
-      });
-    });
-  });
+addDelegatedEvent(document, 'mousedown', '.reorderable .handle', (e, handle) => {
+	e.preventDefault();
+	
+	document.addEventListener('mousemove', grabber);
+	document.addEventListener('mouseup', cancelAll);
+	document.addEventListener('blur', cancelAll);
+	
+	function grabber() {
+		cancelAll();
+		grab(handle.closest('.reorderable'), handle.parentNode);
+	}
+	
+	function cancelAll() {
+		document.removeEventListener('mousemove', grabber);
+		document.removeEventListener('mouseup', cancelAll);
+		document.removeEventListener('blur', cancelAll);
+	}
 });

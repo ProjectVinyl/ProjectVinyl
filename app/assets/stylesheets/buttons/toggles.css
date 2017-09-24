@@ -1,0 +1,9 @@
+
+.state-toggle.toggled .on,
+.state-toggle .off {
+	display: none;
+}
+
+.state-toggle.toggled .off {
+	display: initial;
+}

@@ -1,4 +1,4 @@
-import { bindAll } from './jslim';
+import { bindAll } from '../jslim/events';
 
 /* Standardise fullscreen API */
 (p => {

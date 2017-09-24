@@ -1,4 +1,5 @@
-import { jSlim } from '../utils/jslim';
+import { ready } from '../jslim/events';
+import { all } from '../jslim/dom';
 import { linearInterpolate } from '../utils/math';
 
 function sizeFont(el, targetWidth) {
@@ -22,7 +23,7 @@ function sizeFont(el, targetWidth) {
   computed = getComputedStyle(div);
   const x1 = div.clientWidth, y1 = parseFloat(computed.fontSize);
   
-  div.style.fontSize = (parseFloat(computed.fontSize) + 1) + 'px';
+  div.style.fontSize = `${parseFloat(computed.fontSize) + 1}px`;
   computed = getComputedStyle(div);
   const x2 = div.clientWidth, y2 = parseFloat(computed.fontSize);
 
@@ -36,7 +37,7 @@ function sizeFont(el, targetWidth) {
   document.body.removeChild(div);
 }
 
-function resizeFont(el) {
+export function resizeFont(el) {
   const holder = el.closest('.resize-holder');
   const computed = getComputedStyle(holder);
   const targetWidth = parseFloat(computed.width) - (parseFloat(computed.paddingLeft) + parseFloat(computed.paddingRight));
@@ -45,10 +46,8 @@ function resizeFont(el) {
 }
 
 function fixFonts() {
-  jSlim.all('h1.resize-target', resizeFont);
+  all('h1.resize-target', resizeFont);
 }
 
 window.addEventListener('resize', fixFonts);
-jSlim.ready(fixFonts);
-
-export { resizeFont };
+ready(fixFonts);

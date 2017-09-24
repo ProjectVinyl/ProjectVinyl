@@ -9,12 +9,13 @@ export function decodeParameters(data) {
 		const item = pair.split('=');
 		if (item.length < 2) item.push('');
 		values[decodeURIComponent(item[0])] = decodeURIComponent(item[1]);
+		return values;
 	}, {});
 }
 
 export function QueryParameters(raw, historyObj) {
 	this.historyObj = historyObj;
-  this.values = decodeParameters(raw);
+  this.values = typeof raw === 'string' ? decodeParameters(raw) : raw;
 }
 
 QueryParameters.prototype = {

@@ -1,5 +1,5 @@
-import { slideOut } from '../ui/slide';
-import { jSlim } from '../utils/jslim';
+import { recomputeHeight } from '../ui/slide';
+import { ready, addDelegatedEvent } from '../jslim/events';
 
 const shares = {
   facebook: 'http://www.facebook.com/sharer/sharer.php?href={url}',
@@ -10,15 +10,15 @@ const shares = {
 
 // https://medium.com/@jitbit/target-blank-the-most-underestimated-vulnerability-ever-96e328301f4c
 function popOpen(url, title, props) {
-  var other = window.open('_blank', title, props);
+  const other = window.open('_blank', title, props);
   other.opener = null;
   other.location = url;
 }
 
-jSlim.on(document, 'click', '.share-buttons button', function(e) {
+addDelegatedEvent(document, 'click', '.share-buttons button', function(e) {
   // Left-click only
   if (e.which != 1 && e.button !== 0) return;
-  var ref = shares[this.dataset.type];
+  let ref = shares[this.dataset.type];
   if (ref) {
     ref = ref.replace(/{url}/g, encodeURIComponent(document.location.href));
     ref = ref.replace(/{title}/g, encodeURIComponent(this.parentNode.dataset.caption));
@@ -26,21 +26,19 @@ jSlim.on(document, 'click', '.share-buttons button', function(e) {
   }
 });
 
-jSlim.ready(() => {
+ready(() => {
   const embedPreview = document.querySelector('#embed_preview');
-  let frame;
-  
   if (!embedPreview) return;
   
-  document.querySelector('.action.test').addEventListener('click', function() {
+	let frame;
+	
+  document.querySelector('.action.test').addEventListener('click', e => {
     embedPreview.style.display = '';
-    this.parentNode.removeChild(this);
+    e.target.parentNode.removeChild(e.target);
     embedPreview.innerHTML = '<iframe style="max-width:100%;" width="560px" height="100%" frameborder="0"></iframe>';
     frame = embedPreview.firstChild;
     updateShareIframe();
-    // Refresh container height - Kind of hacky, imo
-    // TODO: replace this
-    slideOut(slideOut(embedPreview.closest('.slideout')));
+    recomputeHeight(embedPreview.closest('.slideout'));
   });
   
   const shareField = document.getElementById('share_field');
@@ -57,34 +55,23 @@ jSlim.ready(() => {
   
   function updateShareIframe() {
     const id = getVideoId();
-    
-    let src = '/embed/' + id;
-    let htm = shareField.dataset.value;
-    
-    htm = htm.replace('{id}', id);
-    
-    if (shouldIncludeAlbum()) {
-      let extra = getAlbumParams();
-      htm = htm.replace('{extra}', extra);
-      src += extra;
-    } else {
-      htm = htm.replace('{extra}', '');
-    }
-    shareField.value = htm;
-    
-    if (frame) frame.src = src;
-  }
-  
-  function getVideoId() {
-    return shareField.dataset[shouldIncludeAlbum() ? 'first' : 'id'];
+		const extra = getAlbumParams();
+		
+    shareField.value = shareField.dataset.value.replace('{id}', id).replace('{extra}', extra);
+    if (frame) frame.src = `/embed/${id}${extra}`;
   }
   
   function shouldIncludeAlbum() {
     return shareToggle && shareToggle.checked;
   }
-
+	
+  function getVideoId() {
+    return shareField.dataset[shouldIncludeAlbum() ? 'first' : 'id'];
+  }
+  
   function getAlbumParams() {
-    var index = shareType.value == 'beginning' ? 0 : shareField.dataset.albumIndex;
-    return '?list=' + shareField.dataset.albumId + '&index=' + index;
+		if (!shouldIncludeAlbum()) return '';
+    const index = shareType.value == 'beginning' ? 0 : shareField.dataset.albumIndex;
+    return `?list=${shareField.dataset.albumId}&index=${index}`;
   }
 });

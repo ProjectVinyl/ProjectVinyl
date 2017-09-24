@@ -1,13 +1,13 @@
 /*
  * Initialises basic video playback funtionality.
- *
-*/
+ */
 import { ajax } from '../utils/ajax';
 import { scrollTo } from '../ui/scroll';
 import { ContextMenu } from '../ui/contextmenu';
 import { halt, Key } from '../utils/misc';
 import { errorMessage, errorPresent } from '../utils/videos';
-import { jSlim, bindAll } from '../utils/jslim';
+import { all } from '../jslim/dom';
+import { ready, bindAll } from '../jslim/events';
 import { isFullscreen, onFullscreenChange } from '../utils/fullscreen';
 import { cookies } from '../utils/cookies';
 import { TapToggler } from './taptoggle';
@@ -81,7 +81,7 @@ function readyVideo(sender) {
   
   let suspendTimer = null;
   function suspended() {
-    if (!suspendTimer) suspendTimer = setTimeout(() => sender.suspend.style.display = 'block', 3000);
+    if (!suspendTimer) suspendTimer = setTimeout(() => sender.suspend.classList.remove('hidden'), 300);
   }
   
   bindAll(video, {
@@ -107,6 +107,7 @@ function readyVideo(sender) {
     },
     suspend: suspended,
     waiting: suspended,
+		stalled: suspended,
     volumechange: () => {
       sender.volume(video.volume, video.muted || video.volume === 0);
     },
@@ -125,7 +126,15 @@ function readyVideo(sender) {
   return video;
 }
 
-function Player() { }
+// Have to do this the long way to avoid caching errors in firefox
+function addSource(video, src, type) {
+	const source = document.createElement('source');
+	source.type = type;
+	source.src = src;
+	video.appendChild(source);
+}
+
+export function Player() { }
 Player.prototype = {
   // FIXME: way too much happening here
   constructor: function(el, standalone) {
@@ -152,7 +161,7 @@ Player.prototype = {
     if (this.heading) {
       this.heading.addEventListener('mouseover', () => {
         if (this.video && this.video.currentTime) {
-          this.heading.href = '/videos/' + this.source + '-' + this.title + '?resume=' + this.video.currentTime;
+          this.heading.href = `/videos/${this.source}-${this.title}?resume=${this.video.currentTime}`;
         }
       });
     }
@@ -350,21 +359,21 @@ Player.prototype = {
   },
   createMediaElement: function() {
     if (this.audioOnly && this.source) {
-      let video = document.createElement('audio');
-      video.src = '/stream/' + this.source + this.mime[0];
-      video.type = this.mime[1];
-      return video;
+      let audio = document.createElement('audio');
+			addSource(audio, `/stream/${this.source}${this.mime[0]}`, this.mime[1]);
+      return audio;
     }
     
     let video = document.createElement('video');
     
+		video.preload = 'auto';
+		
     if (!this.source || this.source === '0') return video;
     if (typeof this.source === 'string' && this.source.indexOf('blob') === 0) {
       video.src = this.source;
     } else {
-      video.innerHTML = '\
-      <source src="/stream/' + this.source + '.webm" type="video/webm"></source>\
-      <source src="/stream/' + this.source + this.mime[0] + '" type="' + this.mime[1] + '"></source>';
+			addSource(video, `/stream/${this.source}.webm`, 'video/webm');
+			addSource(video, `/stream/${this.source}${this.mime[0]}`, this.mime[1]);
     }
     
     return video;
@@ -385,7 +394,7 @@ Player.prototype = {
   pause: function() {
     if (this.video) this.video.pause();
     this.player.dataset.state = 'paused';
-    this.suspend.style.display = 'none';
+		this.suspend.classList.add('hidden');
     return true;
   },
   error: function(e) {
@@ -413,7 +422,7 @@ Player.prototype = {
     this.track(time, duration);
   },
   track: function(time, duration) {
-    this.suspend.style.display = 'none';
+    this.suspend.classList.add('hidden');
     this.controls.repaintTrackBar((time / duration) * 100);
     if (this.noise) {
       this.noise.destroy();
@@ -431,18 +440,16 @@ function resize(obj) {
   obj.style.height = (obj.clientWidth * 9 / 16) + 'px';
 }
 
-jSlim.ready(() => {
-  jSlim.all('.video', v => {
+ready(() => {
+  all('.video', v => {
     if (!v.dataset.pending && !v.classList.contains('unplayable')) (new Player()).constructor(v);
   });
   
   window.addEventListener('resize', () => {
-    jSlim.all('.video', resize);
+    all('.video', resize);
   });
   
   onFullscreenChange(() => {
     if (fullscreenPlayer) fullscreenPlayer.fullscreen(isFullscreen());
   });
 });
-
-export { Player };

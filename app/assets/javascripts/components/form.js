@@ -4,7 +4,7 @@
 import { ajax} from '../utils/ajax';
 import { createWindow, centerWindow } from './window';
 import { popupError } from '../components/popup';
-import { jSlim } from '../utils/jslim';
+import { addDelegatedEvent } from '../jslim/events';
 
 export function checkFormPrerequisits(group) {
 	const required = group.querySelectorAll('[required], [data-required]');
@@ -53,7 +53,7 @@ function createExternalForm(url, title, icon, maxWidth, thin) {
   return win;
 }
 
-jSlim.on(document, 'click', '[data-external-form]', function(e) {
+addDelegatedEvent(document, 'click', '[data-external-form]', function(e) {
   if (e.button !== 0) return;
   
   if (this.popup) {

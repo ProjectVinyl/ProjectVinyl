@@ -9,7 +9,7 @@ Thread locked
 			</span>
 		</a>
 	</div>
-	<div class="content editing">
+	<div class="content editing previewable">
 		<div class="name">
 			<a<% if !visitor.is_dummy %> class="user-link" data-id="<%= visitor.id %>" href="<%= visitor.link %>"<% end %>><%= visitor.username %></a>
 			<% if user_signed_in? %>
@@ -26,7 +26,10 @@ Thread locked
 		<% if @thread.owner_type == "Report" %>
 			<%= render partial: 'thread/report_options' %>
 		<% end %>
-		<button class="blue state-toggle button-fw" data-state="editing" data-true="Preview" data-false="Edit">Preview</button>
+		<button class="blue state-toggle button-fw" data-state="editing">
+			<span class="on">Preview</span>
+			<span class="off">Edit</span>
+		</button>
 		<a class="popper button button-bub right pop-out-toggle edit-action<% if invert %> invert<% end %>" data-action="emoticons" title="Emoticons">
 			<i class="fa fa-smile-o"></i>
 			<ul class="pop-out" id="emoticons"></ul>

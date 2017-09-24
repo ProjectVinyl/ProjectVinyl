@@ -1,13 +1,15 @@
 import { ajax } from '../utils/ajax';
-import { jSlim } from '../utils/jslim';
+import { addDelegatedEvent } from '../jslim/events';
 
-function lazyLoad(button) {
-  var target = document.getElementById(button.dataset.target);
-  var page = parseInt(button.dataset.page) + 1;
+addDelegatedEvent(document, 'click', '.load-more button', (e, button) => {
+  const page = parseInt(button.dataset.page) + 1;
+	
   button.classList.add('working');
   ajax.get(button.dataset.url, {
     page: page
-  }).json(function(json) {
+  }).json(json => {
+		const target = document.getElementById(button.dataset.target);
+		
     button.classList.remove('working');
     if (json.page == page) {
       target.innerHTML += json.content;
@@ -16,13 +18,9 @@ function lazyLoad(button) {
       button.parentNode.removeChild(button);
     }
   });
-}
-
-jSlim.on(document, 'click', '.load-more button', function() {
-  lazyLoad(this);
 });
 
-jSlim.on(document, 'click', '.mix a', function(e) {
-  document.location.replace(this.href + '&t=' + document.querySelector('#video .player').getPlayerObj().video.currentTime);
+addDelegatedEvent(document, 'click', '.mix a', (e, target) => {
+  document.location.replace(`${target.href}&t=${document.querySelector('#video .player').getPlayerObj().video.currentTime}`);
   e.preventDefault();
 });

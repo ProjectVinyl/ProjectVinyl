@@ -46,8 +46,9 @@ class CommentController < ApplicationController
   
   def update
     check_then do |comment|
-      comment.update_comment(params[:comment])
-      head :ok
+      render json: {
+				content: comment.update_comment(params[:comment])
+      }
     end
   end
   

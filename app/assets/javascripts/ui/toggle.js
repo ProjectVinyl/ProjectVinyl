@@ -1,5 +1,6 @@
 import { ajax } from '../utils/ajax';
-import { jSlim } from '../utils/jslim';
+import { all } from '../jslim/dom';
+import { addDelegatedEvent } from '../jslim/events';
 
 function toggle(e, sender, options, callback) {
 	e.preventDefault();
@@ -12,14 +13,14 @@ function toggle(e, sender, options, callback) {
 
 function updateCheck(element, state) {
   const check = element.dataset.checkedIcon || 'check';
-  const uncheck = element.dataset.uncheckedIcon;
-  element.querySelector('.icon').innerHTML = state ? `<i class="fa fa-${state}"></i>` : uncheck ? `<i class="fa fa-${uncheck}></i>` : '';
+  const uncheck = element.dataset.uncheckedIcon || '';
+  element.querySelector('.icon').innerHTML = `<i class="fa fa-${state ? state : uncheck}></i>`;
 }
 
-jSlim.on(document, 'click', '.action.toggle', (e, target) => {
+addDelegatedEvent(document, 'click', '.action.toggle', (e, target) => {
   if (e.which === 1 || e.button === 0) toggle(e, target, target, json => {
     if (target.dataset.family) {
-      return jSlim.all(`.action.toggle[data-family="${target.dataset.family}"][data-id="${target.dataset.id}"]`, a => {
+      return all(`.action.toggle[data-family="${target.dataset.family}"][data-id="${target.dataset.id}"]`, a => {
         updateCheck(a, json[a.dataset.descriminator]);
       });
     }
@@ -31,24 +32,8 @@ jSlim.on(document, 'click', '.action.toggle', (e, target) => {
   });
 });
 
-jSlim.on(document, 'click', '.action.multi-toggle [data-item]', (e, target) => {
+addDelegatedEvent(document, 'click', '.action.multi-toggle [data-item]', (e, target) => {
   if (e.which === 1 || e.button === 0) toggle(e, target, target.closest('.action.multi-toggle'), (json, options) => {
-    jSlim.all(options, '[data-item]', a => updateCheck(a, json[a.dataset.descriminator]));
+    all(options, '[data-item]', a => updateCheck(a, json[a.dataset.descriminator]));
   });
-});
-
-jSlim.on(document, 'click', '.state-toggle', (e, target) => {
-  if (e.which != 1 && e.button != 0) return;
-  e.preventDefault();
-	
-	let parent = target.dataset.parent;
-	parent = parent ? target.closest(parent) : target.parentNode;
-	
-	const state = target.dataset.state;
-	parent.classList.toggle(state);
-	
-	const label = target.dataset[parent.classList.contains(state)];
-	if (label) target.innerText = label;
-	
-	target.dispatchEvent(new CustomEvent('toggle', {bubbles: true}));
 });

@@ -1,8 +1,7 @@
 /**
  * Drag targets.
  */
-
-import { jSlim } from '../utils/jslim';
+import { delegateAll } from '../jslim/events';
 
 function enterDrag() {
   this.classList.add('drag');
@@ -12,7 +11,7 @@ function leaveDrag() {
   this.classList.remove('drag');
 }
 
-jSlim.on(document, 'dragover', '.drag-target', enterDrag);
-jSlim.on(document, 'dragenter', '.drag-target', enterDrag);
-jSlim.on(document, 'dragleave', '.drag-target', leaveDrag);
-jSlim.on(document, 'drop', '.drag-target', leaveDrag);
+delegateAll(document, '.drag-target', {
+	dragover: enterDrag, dragenter: enterDrag,
+	dragleave: leaveDrag, drop: leaveDrag
+});

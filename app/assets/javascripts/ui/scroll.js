@@ -1,4 +1,5 @@
-import { jSlim } from '../utils/jslim';
+import { all, offset } from '../jslim/dom';
+import { ready } from '../jslim/events';
 import { ease } from '../utils/math';
 
 function animateScroll(elementX, elementY, viewport, duration) {
@@ -22,13 +23,13 @@ function animateScroll(elementX, elementY, viewport, duration) {
 
 // me: The element you want to find
 // container: The container whose scroll position changes
-function scrollTo(me, container) {
+export function scrollTo(me, container) {
   if (!container) {
     container = me.closest('.context-3d') || document.documentElement;
   }
   
-  const childOff = jSlim.offset(me);
-  const containerOff = jSlim.offset(container);
+  const childOff = offset(me);
+  const containerOff = offset(container);
   
   var viewX = container.clientWidth / 2;
   var viewY = container.clientHeight / 2;
@@ -39,17 +40,13 @@ function scrollTo(me, container) {
   animateScroll(container.scrollLeft + elementX, container.scrollTop + elementY, container, 250);
 }
 
-jSlim.ready(() => {
-  jSlim.all('.scroll-container', el => {
-    const target = el.querySelector('.scroll-focus');
-    if (target) scrollTo(target, el);
-    if (el.dataset.documentScrollY) {
-      document.documentElement.scrollTop = parseInt(el.dataset.documentScrollY, 10);
-    }
-    if (el.dataset.documentScrollX) {
-      document.documentElement.scrollLeft = parseInt(el.dataset.documentScrollX, 10);
-    }
-  });
-});
-
-export { scrollTo };
+ready(() => all('.scroll-container', el => {
+	const target = el.querySelector('.scroll-focus');
+	if (target) scrollTo(target, el);
+	if (el.dataset.documentScrollY) {
+		document.documentElement.scrollTop = parseInt(el.dataset.documentScrollY, 10);
+	}
+	if (el.dataset.documentScrollX) {
+		document.documentElement.scrollLeft = parseInt(el.dataset.documentScrollX, 10);
+	}
+}));

@@ -1,4 +1,4 @@
-import { jSlim } from '../utils/jslim';
+import { addDelegatedEvent } from '../jslim/events';
 import { ajax } from '../utils/ajax';
 
 function count(me, offset, save) {
@@ -26,7 +26,7 @@ function save(sender, data) {
   return ajax.put((sender.dataset.target || 'videos') + '/' + sender.dataset.id + '/' + sender.dataset.action, data);
 }
 
-jSlim.on(document, 'click', 'button.action.like, button.action.dislike', function(e) {
+addDelegatedEvent(document, 'click', 'button.action.like, button.action.dislike', function(e) {
   if (e.button) return;
   if (!this.classList.contains('liked')) {
     let other = this.parentNode.querySelector('.liked');
@@ -40,7 +40,7 @@ jSlim.on(document, 'click', 'button.action.like, button.action.dislike', functio
   }).json(count(this, offset));
 });
 
-jSlim.on(document, 'click', 'button.action.star', function(e) {
+addDelegatedEvent(document, 'click', 'button.action.star', function(e) {
   if (e.button) return;
   this.classList.toggle('starred');
   save(this).json(json => {

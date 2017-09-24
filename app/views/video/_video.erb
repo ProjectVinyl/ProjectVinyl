@@ -15,13 +15,13 @@
 	</span>
 	<div class="post description resize-holder">
 	<% if @modifications_allowed %>
-		<h2 class="title editable post-title resize-target short" data-target="video" data-member="title" data-id="<%= @video.id %>">
+		<h2 class="title editable short post-title resize-target" data-target="videos" data-member="title" data-id="<%= @video.id %>">
 			<span class="content "><%= @video.title %></span>
 			<span class="edit"><i class="fa fa-pencil"></i></span>
 			<span style="display:none">11</span>
 		</h2>
 	<% else %>
-		<h2 class="title post-title resize-target short">
+		<h2 class="title post-title resize-target">
 			<span class="content "><%= @video.title %></span>
 		</h2>
 	<% end %>
@@ -35,8 +35,9 @@
 			<span class="views right"><%= number_with_delimiter @video.views %> views</span>
 		</div>
 	<% if @modifications_allowed %>
-		<span class="editable post-content" data-target="video" data-member="description" data-id="<%= @video.id %>">
+		<span class="editable post-content" data-target="videos" data-member="description" data-id="<%= @video.id %>">
 			<span class="content"><%= raw @video.html_description %></span>
+			<textarea class="input js-auto-resize" name="description_video_<%= @video.id %>"><%= @video.description %></textarea>
 			<span class="edit"><i class="fa fa-pencil" ></i></span>
 		</span>
 	<% else %>
@@ -52,8 +53,7 @@
 				<%= render partial: 'tag/thumb_h', collection: @tags %>
 			</div>
 		<% if user_signed_in? %>
-			<%= form_for(@video, as: "video", url: "/ajax/video/edit", html: {class: "editing async form-state-toggle js-edit-video", "data-state": "editing"}) do |f| %>
-				<%= f.text_field :id, hidden: true %>
+			<%= form_for(@video, as: "video", url: "/videos/#{@video.id}/details", html: {class: "editing async form-state-toggle js-edit-video", method: :patch}, data: {state: "editing"}) do |f| %>
 				<%= render layout: 'tag/editor', locals: {tags: @video.tags} do %>
 					<textarea autocomplete="off" name="tags"><%= raw @video.tag_string %></textarea>
 				<% end %>

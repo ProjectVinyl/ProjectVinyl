@@ -1,12 +1,12 @@
 import { halt } from '../utils/misc';
 import { isFullscreen } from '../utils/fullscreen';
-import { jSlim } from '../utils/jslim';
+import { addDelegatedEvent } from '../jslim/events';
 import { TapToggler } from './taptoggle';
 import { toHMS } from '../utils/duration';
 import { Slider } from './slider';
 import { createMiniTile } from './minitile';
 
-function PlayerControls(player, dom) {
+export function PlayerControls(player, dom) {
   this.dom = dom;
   this.player = player;
   this.rangeEnd = 0;
@@ -19,7 +19,7 @@ function PlayerControls(player, dom) {
   
   if (player.audioOnly) {
     this.preview = document.createElement('img');
-    this.preview.src = '/cover/' + player.source + '-small.png';
+    this.preview.src = `/cover/${player.source}-small.png`;
     this.track.preview.appendChild(this.preview);
   } else {
     this.preview = createMiniTile(player);
@@ -95,7 +95,7 @@ function PlayerControls(player, dom) {
     }
   });
   
-  jSlim.on(dom, 'click', 'li', halt);
+  addDelegatedEvent(dom, 'click', 'li', halt);
 }
 PlayerControls.prototype = {
   hide: function() {
@@ -158,14 +158,14 @@ PlayerControls.prototype = {
     for (let range = 0; range < videoBuffer.length; range++) {
       let start = videoBuffer.start(range) * 100 / duration;
       let end = videoBuffer.end(range) * 100 / duration;
-      result.push('<span style="left:' + start + '%;width:' + end + '%"></span>');
+      result.push(`<span style="left:${start}%;width:${end}%"></span>`);
     }
     
     this.track.load.innerHTML = result.join('');
     this.buffer = {
       length: videoBuffer.length,
-      start: videoBuffer.length ? 0 : videoBuffer.start(0),
-      end: videoBuffer.length ? 0 : videoBuffer.end(videoBuffer.length - 1)
+      start: videoBuffer.length ? videoBuffer.start(0) : 0,
+      end: videoBuffer.length ? videoBuffer.end(videoBuffer.length - 1) : 0
     };
   }
 };
@@ -186,5 +186,3 @@ function clampPercentage(p, max) {
   if (p > max) return 1;
   return p / max;
 }
-
-export { PlayerControls };

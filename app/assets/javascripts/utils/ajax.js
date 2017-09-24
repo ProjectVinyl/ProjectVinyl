@@ -25,7 +25,7 @@ export function AjaxRequest(method, resource, data) {
   if (data) {
 		data = new QueryParameters(data);
     if (method == 'GET') {
-      resource += `?${data}`;
+      resource += '?' + data.toString();
     } else {
       params.body = data.toString();
     }

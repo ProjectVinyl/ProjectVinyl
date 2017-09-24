@@ -82,7 +82,7 @@ class Video < ApplicationRecord
     return 'https:' + s if s.index('http:') != 0 && s.index('https:') != 0
     s
   end
-
+	
   def self.ensure_uniq(data)
     if data
       hash = Ffmpeg.compute_checksum(data)
@@ -92,7 +92,7 @@ class Video < ApplicationRecord
     end
     { valid: false }
   end
-
+	
   def self.rebuild_queue
     webms = []
     location = Rails.root.join('public', 'stream')

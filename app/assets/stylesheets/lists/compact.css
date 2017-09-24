@@ -29,15 +29,16 @@
   text-rendering: geometricPrecision;
 }
 .listing.compact .items span.bump {
-  display: table-row;
-  height: 2px;
+  display: table-caption;
+  height: 10px;
+	margin-top: -10px;
 }
 
 .listing.compact .row.floater {
   position: absolute;
   padding: 0;
   pointer-events: none;
-  left: 0px;
+  left: 0;
   right: 0;
   background: #fff;
 }

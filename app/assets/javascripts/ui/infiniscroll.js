@@ -1,4 +1,4 @@
-import { jSlim } from '../utils/jslim';
+import { ready } from '../jslim/events';
 import { ajax } from '../utils/ajax';
 
 function throttleFunc(func, ms) {
@@ -33,7 +33,7 @@ function scrollListener(target, ref, position, test, data) {
   };
 }
 
-jSlim.ready(() => {
+ready(() => {
   const target = document.querySelector('.infinite-page');
   if (!target) return;
   const context = target.closest('.context-3d') || document.scrollingElement;

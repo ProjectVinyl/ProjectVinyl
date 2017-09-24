@@ -16,6 +16,7 @@
 			</h1>
 			<div class="editable content description" data-target="albums" data-member="description" data-id="<%= @album.id %>">
 				<span class="content"><%= raw @album.html_description %></span>
+				<textarea class="input js-auto-resize" name="album_description_<%= @album.id %>" autocomplete="false"><%= @album.description %></textarea>
 				<span class="edit"><i class="fa fa-pencil" ></i></span>
 			</div>
 		<% else %>

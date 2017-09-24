@@ -1,12 +1,13 @@
 import { uploadForm } from '../utils/progressform';
 import { setupEditable } from '../ui/editable';
-import { TagEditor } from './tageditor';
+import { getTagEditor } from './tageditor';
 import { ThumbPicker } from './thumbnailpicker';
 import { resizeFont } from '../ui/resize';
 import { focusTab } from '../ui/tabset';
 import { toBool, extendObj } from '../utils/misc';
 import { canPlayType } from '../utils/videos';
-import { jSlim } from '../utils/jslim';
+import { all } from '../jslim/dom';
+import { ready } from '../jslim/events';
 
 const INSTANCES = [];
 let INDEX = 0;
@@ -27,33 +28,31 @@ const uploadingQueue = {
   poke: function() {
     if (this.running) return;
     this.running = true;
-    var self = this;
-    return this.tick(function() {
+    return this.tick(() => {
       let i = 0;
-      while (self.items.length > 0 && !(i = self.items.shift()).isReady());
+      while (this.items.length > 0 && !(i = this.items.shift()).isReady());
       if (i && i.isReady()) return i;
     });
   },
   tick: function(next) {
     const uploader = next();
     this.running = !!uploader;
-    var self = this;
     if (this.running) {
       uploader.tab.classList.add('loading');
       uploader.tab.classList.add('waiting');
       uploadForm(uploader.form, {
-        success: function(data) {
-          uploader.complete(data.ref);
-          if (next) next = self.tick(next);
-        },
-        error: function(message, error) {
-          uploader.error();
-          message.text(error);
-        },
-        progress: function(message, fill, percentage) {
+				progress: (message, fill, percentage) => {
           uploader.update(percentage);
-          if (next && percentage > 100) next = self.tick(next);
+          if (next && percentage > 100) next = this.tick(next);
         },
+        success: data => {
+          uploader.complete(data.ref);
+          if (next) next = this.tick(next);
+        },
+        error: (message, error) => {
+          uploader.error();
+          message.innerText = error;
+        }
       });
     }
     return 0;
@@ -80,12 +79,10 @@ function Validator(el) {
   this.video = this.el.querySelector('#video-upload');
   this.video.input = this.video.querySelector('input[type=file]');
   
-  var self = this;
-  
   var changeVideo = this.el.querySelector('.change-video');
   if (changeVideo) {
-    changeVideo.addEventListener('click', function() {
-      self.video.input.click();
+    changeVideo.addEventListener('click', () => {
+      this.video.input.click();
     });
   }
   
@@ -102,9 +99,9 @@ function Validator(el) {
     });
   });
   
-  this.cover.input.addEventListener('change', function() {
-    self.hasCover = true;
-    self.validateInput();
+  this.cover.input.addEventListener('change', () => {
+    this.hasCover = true;
+    this.validateInput();
   });
 }
 Validator.prototype = {
@@ -145,7 +142,7 @@ function Uploader() {
   
   document.getElementById('new_tab_button').insertAdjacentHTML('beforebegin', tabMarkup(this.id));
   
-  this.tab = document.querySelector('[data-target="new[' + this.id + ']"');
+  this.tab = document.querySelector(`[data-target="new[${this.id}]"`);
   
   this.tab.label = this.tab.querySelector('.label');
   this.tab.progress = this.tab.querySelector('.progress');
@@ -157,55 +154,47 @@ function Uploader() {
   this.videoDescription = this.el.querySelector('textarea.comment-content');
   this.title = this.videoTitle.querySelector('.content');
   
-  this.tagEditor = TagEditor.getOrCreate(this.el.querySelector('.tag-editor'));
+  this.tagEditor = getTagEditor(this.el.querySelector('.tag-editor'));
   
   this.source = this.el.querySelector('#video_source');
   this.srcNeeded = false;
   
-  var self = this;
-  
   // FIXME
-  requestAnimationFrame(function() {
-    self.tab.classList.remove('hidden');
-  });
+  requestAnimationFrame(() => this.tab.classList.remove('hidden'));
   
   // Close button click
-  this.tab.querySelector('i').addEventListener('click', function() {
-    self.dispose();
-  });
-  this.form.addEventListener('submit', function(event) {
-    uploadingQueue.enqueue(self);
+  this.tab.querySelector('i').addEventListener('click', () => this.dispose());
+  this.form.addEventListener('submit', event => {
+    uploadingQueue.enqueue(this);
     event.preventDefault();
     event.stopImmediatePropagation();
   });
 
   const newVideo = this.el.querySelector('#new_video');
-  const thumbPicker = this.el.querySelector('.tab[data-tab="thumbpick_' + this.id + '"]');
+  const thumbPicker = this.el.querySelector(`.tab[data-tab="thumbpick_${this.id}"]`);
 
-  newVideo.addEventListener('tagschange', function() {
-    self.validateInput();
+  newVideo.addEventListener('tagschange', () => {
+    this.validateInput();
   });
 
-  newVideo.addEventListener('change', function(event) {
+  newVideo.addEventListener('change', event => {
     if (event.target.matches('h1#video_title input')) {
-      self.validateInput();
+      this.validateInput();
     }
   });
   
-  thumbPicker.addEventListener('tabblur', function() {
-    self.lastTime = self.time.value;
-    self.time.value = -1;
-    self.validateInput();
+  thumbPicker.addEventListener('tabblur', () => {
+    this.lastTime = this.time.value;
+    this.time.value = -1;
+    this.validateInput();
   });
   
-  thumbPicker.addEventListener('tabfocus', function() {
-    self.time.value = self.lastTime;
-    self.validateInput();
+  thumbPicker.addEventListener('tabfocus', () => {
+    this.time.value = this.lastTime;
+    this.validateInput();
   });
   
-  jSlim.all(this.el, 'h1.resize-target', function(t) {
-    resizeFont(t);
-  });
+  all(this.el, 'h1.resize-target', resizeFont);
   
   Validator.call(this, this.el);
   focusTab(this.tab);
@@ -221,10 +210,10 @@ Uploader.prototype = extendObj({
     this.player.constructor(this.el.querySelector('.video'));
   },
   showUI: function(title) {
-    jSlim.all(this.el, '.hidden', function(e) {
+    all(this.el, '.hidden', e => {
       e.classList.remove('hidden');
     });
-    jSlim.all(this.el, '.shown', function(e) {
+    all(this.el, '.shown', e => {
       e.classList.add('hidden');
       e.classList.remove('shown');
     });
@@ -232,8 +221,8 @@ Uploader.prototype = extendObj({
     this.tab.label.textContent = title;
   },
   accept: function(file) {
-    const thumbUpload = this.el.querySelector('li[data-target="thumbupload_' + this.id + '"]');
-    const thumbPick = this.el.querySelector('li[data-target="thumbpick_' + this.id + '"]');
+    const thumbUpload = this.el.querySelector(`li[data-target="thumbupload_${this.id}"]`);
+    const thumbPick = this.el.querySelector(`li[data-target="thumbpick_${this.id}"]`);
     
     if (this.video.classList.contains('shown')) {
       const title = this.cleanup(file.title);
@@ -282,8 +271,6 @@ Uploader.prototype = extendObj({
     if (!this.source.value) {
       this.srcNeeded = false;
       
-      // FIXME: Polyfill Array.prototype.includes for IE
-      // Why? -_-
       if (tags.indexOf('source needed') !== -1) {
         this.srcNeeded = true;
       }
@@ -318,12 +305,12 @@ Uploader.prototype = extendObj({
     this.ready = false;
     
     if (this.tab.classList.contains('selected')) {
-      const otherTab = this.tab.parentNode.querySelector('li.button:not([data-disabled]):not(.hidden)[data-target]:not([data-target="' + this.id + '"])');
+      const otherTab = this.tab.parentNode.querySelector(`li.button:not([data-disabled]):not(.hidden)[data-target]:not([data-target="${this.id}"])`);
       if (otherTab) focusTab(otherTab);
     }
     
     if (ref) {
-      this.el.innerHTML = 'Uploading Complete. You can see your new video over <a target="_blank" href="' + ref + '">here</a>.';
+      this.el.innerHTML = `Uploading Complete. You can see your new video over <a target="_blank" href="${ref}">here</a>.`;
     }
   },
   error: function() {
@@ -333,17 +320,6 @@ Uploader.prototype = extendObj({
     INSTANCES.splice(INSTANCES.indexOf(this), 1);
   }
 }, Validator.prototype);
-
-jSlim.ready(function() {
-  const button = document.getElementById('new_tab_button');
-  if (button) {
-    button.addEventListener('click', function(event) {
-      if (event.button === 0) {
-        new Uploader();
-      }
-    });
-  }
-});
 
 function UploadChecker(el) {
   Validator.call(this, el);
@@ -383,9 +359,14 @@ Uploader.createChecker = function(el) {
   return new UploadChecker(el);
 };
 
-jSlim.ready(function() {
-  jSlim.all('#uploader_frame', function() {
-    new Uploader();
-  });
-  jSlim.all('#video-editor', Uploader.createChecker);
+ready(() => {
+  const button = document.getElementById('new_tab_button');
+  if (button) {
+    button.addEventListener('click', event => {
+      if (event.button === 0) new Uploader();
+    });
+  }
+	
+  if (document.querySelector('#uploader_frame')) new Uploader();
+  all('#video-editor', Uploader.createChecker);
 });

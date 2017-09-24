@@ -18,17 +18,11 @@ export function TapToggler(owner) {
         hoverFlag = 0;
       }, 1700);
     },
-    touching: function() {
-      return touching;
-    },
-    interactable: function() {
-      return !touching || hoverFlag > 1;
-    }
+    touching: _ => touching,
+    interactable: _ => !touching || hoverFlag > 1
   };
   
-  owner.addEventListener('touchstart', ev => {
-    toggler.update(ev);
-  });
+  owner.addEventListener('touchstart', ev => toggler.update(ev));
   
   return owner.toggler = toggler;
 }

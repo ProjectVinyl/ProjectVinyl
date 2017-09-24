@@ -1,3 +1,8 @@
+export function round(num, precision) {
+  precision = Math.pow(10, precision || 0);
+  return Math.round(num * precision) / precision;
+}
+
 export function linearInterpolate({x1, y1}, {x2, y2}, x) {
   const m = (y2 - y1)/(x2 - x1);
   return (m*(x - x1)) + y1;

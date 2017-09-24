@@ -1,9 +1,9 @@
 /**
  * Automatically-resizing <input>s.
  */
-import { jSlim } from '../utils/jslim';
+import { addDelegatedEvent } from '../jslim/events';
 
-jSlim.on(document, 'keyup', 'textarea.js-auto-resize', function() {
+addDelegatedEvent(document, 'keyup', 'textarea.js-auto-resize', function() {
   const height = this.clientHeight;
   this.style.height = '0px';
   this.style.marginTop = height + 'px';
@@ -11,7 +11,7 @@ jSlim.on(document, 'keyup', 'textarea.js-auto-resize', function() {
   this.style.marginTop = '';
 });
 
-jSlim.on(document, 'keyup', 'input.js-auto-resize', function() {
+addDelegatedEvent(document, 'keyup', 'input.js-auto-resize', function() {
   const width = this.clientWidth;
   this.style.width = '0px';
   this.style.marginLeft = width + 'px';

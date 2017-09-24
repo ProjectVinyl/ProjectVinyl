@@ -1,21 +1,21 @@
-import { jSlim } from '../utils/jslim';
+import { addDelegatedEvent } from '../jslim/events';
 
-jSlim.on(document, 'change', '.file-select-options input', function() {
-  const fileInput = this.closest('.file-select-container').querySelector('input[type="file"]');
+addDelegatedEvent(document, 'change', '.file-select-options input', (e, target) => {
+  const fileInput = target.closest('.file-select-container').querySelector('input[type="file"]');
   
-  if (this.dataset.action === 'erase' && this.checked) {
+  if (target.dataset.action === 'erase' && target.checked) {
     fileInput.value = '';
     fileInput.dispatchEvent(new CustomEvent('change', { bubbles: true, cancelable: true }));
-    this.checked = false;
+    target.checked = false;
   }
 });
 
-jSlim.on(document, 'change', '.file-select input[type="file"]', function(event) {
+addDelegatedEvent(document, 'change', '.file-select input[type="file"]', (event, target) => {
   const fileSelect = event.target.closest('.file-select');
   const preview = fileSelect.querySelector('.preview');
   
   if (!preview) return;
   if (preview.src) URL.revokeObjectURL(preview.src);
-  preview.src = URL.createObjectURL(this.files[0]);
-  preview.style.backgroundImage = 'url(' + preview.src + ')';
+  preview.src = URL.createObjectURL(target.files[0]);
+  preview.style.backgroundImage = `url(${preview.src})`;
 });

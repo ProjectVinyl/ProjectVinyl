@@ -1,8 +1,9 @@
 import { ajax } from '../utils/ajax';
-import { paginator } from './paginator';
+import { repaintPagination } from './paginator';
 import { popupConfirm, popupError } from './popup';
 import { scrollTo } from '../ui/scroll';
-import { jSlim } from '../utils/jslim';
+import { ready } from '../jslim/events';
+import { all, decodeEntities } from '../jslim/dom';
 import { insertTags } from '../ui/editable';
 
 function postComment(sender) {
@@ -27,7 +28,7 @@ function postComment(sender) {
   
   ajax.post('comments', data).json(json => {
     sender.classList.remove('posting');
-    paginator.repaint(document.getElementById('thread-' + data.thread).closest('.paginator'), json);
+    repaintPagination(document.getElementById('thread-' + data.thread).closest('.paginator'), json);
     scrollTo(document.querySelector('#comment_' + json.focus));
     input.value = '';
   });
@@ -58,9 +59,7 @@ function removeComment(sender) {
 
 function scrollToAndHighlightElement(comment) {
   if (comment) {
-    jSlim.all('.comment.highlight', a => {
-      a.classList.remove('highlight');
-    });
+    all('.comment.highlight', a => a.classList.remove('highlight'));
     scrollTo(comment);
     comment.classList.add('highlight');
     return true;
@@ -68,35 +67,33 @@ function scrollToAndHighlightElement(comment) {
 }
 
 function scrollToAndHighlight(commentId) {
-  return scrollToAndHighlightElement(document.getElementById('comment_' + commentId));
+  return scrollToAndHighlightElement(document.getElementById(`comment_${commentId}`));
 }
 
 function lookupComment(commentId) {
   if (scrollToAndHighlight(commentId)) return;
   
   const pagination = document.querySelector('.comments').parentNode;
-  ajax.get(pagination.dataset.type, `comment=${commentId}&${pagination.dataset.args}`).json(function(json) {
-    paginator.repaint(pagination, json);
+  ajax.get(pagination.dataset.type, `comment=${commentId}&${pagination.dataset.args}`).json(json => {
+    repaintPagination(pagination, json);
     scrollToAndHighlight(commentId);
   });
 }
 
 function editComment(sender) {
   sender = sender.parentNode;
-  ajax.patch('comments/' + sender.dataset.id, {
+  ajax.patch(`/comments/${sender.dataset.id}`, {
     comment: sender.querySelector('textarea, input.comment-content').value
-  }).text(() => {
+  }).json(json => {
+		sender.querySelector('.preview').innerHTML = json.content;
     sender.classList.remove('editing');
   });
 }
 
 function moveInlineComment(sender, container, type, commentEl) {
-  if (container.classList.contains('comment-content')) {
-    container = getSubCommentList(sender);
-    container[`insertAdjacent${type}`]('afterbegin', commentEl);
-  } else {
-    container[`insertAdjacent${type}`]('beforebegin', commentEl);
-  }
+	const recurse = container.classList.contains('comment-content');
+  if (recurse) container = getSubCommentList(sender);
+	container[`insertAdjacent${type}`](recurse ? 'afterbegin' : 'beforebegin', commentEl);
   return container;
 }
 
@@ -139,7 +136,7 @@ function getSubCommentList(sender) {
 function replyTo(sender) {
   sender = sender.parentNode;
   const textarea = sender.closest('.page, body').querySelector('.post-box textarea');
-  insertTags(textarea, `\n>>${sender.dataset.oId} [q]\n${jSlim.dom.decodeEntities(sender.dataset.comment)}\n[/q]\n\n`, '');
+  insertTags(textarea, `\n>>${sender.dataset.oId} [q]\n${decodeEntities(sender.dataset.comment)}\n[/q]\n\n`, '');
   let height = parseFloat(textarea.style.height) || 0;
   textarea.style.height = Math.max(height, textarea.scrollHeight) + 'px';
 }
@@ -163,7 +160,6 @@ const targets = {
 };
 
 document.addEventListener('click', event => {
-  // Left-click only
   if (event.which !== 1 && event.button !== 0) return;
   
   for (const target in targets) {
@@ -176,7 +172,7 @@ document.addEventListener('click', event => {
 });
 
 
-jSlim.ready(() => {
+ready(() => {
   if (document.location.hash.indexOf('#comment_') == 0) {
     lookupComment(document.location.hash.split('_')[1]);
   }

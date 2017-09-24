@@ -1,9 +1,9 @@
 import { ajax } from '../utils/ajax';
-import { jSlim } from '../utils/jslim';
+import { addDelegatedEvent } from '../jslim/events';
 
 let autocomplete = null;
 
-jSlim.on(document, 'focusin', '.auto-lookup:not(.loaded) input', (e, input) => {
+addDelegatedEvent(document, 'focusin', '.auto-lookup:not(.loaded) input', (e, input) => {
   const me = input.parentNode;
   const popout = me.querySelector('.pop-out');
   const action = me.dataset.action;
@@ -12,7 +12,7 @@ jSlim.on(document, 'focusin', '.auto-lookup:not(.loaded) input', (e, input) => {
   
   me.classList.add('loaded');
   
-	jSlim.on(popup, 'mousedown', '.auto-lookup li[data-name]', (e, sender) => {
+	addDelegatedEvent(popup, 'mousedown', '.auto-lookup li[data-name]', (e, sender) => {
 		input.value = sender.dataset.name;
 		me.classList.remove('pop-out-shown');
 	});
