@@ -3,6 +3,7 @@ import './fileinput';
 import './form';
 import './search';
 import './share';
+import './uploadchecker';
 import './uploader';
 import './usercard';
 import './vote';
