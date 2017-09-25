@@ -13,17 +13,11 @@ const specialActions = {
   emoticons: sender => {
     sender.classList.remove('edit-action');
     sender.querySelector('.pop-out').innerHTML = emoticons.map(e => `<li class="edit-action" data-action="emoticon" title=":${e}:">
-			<span class="emote" data-emote="${e}" title=":${e}:"></span>
-		</li>`).join('');
+      <span class="emote" data-emote="${e}" title=":${e}:"></span>
+    </li>`).join('');
   },
   emoticon: (sender, textarea) => insertTags(textarea, sender.title, '')
 };
-
-function handleSpecialKeys(key, callback) {
-  const k = keyEvents[key];
-  if (k) return callback(k);
-  if (key == 13) deactivate();
-}
 
 export function insertTags(textarea, open, close) {
   const start = textarea.selectionStart;
@@ -35,12 +29,12 @@ export function insertTags(textarea, open, close) {
   if (selected.indexOf(open) > -1 || (selected.indexOf(close) > -1 && close)) {
     selected = selected.replace(open, '').replace(close, '');
   } else {
-    selected = `${open}${selected}${close}`;
+    selected = open + selected + close;
   }
   
-	const before = textarea.value.substring(0, start);
-	const after = textarea.value.substring(end, textarea.value.length);
-	
+  const before = textarea.value.substring(0, start);
+  const after = textarea.value.substring(end, textarea.value.length);
+  
   textarea.value = `${before}${selected}${after}`;
   textarea.selectionStart = start;
   textarea.selectionEnd = start + selected.length;
@@ -56,14 +50,13 @@ function initEditable(textarea, content) {
   if (!textarea) {
     textarea = document.createElement('input');
     textarea.className = 'input js-auto-resize';
-		textarea.value = content.innerHTML;
+    textarea.value = content.innerHTML;
     content.insertAdjacentElement('afterend', textarea);
   }
   return textarea;
 }
 
 export function setupEditable(sender) {
-  let editing = false;
   const content = sender.querySelector('.content');
   const button = sender.querySelector('.edit');
   const textarea = initEditable(sender.querySelector('.input'), content);
@@ -71,44 +64,44 @@ export function setupEditable(sender) {
   button.addEventListener('click', () => {
     if (active != button) deactivate();
     if (toggleEdit(sender, content, textarea)) {
-			active = button;
-		}
+      active = button;
+    }
   });
   sender.addEventListener('click', ev => ev.stopPropagation());
 }
 
 function toggleEdit(holder, content, textarea) {
-  const text = content.innerText.toLowerCase().trim();
-	
-	holder.classList.toggle('editing');
+  holder.classList.toggle('editing');
 	
   if (holder.classList.contains('editing')) {
     const hovercard = content.querySelector('.hovercard');
     if (hovercard) hovercard.parentNode.removeChild(hovercard);
     textarea.dispatchEvent(new Event('keyup')); // ensure input size is correct
-		textarea.focus();
-		return true;
+    textarea.focus();
+    return true;
   }
-	
-	if (!holder.classList.contains('dirty')) return;
-	
-	holder.classList.add('loading');
-	ajax.patch(`${holder.dataset.target}/${holder.dataset.id}`, {
-		field: holder.dataset.member,
-		value: holder.querySelector('.input').value
-	}).json(json => {
-		content.innerHTML = json.content;
-		holder.classList.remove('loading');
-		holder.classList.remove('dirty');
-	});
+  
+  if (!holder.classList.contains('dirty')) return;
+  
+  holder.classList.add('loading');
+  ajax.patch(`/${holder.dataset.target}/${holder.dataset.id}`, {
+    field: holder.dataset.member, value: holder.querySelector('.input').value
+  }).json(json => {
+    content.innerHTML = json.content;
+    holder.classList.remove('loading');
+    holder.classList.remove('dirty');
+  });
 }
 
 addDelegatedEvent(document, 'change', '.editable', (ev, target) => target.classList.add('dirty'));
 addDelegatedEvent(document, 'keydown', 'textarea.comment-content, .editable textarea.input', (ev, target) => {
-  if (ev.ctrlKey) handleSpecialKeys(ev.keyCode, tag => {
-		insertTags(target, `[${tag}]`, `[/${tag}]`);
-		ev.preventDefault();
-	});
+  if (!ev.ctrlKey) return;
+  const tag = keyEvents[ev.keyCode];
+  if (tag) {
+    ev.preventDefault();
+    return insertTags(target, `[${tag}]`, `[/${tag}]`);
+  }
+  if (key == 13) deactivate();
 });
 addDelegatedEvent(document, 'mouseup', '.edit-action', (e, target) => {
   const type = specialActions[target.dataset.action];

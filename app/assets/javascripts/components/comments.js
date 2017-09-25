@@ -85,15 +85,15 @@ function editComment(sender) {
   ajax.patch(`/comments/${sender.dataset.id}`, {
     comment: sender.querySelector('textarea, input.comment-content').value
   }).json(json => {
-		sender.querySelector('.preview').innerHTML = json.content;
+    sender.querySelector('.preview').innerHTML = json.content;
     sender.classList.remove('editing');
   });
 }
 
 function moveInlineComment(sender, container, type, commentEl) {
-	const recurse = container.classList.contains('comment-content');
+  const recurse = container.classList.contains('comment-content');
   if (recurse) container = getSubCommentList(sender);
-	container[`insertAdjacent${type}`](recurse ? 'afterbegin' : 'beforebegin', commentEl);
+  container[`insertAdjacent${type}`](recurse ? 'afterbegin' : 'beforebegin', commentEl);
   return container;
 }
 

@@ -5,7 +5,6 @@
 import { uploadForm } from './utils/progressform';
 import { addDelegatedEvent } from './jslim/events';
 import { all } from './jslim/dom';
-import { popupError } from './components/popup';
 
 addDelegatedEvent(document, 'ajax:complete', 'form.js-edit-video', (e, sender) => {
   const data = e.detail.data;
@@ -17,22 +16,18 @@ addDelegatedEvent(document, 'ajax:complete', 'form.js-edit-video', (e, sender) =
 
 addDelegatedEvent(document, 'loaded', '.js-banner-select', () => {
   const me = document.getElementById('banner-upload');
-  const banner = document.getElementById('banner');
-  
-  me.querySelector('input[type="file"]').addEventListener('change', function(e) {
-    e.preventDefault();
-    uploadForm(this.closest('form'), {
+  me.querySelector('input[type="file"]').addEventListener('change', e => {
+    uploadForm(e.target.closest('form'), {
       success: () => {
+        const banner = document.getElementById('banner');
         banner.style.backgroundSize = 'cover';
         banner.style.backgroundImage = `url(${me.dataset.path}?${new Date().getTime()})`;
       }
-    });
+    }, e);
   });
 });
 
-addDelegatedEvent(document, 'submit', '.form.report form.async', (e, sender) => {
-  e.preventDefault();
-  e.stopImmediatePropagation(); // form.async
+addDelegatedEvent(document, 'submit', '.form.report form', (e, sender) => {
   uploadForm(sender, {
     progress: (message, fill, percentage) => {
       if (percentage >= 100) {
@@ -42,17 +37,15 @@ addDelegatedEvent(document, 'submit', '.form.report form.async', (e, sender) => 
     error: (message, error) => {
       message.innerHTML = `<i style="color: red; font-size: 50px;" class="fa fa-times"></i><br>Error: ${error}<br>Please contact <a href="mailto://support@projectvinyl.net">support@projectvinyl.net</a> for assistance.`;
     }
-  });
+  }, e);
 });
 
 addDelegatedEvent(document, 'change', '.avatar.file-select', (e, target) => {
-  e.preventDefault();
   uploadForm(e.target.closest('form'), {
     success: () => {
       const ext = e.target.files.length ? e.target.files[0].name.split('.').reverse()[0] : 'png';
-      all('#login .avatar.small span, #avatar-upload .preview', el => {
-        el.style.backgroundImage = `url(/avatar/${target.dataset.id}.${ext}?${new Date().getTime()})`;
-      });
+      const img = `url(/avatar/${target.dataset.id}.${ext}?${new Date().getTime()})`;
+      all('#login .avatar.small span, #avatar-upload .preview', el => el.style.backgroundImage = img);
     }
-  });
+  }, e);
 });

@@ -4,14 +4,13 @@
 import { ajax } from '../utils/ajax';
 import { scrollTo } from '../ui/scroll';
 import { ContextMenu } from '../ui/contextmenu';
-import { halt, Key } from '../utils/misc';
+import { Key } from '../utils/misc';
 import { errorMessage, errorPresent } from '../utils/videos';
 import { all } from '../jslim/dom';
-import { ready, bindAll } from '../jslim/events';
+import { ready, bindAll, halt } from '../jslim/events';
 import { isFullscreen, onFullscreenChange } from '../utils/fullscreen';
 import { cookies } from '../utils/cookies';
 import { TapToggler } from './taptoggle';
-import { toHMS } from '../utils/duration';
 import { PlayerControls } from './playercontrols';
 import { setupNoise } from './noise';
 
@@ -107,7 +106,7 @@ function readyVideo(sender) {
     },
     suspend: suspended,
     waiting: suspended,
-		stalled: suspended,
+    stalled: suspended,
     volumechange: () => {
       sender.volume(video.volume, video.muted || video.volume === 0);
     },
@@ -128,10 +127,10 @@ function readyVideo(sender) {
 
 // Have to do this the long way to avoid caching errors in firefox
 function addSource(video, src, type) {
-	const source = document.createElement('source');
-	source.type = type;
-	source.src = src;
-	video.appendChild(source);
+  const source = document.createElement('source');
+  source.type = type;
+  source.src = src;
+  video.appendChild(source);
 }
 
 export function Player() { }
@@ -360,20 +359,20 @@ Player.prototype = {
   createMediaElement: function() {
     if (this.audioOnly && this.source) {
       let audio = document.createElement('audio');
-			addSource(audio, `/stream/${this.source}${this.mime[0]}`, this.mime[1]);
+      addSource(audio, `/stream/${this.source}${this.mime[0]}`, this.mime[1]);
       return audio;
     }
     
     let video = document.createElement('video');
     
-		video.preload = 'auto';
-		
+    video.preload = 'auto';
+    
     if (!this.source || this.source === '0') return video;
     if (typeof this.source === 'string' && this.source.indexOf('blob') === 0) {
       video.src = this.source;
     } else {
-			addSource(video, `/stream/${this.source}.webm`, 'video/webm');
-			addSource(video, `/stream/${this.source}${this.mime[0]}`, this.mime[1]);
+      addSource(video, `/stream/${this.source}.webm`, 'video/webm');
+      addSource(video, `/stream/${this.source}${this.mime[0]}`, this.mime[1]);
     }
     
     return video;
@@ -394,7 +393,7 @@ Player.prototype = {
   pause: function() {
     if (this.video) this.video.pause();
     this.player.dataset.state = 'paused';
-		this.suspend.classList.add('hidden');
+    this.suspend.classList.add('hidden');
     return true;
   },
   error: function(e) {
@@ -436,7 +435,7 @@ Player.prototype = {
 };
 
 function resize(obj) {
-  obj.style.marginBottom = '';          // 16/9 aspect ratio
+  obj.style.marginBottom = ''; // 16/9 aspect ratio
   obj.style.height = (obj.clientWidth * 9 / 16) + 'px';
 }
 

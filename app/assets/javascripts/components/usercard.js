@@ -1,6 +1,6 @@
 /**
   * Popup usercards because fancy
-	*/
+  */
 import { all } from '../jslim/dom';
 import { addDelegatedEvent } from '../jslim/events';
 import { ajax } from '../utils/ajax';
@@ -10,8 +10,8 @@ function openUsercard(sender, usercard) {
   sender.appendChild(newUsercard);
   requestAnimationFrame(() => newUsercard.classList.add('shown'));
   setTimeout(() => {
-		if (usercard.parentNode) usercard.parentNode.removeChild(usercard);
-	}, 500);
+    if (usercard.parentNode) usercard.parentNode.removeChild(usercard);
+  }, 500);
 }
 
 function closeUsercard() {
@@ -29,8 +29,8 @@ addDelegatedEvent(document, 'mouseover', '.user-link', function(e) {
   if (usercard) return openUsercard(this, usercard);
   
   this.insertAdjacentHTML('beforeend', `<div class="hovercard" data-id="${id}"></div>`);
-	usercard = this.lastChild;
-	
+  usercard = this.lastChild;
+  
   ajax.get(`/users/${id}/hovercard`).text(text => {
     usercard.innerHTML = text;
     usercard.classList.add('shown');

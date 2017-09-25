@@ -13,10 +13,10 @@ function animateScroll(elementX, elementY, viewport, duration) {
     if (!start) start = timestamp;
     const time = timestamp - start;
     const percent = ease(Math.min(time / duration, 1));
-
+    
     viewport.scrollLeft = startingX + diffX * percent;
     viewport.scrollTop = startingY + diffY * percent;
-
+    
     if (time < duration) requestAnimationFrame(step);
   });
 }
@@ -41,12 +41,12 @@ export function scrollTo(me, container) {
 }
 
 ready(() => all('.scroll-container', el => {
-	const target = el.querySelector('.scroll-focus');
-	if (target) scrollTo(target, el);
-	if (el.dataset.documentScrollY) {
-		document.documentElement.scrollTop = parseInt(el.dataset.documentScrollY, 10);
-	}
-	if (el.dataset.documentScrollX) {
-		document.documentElement.scrollLeft = parseInt(el.dataset.documentScrollX, 10);
-	}
+  const target = el.querySelector('.scroll-focus');
+  if (target) scrollTo(target, el);
+  if (el.dataset.documentScrollY) {
+    document.documentElement.scrollTop = parseInt(el.dataset.documentScrollY, 10);
+  }
+  if (el.dataset.documentScrollX) {
+    document.documentElement.scrollLeft = parseInt(el.dataset.documentScrollX, 10);
+  }
 }));

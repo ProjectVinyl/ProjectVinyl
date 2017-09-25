@@ -1,6 +1,5 @@
-import { halt } from '../utils/misc';
 import { isFullscreen } from '../utils/fullscreen';
-import { addDelegatedEvent } from '../jslim/events';
+import { addDelegatedEvent, halt } from '../jslim/events';
 import { TapToggler } from './taptoggle';
 import { toHMS } from '../utils/duration';
 import { Slider } from './slider';

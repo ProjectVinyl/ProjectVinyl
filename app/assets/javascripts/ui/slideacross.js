@@ -13,7 +13,7 @@ function slideAcross(me, direction) {
   const from = form.querySelector('.active');
   if (from) {
     from.classList.remove('active');
-		from.insertAdjacentElement(direction > 0 ? 'afterend' : 'beforestart', to);
+    from.insertAdjacentElement(direction > 0 ? 'afterend' : 'beforestart', to);
   }
   
   to.classList.add('active');
@@ -30,15 +30,15 @@ function slideAcross(me, direction) {
 }
 
 addDelegatedEvent(document, 'click', '.slide-holder form input[data-to]', (e, target) => {
-	if (!checkFormPrerequisits(target.closest('.group'))) return;
-	const required = target.closest('.group').querySelectorAll('input[data-required]');
+  if (!checkFormPrerequisits(target.closest('.group'))) return;
+  const required = target.closest('.group').querySelectorAll('input[data-required]');
   slideAcross(target, 1);
 });
 
 addDelegatedEvent(document, 'click', '.slide-holder .goto.slide-right', (e, target) => {
   if (e.button !== 0) return;
-	if (target.closest('form') && !checkFormPrerequisits(target.closest('.group'))) return; 
-	slideAcross(target, 1);
+  if (target.closest('form') && !checkFormPrerequisits(target.closest('.group'))) return; 
+  slideAcross(target, 1);
 });
 
 addDelegatedEvent(document, 'click', '.slide-holder .goto.slide-left', (e, target) => {

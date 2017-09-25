@@ -30,9 +30,9 @@ function requestPage(context, page) {
 }
 
 export function repaintPagination(context, json) {
-	context.querySelector('.pagination .pages .button.selected').classList.remove('selected');
-	populatePage(context, json);
-	QueryParameters.current.setItem(context.dataset.id, json.page + 1);
+  context.querySelector('.pagination .pages .button.selected').classList.remove('selected');
+  populatePage(context, json);
+  QueryParameters.current.setItem(context.dataset.id, json.page + 1);
 }
 
 ready(() => {

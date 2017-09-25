@@ -12,6 +12,6 @@ function leaveDrag() {
 }
 
 delegateAll(document, '.drag-target', {
-	dragover: enterDrag, dragenter: enterDrag,
-	dragleave: leaveDrag, drop: leaveDrag
+  dragover: enterDrag, dragenter: enterDrag,
+  dragleave: leaveDrag, drop: leaveDrag
 });

@@ -3,7 +3,7 @@ import { all } from '../jslim/dom';
 import { addDelegatedEvent } from '../jslim/events';
 
 function toggle(e, sender, options, callback) {
-	e.preventDefault();
+  e.preventDefault();
   const data = {};
   if (sender.dataset.item) data.item = sender.dataset.item;
   if (sender.dataset.with) data.extra = document.querySelector(sender.dataset.with).value;

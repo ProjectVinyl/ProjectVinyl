@@ -12,11 +12,11 @@ addDelegatedEvent(document, 'focusin', '.auto-lookup:not(.loaded) input', (e, in
   
   me.classList.add('loaded');
   
-	addDelegatedEvent(popup, 'mousedown', '.auto-lookup li[data-name]', (e, sender) => {
-		input.value = sender.dataset.name;
-		me.classList.remove('pop-out-shown');
-	});
-	
+  addDelegatedEvent(popup, 'mousedown', '.auto-lookup li[data-name]', (e, sender) => {
+    input.value = sender.dataset.name;
+    me.classList.remove('pop-out-shown');
+  });
+  
   input.addEventListener('blur', () => {
     if (autocomplete) clearInterval(autocomplete);
     autocomplete = null;
@@ -24,15 +24,15 @@ addDelegatedEvent(document, 'focusin', '.auto-lookup:not(.loaded) input', (e, in
   
   input.addEventListener('focus', () => {
     if (!autocomplete) autocomplete = setInterval(() => {
-			if (input.value == lastValue) return;
-			lastValue = input.value;
-			ajax.post(`${action}/lookup`, {
-				query: input.value, validate: validate ? 1 : 0
-			}).json(json => {
-				popout.innerHTML = json.content.map(a => `<li data-name="${a[1]}">${a[1]} (${a[0]})</li>`).join('');
-				me.classList.toggle('pop-out-shown', json.content.length);
-				me.classList.toggle('invalid', json.reject);
-			});
-		}, 1000);
+      if (input.value == lastValue) return;
+      lastValue = input.value;
+      ajax.post(`${action}/lookup`, {
+        query: input.value, validate: validate ? 1 : 0
+      }).json(json => {
+        popout.innerHTML = json.content.map(a => `<li data-name="${a[1]}">${a[1]} (${a[0]})</li>`).join('');
+        me.classList.toggle('pop-out-shown', json.content.length);
+        me.classList.toggle('invalid', json.reject);
+      });
+    }, 1000);
   });
 });

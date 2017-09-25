@@ -2,7 +2,7 @@ import { ready } from '../jslim/events';
 import { all } from '../jslim/dom';
 
 function sizeSpannedBlocks() {
-	all('.row.row-spanned > .content', el => el.parentNode.style.height = `${el.children[0].offsetHeight}px`);
+  all('.row.row-spanned > .content', el => el.parentNode.style.height = `${el.children[0].offsetHeight}px`);
 }
 
 ready(() => {

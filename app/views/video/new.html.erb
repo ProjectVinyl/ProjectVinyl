@@ -7,18 +7,18 @@
 </div>
 <ul id="tab-template" class="hidden">
 	<li data-target="new[{id}]" class="button hidden">
-    <span class="progress">
-      <span class="fill"></span>
-    </span>
-    <span class="label">Untitled {index}</span>
-    <i class="fa fa-close"></i>
-  </li>
+		<span class="progress">
+			<span class="fill"></span>
+		</span>
+		<span class="label">Untitled {index}</span>
+		<i class="fa fa-close"></i>
+	</li>
 </ul>
 <div id="template" class="hidden">
 	<div data-tab="new[{id}]" class="tab selected">
 		<%= form_for(@video, as: "video", url: "videos", html: {class: "new_video async", method: :post}) do |f| %>
 			<section class="tab-set page full-width resize-holder uploaded-preview preview-selective">
-				<ul class="hidden tab-set tabs">
+				<ul class="ui hidden tab-set tabs">
 					<li data-target="thumbpick_{id}" class="button selected">Pick Thumbnail</li>
 					<li data-target="thumbupload_{id}" class="button">Upload Image</li>
 				</ul>
@@ -33,13 +33,13 @@
 					</div>
 				</div>
 				<div id="upload" class="preview-selective-selected">
-					<div class="hidden">
+					<div class="ui hidden">
 						<div id="video" class="tab selected video"
 							data-tab="thumbpick_{id}"
 							data-pending="1"
 							data-video="0"
 						>
-						<%= render layout: 'video/video_content', locals: {embed: false, header: false} do %>
+						<%= render layout: "video/video_content", locals: {embed: false, header: false} do %>
 							<input class="playlist" id="time" type="text" name="video[time]" value="-1">-1</input>
 						<% end %>
 						<div data-tab="thumbupload_{id}" id="cover-upload" class="cover-block tab drag-target file-select image-selector">
@@ -48,29 +48,29 @@
 								<i class="fa fa-picture-o"></i>
 								<div>Select Cover Art</div>
 							</span>
-							<%= f.file_field :cover, accept: 'image/*' %>
+							<%= f.file_field :cover, accept: "image/*" %>
 						</div>
 					</div>
-					<div id="video-upload" class="shown cover-block drag-target file-select video-drop">
+					<div id="video-upload" class="ui shown cover-block drag-target file-select video-drop">
 						<span class="drop-icon">
 							<i class="fa fa-upload"></i>
 							<div>Select an Audio/Video file to upload</div>
 						</span>
-						<%= f.file_field :file, accept: 'audio/*,video/*' %>
+						<%= f.file_field :file, accept: "audio/*,video/*" %>
 					</div>
 				</div>
-				<div class="hidden post description resize-holder">
+				<div class="ui hidden post description resize-holder">
 					<h1 id="video_title" class="title editable short post-title resize-target">
 						<span class="content ">Title</span>
 						<%= f.text_field :title, class: "input" %>
 						<span class="edit"><i class="fa fa-pencil"></i></span>
 						<span style="display:none">11</span>
 					</h1>
-					<%= render layout: 'comment/description_box' do %>
+					<%= render layout: "comment/description_box" do %>
 						<%= f.text_area :description, autofocus: true, class: "comment-content" %>
 					<% end %>
 					<div class="post-tags">
-						<%= render layout: 'tag/editor', locals: {tags: nil} do %>
+						<%= render layout: "tag/editor", locals: {tags: nil} do %>
 							<%= f.text_area :tag_string %>
 						<% end %>
 					</div>

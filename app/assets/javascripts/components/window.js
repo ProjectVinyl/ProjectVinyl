@@ -7,19 +7,19 @@ import { Key } from '../utils/misc';
 import { initDraggable, move } from './draggable';
 
 function createPopupContent(params) {
-	return nodeFromHTML(`<div class="popup-container focus transitional hidden ui-draggable">
-		<div class="popup">
-			<h1 class="popup-header">
-				<i class="fa fa-${params.icon}"></i>
-				${params.title}
-				<a class="close" data-resolve="false"></a>
-			</h1>
-			<div class="content">
-				<div class="message_content">${params.content}</div>
-				<div class="foot center hidden"></div>
-			</div>
-		</div>
-	</div>`);
+  return nodeFromHTML(`<div class="popup-container focus transitional hidden ui-draggable">
+    <div class="popup">
+      <h1 class="popup-header">
+        <i class="fa fa-${params.icon}"></i>
+        ${params.title}
+        <a class="close" data-resolve="false"></a>
+      </h1>
+      <div class="content">
+        <div class="message_content">${params.content}</div>
+        <div class="foot center hidden"></div>
+      </div>
+    </div>
+  </div>`);
 }
 
 function PopupWindow(dom) {
@@ -80,18 +80,18 @@ function handleEvents(win) {
 }
 
 document.addEventListener('keydown', e => {
-	const activeWindow = document.querySelector('.popup-container.focus');
-	if (!activeWindow) return;
-	if (e.which === Key.ESC) resolveWith(activeWindow.windowObj, false);
-	if (e.which === Key.ENTER) {
-		const accept = activeWindow.querySelector('.confirm');
-		if (accept) {
-			accept.dispatchEvent(new MouseEvent('click'));
-		} else {
-			resolveWith(activeWindow.windowObj, true);
-		}
-		e.preventDefault(); // hitting enter triggers the link again, let's stop that.
-	}
+  const activeWindow = document.querySelector('.popup-container.focus');
+  if (!activeWindow) return;
+  if (e.which === Key.ESC) resolveWith(activeWindow.windowObj, false);
+  if (e.which === Key.ENTER) {
+    const accept = activeWindow.querySelector('.confirm');
+    if (accept) {
+      accept.dispatchEvent(new MouseEvent('click'));
+    } else {
+      resolveWith(activeWindow.windowObj, true);
+    }
+    e.preventDefault(); // hitting enter triggers the link again, let's stop that.
+  }
 });
 
 export function createWindow(params) {

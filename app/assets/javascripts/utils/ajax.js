@@ -14,16 +14,16 @@ export function handleError(response) {
 
 export function AjaxRequest(method, resource, data) {
   const params = {
-		method: method,
-		credentials: 'same-origin',
-		headers: {
-			'Content-Type': 'application/x-www-form-urlencoded', //Has to be url-encoded to prevent rails form injecting ghost parameters
-			'X-Requested-With': 'XMLHttpRequest',
-			'X-CSRF-Token': csrfToken()
-		}
-	};
+    method: method,
+    credentials: 'same-origin',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded', //Has to be url-encoded to prevent rails form injecting ghost parameters
+      'X-Requested-With': 'XMLHttpRequest',
+      'X-CSRF-Token': csrfToken()
+    }
+  };
   if (data) {
-		data = new QueryParameters(data);
+    data = new QueryParameters(data);
     if (method == 'GET') {
       resource += '?' + data.toString();
     } else {
@@ -31,16 +31,16 @@ export function AjaxRequest(method, resource, data) {
     }
   }
   resource = `/${resource.replace(/^[\/]*/g, '')}`;
-	
-	const promise = fetch(resource, params).catch(err =>
-		popupError(`${params.method} ${resource}\n\n${err}`)).then(handleError);
-	const send = (convert, callback) => promise.then(convert).then(data => {
-		document.dispatchEvent(new CustomEvent('ajax:complete', {
-			detail: { data: data }, cancelable: true
-		}));
-		return callback(data);
-	});
-	
+  
+  const promise = fetch(resource, params).catch(err =>
+    popupError(`${params.method} ${resource}\n\n${err}`)).then(handleError);
+  const send = (convert, callback) => promise.then(convert).then(data => {
+    document.dispatchEvent(new CustomEvent('ajax:complete', {
+      detail: { data: data }, cancelable: true
+    }));
+    return callback(data);
+  });
+  
   return {
     text: callback => send(r => r.text(), callback),
     json: callback => send(r => r.json(), callback)

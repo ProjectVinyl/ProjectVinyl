@@ -5,16 +5,16 @@ export function encodeParamaters(data) {
 }
 
 export function decodeParameters(data) {
-	return data.toString().split('&').reduce((values, pair) => {
-		const item = pair.split('=');
-		if (item.length < 2) item.push('');
-		values[decodeURIComponent(item[0])] = decodeURIComponent(item[1]);
-		return values;
-	}, {});
+  return data.toString().split('&').reduce((values, pair) => {
+    const item = pair.split('=');
+    if (item.length < 2) item.push('');
+    values[decodeURIComponent(item[0])] = decodeURIComponent(item[1]);
+    return values;
+  }, {});
 }
 
 export function QueryParameters(raw, historyObj) {
-	this.historyObj = historyObj;
+  this.historyObj = historyObj;
   this.values = typeof raw === 'string' ? decodeParameters(raw) : raw;
 }
 
@@ -25,7 +25,7 @@ QueryParameters.prototype = {
   setItem: function(key, value) {
     this.values[key] = value;
     if (this.historyObj && this.historyObj.pushState) {
-			pushUrl(`${document.location.href.split('?')[0]}?${this.toString()}`);
+      pushUrl(`${document.location.href.split('?')[0]}?${this.toString()}`);
     }
     return this;
   },

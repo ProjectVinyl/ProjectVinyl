@@ -26,7 +26,7 @@ function sizeFont(el, targetWidth) {
   div.style.fontSize = `${parseFloat(computed.fontSize) + 1}px`;
   computed = getComputedStyle(div);
   const x2 = div.clientWidth, y2 = parseFloat(computed.fontSize);
-
+  
   let newSize = linearInterpolate({x1, y1}, {x2, y2}, targetWidth);
   
   // clamped minimum/maximum font sizes

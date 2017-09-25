@@ -30,8 +30,8 @@ ready(() => {
   const embedPreview = document.querySelector('#embed_preview');
   if (!embedPreview) return;
   
-	let frame;
-	
+  let frame;
+  
   document.querySelector('.action.test').addEventListener('click', e => {
     embedPreview.style.display = '';
     e.target.parentNode.removeChild(e.target);
@@ -55,8 +55,8 @@ ready(() => {
   
   function updateShareIframe() {
     const id = getVideoId();
-		const extra = getAlbumParams();
-		
+    const extra = getAlbumParams();
+    
     shareField.value = shareField.dataset.value.replace('{id}', id).replace('{extra}', extra);
     if (frame) frame.src = `/embed/${id}${extra}`;
   }
@@ -70,7 +70,7 @@ ready(() => {
   }
   
   function getAlbumParams() {
-		if (!shouldIncludeAlbum()) return '';
+    if (!shouldIncludeAlbum()) return '';
     const index = shareType.value == 'beginning' ? 0 : shareField.dataset.albumIndex;
     return `?list=${shareField.dataset.albumId}&index=${index}`;
   }

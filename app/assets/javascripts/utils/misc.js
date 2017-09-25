@@ -13,14 +13,6 @@ export function tryUnmarshal(data, fallback) {
   return fallback === undefined ? data : fallback;
 }
 
-
-// FIXME: why is it necessary to also stopPropagation?
-// Utility function, used all over the place. Move it if you like.
-export function halt(ev) {
-  ev.preventDefault();
-  ev.stopPropagation();
-}
-
 export function stopPropa(ev) {
   ev.stopPropagation();
 }

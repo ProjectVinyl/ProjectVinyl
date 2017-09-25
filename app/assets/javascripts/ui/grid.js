@@ -16,14 +16,14 @@ function calculateNewWidth(grid, beside) {
   const width = grid.parentNode.clientWidth - 195;
   let calculatedWidth = width + 1;
   let n = 10;
-
+  
   // 60 is the margins of the .page, 182 is the column width, and 45 is the column spacing
   do {
     calculatedWidth = 60 + (182 * n) + 45 * --n + 60;
   } while (calculatedWidth > width);
-
+  
   grid.style.width = `${calculatedWidth}px`;
-
+  
   if (beside) {
     beside.style.width = `${beside.parentNode.clientWidth - (calculatedWidth + 15)}px`;
   }
@@ -39,7 +39,7 @@ function calculatePageSplit(grid, beside) {
         if (offset(li).top > b) {
           li.classList.add('t');
           page.classList.add('split');
-					page.insertAdjacentHTML('afterend', '<section class="page virtual"><div class="group"><ul class="horizontal latest"></ul></div></section>');
+          page.insertAdjacentHTML('afterend', '<section class="page virtual"><div class="group"><ul class="horizontal latest"></ul></div></section>');
           const ul = pagt.nextSibling.querySelector('ul');
           all('.t, .t ~ li', t => ul.appendChild(t));
           li.classList.remove('t');
@@ -58,13 +58,13 @@ function resizeGrid(grid, beside) {
     prev.querySelector('ul').appendChild(page.querySelector('li'));
     page.parentNode.removeChild(page);
   });
-
+  
   grid.style.width = '';
-
+  
   if (width(beside) > 0) {
     calculateNewWidth(grid, beside);
   }
-
+  
   calculatePageSplit(grid, beside);
 }
 
@@ -72,11 +72,11 @@ ready(() => {
   if (document.querySelector('.grid-root')) {
     const columnLeft = document.querySelector('.column-left');
     const columnRight = document.querySelector('.column-right');
-
+    
     function resize() {
       resizeGrid(columnLeft, columnRight);
     }
-
+    
     window.addEventListener('resize', resize);
     resize();
   }

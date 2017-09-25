@@ -58,9 +58,6 @@ function initWorker() {
     updateCounter(handler, count);
     title.togglePrefix(!windowFocused && count);
   }
-  // Testing purposes
-  // > notifyUser('feeds', 1);
-  //window.notifyUser = notifyUser;
 }
 
 ready(() => {

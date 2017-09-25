@@ -17,7 +17,7 @@ function setPos(sender, x, y) {
   if (y < 0) y = 0;
   
   sender.style.top = `${y}px`;
-	sender.style.left = `${x}px`;
+  sender.style.left = `${x}px`;
 }
 
 export function initDraggable(sender, target) {

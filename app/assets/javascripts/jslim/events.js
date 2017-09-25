@@ -27,13 +27,13 @@ export function bindAll(el, handlers, bubble) {
 }
 
 export function delegateAll(el, selector, handlers, bubble) {
-	Object.keys(handlers).forEach(key => {
-		addDelegatedEvent(el, key, selector, handlers[key], bubble);
+  Object.keys(handlers).forEach(key => {
+    addDelegatedEvent(el, key, selector, handlers[key], bubble);
   });
 }
 
 export function bindEvent(el, event, func, bubble) {
-	getHandlers(el, event, bubble).push({ callback: func });
+  getHandlers(el, event, bubble).push({ callback: func });
 }
 
 export function once(node, type, listener) {
@@ -42,14 +42,19 @@ export function once(node, type, listener) {
     return listener.apply(this, arguments);
   }
   node.addEventListener(type, wrapper);
-	return wrapper;
+  return wrapper;
 }
 
 export function addDelegatedEvent(el, event, selector, func, bubble) {
-	getHandlers(el, event, bubble).push({ selector: selector, callback: func });
+  getHandlers(el, event, bubble).push({ selector: selector, callback: func });
 }
 
 export function ready(func) {
-	if (document.readyState !== 'loading') return func();
-	bindEvent(document, 'DOMContentLoaded', func);
+  if (document.readyState !== 'loading') return func();
+  bindEvent(document, 'DOMContentLoaded', func);
+}
+
+export function halt(ev) {
+  ev.preventDefault();
+  ev.stopPropagation();
 }
