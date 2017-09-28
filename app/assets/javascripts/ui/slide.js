@@ -25,6 +25,7 @@ addDelegatedEvent(document, 'click', '.slider-toggle:not(.loading)', (e, target)
     target.classList.add('loading');
     return ajax.get(target.dataset.url).json(json => {
       target.classList.remove('loading');
+      target.classList.remove('loadable');
       holder.innerHTML = json.content;
       slideOut(holder);
     });
