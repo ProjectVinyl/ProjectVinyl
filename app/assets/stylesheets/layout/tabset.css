@@ -15,6 +15,10 @@ ul.tab-set li {
 .page.properties.tab-set > .tab-set.tabs {
   margin: 0 0 20px 0;
 }
+.tab-set .tab-set .tabs {
+  background: #fff;
+  box-shadow: 0 -2px 2px #eee inset;
+}
 
 .tab-set > .tab-set.tabs .button {
   position: relative;
@@ -22,6 +26,7 @@ ul.tab-set li {
   border-radius: 0 ;
   box-shadow: 0 0 10px -5px rgba(0,0,0,0.3);
   margin-right: 10px;
+	transition: background 0.125s ease;
 }
 .tab-set > .tab-set.tabs .button span {
   display: inline-block;
@@ -46,15 +51,20 @@ ul.tab-set li {
   height: 0;
   border: solid #f8f8f8;
   border-bottom-width: 30px;
-  transition: border 0.5s ease;
+  transition: border 0.125s ease;
 }
 
-.tab-set > .tab-set.tabs .button.selected::before,
 .tab-set > .tab-set.tabs .button:hover::before {
+	border-color: transparent #fcfcfc #fcfcfc transparent;
+}
+.tab-set > .tab-set.tabs .button:hover::after {
+	border-color: transparent transparent #fcfcfc #fcfcfc;
+}
+
+.tab-set > .tab-set.tabs .button.selected::before {
   border-color: transparent #fff #fff transparent;
 }
-.tab-set > .tab-set.tabs .button.selected::after,
-.tab-set > .tab-set.tabs .button:hover::after {
+.tab-set > .tab-set.tabs .button.selected::after {
   border-color: transparent transparent #fff #fff;
 }
 .tab-set > .tab-set.tabs .button:active::before,
