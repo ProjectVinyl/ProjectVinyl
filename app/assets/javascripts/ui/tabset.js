@@ -20,6 +20,7 @@ export function focusTab(me) {
 }
 
 addDelegatedEvent(document, 'click', '.tab-set > li.button:not([data-disabled])', (e, target) => {
+  if (e.button !== 0) return;
   if (!e.target.closest('.fa-close')) focusTab(target);
 });
 addDelegatedEvent(document, 'click', '.tab-set > li.button i.fa-close',  (e, target) => {
