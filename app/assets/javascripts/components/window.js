@@ -14,7 +14,7 @@ function createPopupContent(params) {
       </h1>
       <div class="content">
         <div class="message_content">${params.content}</div>
-        <div class="foot center hidden">${params.foot || ''}</div>
+        <div class="foot center${params.foot ? '' : ' hidden'}">${params.foot || ''}</div>
       </div>
     </div>
   </div>`);
