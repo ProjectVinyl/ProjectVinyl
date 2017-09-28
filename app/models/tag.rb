@@ -223,7 +223,7 @@ class Tag < ApplicationRecord
   end
 
   def suffex
-    if !self.has_type
+    if self.has_type
       prefix = self.tag_type.prefix
       if self.name.index(prefix) == 0
         return self.name.sub(prefix + ":", '')

@@ -35,8 +35,7 @@ module Admin
         @location = @location.join('/')
         @public = ProjectVinyl::Storage::VideoDirectory.entries(@location).limit(50)
         if ajax
-          if (params[:start] && !@public.start_from(params[:start], params[:offset]))
-          || (params[:end] && !@public.end_with(params[:end]) && ajax)
+          if (params[:start] && !@public.start_from(params[:start], params[:offset])) || (params[:end] && !@public.end_with(params[:end]) && ajax)
             return render json: {}
           end
         end
