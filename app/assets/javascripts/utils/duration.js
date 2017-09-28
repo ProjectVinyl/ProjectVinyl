@@ -33,7 +33,7 @@ function extractTimeUnit(duration, modulus) {
 export function toHMS(timeframe, delimiter) {
   const times = [];
   timeframe = Math.floor(timeframe);
-  while (time >= 60) {
+  while (timeframe >= 60) {
     times.unshift(timeframe % 60);
     timeframe = Math.floor(timeframe / 60);
   }
