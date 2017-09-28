@@ -14,7 +14,7 @@ function toggle(e, sender, options, callback) {
 function updateCheck(element, state) {
   const check = element.dataset.checkedIcon || 'check';
   const uncheck = element.dataset.uncheckedIcon || '';
-  element.querySelector('.icon').innerHTML = `<i class="fa fa-${state ? state : uncheck}></i>`;
+  element.querySelector('.icon').innerHTML = `<i class="fa fa-${state ? check : uncheck}"></i>`;
 }
 
 addDelegatedEvent(document, 'click', '.action.toggle', (e, target) => {
