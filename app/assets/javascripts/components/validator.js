@@ -13,22 +13,18 @@ export function Validator(el) {
   this.time = this.el.querySelector('#time');
   this.lastTime = -1;
   
-  this.cover = this.el.querySelector('#cover-upload');
-  this.cover.input = this.cover.querySelector('input[type=file]');
-  this.cover.preview = this.cover.querySelector('.preview');
-  
-  this.video = this.el.querySelector('#video-upload');
-  this.video.input = this.video.querySelector('input[type=file]');
+  this.coverInput = this.el.querySelector('#cover-upload input[type=file]');
+  this.videoInput = this.el.querySelector('#video-upload input[type=file]');
   
   const changeVideo = this.el.querySelector('.change-video');
   if (changeVideo) {
     changeVideo.addEventListener('click', () => {
-      this.video.input.click();
+      this.videoInput.click();
     });
   }
   
-  this.video.input.addEventListener('change', () => {
-    const file = this.video.input.files[0];
+  this.videoInput.addEventListener('change', () => {
+    const file = this.videoInput.files[0];
     const title = file.name.split('.');
     
     this.needsCover = !!file.type.match(/audio\//);
@@ -40,7 +36,7 @@ export function Validator(el) {
     });
   });
   
-  this.cover.input.addEventListener('change', () => {
+  this.coverInput.addEventListener('change', () => {
     this.hasCover = true;
     this.validateInput();
   });
@@ -51,10 +47,10 @@ Validator.prototype = {
   },
   notify: function(msg) {
     this.el.notify.classList.add('shown');
-    this.el.notify.bobber.textContent = msg;
+    this.el.notify.bobber.innerText = msg;
   },
   info: function(msg) {
-    this.el.info.style.display = '';
-    this.el.info.textContent = msg;
+    this.el.info.classList.remove('hidden');
+    this.el.info.innerText = msg;
   }
 };

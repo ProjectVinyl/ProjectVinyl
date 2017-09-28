@@ -7,6 +7,10 @@ import { Validator } from './validator';
 
 function UploadChecker(el) {
   Validator.call(this, el);
+  
+  this.thumbPick = this.el.querySelector('li[data-target="thumbpick"]');
+  this.thumbUpload = this.el.querySelector('li[data-target="thumbupload"]');
+  
   if (this.needsCover) {
     this.initPlayer();
   }
@@ -18,17 +22,14 @@ UploadChecker.prototype = extendObj({
     this.player.start();
   },
   accept: function(file) {
-    const thumbPick = this.el.querySelector('li[data-target="thumbpick"]');
-    const thumbUpload = this.el.querySelector('li[data-target="thumbupload"]');
-    
     if (this.needsCover && !this.player) this.initPlayer();
     if (canPlayType(file.mime)) {
       this.player.load(file.data);
-      thumbPick.removeAttribute('data-disabled');
-      thumbPick.click();
+      this.thumbPick.removeAttribute('data-disabled');
+      this.thumbPick.click();
     } else {
-      thumbUpload.click();
-      thumbPick.dataset.disabled = '1';
+      this.thumbUpload.click();
+      this.thumbPick.dataset.disabled = '1';
     }
     
     this.validateInput();

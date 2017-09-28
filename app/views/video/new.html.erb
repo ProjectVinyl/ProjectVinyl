@@ -1,6 +1,6 @@
 <% lim "900px" %>
 <% title "Upload" %>
-<div id="uploader_frame" class="wrapper page full-width tab-set">
+<div id="uploader_frame" class="page full-width tab-set">
 	<ul class="tab-set tabs">
 		<li id="new_tab_button" class="button" title="Add">+</li>
 	</ul>
@@ -16,8 +16,8 @@
 </ul>
 <div id="template" class="hidden">
 	<div data-tab="new[{id}]" class="tab selected">
-		<%= form_for(@video, as: "video", url: "videos", html: {class: "new_video async", method: :post}) do |f| %>
-			<section class="tab-set page full-width resize-holder uploaded-preview preview-selective">
+		<%= form_for(@video, as: "video", url: "videos", html: {class: "new_video", method: :post}) do |f| %>
+			<section class="tab-set full-width resize-holder uploaded-preview preview-selective">
 				<ul class="ui hidden tab-set tabs">
 					<li data-target="thumbpick_{id}" class="button selected">Pick Thumbnail</li>
 					<li data-target="thumbupload_{id}" class="button">Upload Image</li>

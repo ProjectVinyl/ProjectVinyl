@@ -6,7 +6,7 @@ function tick(next) {
   uploader.tab.classList.add('loading');
   uploader.tab.classList.add('waiting');
   uploadForm(uploader.form, {
-    progress: (message, fill, percentage) => {
+    progress: percentage => {
       uploader.update(percentage);
       if (next && percentage >= 100) next = tick(next);
     },
@@ -14,10 +14,10 @@ function tick(next) {
       uploader.complete(data.ref);
       if (next) next = tick(next);
     },
-    error: (message, error) => {
+    error: error => {
       uploader.error();
-      message.innerText = error;
       if (next) next = tick(next);
+      return error;
     }
   });
 }
