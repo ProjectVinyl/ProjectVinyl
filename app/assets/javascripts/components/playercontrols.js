@@ -170,7 +170,7 @@ PlayerControls.prototype = {
 };
 
 function didBufferChange(old, neu) {
-  return !old || old.length != neu.length || old.start != neu.start(0) || old.end != neu.end(neu.length - 1);
+  return !old || old.length != neu.length || (neu.length && old.start != neu.start(0) || old.end != neu.end(neu.length - 1));
 }
 
 function getVolumeIcon(level) {

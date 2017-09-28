@@ -6,7 +6,7 @@ import { scrollTo } from '../ui/scroll';
 import { ContextMenu } from '../ui/contextmenu';
 import { Key } from '../utils/misc';
 import { errorMessage, errorPresent } from '../utils/videos';
-import { all } from '../jslim/dom';
+import { all, each } from '../jslim/dom';
 import { ready, bindAll, halt } from '../jslim/events';
 import { isFullscreen, onFullscreenChange } from '../utils/fullscreen';
 import { cookies } from '../utils/cookies';
@@ -45,11 +45,10 @@ function setFullscreen(sender) {
 }
 
 function sendMessage(sender) {
-  if (sender.__sendMessages) {
-    let id = parseInt(localStorage['::activeplayer'] || '0');
-    sender.__seed = ((id + 1) % 3).toString();
-    localStorage.setItem('::activeplayer', sender.__seed);
-  }
+  if (!sender.__sendMessages) return;
+  let id = parseInt(localStorage['::activeplayer'] || '0');
+  sender.__seed = ((id + 1) % 3).toString();
+  localStorage.setItem('::activeplayer', sender.__seed);
 }
 
 function attachMessageListener(sender) {
@@ -61,7 +60,8 @@ function attachMessageListener(sender) {
 }
 
 function readyVideo(sender) {
-  let video = sender.createMediaElement()
+  let video = sender.createMediaElement();
+  sender.player.media.appendChild(video);
   
   if (sender.time) {
     if (sender.isReady()) {
@@ -80,12 +80,14 @@ function readyVideo(sender) {
   
   let suspendTimer = null;
   function suspended() {
-    if (!suspendTimer) suspendTimer = setTimeout(() => sender.suspend.classList.remove('hidden'), 300);
+    if (!suspendTimer) suspendTimer = setTimeout(() => {
+      suspendTimer = null;
+      sender.suspend.classList.remove('hidden');
+    }, 300);
   }
   
   bindAll(video, {
-    abort: e => sender.error(e),
-    error: e => sender.error(e),
+    abort: e => sender.error(e), error: e => sender.error(e),
     pause: () => sender.pause(),
     play: () => {
       sender.player.dataset.state = 'playing';
@@ -104,11 +106,12 @@ function readyVideo(sender) {
         sender.player.dataset.state = 'stopped';
       }
     },
-    suspend: suspended,
-    waiting: suspended,
-    stalled: suspended,
+    suspend: suspended, waiting: suspended, stalled: suspended,
     volumechange: () => {
       sender.volume(video.volume, video.muted || video.volume === 0);
+    },
+    seek: () => {
+      sender.track(video.currentTime, sender.getDuration());
     },
     timeupdate: () => {
       if (suspendTimer) {
@@ -118,6 +121,7 @@ function readyVideo(sender) {
       sender.track(video.currentTime, sender.getDuration());
     },
     progress: () => {
+      console.log('progress');
       sender.controls.repaintProgress(video);
     }
   });
@@ -127,7 +131,7 @@ function readyVideo(sender) {
 
 // Have to do this the long way to avoid caching errors in firefox
 function addSource(video, src, type) {
-  const source = document.createElement('source');
+  const source = document.createElement('SOURCE');
   source.type = type;
   source.src = src;
   video.appendChild(source);
@@ -157,13 +161,11 @@ Player.prototype = {
     this.playlist = document.querySelector('.playlist');
     
     this.heading = el.querySelector('h1 .title');
-    if (this.heading) {
-      this.heading.addEventListener('mouseover', () => {
-        if (this.video && this.video.currentTime) {
-          this.heading.href = `/videos/${this.source}-${this.title}?resume=${this.video.currentTime}`;
-        }
-      });
-    }
+    if (this.heading) this.heading.addEventListener('mouseover', () => {
+      if (this.video && this.video.currentTime) {
+        this.heading.href = `/videos/${this.source}-${this.title}?resume=${this.video.currentTime}`;
+      }
+    });
     
     this.contextmenu = new ContextMenu(el.querySelector('.contextmenu'), this.dom);
     this.controls = new PlayerControls(this, el.querySelector('.controls'));
@@ -189,19 +191,14 @@ Player.prototype = {
             return this.navTo(target);
           }
           if (this.playlist && ev.target.closest('.playlist-toggle')) {
-            this.playlist.classList.toggle('visible');
-            return;
+            return this.playlist.classList.toggle('visible');
           }
           
           if (ev.target.closest('.action')) return;
-          
           if (this.player.dataset.state != 'playing' || this.dom.toggler.interactable()) {
-            
             if (this.playlist && this.playlist.classList.contains('visible')) {
-              this.playlist.classList.remove('visible');
-              return;
+              return this.playlist.classList.remove('visible');
             }
-            
             this.togglePlayback();
           }
         }
@@ -330,7 +327,7 @@ Player.prototype = {
     return on;
   },
   loadAttributesAndRestart: function(attr) {
-    this.dom.style.backgroundImage = "url('/cover/" + attr.source + ".png')";
+    this.dom.style.backgroundImage = `url('/cover/${attr.source}.png')`;
     this.source = attr.source;
     this.mime = attr.mime;
     this.title = attr.title;
@@ -357,37 +354,28 @@ Player.prototype = {
     return this.video && this.video.readyState === 4;
   },
   createMediaElement: function() {
-    if (this.audioOnly && this.source) {
-      let audio = document.createElement('audio');
-      addSource(audio, `/stream/${this.source}${this.mime[0]}`, this.mime[1]);
-      return audio;
-    }
+    const media = document.createElement(this.audioOnly && this.source ? 'AUDIO' : 'VIDEO');
     
-    let video = document.createElement('video');
-    
-    video.preload = 'auto';
-    
-    if (!this.source || this.source === '0') return video;
+    if (!this.source || this.source === '0') return media;
     if (typeof this.source === 'string' && this.source.indexOf('blob') === 0) {
-      video.src = this.source;
+      media.src = this.source;
     } else {
-      addSource(video, `/stream/${this.source}.webm`, 'video/webm');
-      addSource(video, `/stream/${this.source}${this.mime[0]}`, this.mime[1]);
+      if (!this.audioOnly) addSource(media, `/stream/${this.source}.webm`, 'video/webm');
+      addSource(media, `/stream/${this.source}${this.mime[0]}`, this.mime[1]);
     }
     
-    return video;
+    return media;
   },
   play: function() {
     if (!this.video) {
       this.video = readyVideo(this);
-      this.player.media.appendChild(this.video);
       this.volume(this.video.volume, this.video.muted);
+      this.video.load();
     }
     
     if (this.video.networkState === HTMLMediaElement.NETWORK_NO_SOURCE) {
       this.video.load();
     }
-    
     this.video.play();
   },
   pause: function() {
@@ -436,19 +424,17 @@ Player.prototype = {
 
 function resize(obj) {
   obj.style.marginBottom = ''; // 16/9 aspect ratio
-  obj.style.height = (obj.clientWidth * 9 / 16) + 'px';
+  obj.style.height = `${obj.clientWidth * 9 / 16}px`;
 }
 
-ready(() => {
-  all('.video', v => {
-    if (!v.dataset.pending && !v.classList.contains('unplayable')) (new Player()).constructor(v);
-  });
-  
-  window.addEventListener('resize', () => {
-    all('.video', resize);
-  });
-  
-  onFullscreenChange(() => {
-    if (fullscreenPlayer) fullscreenPlayer.fullscreen(isFullscreen());
-  });
+window.addEventListener('resize', () => {
+  all('.video', resize);
 });
+
+onFullscreenChange(() => {
+  if (fullscreenPlayer) fullscreenPlayer.fullscreen(isFullscreen());
+});
+
+ready(() => all('.video', v => {
+  if (!v.dataset.pending && !v.classList.contains('unplayable')) (new Player()).constructor(v);
+}));
