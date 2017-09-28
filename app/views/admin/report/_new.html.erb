@@ -3,6 +3,9 @@
 		Please select the type of report you would like to submit.
 		<table>
 			<tr>
+				<td><label><%= f.radio_button :first, "duplicate", data: {to: "duplicate"} %><i class="fa"></i> Updated of previously uploaded</label></td>
+			</tr>
+			<tr>
 				<td><label><%= f.radio_button :first, "stolen", data: {to: "stolen"} %><i class="fa"></i> This is my intellectual Property</label></td>
 			</tr>
 			<tr>
@@ -13,6 +16,30 @@
 			</tr>
 			<tr>
 				<td><label><%= f.radio_button :first, "other", data: {to: "other"} %><i class="fa"></i> Other</label></td>
+			</tr>
+		</table>
+	</div>
+	<div class="group" data-stage="duplicate">
+		<table>
+			<tr>
+				<td colspan="2">
+					Please enter the video id you think this one is a duplicate of.
+					<%= f.number_field :target, placeholder: "Target Video" %>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="2">
+					If there's anything else we should know add it below.
+					<%= f.text_area :note, placeholder: "Note", required: true %>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<button class="goto left slide-left" data-to="start" type="button">< Back</button>
+				</td>
+				<td>
+					<button class="goto right slide-right" data-to="final" type="button">Next ></button>
+				</td>
 			</tr>
 		</table>
 	</div>
@@ -155,6 +182,9 @@
 				<td>
 					<div class="progressor">
 						<span class="message plain">Sending...</span>
+						<div class="progress">
+							<div class="fill"></div>
+						</div>
 					</div>
 				</td>
 			</tr>

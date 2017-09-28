@@ -56,14 +56,14 @@ module Admin
       @report = Report.create(
         video_id: @video.id,
         first: @report[:first],
-        source: @report[:source],
+        source: @report[:source] || @report[:target],
         content_type_unrelated: @report[:content_type_unrelated] == '1',
         content_type_offensive: @report[:content_type_offensive] == '1',
         content_type_disturbing: @report[:content_type_disturbing] == '1',
         content_type_explicit: @report[:content_type_explicit] == '1',
         copyright_holder: @report[:copyright_holder],
         subject: @report[:subject],
-        other: @report[:other],
+        other: @report[:note] || @report[:other],
         name: @report[:name] || (user_signed_in? ? current_user.username : "")
       )
       if user_signed_in?

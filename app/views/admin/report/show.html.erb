@@ -48,7 +48,7 @@
 				</tr>
 				<% if @report.source %>
 				<tr>
-					<td>Source:</td>
+					<td><% if @report.first == "duplicate" %>Target Video<% else %>Source<% end %>:</td>
 					<td><%= @report.source %></td>
 				</tr>
 				<% end %>

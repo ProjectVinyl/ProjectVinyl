@@ -1,9 +1,18 @@
+# TODO: Reports are a mess
 class Report < ApplicationRecord
   belongs_to :direct_user, class_name: "User", foreign_key: "user_id"
   belongs_to :video
 
   has_one :comment_thread, as: :owner, dependent: :destroy
-
+	
+	def note
+		other
+	end
+	
+	def target
+		source
+	end
+	
   def user
     self.direct_user || @dummy || (@dummy = User.dummy(self.user_id))
   end
