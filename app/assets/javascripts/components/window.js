@@ -10,100 +10,80 @@ function createPopupContent(params) {
   return nodeFromHTML(`<div class="popup-container focus transitional hidden ui-draggable">
     <div class="popup">
       <h1 class="popup-header">
-        <i class="fa fa-${params.icon}"></i>
-        ${params.title}
-        <a class="close" data-resolve="false"></a>
+        <i class="fa fa-${params.icon}"></i> ${params.title} <a class="close" data-resolve="false"></a>
       </h1>
       <div class="content">
         <div class="message_content">${params.content}</div>
-        <div class="foot center hidden"></div>
+        <div class="foot center hidden">${params.foot || ''}</div>
       </div>
     </div>
   </div>`);
 }
 
+function focus(dom) {
+  all(document, '.popup-container.focus', a => a.classList.remove('focus'));
+  dom.classList.remove('hidden');
+  dom.classList.add('focus');
+}
+
+function resolve(win, result) {
+  win.dom.classList.add('hidden');
+  if (win.dom.classList.contains('focus'))  {
+    const others = document.querySelectorAll('.popup-container:not(.hidden)');
+    if (others.length) {
+      focus(others[others.length - 1]);
+    }
+  }
+  setTimeout(() => win.dom.parentNode.removeChild(win.dom), 500);
+  if (result && win.accept) win.accept();
+}
+
 function PopupWindow(dom) {
-  this.dom = dom;
+  this.dom = createPopupContent(dom);
   this.dom.windowObj = this;
-  this.content = this.dom.querySelector('.content');
-  this.foot = this.content.querySelector('.foot');
+  
+  addDelegatedEvent(this.dom, 'click', '[data-resolve]', (e, target) => {
+    resolve(this, target.dataset.resolve === 'true');
+  });
+  initDraggable(this.dom, 'h1.popup-header');
+  this.show();
 }
 PopupWindow.prototype = {
   show: function() {
     document.querySelector('.fades').insertAdjacentElement('beforebegin', this.dom);
     requestAnimationFrame(() => {
-      this.focus();
-      centerWindow(this);
+      focus(this.dom);
+      this.center();
     });
   },
-  close: function() {
-    this.dom.classList.add('hidden');
-    if (this.dom.classList.contains('focus'))  {
-      var others = document.querySelectorAll('.popup-container:not(.hidden)');
-      if (others.length) {
-        others[others.length - 1].windowObj.focus();
-      }
-    }
-    setTimeout(() => {
-      this.dom.parentNode.removeChild(this.dom);
-    }, 500);
-  },
-  focus: function() {
-    all(document, '.popup-container.focus', a => a.classList.remove('focus'));
-    this.dom.classList.remove('hidden');
-    this.dom.classList.add('focus');
-  },
   setContent: function(content) {
-    this.content.innerHTML = content;
-  },
-  setFooter: function(content) {
-    this.foot.classList.remove('hidden');
-    this.foot.innerHTML = content;
+    this.dom.querySelector('.content').innerHTML = content;
   },
   setOnAccept: function(func) {
     this.accept = func;
+  },
+  center: function() {
+    const x = (document.body.offsetWidth - this.dom.offsetWidth) / 2;
+    const y = (document.body.offsetHeight - this.dom.offsetHeight) / 2;
+    move(this.dom, x, y);
   }
 }
 
-function resolveWith(win, result) {
-  win.close();
-  if (result && win.accept) win.accept();
-}
-
-function handleEvents(win) {
-  addDelegatedEvent(win.dom, 'click', '[data-resolve]', e => {
-    if (e.target.matches('[data-resolve]')) {
-      resolveWith(win, e.target.dataset.resolve === 'true');
-    }
-  });
-  initDraggable(win.dom, 'h1.popup-header');
+export function createWindow(params) {
+  return new PopupWindow(params);
 }
 
 document.addEventListener('keydown', e => {
   const activeWindow = document.querySelector('.popup-container.focus');
   if (!activeWindow) return;
-  if (e.which === Key.ESC) resolveWith(activeWindow.windowObj, false);
+  if (e.which === Key.ESC) resolve(activeWindow.windowObj, false);
   if (e.which === Key.ENTER) {
+    e.preventDefault(); // hitting enter triggers the link again. Let's stop that.
     const accept = activeWindow.querySelector('.confirm');
     if (accept) {
-      accept.dispatchEvent(new MouseEvent('click'));
+      accept.click();
     } else {
-      resolveWith(activeWindow.windowObj, true);
+      resolve(activeWindow.windowObj, true);
     }
-    e.preventDefault(); // hitting enter triggers the link again, let's stop that.
   }
 });
-
-export function createWindow(params) {
-  const win = new PopupWindow(createPopupContent(params));
-  handleEvents(win);
-  win.show();
-  return win;
-}
-
-export function centerWindow(win) {
-  const x = (document.body.offsetWidth - win.dom.offsetWidth) / 2;
-  const y = (document.body.offsetHeight - win.dom.offsetHeight) / 2;
-
-  move(win.dom, x, y);
-}
