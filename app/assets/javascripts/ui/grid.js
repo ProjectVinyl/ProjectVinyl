@@ -1,83 +1,78 @@
 import { ready } from '../jslim/events';
-import { all, offset } from '../jslim/dom';
+import { all } from '../jslim/dom';
 
-function height(el) {
-  const style = getComputedStyle(el);
-  return el.clientHeight - parseFloat(style.paddingTop) - parseFloat(style.paddingBottom);
-}
-
-function width(el) {
-  const style = getComputedStyle(el);
-  return el.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight);
-}
+const MARGIN = 60,
+      COLUMN_WIDTH = 182,
+      COLUMN_SPACING = 45,
+      SIDEBAR_WIDTH = 255,
+      SIDEBAR_SPACING = 15;
 
 function calculateNewWidth(grid, beside) {
-  // subtract any padding
-  const width = grid.parentNode.clientWidth - 195;
-  let calculatedWidth = width + 1;
+  const maxWidth = grid.parentNode.clientWidth - SIDEBAR_WIDTH;
+  let calculatedWidth = maxWidth + 1;
   let n = 10;
   
-  // 60 is the margins of the .page, 182 is the column width, and 45 is the column spacing
   do {
-    calculatedWidth = 60 + (182 * n) + 45 * --n + 60;
-  } while (calculatedWidth > width);
+    calculatedWidth = (MARGIN * 2) + (COLUMN_WIDTH * n) + (COLUMN_SPACING * --n);
+  } while (calculatedWidth > maxWidth);
+  
+  let besideWidth = beside.parentNode.clientWidth - (calculatedWidth + SIDEBAR_SPACING);
+  if (besideWidth < SIDEBAR_WIDTH) {
+    calculatedWidth == besideWidth - SIDEBAR_WIDTH;
+    besideWidth = SIDEBAR_WIDTH;
+  }
   
   grid.style.width = `${calculatedWidth}px`;
-  
-  if (beside) {
-    beside.style.width = `${beside.parentNode.clientWidth - (calculatedWidth + 15)}px`;
+  beside.style.width = `${besideWidth}px`;
+}
+
+function getTargetPage(grid, b) {
+  for (const page of grid.querySelectorAll('.page')) {
+    const t = page.getBoundingClientRect();
+    if (t.top < b && t.bottom > b) return page;
   }
 }
 
-// FIXME
-function calculatePageSplit(grid, beside) {
-  const b = offset(beside).top + height(beside) + 10;
-  for (const page of grid.querySelectorAll('.page')) {
-    const t = offset(page).top;
-    if (t < b && (t + page.offsetHeight) > b) {
-      for (const li of page.querySelectorAll('li')) {
-        if (offset(li).top > b) {
-          li.classList.add('t');
-          page.classList.add('split');
-          page.insertAdjacentHTML('afterend', '<section class="page virtual"><div class="group"><ul class="horizontal latest"></ul></div></section>');
-          const ul = pagt.nextSibling.querySelector('ul');
-          all('.t, .t ~ li', t => ul.appendChild(t));
-          li.classList.remove('t');
-          return;
-        }
-      }
-      return;
+function calculatePageSplit(grid, b) {
+  const page = getTargetPage(grid, b);
+  if (!page) return;
+  let found;
+  for (const li of page.querySelectorAll('li')) {
+    if (!found && li.getBoundingClientRect().top >= b) {
+      page.classList.add('split');
+      page.insertAdjacentHTML('afterend', '<section class="page virtual"><div class="group"><ul class="horizontal latest"></ul></div></section>');
+      found = page.nextSibling.querySelector('ul');
     }
+    if (found) found.appendChild(li);
   }
 }
 
 function resizeGrid(grid, beside) {
   all(grid, '.page.virtual', page => {
-    const prev = page.previousSibling;
+    let prev = page.previousSibling;
     prev.classList.remove('split');
-    prev.querySelector('ul').appendChild(page.querySelector('li'));
+    prev = prev.querySelector('ul');
+    all(page, 'li', a => prev.appendChild(a));
     page.parentNode.removeChild(page);
   });
   
   grid.style.width = '';
-  
-  if (width(beside) > 0) {
+  if (beside.offsetWidth) {
     calculateNewWidth(grid, beside);
   }
   
-  calculatePageSplit(grid, beside);
+  calculatePageSplit(grid, beside.getBoundingClientRect().bottom);
 }
 
 ready(() => {
-  if (document.querySelector('.grid-root')) {
-    const columnLeft = document.querySelector('.column-left');
-    const columnRight = document.querySelector('.column-right');
-    
-    function resize() {
-      resizeGrid(columnLeft, columnRight);
-    }
-    
-    window.addEventListener('resize', resize);
-    resize();
+  const columnRight = document.querySelector('.grid-root.column-right');
+  if (!columnRight) return;
+  const columnLeft = document.querySelector('.column-left');
+  
+  function resize() {
+    resizeGrid(columnLeft, columnRight);
   }
+  
+  window.addEventListener('resize', resize);
+  resize();
 });
