@@ -24,7 +24,7 @@ module Admin
     end
     
     def unprocessed
-      page(Video.where("(processed IS NULL or processed = ?) AND hidden = false", false)
+      page(Video.where("(processed IS NULL or processed = ?) AND hidden = false", false))
     end
     
     def destroy

@@ -28,5 +28,5 @@ document.addEventListener('click', event => {
   document.body.appendChild(form);
   event.preventDefault();
   
-  form.submit();
+  form.dispatchEvent(new Event('submit', event));
 });

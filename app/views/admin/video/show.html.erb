@@ -68,7 +68,7 @@
 			</tr>
 			<tr>
 				<td class="label">Cover</td>
-				<td class="field"><%= File.exist?("#{@video.cover_path}.png")) ? "Yes" : "No" %></td>
+				<td class="field"><%= File.exist?("#{@video.cover_path}.png") ? "Yes" : "No" %></td>
 				<td>
 					<a class="button" href="/admin/files?p=public/cover&start=<%= @video.id %>.png&offset=-5#<%= @video.id %>">View</a>
 				</td>

@@ -26,7 +26,7 @@
 					data-pending="1"
 					data-video="<%= @video.id %>" data-mime="<%= @video.file %>|<%= @video.mime %>"
 				>
-			<%= render partial: 'video/video_content', locals: {embed: false, header: false} do %>
+			<%= render layout: 'video/video_content', locals: {embed: false, header: false} do %>
 				<input class="playlist" id="time" type="text" name="video[time]" value="-1">-1</input>
 			<% end %>
 		<% end %>

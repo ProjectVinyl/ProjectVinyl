@@ -41,6 +41,7 @@ function resolve(win, result) {
 function PopupWindow(dom) {
   this.dom = createPopupContent(dom);
   this.dom.windowObj = this;
+  this.content = this.dom.querySelector('.content');
   
   addDelegatedEvent(this.dom, 'click', '[data-resolve]', (e, target) => {
     resolve(this, target.dataset.resolve === 'true');
@@ -57,7 +58,7 @@ PopupWindow.prototype = {
     });
   },
   setContent: function(content) {
-    this.dom.querySelector('.content').innerHTML = content;
+    this.content.innerHTML = content;
   },
   setOnAccept: function(func) {
     this.accept = func;

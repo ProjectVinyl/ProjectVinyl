@@ -114,9 +114,9 @@ Rails.application.routes.draw do
   
   # Boards/Categories #
   
+  resources :boards, only: [:new, :create, :destroy], controller: 'forum/board'
   get 'boards(/:ajax)' => 'forum/board#index'
-  resources :boards, only: [:new, :create, :destroy], controller: :board
-  
+	
   # Threads #
   get 'thread/:id' => 'thread#view', constraints: { id: /([0-9]+).*/ } # /
   resources :threads, only: [:new, :create, :update], controller: :thread do
@@ -172,7 +172,7 @@ Rails.application.routes.draw do
       put 'feature'
     end
     
-    resources :videos, only: [:show, :destroy] do
+    resources :videos, only: [:show, :destroy], controller: :video do
       put 'hide'
       put 'feature'
       put 'reprocess'

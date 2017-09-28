@@ -91,7 +91,7 @@
 	</div>
 	<div data-tab="commenting" class="tab">
 		<h1>Notifications</h1>
-		<%= form_for(current_user.prefs_cache, as: 'settings', url: '/users/<%= current_user.id %>/prefs', html: { method: :put }) do |f| %>
+		<%= form_for(current_user.prefs_cache, as: 'settings', url: '/users/#{current_user.id}/prefs', html: { method: :put }) do |f| %>
 		<table style="table-layout:auto;">
 			<tr>
 				<td class="label">

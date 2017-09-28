@@ -39,11 +39,11 @@ class ThreadController < ApplicationController
   end
 
   def update
-    if !(user_signed_in?
+    if !user_signed_in?
 			return head 401
 		end
 		
-		if !(thread = CommentThread.where(id: params[:id]).first))
+		if !(thread = CommentThread.where(id: params[:id]).first)
 			return head :not_found
 		end
 		
