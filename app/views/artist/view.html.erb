@@ -2,8 +2,7 @@
 <% if @user.banner_set %>
 <style>
 .banner-background {
-  background-image: url('<%= @user.banner %>');
-  background-size: cover;
+  background: url('<%= @user.banner %>') center center/cover #000;
 }
 </style>
 <% end %>

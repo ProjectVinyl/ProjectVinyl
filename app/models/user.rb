@@ -13,7 +13,8 @@ class User < ApplicationRecord
   include Indexable
   include Uncachable
   include Taggable
-  
+  include WithFiles
+	
   prefs :preferences, subscribe_on_reply: true, subscribe_on_thread: true, subscribe_on_upload: true
   
   after_destroy :remove_assets
@@ -293,7 +294,7 @@ class User < ApplicationRecord
   end
 
   def banner
-    self.cache_bust("/banner/#{self.id}#{self.mime}")
+    self.cache_bust("/banner/#{self.id}.png")
   end
 
   def link

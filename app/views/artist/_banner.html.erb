@@ -1,6 +1,6 @@
-<%= form_for(@user, as: "user", url: "/users/<%= @user.id %>/banner", html: {method: :patch}) do |f| %>
+<%= form_for(@user, as: "user", url: "/users/#{@user.id}/banner", html: {class: "async js-banner-select", method: :patch}) do |f| %>
 <div class="uploaded-preview">
-	<div id="banner-upload" class="banner drag-target file-select image-selector uploaded-preview" data-base-path="<%= @user.banner %>">
+	<div id="banner-upload" class="banner drag-target file-select image-selector uploaded-preview auto-submit" data-path="/banner/<%= @user.id %>.png">
 		<span class="preview" style="background-image: url('<%= @user.banner %>');"></span>
 		<span class="drop-icon" style="box-shadow: none;">
 			<i class="fa fa-camera"></i>
