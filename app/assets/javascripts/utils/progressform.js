@@ -1,52 +1,30 @@
-import { unionObj } from './misc';
 import { addDelegatedEvent } from '../jslim/events';
 import { xhr } from './xhr';
 
-const defaultCallbacks = {
-  progress: (e, message, fill, percentage, secondsRemaining) => {
-    if (percentage >= 100) {
-      message.innerText = 'Waiting for server...';
-    } else {
-      message.innerText = `${secondsRemaining} remaining (${Math.floor(percentage)}% )`;
-    }
-    fill.style.width = `${percentage}%`;
-    message.style.left = `${percentage}%`;
-    message.style.marginLeft = -message.offsetWidth / 2;
-  },
-  success: _ => _,
-  error: (message, error) => {
-    message.innerText = error;
-  }
-};
-
 export function uploadForm(form, callbacks, e) {
   if (e) e.preventDefault();
-  callbacks = unionObj(defaultCallbacks, callbacks || {});
-  
-  const message = form.querySelector('.progressor .message');
-  const fill = form.querySelector('.progressor .fill');
+  const message = form.querySelector('.progressor .message'),
+        fill = form.querySelector('.progressor .fill');
   
   form.classList.add('uploading');
-  
-  xhr(form.getAttribute('method'), `${form.getAttribute('action')}/async`, new FormData(form), {
-    progress: message ? function(percentage, secondsRemaining) {
+  xhr(form.getAttribute('method'), `${form.action}/async`, new FormData(form), {
+    progress: function(percentage, secondsRemaining) {
       if (!message.classList.contains('plain')) message.classList.add('bobber');
       form.classList.toggle('waiting', percentage >= 100);
-      callbacks.progress(message, fill, percentage, secondsRemaining);
-    } : null,
+      if (callbacks.progress) callbacks.progress(percentage, secondsRemaining, message, fill);
+    },
     success: data => {
       form.classList.remove('uploading');
       form.dispatchEvent(new CustomEvent('ajax:complete', {
         detail: { data: data },
-        bubbles: true,
-        cancelable: true
+        bubbles: true, cancelable: true
       }));
-      callbacks.success(data);
+      if (callbacks.success) callbacks.success(data, message);
     },
     error: error => {
       form.classList.add('error');
       message.style.marginLeft = '';
-      callbacks.error(message, error);
+      callbacks.error(error, message);
     },
     complete: () => {
       if (form.classList.contains('form-state-toggle')) {
@@ -57,6 +35,18 @@ export function uploadForm(form, callbacks, e) {
   });
 }
 
+const defaultCallbacks = {
+  progress: (percentage, secondsRemaining, message, fill) => {
+    message.innerText = percentage < 100 ? `${secondsRemaining} remaining (${Math.floor(percentage)}% )` : 'Waiting for server...';
+    fill.style.width = `${percentage}%`;
+    message.style.left = `${percentage}%`;
+    message.style.marginLeft = -message.offsetWidth / 2;
+  },
+  error: (error, message) => {
+    message.innerHTML = error;
+  }
+};
+
 addDelegatedEvent(document, 'submit', 'form.async', (e, target) => {
-  uploadForm(target, {}, e);
+  uploadForm(target, defaultCallbacks, e);
 });

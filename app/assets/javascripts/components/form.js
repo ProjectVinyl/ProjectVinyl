@@ -2,7 +2,7 @@
  * External forms.
  */
 import { ajax} from '../utils/ajax';
-import { createWindow, centerWindow } from './window';
+import { createWindow } from './window';
 import { popupError } from '../components/popup';
 import { addDelegatedEvent } from '../jslim/events';
 
@@ -47,11 +47,21 @@ function createExternalForm(url, title, icon, maxWidth, thin) {
   
   ajax.get(url).text(html => {
     win.setContent(html);
-    centerWindow(win);
+    win.center();
   });
   
   return win;
 }
+
+addDelegatedEvent(document, 'change', 'form .auto-submit', (e, target) => {
+  const form = target.closest('form');
+  let button = form.querySelector('button[type="submit"]');
+  if (!button) {
+    form.insertAdjacentHTML('beforeend', '<button class="hidden" type="submit" />');
+    button = form.lastChild;
+  }
+  button.click();
+});
 
 addDelegatedEvent(document, 'click', '[data-external-form]', function(e) {
   if (e.button !== 0) return;
