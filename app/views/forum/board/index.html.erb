@@ -3,9 +3,6 @@
 	stack: [],
 	title: "Forum"
 } %>
-<h1 class="title">
-	<a href="/">Home</a> <i class="fa fa-chevron-right"></i> Forum
-</h1>
 <div class="actions space-fix">
 	<% if user_signed_in? && current_user.is_contributor? %>
 		<button class="action mobile-friendly green" data-external-form="/boards/new" data-title="Create Category" type="button">
