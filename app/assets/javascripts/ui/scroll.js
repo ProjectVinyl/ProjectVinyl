@@ -1,12 +1,10 @@
-import { all, offset } from '../jslim/dom';
+import { all, offset, subtractOffsets } from '../jslim/dom';
 import { ready } from '../jslim/events';
 import { ease } from '../utils/math';
 
-function animateScroll(elementX, elementY, viewport, duration) {
+function animateScroll(diff, viewport, duration) {
   const startingX = viewport.scrollLeft;
   const startingY = viewport.scrollTop;
-  const diffX = elementX - startingX;
-  const diffY = elementY - startingY;
   let start;
   
   requestAnimationFrame(function step(timestamp) {
@@ -14,8 +12,8 @@ function animateScroll(elementX, elementY, viewport, duration) {
     const time = timestamp - start;
     const percent = ease(Math.min(time / duration, 1));
     
-    viewport.scrollLeft = startingX + diffX * percent;
-    viewport.scrollTop = startingY + diffY * percent;
+    viewport.scrollLeft = startingX + diff.left * percent;
+    viewport.scrollTop = startingY + diff.top * percent;
     
     if (time < duration) requestAnimationFrame(step);
   });
@@ -24,20 +22,12 @@ function animateScroll(elementX, elementY, viewport, duration) {
 // me: The element you want to find
 // container: The container whose scroll position changes
 export function scrollTo(me, container) {
-  if (!container) {
-    container = me.closest('.context-3d') || document.documentElement;
-  }
+  container = container || me.closest('.context-3d') || document.documentElement;
   
-  const childOff = offset(me);
-  const containerOff = offset(container);
-  
-  var viewX = container.clientWidth / 2;
-  var viewY = container.clientHeight / 2;
-  
-  const elementX = (childOff.left - containerOff.left) - viewX + (me.offsetWidth / 2);
-  const elementY = (childOff.top - containerOff.top) - viewY + (me.offsetHeight / 2);
-  
-  animateScroll(container.scrollLeft + elementX, container.scrollTop + elementY, container, 250);
+  animateScroll(subtractOffsets(subtractOffsets(offset(me), offset(container)), {
+    left: (container.clientWidth - me.offsetWidth) / 2,
+    top: (container.clientHeight - me.offsetHeight) / 2
+  }), container, 250);
 }
 
 ready(() => all('.scroll-container', el => {

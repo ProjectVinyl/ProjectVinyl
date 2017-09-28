@@ -8,7 +8,7 @@ function pull(input, push) {
 }
 
 export function nodeFromHTML(html) {
-  return pull(html, () => div.firstChild);
+  return pull(html, () => div.firstElementChild);
 }
 
 export function decodeEntities(string) {
@@ -28,6 +28,10 @@ export function offset(element) {
     top: rect.top + win.pageYOffset - doc.clientTop,
     left: rect.left + win.pageXOffset - doc.clientLeft
   };
+}
+
+export function subtractOffsets(offOne, offTwo) {
+  return {top: offOne.top - offTwo.top, left: offOne.left - offTwo.left};
 }
 
 export function each(arrLike, func, thisArg) {
