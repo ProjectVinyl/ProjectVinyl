@@ -1,5 +1,6 @@
 import { addDelegatedEvent, ready } from '../jslim/events';
 import { offset, all } from '../jslim/dom';
+import { clamp } from '../utils/math';
 
 export function move(sender, x, y) {
   setPos(sender, x, y);
@@ -11,13 +12,8 @@ function setPos(sender, x, y) {
   const maxX  = document.body.offsetWidth - sender.clientWidth;
   const maxY = document.body.offsetHeight - sender.clientHeight;
   // Clamp to valid region on the page
-  if (x > maxX)  x = maxX;
-  if (y > maxY) y = maxY;
-  if (x < 0) x = 0;
-  if (y < 0) y = 0;
-  
-  sender.style.top = `${y}px`;
-  sender.style.left = `${x}px`;
+  sender.style.top = `${clamp(y, 0, maxY)}px`;
+  sender.style.left = `${clamp(x, 0, maxX)}px`;
 }
 
 export function initDraggable(sender, target) {

@@ -39,12 +39,12 @@ function removeComment(sender) {
     ajax.delete(sender.getAttribute('href')).json(json => {
       const el = sender.closest('.comment');
       
-      el.style.height = el.offsetHeight + 'px';
+      el.style.height = `${el.offsetHeight}px`;
       requestAnimationFrame(() => {
         el.classList.add('hidden');
         if (json.content) {
           el.insertAdjacentHTML('afterend', json.content);
-          el.nextSibling.style.height = el.nextSibling.offsetHeight + 'px';
+          el.nextSibling.style.height = `${el.nextSibling.offsetHeight}px`;
           el.nextSibling.classList.add('hidden');
           requestAnimationFrame(() => {
             el.nextSibling.classList.remove('hidden');
@@ -58,12 +58,11 @@ function removeComment(sender) {
 }
 
 function scrollToAndHighlightElement(comment) {
-  if (comment) {
-    all('.comment.highlight', a => a.classList.remove('highlight'));
-    scrollTo(comment);
-    comment.classList.add('highlight');
-    return true;
-  }
+  if (!comment) return;
+  all('.comment.highlight', a => a.classList.remove('highlight'));
+  scrollTo(comment);
+  comment.classList.add('highlight');
+  return true;
 }
 
 function scrollToAndHighlight(commentId) {
@@ -163,7 +162,7 @@ document.addEventListener('click', event => {
   if (event.which !== 1 && event.button !== 0) return;
   
   for (const target in targets) {
-    var el = event.target.closest(target);
+    let el = event.target.closest(target);
     if (el) {
       event.preventDefault();
       return targets[target](el);

@@ -17,33 +17,31 @@ function count(me, offset, save) {
     count.innerText = state.count;
   };
   
-  updateUI({ count: (parseInt(me.dataset.count || 0) || 0) + offset });
+  updateUI({ count: (parseInt(me.dataset.count) || 0) + offset });
   
   return updateUI;
 }
 
 function save(sender, data) {
-  return ajax.put((sender.dataset.target || 'videos') + '/' + sender.dataset.id + '/' + sender.dataset.action, data);
+  return ajax.put(`${sender.dataset.target || 'videos'}/${sender.dataset.id}/${sender.dataset.action}`, data);
 }
 
-addDelegatedEvent(document, 'click', 'button.action.like, button.action.dislike', function(e) {
+addDelegatedEvent(document, 'click', 'button.action.like, button.action.dislike', (e, target) => {
   if (e.button) return;
-  if (!this.classList.contains('liked')) {
-    let other = this.parentNode.querySelector('.liked');
-    if (other) {
-      count(other, -1);
-    }
+  if (!target.classList.contains('liked')) {
+    let other = target.parentNode.querySelector('.liked');
+    if (other) count(other, -1);
   }
-  const offset = this.classList.contains('liked') ? -1 : 1;
-  save(this, {
+  const offset = target.classList.contains('liked') ? -1 : 1;
+  save(target, {
     incr: offset
-  }).json(count(this, offset));
+  }).json(count(target, offset));
 });
 
-addDelegatedEvent(document, 'click', 'button.action.star', function(e) {
+addDelegatedEvent(document, 'click', 'button.action.star', (e, target) => {
   if (e.button) return;
-  this.classList.toggle('starred');
-  save(this).json(json => {
-    this.classList.toggle('starred', json.count);
+  target.classList.toggle('starred');
+  save(target).json(json => {
+    target.classList.toggle('starred', json.count);
   });
 });

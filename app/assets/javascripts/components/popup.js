@@ -3,14 +3,8 @@
  */
 import { createWindow } from './window';
 
-function createPopup(ref) {
-  var win = createWindow(ref);
-  win.setFooter(ref.foot);
-  return win;
-}
-
 export function popupConfirm(msg, title) {
-  return createPopup({
+  return createWindow({
     icon: 'warning',
     title: title || 'Confirm',
     content: msg,
@@ -21,7 +15,7 @@ export function popupConfirm(msg, title) {
 
 export function popupError(msg, title) {
   console.error(msg);
-  return createPopup({
+  return createWindow({
     icon: 'warning',
     title: title || 'Error',
     content: msg,
