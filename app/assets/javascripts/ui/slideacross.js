@@ -13,7 +13,7 @@ function slideAcross(me, direction) {
   const from = form.querySelector('.active');
   if (from) {
     from.classList.remove('active');
-    from.insertAdjacentElement(direction > 0 ? 'afterend' : 'beforestart', to);
+    from.insertAdjacentElement(direction > 0 ? 'afterend' : 'beforebegin', to);
   }
   
   to.classList.add('active');
