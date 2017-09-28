@@ -5,7 +5,7 @@
 			<td class="label">
 				<%= f.label "To" %>
 			</td>
-			<td class="field popper auto-lookup validate" data-action="users">
+			<td class="field popper auto-lookup validate" data-action="/find/users">
 				<%= f.text_field "recipient", value: @user ? @user.username : "", autocomplete: "off" %>
 				<ul class="pop-out"></ul>
 			</td>

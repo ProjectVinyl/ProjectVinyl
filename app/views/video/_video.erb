@@ -75,6 +75,12 @@
 						</tr>
 					</table>
 				</div>
+				<div class="progressor">
+					<div class="message">Uploading...</div>
+					<div class="progress">
+						<div class="fill"></div>
+					</div>
+				</div>
 			<% end %>
 			<hr class="normal">
 			<button class="normal state-toggle" data-state="editing">Edit Tags Or Source</button>
@@ -94,7 +100,7 @@
 				<% end %>
 				<% if @modifications_allowed %>
 					<li class="action">
-						<a href="/video/edit/<%= @video.id %>">
+						<a href="/videos/<%= @video.id %>/edit">
 							<span class="icon"><i class="fa fa-pencil"></i></span>
 							<span class="label">Change Cover Image</span>
 						</a>

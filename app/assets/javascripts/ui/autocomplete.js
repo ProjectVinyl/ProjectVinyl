@@ -1,38 +1,54 @@
 import { ajax } from '../utils/ajax';
 import { addDelegatedEvent } from '../jslim/events';
 
-let autocomplete = null;
+addDelegatedEvent(document, 'lookup:complete', '.auto-lookup .popup', (e, target) => {
+  target.innerHTML = e.detail.results.map((a, i) => `<li data-index="${i}">${a[1]} (${a[0]})</li>`).join('');
+});
 
 addDelegatedEvent(document, 'focusin', '.auto-lookup:not(.loaded) input', (e, input) => {
-  const me = input.parentNode;
-  const popout = me.querySelector('.pop-out');
-  const action = me.dataset.action;
-  const validate = me.classList.contains('validate');
-  let lastValue = null;
+  let autocomplete = null;
+  let lastValue = '';
   
-  me.classList.add('loaded');
+  let results = [];
   
-  addDelegatedEvent(popup, 'mousedown', '.auto-lookup li[data-name]', (e, sender) => {
-    input.value = sender.dataset.name;
-    me.classList.remove('pop-out-shown');
-  });
+  const container = input.closest('.auto-lookup');
+  container.classList.add('loaded');
   
+  const popout = container.querySelector('.pop-out');
+  
+  input.addEventListener('focus', focus);
   input.addEventListener('blur', () => {
-    if (autocomplete) clearInterval(autocomplete);
+    container.classList.remove('focus');
+    if (!autocomplete) return;
+    clearInterval(autocomplete);
     autocomplete = null;
   });
-  
-  input.addEventListener('focus', () => {
-    if (!autocomplete) autocomplete = setInterval(() => {
-      if (input.value == lastValue) return;
-      lastValue = input.value;
-      ajax.post(`${action}/lookup`, {
-        query: input.value, validate: validate ? 1 : 0
-      }).json(json => {
-        popout.innerHTML = json.content.map(a => `<li data-name="${a[1]}">${a[1]} (${a[0]})</li>`).join('');
-        me.classList.toggle('pop-out-shown', json.content.length);
-        me.classList.toggle('invalid', json.reject);
-      });
-    }, 1000);
+  addDelegatedEvent(popout, 'click', 'li[data-index]', (e, target) => {
+    const item = results[target.dataset.index];
+    container.classList.remove('pop-out-shown');
+    if (!item) return;
+    input.value = item.toString();
+    popout.dispatchEvent(new CustomEvent('lookup:insert', { detail: item, bubbles: true, cancellable: true }));
   });
+  focus();
+  
+  function focus() {
+    if (autocomplete) return;
+    autocomplete = setInterval(() => {
+      const value = input.value.trim();
+      if (value.length && value !== lastValue) {
+        lastValue = value;
+        ajax.get(container.dataset.action, {
+          q: value, validate: input.classList.contains('validate')
+        }).json(json => {
+          results = json.results;
+          container.classList.toggle('pop-out-shown', results.length);
+          input.classList.toggle('invalid', json.reject);
+          popout.dispatchEvent(new CustomEvent('lookup:complete', { detail: json, bubbles: true, cancellable: true }));
+        });
+      }
+    }, 1000);
+    container.classList.add('focus');
+    container.classList.toggle('pop-out-shown', results.length);
+  }
 });

@@ -77,7 +77,7 @@ function inputHandler(sender) {
   };
   
   sender.dom.addEventListener('mouseup', e => {
-    if (!e.target.closest('i')) input.focus();
+    if (!e.target.closest('li')) input.focus();
   });
   
   input.addEventListener('keydown', e => {
@@ -95,52 +95,18 @@ function inputHandler(sender) {
     handledBack = false;
   });
   
-  autoCompleteHandler(input, sender);
-}
-// TODO: Move to autocomplete.js
-function autoCompleteHandler(input, sender) {
-  const searchResults = sender.dom.querySelector('.search-results');
-  
-  let autocomplete = null;
-  let lastValue = '';
-  
-  let searchResultResults = [];
-  
-  input.addEventListener('focus', () => {
-    if (autocomplete) return;
-    autocomplete = setInterval(() => {
-      const value = input.value.trim().split(/,|;/).reverse()[0].trim().toLowerCase();
-      if (value.length && value != lastValue) {
-        lastValue = value;
-        doSearch(value);
-      }
-    }, 1000);
-    sender.dom.classList.add('focus');
-    sender.dom.classList.toggle('pop-out-shown', searchResults.children.length);
-  });
-  input.addEventListener('blur', () => {
-    sender.dom.classList.remove('focus');
-    if (!autocomplete) return;
-    clearInterval(autocomplete);
-    autocomplete = null;
+  sender.dom.addEventListener('lookup:complete', e => {
+    e.stopPropagation(); //autocomplete.js
+    e.target.innerHTML = e.detail.results.map((tag, i) => `<li class="tag-${tag.namespace}" data-slug="${tag.slug}" data-index="${i}">
+      <span>${tag.name.replace(e.detail.term, `<b>${e.detail.term}</b>`)}</span> (${tag.members})
+    </li>`).join('');
   });
   
-  addDelegatedEvent(searchResults, 'click', 'li[data-index]', (e, target) => {
-    sender.dom.classList.remove('pop-out-shown');
-    addTag(sender, searchResultResults[parseInt(target.dataset.index)]);
-    save(sender);
+  sender.dom.addEventListener('lookup:insert', e => {
     input.value = '';
+    addTag(sender, e.detail);
+    save(sender);
   });
-  
-  function doSearch(name) {
-    ajax.get('find/tags', { q: name }).json(json => {
-      sender.dom.classList.toggle('pop-out-shown', !!json.results.length);
-      searchResultResults = json.results;
-      searchResults.innerHTML = searchResultResults.map((tag, i) => `<li class="tag-${tag.namespace}" data-slug="${tag.slug}" data-index="${i}">
-        <span>${tag.name.replace(name, `<b>${name}</b>`)}</span> (${tag.members})
-      </li>`).join('');
-    });
-  }
 }
 
 function TagEditor(el) {

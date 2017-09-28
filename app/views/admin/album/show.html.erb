@@ -30,7 +30,7 @@
 					<td class="label">
 						<%= f.label "Owner" %>
 					</td>
-					<td class="field popper auto-lookup" data-type="users">
+					<td class="field popper auto-lookup" data-action="/find/users">
 						<%= f.text_field :user_id, autocomplete: "off" %>
 						<ul class="pop-out"></ul>
 					</td>
