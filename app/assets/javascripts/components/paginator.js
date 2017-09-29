@@ -39,9 +39,9 @@ ready(() => {
   document.addEventListener('click', event => {
     // Left-click only, no modifiers
     if (event.button !== 0 || event.ctrlKey || event.shiftKey) return;
-    const target = event.target.closest('.pagination .button');
+    const target = event.target.closest('.pagination .button[data-page-to]');
     if (target) {
-      paginator.go(target);
+      requestPage(target.closest('.paginator'), target.dataset.pageTo);
       event.preventDefault();
     }
   });
