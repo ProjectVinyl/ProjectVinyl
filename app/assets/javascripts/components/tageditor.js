@@ -128,6 +128,11 @@ function TagEditor(el) {
   });
   
   inputHandler(this);
+  
+  this.reload = tags => {
+    this.tags = tagSet(tags);
+    save(this);
+  };
 }
 
 function pushHistory(history, tag, action) {
