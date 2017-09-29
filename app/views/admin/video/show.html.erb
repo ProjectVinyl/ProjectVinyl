@@ -109,7 +109,7 @@
 				</td>
 			</tr>
 			<tr>
-				<td class="label">Disable Comments</td>
+				<td class="label">Commenting</td>
 				<td class="field">
 					<button class="action toggle blue" data-target="admin/threads" data-id="<%= @video.comment_thread.id %>" data-action="lock">
 						<span class="icon">
@@ -117,8 +117,9 @@
 								<i class="fa fa-check"></i>
 							<% end %>
 						</span>
-						<span class="label">Disable Comments</span>
+						<span class="label">Disable</span>
 					</button>
+					<a class="button" href="<%= @video.comment_thread.link %>" target="_blank">View</a>
 				</td>
 			</tr>
 			<tr class="actions">
