@@ -24,7 +24,7 @@
 	<div>
 		<h1>Implies</h1>
 		<ul class="tags">
-			<%= render partial: "layouts/genre_thumb_h", collection: tag.implications %>
+			<%= render partial: "tag/thumb_h", collection: tag.implications %>
 		</ul>
 	</div>
 	<% end %>
@@ -32,7 +32,7 @@
 	<div>
 		<h1>Implied by</h1>
 		<ul class="tags">
-			<%= render partial: "layouts/genre_thumb_h", collection: tag.implicators %>
+			<%= render partial: "tag/thumb_h", collection: tag.implicators %>
 		</ul>
 	</div>
 	<% end %>
@@ -40,7 +40,7 @@
 	<div>
 		<h1>Aliases</h1>
 		<ul class="tags">
-			<%= render partial: "layouts/genre_thumb_h", collection: tag.aliases %>
+			<%= render partial: "tag/thumb_h", collection: tag.aliases %>
 		</ul>
 	</div>
 	<% end %>
