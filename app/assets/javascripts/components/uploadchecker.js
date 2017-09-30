@@ -11,15 +11,13 @@ function UploadChecker(el) {
   this.thumbPick = this.el.querySelector('li[data-target="thumbpick"]');
   this.thumbUpload = this.el.querySelector('li[data-target="thumbupload"]');
   
-  if (this.needsCover) {
-    this.initPlayer();
-  }
+  this.initPlayer();
 }
 UploadChecker.prototype = extendObj({
   initPlayer: function() {
     this.player = new ThumbPicker();
     this.player.constructor(this.el.querySelector('.video'));
-    this.player.start();
+    this.player.play();
   },
   accept: function(file) {
     if (this.needsCover && !this.player) this.initPlayer();

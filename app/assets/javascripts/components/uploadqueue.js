@@ -38,7 +38,7 @@ export function UploadQueue() {
   
   return {
     enqueue: function(me) {
-      if (me.isReady()) enqueueAll([me]);
+      if (me.isReady()) this.enqueueAll([me]);
     },
     enqueueAll: function(args) {
       items.push.apply(items, args);

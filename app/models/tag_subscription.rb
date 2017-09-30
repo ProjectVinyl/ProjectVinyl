@@ -50,10 +50,10 @@ class TagSubscription < ApplicationRecord
   end
   
   protected
-  def update_users(op, tags, preserved_receivers)
+  def self.update_users(op, tags, preserved_receivers)
     if !tags.empty?
       User.joins('INNER JOIN `tag_subscriptions` ON user_id = `users`.id')
-          .where("`tag_subscriptions`.tag_id IN (?) AND `users`.id NOT IN (?)#{op ? '' : ' AND feed_count > 0'}", gained, preserved_receivers)
+          .where("`tag_subscriptions`.tag_id IN (?) AND `users`.id NOT IN (?)#{op ? '' : ' AND feed_count > 0'}", tags, preserved_receivers)
           .group('`users`.id').update_all("feed_count = feed_count #{op ? "+" : "-"} 1")
     end
   end

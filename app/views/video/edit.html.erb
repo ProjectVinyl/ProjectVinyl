@@ -6,7 +6,7 @@
 		<li data-target="thumbpick" class="button">Pick Time</li>
 	</ul>
 	<% end %>
-	<%= form_for(@video, as: "video", url: "videos/%{@video.id}/cover", html: {class: "edit_video async", method: :patch}) do |f| %>
+	<%= form_for(@video, as: "video", url: "videos/#{@video.id}/cover", html: {class: "edit_video async", method: :patch}) do |f| %>
 	<%= f.text_field :id, hidden: true %>
 	<div class="progressor">
 		<div class="cover-block">
