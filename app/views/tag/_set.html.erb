@@ -1,9 +1,9 @@
 <% if tags.length == 1 %>
-	<%= render partial: '/genre/bio', locals: {tag: tags.first} %>
+	<%= render partial: 'tag/bio', locals: {tag: tags.first} %>
 <% else %>
 	<div class="post">
 		<ul class="tags">
-			<%= render partial: "layouts/genre_thumb_h", collection: tags %>
+			<%= render partial: "tag/thumb_h", collection: tags %>
 		</ul>
 	</div>
 <% end %>

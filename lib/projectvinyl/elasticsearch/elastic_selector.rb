@@ -8,6 +8,7 @@ module ProjectVinyl
         @user = sender
         @opset = ProjectVinyl::Search::Op.load_ops(search_terms.downcase)
         @elastic = nil
+        @offset = 0
         @type = "unknown"
         @ordering = []
       end
@@ -17,7 +18,12 @@ module ProjectVinyl
         @limit = limit
         self
       end
-
+      
+      def offset(off)
+        @offset = off
+        self
+      end
+      
       def videos
         @type = 'video'
         self
@@ -95,7 +101,7 @@ module ProjectVinyl
         end
         @page = 0 if @page.nil?
         params = {
-          from: @limit * @page,
+          from: @offset + @limit * @page,
           size: @limit,
           query: add_required_params(@elastic.to_hash)
         }

@@ -30,7 +30,7 @@ class Video < ApplicationRecord
   }
   scope :random, ->(limit) {
     selection = pluck(:id)
-    return { ids: [], videos: [] } if selection.blank?
+    return { ids: [], videos: Video.none } if selection.blank?
     if selection.length < limit
       selected = selection
     else

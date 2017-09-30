@@ -388,7 +388,7 @@ class VideoController < ApplicationController
       end
       
       if @album
-        @items = @album.album_items.order(:index)
+        @items = params[:q] ? @album.album_items : @album.album_items.order(:index)
         @index = params[:index].to_i || (@items.first ? @items.first.index : 0)
         
         if @index > 0
