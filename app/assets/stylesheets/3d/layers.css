@@ -24,4 +24,5 @@
   padding-top: 20px;
   background: inherit;
   z-index: 1;
+  transform-style: flat;
 }
