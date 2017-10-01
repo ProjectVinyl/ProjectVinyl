@@ -23,7 +23,8 @@ addDelegatedEvent(document, 'mouseover', '.user-link', function(e) {
   if (e.target.closest('.user-link-ignore')) return;
   closeUsercard();
   
-  const id = this.dataset.id;
+  const id = parseInt(this.dataset.id) || 0;
+  if (id <= 0) return;
   
   let usercard = document.querySelector(`.hovercard[data-id="${id}"]`);
   if (usercard) return openUsercard(this, usercard);
