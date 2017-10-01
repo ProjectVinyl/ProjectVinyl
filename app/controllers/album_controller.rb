@@ -80,11 +80,12 @@ class AlbumController < ApplicationController
       return redirect_to action: 'view', controller: "video", id: initial.id
     end
     
-    redirect_to action: 'view', id: album.id
+    redirect_to action: 'show', id: album.id
   end
   
   def edit
     check_then :id do |album|
+      @album = album
       render partial: 'edit'
     end
   end
@@ -95,7 +96,7 @@ class AlbumController < ApplicationController
       album.listing = params[:album][:privacy].to_i
       album.save
       
-      redirect_to action: 'view', id: album.id
+      redirect_to action: 'show', id: album.id
     end
   end
   
