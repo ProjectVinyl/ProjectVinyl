@@ -61,23 +61,25 @@ export function setupEditable(sender) {
   const button = sender.querySelector('.edit');
   const textarea = initEditable(sender.querySelector('.input'), content);
   
-  button.addEventListener('click', () => {
+  button.addEventListener('click', e => {
     if (active != button) deactivate();
-    if (toggleEdit(sender, content, textarea)) {
+    if (toggleEdit(e, sender, content, textarea)) {
       active = button;
     }
   });
   sender.addEventListener('click', ev => ev.stopPropagation());
 }
 
-function toggleEdit(holder, content, textarea) {
+function toggleEdit(e, holder, content, textarea) {
   holder.classList.toggle('editing');
 	
   if (holder.classList.contains('editing')) {
     const hovercard = content.querySelector('.hovercard');
     if (hovercard) hovercard.parentNode.removeChild(hovercard);
-    textarea.dispatchEvent(new Event('keyup')); // ensure input size is correct
-    textarea.focus();
+    requestAnimationFrame(() => {
+      textarea.focus();
+      textarea.dispatchEvent(new CustomEvent('keyup', e)); // ensure input size is correct
+    });
     return true;
   }
   
