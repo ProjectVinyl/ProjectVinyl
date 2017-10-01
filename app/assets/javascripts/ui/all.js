@@ -15,3 +15,4 @@ import './statetoggle';
 import './autocomplete';
 import './editable';
 import './previewable';
+import './reflow';
