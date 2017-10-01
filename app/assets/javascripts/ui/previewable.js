@@ -2,7 +2,7 @@ import { ajax } from '../utils/ajax';
 import { addDelegatedEvent } from '../jslim/events';
 
 addDelegatedEvent(document, 'toggle', '.previewable', (e, target) => {
-  if (e.detail.state) return; // only update when previewing enable (state off)
+  if (!e.detail.active) return; // only update when previewing enable (state off)
   if (target.classList.contains('loading')) return;
   target.classList.add('loading');
   

@@ -13,6 +13,7 @@ module ProjectVinyl
         @parent = parent
       end
       
+      attr_reader :equals_par
       attr_reader :tag_name
       attr_reader :parent
       attr_reader :classes

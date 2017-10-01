@@ -9,7 +9,7 @@ addDelegatedEvent(document, 'click', '.state-toggle', (e, target) => {
   let parent = target.dataset.parent;
   parent = parent ? target.closest(parent) : target.parentNode;
   
-  const active = parent.classList.contains('active');
+  const active = parent.classList.contains(target.dataset.state);
   parent.classList.toggle(target.dataset.state);
   target.dispatchEvent(new CustomEvent('toggle', {
     detail: { active: active },

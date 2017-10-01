@@ -83,7 +83,7 @@ module ProjectVinyl
         "<blockquote#{!tag.even ? ' class="even"' : ''}>#{tag.inner_html}</blockquote>"
       end
       TagGenerator.register(:html, [:url]) do |tag|
-        "<a href=\"#{tag.equals_par  || tag.inner_text}\">#{tag.inner_html}</a>}"
+        "<a href=\"#{tag.equals_par  || tag.inner_text}\">#{tag.inner_html}</a>"
       end
       TagGenerator.register(:html, [:at]) do |tag|
         tag.resolve_dynamically do
