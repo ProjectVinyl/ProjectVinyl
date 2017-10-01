@@ -36,7 +36,7 @@ module ProjectVinyl
           next tag.inner_bbc
         end
         
-        if tag.classes.includes?('user-link')
+        if tag.classes.include?('user-link')
           next "@#{tag.inner_text}"
         end
         

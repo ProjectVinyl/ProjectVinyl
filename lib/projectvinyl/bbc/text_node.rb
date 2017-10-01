@@ -5,6 +5,10 @@ module ProjectVinyl
         @inner_text = text
       end
       
+      def getElementsByTagName(name)
+        []
+      end
+      
       def inner_text
         CGI::escapeHTML @inner_text
       end

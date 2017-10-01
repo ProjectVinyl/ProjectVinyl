@@ -8,7 +8,9 @@ module ProjectVinyl
       def initialize(parent, name = '')
         @tag_name = name
         @children = []
-        @attributes = {}
+        @attributes = Hash.new do
+          ""
+        end
         @classes = []
         @parent = parent
       end
