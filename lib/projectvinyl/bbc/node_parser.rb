@@ -51,7 +51,7 @@ module ProjectVinyl
               next
             end
             
-            if content[index] == '@' || content[index] == ':' || content[index] == open
+            if content[index] == open || ((index == 0 || content[index - 1].strip == '' || content[index - 1] == close) && (content[index] == '@' || content[index] == ':'))
               if text.length > 0
                 node.append_text(text)
                 text = ''
