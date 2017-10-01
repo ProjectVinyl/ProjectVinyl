@@ -389,10 +389,10 @@ class Video < ApplicationRecord
 
   def pull_meta(src, tit, dsc, tgs)
     if src.present?
-      src = "https://www.youtube.com/watch?v=#{Youtube.video_id(src)}"
+      src = "https://www.youtube.com/watch?v=#{ProjectVinyl::Web::Youtube.video_id(src)}"
       self.set_source(src)
       
-      meta = Youtube.get(src, title: tit, description: dsc, artist: tgs)
+      meta = ProjectVinyl::Web::Youtube.get(src, title: tit, description: dsc, artist: tgs)
       self.set_title(meta[:title]) if tit && meta[:title]
       if dsc && meta[:description]
         self.set_description(meta[:description][:bbc])

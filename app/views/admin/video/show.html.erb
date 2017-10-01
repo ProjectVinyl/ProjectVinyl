@@ -127,7 +127,7 @@
 					Processed (<%= (@video.processed ? "Yes" : @video.processed.nil? ? "No" : "In Progress") %>)
 				</td>
 				<td class="field">
-					<%= form_for(@video, as: "video", url: "/admin/videos/#{@video.id}reprocess", html: { method: :put }) do |f| %>
+					<%= form_for(@video, as: "video", url: "/admin/videos/#{@video.id}/reprocess", html: { method: :put }) do |f| %>
 						<%= f.submit "Restart" %>
 					<% end %>
 				</td>
@@ -199,7 +199,7 @@
 </section>
 <section class="page properties column-left">
 	<h1>Duplication Status</h1>
-	<%= form_for(@video, as: "video", url: "/admin/videos/#{@video.id}merge", html: { method: :put }) do |f| %>
+	<%= form_for(@video, as: "video", url: "/admin/videos/#{@video.id}/merge", html: { method: :put }) do |f| %>
 	<table>
 		<tr>
 			<td class="label">Unique Hash</td>

@@ -53,26 +53,26 @@ module Admin
     end
     
     def metadata
-      try_and do |video|
+      try_to do |video|
         video.pull_meta(params[:source], params[:title], params[:description], params[:tags])
       end
     end
     
     def reprocess
-      try_and do |video|
+      try_to do |video|
         flash[:notice] = "Processing Video: #{video.generate_webm}"
       end
     end
     
     def resetthumb
-      try_and do |video|
+      try_to do |video|
         video.set_thumbnail(false)
         flash[:notice] = "Thumbnail Reset."
       end
     end
     
     def merge
-      try_and do |video|
+      try_to do |video|
         flash[:notice] = "Changes Saved."
         
         if other = Video.where(id: params[:video][:duplicate_id]).first
@@ -135,14 +135,14 @@ module Admin
       yield
     end
     
-    def try_and
-      redirect_to action: "view", id: params[:video][:id]
+    def try_to
+      redirect_to action: 'show', id: params[:video_id]
       
       if !current_user.is_contributor?
         return flash[:error] = "Error: Login required."
       end
       
-      if !(video = Video.where(id: params[:video][:id]).first)
+      if !(video = Video.where(id: params[:video_id]).first)
         return flash[:error] = "Error: Video not found."
       end
       

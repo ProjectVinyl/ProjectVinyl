@@ -22,12 +22,12 @@ module ProjectVinyl
         if Youtube.flag_set(wanted_data, :description)
           Ajax.get(url) do |body|
             if desk = Youtube.description_from_html(body)
-              desc_node = Bbcode.from_html(desk)
+              desc_node = ProjectVinyl::Bbc::Bbcode.from_html(desk)
               desc_node.getElementsByTagName('a').each do |a|
-                if a.attributes['href'].index('//www.youtube.com/redirect?')
-                  a.attributes['href'] = HTMNode.extract_uri_parameter(a.attributes['href'], 'q')
+                if a.attributes[:href].index('redirect?')
+                  a.attributes[:href] = extract_uri_parameter(a.attributes[:href], 'q')
                 end
-                a.inner_text = a.attributes['href']
+                a.inner_text = a.attributes[:href]
               end
               wanted_data[:description] = {
                 html: desc_node.outer_html,
@@ -62,6 +62,10 @@ module ProjectVinyl
       
       def self.flag_set(hash, key)
         hash.key?(key) && hash[key]
+      end
+      
+      def self.extract_uri_parameter(url, parameter)
+        Rack::Utils.parse_nested_query(URI.parse(url).query)[parameter]
       end
     end
   end
