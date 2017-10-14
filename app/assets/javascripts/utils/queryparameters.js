@@ -6,7 +6,8 @@ export function encodeParamaters(data) {
 
 export function decodeParameters(data) {
   return data.toString().split('&').reduce((values, pair) => {
-    const item = pair.split('=');
+    const item = pair.trim().split('=');
+    if (!item[0].length) return values;
     if (item.length < 2) item.push('');
     values[decodeURIComponent(item[0])] = decodeURIComponent(item[1]);
     return values;
