@@ -365,13 +365,13 @@ class Video < ApplicationRecord
   end
 
   def upvote(user, incr)
-    self.downvotes = Vote.vote(user, self, incr, self.upvotes, false)
+    Vote.vote(user, self, incr, false)
     compute_score
     self.upvotes
   end
 
   def downvote(user, incr)
-    self.downvotes = Vote.vote(user, self, incr, self.downvotes, true)
+    Vote.vote(user, self, incr, true)
     compute_score
     self.downvotes
   end
