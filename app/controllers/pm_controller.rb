@@ -27,7 +27,7 @@ class PmController < InboxController
     if !user_signed_in? || !(user = User.where(username: params[:thread][:recipient]).first)
       return redirect_to action: "index", controller: "welcome"
     end
-    redirect_to action: 'view', id: Pm.send_pm(current_user, user, params[:thread][:title], params[:thread][:description]).id
+    redirect_to action: :show, id: Pm.send_pm(current_user, user, params[:thread][:title], params[:thread][:description]).id
   end
   
   def markread

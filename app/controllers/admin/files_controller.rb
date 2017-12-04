@@ -5,9 +5,9 @@ module Admin
     before_action :authenticate_user!
     
     def index
-      ajax = params[:ajax] == 'page'
+      json = params[:format] == 'json'
       if !user_signed_in? || !current_user.is_contributor?
-        return render_error_file 403, ajax
+        return render_error_file 403, json
       end
       
       @location = (params[:p] || "public/stream").strip
@@ -23,19 +23,19 @@ module Admin
       
       if @location.length > 1 && @location[1] != 'stream' && @location[1] != 'cover' && @location[1] != 'avatar' && @location[1] != 'banner'
         if @location[0] != 'encoding'
-          return render_error_file 403, ajax
+          return render_error_file 403, json
         end
       end
       
       if @location[0] != 'public' && @location[0] != 'private' && @location[0] != 'encoding'
-        return render_error_file 403, ajax
+        return render_error_file 403, json
       end
       
       begin
         @location = @location.join('/')
         @public = ProjectVinyl::Storage::VideoDirectory.entries(@location).limit(50)
-        if ajax
-          if (params[:start] && !@public.start_from(params[:start], params[:offset])) || (params[:end] && !@public.end_with(params[:end]) && ajax)
+        if json
+          if (params[:start] && !@public.start_from(params[:start], params[:offset])) || (params[:end] && !@public.end_with(params[:end]) && json)
             return render json: {}
           end
         end
@@ -62,10 +62,10 @@ module Admin
         end
         
       rescue Exception => e
-        return render_error_file 404, ajax
+        return render_error_file 404, json
       end
       
-      if ajax
+      if json
         render json: {
           content: render_to_string(partial: 'file', collection: @public.items),
           start: @public.start_ref,

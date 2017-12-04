@@ -6,9 +6,11 @@
 	<% else %>
 	<div>
 		<div>
+			<% if !change.tag.nil? %>
 			#<a href="<%= change.tag.link %>">
 			<%= change.tag.name %>
 			</a>
+			<% end %>
 		</div>
 	</div>
 	<% end %>

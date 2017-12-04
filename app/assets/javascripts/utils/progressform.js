@@ -7,7 +7,7 @@ export function uploadForm(form, callbacks, e) {
         fill = form.querySelector('.progressor .fill');
   
   form.classList.add('uploading');
-  xhr(form.getAttribute('method'), `${form.action}/async`, new FormData(form), {
+  xhr(form.getAttribute('method'), `${form.action}.json`, new FormData(form), {
     progress: function(percentage, secondsRemaining) {
       if (!message.classList.contains('plain')) message.classList.add('bobber');
       form.classList.toggle('waiting', percentage >= 100);

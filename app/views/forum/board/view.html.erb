@@ -32,7 +32,7 @@
 <hr>
 <section class="page full-width">
 	<h1>Topics (<%= number_with_delimiter @threads.count %>)</h1>
-	<%= render layout: 'pagination/paginated', locals: {type: 'threads/' + @board.id.to_s, paginated: @threads, id: "page"} do %>
+	<%= render layout: 'pagination/paginated', locals: {type: "forum/#{@board.id}/threads", paginated: @threads, id: "page"} do %>
 		<section class="search-result">
 			<div class="listing thread-list">
 				<ul class="items">

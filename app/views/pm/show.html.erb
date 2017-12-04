@@ -1,7 +1,7 @@
 <% title @thread.title + " - Private Messages" %>
 <%= render partial: "view/breadcrumb", locals: {
 	stack: [
-		{ link: "/messages", title: "Messages" }
+		{ link: "/inbox", title: "Messages" }
 	],
 	title: @thread.get_title
 } %>

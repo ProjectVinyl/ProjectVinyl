@@ -23,7 +23,7 @@ function requestPage(context, page) {
   context.querySelector('ul').classList.add('waiting');
   context.querySelector('.pagination .pages .button.selected').classList.remove('selected');
   
-  ajax.get(`${context.dataset.type}?page=${page}${context.dataset.args ? `&${context.dataset.args}` : ''}`).json(json => {
+  ajax.get(`${context.dataset.type}.json?page=${page}${context.dataset.args ? `&${context.dataset.args}` : ''}`).json(json => {
     populatePage(context, json);
     QueryParameters.current.setItem(context.dataset.id, json.page + 1);
   });

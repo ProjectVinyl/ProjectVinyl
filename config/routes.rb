@@ -22,6 +22,7 @@ Rails.application.routes.draw do
   namespace :ajax do
     get 'login' => 'session#login'
     get 'donate' => 'staff#donate'
+    get 'videos/:id' => 'video#go_next'
   end
   
   # Asset Fallbacks #
@@ -45,54 +46,45 @@ Rails.application.routes.draw do
   # Videos #
   get 'upload' => 'video#new'
   get 'download/:id' => 'video#download'
-  get 'ajax/videos/:id' => 'video#go_next'
   
-  resources :videos, except: [:index, :create, :new, :destroy], controller: :video, id: /([0-9]+).*/ do # /
+  resources :videos, except: [:create, :new, :destroy], controller: :video, id: /([0-9]+).*/ do # /
     put 'like'
     put 'dislike'
     put 'star'
-    patch 'cover(/:async)' => 'video#cover'
-    patch 'details(/:async)' => 'video#details'
+    patch 'cover' => 'video#cover'
+    patch 'details' => 'video#details'
     
     get 'changes' => 'history#index'
-    get 'changes/page' => 'history#page'
     
     put 'add' => 'album_item#toggle'
   end
-  scope 'videos', controller: :video, id: /([0-9]+).*/ do # /
-    get '(/:ajax)', action: :index
-    put '(/:async)', action: :create
-    post '(/:async)', action: :create
-  end
   
   # Users #
-  resources :users, only: [:update], controller: :artist do
-    get 'uploads(/:ajax)', action: :uploads
-    get 'videos(/:ajax)', action: :videos
-    get 'albums(/:ajax)', action: :albums
+  resources :users, only: [:index, :update], controller: :artist do
+    get 'uploads'
+    get 'videos'
+    get 'albums'
     
     get 'hovercard'
     get 'banner'
     put 'prefs'
-    patch 'avatar(/:async)' => 'artist#set_avatar'
-    patch 'banner(/:async)' => 'artist#set_banner'
+    patch 'avatar' => 'artist#set_avatar'
+    patch 'banner' => 'artist#set_banner'
   end
-  get 'users(/:ajax)' => 'artist#index'
   get 'profile/:id' => 'artist#view', constraints: { id: /([0-9]+).*/ } # /
   
   # Albums #
-  resources :albums, except: [:index, :show], controller: :album do
+  resources :albums, except: [:show], controller: :album do
     get 'items' => 'album_item#index'
     patch 'order'
   end
   get 'album/:id' => 'album#show', constraints: { id: /([0-9]+).*/ } # /
   get 'stars' => 'album#starred'
-  get 'albums(/:ajax)' => 'album#index'
   
   resources :albumitems, only: [:create, :update, :destroy], controller: :album_item
   
   # Tags #
-  resources :tags, only: [], controller: :tag, id: /([0-9]+).*/ do # /
+  resources :tags, only: [:index], controller: :tag, id: /([0-9]+).*/ do # /
     get 'videos'
     get 'users'
     
@@ -102,25 +94,23 @@ Rails.application.routes.draw do
   end
   scope 'tags', controller: :tag do
     get ':name', action: 'view', constraints: { name: /.*/ } # /
-    get '(/:ajax)', action: 'index'
   end
   
   # Forums #
-  namespace :forum do
-    get 'search(/:ajax)' => 'search#index'
+  namespace :forum, id: /[^\.\/]+/ do # /
+    get 'search' => 'search#index'
     get ':id' => 'board#view'
+    get ':board_id/threads' => 'board#threads'
     root 'board#index'
   end
   
   # Boards/Categories #
   
-  resources :boards, only: [:new, :create, :destroy], controller: 'forum/board'
-  get 'boards(/:ajax)' => 'forum/board#index'
-	
+  resources :boards, only: [:index, :new, :create, :destroy], controller: 'forum/board'
+  
   # Threads #
   get 'thread/:id' => 'thread#view', constraints: { id: /([0-9]+).*/ } # /
   resources :threads, only: [:new, :create, :update], controller: :thread do
-    get 'page'
     put 'subscribe'
   end
   
@@ -128,12 +118,11 @@ Rails.application.routes.draw do
   resources :comments, only: [:create, :update, :destroy], controller: :comment do
     put 'like(/:incr)', action: 'like'
   end
-  get 'comments/:thread_id/:order/page' => 'comment#page'
+  get 'comments/:thread_id/:order' => 'comment#page'
   
   # Private Messages #
   scope 'inbox', controller: :inbox do
-    get ':type/page', action: :page
-    get ':type/tab', action: :tab
+    get ':type/tabs', action: :tab
     get '(:type)', action: :show
   end
   
@@ -151,7 +140,7 @@ Rails.application.routes.draw do
   get 'ajax/notifications' => 'ajax/notification#view'
   
   # Main Search #
-  get 'search/page' => 'search#page'
+  get 'search.json' => 'search#page'
   get 'search' => 'search#index'
   
   # Lookup Actions #
@@ -166,7 +155,7 @@ Rails.application.routes.draw do
     post 'transfer'
     post 'verify'
     
-    get 'files(/:ajax)' => 'files#index'
+    get 'files' => 'files#index'
     
     resources :albums, only: [:show], controller: :album do
       put 'feature'
@@ -182,8 +171,8 @@ Rails.application.routes.draw do
     end
     
     resource :videos, only: [], controller: :video do
-      get 'hidden/page', action: :hidden
-      get 'unprocessed/page', action: :unprocessed
+      get 'hidden'
+      get 'unprocessed'
       
       post 'hidden/drop', action: :batch_drop
       post 'requeue'
@@ -198,11 +187,7 @@ Rails.application.routes.draw do
     end
     
     # Reporting #
-    resources :reports, only: [:new, :show], controller: :report
-    resource :reports, controller: :report do
-      get 'page'
-      post '(/:async)', action: :create
-    end
+    resources :reports, only: [:new, :show, :index], controller: :report
     
     resources :threads, only: [], controller: :thread do
       put 'pin'

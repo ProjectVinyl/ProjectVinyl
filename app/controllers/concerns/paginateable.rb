@@ -13,7 +13,7 @@ module Paginateable
   
   def pagination_json_for_render(partial, pagination, locals = {})
     {
-      paginate: render_to_string(partial: 'pagination/numbering', locals: {
+      paginate: render_to_string(partial: 'pagination/numbering', formats: [:html], locals: {
         page: pagination.page, pages: pagination.pages, id: '{page}'
       }),
       content: render_to_string(partial: partial, collection: pagination.records, locals: locals),
@@ -29,7 +29,7 @@ module Paginateable
   def render_listing_total(records, page, page_size, reverse, locals)
     locals[:partial] = partial_for_type(locals[:label], locals[:is_admin])
     
-    if params[:ajax]
+    if params[:format] == 'json'
       return render_pagination locals[:partial], records, page, page_size, reverse
     end
     

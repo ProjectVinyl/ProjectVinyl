@@ -19,7 +19,7 @@ module Errorable
   end
   
   def error(title, message)
-    if params[:async]
+    if params[:format] == 'json'
       return render plain: "#{title}:#{message}", status: 401
     end
     render_error title: title, description: message

@@ -52,7 +52,7 @@ addDelegatedEvent(document, 'click', '.tab-set.async a.button:not([data-disabled
   holder.classList.add('waiting');
   
   pushUrl(url);
-  ajax.get(`${url}/tab`, { page: this.dataset.page || 0 }).json(json => {
+  ajax.get(`${url}/tabs.json`, { page: this.dataset.page || 0 }).json(json => {
     holder.innerHTML = json.content;
     holder.classList.remove('waiting');
   });

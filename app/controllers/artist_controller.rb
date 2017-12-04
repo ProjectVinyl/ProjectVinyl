@@ -57,13 +57,13 @@ class ArtistController < ApplicationController
         user.save
       end
       
-      if !params[:async]
-        return redirect_to action: "view", id: user.id
+      if params[:format] == 'json'
+        return render json: {
+          result: "success"
+        }
       end
       
-      render json: {
-        result: "success"
-      }
+      redirect_to action: "view", id: user.id
     end
   end
   
@@ -72,13 +72,13 @@ class ArtistController < ApplicationController
       user.set_avatar(params[:erase] ? false : params[:user][:avatar])
       user.save
       
-      if !params[:async]
-        return redirect_to action: "edit", controller: "devise/registrations"
+      if params[:format] == 'json'
+        return render json: {
+          result: "success"
+        }
       end
       
-      render json: {
-        result: "success"
-      }
+      redirect_to action: "edit", controller: "devise/registrations"
     end
   end
   
@@ -118,7 +118,7 @@ class ArtistController < ApplicationController
       @table = 'Video'
       @partial = partial_for_type(@table)
       
-      if params[:ajax]
+      if params[:format] == 'json'
         return render_pagination_json @partial, @records
       end
       render template: 'artist/listing'
@@ -138,7 +138,7 @@ class ArtistController < ApplicationController
       @table = 'Album'
       @partial = partial_for_type(@table)
       
-      if params[:ajax]
+      if params[:format] == 'json'
         return render_pagination_json @partial, @records
       end
       render template: 'artist/listing'

@@ -30,7 +30,7 @@ module Forum
       
       @results = Pagination.paginate(@q, params[:page].to_i, 20, params[:order] != '1')
       
-      if params[:ajax]
+      if params[:format] == 'json'
         render_pagination_json 'comment/comment', index, {
           indirect: true
         }

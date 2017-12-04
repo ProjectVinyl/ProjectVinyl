@@ -12,7 +12,7 @@ function throttleFunc(func, ms) {
 }
 
 function scrollListener(target, ref, position, test, data) {
-  const path = target.dataset.url + '/page';
+  const path = target.dataset.url + '.json';
   let busy = false;
   return () => {
     if (busy || !test()) return false;

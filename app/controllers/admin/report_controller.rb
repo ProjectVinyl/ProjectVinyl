@@ -25,7 +25,7 @@ module Admin
       
     end
     
-    def page
+    def index
       if !user_signed_in?
         return head 401
       end

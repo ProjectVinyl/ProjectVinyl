@@ -135,12 +135,12 @@ class VideoController < ApplicationController
     end
     
     if video[:title].blank?
-      return error(params[:async], "Error", "Title is blank.")
+      return error(params[:format] == 'json', "Error", "Title is blank.")
     end
     
     data = file.read
     if !(checksum = Video.ensure_uniq(data))[:valid]
-      return error(params[:async], "Duplication Error", "The uploaded video already exists.")
+      return error(params[:format] == 'json', "Duplication Error", "The uploaded video already exists.")
     end
     
     ext = File.extname(file.original_filename)
@@ -200,7 +200,7 @@ class VideoController < ApplicationController
     
     @video.save
     
-    if params[:async]
+    if params[:format] == 'json'
       return render json: {
         result: "success",
         ref: @video.link
@@ -278,15 +278,15 @@ class VideoController < ApplicationController
   
   def cover
     if !user_signed_in?
-      error(params[:async], "Access Denied", "You can't do that right now.")
+      error(params[:format] == 'json', "Access Denied", "You can't do that right now.")
     end
     
     if !(video = Video.where(id: params[:video_id]).first)
-      error(params[:async], "Nothing to see here!", "This is not the video you are looking for.")
+      error(params[:format] == 'json', "Nothing to see here!", "This is not the video you are looking for.")
     end
     
     if !video.owned_by(current_user)
-      error(params[:async], "Access Denied", "You can't do that right now.")
+      error(params[:format] == 'json', "Access Denied", "You can't do that right now.")
     end
     
     if current_user.is_staff? && (file = params[:video][:file])
@@ -303,7 +303,7 @@ class VideoController < ApplicationController
     end
     
     flash[:notice] = "Changes saved successfully. You may need to refresh the page."
-    if params[:async]
+    if params[:format] == 'json'
       return render json: {
         result: "success",
         ref: video.ref

@@ -11,7 +11,7 @@ module Admin
     
     def update
       if !current_user.is_contributor?
-        if params[:ajax]
+        if params[:format] == 'json'
           return head 403
         end
         return render file: '/public/403.html', layout: false

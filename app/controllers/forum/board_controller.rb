@@ -7,13 +7,21 @@ module Forum
           description: 'That forum does not exist.'
         )
       end
-      @modifications_allowed = user_signed_in? && current_user.is_contributor?
+      
       @threads = Pagination.paginate(@board.threads, params[:page].to_i, 50, false)
+      @modifications_allowed = user_signed_in? && current_user.is_contributor?
+    end
+    
+    def threads
+      if !(board = Board.where(id: params[:board_id]).first)
+        return head 404
+      end
+      render_pagination 'thread/thumb', board.threads, params[:page].to_i, 50, false
     end
     
     def index
       @boards = Pagination.paginate(Board.all, params[:page].to_i, 10, false)
-      if params[:ajax]
+      if params[:format] == 'json'
         render_pagination_json 'thumb', @boards
       end
     end
