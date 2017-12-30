@@ -27,7 +27,7 @@ Rails.application.routes.draw do
   
   # Asset Fallbacks #
   
-  get 'cover/:id(-:small)' => 'imgs#cover'
+  get 'cover/:id(-:small)' => 'imgs#cover', constraints: { id: /[0-9]+/ } # /
   get 'avatar/:id(-:small)' => 'imgs#avatar', constraints: { id: /[0-9]+/ } # /
   get 'banner/:id' => 'imgs#banner'
   get 'stream/:id' => 'imgs#stream', constraints: { id: /.*/ } # /
