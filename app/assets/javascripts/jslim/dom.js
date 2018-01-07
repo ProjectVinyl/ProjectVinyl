@@ -12,7 +12,7 @@ export function nodeFromHTML(html) {
 }
 
 export function decodeEntities(string) {
-  pull(string, () => div.innerText);
+  return pull(string, () => div.innerText);
 }
 
 export function offset(element) {

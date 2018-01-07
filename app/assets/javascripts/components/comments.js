@@ -135,7 +135,7 @@ function getSubCommentList(sender) {
 function replyTo(sender) {
   sender = sender.parentNode;
   const textarea = sender.closest('.page, body').querySelector('.post-box textarea');
-  insertTags(textarea, `\n>>${sender.dataset.oId} [q]\n${decodeEntities(sender.dataset.comment)}\n[/q]\n\n`, '');
+  insertTags(textarea, `>>${sender.dataset.oId} [q]\n${decodeEntities(sender.dataset.comment)}\n[/q]\n`, '');
   let height = parseFloat(textarea.style.height) || 0;
   textarea.style.height = Math.max(height, textarea.scrollHeight) + 'px';
 }
