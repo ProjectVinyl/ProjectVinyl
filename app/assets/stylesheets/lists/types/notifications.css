@@ -3,16 +3,18 @@ ul.notifications {
   padding: 20px;
 }
 .notification {
+	border-radius: 3px;
   border: solid 1px rgba(0,0,0,0.1);
 }
 .notification + .notification {
   border-top: none;
 }
 .notification a {
-  display: inline-block;
+  display: table-cell;
   padding: 10px;
   text-decoration: none;
   font-weight: initial;
+	line-height: 100%;
 }
 .notification .remove {
   color: #e00;
@@ -22,6 +24,9 @@ ul.notifications {
 }
 .notification:hover {
   background: rgb(250,250,250);
+}
+li.notification .action:hover, li.notification .remove:hover {
+    background: rgba(0,0,0,0.05);
 }
 .notification.unread {
   background: rgba(200,250,200,0.6);
