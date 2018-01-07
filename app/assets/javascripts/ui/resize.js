@@ -6,7 +6,7 @@ function sizeFont(el, targetWidth) {
   const div = document.createElement('div');
   let computed = getComputedStyle(el);
   
-  div.setAttribute('style', 'position:fixed;top:0;left:0;white-space:nowrap;background:#fff');
+  div.setAttribute('style', 'position:fixed;top:0;left:0;white-space:nowrap');
   div.style.fontFamily = computed.fontFamily;
   div.style.fontWeight = computed.fontWeight;
   div.style.fontSizeAdjust = computed.fontSizeAdjust;
@@ -33,7 +33,7 @@ function sizeFont(el, targetWidth) {
   if (newSize < 5) newSize = 5;
   if (newSize > 16.25) newSize = 16.25;
   
-  el.style.fontSize = newSize + 'px';
+  el.style.fontSize = `${newSize}px`;
   document.body.removeChild(div);
 }
 
@@ -50,4 +50,5 @@ function fixFonts() {
 }
 
 window.addEventListener('resize', fixFonts);
+document.addEventListener('load', fixFonts);
 ready(fixFonts);
