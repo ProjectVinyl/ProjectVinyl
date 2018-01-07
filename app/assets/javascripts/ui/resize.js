@@ -50,5 +50,5 @@ function fixFonts() {
 }
 
 window.addEventListener('resize', fixFonts);
-document.addEventListener('load', fixFonts);
+window.addEventListener('load', fixFonts);
 ready(fixFonts);
