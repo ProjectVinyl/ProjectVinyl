@@ -1,7 +1,4 @@
 <li class="removeable notification <%= notification.sender %><% if notification.unread %> unread<% end %>" data-target="notifications"  data-id="<%= notification.id %>">
-	<a href="/review?n=<%= notification.id %>">
-		<%= raw notification.message %>
-	</a>
 	<a href="#" title="Remove" class="remove right" >
 		<i class="fa fa-times"></i>
 	</a>
@@ -16,4 +13,7 @@
 			</a>
 		<% end %>
 	<% end %>
+	<a href="/review?n=<%= notification.id %>">
+		<%= raw notification.message %>
+	</a>
 </li>
