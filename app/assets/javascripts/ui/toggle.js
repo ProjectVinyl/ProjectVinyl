@@ -11,10 +11,13 @@ function toggle(e, sender, options, callback) {
   ajax.put(`${options.dataset.target}/${options.dataset.id}/${options.dataset.action}`, data).json(json => callback(json, options));
 }
 
+function getIcon(element, state) {
+  return state ? (element.dataset.checkedIcon || 'check') : (element.dataset.uncheckedIcon || '');
+}
+
 function updateCheck(element, state) {
-  const check = element.dataset.checkedIcon || 'check';
-  const uncheck = element.dataset.uncheckedIcon || '';
-  element.querySelector('.icon').innerHTML = `<i class="fa fa-${state ? check : uncheck}"></i>`;
+  const icon = getIcon(element, state);
+  element.querySelector('.icon').innerHTML = icon.length ? `<i class="fa fa-${icon}"></i>` : '';
 }
 
 addDelegatedEvent(document, 'click', '.action.toggle', (e, target) => {
