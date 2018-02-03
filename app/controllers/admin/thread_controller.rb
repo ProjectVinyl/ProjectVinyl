@@ -30,6 +30,16 @@ module Admin
       }
     end
     
+    def destroy
+      if !(@thread = CommentThread.where(id: params[:id], owner_type: 'Board').first)
+        return head :not_found
+      end
+      
+      @thread.destroy
+      
+      return redirect_to action: 'view', controller: 'forum/board', id: @thread.owner.title
+    end
+    
     protected
     def toggle_action
       if !(thread = CommentThread.where(id: params[:thread_id]).first)

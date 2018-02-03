@@ -50,6 +50,11 @@
 		<% end %>
 		</ul>
 	</div>
+	<% if current_user.is_contributor? %>
+  <a class="button mobile-friendly red right" data-confirm="This thread will be lost forever." data-title="Delete Thread" data-method="delete" href="/admin/threads/<%= @thread.id %>">
+    <i class="fa fa-trash"></i><span> Delete Thread</span>
+  </a>
+	<% end %>
 	<% end %>
 </div>
 <hr>

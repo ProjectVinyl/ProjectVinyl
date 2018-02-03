@@ -189,7 +189,7 @@ Rails.application.routes.draw do
     # Reporting #
     resources :reports, only: [:new, :show, :index], controller: :report
     
-    resources :threads, only: [], controller: :thread do
+    resources :threads, only: [:destroy], controller: :thread do
       put 'pin'
       put 'lock'
       put 'move'

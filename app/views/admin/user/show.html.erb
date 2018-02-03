@@ -19,41 +19,13 @@
 				<% if current_user.id == @user.id %>
 				<p style="color:red">You cannot change your own role.</p>
 				<% else %>
-				<button class="action toggle blue<% if !current_user.is_admin? %> disable" disabled<% else %>"<% end %> data-family="role-flags" data-target="admin/users" data-id="<%= @user.id %>" data-action="roles" data-value="admin">
-					<span class="icon">
-						<% if @user.admin? %>
-						<i class="fa fa-check"></i>
-						<% end %>
-					</span>
-					<span class="label">Administrator</span>
-				</button>
+				<%= render partial: 'admin/user/role_check', locals: { enable: current_user.is_admin?, value: @user.admin?, role: :admin, title: 'Administrator'} %>
 				<br><br>
-				<button class="action toggle blue<% if !current_user.is_contributor? %> disable" disabled<% else %>"<% end %> data-family="role-flags" data-target="admin/users" data-id="<%= @user.id %>" data-action="roles" data-value="contributor">
-					<span class="icon">
-						<% if @user.contributor? %>
-						<i class="fa fa-check"></i>
-						<% end %>
-					</span>
-					<span class="label">Moderator</span>
-				</button>
+				<%= render partial: 'admin/user/role_check', locals: { enable: current_user.is_contributor?, value: @user.contributor?, role: :contributor, title: 'Moderator'} %>
 				<br><br>
-				<button class="action toggle blue<% if !current_user.is_staff? %> disable" disabled<% else %>"<% end %> data-family="role-flags" data-target="admin/users" data-id="<%= @user.id %>" data-action="roles"  data-value="staff">
-					<span class="icon">
-						<% if @user.staff? %>
-						<i class="fa fa-check"></i>
-						<% end %>
-					</span>
-					<span class="label">Staff</span>
-				</button>
+				<%= render partial: 'admin/user/role_check', locals: { enable: current_user.is_staff?, value: @user.staff?, role: :staff, title: 'Staff'} %>
 				<br><br>
-				<button class="action toggle blue" data-family="role-flags" data-target="admin/users" data-id="<%= @user.id %>" data-action="roles"  data-value="normal">
-					<span class="icon">
-						<% if @user.role == 0 %>
-						<i class="fa fa-check"></i>
-						<% end %>
-					</span>
-					<span class="label">Normal</span>
-				</button>
+				<%= render partial: 'admin/user/role_check', locals: { enable: true, value: @user.normal?, role: :normal, title: 'Normal'} %>
 				<% end %>
 			</td>
 		</tr>
@@ -65,14 +37,7 @@
 				<% if current_user.id == @user.id %>
 				<p style="color:red">You cannot ban yourself.</p>
 				<% else %>
-				<button class="action toggle red" data-family="role-flags" data-target="admin/users" data-id="<%= @user.id %>" data-action="roles"  data-value="banned">
-					<span class="icon">
-						<% if @user.banned? %>
-						<i class="fa fa-check"></i>
-						<% end %>
-					</span>
-					<span class="label">Ban User</span>
-				</button>
+				<%= render partial: 'admin/user/role_check', locals: { enable: true, value: @user.banned?, role: :banned, title: 'Ban User'} %>
 				<% end %>
 			</td>
 		<tr>
