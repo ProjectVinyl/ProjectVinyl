@@ -1,0 +1,8 @@
+<button class="action toggle <% if role == :banned %>red<% else %>blue<% end %><% if !enable %> disable" disabled<% else %>"<% end %> data-family="role-flags" data-target="admin/users" data-id="<%= @user.id %>" data-action="roles/<%= role %>" data-descriminator="<%= role %>">
+	<span class="icon">
+		<% if value %>
+		<i class="fa fa-check"></i>
+		<% end %>
+	</span>
+	<span class="label"><%= title %></span>
+</button>

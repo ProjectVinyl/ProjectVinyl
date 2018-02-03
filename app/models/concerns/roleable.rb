@@ -22,6 +22,10 @@ module Roleable
     self.role == 1
   end
   
+  def normal?
+    self.role == 0
+  end
+  
   def banned?
     self.role < 0
   end
