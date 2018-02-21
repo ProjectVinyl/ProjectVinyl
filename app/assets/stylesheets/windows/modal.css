@@ -13,6 +13,10 @@
 .modal input:not([type=checkbox]) {
   width: 100%;
 }
+.modal input {
+	margin-bottom: 20px;
+}
+
 .modal .actions {
   padding-top: 10px;
 }

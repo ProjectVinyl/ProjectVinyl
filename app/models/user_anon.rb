@@ -22,4 +22,16 @@ class UserAnon < UserDummy
   def votes
     Vote.none
   end
+  
+  def error
+    @error
+  end
+  
+  def errors
+    self
+  end
+  
+  def add(v, vv)
+    @error = vv
+  end
 end

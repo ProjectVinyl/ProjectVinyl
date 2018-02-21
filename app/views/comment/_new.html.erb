@@ -19,6 +19,10 @@ Thread locked
 		<div class="comment-content preview"></div>
 		<textarea class="comment-content" required="true"></textarea>
 		<hr>
+		<% if visitor.is_dummy %>
+			<%= recaptcha_tags %>
+			<hr>
+		<% end %>
 		<button class="green post-submitter" data-thread-id="<%= @thread.id %>" data-order="<%= @order %>">
 			<span>Post Comment</span>
 			<i class="posting-spinner fa fw fa-spinner fa-spin"></i>
@@ -34,6 +38,7 @@ Thread locked
 			<i class="fa fa-smile-o"></i>
 			<ul class="pop-out" id="emoticons"></ul>
 		</a>
+		<%= flash[:recaptcha_error] %>
 	</div>
 </div>
 <% end %>

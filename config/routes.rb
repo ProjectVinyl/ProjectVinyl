@@ -1,8 +1,11 @@
 require 'resque/server'
 
 Rails.application.routes.draw do
-  devise_for :users
-  
+  devise_for :users, controllers: {
+    passwords: 'users/passwords',
+    registrations: 'users/registrations'
+  }
+    
   scope controller: :staff do
     scope action: :copyright do
       get 'copyright'
@@ -20,7 +23,7 @@ Rails.application.routes.draw do
   
   # Popup Windows #
   namespace :ajax do
-    get 'login' => 'session#login'
+    get 'login' => 'sessions#login'
     get 'donate' => 'staff#donate'
     get 'videos/:id' => 'video#go_next'
   end

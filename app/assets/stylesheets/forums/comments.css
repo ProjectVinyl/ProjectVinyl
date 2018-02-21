@@ -117,11 +117,12 @@
   border: none;
 }
 
-.comment .content.editing .preview, .comment .content textarea {
-  display: none !important;
+.comment .content.editing .preview,
+.comment .content textarea {
+  display: none;
 }
 .comment .content.editing textarea {
-  display: block !important;
+  display: block;
 }
 .comment .edit-comment, .comment .remove-comment, .comment .reply-comment {
   float: right;

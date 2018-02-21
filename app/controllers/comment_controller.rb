@@ -16,7 +16,15 @@ class CommentController < ApplicationController
   
   def create
     if !(@thread = CommentThread.where(id: params[:thread]).first) || @thread.locked
-      return render :not_found
+      return head :not_found
+    end
+    
+    user = user_signed_in? ? current_user : UserAnon.new(session)
+    
+    if !user_signed_in?
+      if !verify_recaptcha(model: user)
+        return render json: { error: user.error }
+      end
     end
     
     comment = @thread.comments.create(
@@ -31,7 +39,7 @@ class CommentController < ApplicationController
       @thread.owner.compute_hotness.save
     end
     
-    @thread.bump(user_signed_in? ? current_user : UserAnon.new(session), params, comment)
+    @thread.bump(user, params, comment)
     
     @reverse = params[:order] == '1'
     @records = @thread.get_comments(user_signed_in? && current_user.is_contributor?).with_likes(current_user)

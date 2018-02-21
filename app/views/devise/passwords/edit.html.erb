@@ -1,25 +1,20 @@
-<h2>Change your password</h2>
-
-<%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :put }) do |f| %>
-  <%= devise_error_messages! %>
-  <%= f.hidden_field :reset_password_token %>
-
-  <div class="field">
-    <%= f.label :password, "New password" %><br />
-    <% if @minimum_password_length %>
-      <em>(<%= @minimum_password_length %> characters minimum)</em><br />
-    <% end %>
-    <%= f.password_field :password, autofocus: true, autocomplete: "off" %>
-  </div>
-
-  <div class="field">
-    <%= f.label :password_confirmation, "Confirm new password" %><br />
-    <%= f.password_field :password_confirmation, autocomplete: "off" %>
-  </div>
-
-  <div class="actions">
-    <%= f.submit "Change my password" %>
-  </div>
-<% end %>
-
-<%= render "devise/shared/links" %>
+<div class="wrapper center">
+	<%= devise_error_messages! %>
+	<section class="page half-width modal">
+		<h1>Change your password</h1>
+		<%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :put }) do |f| %>
+			<%= f.hidden_field :reset_password_token %>
+			<div class="bob-holder fixed">
+				<%= f.password_field :password, autofocus: true, autocomplete: "off", placeholder: "New password" %>
+				<div class="bobber bob-left">Minimum <%= @minimum_password_length %> characters</div>
+			</div>
+			<%= f.password_field :password_confirmation, autocomplete: "off", placeholder: "Confirm Password" %>
+			<div class="actions">
+				<%= f.submit "Change my password" %>
+			</div>
+		<% end %>
+		<div class="tiny-foot">
+			<%= render "devise/shared/links" %>
+		</div>
+	</section>
+</div>

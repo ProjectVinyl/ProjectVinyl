@@ -18,6 +18,9 @@ function postComment(sender) {
     comment: comment
   };
   
+  const captcha = input.parentNode.querySelector('#g-recaptcha-response');
+  if (captcha) data['g-recaptcha-response'] = captcha.value;
+  
   sender = sender.parentNode;
   
   if (sender.classList.contains('report-state')) {
@@ -28,9 +31,10 @@ function postComment(sender) {
   
   ajax.post('comments', data).json(json => {
     sender.classList.remove('posting');
-    repaintPagination(document.getElementById('thread-' + data.thread).closest('.paginator'), json);
-    scrollTo(document.querySelector('#comment_' + json.focus));
+    if (json.error) return popupError(json.error);
     input.value = '';
+    repaintPagination(document.getElementById(`thread-${data.thread}`).closest('.paginator'), json);
+    scrollTo(document.getElementById(`comment_${json.focus}`));
   });
 }
 

@@ -1,23 +1,6 @@
 <div class="wrapper center">
 	<section class="page half-width modal">
 		<h1>Log in</h1>
-	<%= form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
-		<%= f.text_field :login, autofocus: true, placeholder: "Username Or Email" %>
-		<br><br>
-		<%= f.password_field :password, autocomplete: "off", placeholder: "Password" %>
-		<% if devise_mapping.rememberable? -%>
-			<br><br>
-			<label class="check-box">
-				<%= f.check_box :remember_me %>
-				<span>Remember Me</span>
-			</label>
-		<% end -%>
-		<div class="actions">
-			<%= f.submit "Sign in" %>
-		</div>
-	<% end %>
-	<div class="tiny-foot">
-		<%= render "devise/shared/links" %>
-	</div>
+		<%= render partial: "devise/sessions/login_form" %>
 	</section>
 </div>

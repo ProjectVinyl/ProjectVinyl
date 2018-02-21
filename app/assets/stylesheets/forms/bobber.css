@@ -38,6 +38,9 @@
   display: block;
   float: right;
 }
+.bob-holder.fixed {
+	float: none;
+}
 .bob-holder .bobber {
   pointer-events: none;
   opacity: 0;

@@ -1,25 +1,22 @@
 <div class="wrapper center">
 	<%= devise_error_messages! %>
 	<section class="page half-width modal">
-		<%= form_for(resource, as: resource_name, url: registration_path(resource_name)) do |f| %>
 		<h1>Sign up</h1>
-		
-		<%= f.text_field :username, autofocus: true, placeholder: "Nickname" %>
-		<br><br>
-		<%= f.email_field :email, placeholder: "Email" %>
-		<br><br><br>
-		<%= f.password_field :password, autocomplete: "off", placeholder: "Password" %>
-		<% if @minimum_password_length %>
-			<em>(<%= @minimum_password_length %> characters minimum)</em>
+		<%= form_for(resource, as: resource_name, url: registration_path(resource_name)) do |f| %>
+			<%= f.text_field :username, autofocus: true, placeholder: :nickname %>
+			<%= f.email_field :email, placeholder: :email %>
+			<div class="bob-holder fixed">
+				<%= f.password_field :password, autocomplete: "off", placeholder: :password %>
+				<div class="bobber bob-left">Minimum <%= @minimum_password_length %> characters</div>
+			</div>
+			<%= f.password_field :password_confirmation, autocomplete: "off", placeholder: :confirm_password %>
+			<%= recaptcha_tags %>
+			<div class="actions">
+				<%= f.submit "Sign up" %>
+			</div>
 		<% end %>
-		<br><br>
-		<%= f.password_field :password_confirmation, autocomplete: "off", placeholder: "Password Confirmation" %>
-		<div class="actions">
-			<%= f.submit "Sign up" %>
+		<div class="tiny-foot">
+			<%= render "devise/shared/links" %>
 		</div>
-	<% end %>
-	<div class="tiny-foot">
-		<%= render "devise/shared/links" %>
-	</div>
 	</section>
 </div>

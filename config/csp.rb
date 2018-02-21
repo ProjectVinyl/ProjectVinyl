@@ -15,10 +15,10 @@ module ProjectVinyl
       default: Csp.parse({
         default_src: [ 'self' ],
         form_action: [ 'self' ],
-        child_src: [ 'self', 'https://www.youtube.com' ],
+        child_src: [ 'self', 'https://www.youtube.com', 'https://www.google.com/recaptcha/' ],
         media_src: [ 'self', 'blob:' ],
         img_src: [ '*', 'blob:', 'data:' ],
-        script_src: [ 'self' ],
+        script_src: [ 'self', 'https://www.google.com/recaptcha/api.js', 'https://www.gstatic.com' ],
         style_src: [ 'self', 'unsafe-inline' ]
       }),
       embed: Csp.parse({

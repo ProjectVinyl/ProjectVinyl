@@ -23,9 +23,7 @@
 				</td>
 			</tr>
 			<tr>
-				<td class="label">
-					<%= f.label :email %>
-				</td>
+				<td class="label"><%= f.label :email %></td>
 				<td class="field">
 					<%= f.email_field :email, autofocus: true %>
 					<% if devise_mapping.confirmable? && resource.pending_reconfirmation? %>
@@ -34,9 +32,7 @@
 				</td>
 			</tr>
 			<tr>
-				<td class="label">
-				<%= f.label :password %>
-				</td>
+				<td class="label"><%= f.label :password %></td>
 				<td class="field">
 				<%= f.password_field :password, autocomplete: "off" %>
 				</td>
@@ -50,21 +46,16 @@
 				</td>
 			</tr>
 			<tr class="section">
-				<td colspan="2">
-					Save
-				</td>
+				<td colspan="2">Save</td>
 			</tr>
 			<tr>
-				<td class="label">
-				<%= f.label :current_password %>
-				</td>
+				<td class="label"><%= f.label :current_password %></td>
 				<td class="field">
 				<%= f.password_field :current_password, autocomplete: "off" %>
 				</td>
 			</tr>
 			<tr class="actions">
-				<td class="label">
-				</td>
+				<td class="label"></td>
 				<td class="field">
 					<%= f.submit "Save Changes", class: "green" %>
 				</td>

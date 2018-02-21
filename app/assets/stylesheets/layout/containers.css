@@ -95,7 +95,7 @@ div.page .positioner {
 }
 .half-width {
   width: 100%;
-  max-width: 300px !important;
+  max-width: 340px !important;
 }
 
 @media(max-width: 600px) {
