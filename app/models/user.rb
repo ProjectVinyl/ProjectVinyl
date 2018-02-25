@@ -48,7 +48,11 @@ class User < ApplicationRecord
   validates :username, presence: true, uniqueness: {
     case_sensitive: false
   }
-  validates :username, format: { with: /^[a-zA-Z0-9_\. ]*$/, multiline: true }
+  validates :username, format: {
+    with: /^[a-zA-Z0-9_\. ]*$/,
+    multiline: true
+  }
+  
   SANITIZE = /[^a-zA-Z0-9]+/
   BP_PONY = /^background pony #([0-9a-z]+)/
 
@@ -70,6 +74,8 @@ class User < ApplicationRecord
   end
   
   scope :by_name_or_id, ->(id) { where('id = ? OR username = ?', id, id).first }
+  
+  scope :with_badges, -> { includes(user_badges: [:badge]) }
   
   def self.find_for_database_authentication(warden_conditions)
     conditions = warden_conditions.dup
@@ -111,8 +117,6 @@ class User < ApplicationRecord
     return false if !(name.present? && !name.strip.empty?)
     !name.gsub(SANITIZE, '').empty?
   end
-  
-  scope :with_badges, -> { includes(user_badges: [:badge]) }
   
   def self.dummy(id)
     UserDummy.new(id)

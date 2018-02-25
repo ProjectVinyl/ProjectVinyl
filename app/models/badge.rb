@@ -8,8 +8,7 @@ class BadgeInstance
   end
 
   def get_title(user)
-    return @adv_title.call(user) if @adv_title
-    title
+    @adv_title ? @adv_title.call(user) : title
   end
 
   attr_reader :title
@@ -22,7 +21,7 @@ class BadgeInstance
   end
 
   def matches(user)
-    (user && !user.is_dummy && @block.call(user))
+    user && !user.is_dummy && @block.call(user)
   end
 end
 

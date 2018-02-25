@@ -9,9 +9,8 @@ class Video < ApplicationRecord
   include Taggable
   include Periodic
   include Reportable
+  include Indirected
   
-  belongs_to :direct_user, class_name: "User", foreign_key: "user_id"
-
   has_one :comment_thread, as: :owner, dependent: :destroy
 
   has_many :album_items, dependent: :destroy
@@ -79,8 +78,14 @@ class Video < ApplicationRecord
   end
   
   def self.clean_url(s)
-    return '' if s.blank?
-    return 'https:' + s if s.index('http:') != 0 && s.index('https:') != 0
+    if s.blank?
+      return ''
+    end
+    
+    if s.index('http:') != 0 && s.index('https:') != 0
+      return "https:#{s}"
+    end
+    
     s
   end
 	
@@ -150,15 +155,7 @@ class Video < ApplicationRecord
       report.write("<br>Damaged videos have been removed from public listings until they can be repaired.")
     end
   end
-
-  def user
-    self.direct_user || @dummy || (@dummy = User.dummy(self.user_id))
-  end
-
-  def user=(user)
-    self.direct_user = user
-  end
-
+  
   def transfer_to(user)
     self.user = user
     self.save

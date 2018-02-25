@@ -1,8 +1,8 @@
 class Comment < ApplicationRecord
   include Reportable
+  include Indirected
   
   belongs_to :comment_thread
-  belongs_to :direct_user, class_name: "User", foreign_key: "user_id"
   
   has_many :comment_replies, dependent: :destroy
   has_many :mentions, class_name: "CommentReply", foreign_key: "comment_id"
@@ -27,13 +27,6 @@ class Comment < ApplicationRecord
   
   scope :encode_open_id, ->(i) { i.to_s(36) }
   scope :decode_open_id, ->(s) { s.to_i(36) }
-  
-  def user
-    if user_id < 0 
-      return @dummy_user || (@dummy_user = User.dummy(self.user_id))
-    end
-    self.direct_user || @dummy_user || (@dummy_user = User.dummy(self.user_id))
-  end
   
   def update_comment(bbc)
     self.bbc_content = bbc

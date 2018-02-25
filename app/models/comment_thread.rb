@@ -1,20 +1,12 @@
 class CommentThread < ApplicationRecord
-  belongs_to :direct_user, class_name: "User", foreign_key: "user_id"
+  include Indirected
 
   has_many :comments, dependent: :destroy, counter_cache: "total_comments"
   has_many :thread_subscriptions, dependent: :destroy
   has_many :subscribers, through: :thread_subscriptions, class_name: 'User'
 
   belongs_to :owner, polymorphic: true
-
-  def user
-    self.direct_user || @dummy || (@dummy = User.dummy(self.user_id))
-  end
-
-  def user=(user)
-    self.direct_user = user
-  end
-
+  
   def private_message?
     self.owner_type == 'Pm'
   end
