@@ -84,9 +84,11 @@
 		<h1 class="title resize-target">Open Reports (<%= number_with_delimiter @reports.count %>)</h1>
 		<% if @reports.count > 0 %>
 		<%= render layout: 'pagination/paginated', locals: {type: "admin/reports", paginated: @reports, id: "reports"} do %>
-		<ul id="reports" class="report-list">
-			<%= render partial: 'admin/report/thumb', collection: @reports.records %>
-		</ul>
+			<div class="listing compact">
+				<div id="reports" class="report-list items">
+					<%= render partial: 'admin/report/thumb', collection: @reports.records %>
+				</div>
+			</div>
 		<% end %>
 		<% end %>
 		<h1 class="title resize-target">Hidden Videos (<%= number_with_delimiter @hiddenvideos.count %>)</h1>

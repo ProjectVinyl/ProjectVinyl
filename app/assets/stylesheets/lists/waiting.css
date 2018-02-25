@@ -1,9 +1,9 @@
-ul.waiting, .tab.waiting {
+.waiting ul, .waiting .items, .tab.waiting {
   position: relative;
   opacity: 0.2;
   transition: opacity 0.5s ease;
 }
-ul.waiting::after, .tab.waiting::after {
+.waiting ul::after, .waiting .items::after, .tab.waiting::after {
   content: '\f110';
   position: absolute;
   top: 50%;

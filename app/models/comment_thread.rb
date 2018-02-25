@@ -93,22 +93,20 @@ class CommentThread < ApplicationRecord
   end
 
   def bump(sender, params, comment)
-    recievers = self.thread_subscriptions.pluck(:user_id) - [sender.id]
-    
-    @source = self
     
     if self.owner_type == 'Report'
-      @source = self.owner
-      @source.bump(self, params[:report_state])
+      return self.owner.bump(self, params, comment)
     elsif self.owner_type == 'Pm'
-      return self.owner.bump(sender, comment)
-    else
-      if !sender.is_dummy && sender.subscribe_on_reply? && !self.subscribed?(sender)
-        self.subscribe(sender)
-      end
+      return self.owner.bump(sender, params, comment)
     end
     
-    Notification.notify_recievers(recievers, @source,
+    if !sender.is_dummy && sender.subscribe_on_reply? && !self.subscribed?(sender)
+      self.subscribe(sender)
+    end
+    
+    recievers = self.thread_subscriptions.pluck(:user_id) - [sender.id]
+    
+    Notification.notify_recievers(recievers, self,
       "#{sender.username} has posted a reply to <b>#{self.title}</b>", self.location)
   end
 end

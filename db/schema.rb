@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170725165301) do
+ActiveRecord::Schema.define(version: 20180223100800) do
 
   create_table "album_items", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci" do |t|
     t.integer "album_id"
@@ -130,7 +130,7 @@ ActiveRecord::Schema.define(version: 20170725165301) do
   end
 
   create_table "reports", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci" do |t|
-    t.integer "video_id"
+    t.integer "reportable_id"
     t.integer "user_id"
     t.boolean "resolved"
     t.string "first", limit: 340
@@ -148,6 +148,7 @@ ActiveRecord::Schema.define(version: 20170725165301) do
     t.text "contact", limit: 16777215
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "reportable_type"
   end
 
   create_table "site_notices", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci" do |t|

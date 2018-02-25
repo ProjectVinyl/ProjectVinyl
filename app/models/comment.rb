@@ -1,4 +1,6 @@
 class Comment < ApplicationRecord
+  include Reportable
+  
   belongs_to :comment_thread
   belongs_to :direct_user, class_name: "User", foreign_key: "user_id"
   
@@ -119,5 +121,12 @@ class Comment < ApplicationRecord
   
   def link
     "#{comment_thread.location}#comment_#{get_open_id}"
+  end
+  
+  def report(sender_id, params)
+    Report.generate_report(
+      reportable: self,
+      user_id: sender_id
+    )
   end
 end

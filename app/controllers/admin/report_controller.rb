@@ -20,9 +20,25 @@ module Admin
       @order = '0'
       
       @comments = Pagination.paginate(@thread.get_comments(true), (params[:page] || -1).to_i, 10, false)
-      @video = @report.video
+      @video = @report.reportable
       @user = @report.user
       
+    end
+    
+    def status
+      if !user_signed_in? || !current_user.is_contributor?
+        return render_access_denied
+      end
+      
+      if !(@report = Report.where(id: params[:id]).first)
+        return head :not_found
+      end
+      
+      @report.bump(current_user, params, nil)
+      
+      render json: {
+        status: @report.status
+      }
     end
     
     def index
@@ -30,51 +46,31 @@ module Admin
         return head 401
       end
       
-      @records = Report.includes(:video).where(resolved: nil)
+      @records = Report.includes(:reportable).open
       render_pagination 'thumb', @records, params[:page].to_i, 40, false
     end
     
     def new
-      if !(@video = Video.where(id: params[:video_id]).first)
-        return head 401
+      if !(reportable = Reportable.find(params))
+        return head :not_found
       end
       
       render json: {
         content: render_to_string(partial: 'new', locals: {
-          video: @video,
+          reportable: reportable,
           report: Report.new
         })
       }
     end
     
     def create
-      if !(@video = Video.where(id: params[:video_id]).first)
-        head :not_found
+      
+      if !(reportable = Reportable.find(params))
+        return head :not_found
       end
       
-      @report = params[:report]
-      @report = Report.create(
-        video_id: @video.id,
-        first: @report[:first],
-        source: @report[:source] || @report[:target],
-        content_type_unrelated: @report[:content_type_unrelated] == '1',
-        content_type_offensive: @report[:content_type_offensive] == '1',
-        content_type_disturbing: @report[:content_type_disturbing] == '1',
-        content_type_explicit: @report[:content_type_explicit] == '1',
-        copyright_holder: @report[:copyright_holder],
-        subject: @report[:subject],
-        other: @report[:note] || @report[:other],
-        name: @report[:name] || (user_signed_in? ? current_user.username : "")
-      )
-      if user_signed_in?
-        @report.user_id = current_user.id
-      end
-      @report.comment_thread = CommentThread.create(
-        user_id: @report.user_id,
-        title: "Report: " + @video.title
-      )
-      @report.save
-      Notification.notify_admins(@report, "A new <b>Report</b> has been submitted for <b>" + @video.title + "</b>", @report.comment_thread.location)
+      reportable.report(anonymous_user_id, params)
+      
       head :ok
     end
   end

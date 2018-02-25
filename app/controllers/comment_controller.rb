@@ -28,7 +28,7 @@ class CommentController < ApplicationController
     end
     
     comment = @thread.comments.create(
-      user_id: user_signed_in? ? current_user.id : UserAnon.anon_id(session),
+      user_id: anonymous_user_id,
       o_comment_thread_id: @thread.id
     )
     @thread.total_comments = @thread.comments.count

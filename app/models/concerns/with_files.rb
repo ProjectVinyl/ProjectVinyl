@@ -1,5 +1,3 @@
-require 'elasticsearch/model'
-
 module WithFiles
   extend ActiveSupport::Concern
   

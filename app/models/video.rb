@@ -8,6 +8,7 @@ class Video < ApplicationRecord
   include WithFiles
   include Taggable
   include Periodic
+  include Reportable
   
   belongs_to :direct_user, class_name: "User", foreign_key: "user_id"
 
@@ -551,5 +552,23 @@ class Video < ApplicationRecord
     self.score = self.upvotes - self.downvotes
     self.update_index(defer: false)
     self.compute_hotness.save
+  end
+  
+  def report(sender_id, params)
+    @report = params[:report]
+    Report.generate_report(
+      reportable: self,
+      first: @report[:first],
+      source: @report[:source] || @report[:target],
+      content_type_unrelated: @report[:content_type_unrelated] == '1',
+      content_type_offensive: @report[:content_type_offensive] == '1',
+      content_type_disturbing: @report[:content_type_disturbing] == '1',
+      content_type_explicit: @report[:content_type_explicit] == '1',
+      copyright_holder: @report[:copyright_holder],
+      subject: @report[:subject],
+      other: @report[:note] || @report[:other],
+      name: @report[:name],
+      user_id: sender_id
+    )
   end
 end

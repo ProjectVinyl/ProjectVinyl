@@ -28,4 +28,8 @@ class ApplicationController < ActionController::Base
     return unless request.get?
     store_location_for('user', request.fullpath)
   end
+  
+  def anonymous_user_id
+    user_signed_in? ? current_user.id : UserAnon.anon_id(session)
+  end
 end

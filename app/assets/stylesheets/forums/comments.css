@@ -179,31 +179,3 @@
   width: auto;
   padding-right: 3px;
 }
-
-.comment .resolution-status {
-  border-radius: 5px;
-  margin-bottom: 10px;
-  box-shadow: 0px 0px 12px rgba(0, 0, 0, 0.07) inset;
-}
-.comment.closed .resolution-status {
-  background: rgb(236, 72, 72);
-  border: 1px solid #a73535;
-  border-bottom-color: #9d3232;
-  border-top-color: #b03838;
-  text-shadow: -1px -1px #a73535;
-  color: #fff;
-}
-.comment.resolved .resolution-status {
-  background: #7bb042;
-  border: 1px solid #699739;
-  border-bottom-color: #638f36;
-  border-top-color: #6fa03c;
-  text-shadow: -1px -1px #699739;
-  color: #8f8;
-}
-.comment.closed .resolution-status .fa-inverse {
-  color: rgb(236, 72, 72);
-}
-.comment.resolved .resolution-status .fa-inverse {
-  color: #7bb042;
-}

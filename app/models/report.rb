@@ -1,10 +1,34 @@
 # TODO: Reports are a mess
 class Report < ApplicationRecord
   belongs_to :direct_user, class_name: "User", foreign_key: "user_id"
-  belongs_to :video
+  
+  belongs_to :reportable, polymorphic: true
 
   has_one :comment_thread, as: :owner, dependent: :destroy
 	
+  scope :open, -> { where(resolved: nil) }
+  scope :closed, -> { where(resolved: false) }
+  scope :solved, -> { where(resolved: true) }
+  
+  STATE_TO_STATUS = {
+    open: [:reopened, nil],
+    close: [:closed, false],
+    resolve: [:resolved, true]
+  }
+  
+  def self.generate_report(params)
+    report = Report.create(params)
+    report.comment_thread = CommentThread.create(
+      user_id: params[:user_id],
+      title: "Report: " + params[:reportable].reportable_name
+    )
+    report.save
+    Notification.notify_admins(report,
+      "A new <b>Report</b> has been submitted for <b>#{params[:reportable].reportable_name}</b>",
+      report.comment_thread.location
+    )
+  end
+  
 	def note
 		other
 	end
@@ -25,36 +49,31 @@ class Report < ApplicationRecord
     self.other << "<br>#{msg}"
   end
   
-  def bump(sender, state)
+  def status
+    self.resolved.nil? ? "Open" : self.resolved ? "Resolved" : "Closed"
+  end
+  
+  def source_label
+    first == "duplicate" ? "Target Video" : "Source"
+  end
+  
+  def open?
+    self.resolved.nil?
+  end
+  
+  def bump(sender, params, comment)
+    state = params[:report_state]
+    
     if state.nil?
       return
     end
     
-    @changed = nil
+    status = STATE_TO_STATUS[state.to_sym]
     
-    if state == 'open'
-      if !self.resolved.nil?
-        self.resolved = nil
-        @changed = 'reopened'
-      end
-    elsif state == 'close'
-      if self.resolved != false
-        self.resolved = false
-        @changed = 'closed'
-      end
-    elsif state == 'resolve'
-      if !self.resolved
-        self.resolved = true
-        @changed = 'resolved'
-      end
+    if self.resolved != status[1]
+      self.resolved = status[1]
+      Notification.notify_admins(self, "Report <b>#{sender.title}</b> has been #{status[0]}", sender.location)
+      self.save
     end
-    
-    if @changed.nil?
-      return
-    end
-    
-    Notification.notify_admins(self,
-      "Report <b>#{sender.title}</b> has been #{changed}", sender.location)
-    self.save
   end
 end

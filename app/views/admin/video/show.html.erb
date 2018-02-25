@@ -237,3 +237,16 @@
 	</p>
 	<% end %>
 </section>
+<section class="page column-left">
+	<h1>Reporting</h1>
+	<div class="actions space-fix">
+		<a class="button left blue" href="/admin/reports?reportable_class=Video&reportable_id=<%= @video.id %>">View All</a>
+	</div>
+	<hr>
+	<h1>Open Reports</h1>
+	<div class="compact listing">
+		<ul class="items">
+			<%= render partial: "admin/report/thumb", collection: Report.all %>
+		</ul>
+	</div>
+</section>

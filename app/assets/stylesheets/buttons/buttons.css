@@ -70,6 +70,15 @@ button.disable, .button.disable, button.working, .button.working {
   vertical-align: top;
 }
 
+.waiting .refresh, .button.working {
+	opacity: 1;
+}
+.waiting .refresh .progress-throbber,
+.button.working .progress-throbber {
+	-webkit-animation: fa-spin 2s infinite linear;
+	animation: fa-spin 2s infinite linear;
+}
+
 .split-button > .action {
   display: block;
   float: left;

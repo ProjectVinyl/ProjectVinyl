@@ -1,6 +1,15 @@
-<li class="generic">
-	<a href="/admin/reports/<%= thumb.id %>">Report #<%= thumb.id %></a>
-	<% if thumb.video %>
-		<%= render partial: 'admin/video/thumb_h', locals: {thumb_h: thumb.video } %>
-	<% end %>
-</li>
+<a class="row" href="/admin/reports/<%= thumb.id %>">
+	<div>
+		<span class="active-icon<% if thumb.open? %> active<% end %>" ></span>
+		#<%= thumb.id %>
+	</div>
+	<div>
+		<%= thumb.status %>
+	</div>
+	<div>
+		<%= since thumb.updated_at %>
+	</div>
+	<div>
+		<%= thumb.reportable_type %>
+	</div>
+</a>

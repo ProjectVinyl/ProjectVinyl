@@ -52,7 +52,7 @@ class Pm < ApplicationRecord
     end
   end
 
-  def bump(sender, comment)
+  def bump(sender, params, comment)
     Pm.where('state = 0 AND unread = false AND comment_thread_id = ? AND NOT user_id = ?', self.comment_thread_id, sender.id).update_all(new_comment_id: comment.id, unread: true)
     Pm.where('state = 0 AND comment_thread_id = ? AND NOT user_id = ?', self.comment_thread_id, sender.id).find_each do |t|
       Notification.notify_recievers([t.user_id], self, sender.username + " has posted a reply on <b>" + self.comment_thread.title + "</b>", t.location)

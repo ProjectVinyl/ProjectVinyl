@@ -1,5 +1,3 @@
-require 'elasticsearch/model'
-
 module Uncachable
   extend ActiveSupport::Concern
 

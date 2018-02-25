@@ -1,5 +1,3 @@
-require 'elasticsearch/model'
-
 module Taggable
   extend ActiveSupport::Concern
   
