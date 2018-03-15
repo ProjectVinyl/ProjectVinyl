@@ -19,13 +19,36 @@
 </div>
 <% end %>
 <div<% if indirect && comment.comment_thread.owner_type == 'Video' %> style="margin-left:200px;"<% end %> class="content" data-id="<%= comment.id %>" data-o-id="<%= comment.get_open_id %>" data-comment="<%= comment.bbc_content %>">
-<% if user_signed_in? && (current_user.is_contributor? || current_user.id == comment.user_id) %>
-	<a title="Delete" class="remove-comment" href="/comments/<%= comment.id %><% if indirect %>?indirect=1<% end %>" data-id="<%= comment.get_open_id %>" data-title="Delete Comment"><i class="fa fa-trash"></i></a>
-<% end %>
-<% if user_signed_in? && current_user.id == comment.user_id %>
-	<a title="Edit" class="edit-comment state-toggle" data-state="editing"><i class="fa fa-pencil"></i></a>
-<% end %>
 <% if user_signed_in? %>
+	<span class="popper">
+		<button class="action pop-out-toggle">
+			<i class="fa fa-ellipses"></i>
+		</button>
+		<ul class="pop-out">
+		<% if user_signed_in? && comment.owned_by!(current_user) %>
+			<li class="action">
+				<a class="edit-comment state-toggle" data-state="editing">
+					<span class="icon"><i class="fa fa-pencil"></i></span>
+					<span class="label">Edit</span>
+				</a>
+			</li>
+		<% end %>
+		<% if user_signed_in? && comment.owned_by(current_user) %>
+			<li class="action">
+					<a class="remove-comment" href="/comments/<%= comment.id %><% if indirect %>?indirect=1<% end %>" data-id="<%= comment.get_open_id %>" data-title="Delete Comment">
+						<span class="icon"><i class="fa fa-trash"></i></span>
+						<span class="label">Delete</span>
+					</a>
+			</li>
+		<% end %>
+			<li class="action">
+				<a class="report-comment" href="/admin/report?<%= comment.reportable_params %>" data-id="<%= comment.get_open_id %>" data-title="Report Comment">
+					<span class="icon"><i class="fa fa-flag"></i></span>
+					<span class="label">Report</span>
+				</a>
+			</li>
+		</ul>
+	</span>
 	<% if !indirect %>
 	<a title="Reply" class="reply-comment" ><i class="fa fa-reply"></i></a>
 	<% end %>
@@ -37,6 +60,10 @@
 		</span>
 		<i class="fa fa-thumbs-up"></i>
 	</button>
+<% else %>
+		<a title="Report" class="report-comment" href="/admin/report?<%= comment.reportable_params %>" data-id="<%= comment.get_open_id %>" data-title="Report Comment">
+			<i class="fa fa-flag"></i>
+		</a>
 <% end %>
 	<div class="name<% if comment.user.banned? %> banned<% end %>">
 		<a <% if !comment.user.is_dummy %>class="user-link" data-id="<%= comment.user_id %>" href="<%= comment.user.link %>"<% end %>>

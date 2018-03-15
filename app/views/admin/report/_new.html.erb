@@ -33,14 +33,7 @@
 					<%= f.text_area :note, placeholder: :note, required: true %>
 				</td>
 			</tr>
-			<tr>
-				<td>
-					<button class="goto left slide-left" data-to="start" type="button">< Back</button>
-				</td>
-				<td>
-					<button class="goto right slide-right" data-to="final" type="button">Next ></button>
-				</td>
-			</tr>
+			<%= render partial: 'admin/report/slide_buttons', locals: {prev: 'start', next: 'final'} %>
 		</table>
 	</div>
 	<div class="group" data-stage="stolen">
@@ -54,14 +47,7 @@
 					<%= f.text_field :source, placeholder: "Source" %>
 				</td>
 			</tr>
-			<tr>
-				<td>
-					<button class="goto left slide-left" data-to="start" type="button">< Back</button>
-				</td>
-				<td>
-					<button class="goto right slide-right" data-to="final" type="button">Next ></button>
-				</td>
-			</tr>
+			<%= render partial: 'admin/report/slide_buttons', locals: {prev: 'start', next: 'final'}
 		</table>
 	</div>
 	<div class="group" data-stage="content">
@@ -79,14 +65,7 @@
 			<tr>
 				<td colspan="2"><label><%= f.check_box :content_type_explicit %><i class="fa"></i> Pornography</label></td>
 			</tr>
-			<tr>
-				<td>
-					<button class="goto left slide-left" data-to="start" type="button">< Back</button>
-				</td>
-				<td>
-					<button class="goto right slide-right" data-to="final" type="button">Next ></button>
-				</td>
-			</tr>
+			<%= render partial: 'admin/report/slide_buttons', locals: {prev: 'start', next: 'final'} %>
 		</table>
 	</div>
 	<div class="group" data-stage="copy">
@@ -107,14 +86,7 @@
 			<tr>
 				<td colspan="2"><label><input type="checkbox" name="copyright_accept" required="true" value="copyright_accept"></input>* I am or represent the copyright holder for the identified content in this video</label></td>
 			</tr>
-			<tr>
-				<td>
-					<button class="goto left slide-left" data-to="start" type="button">< Back</button>
-				</td>
-				<td>
-					<button class="goto right slide-right" data-to="final" type="button">Next ></button>
-				</td>
-			</tr>
+			<%= render partial: 'admin/report/slide_buttons', locals: {prev: 'start', next: 'final'} %>
 		</table>
 	</div>
 	<div class="group" data-stage="other">
@@ -130,14 +102,7 @@
 					<%= f.text_area :other %>
 				</td>
 			</tr>
-			<tr>
-				<td>
-					<button class="goto left slide-left" data-to="start" type="button">< Back</button>
-				</td>
-				<td>
-					<button class="goto right slide-right" data-to="final" type="button">Next ></button>
-				</td>
-			</tr>
+			<%= render partial: 'admin/report/slide_buttons', locals: {prev: 'start', next: 'final'} %>
 		</table>
 	</div>
 	<div class="group" data-stage="final">
@@ -165,14 +130,7 @@
 					<%= f.text_field :contact, placeholder: "Email", required: true %>
 				</td>
 			</tr>
-			<tr>
-				<td>
-					<button class="goto left slide-left" data-to="start" type="button">< Back</button>
-				</td>
-				<td>
-					<button class="goto right send slide-right" data-to="end">Send</button>
-				</td>
-			</tr>
+			<%= render partial: 'admin/report/slide_buttons', locals: {prev: 'start', next: 'end'} %>
 		</table>
 		<% end %>
 	</div>

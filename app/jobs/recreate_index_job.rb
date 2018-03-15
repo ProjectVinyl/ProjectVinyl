@@ -6,18 +6,11 @@ class RecreateIndexJob < ApplicationJob
     table.__elasticsearch__.delete_index!
     table.__elasticsearch__.create_index!
     table.import
-
-    report = Report.create!(
-      user_id: user_id,
-      first: "System",
-      other: "Complete.",
-      resolved: nil
+    
+    Report.generate_report!(
+      "Indexing table #{table} (#{Time.zone.now})",
+      "Action 'Recreate #{table} Index' has been completed",
+      { user_id: user_id, first: "System", other: "Complete" }
     )
-    report.comment_thread = CommentThread.create!(
-      user_id: user_id,
-      title: "Indexing table #{table} (#{Time.zone.now})"
-    )
-    report.save!
-    Notification.notify_admins(report, "Action \"Recreate #{table} Index\" has been completed", report.comment_thread.location)
   end
 end

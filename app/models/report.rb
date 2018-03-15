@@ -16,17 +16,41 @@ class Report < ApplicationRecord
     resolve: [:resolved, true]
   }
   
+  def self.prepare_params(params)
+    params[:resolved] = nil
+    params
+  end
+  
   def self.generate_report(params)
-    report = Report.create(params)
-    report.comment_thread = CommentThread.create(
-      user_id: params[:user_id],
-      title: "Report: " + params[:reportable].reportable_name
-    )
-    report.save
-    Notification.notify_admins(report,
+    Report.generate_report!(
+      "Report: " + params[:reportable].reportable_name,
       "A new <b>Report</b> has been submitted for <b>#{params[:reportable].reportable_name}</b>",
-      report.comment_thread.location
+      params
     )
+  end
+  
+  def self.generate_report!(title, message, params)
+    Report.create_report!(title, params).notify_admins(message)
+  end
+  
+  def self.report_on(title, message, params)
+    report = Report.create_report!(title, params)
+    yield(report)
+    report.notify_admins(message)
+  end
+  
+  def self.create_report!(title, params)
+    report = Report.create!(Report.prepare_params(params))
+    report.comment_thread = CommentThread.create!(
+      user_id: params[:user_id],
+      title: title
+    )
+    report
+  end
+  
+  def notify_admins(message)
+    self.save!
+    Notification.notify_admins(self, message, self.comment_thread.location)
   end
   
 	def note
@@ -36,6 +60,10 @@ class Report < ApplicationRecord
 	def target
 		source
 	end
+  
+  def link
+    "/admin/reports/#{self.id}"
+  end
 	
   def write(msg)
     self.other << "<br>#{msg}"
@@ -64,8 +92,7 @@ class Report < ApplicationRecord
     
     if self.resolved != status[1]
       self.resolved = status[1]
-      Notification.notify_admins(self, "Report <b>#{sender.title}</b> has been #{status[0]}", sender.location)
-      self.save
+      self.notify_admins("Report <b>#{sender.title}</b> has been #{status[0]}")
     end
   end
 end

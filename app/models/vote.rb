@@ -5,30 +5,35 @@ class Vote < ApplicationRecord
   scope :up, -> { where(negative: false) }
   scope :down, -> { where(negative: true) }
   
-  def self.vote(user, sender, incr, negative)
-    votes = (negative ? sender.downvotes : sender.upvotes).to_i
-    opposing_votes = (negative ? sender.upvotes : sender.downvotes).to_i
-    
-    vote = user.votes.where(video_id: sender.id).first
-    if vote.nil?
-      vote = user.votes.create(video_id: sender.id, negative: negative)
-      votes += 1
-    else
-      if incr.to_i < 0
-        vote.destroy
-        votes -= 1 if votes > 0
-      else
-        if vote.negative != negative
-          opposing_votes -= 1 if opposing_votes > 0
-          votes += 1
-          vote.negative = negative
-          vote.save
-        end
-      end
-    end
-    
-    sender.downvotes = negative ? votes : opposing_votes
-    sender.upvotes = negative ? opposing_votes : votes
+  def self.posi(one, value)
+    one > 0 ? one : 0
   end
   
+  def self.set_count(sender, negative, value)
+    if negative
+      sender.downvotes = Vote.posi(sender.downvotes.to_i + value)
+    else
+      sender.upvotes = Vote.posi(sender.upvotes.to_i + value)
+    end
+  end
+  
+  def self.vote(user, sender, incr, negative)
+    vote = user.votes.where(video_id: sender.id).first
+    
+    if vote.nil?
+      vote = user.votes.create(video_id: sender.id, negative: negative)
+      
+      Vote.set_count(sender, negative, 1)
+    elsif incr.to_i < 0
+      vote.destroy
+      
+      Vote.set_count(sender, negative, -1)
+    elsif vote.negative != negative
+      vote.negative = negative
+      vote.save
+      
+      Vote.set_count(sender, negative, 1)
+      Vote.set_count(sender, !negative, -1)
+    end
+  end
 end

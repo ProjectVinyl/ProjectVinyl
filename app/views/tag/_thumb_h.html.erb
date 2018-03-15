@@ -3,9 +3,7 @@
 		<span>
 			<%= thumb_h.name %> (<%= number_with_delimiter thumb_h.members %>)
 			<% if user_signed_in? %>
-				<% if current_user.hides([thumb_h.id]) %> H<% end %>
-				<% if current_user.spoilers([thumb_h.id]) %> S<% end %>
-				<% if current_user.watches(thumb_h) %> W<% end %>
+				<%= render partial: "tag/flags", locals: {tag: thumb_h} %>
 			<% end %>
 		</span>
 	</a>
@@ -17,8 +15,7 @@
 				<i class="fa fa-check"></i>
 				<% end %>
 			</span>
-				<span class="label">Hide</span>
-			</span>
+			<span class="label">Hide</span>
 		</li>
 		<li class="action toggle" data-family="tag-flags" data-descriminator="spoiler" data-target="tags" data-id="<%= thumb_h.id %>" data-action="spoiler">
 			<span class="icon">
@@ -26,8 +23,7 @@
 				<i class="fa fa-check"></i>
 				<% end %>
 			</span>
-				<span class="label">Spoiler</span>
-			</span>
+			<span class="label">Spoiler</span>
 		</li>
 		<li class="action toggle" data-family="tag-flags" data-descriminator="watch" data-target="tags" data-id="<%= thumb_h.id %>" data-action="watch">
 			<span class="icon">
@@ -35,8 +31,7 @@
 				<i class="fa fa-check"></i>
 				<% end %>
 			</span>
-				<span class="label">Watch</span>
-			</span>
+			<span class="label">Watch</span>
 		</li>
 	</ul>
 	<% end %>

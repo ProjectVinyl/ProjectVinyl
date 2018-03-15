@@ -7,6 +7,10 @@ class Album < ApplicationRecord
   ADDED = 2
   SCORE = 3
   
+  def sample_videos
+    self.ordered(self.videos.where(hidden: false).limit(4)
+  end
+  
   def set_description(text)
     self.description = text
     self.html_description = ApplicationHelper.emotify(text)

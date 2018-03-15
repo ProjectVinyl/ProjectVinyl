@@ -20,6 +20,9 @@ class Comment < ApplicationRecord
         .select('`comments`.*, `comment_votes`.user_id AS is_liked_flag')
     end
   }
+  scope :with_threads, ->(owner_type) {
+    visible.includes(:direct_user, :comment_thread).where("`comment_threads`.owner_type = ?", owner_type)
+  }
   
   def is_liked
     (respond_to? :is_liked_flag) && is_liked_flag

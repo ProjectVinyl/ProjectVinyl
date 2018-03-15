@@ -5,10 +5,13 @@ class Pm < ApplicationRecord
   belongs_to :comment_thread, dependent: :destroy
   belongs_to :new_comment, class_name: 'Comment'
   
+  STATE_NORMAL = 0
+  STATE_DELETED = 1
+  
   scope :find_for_user, ->(id, user) { includes(:comment_thread, :new_comment).where('`pms`.id = ? AND `pms`.user_id = ?', id, user.id).first }
   
   scope :find_for_tab_counter, ->(type, user) {
-    listing_selector = where(user_id: user.id, state: type == 'deleted' ? 1 : 0)
+    listing_selector = where(user_id: user.id, state: type == 'deleted' ? STATE_DELETED : STATE_NORMAL)
     if type == 'received'
       return listing_selector.where(receiver: user)
     elsif type == 'sent'
@@ -45,24 +48,22 @@ class Pm < ApplicationRecord
           comment_thread_id: thread.id,
           new_comment_id: comment.id
         )
-        Notification.notify_recievers([receiver.id], pms,
-          "#{sender.username} has sent you a Private Message: <b>#{thread.title}</b>", pms.location)
+        Notification.notify_recievers([receiver.id], pms, "#{sender.username} has sent you a Private Message: <b>#{thread.title}</b>", pms.location)
       end
       return pm
     end
   end
 
   def bump(sender, params, comment)
-    Pm.where('state = 0 AND unread = false AND comment_thread_id = ? AND NOT user_id = ?', self.comment_thread_id, sender.id).update_all(new_comment_id: comment.id, unread: true)
-    Pm.where('state = 0 AND comment_thread_id = ? AND NOT user_id = ?', self.comment_thread_id, sender.id).find_each do |t|
-      Notification.notify_recievers([t.user_id], self, sender.username + " has posted a reply on <b>" + self.comment_thread.title + "</b>", t.location)
+    Pm.where('state = ? AND unread = false AND comment_thread_id = ? AND NOT user_id = ?', STATE_NORMAL, self.comment_thread_id, sender.id).update_all(new_comment_id: comment.id, unread: true)
+    Pm.where('state = ? AND comment_thread_id = ? AND NOT user_id = ?', STATE_NORMAL, self.comment_thread_id, sender.id).find_each do |t|
+      Notification.notify_recievers([t.user_id], self, "#{sender.username} has posted a reply to <b>#{self.comment_thread.title}</b>", t.location)
     end
   end
   
   def get_tab_type(user)
-    if self.state == 0
-      return 'sent' if self.sender_id == user.id
-      return 'received'
+    if self.state == STATE_NORMAL
+      return self.sender_id == user.id ? 'sent' : 'received'
     end
     'deleted'
   end
@@ -72,21 +73,18 @@ class Pm < ApplicationRecord
   end
 
   def location
-    result = "/message/#{self.id}"
     if self.unread && self.new_comment_id
-      result += "/message/#{self.id}#comment_#{Comment.encode_open_id(self.new_comment_id)}"
+      return "/message/#{self.id}#comment_#{Comment.encode_open_id(self.new_comment_id)}"
     end
-    result
+    "/message/#{self.id}"
   end
 
   def toggle_deleted
-    if self.state == 0
-      if self.unread
-        self.unread = false
-      end
-      self.state = 1
+    if self.state == STATE_NORMAL
+      self.unread = false
+      self.state = STATE_DELETED
     else
-      self.state = 0
+      self.state = STATE_NORMAL
     end
     self.save
   end

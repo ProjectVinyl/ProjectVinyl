@@ -31,11 +31,9 @@ class Video < ApplicationRecord
   scope :random, ->(limit) {
     selection = pluck(:id)
     return { ids: [], videos: Video.none } if selection.blank?
-    if selection.length < limit
-      selected = selection
-    else
-      selected = selection.sample(limit)
-    end
+    
+    selected = selection.length < limit ? selection : selection.sample(limit)
+    
     {
       ids: selected,
       videos: finder.where("`#{self.table_name}`.id IN (?)", selected)
@@ -160,10 +158,6 @@ class Video < ApplicationRecord
     self.user = user
     self.save
     self.update_index(defer: false)
-  end
-  
-  def owned_by(user)
-    user && (self.user_id == user.id || user.is_contributor?)
   end
   
   def remove_self
@@ -514,7 +508,25 @@ class Video < ApplicationRecord
   def unmerge
     self.save if self.do_unmerge
   end
-
+  
+  def report(sender_id, params)
+    @report = params[:report]
+    Report.generate_report(
+      reportable: self,
+      first: @report[:first],
+      source: @report[:source] || @report[:target],
+      content_type_unrelated: @report[:content_type_unrelated] == '1',
+      content_type_offensive: @report[:content_type_offensive] == '1',
+      content_type_disturbing: @report[:content_type_disturbing] == '1',
+      content_type_explicit: @report[:content_type_explicit] == '1',
+      copyright_holder: @report[:copyright_holder],
+      subject: @report[:subject],
+      other: @report[:note] || @report[:other],
+      name: @report[:name],
+      user_id: sender_id
+    )
+  end
+  
   protected
   def do_unmerge
     if self.duplicate_id
@@ -549,23 +561,5 @@ class Video < ApplicationRecord
     self.score = self.upvotes - self.downvotes
     self.update_index(defer: false)
     self.compute_hotness.save
-  end
-  
-  def report(sender_id, params)
-    @report = params[:report]
-    Report.generate_report(
-      reportable: self,
-      first: @report[:first],
-      source: @report[:source] || @report[:target],
-      content_type_unrelated: @report[:content_type_unrelated] == '1',
-      content_type_offensive: @report[:content_type_offensive] == '1',
-      content_type_disturbing: @report[:content_type_disturbing] == '1',
-      content_type_explicit: @report[:content_type_explicit] == '1',
-      copyright_holder: @report[:copyright_holder],
-      subject: @report[:subject],
-      other: @report[:note] || @report[:other],
-      name: @report[:name],
-      user_id: sender_id
-    )
   end
 end

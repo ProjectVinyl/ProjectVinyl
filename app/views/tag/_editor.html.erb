@@ -4,9 +4,7 @@
 		<i title="Remove Tag" data-name="<%= tag.get_as_string %>" class="fa fa-times remove">
 		</i><a href="<%= tag.link %>"><%= tag.get_as_string %></a>
 		<span><% if user_signed_in? %>
-		<% if current_user.hides([tag.id]) %>H<% end %>
-		<% if current_user.spoilers([tag.id]) %>S<% end %>
-		<% if current_user.watches(tag) %>W<% end %>
+		<%= render partial: "tag/flags", locals: {tag: tag} %>
 		<% end %></span>
 	</li><% end %><% end %></ul
 	><input class="tag input js-auto-resize" type="text" placeholder="Tag list..."/
