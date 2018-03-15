@@ -1,0 +1,44 @@
+><div class="split-button popper">
+	<button class="action star split-icon<% if @video.is_starred_by(current_user) %> starred<% end %>" data-action="star" data-id="<%= @video.id %>">
+		<i class="fa fa-star"></i>
+	</button>
+	<a class="button action addto split-action pop-out-toggle">Add To</a>
+	<ul class="pop-out">
+		<li class="action" data-external-form="album/create?initial=<%= @video.id %>" data-title="New Album">
+			<span class="icon">
+				<i class="fa fa-pencil"></i>
+			</span>
+			<span class="label">
+				New Album
+			</span>
+		</li>
+		<% current_user.albums.each do |album| %>
+		<li class="action toggle" data-action="add" data-target="videos" data-id="<%= @video.id %>" data-item="<%= album.id %>">
+			<span class="icon">
+			<% if album.album_items.where(video_id: @video.id).first %>
+				<i class="fa fa-check"></i>
+			<% end %>
+			</span>
+			<span class="label">
+				<%= album.title %>
+			</span>
+		</li>
+		<% end %>
+	</ul>
+</div
+><button class="action like<% if @video.is_upvoted %> liked<% end %>" data-count="<%= @video.upvotes %>" data-action="like" data-id="<%= @video.id %>">
+	<i class="fa fa-thumbs-up"></i>
+	<span>
+		<% if @video.upvotes && @video.upvotes > 0 %>
+		<span class="count"><%= @video.upvotes %></span>
+		<% end %>
+	</span>
+</button
+><button class="action dislike<% if @video.is_downvoted %> liked<% end %>" data-count="<%= @video.downvotes %>" data-action="dislike" data-id="<%= @video.id %>">
+	<i class="fa fa-thumbs-down"></i>
+	<span>
+		<% if @video.downvotes && @video.downvotes > 0 %>
+		<span class="count"><%= @video.downvotes %></span>
+		<% end %>
+	</span>
+</button
