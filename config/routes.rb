@@ -164,6 +164,14 @@ Rails.application.routes.draw do
       put 'feature'
     end
     
+    resource :videos, only: [], controller: :video do
+      get 'hidden'
+      get 'unprocessed'
+      
+      post 'hidden/drop', action: :batch_drop
+      post 'requeue'
+    end
+    
     resources :videos, only: [:show, :destroy], controller: :video do
       put 'hide'
       put 'feature'
@@ -171,14 +179,6 @@ Rails.application.routes.draw do
       put 'resetthumb'
       put 'merge'
       put 'metadata'
-    end
-    
-    resource :videos, only: [], controller: :video do
-      get 'hidden'
-      get 'unprocessed'
-      
-      post 'hidden/drop', action: :batch_drop
-      post 'requeue'
     end
     
     resources :tags, only: [:show, :update], controller: :tag

@@ -4,7 +4,7 @@ import { ready } from '../jslim/events';
 import { all } from '../jslim/dom';
 
 function populatePage(context, json) {
-  const container = context.querySelector('ul');
+  const container = context.querySelector('ul, .items');
   container.innerHTML = json.content;
   context.classList.remove('waiting');
   context.dataset.page = json.page;
