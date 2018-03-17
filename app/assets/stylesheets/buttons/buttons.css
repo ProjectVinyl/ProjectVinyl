@@ -94,6 +94,10 @@ button.disable, .button.disable, button.working, .button.working {
   padding-left: 6px;
 }
 
+.actions {
+	line-height: 19px;
+}
+
 .actions > .button, .actions > button, .actions > .split-button {
   margin-right: 4px;
   margin-top: 4px;
