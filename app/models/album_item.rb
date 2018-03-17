@@ -4,7 +4,7 @@ class AlbumItem < ApplicationRecord
   has_one :direct_user, through: :video
   
   scope :discriminate, ->(comparitor, current, user) {
-    includes(:video).where('`album_items`.index ' + comparitor + ' ?', current).reject do |i|
+    where('`album_items`.index ' + comparitor + ' ?', current).reject do |i|
       (i.video.is_hidden_by(user) || i.video.hidden)
     end
   }

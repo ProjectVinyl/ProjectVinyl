@@ -8,7 +8,7 @@ class Album < ApplicationRecord
   SCORE = 3
   
   def sample_videos
-    self.ordered(self.videos.where(hidden: false).limit(4)
+    self.ordered(self.videos.where(hidden: false).limit(4))
   end
   
   def set_description(text)
