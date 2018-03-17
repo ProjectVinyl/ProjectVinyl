@@ -1,8 +1,7 @@
 /*
  *= require ./font-awesome.min
  *= require ./normalise
- *= require ./compatability
- *= require ./animations
+  *= require ./animations
  *= require ./tables/all
  *= require ./misc/all
  *= require ./3d/all
@@ -23,4 +22,5 @@
  *= require ./tags/editor
  *= require_self
  *= require ./emoticons
+ *= require ./compatability
  */

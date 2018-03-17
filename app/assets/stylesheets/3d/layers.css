@@ -1,11 +1,16 @@
 .context-3d .layer-background, .context-3d .layer-foreground {
   position: absolute;
   transform-style: preserve-3d;
+	-webkit-transform-style: preserve-3d;
   width: 100%;
 }
 
 .context-3d .layer-background {
   z-index: -1;
+}
+
+.context-3d .layer-foreground {
+  z-index: 2;
 }
 
 .layer-background .far {
@@ -15,14 +20,9 @@
   transform: translateX(50%) translateZ(-300px) scale(2);
 }
 
-.layer-foreground {
-  z-index: 2;
-}
-
 .layer-foreground.body {
   margin-top: 240px;
   padding-top: 20px;
   background: inherit;
   z-index: 1;
-  transform-style: flat;
 }

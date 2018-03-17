@@ -7,7 +7,9 @@
   overflow-x: hidden;
   overflow-y: auto;
   perspective: 300px;
+	-webkit-perspective: 300px;
   perspective-origin: 0 100px;
+	-webkit-perspective-origin: 0 100px;
   height: 100%;
   background: inherit;
 }

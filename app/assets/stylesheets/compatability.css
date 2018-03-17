@@ -12,6 +12,9 @@ html.andoid-mozilla .layer-background .far,
 html.andoid-mozilla .layer-background .near {
   transform: none !important;
 }
+html.andoid-mozilla .context-3d .layer-foreground {
+	position: absolute;
+}
 
 /*Opera Fix*/
 input:focus, textarea:focus, keygen:focus, select:focus {
