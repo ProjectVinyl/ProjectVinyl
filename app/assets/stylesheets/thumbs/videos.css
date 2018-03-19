@@ -157,4 +157,8 @@ li.generic.mix .tile::after {
   .tile {
     min-height: 80px;
   }
+  
+  .thumb .date {
+    display: none;
+  }
 }
