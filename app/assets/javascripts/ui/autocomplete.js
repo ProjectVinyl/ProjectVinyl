@@ -1,8 +1,8 @@
 import { ajax } from '../utils/ajax';
 import { addDelegatedEvent } from '../jslim/events';
 
-addDelegatedEvent(document, 'lookup:complete', '.auto-lookup .popup', (e, target) => {
-  target.innerHTML = e.detail.results.map((a, i) => `<li data-index="${i}">${a[1]} (${a[0]})</li>`).join('');
+addDelegatedEvent(document, 'lookup:complete', '.auto-lookup', (e, target) => {
+  target.querySelector('.pop-out').innerHTML = e.detail.results.map((a, i) => `<li data-index="${i}"><i class="fa fa-fw fa-user"></i> ${a[1]}</li>`).join('');
 });
 
 addDelegatedEvent(document, 'focusin', '.auto-lookup:not(.loaded) input', (e, input) => {
@@ -24,7 +24,7 @@ addDelegatedEvent(document, 'focusin', '.auto-lookup:not(.loaded) input', (e, in
     autocomplete = null;
   });
   addDelegatedEvent(popout, 'click', 'li[data-index]', (e, target) => {
-    const item = results[target.dataset.index];
+    const item = results[target.dataset.index][1];
     container.classList.remove('pop-out-shown');
     if (!item) return;
     input.value = item.toString();
@@ -44,7 +44,11 @@ addDelegatedEvent(document, 'focusin', '.auto-lookup:not(.loaded) input', (e, in
           results = json.results;
           container.classList.toggle('pop-out-shown', results.length);
           input.classList.toggle('invalid', json.reject);
-          popout.dispatchEvent(new CustomEvent('lookup:complete', { detail: json, bubbles: true, cancellable: true }));
+          popout.dispatchEvent(new CustomEvent('lookup:complete', {
+            detail: json,
+            bubbles: true,
+            cancellable: true
+          }));
         });
       }
     }, 1000);
