@@ -10,13 +10,18 @@ addDelegatedEvent(document, 'click', '.popper .pop-out-toggle, .popper.pop-out-t
   if (!target.classList.contains('pop-out-shown')) return;
   
   const content = target.querySelector('.pop-out');
-  const left = offset(content).left;
   
-  target.classList.toggle('pop-left', left + content.offsetWidth > document.documentElement.offsetWidth);
-  target.classList.toggle('pop-right', left < 0);
+  target.classList.toggle('pop-left', false);
+  target.classList.toggle('pop-right', false);
+  
+  requestAnimationFrame(() => {
+    const left = offset(content).left;
+    target.classList.toggle('pop-left', left + content.offsetWidth > document.documentElement.offsetWidth);
+    target.classList.toggle('pop-right', left < 0);
+  });
 });
 
-document.addEventListener('mousedown', () => all('.pop-out-shown:not(:hover)', a => {
+document.addEventListener('mouseup', () => all('.pop-out-shown', a => {
 	a.classList.remove('pop-out-shown');
 }));
 
