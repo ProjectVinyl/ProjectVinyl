@@ -1,2 +1,2 @@
 .video#video{style: format_bg(@video.thumb), data: @video.widget_header(@time, @resume, embed, @album)}
-	= render partial: 'video/widget/content', locals: {embed: embed}
+	= render 'video/widget/content', embed: embed

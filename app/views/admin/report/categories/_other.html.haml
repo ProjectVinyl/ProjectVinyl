@@ -41,7 +41,7 @@
 			%tr
 				%td.label If there's anything else we should know add it below.
 				%td.field= f.text_area :note, placeholder: :note, required: true
-			= render partial: 'admin/report/slide_buttons', locals: {prev: 'start', next: 'final'}
+			= render 'admin/report/slide_buttons', prev: 'start', next: 'final'
 	.group(data-stage="stolen" style="white-space:normal")
 		.notice
 			If this video belongs to you, and was uploaded without your permision, fill in the following form.
@@ -55,7 +55,7 @@
 				%td(colspan="2") Please provide a link to where you believe this video may have come from. Must be older than the current report target.
 			%tr
 				%td.field(colspan="2")= f.text_field :source, placeholder: "Source"
-			= render partial: 'admin/report/slide_buttons', locals: {prev: 'start', next: 'final'}
+			= render 'admin/report/slide_buttons', prev: 'start', next: 'final'
 	.group(data-stage="content" style="white-space:normal")
 		.notice Please select the option(s) that best describe the content in this video.
 		%table(data-required)
@@ -83,7 +83,7 @@
 						= f.check_box :content_type_explicit
 						%i.fa
 						Pornography
-			= render partial: 'admin/report/slide_buttons', locals: {prev: 'start', next: 'final'}
+			= render 'admin/report/slide_buttons', prev: 'start', next: 'final'
 	.group(data-stage="copy" style="white-space:normal")
 		.notice
 			If you believe that this video is using copyrighted material that does not fall in line with this site's
@@ -105,7 +105,7 @@
 					%label
 						%input(type="checkbox" name="copyright_accept" required="true" value="copyright_accept")
 						* I am or represent the copyright holder for the identified content in this video
-			= render partial: 'admin/report/slide_buttons', locals: {prev: 'start', next: 'final'}
+			= render 'admin/report/slide_buttons', prev: 'start', next: 'final'
 	.group(data-stage="other" style="white-space:normal")
 		.notice Please provide as much detail as possible so as to help the moderation team resolve your issue as quickly as possible.
 		%table
@@ -117,7 +117,7 @@
 	.group(data-stage="final" style="white-space:normal")
 		- if user_signed_in?
 			Thank you!
-			<br>
+			%br/
 			Your report will be sent as <a href="<%= current_user.link %>"><%= current_user.username %></a>.
 			%table
 				%tr
@@ -130,7 +130,7 @@
 					%td.field(colspan="2")= f.text_field :name, placeholder: "Name", required: true
 				%tr
 					%td.field(colspan="2")= f.text_field :contact, placeholder: "Email", required: true
-				= render partial: 'admin/report/slide_buttons', locals: {prev: 'start', next: 'end'}
+				= render 'admin/report/slide_buttons', prev: 'start', next: 'end'
 	.group(data-stage="end" style="white-space:normal")
 		%table
 			%tr

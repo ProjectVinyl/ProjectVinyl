@@ -1,13 +1,13 @@
 - title "Admin"
-= render partial: "video/video"
+= render 'video/video'
 .wrapper.column-right.right
 	%section.page.full-width
 		%h1 Thumbnail Preview
-		%ul.horizontal.center= render partial: "video/thumb_h", locals: {thumb_h: @video}
-	= render partial: 'admin/video/metadata'
-	= render partial: 'admin/video/files'
-	= render partial: 'admin/video/actions'
-= render partial: 'video/description'
-= render partial: 'admin/video/ownership'
-= render partial: 'admin/video/duplication'
-= render partial: 'admin/video/reports'
+		%ul.horizontal.center= render 'thumb_h', thumb_h: @video
+	= render 'metadata'
+	= render 'files'
+	= render 'actions'
+= render 'video/description'
+= render 'ownership'
+= render 'duplication'
+= render 'reports'

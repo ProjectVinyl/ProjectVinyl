@@ -26,7 +26,7 @@
 			.date.right= since @report.created_at
 			%table(style="table-layout:auto" class="properties comment-content preview")
 				- if @video
-					= render partial: "layouts/video_thumb_h", locals: {video_thumb_h: @video}
+					= render 'layouts/video_thumb_h', video_thumb_h: @video
 				%tr
 					%td Report Type:
 					%td= @report.first
@@ -66,4 +66,4 @@
 							= @report.name
 							Email:
 							= (@report.contact || "").gsub(/a-zA-z/,"*")
-%section.page.full-width.resize-holder= render partial: "thread/view_reverse"
+%section.page.full-width.resize-holder= render 'thread/view_reverse'

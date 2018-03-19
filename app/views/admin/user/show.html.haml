@@ -1,6 +1,6 @@
 %section.page.properties.column-left
 	%h1 Edit Profile
-	= render partial: 'artist/edit', locals: { user: @user, url: "/users/#{@user.id}", method: :patch }
+	= render 'user/edit', user: @user, url: "/users/#{@user.id}", method: :patch
 %section.page.properties.column-right.right
 	%table
 		%tr
@@ -9,13 +9,13 @@
 				- if current_user.id == @user.id
 					%p(style="color:red") You cannot change your own role.
 				- else
-					= render partial: 'admin/user/role_check', locals: { enable: current_user.is_admin?, value: @user.admin?, role: :admin, title: 'Administrator'}
+					= render 'admin/user/role_check', enable: current_user.is_admin?, value: @user.admin?, role: :admin, title: 'Administrator'
 					%br/
-					= render partial: 'admin/user/role_check', locals: { enable: current_user.is_contributor?, value: @user.contributor?, role: :contributor, title: 'Moderator'}
+					= render 'admin/user/role_check', enable: current_user.is_contributor?, value: @user.contributor?, role: :contributor, title: 'Moderator'
 					%br/
-					= render partial: 'admin/user/role_check', locals: { enable: current_user.is_staff?, value: @user.staff?, role: :staff, title: 'Staff'}
+					= render 'admin/user/role_check', enable: current_user.is_staff?, value: @user.staff?, role: :staff, title: 'Staff'
 					%br/
-					= render partial: 'admin/user/role_check', locals: { enable: true, value: @user.normal?, role: :normal, title: 'Normal'}
+					= render 'admin/user/role_check', enable: true, value: @user.normal?, role: :normal, title: 'Normal'
 			</td>
 		</tr>
 		%tr
@@ -31,10 +31,10 @@
 				- had_badges = []
 				- @user.user_badges.includes(:badge).each do |i|
 					- had_badges << i.badge.id
-					= render partial: 'admin/user/badge_toggle', locals: {badge_toggle: i, checked: true}
+					= render 'badge_toggle', badge_toggle: i, checked: true
 				%hr/
 				- (had_badges.length > 0 ? Badge.where.not('id IN (?)', had_badges) : Badge.all).each do |i|
-					= render partial: 'admin/user/badge_toggle', locals: {badge_toggle: i, checked: false}
+					= render 'badge_toggle', badge_toggle: i, checked: false
 		%tr.actions
 			%td.label Reindex User
 			%td.field
