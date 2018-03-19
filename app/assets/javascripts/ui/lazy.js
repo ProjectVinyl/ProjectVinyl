@@ -20,7 +20,6 @@ addDelegatedEvent(document, 'click', '.load-more button', (e, button) => {
   });
 });
 
-addDelegatedEvent(document, 'click', '.mix a', (e, target) => {
-  document.location.replace(`${target.href}&t=${document.querySelector('#video .player').getPlayerObj().video.currentTime}`);
-  e.preventDefault();
+addDelegatedEvent(document, 'mousedown', '.mix a', (e, target) => {
+  target.href = `${target.dataset.href}&t=${document.querySelector('#video .player').getPlayerObj().video.currentTime}`;
 });
