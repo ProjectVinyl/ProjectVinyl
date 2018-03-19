@@ -1,0 +1,28 @@
+%h1.title.resize-target Processor Status
+- begin
+	.listing.compact
+		.items
+			.row
+				%div
+					Jobs in queue: 
+					= Resque.info[:pending]
+					Total workers: 
+					= Resque.info[:workers]
+				%div
+				%div
+				%div
+		- Resque.workers.each_with_index do |worker, i|
+			- payload = worker.job.dig("payload", "args")
+			- payload = "#{payload[0]["job_class"]}: #{payload[0]["arguments"]}" if payload
+			%a.row{href: "/admin/resque"}
+				%div
+					%span.active-icon{class: worker.working? && "active"}#
+					= i+1
+				%div= payload || "No Task"
+	%hr/
+	%button.action.blue{type: "button", data: {method: "post", confirm: "", url: "/ajax/admin/verify", title: "Verify System Integrity"}}
+		Verify System Integrity
+	%button.action.blue{type: "button", data: {method: "post", confirm: "", method: "post", url: "/ajax/admin/videos/requeue", title: "Rebuild Processing Queue"}}
+		Rebuild Processing Queue
+- rescue
+	%p Oops! Could not connect to Resque.

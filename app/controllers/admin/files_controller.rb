@@ -72,6 +72,13 @@ module Admin
           end: @public.end_ref
         }
       end
+      
+      @crumb = {
+        stack: [
+          { link: '/admin', title: 'Admin' },
+        ],
+        title: "Control Panel"
+      }
     end
   end
 end

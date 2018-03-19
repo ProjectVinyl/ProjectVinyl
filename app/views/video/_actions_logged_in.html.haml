@@ -1,0 +1,24 @@
+%button.action.like{class: @video.is_upvoted && "liked", data: {count: @video.upvotes, action: "like", id: @video.id}}>
+	= fa :thumbs_up
+	%span
+		- if @video.upvotes && @video.upvotes > 0
+			%span.count= @video.upvotes
+%button.action.dislike{class: @video.is_downvoted && "liked", data: {count: @video.downvotes, action: "dislike", id: @video.id}}>
+	= fa :thumbs_down
+	%span
+		- if @video.downvotes && @video.downvotes > 0
+			%span.count= @video.downvotes
+.split-button.popper>
+	%button.action.star.split-icon{class: @video.is_starred_by(current_user) && "starred", data: {action: "star", id: @video.id}}
+		= fa :star
+	%a.button.action.addto.split-action.pop-out-toggle Add To
+	%ul.pop-out
+		%li.action(data-external-form="album/create?initial=#{@video.id}" data-title="New Album")
+			%span.icon= fa :pencil
+			%span.label New Album
+		- current_user.albums.each do |album|
+			%li.action.toggle(data-action="add" data-target="videos" data-id="#{@video.id}" data-item="#{album.id}")
+				%span.icon
+					- if album.album_items.where(video_id: @video.id).first
+						= fa :check
+				%span.label= album.title

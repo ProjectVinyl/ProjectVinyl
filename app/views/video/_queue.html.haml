@@ -1,0 +1,23 @@
+%section
+	%h1 Related Videos
+	.slide-holder.slide-group
+		.group.active(data-stage="user")
+			%h2.resize-target.slide-nav
+				%a Uploader
+				%a.slide-right.goto(data-to="global" title="Anyone")= fw :chevron_right
+			%ul.queue
+				- if (@mix_string = @video.mix_string(current_user)).length > 0
+					%li.generic.mix>
+						%a.thumb(href="#{@video.link}?q=#{@mix_string}&index=0")
+							.tile(style="background-image:none,url('#{@video.tiny_thumb(current_user)}')")
+								.details
+									.title
+										MIX - 
+										= @video.title
+				= render partial: 'video/thumb_v', collection: @queue[:user]
+		.group(data-stage="global")
+			%h2.resize-target.slide-nav
+				%a.goto.slide-left(data-to="user" title="Uploader")= fa :chevron_left
+				%a Anyone
+			%ul.queue
+				= render partial: 'video/thumb_v', collection: @queue[:global]

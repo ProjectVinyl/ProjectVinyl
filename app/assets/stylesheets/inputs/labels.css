@@ -21,12 +21,15 @@ label input[type=radio]:checked + i::before {
 }
 
 .link input[type=checkbox],
-label.button input[type=checkbox] {
+label input[type=checkbox] {
   display: none;
 }
 label input[type=checkbox]:not(:checked) + i,
 label input[type=checkbox]:checked + i + i {
   display: none;
+}
+label input[type=checkbox] ~ i {
+  color: rgba(0,0,150, 0.3);
 }
 
 label[disabled] span::after {

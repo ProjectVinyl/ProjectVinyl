@@ -1,0 +1,9 @@
+- title @video.title
+%section.page.full-width
+	= render layout: 'pagination/paginated', locals: {type: "videos/#{@video.id}/changes", paginated: @history, id: "page"} do
+		.listing.compact
+			%ul.items.history{id: "history-#{@video.id}"}
+				- if @history.count > 0
+					= render partial: 'change', collection: @history.records
+				- else
+					= render partial: 'wardenderpy'

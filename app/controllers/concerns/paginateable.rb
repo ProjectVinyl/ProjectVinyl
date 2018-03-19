@@ -1,7 +1,7 @@
 module Paginateable
   def render_empty_pagination(partial)
     render json: {
-      content: render_to_string(partial: 'pm/mailderpy'),
+      content: render_to_string(partial: partial, formats: :html),
       pages: 0,
       page: 0
     }
@@ -28,6 +28,11 @@ module Paginateable
   
   def render_listing_total(records, page, page_size, reverse, locals)
     locals[:partial] = partial_for_type(locals[:label], locals[:is_admin])
+    
+    @crumb = {
+      stack: [],
+      title: locals[:label].pluralize
+    }
     
     if params[:format] == 'json'
       return render_pagination locals[:partial], records, page, page_size, reverse

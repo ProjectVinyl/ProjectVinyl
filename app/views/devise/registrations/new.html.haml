@@ -1,0 +1,17 @@
+.wrapper.center
+	= devise_error_messages!
+	%section.page.half-width.modal
+		%h1 Sign up
+		= form_for(resource, as: resource_name, url: registration_path(resource_name)) do |f|
+			= f.text_field :username, autofocus: true, placeholder: :nickname
+			= f.email_field :email, placeholder: :email
+			.bob-holder.fixed
+				= f.password_field :password, autocomplete: "off", placeholder: :password
+				.bobber.bob-left
+					Minimum
+					= @minimum_password_length
+					characters
+			= f.password_field :password_confirmation, autocomplete: "off", placeholder: :confirm_password
+			= recaptcha_tags
+			.actions= f.submit "Sign up"
+		.tiny-foot= render "devise/shared/links"

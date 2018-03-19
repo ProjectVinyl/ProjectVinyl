@@ -1,0 +1,22 @@
+%section.page.full-width.genre-bio= render 'bio'
+- if @users.count > 0
+	%section.page.full-width
+		%h1
+			Recent Users
+		- if @users.length > 0
+			%ul.horizontal.artist-list#artists= render partial: 'user/thumb_h', collection: @users.records
+			- if @users.pages > 0
+				.load-more
+					%button(data-page="0" data-url="tags/users" data-id="#{@tag.id}" data-target="artists") Load More
+		- else
+			No activity for this section
+%section.page.full-width
+	%h1
+		Recent Songs
+	- if @videos.length > 0
+		%ul.horizontal.video-list#songs= render partial: 'video/thumb_h', collection: @videos.records
+		- if @videos.pages > 0
+			.load-more
+				%button(data-page="0" data-url="tags/videos" data-id="#{@tag.id}" data-target="songs") Load More
+	-	else
+		No activity for this section

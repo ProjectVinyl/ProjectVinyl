@@ -1,0 +1,6 @@
+%section.artist-bio.bio
+	%a{href: user.link}
+		%span.avatar
+			%span{style: format_bg(user.avatar)}
+		%h1.name.resize-target{class: user.banned? && "banned"}= user.username
+	.bio.short= raw user.html_bio

@@ -1,0 +1,19 @@
+= form_for(@notice, as: 'notice', url: '/admin/sitenotices', html: { method: :post}) do |f|
+	.message_content
+		.properties
+			%table
+				%tr
+					%td.label= f.label :message
+					%td.field
+						= render layout: 'comment/description_box' do
+							= f.text_area :message, class: "comment-content"
+				%tr
+					%td.label= f.label :active
+					%td.field
+						%label.button.blue
+							= f.check_box :active
+								= fa :check
+								Is Active
+	.foot
+		= f.submit "Save", class: "green"
+		%button.right.cancel(type="button" data-resolve="false") Cancel

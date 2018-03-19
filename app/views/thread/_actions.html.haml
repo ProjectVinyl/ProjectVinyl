@@ -1,0 +1,28 @@
+.actions
+	- if @thread.owner_type == 'Board'
+		%button.action.toggle.blue{data: {target: "admin/threads", id: @thread.id, action: "pin"}}
+			%span.icon
+				- if @thread.pinned
+					= fa :check
+			%span.label Pin Thread
+	%button.action.toggle.blue{data: {target: "admin/threads", id: @thread.id, action: "lock"}}
+		%span.icon
+			- if @thread.locked
+				= fa :check
+		%span.label Lock Thread
+	- if @thread.owner_type == 'Board'
+		.split-button.popper.action.multi-toggle{data: {target: "admin/threads", id: @thread.id, action: "move"}}
+			%button.action.options.pop-out-toggle.blue
+				%span Move Thread
+			%ul.pop-out
+				- Board.listables.each do |b|
+					%li{data: {descriminator: b[0], item: b[0]}}
+						%span.icon
+							- if b[0] == @thread.owner_id
+								= fa :check
+						%span.label= b[1]
+		- if current_user.is_contributor?
+			%a.button.mobile-friendly.red.right(data-confirm="This thread will be lost forever." data-title="Delete Thread" data-method="delete" href="/admin/threads/#{@thread.id}")
+				= fa :trash
+				%span Delete Thread
+%hr/

@@ -1,0 +1,26 @@
+- title "Private Messages"
+%h1 Private Messages
+%section.page.tab-set.full-width
+	.tab-set.tabs.async(data-target="messages")
+		%a.button{href: "/inbox/new", "data-live-tab": "new", class: (@type == "new") && "selected"}
+			= fa :star
+			Unread
+			%span.count
+				- if @counts[:new] > 0
+					= "(#{number_with_delimiter @counts[:new]})"
+		%a.button{href: "/inbox/received", class: (@type == "received") && "selected"}
+			= fa :inbox
+			Inbox
+		%a.button{href: "/inbox/sent", class: @type == "sent" && "selected"}
+			= fa :reply
+			Sent
+		%a.button{href: "/inbox/deleted", class: @type == "deleted" && "selected"}
+			= fa :trash
+			Deleted
+	.actions.space-fix
+		%button.action.green.right(data-external-form="/message/new" data-title="New PM" type="button")
+			= fa :plus
+			New Message
+	%hr/
+	.tab.selected(data-tab="messages")
+		= render "list_group", type: @type, paginated: @result, selected: true

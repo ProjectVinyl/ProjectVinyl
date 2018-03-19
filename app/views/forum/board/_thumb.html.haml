@@ -1,0 +1,21 @@
+%li.thread
+	.thumb
+		.avatar.medium
+			%span(style="#{format_bg thumb.last_poster.avatar}")
+	.info
+		.title
+			%a{href: thumb.link}= thumb.title
+		.description= thumb.description
+	.replies
+		%span
+			= number_with_delimiter thumb.total_threads
+			topics
+	.replies
+		%span
+			= number_with_delimiter thumb.total_comments
+			posts
+	.activity
+		%span
+			- if thumb.last_comment
+				active
+				= since thumb.last_comment.updated_at

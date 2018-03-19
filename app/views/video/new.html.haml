@@ -1,0 +1,62 @@
+- lim "900px"
+- title "Upload"
+.page.full-width.tab-set#uploader_frame
+	%ul.tab-set.tabs
+		%li.button#new_tab_button(title="Add") +
+%ul.hidden#tab-template
+	%li.button.hidden(data-target="new[{id}]")
+		%span.progress
+			%span.fill
+		%span.label Untitled {index}
+		= fa :close
+.hidden#template
+	.tab.selected(data-tab="new[{id}]")
+		= form_for(@video, as: "video", url: "videos", html: {class: "new_video", method: :post}) do |f|
+			%section.tab-set.full-width.resize-holder.uploaded-preview.preview-selective
+				%ul.ui.hidden.tab-set.tabs
+					%li.button.selected(data-target="thumbpick_{id}") Pick Thumbnail
+					%li.button(data-target="thumbupload_{id}") Upload Image
+				.progressor
+					.cover-block
+						.message Uploading...
+						.progress
+							.fill
+				.preview-selective-selected#upload
+					.ui.hidden
+						.tab.selected.video#video(data-tab="thumbpick_{id}" data-pending="1" data-video="0")
+							= render layout: "video/widget/slim"
+						.cover-block.tab.drag-target.file-select.image-selector#cover-upload(data-tab="thumbupload_{id}")
+							%span.preview
+							%span.drop-icon
+								= fa :picture_o
+								%div Select Cover Art
+							= f.file_field :cover, accept: "image/*"
+					.ui.shown.cover-block.drag-target.file-select.video-drop#video-upload
+						%span.drop-icon
+							= fa :upload
+							%div Select an Audio/Video file to upload
+						= f.file_field :file, accept: "audio/*,video/*"
+				.ui.hidden.post.description.resize-holder
+					%h1.title editable.short.post-title.resize-target#video_title
+						%span.content Title
+						= f.text_field :title, class: "input"
+						%span.edit= fa :pencil
+						%span.hidden 11
+					= render layout: "comment/description_box" do
+						= f.text_area :description, autofocus: true, class: "comment-content"
+					.post-tags
+						= render layout: "tag/editor", locals: {tags: nil} do
+							= f.text_area :tag_string
+					.properties
+						%table
+							%tr
+								%td.label= f.label :source
+								%td.field
+									= f.text_field :source, class: "input"
+									%span.info.hidden(style="color:red")
+					.actions
+						%button.action.change-video(type="button") Change Main File
+						%span.notify.bob-holder
+							.bobber.bob-left Cover art is required to upload audio files.
+							= f.submit "Upload", class: "action right green"
+					= render partial: 'video/foobar'

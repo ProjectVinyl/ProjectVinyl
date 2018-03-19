@@ -8,6 +8,18 @@
   border-radius: 2px;
 }
 
+.page.slim {
+	padding: 0;
+	transition: width 0.25s ease, height 0.25s ease;
+}
+
+div.page.slim section {
+	padding: 20px;
+}
+div.page.slim section.slim {
+	padding: 0;
+}
+
 .page img, .notice {
   max-width: 100%;
 }

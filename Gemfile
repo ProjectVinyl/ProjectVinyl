@@ -1,5 +1,4 @@
 source 'http://rubygems.org'
-Bundler.settings['github.https'] = true
 
 gem 'rails', '5.1.2'
 gem 'mysql2'
@@ -11,6 +10,8 @@ gem 'sdoc', '~> 0.4.0', group: :doc
 gem 'jquery-rails'
 gem 'uglifier'
 gem 'yui-compressor'
+
+gem 'haml'
 
 platforms :ruby do
   gem 'unicorn'

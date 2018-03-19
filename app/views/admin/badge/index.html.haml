@@ -1,0 +1,17 @@
+%section.page.full-width.listing.compact
+	%p
+		Badges are a fun little feature that lets you add custom, sometimes humerous, notes a specific user.
+		Other than appearing in strategic places next to their names, badges have no semantic meaning.
+	.items
+		%span.row.heads
+			%div
+			.center(style="width:4em") Glyph
+			%div Name
+			.center(style="width:0") Hidden
+			%div Moderation notes
+		= render partial: 'static_item', collection: Badge.static_badges
+		= render partial: 'item', collection: @badges
+	%span.row.foot
+		%a.button.button-bub.bub"(title="add" data-title="Add Badge" data-external-form="badge/new")
+			= fa :plus
+			Add New

@@ -56,7 +56,7 @@ class Album < ApplicationRecord
   end
 
   def link
-    "/album/#{self.id}-#{self.safe_title}"
+    "/albums/#{self.id}-#{self.safe_title}"
   end
   
   def set_ordering(order, direction)

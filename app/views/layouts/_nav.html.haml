@@ -1,0 +1,18 @@
+%nav.header.layer-foreground
+	%ul
+		%li.albums{class: selected_path?('albums')}>
+			%a(href="/albums")
+				%i.fa.fa-fw.fa-picture-o
+				%span Albums
+		%li.artists{class: selected_path?('videos')}>
+			%a(href="/videos")
+				%i.fa.fa-fw.fa-play
+				%span Videos
+		%li.genres{class: selected_path?('tags')}>
+			%a(href="/tags")
+				%i.fa.fa-fw.fa-tags
+				%span Tags
+		%li.forum{class: selected_path?('forum')}>
+			%a(href="/forum")
+				%i.fa.fa-fw.fa-users
+				%span Forums

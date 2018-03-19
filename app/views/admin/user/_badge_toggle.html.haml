@@ -1,0 +1,15 @@
+%div(style="margin-bottom: 10px")
+	- reasoned = !checked && badge_toggle.badge_type > 0
+	%button.action.toggle.blue{data: {target="admin/users",
+			id: @user.id,
+			action: "badges/#{badge_toggle.id}",
+			with: reasoned && "#reason_#{badge_toggle.id}"}}
+		%span.icon
+			- if checked
+				= fa :check
+		%span.label= badge_toggle.title
+	- if reasoned
+		%input(id="reason_#{badge_toggle.id}" type="text")
+	.right(style="color:#{badge_toggle.colour}" title="#{badge_toggle.title}")
+		%i.fa.fa-3x{class: "fa-#{badge_toggle.icon}"}
+	</div>

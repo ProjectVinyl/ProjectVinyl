@@ -310,7 +310,11 @@ class Video < ApplicationRecord
   end
 
   def thumb
-    self.hidden ? '/images/default-cover.png' : self.cache_bust("/cover/#{self.id}.png")
+    self.hidden ? '/images/default-cover.png' : self.direct_thumb
+  end
+  
+  def direct_thumb
+    self.cache_bust("/cover/#{self.id}.png")
   end
 
   def tiny_thumb(user)
@@ -419,7 +423,20 @@ class Video < ApplicationRecord
       }
     }
   end
-
+  
+  def widget_header(time, resume, embed, album)
+    {
+      title: self.get_title,
+      time: time,
+      resume: resume,
+      audio: self.audio_only && self.id,
+      video: !self.audio_only && self.id,
+      mime: "#{self.file}|#{self.mime}",
+      embed: embed,
+      autoplay: (!album.nil?).to_s
+    }
+  end
+  
   def is_hidden_by(user)
     user && user.hides(@tag_ids || (@tag_ids = self.tags.map(&:id)))
   end

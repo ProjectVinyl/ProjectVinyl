@@ -1,0 +1,14 @@
+- if @thread.owner.resolved.nil?
+	%label.button.blue.right
+		%input(name="resolve" type="checkbox")
+		= fa :check
+		Mark As Resolved
+	%label.button.red.right
+		%input(name="close" type="checkbox")
+		= fa :check
+		Close Report
+- else
+	%label.button.blue.right
+		%input(name="unresolve" type="checkbox")
+		= fa :check
+		Re-open Report

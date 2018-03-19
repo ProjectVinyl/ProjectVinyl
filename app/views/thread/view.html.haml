@@ -1,0 +1,21 @@
+- title "#{@thread.get_title} - Forum"
+= render layout: 'view/advanced_breadcrumb',
+					locals: {stack: [{link: '/forum', title: 'Forum'},
+													{link: @thread.owner.link, title: @thread.owner.title}]} do
+	- if @thread.locked
+		%i.fa.fa-lock(title="Thread Locked")
+	- if @thread.pinned
+		%i.fa.fa-thumb-tack(title="Thread Pinned")
+	- if @modifications_allowed
+		%span.editable.short.inline.title{data: {target: "threads", member: "title", id: @thread.id}}
+			%span.content= @thread.get_title
+			%span.edit= fa :pencil
+	- else
+		= @thread.get_title
+	= render 'watch_options'
+%br/
+- if user_signed_in? && current_user.is_contributor?
+	= render 'actions'
+= render 'comments'
+%hr/
+= render 'comment/new', invert: true

@@ -16,6 +16,13 @@ module Admin
         return render_access_denied
       end
       
+      @crumb = {
+        stack: [
+          { link: "/admin", title: "Admin" }
+        ],
+        title: "Reports"
+      }
+      
       @thread = @report.comment_thread
       @order = '0'
       
@@ -51,16 +58,20 @@ module Admin
     end
     
     def new
-      if !(reportable = Reportable.find(params))
+      if !(@reportable = Reportable.find(params))
         return head :not_found
       end
       
-      render json: {
-        content: render_to_string(partial: 'new', locals: {
-          reportable: reportable,
-          report: Report.new
-        })
+      @repot = {
+        reportable: @reportable,
+        report: Report.new
       }
+      
+      if params[:format] == 'json'
+        render json: {
+          content: render_to_string(partial: 'new', locals: @repot)
+        }
+      end
     end
     
     def create

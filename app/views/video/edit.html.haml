@@ -1,0 +1,42 @@
+- lim "900px"
+%section.page.full-width#video-editor{"data-needs-cover": @video.audio_only, class: !@video.audio_only && "tab-set"}
+	- if !@video.audio_only
+		%ul.tab-set.tabs
+			%li.button.selected(data-target="thumbupload") Upload Image
+			%li.button(data-target="thumbpick) Pick Time
+	= form_for(@video, as: "video", url: "videos/#{@video.id}/cover", html: {class: "edit_video async", method: :patch}) do |f|
+		= f.text_field :id, hidden: true
+		.progressor
+			.cover-block
+				.message Uploading...
+				.progress
+					.fill
+		#upload
+			- if !@video.audio_only
+				.tab.video#video{style: format_bg(@video.direct_thumb), data: {tab: "thumbpick", title: @video.get_title, pending: 1, video: @video.id, mime: "#{@video.file}|#{@video.mime}"}}
+					= render layout: 'video/widget/slim'
+			.cover-block.selected.tab.drag-target.file-select.image-selector#cover-upload(data-tab="thumbupload")
+				%span.preview{style: format_bg(@video.direct_thumb)}
+				%span.drop-icon
+					= fa :picture_o
+					%div Select Cover Art
+				= f.file_field :cover, accept: 'image/*'
+			- if current_user.is_staff?
+				.hidden.cover-block.drag-target.file-select.video-drop#video-upload
+					%span.drop-icon
+						= fa :upload
+						%div Select an Audio/Video file to upload
+					= f.file_field :file, accept: 'audio/*,video/*'
+		.post.description.resize-holder
+			.actions
+				%label.button
+					%input(name="erase" type="checkbox")
+					= fa :check
+					Remove current Image
+				- if current_user.is_staff?
+					%button.action.change-video(type="button") Change Main File
+				%span.notify.bob-holder
+					.bobber.bob-left
+						Cover art is required to upload audio files
+					= f.submit "Save", class: "action right green"
+			= render partial: 'video/foobar'

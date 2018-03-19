@@ -1,0 +1,14 @@
+= form_for(@thread, as: "thread", url: "/threads", html: {method: :post}) do |f|
+	= f.text_field :owner_id, hidden: true
+	.properties
+		%table
+			%tr
+				%td.label= f.label :title
+				%td.field= f.text_field :title, autofocus: true
+			%tr
+				%td.field(colspan="2")
+					= render layout: 'comment/description_box' do
+						= f.text_area :description, class: "comment-content"
+	.foot
+		= f.submit "OK", class: "green confirm"
+		%button.right.cancel(type="button" data-resolve="false") Cancel

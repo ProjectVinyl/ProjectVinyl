@@ -1,0 +1,33 @@
+- title @board.title.to_s + " Forums"
+%h1.title
+	%a(href="/") Home
+	= fa :chevron_right
+	%a(href="/forum") Forum
+	= fa :chevron_right
+	- if @modifications_allowed
+		%span.editable.short.inline.title{data: {target: "board", member: "title", id: @board.id}}
+			%span.content= @board.title
+			%span.edit= fa :pencil
+	- else
+		= @board.title
+.actions.space-fix
+	- if user_signed_in?
+		- if current_user.is_contributor?
+			%a.button.mobile-friendly.red{href: "/boards/#{@board.id}", data: {confirm: "Any threads inside this board will be lost.", title: "Delete Board", method: "delete"}}
+				= fa :trash
+				%span Delete Board
+		%button.action.mobile-friendly.green(data-external-form="/threads/new?board=#{@board.id}" data-title="New Thread" type="button")
+			= fa :plus
+			%span New Thread
+	%a.button.blue.mobile-friendly.right(href="/forum/search?category=${@board.id}")
+		= fa :search
+		%span Find Post
+%hr/
+%section.page.full-width
+	%h1
+		Topics
+		= "(#{number_with_delimiter @threads.count})"
+	= render layout: 'pagination/paginated', locals: {type: "forum/#{@board.id}/threads", paginated: @threads, id: "page"} do
+		%section.search-result
+			.listing.thread-list
+				%ul.items= render partial: 'thread/thumb', collection: @threads.records

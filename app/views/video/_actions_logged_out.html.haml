@@ -1,0 +1,14 @@
+%a.button.action.like(target="_blank" href="/users/sign_in")>
+	= fa :thumbs_up
+	%span
+		- if @video.upvotes && @video.upvotes > 0
+			%span.count= @video.upvotes
+%a.button.action.dislike(target="_blank" href="/users/sign_in")>
+	= fa :thumbs_down
+	%span
+		- if @video.downvotes && @video.downvotes > 0
+			%span.count= @video.downvotes
+.split-button<>
+	%a.button.action.star.split-icon(target="_blank" href="/users/sign_in")
+		= fa :star
+	%a.button.action.split-action(target="_blank" href="/users/sign_in") Add To

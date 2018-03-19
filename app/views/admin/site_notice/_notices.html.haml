@@ -1,0 +1,9 @@
+- flash.each do |key,value|
+	%p.notice.removeable{class: key}
+		= value
+		%a.remove.right.red= fa :close
+- cache('site_notices', expires_in: 1.minute) do
+	- SiteNotice.where(active: true).each do |notice|
+		%p.notice.site-notice.removeable
+			= raw notice.html_message
+			%a.remove.right.red= fa :close

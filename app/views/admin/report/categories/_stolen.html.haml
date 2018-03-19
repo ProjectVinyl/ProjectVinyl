@@ -1,0 +1,14 @@
+﻿.group(data-stage="stolen" style="white-space:normal")
+	.notice
+		If this video belongs to you, and was uploaded without your permision, fill in the following form.
+		Note that this reason does
+		%b not
+		apply to remixes and adaptations. If you feel that this video is using your content unfairly use the 
+		%b Copyright
+		reason.
+	%table
+		%tr
+			%td(colspan="2") Please provide a link to where you believe this video may have come from. Must be older than the current report target.
+		%tr
+			%td.field(colspan="2")= f.text_field :source, placeholder: "Source"
+		= render partial: 'admin/report/slide_buttons', locals: {prev: 'start', next: 'final'}

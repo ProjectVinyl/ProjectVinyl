@@ -10,6 +10,14 @@ module Admin
       @tag = Tag.find(params[:id])
       @prefix = @tag.tag_type_id && @tag.tag_type_id > 0 ? @tag.tag_type.prefix : "[none]"
       @user = User.where(tag_id: @tag.id).first
+      @crumb = {
+        stack: [
+          { link: '/admin', title: 'Admin' },
+          { title: 'Tags' },
+          { link: @tag.link, title: @tag.id }
+        ],
+        title: @tag.name
+      }
     end
     
     def update

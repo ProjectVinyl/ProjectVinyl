@@ -1,0 +1,27 @@
+%section.page.properties.column-left
+	%h1 Duplication Status
+	= form_for(@video, as: "video", url: "/admin/videos/#{@video.id}/merge", html: { method: :put }) do |f|
+	%table
+		%tr
+			%td.label Unique Hash
+			%td.field= @video.checksum
+		%tr
+			%td.label Duplicate Hash
+			%td.field
+				- if @video.duplicate_id > 0
+					= Video.where(id: @video.duplicate_id).first.checksum
+		%tr.actions
+			%td.label Merging
+			%td.field
+				- if @video.duplicate_id > 0
+					= f.submit "Unmerge Video", class: "blue"
+				- else
+					= f.text_field :duplicate_id
+			%td.field= f.submit "Merge Video", class: "green"
+	%p
+		All data from this video (exclusing description, source, and title)
+		will be combined with that of the destination video.
+		This video will remain on the system but any attempts to access it will
+		result in a redirect to the new video.
+		%br/
+		%b (Action can be reversed)

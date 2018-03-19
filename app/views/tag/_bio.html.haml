@@ -1,0 +1,35 @@
+.post.genre-bio
+	%span.genre-icon.fa-stack.fa-4x
+		%i.fa.fa-circle.fa-stack-2x
+		%i.fa.fa-tag.fa-inverse.fa-stack-1x
+	.tag-header
+		%h2.title
+			%a.name{href: @tag.link}= @tag.name
+		.tag-set.subheading
+			%span
+				Used by
+				= @total_videos
+				= "video".pluralize(@total_videos)
+				and
+				= @total_users
+				= "user".pluralize(@total_users)
+			- if @user
+				%span.right
+					Associated User:
+					%span.user-link{"data-id": @user.id}
+						%a{href: @user.link}= @user.username
+		%span.content.bio= @tag.get_description
+	- if @implies.length > 0
+		%div
+			%h1 Implies
+			%ul.tags= render partial: "tag/thumb_h", collection: @implies
+	- if @implied.length > 0
+		%div
+			%h1 Implied by
+			%ul.tags= render partial: "tag/thumb_h", collection: @implied
+	- if @aliases.length > 0
+		%div
+			%h1 Aliases
+			%ul.tags= render partial: "tag/thumb_h", collection: @aliases
+	- if user_signed_in?
+		= render 'tag/actions'

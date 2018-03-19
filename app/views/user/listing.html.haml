@@ -1,0 +1,12 @@
+- tit = "#{@user.username}'s #{@label.pluralize}"
+- title tit
+%section.page.full-width
+	%h1
+		= tit
+		(
+		= number_with_delimiter @records.count
+		)
+	= render layout: 'pagination/paginated', locals: { type: "users/#{@user.id}/#{@label.downcase.pluralize}", paginated: @records, id: "page" } do
+		%section.search-result
+			%ul.horizontal{id: @table.pluralize, class: "#{@table.underscore}-list"}
+				= render partial: @partial, collection: @records.records

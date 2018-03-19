@@ -1,0 +1,35 @@
+- title @album.title
+.wrapper.full-width
+	%section.page.resize-holder.column-left.left= render partial: 'album/album'
+	%section.page.column-right.right.properties
+		.actions
+			%table
+				= form_for(@album, as: "item", url: "/admin/transfer?type=album", html: { method: :post }) do |f|
+					= f.text_field :id, hidden: true
+					%tr
+						%td.label= f.label "Current Owner"
+						%td.field
+							%a(href="#{@user.link}")= "#{@user.username} (#{@user.id})"
+					%tr
+						%td.label= f.label "Owner"
+						%td.field.popper.auto-lookup(data-action="/find/users")
+							= f.text_field :user_id, autocomplete: "off"
+							%ul.pop-out
+					%tr.actions
+						%td.label
+						%td.field= f.submit "Transfer Ownership", class: "green"
+				%tr.actions
+					%td.label Featured
+					%td.field
+						%button.action.toggle.blue{data: {target: "admin/albums", id: @album.id, action: "feature"}}
+							%span.icon
+								- if @album.featured > 0
+									= fa :check
+							%span.label Feature Album
+				%tr.actions
+					%td.label Delete Item
+					%td.field
+						%a.button.red{href: "admin/albums/#{@album.id}", data: {confirm: "", method: "delete", title: "Delete Album"}}
+							= fa :trash
+							Delete Album
+= render partial: 'album/items'

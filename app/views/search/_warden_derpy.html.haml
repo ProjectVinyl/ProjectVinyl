@@ -1,0 +1,12 @@
+﻿%h1 Searching for- Uh, oh!
+.warden_derpy
+	.derpy
+	%div
+	- if @derpy
+		You searched for "
+		%u= @query 
+		" but I don't know what that means. :'c
+	- else
+		= derp
+%hr/
+%p.center.red= (@derpy || @ditzy).message

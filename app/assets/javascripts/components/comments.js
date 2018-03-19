@@ -84,7 +84,7 @@ function lookupComment(commentId) {
 }
 
 function editComment(sender) {
-  sender = sender.parentNode;
+  sender = sender.closest('.content');
   ajax.patch(`/comments/${sender.dataset.id}`, {
     comment: sender.querySelector('textarea, input.comment-content').value
   }).json(json => {

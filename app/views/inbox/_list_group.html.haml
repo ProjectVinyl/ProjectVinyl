@@ -1,0 +1,11 @@
+- @data = "type=#{type}"
+= render layout: 'pagination/paginated', locals: {type: "inbox/" + type, paginated: paginated, id: type} do
+	%section.search-result
+		.listing.thread-list
+			%ul.items
+				- if paginated.count > 0
+					= render partial: 'pm/thumb', collection: paginated.records
+				- else
+					.mail_derpy
+						.derpy
+						%div Nu-uh, no messages here

@@ -15,6 +15,10 @@ module WithFiles
     end
   end
   
+  def file_link(path, name)
+    raw "<a class=\"button\" href=\"/admin/files?p=#{path}&start=#{name}%offset=-5##{self.id}\">View</a>"
+  end
+  
   def img(path, uploaded_io)
     if uploaded_io
       File.open(path, 'wb') do |file|

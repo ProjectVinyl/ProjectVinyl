@@ -1,0 +1,100 @@
+- title @user.username
+- if @user.banner_set
+	:css
+		.banner-background {
+			background: url('#{@user.banner}') center center/cover #000;
+		}
+%section.page.full-width.artist-bio
+	.post
+		.space-fix
+			%span.date.registered.right.underline
+				Registered 
+				%span{title: @user.created_at}= since @user.created_at
+			%span.avatar.large
+				%span{style: format_bg(@user.avatar)}
+			%h1.title
+				%a.name{class: @user.banned? && "banned", href: @user.link}
+					= @user.username
+					= render 'badge/badges', user: @user
+			%span.content.bio= raw @user.html_description
+		- if @user.tag_id || @tags.length > 0
+			.details
+				%h1 Associated Tags
+				- if @user.tag_id
+					%ul.tags.artist-tags= render 'tag/thumb_h', thumb_h: @user.tag
+				%ul.tags= render partial: 'tag/thumb_h', collection: @tags.includes(:tag_type)
+		.actions
+			- if @modifications_allowed
+				.split-button.popper>
+					%button.action.options.pop-out-toggle
+						= fa :gear
+						Options
+					%ul.pop-out
+						- if user_signed_in? && current_user.is_contributor?
+							%li.action
+								%a(href="/admin/users/#{@user.id}")
+									%span.icon= fa :gavel
+									%span.label Admin
+						%li.action.js-banner-select(data-external-form="users/#{@user.id}/banner" data-title="Select Banner Image")
+							%span.icon= fa :pencil
+							%span.label Change Banner Image
+				%button.action(data-external-form="albums/new" data-title="New Album")>
+					= fa :plus
+					New Album
+				%a.button.action(href="/upload")
+					= fa :upload
+					Upload Video
+			- if user_signed_in?
+				%button(data-external-form="message/new?user=#{@user.id}" data-title="New Message")>
+					= fa :envelope
+					Send Message
+- if @art
+	%section.page.full-width.recent-uploads.resize-holder
+		%h1.title.resize-target
+			Songs by
+			= @user.username
+			(
+			= number_with_delimiter @art.count
+			)
+			%a.right(href="#{@user.tag.link}")
+				View All
+				= fa :chevron_right
+		%ul.horizontal.video-list#songs= render partial: 'video/thumb_h', collection: @art.records
+- if @modifications_allowed
+	%section.page.full-width.recent-favourites.resize-holder
+		%h1.title.rasize-target
+			Recent Favourites (
+			= number_with_delimiter @user.stars.album_items.count
+			)
+			%span.icon(title="Private - only you and moderators can see this.")= fa :lock
+			%a.right(href="/stars")
+				View All
+				= fa :chevron_right
+		%ul.horizontal.video-list#uploads= render partial: 'video/thumb_h', collection: @user.stars.videos.limit(8)
+%section.page.full-width.recent-uploads.resize-holder
+	%h1.title.resize-target
+		Recent Uploads (
+		= number_with_delimiter @videos.count
+		)
+		%a.right(href="/users/#{@user.id}/uploads")
+			View All
+			= fa :chevron_right
+	%ul.horizontal.video-list#uploads= render partial: 'video/thumb_h', collection: @videos.records
+%section.page.full-width.recent-uploads.resize-holder
+	%h1.title.resize-target
+		Recent Albums (
+		= number_with_delimiter @albums.count
+		)
+		%a.right(href="/users/#{@user.id}/albums")
+			View All
+			= fa :chevron_right
+	%ul.album-list.horizontal#albums= render partial: 'album/thumb_h', collection: @albums.records
+%section.page.full-width.recent-comments.resize-holder
+	%h1.title.resize-target
+		Recent Comments (
+		= number_with_delimiter @comments.count
+		)
+		%a.right(href="/users/#{@user.id}/comments")
+			View All
+			= fa :chevron_right
+	%ul.comment-list= render 'comment/set', thread: @comments.records, indirect: true

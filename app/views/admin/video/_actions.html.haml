@@ -1,0 +1,57 @@
+%section.page.full-width.properties
+	%h1 Actions
+	%table
+		%tr.actions
+			%td.label Visibility
+			%td.field
+				%button.action.toggle.blue(data-target="admin/videos" data-id="#{@video.id}" data-action="hide")
+					%span.icon
+						- if @video.hidden
+							= fa :check
+					%span.label Unlist Video
+		%tr.actions
+			%td.label Featured
+			%td.field
+				%button.action.toggle.blue(data-target="admin/videos" data-id="#{@video.id}" data-action="feature")
+					%span.icon
+						- if @video.featured
+							= fa :check
+					%span.label Feature Video
+		%tr
+			%td.label Commenting
+			%td.field
+				%button.action.toggle.blue(data-target="admin/threads" data-id="#{@video.comment_thread.id}" data-action="lock")
+					%span.icon
+						- if @video.comment_thread.locked
+							= fa :check
+					%span.label Disable
+				%a.button{href: @video.comment_thread.link, target: "_blank"} View
+		%tr.actions
+			%td.label
+				Processed
+				= "(#{@video.processed ? "Yes" : @video.processed.nil? ? "No" : "In Progress"})"
+			</td>
+			%td.field
+				= form_for(@video, as: "video", url: "/admin/videos/#{@video.id}/reprocess", html: { method: :put }) do |f|
+					= f.submit "Restart"
+		%tr.actions
+			%td.label Reset Thumbnail
+			%td.field
+				= form_for(@video, as: "video", url: "/admin/videos/#{@video.id}/resetthumb", html: { method: :put }) do |f|
+					= f.submit "Restart"
+					%div Thumbnail will be regenerated from source
+		%tr.actions
+			%td.label Reindex Video
+			%td.field
+				= form_for(@video, as: "video", url: "/admin/videos/reindex", html: { method: :put }) do |f|
+					= f.text_field :id, hidden: true
+					= f.submit "Reindex"
+		%tr.actions
+			%td.label Delete Item
+			%td.field
+				%a.button.red(data-confirm data-method="delete" href="/admin/videos/#{@video.id}" data-title="Delete Video")
+					= fa :trash
+					Delete Video
+				%div Removes this video and all related data from the system.
+					%br/
+					%b (Action cannot be reversed)

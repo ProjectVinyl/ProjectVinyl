@@ -1,0 +1,43 @@
+%hr/
+.actions
+	= render partial: user_signed_in? ? 'video/actions_logged_in' : 'video/actions_logged_out'
+	%span.divider>
+	%button.action.share.mobile-friendly.slider-toggle(data-target=".slideout.share")>
+		= fa :share
+		%span Share
+	.split-button.popper>
+		%button.action.options.mobile-friendly.pop-out-toggle
+			= fa :gear
+			%span Options
+		%ul.pop-out
+			- if user_signed_in? && current_user.is_contributor?
+				%li.action
+					%a(href="/admin/videos/#{@video.id}")
+						%span.icon= fa :gavel
+						%span.label Admin
+			%li.action
+				%a(href="/admin/reports/new?#{@video.reportable_params}")
+					%span.icon= fa :flag
+					%span.label Report
+			- if @modifications_allowed
+				%li.action
+					%a(href="/videos/#{@video.id}/edit")
+						%span.icon= fa :pencil
+						%span.label Change Cover Image
+			%li.action
+				%a(download target="_blank" href="/download/#{@video.id}")
+					%span.icon= fa :download
+					%span.label
+						Download (
+						= @video.file.gsub(/\./,'')
+						)
+			%li.action
+				%a(href="/videos/#{@video.id}/changes")
+					%span.icon= fa :history
+					%span.label Tag Changes
+			%li.action
+				%a.slider-toggle(data-target=".slideout.info")
+					%span.icon= fa :info
+					%span.label File Info
+= render partial: 'video/share'
+= render partial: 'video/info'

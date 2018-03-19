@@ -17,9 +17,17 @@ class HistoryController < ApplicationController
     
     if params[:format] == 'json'
       if @history.count == 0
-        return render_empty_pagination 'history/wardenderpy'
+        return render_empty_pagination 'wardenderpy'
       end
-      render_pagination_json 'history/change', @history
+      render_pagination_json 'change', @history
     end
+    
+    @crumb = {
+      stack: [
+        { title: 'Videos' },
+        { link: @video.link, title: "##{@video.id}" }
+      ],
+      title: "Tag Changes"
+    }
   end
 end

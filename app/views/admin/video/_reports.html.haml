@@ -1,0 +1,9 @@
+%section.page.column-left
+	%h1 Reporting
+	.actions.space-fix
+		%a.button.left.blue(href="/admin/reports?reportable_class=Video&reportable_id=#{@video.id}")
+			View All
+	%hr/
+	%h1 Open Reports
+	.compact.listing
+		%ul.items= render partial: "admin/report/thumb", collection: Report.all

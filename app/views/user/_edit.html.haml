@@ -1,0 +1,54 @@
+%table
+	%tr.section
+		%td(colspan="2") Appearance
+	%tr
+		%td.label Avatar
+		%td.field.center
+			= form_for(user, as: "user", url: "/users/#{user.id}/avatar", html: { class: "async js-avatar-select", method: :patch }, data: {id: user.id}) do |f|
+				.file-select-container
+					.avatar.drag-target.file-select.auto-submit.image-selector.uploaded-preview.revertable#avatar-upload
+						%span.preview(style="#{format_bg user.avatar}")
+						%span.drop-icon(style="box-shadow: none")= fa :camera
+						= f.file_field :avatar, accept: 'image/*'
+					.buttons.file-select-options
+						%label.link.red
+							%input#erase-avatar(data-action="erase" name="erase" type="checkbox")
+							= fa :check
+							Delete
+				.progressor
+					.cover-block
+						.message Uploading...
+						.progress
+							.fill
+= form_for(user, as: "user", url: url, html: {method: method}) do |f|
+	= f.text_field :id, hidden: true
+	%table
+		%tr.section
+			%td(colspan="2") Basic Information
+		%tr
+			%td.label= f.label :display_name
+			%td.field.popper.auto-lookup.validate(data-action="/find/users")
+				= f.text_field :username, autofocus: true, autocomplete: "off"
+				%ul.pop-out
+		- if current_user.is_contributor?
+			%tr
+				%td.label Artist tag
+				%td.field= f.text_field "tag", value: @user.tag_id ? @user.tag.name : "", autocomplete: "off"
+		%tr
+			%td.label= f.label "Description"
+			%td.field
+				= render layout: 'comment/description_box' do
+					= f.text_area :description, class: "comment-content", autocomplete: "off"
+		%tr
+			%td.label= f.label "Short Bio"
+			%td.field
+				= render layout: 'comment/description_box' do
+					= f.text_area :bio, class: "comment-content", autocomplete: "off"
+		%tr
+			%td.label= f.label :associated_tags
+			%td.field
+				= render layout: 'tag/editor', locals: { tags: user.tags } do
+					= f.text_area :tag_string, autocomplete: "off"
+		%tr.actions
+			%td.label
+			%td.field= f.submit "Save Changes", class: "green"

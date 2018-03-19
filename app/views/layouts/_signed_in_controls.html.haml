@@ -1,0 +1,51 @@
+%a.username{href: current_user.link}= current_user.username
+%a.notices-bell.feeds(href="/feed")
+	%i.fa.fa-globe
+	%span.feed-count.count{data: {count: current_user.feed_count}}
+		= safe_to_display current_user.feed_count, 999
+%a.notices-bell.notices(href="/notifications")
+	%i.fa.fa-bell
+		%span.notification-count.count{data: {count: current_user.notification_count}}<
+			= safe_to_display current_user.notification_count, 999
+		%span.message-count.count.invert{data: {count: current_user.message_count}}
+			= safe_to_display current_user.message_count, 999
+%ul.drop-down(style="z-index:300;")
+	- if current_user.is_contributor?
+		%li
+			%a(href="/admin" rel="nofollow")
+				%span.icon
+					%i.fa.fa-fw.fa-gavel
+				%span.label Admin
+	%li
+		%a(href="#{current_user.link}" rel="nofollow" title="settings")
+			%span.icon
+				%i.fa.fa-fw.fa-user
+			%span.label Profile
+	%li
+		%a(href="/inbox" rel="nofollow" title="messages")
+			%span.icon
+				%i.fa.fa-fw.fa-envelope
+			%span.label Messages
+	%li
+		%a(href="/upload" rel="nofollow" title="upload")
+			%span.icon
+				%i.fa.fa-fw.fa-upload
+			%span.label Upload
+	%li
+		%a(href="/stars")
+			%span.icon
+				%i.fa.fa-fw.fa-star
+			%span.label Stars
+	%li
+		%a(href="/users/edit" rel="nofollow")
+			%span.icon
+				%i.fa.fa-fw.fa-cog
+			%span.label Settings
+	%li
+		%a#sign-out(href="/users/sign_out" rel="nofollow" data-method="delete")
+			%span.icon
+				%i.fa.fa-fw.fa-sign-out
+			%span.label Sign Out
+%a(href="/users/edit" rel="nofollow" title="settings")
+	%span.avatar.small
+		%span(style="background-image:url('#{current_user.small_avatar}');")

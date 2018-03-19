@@ -1,0 +1,23 @@
+.row.change
+	- if change.added.nil?
+		%div= change.value
+	- else
+		%div
+			%div
+				- if !change.tag.nil?
+					\#
+					%a{href: change.tag.link}= change.tag.name
+	.duration.action{class: change.action_class}= change.action
+	.duration= since change.created_at
+	.author
+		%span
+			- if change.user_id == 0
+				System
+			- else
+				%a.user-link(data-id="#{change.user_id}" href="#{change.user.link}")
+					= change.user.username
+					%sup
+						- if change.user_id == @video.user_id
+							%i.fa.fa-user(title="Uploader")
+						- if change.user.is_staff?
+							%i.fa.fa-gavel(title="Staff")

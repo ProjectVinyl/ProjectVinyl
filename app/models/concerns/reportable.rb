@@ -30,6 +30,10 @@ module Reportable
     "#{self.class.table_name}_#{self.id}"
   end
   
+  def reportable_class
+    self.class.to_s
+  end
+  
   def reportable_params
     "reportable_class=#{self.class}&reportable_id=#{self.id}"
   end

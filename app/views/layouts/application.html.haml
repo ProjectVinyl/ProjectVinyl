@@ -1,0 +1,53 @@
+﻿!!! XHTML 5
+!!!
+%html(lang="en")
+	%head
+		%meta(http-equiv="Content-type" content="text/html; charset=utf-8")
+		%title
+			= raw(content_for(:title) ? "#{content_for(:title)} -" : "")
+			Project Vinyl - My Little Pony: FiM Songs & Animation
+		- if user_signed_in?
+			%meta(name="current_user" content="#{({ id: current_user.id }).to_json}")
+		= csrf_meta_tags
+		%meta(name="theme-color" content="#a66ebe")
+		%meta(name="viewport" content="width=device-width, initial-scale=1")
+		= content_for(:metadata)
+		= stylesheet_link_tag "application"
+		= javascript_include_tag "application"
+%body{class: !user_signed_in? && "logged-out"}
+	.context-3d
+		%header.header.banner-overlay
+			#login{class: user_signed_in? && "drop-down-holder"}
+				- if user_signed_in?
+					= render partial: "layouts/signed_in_controls"
+				- else
+					%a(data-external-form="ajax/login" data-icon="sign-in" data-title="Sign In" data-thin="true" href="/users/sign_in")
+						%i.fa.fa-sign-in
+						Sign-in
+			= render partial: "search/small_search"
+		.layer-background#banner
+			.banner-background.far
+			%a.home-link(href="/")
+			%span.title.near
+				%img(src="/images/logo.svg")
+		= render partial: "layouts/nav"
+		.layer-foreground.body
+			%main.wrapper{class: content_for?(:wrapper) && content_for(:wrapper), style: "max-width:#{content_for(:width)}"}
+				= render partial: "admin/site_notice/notices"
+				- if @crumb
+					= render partial: 'view/breadcrumb', locals: @crumb
+				= yield
+				%span.push
+			%footer
+				%a(title="Home" href="/") projectvinyl.net
+				%div
+					%a(href="/staff")> Staff
+					%a(href="/policy")> Policy
+					%a(href="/copyright")> Copyright
+				%span © 2018 Project Vinyl Foundation
+				.date<
+					Page generated in 
+					%span<>= "#{load_time} seconds"
+				.date
+					%span Powered by Muffins
+	.fades

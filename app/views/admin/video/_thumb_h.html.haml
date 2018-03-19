@@ -1,0 +1,16 @@
+%li.generic.thumb{class: thumb_h.processed == false && "working"}
+	%a.thumb(href="/admin/videos/#{thumb_h.id}")
+		.tile{style: format_bg(thumb_h.tiny_thumb(current_user))}
+			%span.tag-set.duration
+				= duration thumb_h.get_duration
+		.title
+			- if thumb_h.hidden
+				%span.icon(title="Private - This item will not appear in public listings")= fa :lock
+			= thumb_h.title
+		%span.date{title: thumb_h.created_at}
+			= since thumb_h.created_at
+		%span.tag-set.right
+			- if thumb_h.is_liked
+				= fa "thumbs-#{thumb_h.is_like_negative != 0 ? "down red" : "up green"}"
+			= number_with_delimiter thumb_h.views
+			views

@@ -1,9 +1,5 @@
 
-.post .actions .liked, .post .actions .starred {
-  color: #fff;
-}
-
-.post .actions .dislike.liked,
+.actions .dislike.liked,
 button.red, .button.red, input[type=submit].red {
   color: #fff;
   border: 1px solid #a73535;
@@ -13,18 +9,18 @@ button.red, .button.red, input[type=submit].red {
   background: rgb(236, 72, 72);
 }
 
-.post .actions .dislike.liked:hover,
+.actions .dislike.liked:hover,
 button.red:hover, .button.red:hover, input[type=submit].red:hover {
   background: rgb(252, 87, 87);
 }
 
-.post .actions .dislike.liked:active,
+.actions .dislike.liked:active,
 button.red:active, .button.red:active, input[type=submit].red:active {
-   background: rgb(236, 72, 72);
-   box-shadow: 0 0 5px 0 rgba(0,0,0,0.2) inset;
+  background: rgb(236, 72, 72);
+  box-shadow: 0 0 5px 0 rgba(0,0,0,0.2) inset;
 }
 
-.post .actions .like.liked,
+.actions .like.liked,
 button.green, .button.green, input[type=submit].green {
   color: #fff;
   border: 1px solid #699739;
@@ -34,12 +30,12 @@ button.green, .button.green, input[type=submit].green {
   background: #7bb042;
 }
 
-.post .actions .like.liked:hover,
+.actions .like.liked:hover,
 button.green:hover, .button.green:hover, input[type=submit].green:hover {
   background: #8bc052;
 }
 
-.post .actions .like.liked:active,
+.actions .like.liked:active,
 button.green:active, .button.green:active, input[type=submit].green:active {
    background: #7bb042;
    box-shadow: 0 0 5px 0 rgba(0,0,0,0.2) inset;
@@ -59,12 +55,13 @@ button.blue:hover, .button.blue:hover, input[type=submit].blue:hover {
 }
 
 button.blue:active, .button.blue:active, input[type=submit].blue:active {
-   background: #3d95d3;
-   box-shadow: 0 0 5px 0 rgba(0,0,0,0.2) inset;
+  background: #3d95d3;
+  box-shadow: 0 0 5px 0 rgba(0,0,0,0.2) inset;
 }
 
-.post .actions .star.starred,
+.actions .star.starred,
 button.yellow, .button.yellow, input.yellow[type="submit"] {
+  color: #fff;
   border: 1px solid #c7c739;
   border-bottom-color: #b7b736;
   border-top-color: #c7c73c;
@@ -72,13 +69,13 @@ button.yellow, .button.yellow, input.yellow[type="submit"] {
   background: #e0e046;
 }
 
-.post .actions .star.starred:hover,
+.actions .star.starred:hover,
 button.yellow:hover, .button.yellow:hover, input[type=submit].yellow:hover {
   background: #f0f056;
 }
 
-.post .actions .star.starred:active,
+.actions .star.starred:active,
 button.yellow:active, .button.yellow:active, input[type=submit].yellow:active {
-   background: #e0e046;
-   box-shadow: 0 0 5px 0 rgba(0,0,0,0.2) inset;
+  background: #e0e046;
+  box-shadow: 0 0 5px 0 rgba(0,0,0,0.2) inset;
 }

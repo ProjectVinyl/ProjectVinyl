@@ -1,0 +1,69 @@
+= title "Report ##{@report.id}"
+= lim "1100px"
+%section.page.full-width.resize-holder.report{class: @report.status.downcase}
+	%h1.title.resize-target
+		Report \#
+		= "#{@report.id} #{@report.comment_thread.title}"
+	.comment
+		.alert.resolution-status
+			%span.fa-stack.fa-3x
+				%i.fa.fa-circle.fa-stack-2x
+				%i.fa.fa-question.open.fa-inverse.fa-stack-1x
+				%i.fa.fa-check.resolved.fa-inverse.fa-stack-1x
+				%i.fa.fa-ban.closed.fa-inverse.fa-stack-1x
+			%b
+				%span.open This report is unresolved.
+				%span.closed This report has been closed.
+				%span.resolved This report has been resolved.
+		.artist-bio.bio
+			%a{class: !@report.user.is_dummy && "user-link", href: @report.user.link, data: {id: @report.user_id}}
+				%span.avatar.medium
+					%span(style="background-image:url('#{@report.user.avatar}')")
+		.content
+			.name
+				%a{class: !@report.user.is_dummy && "user-link", href: @report.user.link, data: {id: @report.user.id}}
+					= @report.user.username
+			.date.right= since @report.created_at
+			%table(style="table-layout:auto" class="properties comment-content preview")
+				- if @video
+					= render partial: "layouts/video_thumb_h", locals: {video_thumb_h: @video}
+				%tr
+					%td Report Type:
+					%td= @report.first
+				- if @report.source
+					%tr
+						%td
+							= @report.source_label
+							\:
+						%td= @report.source
+				%tr
+					%td Reasons:
+					%td
+						- if @report.content_type_unrelated
+							Unrelated
+						- if @report.content_type_offensive
+							Offensive
+						- if @report.content_type_disturbing
+							Disturbing
+						- if @report.content_type_explicit
+							Explicit
+				- if @report.copyright_holder
+					%tr
+						%td Copyright Holder:
+						%td= @report.copyright_holder
+				%tr
+					%td Message:
+					%td
+						- if @report.subject
+							%b= @report.subject
+							%br/
+						= raw @report.other
+				- if @report.name
+					%tr
+						%td Contact Details:
+						%td
+							Name:
+							= @report.name
+							Email:
+							= (@report.contact || "").gsub(/a-zA-z/,"*")
+%section.page.full-width.resize-holder= render partial: "thread/view_reverse"

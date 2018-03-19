@@ -1,0 +1,15 @@
+- cache(@video.reportable_name, expires_in: 1.week) do
+	.slideout.info.properties
+		%table.group.active
+			%tr
+				%td.label File Size
+				%td.field= "%.2f MB" % (File.size(@video.video_path).to_f / 2**20)
+			%tr
+				%td.label File Type
+				%td.field= @video.file
+			%tr
+				%td.label Mime Type
+				%td.field= @video.mime
+			%tr
+				%td.label Duration
+				%td.field= duration @video.get_duration

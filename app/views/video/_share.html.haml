@@ -1,0 +1,36 @@
+.slideout.share.properties
+	%table.group.active
+		%tr
+			%td.field.share-buttons.actions(data-caption="#{@video.title} - ProjectVinyl")
+				%button.action(data-action="share" data-type="facebook")>= fl :facebook
+				%button.action(data-action="share" data-type="twitter")>= fl :twitter
+				%button.action(data-action="share" data-type="googleplus")>= fl :google_plus
+				%button.action(data-action="share" data-type="tumblr")>= fl :tumblr
+		%tr
+			%td.field
+				Embed
+				%p
+					- share = '<iframe width="560" height="315" src="http://www.projectvinyl.net/embed/{id}{extra}" frameborder="0" allowfullscreen></iframe>'
+					- share_v = share.gsub('{id}', @video.id.to_s).gsub('{extra}', '')
+					%input#share_field{name: "share_field", value: share_v, type: "text", data: {value: share, id: @video.id, first: @album && (@items.length > 1 ? @items.first.video_id : @video.id), album: @album && {id: @album.id, index: @index}}}
+				- if @album && !@album.virtual?
+					%div
+						%input#album_share_toggle(type="checkbox" value="playlist")
+						Share with playlist from the
+						%select#album_share_type
+							%option current video
+							%option beginning
+						\.
+				.center#embed_preview(style="display:none;height:315px")
+				%p
+					%button.action.test.center(type="button") Preview
+		%tr
+			%td.field
+				Projectvinyl preview
+				%p
+					%input(type="text" value="[#{@video.id}]")
+		%tr
+			%td.field
+				BBCode
+				%p
+					%textarea(rows="2")= "[url=http://www.projectvinyl.net/#{@video.id}][img]http://www.projectvinyl.net#{@video.tiny_thumb(current_user)}[/img]#{@video.title.strip}[/url]"

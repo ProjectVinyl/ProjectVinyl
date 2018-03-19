@@ -1,0 +1,28 @@
+.wrapper.full-width
+	%section.page.full-width
+		%h1 Site Staff and Contributors
+		%p
+			Looking to contribute? ProjectVinyl is in short supply of developers, moreators, admins, users...
+			Pretty much everything. If you want to help us, message @projectvinyl on twitter or punch up @ZizzyDizzyMC for a Discord link!
+		%p
+			If that's all just too much for you right now, there is always the possibility to 
+			%a(href="/donate") #donate!
+	%section.space-fix
+		%h1 Administrators
+		%ul.staff
+			= render partial: "thumb_h", locals: { avatar: "images/avatar/anima fever.jpg", name: "Anima Fever", tag_line: "Archivist, Moral Support" }
+	%section.space-fix
+		%h1 Programming & Design
+		%ul.staff
+			= render partial: "thumb_h", locals: { avatar: "images/avatar/schwart.jpg", name: "The Schwarzschild Party", tag_line: "Graphic Design" }
+			= render partial: "thumb_h", locals: { avatar: "http://www.gravatar.com/avatar/f5f7f51b935f0e988efdfd3ca2460807.png?s=150", name: "Sollace", tag_line: "Programming, Graphic Design" }
+	%section.space-fix
+		%h1 Contributors
+		%ul.staff
+			= render partial: "thumb_h", locals: { avatar: "", name: "ZizzyDizzyMC", tag_line: "Hosting" }
+			= render partial: "thumb_h", locals: { avatar: "images/avatar/d3lta.png", name: "D3LTA", tag_line: "Archivist" }
+	%section.space-fix
+		%h1 Retired Staff
+		%ul.staff
+			= render partial: "thumb_h", locals: { avatar: "", name: "Baba Daya", tag_line: "Resident Visionary, Graphic Design" }
+			= render partial: "thumb_h", locals: { avatar: "", name: "byte[]", tag_line: "Programmer" }

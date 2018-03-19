@@ -1,0 +1,10 @@
+%li.removeable.notification{class: [notification.sender, notification.unread && "unread"], data: {target: "notification", id: notification.id}}
+	%a{href: notification.source}= raw notification.message
+	%a.remove.right(href="#" title="Remove")= fa :times
+	- if notification.sender.index('comment_threads_') == 0
+		- if notification.comment_thread && notification.comment_thread.subscribed?(current_user)
+			%a.action.right.toggle.subscription{title: "Unsubscribe", href="#",
+				data: {"unchecked-icon": "bell", "checked-icon": "bell-slash",
+							 action: "subscribe", target: "thread",
+							 id: notification.comment_thread_id}}
+				%span.icon= fa :bell_slash

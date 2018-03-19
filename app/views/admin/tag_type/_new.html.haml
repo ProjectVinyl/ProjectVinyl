@@ -1,0 +1,21 @@
+= form_for(@tagtype, as: 'tag_type', url: '/admin/tagtypes', html: {method: :post}) do |f|
+	.properties
+		%table
+			%tr
+				%td.label= f.label :prefix
+				%td.field= f.text_field :prefix
+			%tr
+				%td.label= f.label :hidden
+				%td.field
+					%label.button.blue
+						= f.check_box :hidden
+							= fa :check
+							Hide prefix in tag name
+			%tr
+				%td.label Implications
+				%td.field
+					= render layout: 'tag/editor', locals: { tags: nil } do
+						= f.text_area :tag_string
+	.foot
+		= f.submit "Save", class: "green"
+		%button.right.cancel"(type="button" data-resolve="false") Cancel

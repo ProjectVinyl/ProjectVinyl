@@ -1,0 +1,13 @@
+.toolbar
+	%ul.button-group>
+		%li.button.edit-action(data-action="tag" data-tag="b" title="Bold")>= fa :bold
+		%li.button.edit-action(data-action="tag" data-tag="i" title="Italic")>= fa :italic
+		%li.button.edit-action(data-action="tag" data-tag="u" title="Underline")>= fa :underline
+		%li.button.edit-action(data-action="tag" data-tag="s" title="Strikethrough")>= fa :strikethrough
+	%ul.button-group>
+		%li.popper.button.pop-out-toggle.edit-action(data-action="emoticons" title="Emoticons")>
+			= fa :smile_o
+			%ul.pop-out#emoticons
+	%ul.button-group>
+		%li.button.edit-action(data-action="tag" data-tag="spoiler" title="Spoiler")>= fa :filter
+		%li.button.edit-action(data-action="tag" data-tag="q" title="Quote")>= fa :quote_left

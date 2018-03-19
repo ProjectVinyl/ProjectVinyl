@@ -7,6 +7,13 @@ module Admin
         return render_access_denied
       end
       @user = User.find(params[:id])
+      @crumb = {
+        stack: [
+          { link: '/admin', title: 'Admin' },
+          { link: @user.link, title: @user.id }
+        ],
+        title: @user.username
+      }
     end
     
     def role

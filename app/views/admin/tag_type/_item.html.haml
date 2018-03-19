@@ -1,0 +1,44 @@
+= form_for(item, as: 'tag_type', url: "/admin/tagtypes/#{item.id}", html: {method: :patch, class: "row row-group removeable state-binary tag-#{item.prefix}"}) do |f|
+	= f.text_field :id, hidden: true
+	.row
+		%div(style="width:30px")
+			%a.button.button-bub.state-toggle(data-state="editing" data-parent="form")= fa :pencil
+		%div
+			= item.prefix
+			:
+		%div= number_with_delimiter item.referrers.count
+		.center
+			%i.fa(title: item.hidden, class: "fa-#{item.hidden ? "check" : "times"}")
+		%div
+			%ul.tags= render partial: "tag/thumb_h", collection: item.tags
+	.editing.row.row-spanned
+		.content.properties
+			%table
+				%tr
+					%td.label= f.label :prefix
+					%td.field= f.text_field :prefix
+				%tr
+					%td.label= f.label :hidden
+					%td.field
+						%label.button.blue
+							= f.check_box :hidden
+								= fa :check
+								Hide prefix in tag name
+				%tr
+					%td.label Implications
+					%td.field
+						= render layout: 'tag/editor', locals: { tags: item.tags } do
+							= f.text_area :tag_string
+				%tr.actions
+					%td.label
+					%td.label
+            %a.button.red.right{href: "/admin/tagtypes/#{item.id}",
+													data: {title: "Delete Tag Type", icon: "warning",
+																confirm: "You are about to delete a tag type. Any related tags will lose their typing information and may have to be reassigned should you want to undo this.",
+																method: "delete",
+																title="Remove Notice"}}
+							= fa :trash
+							Delete
+						%button.green.left
+							= fa :save
+							Save

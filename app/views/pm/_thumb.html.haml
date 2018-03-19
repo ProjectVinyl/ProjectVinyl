@@ -1,0 +1,30 @@
+%li.thread.removeable{class: thumb.unread && "unread", data: {id: @type, target: "messages/#{thumb.id}"}}
+	.thumb
+		.avatar.medium
+			%span{style: format_bg(thumb.sender.avatar)}
+	.info
+		.title
+			%a{href: thumb.location}= thumb.comment_thread.get_title
+		%div
+			sent 
+			%span{title: thumb.comment_thread.created_at}= since thumb.comment_thread.created_at
+			by 
+			%a.user-link{href: thumb.sender.link, "data-id": thumb.sender_id}= thumb.sender.username
+	.replies
+		%span
+			= number_with_delimiter thumb.comment_thread.total_comments
+			replies
+	.activity
+		%span
+			- if thumb.last_comment
+				active
+				= since thumb.last_comment.updated_at
+	.actions.repaintable(data-id="#{thumb.id}")
+		%button.action.button.button-bub.toggle{title: "Mark #{thumb.unread ? "Read" : "Unread"}",
+							data: {state: "unread", parent: ".thread",
+										action: "markread", target: "messages",
+										id: thumb.id, "checked-icon": "star", "unchecked-icon": "star-o"}}
+			%span.icon= fa thumb.unread ? :star : :star_o
+		- if thumb.state == 0
+			%a.button.remove.button-bub(title="Delete")= fa :trash_o
+		%a.button.remove.button-bub(title="Restore")= fa :reply

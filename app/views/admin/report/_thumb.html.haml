@@ -1,0 +1,8 @@
+%a.row{href: thumb.link}
+	%div
+		%span.active-icon{class: thumb.open? && "active"}
+		\#
+		= thumb.id
+	%div= thumb.status
+	%div= since thumb.updated_at
+	%div= thumb.reportable_type

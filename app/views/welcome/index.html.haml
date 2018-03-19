@@ -1,0 +1,53 @@
+﻿.wrapper.resize-holder.column-right.right.column-mobile-fragmented.wrap-around-fixed.grid-root(style="margin-left:-10px;width:23%")
+	- if @featured
+		%section.page.full-width.featured.column-mobile-shown
+			%h1 Featured Video
+			%ul.horizontal.center
+				= render partial: 'video_thumb_h', locals: {video_thumb_h: @featured}
+			.scoring.tag-set
+				%span.like(title="Likes")
+					= safe_to_display @featured.upvotes, 9999
+					%i.fa.fa-thumbs-up
+				%span.score(title="Score")= safe_to_display  @featured.score, 9999
+				%span.dislike(title="Dislikes")
+					= safe_to_display  @featured.downvotes, 9999
+					%i.fa.fa-thumbs-down
+				%a.comments{href: @featured.comment_thread.link, title: "Comments"}
+					= safe_to_display  @featured.comment_thread.total_comments, 9999
+					%i.fa.fa-comments
+			.description.fade-away= raw @featured.html_description
+	- if @threads.length > 0
+		%section.properties.ribbed.page.full-width
+			%h1 Recent Forum Activity
+			%table(style="table-layout: auto")
+				= render partial: 'recent_thumb', collection: @threads
+	- if @comments.length > 0
+		%section.properties.ribbed.page.full-width
+			%h1 Recent Comments
+			%table(style="table-layout: auto")
+				= render partial: 'recent_comment_thumb', collection: @comments
+	%section.page.full-width
+		%iframe.twitter(src="/embed/twitter")
+	%section.page.full-width.donate
+		%h1
+			%a Donate
+		%a(href="/donate" data-external-form="/ajax/donate" data-title="Donate to Project Vinyl" data-icon="paypal" data-max-width="500px")
+			%div
+		%a.source(href="//derpibooru.org/549114") source
+.wrapper.column-left.auto-wrap.resize-holder(style="width: 76%")
+	%section.page
+		= render partial: 'section', locals: { collection: @popular, type: 'popular', label: 'Popular' }
+	- if @featured_album
+		%section.page= render partial: 'featured_album', locals: { featured_album: @featured_album }
+	- @all.group_by(&:period).each do |week, n|
+		%section.page= render partial: 'section', locals: { collection: n, label: week }
+	- if @feed && @feed.length > 0
+		%section.page
+			.group.feed.auto-wrap-contents
+				%h1
+					%a(href="/videos/watched")
+						Watched Videos (
+						= number_with_delimiter @feed.length
+						)
+				%ul.horizontal.latest
+					= render partial: 'video/thumb_h', collection: @feed

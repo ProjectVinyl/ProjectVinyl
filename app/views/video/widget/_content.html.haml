@@ -1,0 +1,29 @@
+.player(data-state="ready")
+	%span.playing
+	%span.error
+		%span.error-message
+	%span.suspend.hidden
+		%i.fa.fa-pulse.fa-spinner
+	%span.pause.resize-holder
+		%span.playback
+		- if embed
+			%h1.resize-target
+				%a.title(target="_blank" href="#{@video.link}")= @video.title
+.controls.playback-controls
+	%ul
+		%li.track
+			%span.fill
+			%span.load
+			.previewer
+			%span.bob
+		%li.icon.volume
+			%span.indicator= fa :volume_up
+			.slider
+				%span.fill
+				%span.bob
+		%li.icon.maximise
+			%span.indicator= fa :square_o
+		%li.icon.fullscreen
+			%span.indicator= fa :arrows_alt
+%ul.contextmenu.transitional.hidden
+= yield

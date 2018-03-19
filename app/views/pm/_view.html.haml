@@ -1,0 +1,16 @@
+%h1.title
+	Comments
+	- if user_signed_in?
+		- @subscribed = @thread.subscribed?(current_user)
+		%button.action.button.button-bub.subscribe.right.toggle{title: subscribed ? "Unsubscribe" : "Subscribe",
+			data: {action: "subscribe", target: "thread", id: @thread.id, "unchecked-icon": "bell-slash"}
+			%span.icon= fa @subscribed ? :check : :bell
+- if user_signed_in?y
+	- if @thread.locked
+		Thread locked
+	- else
+		= render partial: "thread/comment_box", locals: {invert: false}
+			%hr/
+= render layout: 'pagination/paginated', locals: {type: "comments/#{@thread.id}/#{@order}", paginated: @comments, id: "page"} do
+	%ul.comments{id: "thread-#{@thread.id}"}
+		= render partial: 'comment/set', locals: {thread: @comments.records, indirect: false}

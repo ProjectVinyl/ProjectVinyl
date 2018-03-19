@@ -1,0 +1,16 @@
+- title "Admin"
+- lim "1100px"
+%section.page.full-width.resize-holder.listing.compact.limit-overflow
+	%h3
+		- @public.parent.each_with_index do |part,index|
+			- if index > 0
+				%i.fa.fa-chevron-right
+			- if part[:last]
+				= part[:name]
+			- else 
+				%a(href="/admin/files?p=#{part[:path].join('/')}")= part[:name]
+	.infinite-page.items#files{data: {url: "/admin/files", path: @public.full_path, "start-ref": @public.start_ref, ref: @public.end_ref}}
+		.row.header
+			%div Name
+			%div(style="width:10%") Type
+		= render partial: "file", collection: @public.items

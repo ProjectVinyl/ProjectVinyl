@@ -20,6 +20,10 @@ module Forum
     end
     
     def index
+      @crumb = {
+        stack: [],
+        title: "Forum"
+      }
       @boards = Pagination.paginate(Board.all, params[:page].to_i, 10, false)
       if params[:format] == 'json'
         render_pagination_json 'thumb', @boards

@@ -1,0 +1,9 @@
+= form_for(resource, as: resource_name, url: session_path(resource_name)) do |f|
+	= f.text_field :login, autofocus: true, placeholder: "Username Or Email"
+	= f.password_field :password, autocomplete: "off", placeholder: "Password"
+	- if devise_mapping.rememberable?
+		%label.check-box
+			= f.check_box :remember_me
+			%span Remember Me
+	.actions= f.submit "Sign in", class: "confirm"
+.tiny-foot= render "devise/shared/links"

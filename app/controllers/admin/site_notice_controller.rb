@@ -7,6 +7,12 @@ module Admin
         return render_access_denied
       end
       
+      @crumb = {
+        stack: [
+          { link: '/admin', title: 'Admin' }
+        ],
+        title: "Site Notices"
+      }
       @page = params[:page].to_i
       @notices = SiteNotice.all #Pagination.paginate(SiteNotice.all, @page, 40, true)
     end

@@ -1,0 +1,5 @@
+.paginator{data: {id: id, type: type, page: paginated.page, args: @data}}
+	.pagination(data-id="#{id}")
+		= numbering = render partial: 'pagination/numbering', locals: { page: paginated.page, pages: paginated.pages, id: id }
+	= yield
+	.pagination(data-id="#{id}")= numbering

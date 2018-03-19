@@ -1,0 +1,28 @@
+%section.page.properties.full-width
+	%h1 Files
+	%table
+		%tr
+			%td.label Media Type
+			%td.field= @video.audio_only ? "Audio" : "Video"
+			%td
+		%tr
+			%td.label File Type
+			%td.field= "#{@video.mime} (#{@video.file})"
+			%td
+		%tr
+			%td.label Source
+			%td.field= bool File.exist?(@video.video_path)
+			%td= @video.file_path("#{@video.storage_root}/stream", "#{@video.id}#{@video.file}")
+		- if !@video.audio_only
+			%tr
+				%td.label Webm
+				%td.field= bool File.exist?(@video.webm_path)
+				%td= @video.file_link("#{@video.storage_root}/stream", "#{@video.id}.webm")
+		%tr
+			%td.label Cover
+			%td.field= bool File.exist?("#{@video.cover_path}.png")
+			%td= @video.file_link('public/cover', "#{@video.id}.png")
+		%tr
+			%td.label Thumbnail
+			%td.field= bool File.exist?("#{@video.cover_path}-small.png")
+			%td= @video.file_link('public/cover', "#{@video.id}-small.png")

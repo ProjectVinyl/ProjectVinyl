@@ -6,9 +6,16 @@ class PmController < InboxController
         description: "Either the thread does not exist or you don't have the neccessary permissions to see it."
       )
     end
+    
     @order = '0'
     @thread = @pm.comment_thread
     @comments = Pagination.paginate(@thread.get_comments(user_signed_in? && current_user.is_contributor?), (params[:page] || -1).to_i, 10, false)
+    @crumb = {
+      stack: [
+        { link: "/inbox", title: "Messages" }
+      ],
+      title: @thread.get_title
+    }
     if @pm.unread
       @pm.unread = false
       @pm.save

@@ -106,6 +106,12 @@ button.disable, .button.disable, button.working, .button.working {
   margin-right: 0px;
 }
 
+.actions .divider {
+  height: 30px;
+  border-left: 1px solid rgba(0,0,255,0.1);
+  margin: 0 10px;
+}
+
 @media(max-width:430px) {
   button.mobile-friendly span,
   .button.mobile-friendly span {

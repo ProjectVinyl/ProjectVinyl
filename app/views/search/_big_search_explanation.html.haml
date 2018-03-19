@@ -1,0 +1,38 @@
+﻿%a.tiny-link.slider-toggle(href="#" data-target=".explanation") Search Syntax
+.slideout.explanation.properties
+	.group.active(style="padding:10px;white-space:normal")
+		%p
+			ProjectVinyl's search function is designed to work similarly to that of Derpibooru.
+			Searching for a single tag name returns all videos with that tag, a list of tags
+			returns all videos that have all of those tags.
+		%p
+			You can also combine results using the OR ( | ) and AND ( & ) operators.
+			Note that they must have spacing on either side.
+		%p
+			Videos additionally have support for searching them by many of their special attributes.
+		%p
+			System tags:
+			%ul
+				%li title:\<title\> - returns any videos with a matching name
+				%li source:\<source\> - returns any videos with a matching source
+				%li uploader:\<username\> - returns any videos posted by the named user
+				%li is:audio - returns videos only if they are an audio file
+				%li is:upvoted - returns videos only videos that have been liked by the current user (has no affect for anonymous users)
+				%li is:downvoted - equivalent to is:upvoted but for dislikes
+		- if user_signed_in? && current_user.is_staff?
+			%p
+				Moderation tags:
+				%ul
+					%li upvoted_by:\<username\>
+					%li downvoted_by:\<username\>
+					%li is:hidden
+		%p
+			Ranged tags:
+			
+			%ul
+				%li length\<X - returns any videos with a length less than X where X is in the format of hh:mm:ss
+				%li score\<X- returns any videos with a score less than X
+				
+			The above tags may also be inverted by replacing the '\<' with a '\>'.
+		</p>
+		%p Parenthesis '(' and ')' may be used as well for additional control

@@ -1,0 +1,20 @@
+%section.page.full-width
+	%h1 Metadata
+	= form_for(@video, as: "video", url: "/admin/videos/#{@video.id}/metadata", html: { method: :put }) do |f|
+		%label.text-input(data-prefix="https://www.youtube.com/watch?v=")
+			%input(type="text" name="source" placeholder="source")
+		%br/
+		.post
+			%label.button.blue
+				%input(name="title" type="checkbox")
+				= fa :check
+				Title
+			%label.button.blue
+				%input(name="description" type="checkbox")
+				= fa :check
+				Description
+			%label.button.blue
+				%input(name="tags" type="checkbox")
+				= fa :check
+				Tags
+			.actions= f.submit

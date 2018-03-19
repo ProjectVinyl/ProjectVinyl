@@ -1,0 +1,16 @@
+= form_for(@album, as: "album", url: "albums", html: {method: :post}) do |f|
+	.properties
+		- if @initial
+			%input(name="album[initial]" type="text" hidden="true" value="#{@initial}")
+		%table
+			%tr
+				%td.label= f.label :title
+				%td.field= f.text_field :title, autofocus: true
+			%tr
+				%td.label= f.label :description
+				%td.field
+					= render layout: 'comment/description_box' do
+						= f.text_area :description, class: "comment-content"
+	.foot
+		= f.submit "OK", class: "green"
+		%button.right.cancel(type="button" data-resolve="false") Cancel

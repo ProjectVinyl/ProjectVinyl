@@ -1,0 +1,8 @@
+%button.action.toggle{class: [role == :banned ? "red" : "blue", !enable && "disable"],
+											disabled: !enable,
+											data: {family: "role-flags", target: "admin/users",
+														id: @user.id, action: "roles/#{role}", descriminator: role}}
+	%span.icon
+		- if value
+			= fa :check
+	%span.label= title

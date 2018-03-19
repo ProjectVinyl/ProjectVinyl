@@ -1,0 +1,30 @@
+%h1 Notifications
+= form_for(current_user.prefs_cache, as: 'settings', url: '/users/#{current_user.id}/prefs', html: { method: :put }) do |f|
+	%table.auto
+		%tr
+			%td.label Subscribe On Reply
+			%td.field
+				%div Subscribe to comment sections as soon as you post a reply.
+				%label.button
+					= f.check_box :subscribe_on_reply
+					= fa :check
+					Enable
+		%tr
+			%td.label Subscribe On Upload
+			%td.field
+				%div You will be subscribed to new comments on any videos you upload.
+				%label.button
+					= f.check_box :subscribe_on_upload
+					= fa :check
+					Enable
+		%tr
+			%td.label Subscribe On New Thread
+			%td.field
+				%div You will be subscribed to new comments on any threads you create.
+				%label.button
+					= f.check_box :subscribe_on_thread
+					= fa :check
+					Enable
+		%tr.actions
+			%td.label
+			%td.field= f.submit "Save Changes", class: "green"

@@ -1,0 +1,32 @@
+﻿.group(data-stage="content" style="white-space:normal")
+	.notice Please select the option(s) that best describe the content in this video.
+	%table(data-required)
+		%tr
+			%td(colspan="2")
+				%label
+					= f.check_box :content_type_unrelated
+					= fw :check_square_o
+					= fw :square_o
+					Unrelated content
+		%tr
+			%td(colspan="2")
+				%label
+					= f.check_box :content_type_offensive
+					= fw :check_square_o
+					= fw :square_o
+					Offensive/Deflamatory content
+		%tr
+			%td(colspan="2")
+				%label
+					= f.check_box :content_type_disturbing
+					= fw :check_square_o
+					= fw :square_o
+					This video contains disturbing imagery
+		%tr
+			%td(colspan="2")
+				%label
+					= f.check_box :content_type_explicit
+					= fw :check_square_o
+					= fw :square_o
+					Pornography
+		= render partial: 'admin/report/slide_buttons', locals: {prev: 'start', next: 'final'}

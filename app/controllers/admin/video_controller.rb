@@ -17,6 +17,14 @@ module Admin
       @modifications_allowed = true
       @user = @video.user
       @tags = @video.tags
+      @crumb = {
+        stack: [
+          { link: '/admin', title: 'Admin' },
+          { title: 'Videos' },
+          { link: @video.link, title: @video.id }
+        ],
+        title: @video.title
+      }
     end
     
     def hidden

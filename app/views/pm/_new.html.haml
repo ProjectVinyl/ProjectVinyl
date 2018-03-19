@@ -1,0 +1,18 @@
+= form_for(@thread, as: "thread", url: "/message", method: "post") do |f|
+	.properties
+		%table
+			%tr
+				%td.label= f.label "To"
+				%td.field.popper.auto-lookup.validate(data-action="/find/users")
+					= f.text_field "recipient", value: @user ? @user.username : "", autocomplete: "off"
+					%ul.pop-out
+			%tr
+				%td.label= f.label "Subject"
+				%td.field= f.text_field :title, autofocus: true, placeholder: "[no subject]"
+			%tr
+				%td.field(colspan="2")
+					= render layout: 'comment/description_box' do
+						= f.text_area :description, class: "comment-content"
+	.foot
+		= f.submit "Send", class: "green confirm"
+		%button.right.cancel(type="button" data-resolve="false") Cancel

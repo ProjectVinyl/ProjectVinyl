@@ -1,0 +1,25 @@
+%li.thread
+	.thumb
+		.avatar.medium
+			%span{style: format_bg(thumb.user.avatar)}
+	.info
+		.title
+			- if thumb.locked
+				%i.fa.fa-lock(title="Thread Locked")
+			- if thumb.pinned
+				= fa :thumb_tack
+			%a{href: thumb.link}= thumb.get_title
+		%div
+			posted 
+			%span{title: thumb.created_at}= since thumb.created_at
+			by 
+			%a.user-link{"data-id": thumb.user.id, href: thumb.user.link}= thumb.user.username
+	.replies
+		%span
+			= number_with_delimiter thumb.total_comments
+			replies
+	.activity
+		%span
+			- if thumb.last_comment
+				active
+				= since thumb.last_comment.updated_at

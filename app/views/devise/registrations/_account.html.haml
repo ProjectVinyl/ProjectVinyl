@@ -1,0 +1,37 @@
+%h1 Account Settings
+= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { method: :put }) do |f|
+	= devise_error_messages!
+	%table
+		%tr.section
+			%td(colspan="2") Basic Information
+		%tr
+			%td.label= f.label :email
+			%td.field
+				= f.email_field :email, autofocus: true
+				- if devise_mapping.confirmable? && resource.pending_reconfirmation?
+					%div
+						Currently waiting confirmation for:
+						= resource.unconfirmed_email
+		%tr
+			%td.label= f.label :password
+			%td.field= f.password_field :password, autocomplete: "off"
+		%tr
+			%td.label= f.label :password_confirmation
+			%td.field= f.password_field :password_confirmation, autocomplete: "off"
+		%tr.section
+			%td(colspan="2") Save
+		%tr
+			%td.label= f.label :current_password
+			%td.field= f.password_field :current_password, autocomplete: "off"
+		%tr.actions
+			%td.label
+			%td.field= f.submit "Save Changes", class: "green"
+%h1 Delete Account
+%table
+	%tr
+		%td.label Careful! This can not be undone.
+		%td.field
+			%a.button.red{href: registration_path(resource_name),
+				data: { method: "delete",
+								confirm: "Your account will be permanently deleted. This includes any starred videos. Are you really sure about that?",
+								title: "Here be dragons"}} Cancel my account

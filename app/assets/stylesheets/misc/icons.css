@@ -1,5 +1,6 @@
 .icon {
   cursor: default;
+  padding: 2px;
 }
 .action .icon {
   cursor: pointer;

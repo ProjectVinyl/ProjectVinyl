@@ -1,0 +1,7 @@
+%li.generic
+	%a.album{href: thumb_h.link}
+		%span.tile.stack= render partial: 'album/tile_stack', locals: {items: thumb_h.album_items.order(:index)}
+		.title
+			= render partial: 'album/visibility', locals: {album: thumb_h}
+			= thumb_h.title
+		%span.date{title: thumb_h.created_at}= raw since thumb_h.created_at

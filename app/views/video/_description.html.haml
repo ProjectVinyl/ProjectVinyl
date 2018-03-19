@@ -1,0 +1,63 @@
+%section.page.column-left
+	%span.notices
+		- if !@video.processed
+			.notice.pending This video is still being processed by our background ponies. If it does not play correctly try again later.
+		- if @video.hidden
+			.notice.alert This video has been hidden. It will not be shown on other parts of the site until being passed by moderation.
+	.post.description.resize-holder
+		- if @modifications_allowed
+			%h2.title.editable.short.post-title.resize-target(data-target="videos" data-member="title" data-id="#{@video.id}")
+				%span.content= @video.title
+				%span.edit= fa :pencil
+				%span.hidden 11
+		- else
+			%h2.title.post-title.resize-target
+				%span.content= @video.title
+		.tag-set.subheading
+			%span.uploaded
+				Uploaded on
+				= @video.created_at.to_time.strftime('%e %B %Y')
+				by
+				%a.user-link.link{href: @user.link, data: {id: @user.id}}= @user.username
+			%span.views.right
+				= number_with_delimiter @video.views
+				views
+	- if @modifications_allowed
+		%span.editable.post-content(data-target="videos" data-member="description" data-id="#{@video.id}")
+			%span.content= raw @video.html_description
+			%textarea.input.js-auto-resize(name="description_video_#{@video.id}")= @video.description
+			%span.edit= fa :pencil
+	- else
+		%span.post-content
+			%span.content= raw @video.html_description
+	%br/
+	%br/
+	.post-tags
+		.normal.tiny-link
+			Source: 
+			%a{href: @video.source}= @video.source
+		%hr/
+		.normal.tags= render partial: 'tag/thumb_h', collection: @tags
+		- if user_signed_in?
+			= form_for(@video, as: "video", url: "/videos/#{@video.id}/details", html: {class: "editing async form-state-toggle js-edit-video", method: :patch}, data: {state: "editing"}) do |f|
+				= render layout: 'tag/editor', locals: {tags: @video.tags} do
+					%textarea(autocomplete="off" name="tags")= raw @video.tag_string
+				.properties
+					%table
+						%tr
+							%td.label
+								%label(for="video_source") Source
+							%td.field
+								%input(autocomplete="off" class="input" name="source" type="text" value="#{@video.source}")
+						%tr
+							%td.label
+							%td.field
+								%button.form-submitter Save Changes
+								%button.state-toggle(type="button" data-parent=".post-tags" data-state="editing") Close
+				.progressor
+					.message Uploading...
+					.progress
+						.fill
+			%hr.normal
+			%button.normal.state-toggle(data-state="editing") Edit Tags Or Source
+		= render partial: 'video/actions'

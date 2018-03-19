@@ -1,0 +1,8 @@
+﻿%h1
+	Searching for Posts found
+	= number_with_delimiter @results.count
+	= "match#{@results.count == 1 ? "" : "es"}"
+- @data = URI.encode_www_form({title_query: @title_query, poster_query: @poster_query, text_query: @text_query, order: @ascending ? "1" : "0", board: @board})
+= render layout: 'pagination/paginated', locals: {type: 'forum/search',paginated: @results, id: "page"} do
+	%section.search-result
+		%ul.comments#thread= render partial: 'comment/set', locals: {thread: @results.records, indirect: true}

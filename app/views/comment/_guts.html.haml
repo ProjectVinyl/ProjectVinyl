@@ -1,0 +1,59 @@
+- if indirect && comment.comment_thread.owner_type == 'Video'
+	.artist-bio.bio= render 'video/thumb_i', thumb_i: Video.where(id: comment.comment_thread.owner_id).with_likes(current_user).first, comment: comment.get_open_id
+- else
+	- if indirect
+		%div
+			%p
+				In
+				%a{href: comment.comment_thread.owner.link}= comment.comment_thread.owner.title
+				-
+				%a{href: comment.comment_thread.link}= comment.comment_thread.get_title
+	.artist-bio.bio
+		%a{class: !comment.user.is_dummy && "user-link", "data-id": comment.user_id, href: comment.user.link}
+			%span.avatar.medium
+				%span{style: format_bg(comment.user.avatar)}
+.content{style: indirect && comment.comment_thread.owner_type == 'Video' && "margin-left:200px", "data-id": comment.id, "data-o-id": comment.get_open_id, "data-comment": comment.bbc_content}
+	- if user_signed_in?
+		%span.popper.right(style="margin-left: 10px")
+			%a.action.pop-out-toggle= fa :gear
+			%ul.pop-out
+				- if user_signed_in? && comment.owned_by!(current_user)
+					%li.action
+						%a.edit-comment.state-toggle(data-state="editing" data-parent=".content")
+							%span.icon= fa :pencil
+							%span.label Edit
+				- if user_signed_in? && comment.owned_by(current_user)
+					%li.action
+						%a.remove-comment(href="/comments/#{comment.id}#{indirect ? "?indirect=1" : ""}" data-id="#{comment.get_open_id}" data-title="Delete Comment")
+							%span.icon= fa :trash
+							%span.label Delete
+				%li.action
+					%a.report-comment(href="/admin/reports/new?#{comment.reportable_params}" data-id="#{comment.get_open_id}" data-title="Report Comment")
+						%span.icon= fa :flag
+						%span.label Report
+		- if !indirect
+			%a.reply-comment(title="Reply")= fa :reply
+		%button.action.like{title: "Like", class: comment.is_liked && "liked", data: {count: comment.score, target: "comments", action: "like", id: comment.id}}
+			%span
+				- if comment.score && comment.score > 0
+					%span.count= comment.score
+			= fa :thumbs_up
+	- else
+		%a.report-comment.right(title="Report" href="/admin/reports/new?#{comment.reportable_params}" data-id="#{comment.get_open_id}" data-title="Report Comment")= fa :flag
+	
+	.name{class: comment.user.banned? && "banned"}
+		%a{class: !comment.user.is_dummy && "user-link", "data-id": comment.user_id, href: comment.user.link}
+			= comment.user.username
+		= render 'badge/badges', user: comment.user
+		
+		- comment.mentions.each do |mention|
+			%a.mention(href="#comment_#{Comment.encode_open_id(mention.parent_id)}" data-comment-id="#{mention.parent_id}")<
+				&gt;&gt;
+				= Comment.encode_open_id(mention.parent_id)
+	
+	.comment-content.preview= raw comment.html_content
+	- if user_signed_in? && current_user.id == comment.user_id
+		%textarea.comment-content(name="comment_#{comment.id}")= raw comment.bbc_content
+		%hr/
+		.actions
+			%button.green.edit-comment-submit> Edit Comment

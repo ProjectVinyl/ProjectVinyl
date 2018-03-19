@@ -6,6 +6,12 @@ module Admin
       if !current_user.is_contributor?
         return render_access_denied
       end
+      @crumb = {
+        stack: [
+          { link: '/admin', title: 'Admin' }
+        ],
+        title: "Tag Types"
+      }
       @types = TagType.includes(:tag_type_implications).all
     end
     

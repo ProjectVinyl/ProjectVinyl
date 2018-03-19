@@ -32,7 +32,8 @@ class User < ApplicationRecord
   has_many :artist_genres, dependent: :destroy
   has_many :tags, through: :artist_genres
   has_many :tag_subscriptions, dependent: :destroy
-
+  has_many :comments
+  
   has_many :hidden_tags, -> { where(hide: true) }, class_name: "TagSubscription"
   has_many :spoilered_tags, -> { where(spoiler: true) }, class_name: "TagSubscription"
   has_many :watched_tags, -> { where(watch: true, hide: false) }, class_name: "TagSubscription"

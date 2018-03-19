@@ -1,0 +1,6 @@
+- title @album.title
+- if @metadata
+	- content_for :metadata do
+		= render "view/meta", @metadata
+%section.page.full-width.resize-holder= render 'album'
+= render 'items'

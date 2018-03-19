@@ -1,0 +1,46 @@
+- lim "900px"
+%section.page.full-width.properties
+	%h1
+		Editing Tag
+		= @tag.name
+	= form_for(@tag, as: "tag", url: "/admin/tags/#{@tag.id}", html: {method: :patch}) do |f|
+		%table
+			%tr
+				%td.label Domain
+				- if @prefix == 'artist' && @user
+					%td.field(title="this cannot be changed")= @prefix
+				- else
+					%td.field
+						%span.search-options
+							%label= f.select :tag_type_id, TagType.all.pluck(:prefix, :id), include_blank: '[none]'
+			%tr
+				%td.label= f.label :name
+				%td.field
+					- if @prefix != 'artist' || !@user
+						= f.text_field :suffex, autofocus: true, autocomplete: "off"
+					- else
+						%span(title="Tag name synced to the associated artist. You cannot change it here.")= @tag.name
+			- if @prefix == 'artist'
+				%tr
+					%td.label Associated User
+					%td.field
+						- if @user
+							%a{href: @user.link}= @user.username
+						- else
+							This tag is unclaimed.
+			%tr
+				%td.label= f.label :alias
+				%td.field= f.text_field :alias_tag, autocomplete: "off"
+			%tr
+				%td.label= f.label :description
+				%td.field
+					= render layout: 'comment/description_box' do
+						= f.text_area :description, class: "comment-content"
+			%tr
+				%td.label= f.label :implications
+				%td.field
+					= render layout: 'tag/editor', locals: { tags: @tag.implications } do
+						= f.text_area :tag_string
+			%tr.actions
+				%td.label
+				%td.field= f.submit "Save Changes", class: "green"

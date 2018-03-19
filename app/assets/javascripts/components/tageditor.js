@@ -5,7 +5,7 @@ import { addDelegatedEvent, ready, halt } from '../jslim/events';
 
 function createTagItem(tag) {
   return `<li class="tag tag-${tag.namespace}" data-namespace="${tag.namespace}" data-slug="${tag.slug}">
-    <i title="Remove Tag" data-name="${tag.name}" class="fa fa-times remove"></i><a href="/tags/${tag.link}">${tag.name}</a>
+    <i title="Remove Tag" data-name="${tag.name}" class="fa fa-times-circle remove"></i><a href="/tags/${tag.link}">${tag.name}</a>
   </li>`;
 }
 

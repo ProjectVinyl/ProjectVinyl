@@ -63,26 +63,26 @@ Rails.application.routes.draw do
   end
   
   # Users #
-  resources :users, only: [:index, :update], controller: :artist do
+  resources :users, only: [:index, :update], controller: :user do
     get 'uploads'
     get 'videos'
     get 'albums'
+    get 'comments'
     
     get 'hovercard'
     get 'banner'
     put 'prefs'
-    patch 'avatar' => 'artist#set_avatar'
-    patch 'banner' => 'artist#set_banner'
+    patch 'avatar' => 'user#set_avatar'
+    patch 'banner' => 'user#set_banner'
   end
-  get 'profile/:id' => 'artist#view', constraints: { id: /([0-9]+).*/ } # /
+  get 'profile/:id' => 'user#show', constraints: { id: /([0-9]+).*/ } # /
   
   # Albums #
-  resources :albums, except: [:show], controller: :album do
+  resources :albums, id: /([0-9]+).*/ do # /
     get 'items' => 'album_item#index'
     patch 'order'
   end
-  get 'album/:id' => 'album#show', constraints: { id: /([0-9]+).*/ } # /
-  get 'stars' => 'album#starred'
+  get 'stars' => 'albums#starred'
   
   resources :albumitems, only: [:create, :update, :destroy], controller: :album_item
   
@@ -96,7 +96,7 @@ Rails.application.routes.draw do
     put 'watch'
   end
   scope 'tags', controller: :tag do
-    get ':name', action: 'view', constraints: { name: /.*/ } # /
+    get ':name', action: :show, constraints: { name: /.*/ } # /
   end
   
   # Forums #
