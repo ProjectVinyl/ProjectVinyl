@@ -29,16 +29,14 @@
   display: inline-block;
   height: 1.5em;
   width: 1.5em;
-  background: #faa;
-  margin-right: 15px;
-  margin-left: -6px;
+  margin: -6px;
   border-radius: 100%;
   text-align: center;
-  line-height: 1.5em;
-  color: #f8f8f8;
+  line-height: 1.35em;
+  font-size: 1.5em;
+  color: #faa;
   text-shadow: none;
   cursor: pointer;
-  font-size: 1em;
   opacity: 0.8;
 }
 .tag-editor .tag .remove:hover {

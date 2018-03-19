@@ -7,6 +7,8 @@
 .tag {
   text-shadow: 1px 1px rgba(255,255,255,0.3);
   margin: 2px;
+  padding: 5px;
+  border-radius: 5px;
 }
 .tag a {
   text-decoration: none;
