@@ -8,7 +8,7 @@ const keyEvents = { 66: 'b', 85: 'u', 73: 'i', 83: 's', 80: 'spoiler' };
 const specialActions = {
   tag: (sender, textarea) => {
     const tag = sender.dataset.tag;
-    insertTags(textarea, `[${tag}]`, `[/${tag}]`);
+    insertTags(textarea, `[${tag}]`, sender.dataset.close ? '' : `[/${tag}]`);
   },
   emoticons: sender => {
     sender.classList.remove('edit-action');
