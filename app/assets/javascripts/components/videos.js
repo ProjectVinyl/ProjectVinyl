@@ -241,13 +241,14 @@ Player.prototype = {
       val(this.changeSpeed(this.__speed + 1));
     });
     
-    this.contextmenu.addItem('Autoplay', this.setAutoplay(!!cookies.get('autoplay')), val => {
-      cookies.set('autoplay', val(this.setAutoplay(!this.__autoplay)));
-    });
+    if (el.dataset.autoplay == 'true') {
+      this.contextmenu.addItem('Next Automatically', this.setAutoplay(!!cookies.get('autoplay')), val => {
+        cookies.set('autoplay', val(this.setAutoplay(!this.__autoplay)));
+      });
+    }
     
-    this.__autostart = !!cookies.get('autostart');
-    this.contextmenu.addItem('Autostart', this.__autostart, val => {
-      cookies.set('autostart', val(this.__autostart = !this.__autostart));
+    this.contextmenu.addItem('Play Automatically', this.setAutostart(!!cookies.get('autostart')), val => {
+      cookies.set('autostart', val(this.setAutostart(!this.__autostart)));
     });
     
     const selected = document.querySelector('.playlist a.selected');
@@ -256,8 +257,10 @@ Player.prototype = {
     // at the bottom
     resize(el);
     
-    if (!this.embedded && (el.dataset.resume === 'true' || this.__autostart || (this.__autoplay && el.dataset.autoplay))) {
-      this.play();
+    if (!this.embedded) {
+      if (el.dataset.resume === 'true' || this.__autostart || this.__autoplay) {
+        this.play();
+      }
     }
     
     return this;
@@ -331,6 +334,10 @@ Player.prototype = {
   setAutoplay: function(on) {
     this.__autoplay = on;
     if (on) this.setLoop(false);
+    return on;
+  },
+  setAutostart: function(on) {
+    this.__autostart = on;
     return on;
   },
   setLoop: function(on) {

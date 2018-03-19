@@ -18,7 +18,7 @@
 							%a
 								%span.title= @video ? "Hidden Video" : "Video Not Found"
 		- else
-			= render layout: "video/widget/full", locals: {embed: true} do
+			= render layout: "video/widget/full", locals: {embed: "true"} do
 				- if @album
 					.listing.compact.playlist
 						.controls
