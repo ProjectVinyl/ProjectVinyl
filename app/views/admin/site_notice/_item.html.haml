@@ -2,10 +2,10 @@
 	= f.text_field :id, hidden: true
 	.row
 		%div(style="width:30px")
-			%a.button.button-bub.stat-toggle(data-state="editing" data-parent="form")= fa :pencil
+			%a.button.button-bub.state-toggle(data-state="editing" data-parent="form")= fa :pencil
 		%div= raw item.message
 		.center
-			%i.fa{title: !item.active, class: "fa-#{item.active ? "check" : "times"}"}
+			%i.fa{title: !item.active, class: item.active ? "fa-check" : "fa-times"}
 		%div
 	.editing.row.row-spanned
 		.content.properties
@@ -20,14 +20,13 @@
 					%td.field
 						%label.button.blue
 							= f.check_box :active
-								= fa :check
-								Is Active
+							= fa :check
+							Is Active
 				%tr.actions
 					%td.label
-            %a.button.red.right(data-confirm data-method="delete" href="/admin/sitenotices/#{item.id}" data-title="Remove Notice")
+						%a.button.red.right(data-confirm data-method="delete" href="/admin/sitenotices/#{item.id}" data-title="Remove Notice")
 							= fa :trash
 							Delete
-						</a>
 						%button.green.left
 							= fa :save
 							Save
