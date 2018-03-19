@@ -5,28 +5,24 @@
   white-space: nowrap;
   display: none;
   position: absolute;
-  background: #fff;
+  left: -30px;
+  top: 100%;
   z-index: 999;
+  width: 100%;
+  max-height: 300px;
+  min-width: 300px;
   list-style: none;
   padding: 0;
+  margin: 0;
+  background: #fff;
   box-shadow: 0px 1px rgba(255,255,255,0.3) inset;
   border: 1px solid #d6d6d6;
   border-bottom-color: #cacaca;
   border-top-color: #e2e2e2;
-  width: 100%;
-  box-shadow: 2px 2px 3px rgba(0,0,0,0.3);
-  max-height: 300px;
   overflow-y: auto;
   overflow-x: hidden;
-  min-width: 300px;
-}
-
-.popper .pop-out {
   text-align: left;
-  left: 0;
-  top: 100%;
-  margin: 0;
-  border-radius: 5px;
+  border-radius: 3px;
 }
 
 .popper .pop-out li {
