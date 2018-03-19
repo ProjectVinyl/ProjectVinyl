@@ -1,0 +1,21 @@
+%h1.title.resize-target Recent Activity
+%table.auto
+	%thead
+		%td Id
+		%td Contact
+		%td Name
+		%td Created
+		%td Last Active
+		%td Votes
+		%td Sign ins
+	%tbody
+		- @users.each do |user|
+			%tr
+				%td= user.id
+				%td= email_escape user.email
+				%td
+					%a(href="#{user.link}")= user.username
+				%td= since user.created_at
+				%td= since user.updated_at
+				%td= user.votes.count
+				%td= user.sign_in_count

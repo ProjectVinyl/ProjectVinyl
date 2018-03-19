@@ -1,70 +1,9 @@
 - title "Admin"
 - lim "1300px"
-%section.page.tab-bar.column-right.column-mobile-shown.right
-	%h1 Navigation
-	.actions
-		%a.button(href="/users")<
-			= fw :users
-			Users
-		%a.button(href="/admin/files?p=encoding")<
-			= fw :file_code_o
-			Encoding Folder
-		%a.button(href="/admin/files?p=public")<
-			= fw :file_video_o
-			Public Storage Folder
-		%a.button(href="/admin/files?p=private")<
-			= fw :file_video_o
-			Private Storage Folder
-	- if current_user.is_admin?
-		%hr/
-		.actions
-			%a.button.red{href: "/admin/videos/reindex", data: {confirm: "", method: "post", title: "Reindex Videos"}}
-				= fw :refresh
-				Recreate Video Index
-			%a.button.green{href: "/admin/users/reindex", data: {confirm: "", method: "post", title: "Reindex Users"}}
-				= fw :refresh
-				Recreate User Index
-			%a.button.blue{href: "/admin/videos/hidden/drop", data: {confirm: "", method: "post", title: "Drop #{@hiddenvideos.count} Videos"}}
-				= fw :trash_o
-				Delete Unlisted Videos
-	%hr/
-	.actions
-		%a.button(href="/videos?unlisted=1")<
-			= fw :eye_slash
-			Unlisted Videos
-		%a.button(href="/videos?merged=1")<
-			= fw :compress
-			Merged Videos
-		%a.button(href="/admin/tagtypes")<
-			= fw :tags
-			Tag Types
-		%a.button(href="/admin/sitenotices")<
-			= fw :info
-			Site Notices
+= render 'nav'
 .wrapper.column-left.left.tab-bar-beside
-	%section.page.full-width.resize-holder
-		%h1.title.resize-target Recent Activity
-		%table.auto
-			%thead
-				%td Id
-				%td Contact
-				%td Name
-				%td Created
-				%td Last Active
-				%td Votes
-				%td Sign ins
-			%tbody
-				- @users.each do |user|
-					%tr
-						%td= user.id
-						%td= email_escape user.email
-						%td
-							%a(href="#{user.link}")= user.username
-						%td= since user.created_at
-						%td= since user.updated_at
-						%td= user.votes.count
-						%td= user.sign_in_count
-	%section.page.full-width.resize-holder= render partial: 'processor_status'
+	%section.page.full-width.resize-holder= render 'activity'
+	%section.page.full-width.resize-holder= render 'processor_status'
 	%section.page.full-width.recent-uploads.resize-holder
 		%h1.title.resize-target
 			Unprocessed Videos (
