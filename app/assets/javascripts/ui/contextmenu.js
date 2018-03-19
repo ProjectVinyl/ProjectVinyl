@@ -8,7 +8,11 @@ export function ContextMenu(dom, container) {
 ContextMenu.prototype = {
   addItem: function(title, initial, callback) {
     this.dom.insertAdjacentHTML('beforeend', `<li><div class="label">${title}</div><div class="value"></div></li>`);
-    this.dom.lastChild.addEventListener('click', () => callback(val));
+    this.dom.lastChild.addEventListener('click', e => {
+      callback(val);
+      e.preventDefault();
+      e.stopPropagation();
+    });
     
     const item = this.dom.lastChild.querySelector('.value');
     
