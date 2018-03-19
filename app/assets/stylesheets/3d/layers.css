@@ -25,4 +25,5 @@
   padding-top: 20px;
   background: inherit;
   z-index: 1;
+  min-height: calc(100% - 240px);
 }

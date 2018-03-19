@@ -1,10 +1,14 @@
 footer, .push {
   height: 132px;
+  margin-top: 50px;
+  display: block;
 }
 
 footer {
-  position: relative;
-  margin-top: 50px;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
   color: #fff;
   background: #fff;
 }
