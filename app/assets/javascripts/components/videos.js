@@ -15,12 +15,12 @@ import { PlayerControls } from './playercontrols';
 import { setupNoise } from './noise';
 
 const speeds = [
-  {name: 'Double', value: 2},
-  {name: '1.5x', value: 1.5},
-  {name: '1.25x', value: 1.25},
-  {name: 'Normal', value: 1},
+  {name: '0.25x', value: 0.25},
   {name: '0.5x', value: 0.5},
-  {name: '0.25x', value: 0.25}
+  {name: 'Normal', value: 1},
+  {name: '1.25x', value: 1.25},
+  {name: '1.5x', value: 1.5},
+  {name: 'Double', value: 2}
 ];
 
 let fadeControl = null;
@@ -237,7 +237,7 @@ Player.prototype = {
       val(this.setLoop(!this.__loop));
     });
     
-    this.contextmenu.addItem('Speed', this.changeSpeed(3), val => {
+    this.contextmenu.addItem('Speed', this.changeSpeed(2), val => {
       val(this.changeSpeed(this.__speed + 1));
     });
     
@@ -291,7 +291,7 @@ Player.prototype = {
     });
   },
   fullscreen: function(on) {
-    this.controls.fullscreen.innerHTML = '<i class="fa fa-' + (on ? 'restore' : 'arrows-alt') + '"></i>';
+    this.controls.fullscreen.innerHTML = `<i class="fa fa-${on ? 'restore' : 'arrows-alt'}"></i>`;
     this.player.media.style.cursor = on ? 'none' : '';
     
     if (fullscreenPlayer && fullscreenPlayer !== this) fullscreenPlayer.fullscreen(false);
@@ -310,9 +310,21 @@ Player.prototype = {
     setFullscreen(on ? this : null);
     return on;
   },
+  maximise: function() {
+    const holder = this.dom.closest('.slim');
+    let state = holder.classList.contains('column-left');
+    holder.classList.toggle('column-left', !state);
+    holder.classList.toggle('full-width', state);
+    if (state) {
+      this.dom.dataset.height = this.dom.style.height;
+    } else {
+      this.dom.style.height = this.dom.dataset.height;
+    }
+    setTimeout(_ => resize(this.dom), 250);
+  },
   changeSpeed: function(speed) {
     this.__speed = speed % speeds.length;
-    speed = speeds[speed] || speeds[3];
+    speed = speeds[this.__speed];
     if (this.video) this.video.playbackRate = speed.value;
     return speed.name;
   },

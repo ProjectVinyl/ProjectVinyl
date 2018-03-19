@@ -94,6 +94,14 @@ export function PlayerControls(player, dom) {
     }
   });
   
+  dom.querySelector('.maximise').addEventListener('click', ev => {
+    if (ev.button !== 0) return;
+    if (!player.contextmenu.hide(ev)) {
+      player.maximise();
+      halt(ev);
+    }
+  })
+  
   addDelegatedEvent(dom, 'click', 'li', halt);
 }
 PlayerControls.prototype = {

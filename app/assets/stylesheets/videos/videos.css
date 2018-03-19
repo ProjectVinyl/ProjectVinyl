@@ -20,10 +20,23 @@
 }
 .video .player h1,
 .video .player::after {
-  transition: opacity 0.25s linear, transform 0.25s ease, -ms-transform 0.25s ease, -o-transform 0.25s ease, -webkit-transform 0.25s ease, -moz-transform 0.25s ease;
+  transition:
+    opacity 0.25s linear,
+    top 0.25s linear,
+    left 0.25s linear,
+    transform 0.25s ease, -ms-transform 0.25s ease,
+    -o-transform 0.25s ease,
+    -webkit-transform 0.25s ease,
+    -moz-transform 0.25s ease;
 }
 .video .player.playing::after {
-  transition: opacity 0.125s linear, transform 0.25s ease, -ms-transform 0.25s ease, -o-transform 0.25s ease, -webkit-transform 0.25s ease, -moz-transform 0.25s ease;
+  transition:
+    opacity 0.125s linear,
+    transform 0.25s ease,
+    -ms-transform 0.25s ease,
+    -o-transform 0.25s ease,
+    -webkit-transform 0.25s ease,
+    -moz-transform 0.25s ease;
 }
 .video:not(.unplayable) .player::after {
   cursor: pointer;
@@ -46,6 +59,9 @@
 }
 .video:not(.unplayable) .player[data-state=paused]::after {
   content: "\f04c";
+  top: 50px;
+  left: 50px;
+  transform: scale(0.5);
 }
 .video:not(.unplayable) .player[data-state=stopped]::after {
   content: "\f01e";
@@ -54,6 +70,8 @@
 .video:not(.unplayable) .player[data-state=playing]::after {
   cursor: default;
   transform: scale(0.5);
+  top: 50px;
+  left: 50px;
   opacity: 0;
 }
 
@@ -62,6 +80,7 @@
     transform: scale(0.65);
   }
 }
+
 
 .video .player h1 {
   white-space: nowrap;
@@ -198,6 +217,9 @@
   height: 10px;
   cursor: pointer;
   border-radius: 4px;
+}
+.slim .playback-controls .track {
+  width: calc(100% - 85px);
 }
 .playback-controls .track:hover {
   background: rgba(0,0,0,0.1);
@@ -351,6 +373,14 @@
   top: 100%;
   right: 0;
   transition: top 0.25s linear;
+}
+
+.playback-controls .maximise {
+  display: none;
+}
+
+.slim .playback-controls .maximise {
+  display: inline-block;
 }
 
 .video .contextmenu {
