@@ -22,7 +22,7 @@
 				%h1 Associated Tags
 				- if @user.tag_id
 					%ul.tags.artist-tags= render 'tag/thumb_h', thumb_h: @user.tag
-				%ul.tags= render partial: 'tag/thumb_h', collection: @tags.includes(:tag_type)
+				%ul.tags>= render partial: 'tag/thumb_h', collection: @tags.includes(:tag_type)
 		.actions
 			- if @modifications_allowed
 				.split-button.popper>
@@ -88,7 +88,7 @@
 		%a.right(href="/users/#{@user.id}/albums")
 			View All
 			= fa :chevron_right
-	%ul.album-list.horizontal#albums= render partial: 'album/thumb_h', collection: @albums.records
+	%ul.album-list.horizontal#albums= render partial: 'albums/thumb_h', collection: @albums.records
 %section.page.full-width.recent-comments.resize-holder
 	%h1.title.resize-target
 		Recent Comments (
