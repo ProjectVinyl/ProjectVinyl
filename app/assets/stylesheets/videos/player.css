@@ -1,0 +1,133 @@
+.video, #upload .cover-block {
+  display: block;
+  width: 100%;
+  padding-bottom: 53.45%;
+  position: relative;
+}
+
+.video {
+  background: #000 center/contain no-repeat;
+  -ms-touch-action: pan-x pan-y;
+  touch-action: pan-x pan-y;
+}
+
+.video .player, .video .player h1 a {
+  color: #fff;
+  text-decoration: none;
+}
+.video .player video {
+  pointer-events: none;
+}
+.video .player h1,
+.video .player::after {
+  transition:
+    opacity 0.25s linear,
+    top 0.25s linear,
+    left 0.25s linear,
+    transform 0.25s ease, -ms-transform 0.25s ease,
+    -o-transform 0.25s ease,
+    -webkit-transform 0.25s ease,
+    -moz-transform 0.25s ease;
+}
+.video .player.playing::after {
+  transition:
+    opacity 0.125s linear,
+    transform 0.25s ease,
+    -ms-transform 0.25s ease,
+    -o-transform 0.25s ease,
+    -webkit-transform 0.25s ease,
+    -moz-transform 0.25s ease;
+}
+
+.video:not(.unplayable) .player::after {
+  cursor: pointer;
+  content: "\f04b";
+  display: block;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  border-radius: 100%;
+  background: red;
+  width: 100px;
+  height: 100px;
+  margin: -50px 0 0 -50px;
+  text-align: center;
+  line-height: 100px;
+  font-size: 4em;
+  font-family: 'FontAwesome';
+  text-indent: 3px;
+  opacity: 0.6;
+}
+.video:not(.unplayable) .player[data-state=paused]::after {
+  content: "\f04c";
+  top: 50px;
+  left: 50px;
+  transform: scale(0.5);
+}
+.video:not(.unplayable) .player[data-state=stopped]::after {
+  content: "\f01e";
+}
+.video:not(:hover) .player.error::after,
+.video:not(.unplayable) .player[data-state=playing]::after {
+  cursor: default;
+  transform: scale(0.5);
+  top: 50px;
+  left: 50px;
+  opacity: 0;
+}
+
+@media(max-width: 500px) {
+  .video:not(.unplayable) .player::after {
+    transform: scale(0.65);
+  }
+}
+
+.video .player h1 {
+  white-space: nowrap;
+  opacity: 0.7;
+  border: none;
+  box-shadow: 0 50px 40px -40px #000 inset;
+}
+
+.video .player:hover h1, .video .player:hover::after {
+  opacity: 0.99;
+}
+
+.video .player span.pause {
+  display: inline-block;
+  padding: 5px;
+  width: 100%;
+  overflow-x: hidden;
+}
+
+.video .player[data-state=playing] span.pause {
+  opacity: 0;
+}
+.video .player span.playing {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+.video .player[data-state=playing] span.playing, .video.audio-only .player span.pause {
+  opacity: 1;
+}
+
+.video .player[data-state=stopped] span.playing {
+  display: none;
+}
+
+.video .player span.playing video {
+  background: #000;
+}
+
+.video span.playing video {
+  width: 100%;
+  height: 100%;
+}
+
+.video:-webkit-full-screen {
+  width: 100%;
+  height: 100%;
+}

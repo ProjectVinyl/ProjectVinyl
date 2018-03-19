@@ -1,0 +1,34 @@
+.video .player .error {
+  display: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #000;
+  text-align: center;
+  vertical-align: middle;
+}
+.video .player .error .error-message {
+  font-size: 30px;
+  margin: 0 auto;
+  color: #fff;
+  opacity: 0.8;
+}
+.video .player[data-state=error] .error {
+  display: inline;
+}
+.video .player .error .error-message {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  display: block;
+  transform: translate(-50%, -50%);
+  font-weight: bold;
+}
+.video .player .error canvas {
+  width: 100%;
+  height: 100%;
+  background: #777;
+}
+

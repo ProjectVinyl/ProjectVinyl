@@ -17,7 +17,7 @@
  *= require ./buttons/all
  *= require ./ui-elements/all
  *= require ./forms/all
- *= require ./videos/videos
+ *= require ./videos/all
  *= require ./tags/tags
  *= require ./tags/editor
  *= require_self
