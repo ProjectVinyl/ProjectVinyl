@@ -16,7 +16,7 @@ module WithFiles
   end
   
   def file_link(path, name)
-    raw "<a class=\"button\" href=\"/admin/files?p=#{path}&start=#{name}%offset=-5##{self.id}\">View</a>"
+    "/admin/files?p=#{path}&start=#{name}%offset=-5##{self.id}"
   end
   
   def img(path, uploaded_io)

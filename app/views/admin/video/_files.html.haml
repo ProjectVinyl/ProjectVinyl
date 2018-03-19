@@ -12,17 +12,21 @@
 		%tr
 			%td.label Source
 			%td.field= bool File.exist?(@video.video_path)
-			%td= @video.file_path("#{@video.storage_root}/stream", "#{@video.id}#{@video.file}")
+			%td
+				%a.button{href: @video.file_link("#{@video.storage_root}/stream", "#{@video.id}#{@video.file}")} View
 		- if !@video.audio_only
 			%tr
 				%td.label Webm
 				%td.field= bool File.exist?(@video.webm_path)
-				%td= @video.file_link("#{@video.storage_root}/stream", "#{@video.id}.webm")
+				%td
+					%a.button{href: @video.file_link("#{@video.storage_root}/stream", "#{@video.id}.webm")} View
 		%tr
 			%td.label Cover
 			%td.field= bool File.exist?("#{@video.cover_path}.png")
-			%td= @video.file_link('public/cover', "#{@video.id}.png")
+			%td
+				%a.button{href: @video.file_link('public/cover', "#{@video.id}.png")} View
 		%tr
 			%td.label Thumbnail
 			%td.field= bool File.exist?("#{@video.cover_path}-small.png")
-			%td= @video.file_link('public/cover', "#{@video.id}-small.png")
+			%td
+				%a.button{href: @video.file_link('public/cover', "#{@video.id}-small.png")} View

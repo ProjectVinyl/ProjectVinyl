@@ -30,7 +30,6 @@
 			%td.label
 				Processed
 				= "(#{@video.processed ? "Yes" : @video.processed.nil? ? "No" : "In Progress"})"
-			</td>
 			%td.field
 				= form_for(@video, as: "video", url: "/admin/videos/#{@video.id}/reprocess", html: { method: :put }) do |f|
 					= f.submit "Restart"
@@ -52,6 +51,7 @@
 				%a.button.red(data-confirm data-method="delete" href="/admin/videos/#{@video.id}" data-title="Delete Video")
 					= fa :trash
 					Delete Video
-				%div Removes this video and all related data from the system.
+				%div
+					Removes this video and all related data from the system.
 					%br/
 					%b (Action cannot be reversed)
