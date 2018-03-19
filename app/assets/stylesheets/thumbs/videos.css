@@ -30,23 +30,13 @@
 }
 .queue .thumb .tile {
   max-width: 55%;
-  padding: 0 0 15% 0;
+  margin: 5px;
 }
 
-li.generic.mix .tile::before {
-  content: '';
-  background: #000;
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  opacity: 0.3;
-  transition: opacity 0.5s ease;
+li.generic.mix {
+  background: rgba(0,0,200,0.01);
 }
-li.generic.mix:hover .tile::before {
-  opacity: 0;
-}
+
 li.generic.mix .tile::after {
   content: '\f09e';
   font-family: 'FontAwesome';
@@ -126,8 +116,6 @@ li.generic.mix .tile::after {
     min-width: 50%;
     min-height: 110px;
     float: left;
-    margin-right: 50%;
-    margin-bottom: 20px;
   }
   .queue .thumb .tile .details {
     width: 100%;
