@@ -97,14 +97,17 @@
 .comment .content.editing textarea {
   display: block;
 }
-.comment .reply-comment {
+
+.comment .comment-actions {
   float: right;
+}
+
+.comment .reply-comment {
   cursor: pointer;
   margin-left: 5px;
 }
 
 .comment .content .like {
-  float: right;
   border: none;
   background: none;
   padding: 0;
@@ -112,11 +115,17 @@
   margin-right: 10px;
   color: #337287;
 }
-.comment .content .like.liked {
+.comment .content .like.liked,
+.comment .content .like.liked:hover,
+.comment .content .like.liked:active {
   color: #3372ff;
-}
-.comment .content .like:active {
+  border: none;
+  background: none;
+  text-shadow: none;
   box-shadow: none;
+}
+.comment .content .like.liked:active {
+  color: #2362ef;
 }
 
 .comment .content .posting-spinner {
