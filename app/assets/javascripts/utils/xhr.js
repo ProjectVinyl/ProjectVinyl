@@ -9,14 +9,14 @@ export function xhr(method, url, data, callbacks) {
     if (xhr.readyState === XMLHttpRequest.DONE) {
       try {
         if (xhr.status >= 200 && xhr.status < 300) {
-          callbacks.success(tryUnmarshal(xhr.responseXML || xhr.responseText));
+          if (callbacks.success) callbacks.success(tryUnmarshal(xhr.responseXML || xhr.responseText));
         } else if (xhr.responseText) {
-          callbacks.error(xhr.responseText);
+          if (callbacks.error) callbacks.error(xhr.responseText);
         }
       } catch (e) {
         console.error(e);
       }
-      callbacks.complete();
+      if (callbacks.complete) callbacks.complete();
     }
   };
   
@@ -34,4 +34,8 @@ export function xhr(method, url, data, callbacks) {
   xhr.open(method, url, true);
   xhr.setRequestHeader('X-CSRF-Token', csrfToken());
   xhr.send(data);
+}
+
+export function sendForm(form, callbacks) {
+  xhr(form.getAttribute('method'), `${form.action}.json`, new FormData(form), callbacks);
 }

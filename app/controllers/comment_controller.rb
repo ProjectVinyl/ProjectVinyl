@@ -15,7 +15,7 @@ class CommentController < ApplicationController
   end
   
   def create
-    if !(@thread = CommentThread.where(id: params[:thread]).first) || @thread.locked
+    if !(@thread = CommentThread.where(id: params[:thread_id]).first) || @thread.locked
       return head :not_found
     end
     
@@ -99,10 +99,10 @@ class CommentController < ApplicationController
   private
   def check_then
     if !user_signed_in?
-      return head 401
+      return head :unauthorized
     end
     
-    if !(comment = Comment.where(id: params[:id]).first)
+    if !(comment = Comment.where(id: params[:id] || params[:comment_id]).first)
       return head :not_found
     end
     

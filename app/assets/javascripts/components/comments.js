@@ -5,36 +5,23 @@ import { scrollTo } from '../ui/scroll';
 import { ready } from '../jslim/events';
 import { all, decodeEntities } from '../jslim/dom';
 import { insertTags } from '../ui/editable';
+import { sendForm } from '../utils/xhr';
 
 function postComment(sender) {
-  const input = sender.parentNode.querySelector('textarea, input.comment-content');
-  const comment = input.value.trim();
+  const content = sender.closest('.content');
   
-  if (!comment) return popupError('You have to type something to post!');
+  const input = content.querySelector('textarea, input.comment-content');
+  if (!input.value.trim()) return popupError('You have to type something to post!');
   
-  let data = {
-    thread: sender.dataset.threadId,
-    order: sender.dataset.order,
-    comment: comment
-  };
-  
-  const captcha = input.parentNode.querySelector('#g-recaptcha-response');
-  if (captcha) data['g-recaptcha-response'] = captcha.value;
-  
-  sender = sender.parentNode;
-  
-  if (sender.classList.contains('report-state')) {
-    data.report_state = reportState(sender);
-  }
-  
-  sender.classList.add('posting');
-  
-  ajax.post('comments', data).json(json => {
-    sender.classList.remove('posting');
-    if (json.error) return popupError(json.error);
-    input.value = '';
-    repaintPagination(document.getElementById(`thread-${data.thread}`).closest('.paginator'), json);
-    scrollTo(document.getElementById(`comment_${json.focus}`));
+  content.classList.add('posting');
+  sendForm(input.form, {
+    success: json => {
+      content.classList.remove('posting');
+      if (json.error) return popupError(json.error);
+      input.value = '';
+      repaintPagination(document.getElementById(`thread-${sender.dataset.threadId}`).closest('.paginator'), json);
+      scrollTo(document.getElementById(`comment_${json.focus}`));
+    }
   });
 }
 
@@ -137,7 +124,7 @@ function getSubCommentList(sender) {
 }
 
 function replyTo(sender) {
-  sender = sender.parentNode;
+  sender = sender.closest('.content');
   const textarea = sender.closest('.page, body').querySelector('.post-box textarea');
   insertTags(textarea, `>>${sender.dataset.oId} [q]\n${decodeEntities(sender.dataset.comment)}\n[/q]\n`, '');
   let height = parseFloat(textarea.style.height) || 0;

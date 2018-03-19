@@ -1,7 +1,9 @@
 - if @thread.locked
 	Thread locked
 - else
-	.comment.post-box
+	= form_for(Comment.new, url: '/comments', html: {method: :post, class: "comment post-box"}) do |f|
+		%input{type: "hidden", name: "[thread_id]", value: @thread.id}
+		%input{type: "hidden", name: "order", value: @order}
 		.artist-bio.bio
 			%a{class: !visitor.is_dummy && "user-link", "data-id": visitor.id, href: visitor.link}
 				%span.avatar.medium
@@ -13,18 +15,18 @@
 					= render 'badge/badges', user: current_user
 			= render "comment/edit_toolbar"
 			.comment-content.preview
-			%textarea.comment-content(required="true")
+			%textarea.comment-content(required="true" name="comment")
 			%hr/
 			.actions
 				- if visitor.is_dummy
 					= recaptcha_tags
 					%hr/
-				%button.green.post-submitter(data-thread-id="#{@thread.id}" data-order="#{@order}")>
+				%button.green.post-submitter(data-thread-id="#{@thread.id}")>
 					%span Post Comment
 					%i.posting-spinner.fa.fw.fa-spinner.fa-spin
 				- if @thread.owner_type == "Report"
-					= render 'thread/report_options'
-				%button.blue.state-toggle.button-fw(data-state="editing" data-parent=".previewable")>
+					= render 'thread/report_options', f: f
+				%button.blue.state-toggle.button-fw(type="button" data-state="editing" data-parent=".previewable")>
 					%span.on Preview
 					%span.off Edit
 				= flash[:recaptcha_error]

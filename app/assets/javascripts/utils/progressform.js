@@ -1,5 +1,5 @@
 import { addDelegatedEvent } from '../jslim/events';
-import { xhr } from './xhr';
+import { sendForm } from './xhr';
 
 export function uploadForm(form, callbacks, e) {
   if (e) e.preventDefault();
@@ -7,7 +7,7 @@ export function uploadForm(form, callbacks, e) {
         fill = form.querySelector('.progressor .fill');
   
   form.classList.add('uploading');
-  xhr(form.getAttribute('method'), `${form.action}.json`, new FormData(form), {
+  sendForm(form, {
     progress: function(percentage, secondsRemaining) {
       if (!message.classList.contains('plain')) message.classList.add('bobber');
       form.classList.toggle('waiting', percentage >= 100);
