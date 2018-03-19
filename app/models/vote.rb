@@ -5,7 +5,7 @@ class Vote < ApplicationRecord
   scope :up, -> { where(negative: false) }
   scope :down, -> { where(negative: true) }
   
-  def self.posi(one, value)
+  def self.posi(one)
     one > 0 ? one : 0
   end
   
