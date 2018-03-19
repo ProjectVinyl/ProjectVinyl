@@ -1,19 +1,26 @@
 import { ready } from '../jslim/events';
 import { all } from '../jslim/dom';
 
+// +1 to prevent jittering
+const EXTRA_SPACE = 1;
 const MARGIN = 60,
-      COLUMN_WIDTH = 182,
-      COLUMN_SPACING = 45,
-      SIDEBAR_WIDTH = 255,
+      COLUMN_WIDTH_SMAL = 100 + EXTRA_SPACE,
+      COLUMN_WIDTH_MED = 190 + EXTRA_SPACE,
+      COLUMN_WIDTH_LARGE = 215 + EXTRA_SPACE,
+      SIDEBAR_WIDTH = 275,
       SIDEBAR_SPACING = 15;
 
 function calculateNewWidth(grid, beside) {
+  const docW = document.clientWidth;
+  
   const maxWidth = grid.parentNode.clientWidth - SIDEBAR_WIDTH;
+  const col = docW > 900 ? COLUMN_WIDTH_LARGE : docW > 700 ? COLUMN_WIDTH_MED : COLUMN_WIDTH_SMAL;
+  
   let calculatedWidth = maxWidth + 1;
   let n = 10;
   
   do {
-    calculatedWidth = (MARGIN * 2) + (COLUMN_WIDTH * n) + (COLUMN_SPACING * --n);
+    calculatedWidth = (MARGIN * 2) + (col * n--);
   } while (calculatedWidth > maxWidth);
   
   let besideWidth = beside.parentNode.clientWidth - (calculatedWidth + SIDEBAR_SPACING);
