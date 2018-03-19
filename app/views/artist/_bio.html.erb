@@ -1,9 +1,0 @@
-<section class="artist-bio bio">
-	<a<% if !user.is_dummy %> href="<%= user.link %>"<% end %>>
-		<span class="avatar">
-			<span style="background-image:url('<%= user.avatar %>');"></span>
-		</span>
-		<h1 class="name resize-target<% if user.banned? %> banned<% end %>"><%= user.username %></h1>
-	</a>
-	<div class="bio short"><%= raw user.html_bio %></div>
-</section>
