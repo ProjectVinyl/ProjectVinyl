@@ -9,7 +9,7 @@
 		%li.button(data-target="local") Local
 	.tab.selected(data-tab="profile")
 		%h1 Profile Information
-		= render 'user/edit', user: current_user, url: "/users/#{current_user.id}", method: :patch
+		= render 'users/edit', user: current_user, url: "/users/#{current_user.id}", method: :patch
 	.tab(data-tab="account")= render 'account'
 	.tab(data-tab="filter")= render 'feed/filter_settings'
 	.tab(data-tab="commenting")= render 'notifications'

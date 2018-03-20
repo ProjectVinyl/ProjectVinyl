@@ -4,7 +4,7 @@
 		%h1
 			Recent Users
 		- if @users.length > 0
-			%ul.horizontal.artist-list#artists= render partial: 'user/thumb_h', collection: @users.records
+			%ul.horizontal.artist-list#artists= render partial: 'users/thumb_h', collection: @users.records
 			- if @users.pages > 0
 				.load-more
 					%button(data-page="0" data-url="tags/users" data-id="#{@tag.id}" data-target="artists") Load More

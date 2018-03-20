@@ -1,6 +1,6 @@
 %div(style="margin-bottom: 10px")
 	- reasoned = !checked && badge_toggle.badge_type > 0
-	%button.action.toggle.blue{data: {target="admin/users",
+	%button.action.toggle.blue{data: {target: "admin/users",
 			id: @user.id,
 			action: "badges/#{badge_toggle.id}",
 			with: reasoned && "#reason_#{badge_toggle.id}"}}

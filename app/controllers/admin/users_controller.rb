@@ -1,5 +1,5 @@
 module Admin
-  class UserController < ApplicationController
+  class UsersController < ApplicationController
     before_action :authenticate_user!
     
     def show
@@ -43,18 +43,18 @@ module Admin
     
     def toggle_badge
       if !current_user.is_contributor?
-        return head 401
+        return head :unauthorized
       end
       
-      if !(user = User.where(id: params[:user_id]).first)
-        return head :not_found
-      end
-      
-      if existing = user.user_badges.where(badge_id: params[:id]).first
+      if existing = UserBadge.where(user_id: params[:user_id], badge_id: params[:id]).first
         existing.destroy
         return render json: {
           added: false
         }
+      end
+      
+      if !(user = User.where(id: params[:user_id]).first)
+        return head :not_found
       end
       
       if !(badge = Badge.where(id: params[:id]).first)

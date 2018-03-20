@@ -1,4 +1,4 @@
-class UserController < ApplicationController
+class UsersController < ApplicationController
   def show
     check_details_then do |user, edits_allowed|
       @tags = @user.tags.includes(:tag_type)

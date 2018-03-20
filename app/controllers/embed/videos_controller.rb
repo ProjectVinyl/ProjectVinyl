@@ -1,5 +1,5 @@
 module Embed
-  class VideoController < Embed::EmbedController
+  class VideosController < Embed::EmbedController
     def view
       if params[:list]
         if @album = Album.where(id: params[:list]).first

@@ -9,7 +9,7 @@ class TagsController < ApplicationController
     end
     
     if @tag.alias_id
-      flash[:notice] = "The tag '" + @tag.name + "' has been aliased to '" + @tag.alias.name + "'"
+      flash[:notice] = "The tag '#{@tag.name}' has been aliased to '#{@tag.alias.name}'"
       if !user_signed_in? || !current_user.is_staff?
         return redirect_to action: :view, name: @tag.alias.short_name
       end
@@ -50,7 +50,7 @@ class TagsController < ApplicationController
       return head 404
     end
     @records = @tag.users.order(:updated_at_at)
-    render_pagination 'user/thumb_h', @records, params[:page].to_i, 8, true
+    render_pagination 'users/thumb_h', @records, params[:page].to_i, 8, true
   end
   
   def hide

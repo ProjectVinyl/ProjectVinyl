@@ -25,7 +25,7 @@ Rails.application.routes.draw do
   namespace :ajax do
     get 'login' => 'sessions#login'
     get 'donate' => 'staff#donate'
-    get 'videos/:id' => 'video#go_next'
+    get 'videos/:id' => 'videos#go_next'
   end
   
   # Asset Fallbacks #
@@ -47,15 +47,15 @@ Rails.application.routes.draw do
   get 'badges' => 'badge#index'
   
   # Videos #
-  get 'upload' => 'video#new'
-  get 'download/:id' => 'video#download'
+  get 'upload' => 'videos#new'
+  get 'download/:id' => 'videos#download'
   
   resources :videos, except: [:create, :new, :destroy], id: /([0-9]+).*/ do # /
     put 'like'
     put 'dislike'
     put 'star'
-    patch 'cover' => 'video#cover'
-    patch 'details' => 'video#details'
+    patch 'cover' => 'videos#cover'
+    patch 'details' => 'videos#details'
     
     get 'changes' => 'history#index'
     
@@ -63,7 +63,7 @@ Rails.application.routes.draw do
   end
   
   # Users #
-  resources :users, only: [:index, :update], controller: :user do
+  resources :users, only: [:index, :update] do
     get 'uploads'
     get 'videos'
     get 'albums'
@@ -72,10 +72,10 @@ Rails.application.routes.draw do
     get 'hovercard'
     get 'banner'
     put 'prefs'
-    patch 'avatar' => 'user#set_avatar'
-    patch 'banner' => 'user#set_banner'
+    patch 'avatar' => 'users#set_avatar'
+    patch 'banner' => 'users#set_banner'
   end
-  get 'profile/:id' => 'user#show', constraints: { id: /([0-9]+).*/ } # /
+  get 'profile/:id' => 'users#show', constraints: { id: /([0-9]+).*/ } # /
   
   # Albums #
   resources :albums, id: /([0-9]+).*/ do # /
@@ -148,9 +148,9 @@ Rails.application.routes.draw do
   
   # Lookup Actions #
   namespace :find do
-    get 'users' => 'user#find'
+    get 'users' => 'users#find'
     get 'comments' => 'comment#find'
-    get 'tags' => 'tag#find'
+    get 'tags' => 'tags#find'
   end
   
   # Admin Actions #
@@ -184,9 +184,9 @@ Rails.application.routes.draw do
     resources :tags, only: [:show, :update]
     resources :tagtypes, except: [:show, :edit], controller: :tag_type
     resources :sitenotices, except: [:show, :edit], controller: :site_notice
-    resources :users, only: [:show], controller: :user do
-      put 'badges/:id' => 'user#toggle_badge'
-      put 'roles/:id' => 'user#role'
+    resources :users, only: [:show] do
+      put 'badges/:id' => 'users#toggle_badge'
+      put 'roles/:id' => 'users#role'
     end
     
     # Reporting #
@@ -206,9 +206,9 @@ Rails.application.routes.draw do
   # Embeds #
   namespace :embed do
     get 'twitter' => 'twitter#view'
-    get ':id' => 'video#view'
+    get ':id' => 'videos#view'
   end
-  get 'oembed' => 'embed/video#oembed'
+  get 'oembed' => 'embed/videos#oembed'
   
   constraints CanAccessJobs do
     mount Resque::Server.new, at: '/admin/resque'
