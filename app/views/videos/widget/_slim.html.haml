@@ -1,2 +1,2 @@
-render partial: 'videos/widget/content' do
+= render 'videos/widget/content', embed: false do
 	%input.playlist#time(type="text" name="video[time]" value="-1") -1

@@ -24,7 +24,7 @@
 				.preview-selective-selected#upload
 					.ui.hidden
 						.tab.selected.video#video(data-tab="thumbpick_{id}" data-pending="1" data-video="0")
-							= render layout: "video/widget/slim"
+							= render 'videos/widget/slim'
 						.cover-block.tab.drag-target.file-select.image-selector#cover-upload(data-tab="thumbupload_{id}")
 							%span.preview
 							%span.drop-icon
@@ -37,7 +37,7 @@
 							%div Select an Audio/Video file to upload
 						= f.file_field :file, accept: "audio/*,video/*"
 				.ui.hidden.post.description.resize-holder
-					%h1.title editable.short.post-title.resize-target#video_title
+					%h1.title.editable.short.post-title.resize-target#video_title
 						%span.content Title
 						= f.text_field :title, class: "input"
 						%span.edit= fa :pencil
@@ -59,4 +59,4 @@
 						%span.notify.bob-holder
 							.bobber.bob-left Cover art is required to upload audio files.
 							= f.submit "Upload", class: "action right green"
-					= render partial: 'video/foobar'
+					= render 'foobar'

@@ -39,7 +39,7 @@ class VideosController < ApplicationController
       title: @video.title,
       description: @video.description,
       url: url_for(action: :show, controller: :videos, id: @video.id, only_path: false) + "-" + (@video.safe_title || "untitled-video"),
-      embed_url: url_for(action: :view, controller: "embed/video", only_path: false, id: @video.id),
+      embed_url: url_for(action: :view, controller: "embed/videos", only_path: false, id: @video.id),
       cover: "#{url_for(action: :cover, controller: :imgs, only_path: false, id: @video.id)}.png",
       tags: @tags,
       oembed: @album ? {
