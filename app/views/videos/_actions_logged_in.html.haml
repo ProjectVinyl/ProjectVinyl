@@ -13,7 +13,7 @@
 		= fa :star
 	%a.button.action.addto.split-action.pop-out-toggle Add To
 	%ul.pop-out
-		%li.action(data-external-form="album/create?initial=#{@video.id}" data-title="New Album")
+		%li.action(data-external-form="albums/new?initial=#{@video.id}" data-title="New Album")
 			%span.icon= fa :pencil
 			%span.label New Album
 		- current_user.albums.each do |album|
