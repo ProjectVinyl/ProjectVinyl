@@ -34,7 +34,7 @@ class UsersController < ApplicationController
         return redirect_to action: "view", id: user.id
       end
       
-      redirect_to action: "edit", controller: "devise/registrations"
+      redirect_to action: :edit, controller: "users/registrations"
     end
   end
   
@@ -42,7 +42,7 @@ class UsersController < ApplicationController
     if user_signed_in?
       current_user.prefs_cache.save(params[:settings])
     end
-    redirect_to action: "edit", controller: "devise/registrations"
+    redirect_to action: :edit, controller: "users/registrations"
   end
   
   def set_banner
@@ -58,7 +58,7 @@ class UsersController < ApplicationController
         }
       end
       
-      redirect_to action: "view", id: user.id
+      redirect_to action: :view, id: user.id
     end
   end
   
@@ -73,7 +73,7 @@ class UsersController < ApplicationController
         }
       end
       
-      redirect_to action: "edit", controller: "devise/registrations"
+      redirect_to action: :edit, controller: "users/registrations"
     end
   end
   
@@ -82,9 +82,7 @@ class UsersController < ApplicationController
       return head :not_found
     end
     
-    render partial: 'user/thumb_h', locals: {
-      thumb_h: user
-    }
+    render 'users/thumb_h', thumb_h: user
   end
 
   def banner
