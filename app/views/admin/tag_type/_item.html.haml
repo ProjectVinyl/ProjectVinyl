@@ -10,7 +10,7 @@
 		.center
 			%i.fa{title: item.hidden, class: "fa-#{item.hidden ? "check" : "times"}"}
 		%div
-			%ul.tags= render partial: "tag/thumb_h", collection: item.tags
+			%ul.tags= render partial: "tags/thumb_h", collection: item.tags
 	.editing.row.row-spanned
 		.content.properties
 			%table
@@ -27,7 +27,7 @@
 				%tr
 					%td.label Implications
 					%td.field
-						= render layout: 'tag/editor', locals: { tags: item.tags } do
+						= render layout: 'tags/editor', locals: { tags: item.tags } do
 							= f.text_area :tag_string
 				%tr.actions
 					%td.label

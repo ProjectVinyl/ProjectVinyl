@@ -21,8 +21,8 @@
 			.details
 				%h1 Associated Tags
 				- if @user.tag_id
-					%ul.tags.artist-tags= render 'tag/thumb_h', thumb_h: @user.tag
-				%ul.tags>= render partial: 'tag/thumb_h', collection: @tags.includes(:tag_type)
+					%ul.tags.artist-tags= render 'tags/thumb_h', thumb_h: @user.tag
+				%ul.tags>= render partial: 'tags/thumb_h', collection: @tags.includes(:tag_type)
 		.actions
 			- if @modifications_allowed
 				.split-button.popper>

@@ -37,10 +37,10 @@
 			Source: 
 			%a{href: @video.source}= @video.source
 		%hr/
-		.normal.tags= render partial: 'tag/thumb_h', collection: @tags
+		.normal.tags= render partial: 'tags/thumb_h', collection: @tags
 		- if user_signed_in?
 			= form_for(@video, as: "video", url: "/videos/#{@video.id}/details", html: {class: "editing async form-state-toggle js-edit-video", method: :patch}, data: {state: "editing"}) do |f|
-				= render layout: 'tag/editor', locals: {tags: @video.tags} do
+				= render layout: 'tags/editor', locals: {tags: @video.tags} do
 					%textarea(autocomplete="off" name="tags")= raw @video.tag_string
 				.properties
 					%table

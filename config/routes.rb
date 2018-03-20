@@ -87,7 +87,7 @@ Rails.application.routes.draw do
   resources :albumitems, only: [:create, :update, :destroy], controller: :album_item
   
   # Tags #
-  resources :tags, only: [:index], controller: :tag, id: /([0-9]+).*/ do # /
+  resources :tags, only: [:index], id: /([0-9]+).*/ do # /
     get 'videos'
     get 'users'
     
@@ -95,7 +95,7 @@ Rails.application.routes.draw do
     put 'spoiler'
     put 'watch'
   end
-  scope 'tags', controller: :tag do
+  scope 'tags', controller: :tags do
     get ':name', action: :show, constraints: { name: /.*/ } # /
   end
   
@@ -181,7 +181,7 @@ Rails.application.routes.draw do
       put 'metadata'
     end
     
-    resources :tags, only: [:show, :update], controller: :tag
+    resources :tags, only: [:show, :update]
     resources :tagtypes, except: [:show, :edit], controller: :tag_type
     resources :sitenotices, except: [:show, :edit], controller: :site_notice
     resources :users, only: [:show], controller: :user do

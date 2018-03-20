@@ -45,7 +45,7 @@
 					= render layout: "comment/description_box" do
 						= f.text_area :description, autofocus: true, class: "comment-content"
 					.post-tags
-						= render layout: "tag/editor", locals: {tags: nil} do
+						= render layout: "tags/editor", locals: {tags: nil} do
 							= f.text_area :tag_string
 					.properties
 						%table

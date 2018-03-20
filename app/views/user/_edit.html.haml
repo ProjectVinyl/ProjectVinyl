@@ -47,7 +47,7 @@
 		%tr
 			%td.label= f.label :associated_tags
 			%td.field
-				= render layout: 'tag/editor', locals: { tags: user.tags } do
+				= render layout: 'tags/editor', locals: { tags: user.tags } do
 					= f.text_area :tag_string, autocomplete: "off"
 		%tr.actions
 			%td.label

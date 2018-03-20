@@ -1,4 +1,4 @@
-class TagController < ApplicationController
+class TagsController < ApplicationController
   def show
     name = params[:name].downcase
     if !(@tag = Tag.where("short_name = ? OR name = ? OR id = ?", name, name, name).first)

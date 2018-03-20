@@ -14,7 +14,7 @@
 			%tr
 				%td.label Implications
 				%td.field
-					= render layout: 'tag/editor', locals: { tags: nil } do
+					= render layout: 'tags/editor', locals: { tags: nil } do
 						= f.text_area :tag_string
 	.foot
 		= f.submit "Save", class: "green"

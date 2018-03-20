@@ -1,5 +1,5 @@
 module Admin
-  class TagController < ApplicationController
+  class TagsController < ApplicationController
     before_action :authenticate_user!
     
     def show
