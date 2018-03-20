@@ -27,7 +27,7 @@ module Paginateable
   end
   
   def render_listing_total(records, page, page_size, reverse, locals)
-    locals[:partial] = partial_for_type(locals[:label], locals[:is_admin])
+    locals[:partial] = partial_for_type(locals[:table], locals[:is_admin])
     
     @crumb = {
       stack: [],

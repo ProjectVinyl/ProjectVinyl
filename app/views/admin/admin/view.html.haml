@@ -12,7 +12,7 @@
 		- if @unprocessed.count > 0
 			= render layout: 'pagination/paginated', locals: {type: "admin/videos/unprocessed", paginated: @unprocessed, id: "unprocessed"} do
 				%ul.horizontal.video-list#videos
-					= render partial: 'admin/video/thumb_h', collection: @unprocessed.records
+					= render partial: 'admin/videos/thumb_h', collection: @unprocessed.records
 		%h1.title.resize-target
 			Open Reports (
 			= number_with_delimiter @reports.count
@@ -29,4 +29,4 @@
 		- if @hiddenvideos.count > 0
 			= render layout: 'pagination/paginated', locals: {type: "admin/videos/hidden", paginated: @hiddenvideos, id: "hidden"} do
 				%ul.horizontal.video-list#videos
-					= render partial: 'admin/video/thumb_h', collection: @hiddenvideos.records
+					= render partial: 'admin/videos/thumb_h', collection: @hiddenvideos.records

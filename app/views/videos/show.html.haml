@@ -3,7 +3,7 @@
 .page.resize-holder.column-right.right.center{class: @album && "column-mobile-fragmented"}
 	- if @album
 		= render partial: 'album/inline'
-	= render partial: 'video/queue'
-= render partial: 'video/description'
+	= render partial: 'queue'
+= render partial: 'description'
 %section.page.column-left
 	= render partial: 'thread/view', locals: {identifier: @video.id, title: "#{@video.get_title} by #{@user.username}" }

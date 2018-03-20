@@ -50,7 +50,7 @@ Rails.application.routes.draw do
   get 'upload' => 'video#new'
   get 'download/:id' => 'video#download'
   
-  resources :videos, except: [:create, :new, :destroy], controller: :video, id: /([0-9]+).*/ do # /
+  resources :videos, except: [:create, :new, :destroy], id: /([0-9]+).*/ do # /
     put 'like'
     put 'dislike'
     put 'star'
@@ -164,7 +164,7 @@ Rails.application.routes.draw do
       put 'feature'
     end
     
-    resource :videos, only: [], controller: :video do
+    resource :videos, only: [] do
       get 'hidden'
       get 'unprocessed'
       
@@ -172,7 +172,7 @@ Rails.application.routes.draw do
       post 'requeue'
     end
     
-    resources :videos, only: [:show, :destroy], controller: :video do
+    resources :videos, only: [:show, :destroy] do
       put 'hide'
       put 'feature'
       put 'reprocess'
@@ -221,7 +221,7 @@ Rails.application.routes.draw do
   end
   
   # Short link #
-  get '/:id' => 'video#show', constraints: { id: /([0-9]+).*/ } # /
+  get '/:id' => 'videos#show', constraints: { id: /([0-9]+).*/ } # /
   
   # Home #
   get '/' => 'welcome#index'

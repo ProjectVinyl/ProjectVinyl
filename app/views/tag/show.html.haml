@@ -14,7 +14,7 @@
 	%h1
 		Recent Songs
 	- if @videos.length > 0
-		%ul.horizontal.video-list#songs= render partial: 'video/thumb_h', collection: @videos.records
+		%ul.horizontal.video-list#songs= render partial: 'videos/thumb_h', collection: @videos.records
 		- if @videos.pages > 0
 			.load-more
 				%button(data-page="0" data-url="tags/videos" data-id="#{@tag.id}" data-target="songs") Load More

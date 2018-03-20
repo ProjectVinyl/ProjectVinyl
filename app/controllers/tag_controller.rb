@@ -11,7 +11,7 @@ class TagController < ApplicationController
     if @tag.alias_id
       flash[:notice] = "The tag '" + @tag.name + "' has been aliased to '" + @tag.alias.name + "'"
       if !user_signed_in? || !current_user.is_staff?
-        return redirect_to action: "view", name: @tag.alias.short_name
+        return redirect_to action: :view, name: @tag.alias.short_name
       end
     end
     
@@ -42,7 +42,7 @@ class TagController < ApplicationController
       return head 404
     end
     @records = @tag.videos.where(hidden: false).includes(:tags).order(:created_at)
-    render_pagination 'video/thumb_h', @records, params[:page].to_i, 8, true
+    render_pagination 'videos/thumb_h', @records, params[:page].to_i, 8, true
   end
   
   def users

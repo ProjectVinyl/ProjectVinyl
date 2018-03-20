@@ -1,5 +1,5 @@
 - if indirect && comment.comment_thread.owner_type == 'Video'
-	.artist-bio.bio= render 'video/thumb_i', thumb_i: Video.where(id: comment.comment_thread.owner_id).with_likes(current_user).first, comment: comment.get_open_id
+	.artist-bio.bio= render 'videos/thumb_i', thumb_i: Video.where(id: comment.comment_thread.owner_id).with_likes(current_user).first, comment: comment.get_open_id
 - else
 	- if indirect
 		%div

@@ -10,7 +10,7 @@ class FeedController < ApplicationController
     @records = TagSubscription.get_feed_items(current_user)
     
     render_listing_partial @records, params[:page].to_i, 30, false, {
-      partial: 'video/thumb_h', table: 'feed', label: 'Feed'
+      partial: 'videos/thumb_h', table: 'feed', label: 'Feed'
     }
   end
   
@@ -70,6 +70,6 @@ class FeedController < ApplicationController
   
   def page
     @results = TagSubscription.get_feed_items(current_user)
-    render_pagination 'video/thumb_h', @results, params[:page].to_i, 30, false
+    render_pagination 'videos/thumb_h', @results, params[:page].to_i, 30, false
   end
 end

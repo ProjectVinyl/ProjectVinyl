@@ -1,14 +1,14 @@
 .regular-region
 	%h1.title.resize-target= featured_album.title
 	%ul.horizontal.video-list#videos
-		= render partial: 'video/thumb_h', collection: featured_album.sample_videos)
-			%li.generic.thumb
-				%a.thumb{href:"/album/#{featured_album.id}-#{featured_album.safe_title}"}
-					%span.tile.link
-						View All
-						%br/
-						= number_with_delimiter featured_album.videos.length
-						videos
-					.title/
-					%span.date{title: featured_album.created_at}
-						= since featured_album.created_at
+		= render partial: 'videos/thumb_h', collection: featured_album.sample_videos)
+		%li.generic.thumb
+			%a.thumb{href:"/album/#{featured_album.id}-#{featured_album.safe_title}"}
+				%span.tile.link
+					View All
+					%br/
+					= number_with_delimiter featured_album.videos.length
+					videos
+				.title/
+				%span.date{title: featured_album.created_at}
+					= since featured_album.created_at

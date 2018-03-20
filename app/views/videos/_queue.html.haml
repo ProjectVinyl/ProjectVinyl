@@ -14,10 +14,10 @@
 									.title
 										MIX - 
 										= @video.title
-				= render partial: 'video/thumb_v', collection: @queue[:user]
+				= render partial: 'videos/thumb_v', collection: @queue[:user]
 		.group(data-stage="global")
 			%h2.resize-target.slide-nav
 				%a.goto.slide-left(data-to="user" title="Uploader")= fa :chevron_left
 				%a Anyone
 			%ul.queue
-				= render partial: 'video/thumb_v', collection: @queue[:global]
+				= render partial: 'videos/thumb_v', collection: @queue[:global]

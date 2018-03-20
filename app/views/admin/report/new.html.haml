@@ -6,7 +6,7 @@
 	%ul(class="#{@reportable.reportable_class.downcase}-list")
 		- if @reportable.class == Video
 			- @video = @reportable
-			.center= render 'video/video'
+			.center= render 'videos/video'
 		- else
 			= render 'comment/comment', comment: @reportable, indirect: true
 	.properties.ribbed.slide-group.slide-holder(data-offset="0")

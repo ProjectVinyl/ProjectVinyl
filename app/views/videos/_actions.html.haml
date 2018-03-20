@@ -1,6 +1,6 @@
 %hr/
 .actions
-	= render partial: user_signed_in? ? 'video/actions_logged_in' : 'video/actions_logged_out'
+	= render partial: user_signed_in? ? 'videos/actions_logged_in' : 'videos/actions_logged_out'
 	%span.divider>
 	%button.action.share.mobile-friendly.slider-toggle(data-target=".slideout.share")>
 		= fa :share
@@ -39,5 +39,5 @@
 				%a.slider-toggle(data-target=".slideout.info")
 					%span.icon= fa :info
 					%span.label File Info
-= render partial: 'video/share'
-= render partial: 'video/info'
+= render partial: 'videos/share'
+= render partial: 'videos/info'

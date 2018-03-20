@@ -1,5 +1,5 @@
 module Admin
-  class VideoController < ApplicationController
+  class VideosController < ApplicationController
     before_action :authenticate_user!
 
     def show
@@ -118,12 +118,12 @@ module Admin
     
     private
     def page(records, reverse)
-      render_pagination 'admin/video/thumb_h', records.with_likes(current_user), params[:page].to_i, 40, reverse
+      render_pagination 'admin/videos/thumb_h', records.with_likes(current_user), params[:page].to_i, 40, reverse
     end
     
     def check_then
       if !current_user.is_staff?
-        return head 401
+        return head :unauthorized
       end
       
       if !(video = Video.where(id: params[:video_id]).first)
@@ -134,7 +134,7 @@ module Admin
     end
     
     def badly_named_function
-      redirect_to action: 'view', controller: 'admin/admin'
+      redirect_to action: :view, controller: 'admin/admin'
       
       if !current_user.is_contributor?
         return flash[:error] = "Access Denied: You can't do that right now."

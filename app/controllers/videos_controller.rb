@@ -1,4 +1,4 @@
-class VideoController < ApplicationController
+class VideosController < ApplicationController
   def show
     if !(@video = Video.where(id: params[:id]).with_likes(current_user).first)
       return render_error(
@@ -38,7 +38,7 @@ class VideoController < ApplicationController
       mime: @video.mime,
       title: @video.title,
       description: @video.description,
-      url: url_for(action: :show, controller: :video, id: @video.id, only_path: false) + "-" + (@video.safe_title || "untitled-video"),
+      url: url_for(action: :show, controller: :videos, id: @video.id, only_path: false) + "-" + (@video.safe_title || "untitled-video"),
       embed_url: url_for(action: :view, controller: "embed/video", only_path: false, id: @video.id),
       cover: "#{url_for(action: :cover, controller: :imgs, only_path: false, id: @video.id)}.png",
       tags: @tags,

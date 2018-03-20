@@ -3,7 +3,7 @@
 		%section.page.full-width.featured.column-mobile-shown
 			%h1 Featured Video
 			%ul.horizontal.center
-				= render 'video_thumb_h', video_thumb_h: @featured
+				= render 'videos/thumb_f', thumb_f: @featured
 			.scoring.tag-set
 				%span.like(title="Likes")
 					= safe_to_display @featured.upvotes, 9999
@@ -50,4 +50,4 @@
 						= number_with_delimiter @feed.length
 						)
 				%ul.horizontal.latest
-					= render partial: 'video/thumb_h', collection: @feed
+					= render partial: 'videos/thumb_h', collection: @feed
