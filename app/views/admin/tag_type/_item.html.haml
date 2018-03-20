@@ -5,10 +5,10 @@
 			%a.button.button-bub.state-toggle(data-state="editing" data-parent="form")= fa :pencil
 		%div
 			= item.prefix
-			:
+			\:
 		%div= number_with_delimiter item.referrers.count
 		.center
-			%i.fa(title: item.hidden, class: "fa-#{item.hidden ? "check" : "times"}")
+			%i.fa{title: item.hidden, class: "fa-#{item.hidden ? "check" : "times"}"}
 		%div
 			%ul.tags= render partial: "tag/thumb_h", collection: item.tags
 	.editing.row.row-spanned
@@ -22,8 +22,8 @@
 					%td.field
 						%label.button.blue
 							= f.check_box :hidden
-								= fa :check
-								Hide prefix in tag name
+							= fa :check
+							Hide prefix in tag name
 				%tr
 					%td.label Implications
 					%td.field
@@ -32,11 +32,11 @@
 				%tr.actions
 					%td.label
 					%td.label
-            %a.button.red.right{href: "/admin/tagtypes/#{item.id}",
+						%a.button.red.right{href: "/admin/tagtypes/#{item.id}",
 													data: {title: "Delete Tag Type", icon: "warning",
 																confirm: "You are about to delete a tag type. Any related tags will lose their typing information and may have to be reassigned should you want to undo this.",
 																method: "delete",
-																title="Remove Notice"}}
+																title: "Remove Notice"}}
 							= fa :trash
 							Delete
 						%button.green.left
