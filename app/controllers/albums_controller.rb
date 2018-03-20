@@ -46,16 +46,16 @@ class AlbumsController < ApplicationController
   end
   
   def starred
-    if user_signed_in?
+    check_and do
       @user = current_user
       @album = current_user.stars
       
       @records = @album.ordered(@album.album_items.includes(:direct_user))
       @items = Pagination.paginate(@records, 0, 50, false)
       @modifications_allowed = true
+      
+      render template: 'albums/show'
     end
-    
-    render template: 'albums/show'
   end
   
   def new
@@ -65,22 +65,19 @@ class AlbumsController < ApplicationController
   end
   
   def create
-    if !user_signed_in?
-      flash[:error] = "You need to sign in to do that."
-      redirect_to action: :index, controller: :welcome
+    check_and do
+      album = current_user.albums.create
+      album.set_description(album[:description])
+      album.set_title(params[:album][:title])
+      
+      initial = params[:album][:initial]
+      if initial && (initial = Video.where(id: initial).first)
+        album.add_item(initial)
+        return redirect_to action: :view, controller: :video, id: initial.id
+      end
+      
+      redirect_to action: :show, id: album.id
     end
-    
-    album = current_user.albums.create
-    album.set_description(album[:description])
-    album.set_title(params[:album][:title])
-    
-    initial = params[:album][:initial]
-    if initial && (initial = Video.where(id: initial).first)
-      album.add_item(initial)
-      return redirect_to action: :view, controller: :video, id: initial.id
-    end
-    
-    redirect_to action: :show, id: album.id
   end
   
   def edit
@@ -136,6 +133,15 @@ class AlbumsController < ApplicationController
   end
   
   private
+  def check_and
+    if !user_signed_in?
+      flash[:error] = "You need to sign in to do that."
+      return redirect_to action: :index, controller: :welcome
+    end
+    
+    yield
+  end
+  
   def check_then(id)
     if !user_signed_in?
       return head :unauthorized
