@@ -7,4 +7,4 @@
 			%a.slide-right#playlist_next{title: "Next", href: @next_video.link}= fw :step_forward
 	.scroll-container(data-document-scroll-y="200")
 		.items{class: @album_editable && "reorderable", "data-target": "albumitem"}
-			= render partial: 'album/album_item', collection: @items
+			= render partial: 'albums/album_item', collection: @items
