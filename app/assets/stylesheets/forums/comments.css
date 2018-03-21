@@ -153,6 +153,10 @@
   display: none;
 }
 
+.comment .artist-bio .tile {
+  width: 180px;
+}
+
 .comment .name a.mention,
 .comment a.mention {
   color: #ccc;
