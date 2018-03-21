@@ -1,13 +1,21 @@
 - if indirect && comment.comment_thread.owner_type == 'Video'
-	.artist-bio.bio= render 'videos/thumb_i', thumb_i: Video.where(id: comment.comment_thread.owner_id).with_likes(current_user).first, comment: comment.get_open_id
+	- if indirect
+		%div
+			%p
+				In
+				%a.bubble-link(href="/videos") Videos
+				\—
+				%a.bubble-link{href: comment.comment_thread.owner.link}= comment.comment_thread.owner.title
+	.artist-bio.bio
+		= render 'videos/thumb_i', thumb_i: Video.where(id: comment.comment_thread.owner_id).with_likes(current_user).first, comment: comment.get_open_id
 - else
 	- if indirect
 		%div
 			%p
 				In
-				%a{href: comment.comment_thread.owner.link}= comment.comment_thread.owner.title
-				-
-				%a{href: comment.comment_thread.link}= comment.comment_thread.get_title
+				%a.bubble-link{href: comment.comment_thread.owner.link}= comment.comment_thread.owner.title
+				\—
+				%a.bubble-link{href: comment.comment_thread.link}= comment.comment_thread.get_title
 	.artist-bio.bio
 		%a{class: !comment.user.is_dummy && "user-link", "data-id": comment.user_id, href: comment.user.link}
 			%span.avatar.medium

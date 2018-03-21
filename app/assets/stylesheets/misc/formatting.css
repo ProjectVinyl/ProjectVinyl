@@ -17,6 +17,19 @@
   text-decoration: none;
 }
 
+.bubble-link {
+  display: inline-block;
+  padding: 5px;
+  border-radius: 15px;
+  transition: background 0.5s ease;
+  text-decoration: none;
+  background: #fafafa;
+  box-shadow: 0 0 3px 3px rgba(255, 255, 255, 0.05) inset;
+}
+.bubble-link:hover {
+  background: #efefef;
+}
+
 .underline > span, .underline a {
   border-bottom: dotted 1px #aaa;
 }
