@@ -39,7 +39,7 @@
 			%tr
 				%td.label= f.label :implications
 				%td.field
-					= render layout: 'tag/editor', locals: { tags: @tag.implications } do
+					= render layout: 'tags/editor', locals: { tags: @tag.implications } do
 						= f.text_area :tag_string
 			%tr.actions
 				%td.label
