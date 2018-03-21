@@ -1,22 +1,25 @@
 ﻿%section
 	%h1.resize-target
 		%a Forum Search
-	%form#big-search(action="search" method="get")
-		%input.full-width(type="text" name="title_query" placeholder="Thread Title" value="#{@title_query}")
-		%input.full-width(type="text" name="poster_query" placeholder="Poster" value="#{@poster_query}")
-		%input.full-width(type="text" name="text_query" placeholder="Content" value="#{@text_query}")
-		%span.search-options
-			%label
-				%span Category
-				%div
-					%select(name="board")
-						%option{value:0, selected: @category == 0} Everywhere
-						- Board.listables.each do |d|
-							%option{value: d[0], selected: @category == d[0]}= d[1]
-			%label
-				%span Order
-				%div
-					%select(name="order")= sensible_option_for_select(["Ascending", "Descending"], @ascending ? 0 : 1)
+	%form.search-options#big-search(action="search" method="get")
+		.field
+			%input.full-width(type="text" name="title_query" placeholder="Thread Title" value="#{@title_query}")
+		.field.popper.auto-lookup.validate(data-action="/find/users")
+			%input.full-width(type="text" name="poster_query" placeholder="Poster" value="#{@poster_query}" autocomplete="off")
+			%ul.pop-out
+		.field
+			%textarea.full-width(style="resize:vertical;min-height:150px" type="text" name="text_query" placeholder="Content" value="#{@text_query}")
+		%label
+			%span Category
+			%div
+				%select(name="board")
+					%option{value:0, selected: @category == 0} Everywhere
+					- Board.listables.each do |d|
+						%option{value: d[0], selected: @category == d[0]}= d[1]
+		%label
+			%span Order
+			%div
+				%select(name="order")= sensible_option_for_select(["Ascending", "Descending"], @ascending ? 0 : 1)
 		%hr/
 		%button(type="submit")
 			= fa :search
