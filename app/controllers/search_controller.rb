@@ -1,89 +1,90 @@
 require 'projectvinyl/elasticsearch/elastic_selector'
 
 class SearchController < ApplicationController
+  Labels = ['Video', 'Album', 'User', 'Tag']
+  Syms = [:videos, :albums, :users, :tags]
+  
   def index
-    @type_label = params[:type]
-    @type = @type_label.to_i
-    @page = params[:page].to_i
-    @ascending = params[:order] == '1'
-    @orderby = params[:orderby].to_i
-    @results = []
+    merge_queries(params)
     
-    if @type == 2 || @type == 0
-      @title_query = params[:query] || ""
-      @tag_query = params[:tagquery] || ""
-      @query = ""
-      if !@title_query.empty?
-        @query << "title:" + @title_query
-      end
-      if !@tag_query.empty? && !@query.empty?
-        @query << ","
-      end
-      @query << @tag_query
-    else
-      @query = @title_query = params[:query] || ""
-    end
-    
-    @data = URI.encode_www_form(
-      type: @type,
-      order: @ascending ? '1' : '0',
-      orderby: @orderby, query: @query
-    )
-    
-    if @type == 1 || @type == 3
+    if @type_sym == :albums || @type_sym == :tags
       @results = search_basic(@type, @page, @ascending)
-      @type_label = @type == 1 ? 'Album' : 'Tag'
+      
+      if @type_sym == :albums && @randomize
+        index = rand * @results.count
+        record = @results.offset(index).first
+        return redirect_to action: :show, controller: :albums
+      end
     else
       handle_derps do
-        @results = ProjectVinyl::ElasticSearch::ElasticSelector.new(current_user, @query).videos
+        @results = ProjectVinyl::ElasticSearch::ElasticSelector.new(current_user, @query)
         
-        if params[:quick] && @type == 2
-          if @single = @results.query(0, 1).order_by('v.id').exec.first
-            return redirect_to action: 'view', controller: 'embed', id: @single.id
+        @results.videos.order(session, @orderby, @ascending)
+        
+        if params[:quick] && @type_sym == :videos
+          if @single = @results.query(0, 1).exec.first
+            return redirect_to action: 'view', controller: 'embed/videos', id: @single.id
           end
         end
         
-        @results = @results.query(@page, 20)
-        @type_label = 'Video'
-        
-        if @type == 2
-          @type_label = 'User'
-          @results = @results.users
+        if @type_sym == :users
+          @results.users
         end
         
-        @results = @results.order(session, @orderby, @ascending).exec
+        if @randomize
+          if @single = @results.randomized(1).exec.first
+            return redirect_to action: :show, controller: :videos, id: @single.id
+          end
+        end
+        
+        @results = @results.query(@page, 20).exec
+        
         @tags = @results.tags
       end
     end
     
-    @partial = partial_for_type(@type_label)
+    if params[:format] == 'json'
+      return render_pagination_json @partial, @results
+    end
+    
+    @type_label = Labels[@type]
+    @data = URI.encode_www_form(
+      type: @type,
+      order: params[:order],
+      orderby: @orderby,
+      query: @query
+    )
   end
   
-  def page
-    @query = params[:query]
-    @page = params[:page].to_i
+  private
+  def merge_queries(params)
     @type = params[:type].to_i
+    
+    @type_sym = Syms[@type]
+    @partial = partial_for_type(@type_sym)
+    
+    @page = params[:page].to_i
     @ascending = params[:order] == '1'
+    @orderby = params[:orderby].to_i
+    @randomize = params[:format] != 'json' && params[:random] == 'y'
     
-    if !@query
-      return head 401
-    end
+    @query = @title_query = params[:query] || ""
+    @tag_query = params[:tagquery] || ""
     
-    if @type == 1 || @type == 3
-      @results = search_basic(@type, @page, @ascending)
-      @type = @type == 1 ? :album : :tag
-    else
-      @results = ProjectVinyl::ElasticSearch::ElasticSelector.new(current_user, @query).query(@page, 20).videos
-      @type = :video
-      
-      if @type == 2
-        @results = @results.users
-        @type = :user
+    if params[:format] != 'json'
+      if @type == 2 || @type == 0
+        @query = ""
+        if !@title_query.empty?
+          @query << "title:" + @title_query
+        end
+        if !@tag_query.empty? && !@query.empty?
+          @query << ","
+        end
+        @query << @tag_query
       end
-      
-      @results = @results.order(session, params[:orderby].to_i, @ascending).exec
     end
-    render_pagination_json partial_for_type(@type), @results
+    
+    @results = []
   end
   
   def search_basic(type, page, ascending)
@@ -95,7 +96,6 @@ class SearchController < ApplicationController
     Pagination.paginate(records, page, 20, !ascending)
   end
   
-  private
   def handle_derps
     yield
   rescue ProjectVinyl::Search::LexerError => e
