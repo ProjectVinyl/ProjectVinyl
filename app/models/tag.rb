@@ -21,7 +21,7 @@ class Tag < ApplicationRecord
   end
 
   def self.sanitize_name(name)
-    ApplicationHelper.check_and_trunk(name, "").downcase.strip.gsub(/[;,]/, '')
+    StringsHelper.check_and_trunk(name, "").downcase.strip.gsub(/[;,]/, '')
   end
 
   def self.tag_json(tags)
@@ -56,7 +56,7 @@ class Tag < ApplicationRecord
 
   def self.find_matching_tags(name)
     name = name.downcase
-    Tag.jsons(Tag.includes(:tag_type, :alias).where('name LIKE ? OR short_name LIKE ?', "#{name}%", "#{ApplicationHelper.url_safe_for_tags(name)}%")
+    Tag.jsons(Tag.includes(:tag_type, :alias).where('name LIKE ? OR short_name LIKE ?', "#{name}%", "#{PathsHelper.url_safe_for_tags(name)}%")
        .order(:video_count, :user_count).limit(10))
   end
 
@@ -254,15 +254,14 @@ class Tag < ApplicationRecord
   end
 
   def link
-    result = '/tags/'
-    if ApplicationHelper.valid_string?(self.short_name)
-      return result + self.short_name
+    if StringsHelper.valid_string?(self.short_name)
+      return "/tags/#{self.short_name}"
     end
-    if ApplicationHelper.valid_string?(self.name)
+    if StringsHelper.valid_string?(self.name)
       self.set_name(self.name)
-      return result + self.name
+      return "/tags/#{self.name}"
     end
-    result + self.id.to_s
+    "/tags/${self.id}"
   end
 
   def set_name(name)
@@ -278,7 +277,7 @@ class Tag < ApplicationRecord
     if Tag.where('name = ? AND NOT id = ?', name, self.id).count > 0
       return false
     end
-    self.short_name = ApplicationHelper.url_safe_for_tags(name)
+    self.short_name = PathHelper.url_safe_for_tags(name)
     self.name = name
     self.save
     Tag.reindex_for(self.videos, self.users)

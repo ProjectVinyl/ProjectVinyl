@@ -36,7 +36,7 @@ module Admin
       @notice = SiteNotice.create({
           active: params[:notice][:active],
           message: text,
-          html_message: ApplicationHelper.emotify(text)
+          html_message: BbcodeHelper.emotify(text)
       })
     end
     

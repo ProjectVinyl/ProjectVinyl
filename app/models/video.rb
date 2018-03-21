@@ -464,9 +464,9 @@ class Video < ApplicationRecord
   end
 
   def set_title(title)
-    title = ApplicationHelper.check_and_trunk(title, get_title)
+    title = StringsHelper.check_and_trunk(title, get_title)
     self.title = title
-    self.safe_title = ApplicationHelper.url_safe(title)
+    self.safe_title = PathHelper.url_safe(title)
     if self.comment_thread_id
       self.comment_thread.title = title
       self.comment_thread.save

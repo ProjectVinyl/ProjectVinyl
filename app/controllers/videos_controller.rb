@@ -148,14 +148,14 @@ class VideosController < ApplicationController
       ext = Mimes.ext(file.content_type)
     end
     
-    title = ApplicationHelper.check_and_trunk(video[:title], "Untitled Video")
+    title = StringsHelper.check_and_trunk(video[:title], "Untitled Video")
     
     Video.transaction do
       @video = user.videos.create(
         title: title,
-        safe_title: ApplicationHelper.url_safe(title),
+        safe_title: PathHelper.url_safe(title),
         description: video[:description],
-        html_description: ApplicationHelper.emotify(video[:description]),
+        html_description: BbcodeHelper.emotify(video[:description]),
         source: Video.clean_url(video[:source]),
         audio_only: file.content_type.include?('audio/'),
         file: ext,

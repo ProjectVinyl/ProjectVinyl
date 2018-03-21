@@ -1,6 +1,5 @@
 // The current signed-in user.
 const current_user = (function() {
-	var meta = document.querySelector('meta[name="current_user"]');
-	if (!meta) return null;
-	return JSON.parse(meta.getAttribute('content'));
+	const meta = document.querySelector('meta[name="current_user"]');
+	return meta ? JSON.parse(meta.getAttribute('content')) : null;
 })();

@@ -20,9 +20,9 @@ class CommentThread < ApplicationRecord
   end
 
   def set_title(name)
-    name = ApplicationHelper.check_and_trunk(name, self.title)
+    name = StringsHelper.check_and_trunk(name, self.title)
     self.title = name
-    self.safe_title = ApplicationHelper.url_safe(name)
+    self.safe_title = PathHelper.url_safe(name)
     self.save
   end
 

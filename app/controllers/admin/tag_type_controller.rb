@@ -53,7 +53,7 @@ module Admin
       
       prefix = Tag.sanitize_name(params[:tag_type][:prefix])
       
-      if !ApplicationHelper.valid_string?(prefix)
+      if !StringsHelper.valid_string?(prefix)
         return flash[:error] = "Error: Prefix cannot be blank/null"
       end
       

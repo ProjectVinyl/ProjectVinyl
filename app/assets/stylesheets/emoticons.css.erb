@@ -16,7 +16,7 @@ i.emote {
   filter: blur(0);
 }
 
-<% ApplicationHelper.emoticons.each_with_index do |emoticon,index| %>
+<% BbcodeHelper.emoticons.each_with_index do |emoticon,index| %>
 <% x = index % 7 %>
 <% y = (index / 7).floor %>
 .emote[data-emote="<%= emoticon %>"] {

@@ -89,8 +89,8 @@ class User < ApplicationRecord
   end
   
   def self.find_for_mention(match)
-    match_two = ApplicationHelper.url_safe(match)
-    match_four = ApplicationHelper.url_safe(match.underscore)
+    match_two = PathHelper.url_safe(match)
+    match_four = PathHelper.url_safe(match.underscore)
     where('LOWER(username) = ? OR LOWER(safe_name) = ? OR LOWER(safe_name) = ?', match, match_two, match_four).first
   end
   
@@ -259,22 +259,22 @@ class User < ApplicationRecord
   
   def set_name(name)
     name = default_name if !self.validate_name(name)
-    name = ApplicationHelper.check_and_trunk(name, self.username)
+    name = StringsHelper.check_and_trunk(name, self.username)
     self.username = name
-    self.safe_name = ApplicationHelper.url_safe(name)
+    self.safe_name = PathHelper.url_safe(name)
     self.save
     self.update_index(defer: false)
   end
 
   def set_description(text)
     self.description = text
-    self.html_description = ApplicationHelper.emotify(text)
+    self.html_description = BbcodeHelper.emotify(text)
     self
   end
 
   def set_bio(text)
     self.bio = text
-    self.html_bio = ApplicationHelper.emotify(text)
+    self.html_bio = BbcodeHelper.emotify(text)
     self
   end
 

@@ -7,7 +7,7 @@ class TagType < ApplicationRecord
 
   def set_metadata(s, h)
     s = Tag.sanitize_name(s)
-    if !ApplicationHelper.valid_string?(s)
+    if !StringsHelper.valid_string?(s)
       return "Error: Prefix cannot be blank/null"
     end
     self.hidden = h if self.hidden != h

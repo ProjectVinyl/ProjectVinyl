@@ -37,7 +37,7 @@ class MergeArtistsIntoUsers < ActiveRecord::Migration
     User.all.each do |user|
       if user.artist_id && artist = Artist.where(id: user.artist_id).first
         user.username = artist.name
-        user.safe_name = ApplicationHelper.url_safe(artist.name)
+        user.safe_name = PathHelper.url_safe(artist.name)
         user.description = artist.description
         user.bio = artist.bio
         user.mime = artist.mime
@@ -60,7 +60,7 @@ class MergeArtistsIntoUsers < ActiveRecord::Migration
       end
     end
     Video.all.each do |i|
-      i.safe_title = ApplicationHelper.url_safe(i.title)
+      i.safe_title = PathHelper.url_safe(i.title)
       self.artist_to_user(i)
     end
   end
