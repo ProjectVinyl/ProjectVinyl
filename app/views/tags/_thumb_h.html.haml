@@ -3,7 +3,7 @@
 		%span= thumb_h.name
 	= "(#{number_with_delimiter thumb_h.members})"
 	- if user_signed_in?
-		= render 'tag/flags', tag: thumb_h
+		= render 'tags/flags', tag: thumb_h
 	- if user_signed_in?
 		%ul.drop-down.pop-out
 			%li.action.toggle(data-family="tag-flags" data-descriminator="hide" data-target="tags" data-id="#{thumb_h.id}" data-action="hide")

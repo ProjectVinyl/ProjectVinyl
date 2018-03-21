@@ -1,6 +1,6 @@
 - if tags.length == 1
-	= render 'tag/bio', tag: tags.first
+	= render 'tags/bio', tag: tags.first
 - else
 	.post
-		%ul.tags= render partial: "tag/thumb_h", collection: tags
+		%ul.tags= render partial: 'tags/thumb_h', collection: tags
 %hr

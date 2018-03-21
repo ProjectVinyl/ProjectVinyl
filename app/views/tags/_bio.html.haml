@@ -22,14 +22,14 @@
 	- if @implies.length > 0
 		%div
 			%h1 Implies
-			%ul.tags= render partial: "tag/thumb_h", collection: @implies
+			%ul.tags= render partial: "tags/thumb_h", collection: @implies
 	- if @implied.length > 0
 		%div
 			%h1 Implied by
-			%ul.tags= render partial: "tag/thumb_h", collection: @implied
+			%ul.tags= render partial: "tags/thumb_h", collection: @implied
 	- if @aliases.length > 0
 		%div
 			%h1 Aliases
-			%ul.tags= render partial: "tag/thumb_h", collection: @aliases
+			%ul.tags= render partial: "tags/thumb_h", collection: @aliases
 	- if user_signed_in?
-		= render 'tag/actions'
+		= render 'tags/actions'

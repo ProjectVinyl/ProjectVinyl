@@ -9,7 +9,7 @@
 					%a{href: tag.link}= tag.get_as_string
 					%span<
 						- if user_signed_in?
-							= render partial: "tag/flags", locals: {tag: tag}
+							= render partial: "tags/flags", locals: {tag: tag}
 	%input.tag.input.js-auto-resize{type: "text", placeholder: "Tag list..."}<
 		%ul.search-results.pop-out
 	.js-data-store(style="display:none")= raw Tag.jsons(tags || []).to_json
