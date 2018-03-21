@@ -1,4 +1,4 @@
-﻿- title @query.length > 0 ? "Searching for ${@query}" : "Search"
+﻿- title @query.length > 0 ? "Searching for #{@query}" : "Search"
 .page.full-width= render partial: @derpy.nil? ? 'search/results' : 'search/warden_derpy'
 .page.full-width.resize-holder
 	%section
