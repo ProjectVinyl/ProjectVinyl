@@ -1,16 +1,22 @@
 = form_for(@album, as: "album", url: "albums", html: {method: :post}) do |f|
 	.properties
-		- if @initial
-			%input(name="album[initial]" type="text" hidden="true" value="#{@initial}")
 		%table
 			%tr
 				%td.label= f.label :title
 				%td.field= f.text_field :title, autofocus: true
+			%tr
+				- if @initial
+					%td.label Tagged Video
+					%td.field
+						%input(name="album[initial]" type="text" hidden="true" value="#{@initial.id}")
+						%label.button.blue
+							%input(type="checkbox" name="include_initial" checked="checked")
+							= fa :check
+							= @initial.title
 			%tr
 				%td.label= f.label :description
 				%td.field
 					= render layout: 'comment/description_box' do
 						= f.text_area :description, class: "comment-content"
 	.foot
-		= f.submit "OK", class: "green"
-		%button.right.cancel(type="button" data-resolve="false") Cancel
+		= f.submit "Create Album", class: "button-fw green right"
