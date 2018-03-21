@@ -33,7 +33,13 @@
   color: inherit;
 }
 
-.header ul li:hover .drop-down {
+.header .drop-down {
+  height: initial;
+  transition: height 0.5s ease;
+  box-shadow: 2px 4px 3px 0 rgba(0, 0, 0, 0.3);
+}
+
+.header ul li:hover > .drop-down {
   position: absolute;
   display: block;
   top: 100%;
@@ -41,6 +47,10 @@
 }
 .header ul li:hover .drop-down .drop-down {
   left: 100%;
+}
+
+.header .drop-down .divider {
+  border-top: solid 1px #aaf;
 }
 
 .header .drop-down,
