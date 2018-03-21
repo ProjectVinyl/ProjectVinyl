@@ -8,6 +8,8 @@ module ProjectVinyl
         @user = sender
         @opset = ProjectVinyl::Search::Op.load_ops(search_terms.downcase)
         @elastic = nil
+        @exception = nil
+        @lexer_error = false
         @offset = 0
         @type = "unknown"
         @randomized = false
@@ -141,6 +143,20 @@ module ProjectVinyl
           @search = table.search(params)
         end
         self
+      rescue ProjectVinyl::Search::LexerError => e
+        @exception = e
+        @lexer_error = true
+        self
+      rescue Faraday::ConnectionFailed => e
+        @exception = e
+        
+        self
+      rescue e
+        @exception = e
+        puts "Exception raised #{e}"
+        puts "Backtrace:\n\t#{e.backtrace[0..8].join("\n\t")}"
+        
+        self
       end
 
       def sanitize(arguments)
@@ -148,6 +164,10 @@ module ProjectVinyl
       end
 
       def records
+        if @exception
+          return table.none
+        end
+        
         if @type == 'user'
           return @search.records
         end
@@ -156,21 +176,29 @@ module ProjectVinyl
       end
 
       attr_reader :page
-
+      
+      def error
+        @exception
+      end
+      
+      def lexer_error?
+        @lexer_error
+      end
+      
       def page_size
         @limit
       end
 
       def pages
-        (@search.results.total / @limit).floor
+        (count / @limit).floor
       end
 
       def count
-        @search.results.total
+        @exception ? 0 : @search.results.total
       end
 
       def length
-        @search.results.total
+        count
       end
 
       def table

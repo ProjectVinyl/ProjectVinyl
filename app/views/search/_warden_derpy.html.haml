@@ -2,12 +2,13 @@
 .warden_derpy
 	.derpy
 	%div
-	- if @derpy
+	- if @results.lexer_error?
 		You searched for
 		= surround '"' do
-			= @query 
-		but I don't know what that means. :'c
+			= @query
+		but I don't know what that means.
+		= emoticon_tag "applecry"
 	- else
 		= derp
 %hr/
-%p.center.red= (@derpy || @ditzy).message
+%p.center.red= @results.error.message

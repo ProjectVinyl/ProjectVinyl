@@ -1,11 +1,12 @@
 ﻿%h1/
 	- if @query.length == 0
-		= "Showing all #{@type_label}s"
+		Showing all
+		= @type_label.pluralize
 	- else
-		= "Searching for #{@type_label}s matching '#{@query}'"
+		= "Searching for #{@type_label.pluralize} matching '#{@query}'"
 		found 
 		= number_with_delimiter @results.count
-		= "match${@results.count == 1 ? "" : "es"}"
+		= "match".pluralize(@results.count)
 - if @tags && @tags.length > 0
 	= render 'tags/set', tags: @tags
 = render layout: 'pagination/paginated', locals: { type: 'search', paginated: @results, id: "page"} do

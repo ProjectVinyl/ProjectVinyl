@@ -143,7 +143,6 @@ Rails.application.routes.draw do
   get 'ajax/notifications' => 'ajax/notification#view'
   
   # Main Search #
-  get 'search.json' => 'search#page'
   get 'search' => 'search#index'
   
   # Lookup Actions #
