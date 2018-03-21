@@ -10,9 +10,16 @@ module ProjectVinyl
         @elastic = nil
         @offset = 0
         @type = "unknown"
+        @randomized = false
         @ordering = []
       end
-
+      
+      def randomized(limit)
+        query(0, limit)
+        @randomized = true
+        self
+      end
+      
       def query(page, limit)
         @page = page
         @limit = limit
@@ -86,11 +93,24 @@ module ProjectVinyl
       end
 
       def add_required_params(query)
-        return query if @type != 'video'
-        return { term: { hidden: false } } if !query.key?(:bool)
-        query[:bool][:must] = [] if !query[:bool].key?(:must)
-        if !@elastic.uses(:hidden)
-          query[:bool][:must] << { term: { hidden: false } }
+        if @type != 'video'
+          return query
+        end
+        if !query.key?(:bool)
+          query = { term: { hidden: false } }
+        else
+          if !query[:bool].key?(:must)
+            query[:bool][:must] = []
+          end
+          if !@elastic.uses(:hidden)
+            query[:bool][:must] << { term: { hidden: false } }
+          end
+        end
+        if @randomized
+          query[:function_score] = {
+            query: {match_all: {}},
+            functions: {random_score: {}}
+          }
         end
         query
       end
