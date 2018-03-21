@@ -60,7 +60,7 @@ class AlbumsController < ApplicationController
   
   def new
     @album = Album.new
-    @initial = params[:initial] if params[:initial]
+    @initial = Video.where(id: params[:initial]).first if params[:initial]
     render partial: 'new'
   end
   
@@ -70,12 +70,13 @@ class AlbumsController < ApplicationController
       album.set_description(album[:description])
       album.set_title(params[:album][:title])
       
-      initial = params[:album][:initial]
-      if initial && (initial = Video.where(id: initial).first)
-        album.add_item(initial)
-        return redirect_to action: :view, controller: :video, id: initial.id
+      if params[:include_initial]
+        initial = params[:album][:initial]
+        if initial && (initial = Video.where(id: initial).first)
+          album.add_item(initial)
+          return redirect_to action: :view, controller: :video, id: initial.id
+        end
       end
-      
       redirect_to action: :show, id: album.id
     end
   end
