@@ -114,7 +114,7 @@ class UsersController < ApplicationController
       if params[:format] == 'json'
         return render_pagination_json @partial, @records
       end
-      render template: 'user/listing'
+      render template: 'users/listing'
     end
   end
   
@@ -143,7 +143,7 @@ class UsersController < ApplicationController
         title: "#{@label}s"
       }
       
-      render template: 'user/listing'
+      render template: 'users/listing'
     end
   end
   
@@ -169,7 +169,7 @@ class UsersController < ApplicationController
         title: @label.pluralize
       }
       
-      render template: 'user/listing'
+      render template: 'users/listing'
     end
   end
   
