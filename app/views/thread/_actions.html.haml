@@ -10,6 +10,9 @@
 			- if @thread.locked
 				= fa :check
 		%span.label Lock Thread
+	%a.button.blue.mobile-friendly.right(href="/forum/search?board=#{@thread.owner_id}&title_query=#{@thread.title}")
+		= fa :search
+		%span Find Post
 	- if @thread.owner_type == 'Board'
 		.split-button.popper.action.multi-toggle{data: {target: "admin/threads", id: @thread.id, action: "move"}}>
 			%button.action.options.pop-out-toggle.blue

@@ -4,7 +4,7 @@ module Forum
       @title_query = params[:title_query]
       @poster_query = params[:poster_query]
       @text_query = params[:text_query]
-      @category = (params[:category] || 0).to_i
+      @category = (params[:board] || 0).to_i
       
       @q = Comment.visible.where('`comment_threads`.owner_type = "Board"').order(:updated_at, :created_at).with_likes(current_user)
       

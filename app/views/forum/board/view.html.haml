@@ -13,13 +13,13 @@
 .actions.space-fix
 	- if user_signed_in?
 		- if current_user.is_contributor?
-			%a.button.mobile-friendly.red{href: "/boards/#{@board.id}", data: {confirm: "Any threads inside this board will be lost.", title: "Delete Board", method: "delete"}}
+			%a.button.mobile-friendly.red{href: "/boards/#{@board.id}", data: {confirm: "Any topics inside this board will be lost.", title: "Delete Board", method: "delete"}}
 				= fa :trash
 				%span Delete Board
-		%button.action.mobile-friendly.green(data-external-form="/threads/new?board=#{@board.id}" data-title="New Thread" type="button")
+		%button.action.mobile-friendly.green(data-external-form="/threads/new?board=#{@board.id}" data-title="New Topic" type="button")
 			= fa :plus
-			%span New Thread
-	%a.button.blue.mobile-friendly.right(href="/forum/search?category=${@board.id}")
+			%span New Topic
+	%a.button.blue.mobile-friendly.right(href="/forum/search?board=#{@board.id}")
 		= fa :search
 		%span Find Post
 %hr/
