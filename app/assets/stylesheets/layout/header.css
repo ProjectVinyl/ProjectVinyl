@@ -10,7 +10,7 @@
   height: 40px;
 }
 
-.header ul li, .header ul li a {
+.header ul li, .header ul a {
   font-size: 20px;
   display: inline-block;
   line-height: 40px;
@@ -21,22 +21,46 @@
   cursor: pointer;
 }
 .header ul li {
+  position: relative;
   padding-left: 5px;
   padding-right: 5px;
   margin: 0 10px;
   color: #008;
 }
 
-.header ul li a {
+.header ul a {
   margin-top: -5px;
   color: inherit;
 }
 
-header ul li:hover {
-  background: #eee;
+.header ul li:hover .drop-down {
+  position: absolute;
+  display: block;
+  top: 100%;
+  left: 0;
+}
+.header ul li:hover .drop-down .drop-down {
+  left: 100%;
 }
 
-header.header ul li a {
+.header .drop-down,
+.header .drop-down li,
+.header .drop-down a {
+  color: #337287;
+  text-shadow: none;
+}
+.header .drop-down li {
+  display: block;
+  margin: 0;
+  width: 100%;
+  padding: 0;
+}
+.header .drop-down li:hover {
+  background: #eee;
+}
+.header .drop-down a {
+  padding: 0 10px;
+  width: 100%;
   font-size: 13px;
 }
 

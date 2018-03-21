@@ -37,7 +37,7 @@ nav ul li:hover, nav ul li.selected {
   }
 }
 
-nav > ul li a i {
+nav > ul li a > i {
   display: none !important;
 }
 

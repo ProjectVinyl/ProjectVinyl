@@ -3,10 +3,6 @@
    z-index: 1000;
 }
 
-#login ul, #login ul li, #login ul li a {
-  color: #337287;
-  text-shadow: none;
-}
 #login img {
    max-height: 30px;
    border-radius: 100%;
@@ -65,18 +61,6 @@
   animation-delay: 0.2s;
   -webkit-animation-delay: 0.2s;
 }
-
-#login .drop-down li {
-  display: block;
-  margin: 0;
-  width: 100%;
-  padding: 0;
-}
-#login .drop-down li a {
-  padding: 0 10px;
-  width: 100%;
-}
-
 
 #login .drop-down::before {
   content: '';
