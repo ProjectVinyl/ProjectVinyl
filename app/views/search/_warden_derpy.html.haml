@@ -3,9 +3,10 @@
 	.derpy
 	%div
 	- if @derpy
-		You searched for "
-		%u= @query 
-		" but I don't know what that means. :'c
+		You searched for
+		= surround '"' do
+			= @query 
+		but I don't know what that means. :'c
 	- else
 		= derp
 %hr/
