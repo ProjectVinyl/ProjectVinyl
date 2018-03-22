@@ -20,6 +20,9 @@
   vertical-align: middle;
   cursor: pointer;
 }
+.header ul li .icon {
+  cursor: pointer;
+}
 .header ul li {
   position: relative;
   padding-left: 5px;
