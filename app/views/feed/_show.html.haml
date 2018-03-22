@@ -1,0 +1,9 @@
+﻿%section.page
+	.group.feed.auto-wrap-contents
+		%h1
+			%a(href="/videos/watched")
+				Watched Videos
+				= surround '(', ')' do
+					= number_with_delimiter @feed.length
+		%ul.horizontal.latest
+			= render partial: 'videos/thumb_h', collection: @feed

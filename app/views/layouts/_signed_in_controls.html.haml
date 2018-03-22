@@ -13,38 +13,31 @@
 	- if current_user.is_contributor?
 		%li
 			%a(href="/admin" rel="nofollow")
-				%span.icon
-					%i.fa.fa-fw.fa-gavel
+				%span.icon= fw :gavel
 				%span.label Admin
 	%li
 		%a(href="#{current_user.link}" rel="nofollow" title="settings")
-			%span.icon
-				%i.fa.fa-fw.fa-user
+			%span.icon= fw :user
 			%span.label Profile
 	%li
 		%a(href="/inbox" rel="nofollow" title="messages")
-			%span.icon
-				%i.fa.fa-fw.fa-envelope
+			%span.icon= fw :envelope
 			%span.label Messages
 	%li
 		%a(href="/upload" rel="nofollow" title="upload")
-			%span.icon
-				%i.fa.fa-fw.fa-upload
+			%span.icon= fw :upload
 			%span.label Upload
 	%li
 		%a(href="/stars")
-			%span.icon
-				%i.fa.fa-fw.fa-star
+			%span.icon= fw :star
 			%span.label Stars
 	%li
 		%a(href="/users/edit" rel="nofollow")
-			%span.icon
-				%i.fa.fa-fw.fa-cog
+			%span.icon= fw :cog
 			%span.label Settings
 	%li
 		%a#sign-out(href="/users/sign_out" rel="nofollow" data-method="delete")
-			%span.icon
-				%i.fa.fa-fw.fa-sign-out
+			%span.icon= fw :sign_out
 			%span.label Sign Out
 %a(href="/users/edit" rel="nofollow" title="settings")
 	%span.avatar.small
