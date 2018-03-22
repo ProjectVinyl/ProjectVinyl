@@ -1,6 +1,6 @@
 %section.page.properties.column-left
 	%h1 Duplication Status
-	= form_for(@video, as: "video", url: "/admin/videos/#{@video.id}/merge", html: { method: :put }) do |f|
+	= form_for(@video, as: "video", url: admin_video_merge_path(@video), html: { method: :put }) do |f|
 		%table
 			%tr
 				%td.label Unique Hash

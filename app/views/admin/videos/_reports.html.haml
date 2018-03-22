@@ -1,7 +1,7 @@
 %section.page.column-left
 	%h1
 		Reporting
-		%a.right(href="/admin/reports?reportable_class=Video&reportable_id=#{@video.id}")
+		%a.right{href: admin_reports_path(@video.reportable_hash)}
 			View All
 			= fa :chevron_right
 	%h1 Open Reports

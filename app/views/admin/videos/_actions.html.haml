@@ -4,7 +4,7 @@
 		%tr.actions
 			%td.label Visibility
 			%td.field
-				%button.action.toggle.blue(data-target="admin/videos" data-id="#{@video.id}" data-action="hide")
+				%button.action.toggle.blue(data-target="#{admin_video_hide_path @video}")
 					%span.icon
 						- if @video.hidden
 							= fa :check
@@ -12,7 +12,7 @@
 		%tr.actions
 			%td.label Featured
 			%td.field
-				%button.action.toggle.blue(data-target="admin/videos" data-id="#{@video.id}" data-action="feature")
+				%button.action.toggle.blue(data-target="#{admin_video_feature_path @video}")
 					%span.icon
 						- if @video.featured
 							= fa :check
@@ -20,7 +20,7 @@
 		%tr
 			%td.label Commenting
 			%td.field
-				%button.action.toggle.blue(data-target="admin/threads" data-id="#{@video.comment_thread.id}" data-action="lock")
+				%button.action.toggle.blue(data-target="#{admin_thread_lock_path @video.comment_thread}")
 					%span.icon
 						- if @video.comment_thread.locked
 							= fa :check
@@ -31,24 +31,24 @@
 				Processed
 				= "(#{@video.processed ? "Yes" : @video.processed.nil? ? "No" : "In Progress"})"
 			%td.field
-				= form_for(@video, as: "video", url: "/admin/videos/#{@video.id}/reprocess", html: { method: :put }) do |f|
+				= form_for(@video, as: "video", url: admin_video_reprocess_path(@video), html: { method: :put }) do |f|
 					= f.submit "Restart"
 		%tr.actions
 			%td.label Reset Thumbnail
 			%td.field
-				= form_for(@video, as: "video", url: "/admin/videos/#{@video.id}/resetthumb", html: { method: :put }) do |f|
+				= form_for(@video, as: "video", url: admin_video_resetthumb_path(@video), html: { method: :put }) do |f|
 					= f.submit "Restart"
 					%div Thumbnail will be regenerated from source
 		%tr.actions
 			%td.label Reindex Video
 			%td.field
-				= form_for(@video, as: "video", url: "/admin/videos/reindex", html: { method: :put }) do |f|
+				= form_for(@video, as: "video", url: admin_path(table: :videos), html: { method: :put }) do |f|
 					= f.text_field :id, hidden: true
 					= f.submit "Reindex"
 		%tr.actions
 			%td.label Delete Item
 			%td.field
-				%a.button.red(data-confirm data-method="delete" href="/admin/videos/#{@video.id}" data-title="Delete Video")
+				%a.button.red(href="#{admin_video_path @video}" data-confirm data-method="delete" data-title="Delete Video")
 					= fa :trash
 					Delete Video
 				%div

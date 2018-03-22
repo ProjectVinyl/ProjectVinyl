@@ -1,6 +1,6 @@
 %section.page.full-width
 	%h1 Metadata
-	= form_for(@video, as: "video", url: "/admin/videos/#{@video.id}/metadata", html: { method: :put }) do |f|
+	= form_for(@video, as: "video", url: admin_video_metadata_path(@video), html: { method: :put }) do |f|
 		%label.text-input(data-prefix="https://www.youtube.com/watch?v=")
 			%input(type="text" name="source" placeholder="source")
 		%br/

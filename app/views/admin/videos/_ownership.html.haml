@@ -1,16 +1,18 @@
 %section.page.properties.column-left
 	%h1 Ownership
-	= form_for(@video, as: "item", url: "/admin/transfer?type=video", html: { method: :put }) do |f|
+	= form_for(@video, as: :item, url: admin_transfer_path(type: :video), html: { method: :put }) do |f|
 		= f.text_field :id, hidden: true
 		%table
 			%tr
-				%td.label= f.label "Current Owner"
+				%td.label Current owner
 				%td.field(colspan="2")
 					%a.user-link{"data-id": @user.id, href: @user.link}
-						= "#{@user.username} #{@user.id})"
+						= @user.username
+						= surround '(', ')' do
+							= @user.id
 			%tr
-				%td.label= f.label "New Owner"
-				%td.field.popper.auto-lookup(data-action="/find/users")
+				%td.label New owner
+				%td.field.popper.auto-lookup(data-action="#{find_users_path}")
 					= f.text_field :user_id, autocomplete: "off"
 					%ul.pop-out
 				%td.field= f.submit "Transfer Ownership", class: "green"

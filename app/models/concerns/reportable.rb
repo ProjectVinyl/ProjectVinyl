@@ -37,4 +37,8 @@ module Reportable
   def reportable_params
     "reportable_class=#{self.class}&reportable_id=#{self.id}"
   end
+  
+  def reportable_hash
+    {reportable_class: self.class.to_s, reportable_id: self.id}
+  end
 end
