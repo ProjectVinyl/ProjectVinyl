@@ -1,21 +1,21 @@
 %nav.header.layer-foreground
 	%ul
 		%li.albums{class: selected_path?('albums')}>
-			%a(href="/albums")
+			%a{href: albums_path}
 				= fw :picture_o
 				%span Albums
 		%li.artists{class: selected_path?('videos')}>
-			%a(href="/videos")
+			%a{href: videos_path}
 				= fw :play
 				%span Videos
 				%span.icon<>= fa :caret_down
 			%ul.drop-down
 				%li
-					%a(href="/search?tagquery=*&type=0&random=y")
+					%a{href: search_path(tagquery: '*', type: 0, random: 'y')}
 						%span.icon= fw :random
 						%span.label Random
 		%li.forum{class: selected_path?('forum')}>
-			%a(href="/forum")
+			%a{href: forum_root_path}
 				= fw :users
 				%span Forums
 				%span.icon<>= fa :caret_down
@@ -27,24 +27,24 @@
 							%span.label=board.title
 				%li.divider
 				%li
-					%a(href="/users")
+					%a{href: users_path}
 						%span.icon= fw :user
 						%span.label Users
 				%li
-					%a(href="/forum/search")
+					%a{href: forum_search_path}
 						%span.icon= fw :search
 						%span.label Find Posts
 		%li.genres{class: selected_path?('tags')}>
-			%a(href="/tags")
+			%a{href: tags_path}
 				= fw :tags
 				%span Tags
 				%span.icon<>= fa :caret_down
 			%ul.drop-down
 				%li
-					%a(href="/users")
+					%a{href: aliases_path}
 						%span.icon= fw :tag
 						%span.label Aliased
 				%li
-					%a(href="/users")
+					%a{href: users_path}
 						%span.icon= fw :tag
 						%span.label Implied

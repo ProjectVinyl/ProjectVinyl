@@ -95,7 +95,8 @@ Rails.application.routes.draw do
     put 'spoiler'
     put 'watch'
   end
-  scope 'tags', controller: :tags do
+  scope :tags, controller: :tags do
+    get 'aliases'
     get ':name', action: :show, constraints: { name: /.*/ } # /
   end
   
@@ -103,7 +104,6 @@ Rails.application.routes.draw do
   namespace :forum, id: /[^\.\/]+/ do # /
     get 'search' => 'search#index'
     get ':id' => 'board#view'
-    get ':board_id/threads' => 'board#threads'
     root 'board#index'
   end
   
