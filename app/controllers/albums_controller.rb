@@ -31,7 +31,7 @@ class AlbumsController < ApplicationController
       url: "#{url_for(action: :show, id: @album.id, only_path: false)}-#{@album.safe_title}",
       embed_url: url_for({
         action: :view,
-        controller: "embed/video",
+        controller: 'embed/videos',
         id: @items.records.first.video_id,
         list: @album.id,
         index: 0,
