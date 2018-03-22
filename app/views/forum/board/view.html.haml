@@ -1,8 +1,8 @@
-- title @board.title.to_s + " Forums"
+- title "#{@board.title} Forums"
 %h1.title
-	%a(href="/") Home
+	%a{href: root_path} Home
 	= fa :chevron_right
-	%a(href="/forum") Forum
+	%a{href: forum_root_path} Forum
 	= fa :chevron_right
 	- if @modifications_allowed
 		%span.editable.short.inline.title{data: {target: "board", member: "title", id: @board.id}}
@@ -13,13 +13,13 @@
 .actions.space-fix
 	- if user_signed_in?
 		- if current_user.is_contributor?
-			%a.button.mobile-friendly.red{href: "/boards/#{@board.id}", data: {confirm: "Any topics inside this board will be lost.", title: "Delete Board", method: "delete"}}
+			%a.button.mobile-friendly.red{href: board_path(@board), data: {confirm: "Any topics inside this board will be lost.", title: "Delete Board", method: "delete"}}
 				= fa :trash
 				%span Delete Board
-		%button.action.mobile-friendly.green(data-external-form="/threads/new?board=#{@board.id}" data-title="New Topic" type="button")
+		%button.action.mobile-friendly.green(data-external-form="#{new_thread_path board: @board.id}" data-title="New Topic" type="button")
 			= fa :plus
 			%span New Topic
-	%a.button.blue.mobile-friendly.right(href="/forum/search?board=#{@board.id}")
+	%a.button.blue.mobile-friendly.right{href: forum_search_path(board: @board.id)}
 		= fa :search
 		%span Find Post
 %hr/
@@ -27,7 +27,7 @@
 	%h1
 		Topics
 		= "(#{number_with_delimiter @threads.count})"
-	= render layout: 'pagination/paginated', locals: {type: "forum/#{@board.id}/threads", paginated: @threads, id: "page"} do
+	= render layout: 'pagination/paginated', locals: {type: @board.link, paginated: @threads, id: "page"} do
 		%section.search-result
 			.listing.thread-list
 				%ul.items= render partial: 'thread/thumb', collection: @threads.records

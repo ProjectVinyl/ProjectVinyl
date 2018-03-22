@@ -2,6 +2,11 @@ module Forum
   class BoardController < ApplicationController
     def view
       if !(@board = Board.find_board(params[:id]))
+        
+        if params[:format] == 'json'
+          return head :not_found
+        end
+        
         return render_error(
           title: 'Nothing to see here!',
           description: 'That forum does not exist.'
@@ -10,13 +15,10 @@ module Forum
       
       @threads = Pagination.paginate(@board.threads, params[:page].to_i, 50, false)
       @modifications_allowed = user_signed_in? && current_user.is_contributor?
-    end
-    
-    def threads
-      if !(board = Board.where(id: params[:board_id]).first)
-        return head 404
+      
+      if params[:format] == 'json'
+        render_pagination_json 'thread/thumb', @threads
       end
-      render_pagination 'thread/thumb', board.threads, params[:page].to_i, 50, false
     end
     
     def index
