@@ -45,14 +45,14 @@
 								%span.label Delete
 					%li.action
 						%a.report-comment(href="/admin/reports/new?#{comment.reportable_params}" data-id="#{comment.get_open_id}" data-title="Report Comment")
-							%span.icon= fa :flag
+							%span.icon= fa :warning
 							%span.label Report
 		- else
 			%span.like{title: "Likes", class: comment.is_liked && "liked"}
 				- if comment.score && comment.score > 0
 					= comment.score
 				= fa :thumbs_up
-			%a.report-comment(title="Report" href="/admin/reports/new?#{comment.reportable_params}" data-id="#{comment.get_open_id}" data-title="Report Comment")= fa :flag
+			%a.report-comment(title="Report" href="/admin/reports/new?#{comment.reportable_params}" data-id="#{comment.get_open_id}" data-title="Report Comment")= fa :warning
 		
 	.name{class: comment.user.banned? && "banned"}
 		%a{class: !comment.user.is_dummy && "user-link", "data-id": comment.user_id, href: comment.user.link}
