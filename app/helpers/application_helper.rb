@@ -7,7 +7,7 @@ module ApplicationHelper
   include StringsHelper
   
   def self.read_only
-    false
+    ApplicationSettings.get(:readonly)
   end
   
   def read_only

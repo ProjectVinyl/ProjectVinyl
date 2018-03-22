@@ -97,6 +97,7 @@ Rails.application.routes.draw do
   end
   scope :tags, controller: :tags do
     get 'aliases'
+    get 'implied'
     get ':name', action: :show, constraints: { name: /.*/ } # /
   end
   
@@ -158,6 +159,11 @@ Rails.application.routes.draw do
     post 'verify'
     
     get 'files' => 'files#index'
+    
+    resource :settings, only: [] do
+      put 'set/:key', action: :set
+      put 'toggle/:key', action: :toggle
+    end
     
     resources :albums, only: [:show], controller: :album do
       put 'feature'

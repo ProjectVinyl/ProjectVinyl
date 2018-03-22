@@ -1,0 +1,7 @@
+---
+values:
+  read_only: false
+:read_only: false
+readonly: true
+:readonly: false
+:anonposts: false
