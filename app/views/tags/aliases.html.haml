@@ -1,0 +1,17 @@
+- title 'Tag Aliases'
+%section.page.full-width
+	%h1
+		Tag Aliases
+		= surround '(', ')' do
+			= number_with_delimiter @aliases.count
+	%p
+		Tag aliases are used to correct common mistakes and typos.
+	= render layout: 'pagination/paginated', locals: { type: "tags/aliases", paginated: @aliases, id: "page" } do
+		%section.listing.compact
+			.items
+				.row.heads
+					%div Source
+					%div(style="width:30px")
+					%div
+						%span Target
+				= render partial: 'tags/tag_alias', collection: @aliases.records

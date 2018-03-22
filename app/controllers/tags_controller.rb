@@ -39,7 +39,7 @@ class TagsController < ApplicationController
   
   def videos
     if !(@tag = Tag.where(id: params[:tag_id]).first)
-      return head 404
+      return head :not_found
     end
     @records = @tag.videos.where(hidden: false).includes(:tags).order(:created_at)
     render_pagination 'videos/thumb_h', @records, params[:page].to_i, 8, true
@@ -47,10 +47,20 @@ class TagsController < ApplicationController
   
   def users
     if !(@tag = Tag.where(id: params[:tag_id]).first)
-      return head 404
+      return head :not_found
     end
     @records = @tag.users.order(:updated_at_at)
     render_pagination 'users/thumb_h', @records, params[:page].to_i, 8, true
+  end
+  
+  def aliases
+    @aliases = Tag.includes(:alias => [:videos, :users]).where('alias_id > 0').order(:name)
+    
+    @aliases = Pagination.paginate(@aliases, params[:page].to_i, 10, true)
+    
+    if params[:format] == 'json'
+      render_pagination_json 'tags/alias', @aliases
+    end
   end
   
   def hide
