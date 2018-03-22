@@ -44,6 +44,7 @@
   border-top-color: #3787bf;
   text-shadow: -1px -1px #3480b5;
   background: #3d95d3 !important;
+  min-height: 0;
 }
 
 .featured .description {
