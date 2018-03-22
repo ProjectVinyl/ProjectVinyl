@@ -1,0 +1,17 @@
+- title 'Implied Tags'
+%section.page.full-width
+	%h1
+		Implied Tags
+		= surround '(', ')' do
+			= number_with_delimiter @implied.count
+	%p
+		Implied tags are added when one or more tags that imply that tag are added.
+	= render layout: 'pagination/paginated', locals: { type: "tags/implied", paginated: @implied, id: "page" } do
+		%section.listing.compact
+			.items
+				.row.heads
+					%div Tag
+					%div(style="width:30px")
+					%div
+						%span Implications
+				= render partial: 'tags/tag_implication', collection: @implied.records

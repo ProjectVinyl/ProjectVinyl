@@ -1,0 +1,6 @@
+.row
+	%a{href: tag_implication.link}
+		= precede '#' do
+			= tag_implication.name
+	%div= fa :chevron_right
+	%div= render 'taglist', collection: tag_implication.implications

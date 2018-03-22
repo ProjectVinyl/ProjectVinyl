@@ -14,6 +14,11 @@
 					%a{href: search_path(tagquery: '*', type: 0, random: 'y')}
 						%span.icon= fw :random
 						%span.label Random
+				- if user_signed_in?
+					%li
+						%a{href: upload_path}
+							%span.icon= fw :upload
+							%span.label Upload
 		%li.forum{class: selected_path?('forum')}>
 			%a{href: forum_root_path}
 				= fw :users
@@ -45,6 +50,6 @@
 						%span.icon= fw :tag
 						%span.label Aliased
 				%li
-					%a{href: users_path}
+					%a{href: implied_path}
 						%span.icon= fw :tag
 						%span.label Implied

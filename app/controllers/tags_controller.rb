@@ -55,11 +55,19 @@ class TagsController < ApplicationController
   
   def aliases
     @aliases = Tag.includes(:alias => [:videos, :users]).where('alias_id > 0').order(:name)
-    
     @aliases = Pagination.paginate(@aliases, params[:page].to_i, 10, true)
     
     if params[:format] == 'json'
       render_pagination_json 'tags/alias', @aliases
+    end
+  end
+  
+  def implied
+    @implied = Tag.includes(:implications).references(:implications).where('`tag_implications`.id IS NOT NULL').order(:name)
+    @implied = Pagination.paginate(@implied, params[:page].to_i, 10, true)
+    
+    if params[:format] == 'json'
+      render_pagination_json 'tags/tag_implication', @implied
     end
   end
   
