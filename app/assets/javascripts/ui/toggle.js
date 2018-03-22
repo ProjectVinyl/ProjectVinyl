@@ -10,7 +10,7 @@ function toggle(e, sender, options, callback) {
   
   let path = options.dataset.target;
   if (options.dataset.id) path += `/${options.dataset.id}`;
-  path += `/${options.dataset.action}`;
+  if (options.dataset.action) path += `/${options.dataset.action}`;
   
   ajax.put(path, data).json(json => callback(json, options));
 }
