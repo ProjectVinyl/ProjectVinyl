@@ -82,7 +82,7 @@ class UsersController < ApplicationController
       return head :not_found
     end
     
-    render 'users/thumb_h', thumb_h: user
+    render partial: 'users/thumb_h', locals: {thumb_h: user}
   end
 
   def banner
