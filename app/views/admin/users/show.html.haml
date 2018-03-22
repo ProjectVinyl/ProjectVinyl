@@ -1,30 +1,37 @@
 %section.page.properties.column-left
 	%h1 Edit Profile
-	= render 'user/edit', user: @user, url: "/users/#{@user.id}", method: :patch
+	= render 'users/edit', user: @user, url: "/users/#{@user.id}", method: :patch
 %section.page.properties.column-right.right
+	%h1 Record Info
+	%table
+		%tr
+			%td.label Email
+			%td.field
+				- if current_user.is_contributor?
+					=email_escape @user.email
+				- else
+					%p.red Insufficient Permissions
 	%table
 		%tr
 			%td.label Roles
 			%td.field.actions
 				- if current_user.id == @user.id
-					%p(style="color:red") You cannot change your own role.
+					%p.red You cannot change your own role.
 				- else
-					= render 'admin/user/role_check', enable: current_user.is_admin?, value: @user.admin?, role: :admin, title: 'Administrator'
+					= render 'role_check', enable: current_user.is_admin?, value: @user.admin?, role: :admin, title: 'Administrator'
 					%br/
-					= render 'admin/user/role_check', enable: current_user.is_contributor?, value: @user.contributor?, role: :contributor, title: 'Moderator'
+					= render 'role_check', enable: current_user.is_contributor?, value: @user.contributor?, role: :contributor, title: 'Moderator'
 					%br/
-					= render 'admin/user/role_check', enable: current_user.is_staff?, value: @user.staff?, role: :staff, title: 'Staff'
+					= render 'role_check', enable: current_user.is_staff?, value: @user.staff?, role: :staff, title: 'Staff'
 					%br/
-					= render 'admin/user/role_check', enable: true, value: @user.normal?, role: :normal, title: 'Normal'
-			</td>
-		</tr>
+					= render 'role_check', enable: true, value: @user.normal?, role: :normal, title: 'Normal'
 		%tr
 			%td.label Banned
 			%td.field
 				- if current_user.id == @user.id
-					%p(style="color:red") You cannot ban yourself.
+					%p.red You cannot ban yourself.
 				- else
-					= render partial: 'admin/user/role_check', locals: { enable: true, value: @user.banned?, role: :banned, title: 'Ban User'}
+					= render partial: 'role_check', locals: { enable: true, value: @user.banned?, role: :banned, title: 'Ban User'}
 		%tr
 			%td.label Badges
 			%td
