@@ -8,7 +8,11 @@ function toggle(e, sender, options, callback) {
   if (sender.dataset.item) data.item = sender.dataset.item;
   if (sender.dataset.with) data.extra = document.querySelector(sender.dataset.with).value;
   
-  ajax.put(`${options.dataset.target}/${options.dataset.id}/${options.dataset.action}`, data).json(json => callback(json, options));
+  let path = options.dataset.target;
+  if (options.dataset.id) path += `/${options.dataset.id}`;
+  path += `/${options.dataset.action}`;
+  
+  ajax.put(path, data).json(json => callback(json, options));
 }
 
 function getIcon(element, state) {
