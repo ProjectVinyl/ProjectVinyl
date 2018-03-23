@@ -11,6 +11,6 @@
 		| 
 		- c = thumb_h.albums.count
 		= number_with_delimiter c
-		= "album".pluralise(c)
+		= "album".pluralize(c)
 	%br/
 	= render 'tags/taglist', collection: thumb_h.tags.limit(3)
