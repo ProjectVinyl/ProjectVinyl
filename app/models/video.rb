@@ -19,6 +19,8 @@ class Video < ApplicationRecord
   has_many :tags, through: :video_genres
   has_many :votes, dependent: :destroy
   
+  belongs_to :duplicate, class_name: "Video", foreign_key: "duplicate_id"
+  
   scope :listable, -> { where(hidden: false, duplicate_id: 0) }
   scope :finder, -> { listable.includes(:tags) }
   scope :popular, -> { finder.order(:heat).reverse_order.limit(4) }
@@ -516,8 +518,8 @@ class Video < ApplicationRecord
       Tag.send_pickup_event(other, tags)
       self.drop_tags(mytags)
     end
-    recievers = self.comment_thread.comments.pluck(:user_id) | [self.user_id]
-    Notification.notify_recievers_without_delete(recievers, self.comment_thread, "#{user.username} has merged <b>#{self.title}</b> into <b>#{other.title}</b>", other.comment_thread.location)
+    receivers = self.comment_thread.comments.pluck(:user_id) | [self.user_id]
+    Notification.notify_recievers_without_delete(receivers, self.comment_thread, "#{user.username} has merged <b>#{self.title}</b> into <b>#{other.title}</b>", other.comment_thread.location)
     self.save
     self
   end

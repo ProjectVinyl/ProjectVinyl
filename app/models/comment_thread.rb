@@ -96,9 +96,9 @@ class CommentThread < ApplicationRecord
       self.subscribe(sender)
     end
     
-    recievers = self.thread_subscriptions.pluck(:user_id) - [sender.id]
+    receivers = self.thread_subscriptions.pluck(:user_id) - [sender.id]
     
-    Notification.notify_recievers(recievers, self,
+    Notification.notify_receivers(receivers, self,
       "#{sender.username} has posted a reply to <b>#{self.title}</b>", self.location)
   end
 end

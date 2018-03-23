@@ -32,28 +32,28 @@ class Notification < ApplicationRecord
     self.sender = "comment_thread_#{i}"
   end
   
-  def self.notify_recievers(recievers, sender, message, source, del = true)
+  def self.notify_receivers(receivers, sender, message, source, del = true)
     sender = "#{sender.class.table_name}_#{sender.id}"
     if del
-      Notification.where('user_id IN (?) AND sender = ?', recievers, sender).delete_all
+      Notification.where('user_id IN (?) AND sender = ?', receivers, sender).delete_all
     end
-    Notification.create(recievers.uniq.map do |reciever|
+    Notification.create(receivers.uniq.map do |receiver|
       {
-        user_id: reciever,
+        user_id: receiver,
         message: message,
         source: source,
         sender: sender,
         unread: true
       }
     end)
-    User.where('id IN (?)', recievers).update_all('notification_count = (SELECT COUNT(*) FROM `notifications` WHERE user_id = `users`.id AND unread = true)')
+    User.where('id IN (?)', receivers).update_all('notification_count = (SELECT COUNT(*) FROM `notifications` WHERE user_id = `users`.id AND unread = true)')
   end
 
   def self.notify_admins(sender, message, source)
-    Notification.notify_recievers(User.where('role > 1').pluck(:id), sender, message, source, false)
+    Notification.notify_receivers(User.where('role > 1').pluck(:id), sender, message, source, false)
   end
 
-  def self.notify_recievers_without_delete(recievers, sender, message, source)
-    Notification.notify_recievers(recievers, sender, message, source, false)
+  def self.notify_receivers_without_delete(receivers, sender, message, source)
+    Notification.notify_receivers(receivers, sender, message, source, false)
   end
 end

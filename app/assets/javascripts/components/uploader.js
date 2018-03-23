@@ -36,7 +36,7 @@ function Uploader() {
   this.el = nodeFromHTML(uploaderMarkup(this.id));
   this.tab = nodeFromHTML(tabMarkup(this.id));
   
-  // Unselect prior tab and insert
+  // Deselect prior tab and insert
   const selectedTab = document.querySelector('#uploader_frame > .tab.selected');
   if (selectedTab) selectedTab.classList.remove('selected');
   

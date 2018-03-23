@@ -3,7 +3,7 @@ class PmController < InboxController
     if !(user_signed_in? && @pm = Pm.find_for_user(params[:id], current_user))
       return render_error(
         title: 'Nothing to see here!',
-        description: "Either the thread does not exist or you don't have the neccessary permissions to see it."
+        description: "Either the thread does not exist or you don't have the necessary permissions to see it."
       )
     end
     

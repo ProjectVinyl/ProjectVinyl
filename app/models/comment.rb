@@ -73,14 +73,14 @@ class Comment < ApplicationRecord
     CommentReply.where(parent_id: self.id).delete_all
     items = items.uniq
     if !items.empty?
-      recievers = []
+      receivers = []
       replied_to = (Comment.where('id IN (?) AND comment_thread_id = ?', items, self.comment_thread_id).map do |i|
-        recievers << i.user_id
+        receivers << i.user_id
         "(#{i.id},#{self.id})"
       end).join(', ')
-      recievers = recievers.uniq - [self.user_id]
+      receivers = receivers.uniq - [self.user_id]
       if !replied_to.empty?
-        Notification.notify_recievers(recievers, self,
+        Notification.notify_receivers(receivers, self,
           "#{self.user.username} has <b>replied</b> to your comment on <b>#{self.comment_thread.get_title}</b>",
           self.comment_thread.location)
         ApplicationRecord.connection.execute("INSERT INTO comment_replies (`comment_id`,`parent_id`) VALUES #{replied_to}")
@@ -90,7 +90,7 @@ class Comment < ApplicationRecord
   
   def self.send_mentions(receivers, sender, title, location)
     receivers = receivers.uniq - [sender.user_id]
-    Notification.notify_recievers(receivers, sender, "You have been <b>mentioned</b> on <b>#{title}</b>", location)
+    Notification.notify_receivers(receivers, sender, "You have been <b>mentioned</b> on <b>#{title}</b>", location)
   end
   
   def get_open_id

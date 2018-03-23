@@ -1,5 +1,5 @@
 /*
- * Initialises basic video playback funtionality.
+ * Initialises basic video playback functionality.
  */
 import { ajax } from '../utils/ajax';
 import { scrollTo } from '../ui/scroll';

@@ -3,7 +3,7 @@ class ThreadController < ApplicationController
     if !(@thread = CommentThread.where('id = ? AND (owner_type = "Board" OR owner_type = "Video")', params[:id]).first)
       return render_error(
         title: 'Nothing to see here!',
-        description: "Either the thread does not exist or you don't have the neccessary permissions to see it."
+        description: "Either the thread does not exist or you don't have the necessary permissions to see it."
       )
     end
     @order = '0'

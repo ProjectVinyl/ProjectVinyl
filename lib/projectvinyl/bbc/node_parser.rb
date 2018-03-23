@@ -32,13 +32,15 @@ module ProjectVinyl
               return content[index..content.length]
             end
             
-            if content.index('/' + close) == 0
+            if content.index("/#{close}") == 0
               return content[3..content.length]
             end
             
-            if content.index(open + '/' + node.tag_name + close) == index
+            tag = "#{open}/#{node.tag_name}#{close}"
+            
+            if content.index(tag) == index
               node.append_text(text)
-              return content[(index + (open + '/' + node.tag_name + close).length)..content.length]
+              return content[(index + tag.length)..content.length]
             end
             
             if content.index('&gt;&gt;') == index || content.index('>>') == index

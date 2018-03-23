@@ -9,7 +9,7 @@ var ports = [];
 
 var self = this;
 
-var recievers = {
+var receivers = {
   connect: function(port, msg) {
     keys.forEach(function(key) {
       counters[key] = msg[key];

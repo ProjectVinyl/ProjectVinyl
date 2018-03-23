@@ -154,14 +154,14 @@ class Tag < ApplicationRecord
     tags.pluck_actual_ids
   end
   
-  def self.send_pickup_event(reciever, tags)
+  def self.send_pickup_event(receiver, tags)
     tags = tags.uniq
-    reciever = reciever.pick_up_tags(tags)
-    if !reciever.nil?
+    receiver = receiver.pick_up_tags(tags)
+    if !receiver.nil?
       map = tags.map do |o|
         { tag_id: o, o_tag_id: o }
       end
-      reciever.create(map)
+      receiver.create(map)
     end
   end
 
