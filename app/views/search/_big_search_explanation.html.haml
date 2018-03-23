@@ -13,9 +13,9 @@
 		%p
 			System tags:
 			%ul
-				%li title:\<title\> - returns any videos with a matching name
-				%li source:\<source\> - returns any videos with a matching source
-				%li uploader:\<username\> - returns any videos posted by the named user
+				%li title:&lt;title&gt; - returns any videos with a matching name
+				%li source:&lt;source&gt; - returns any videos with a matching source
+				%li uploader:&lt;username&gt; - returns any videos posted by the named user
 				%li is:audio - returns videos only if they are an audio file
 				%li is:upvoted - returns videos only videos that have been liked by the current user (has no affect for anonymous users)
 				%li is:downvoted - equivalent to is:upvoted but for dislikes
@@ -23,16 +23,16 @@
 			%p
 				Moderation tags:
 				%ul
-					%li upvoted_by:\<username\>
-					%li downvoted_by:\<username\>
+					%li upvoted_by:&lt;username&gt;
+					%li downvoted_by:&lt;username&gt;
 					%li is:hidden
 		%p
 			Ranged tags:
 			
 			%ul
-				%li length\<X - returns any videos with a length less than X where X is in the format of hh:mm:ss
-				%li score\<X- returns any videos with a score less than X
+				%li length&lt;X - returns any videos with a length less than X where X is in the format of hh:mm:ss
+				%li score&lt;X - returns any videos with a score less than X
 				
-			The above tags may also be inverted by replacing the '\<' with a '\>'.
+			The above tags may also be inverted by replacing the '&lt;' with a '&gt;'.
 		</p>
 		%p Parenthesis '(' and ')' may be used as well for additional control

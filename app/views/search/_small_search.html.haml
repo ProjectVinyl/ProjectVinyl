@@ -1,5 +1,5 @@
 #search
-	%form(action="/search" method="get")
+	%form(action="#{search_path}" method="get")
 		%input#search_small(name="tagquery" type="search" placeholder="Tag Search" value="#{query}")
 		%label.select
 			%select#search_type_small(name="type")
