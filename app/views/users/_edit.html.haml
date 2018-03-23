@@ -4,7 +4,7 @@
 	%tr
 		%td.label Avatar
 		%td.field.center
-			= form_for(user, as: "user", url: "/users/#{user.id}/avatar", html: { class: "async js-avatar-select", method: :patch }, data: {id: user.id}) do |f|
+			= form_for(user, as: "user", url: user_avatar_path(user), html: { class: "async js-avatar-select", method: :patch }, data: {id: user.id}) do |f|
 				.file-select-container
 					.avatar.drag-target.file-select.auto-submit.image-selector.uploaded-preview.revertable#avatar-upload
 						%span.preview(style="#{format_bg user.avatar}")
@@ -27,7 +27,7 @@
 			%td(colspan="2") Basic Information
 		%tr
 			%td.label= f.label :display_name
-			%td.field.popper.auto-lookup.validate(data-action="/find/users")
+			%td.field.popper.auto-lookup.validate(data-action="#{find_users_path}")
 				= f.text_field :username, autofocus: true, autocomplete: "off"
 				%ul.pop-out
 		- if current_user.is_contributor?

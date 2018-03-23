@@ -1,14 +1,16 @@
 %li.bio
-	%a(href="#{thumb_h.link}")
+	%a{href: thumb_h.link}
 		%span.avatar
 			%span{style: format_bg(thumb_h.avatar)}
 		%h2{class: thumb_h.banned? && "banned"}= thumb_h.username
 		%span.tag-set= render 'badge/badges', user: thumb_h
 	.tag-set
-		= number_with_delimiter thumb_h.videos.length
-		= "video#{thumb_h.videos.length == 1 ? "" : "s"}"
+		- c = thumb_h.videos.count
+		= number_with_delimiter c
+		= "video".pluralize(c)
 		| 
-		= number_with_delimiter thumb_h.albums.length
-		= "album#{thumb_h.albums.length == 1 ? "" : "s"}"
+		- c = thumb_h.albums.count
+		= number_with_delimiter c
+		= "album".pluralise(c)
 	%br/
 	= render 'tags/taglist', collection: thumb_h.tags.limit(3)

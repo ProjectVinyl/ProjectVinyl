@@ -32,20 +32,20 @@
 					%ul.pop-out
 						- if user_signed_in? && current_user.is_contributor?
 							%li.action
-								%a(href="/admin/users/#{@user.id}")
+								%a{href: admin_user_path(@user)}
 									%span.icon= fa :gavel
 									%span.label Admin
-						%li.action.js-banner-select(data-external-form="users/#{@user.id}/banner" data-title="Select Banner Image")
+						%li.action.js-banner-select(data-external-form="#{user_banner_path @user}" data-title="Select Banner Image")
 							%span.icon= fa :pencil
 							%span.label Change Banner Image
-				%button.action(data-external-form="albums/new" data-title="New Album")>
+				%button.action(data-external-form="#{new_album_path}" data-title="New Album")>
 					= fa :plus
 					New Album
-				%a.button.action(href="/upload")
+				%a.button.action{href: upload_path}
 					= fa :upload
 					Upload Video
 			- if user_signed_in?
-				%button(data-external-form="message/new?user=#{@user.id}" data-title="New Message")>
+				%button(data-external-form="#{new_message_path user: @user}" data-title="New Message")>
 					= fa :envelope
 					Send Message
 - if @art
@@ -53,10 +53,9 @@
 		%h1.title.resize-target
 			Songs by
 			= @user.username
-			(
-			= number_with_delimiter @art.count
-			)
-			%a.right(href="#{@user.tag.link}")
+			= surround '(', ')' do
+				= number_with_delimiter @art.count
+			%a.right{href: @user.tag.link}
 				View All
 				= fa :chevron_right
 		%ul.horizontal.video-list#songs= render partial: 'videos/thumb_h', collection: @art.records
@@ -73,10 +72,10 @@
 		%ul.horizontal.video-list#uploads= render partial: 'videos/thumb_h', collection: @user.stars.videos.limit(8)
 %section.page.full-width.recent-uploads.resize-holder
 	%h1.title.resize-target
-		Recent Uploads (
-		= number_with_delimiter @videos.count
-		)
-		%a.right(href="/users/#{@user.id}/uploads")
+		Recent Uploads
+		= surround '(', ')' do
+			= number_with_delimiter @videos.count
+		%a.right{href: user_uploads_path(@user)}
 			View All
 			= fa :chevron_right
 	%ul.horizontal.video-list#uploads= render partial: 'videos/thumb_h', collection: @videos.records
@@ -85,7 +84,7 @@
 		Recent Albums (
 		= number_with_delimiter @albums.count
 		)
-		%a.right(href="/users/#{@user.id}/albums")
+		%a.right{href: user_albums_path(@user)}
 			View All
 			= fa :chevron_right
 	%ul.album-list.horizontal#albums= render partial: 'albums/thumb_h', collection: @albums.records
@@ -94,7 +93,7 @@
 		Recent Comments (
 		= number_with_delimiter @comments.count
 		)
-		%a.right(href="/users/#{@user.id}/comments")
+		%a.right{href: user_comments_path(@user)}
 			View All
 			= fa :chevron_right
 	%ul.comment-list= render 'comment/set', thread: @comments.records, indirect: true

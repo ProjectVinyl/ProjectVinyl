@@ -109,7 +109,7 @@ class UsersController < ApplicationController
       
       @label = 'Upload'
       @table = 'Video'
-      @partial = partial_for_type(@table)
+      @partial = partial_for_type(:videos)
       
       if params[:format] == 'json'
         return render_pagination_json @partial, @records
@@ -129,7 +129,7 @@ class UsersController < ApplicationController
       
       @label = 'Album'
       @table = 'Album'
-      @partial = partial_for_type(@table)
+      @partial = partial_for_type(:albums)
       
       if params[:format] == 'json'
         return render_pagination_json @partial, @records
