@@ -47,6 +47,7 @@
   display: block;
   top: 100%;
   left: 0;
+  right: auto;
 }
 .header ul li:hover .drop-down .drop-down {
   left: 100%;
