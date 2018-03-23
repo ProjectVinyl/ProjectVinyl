@@ -17,11 +17,11 @@
 					%div
 						%input#album_share_toggle(type="checkbox" value="playlist")
 						Share with playlist from the
-						%select#album_share_type
-							%option current video
-							%option beginning
-						\.
-				.center#embed_preview(style="display:none;height:315px")
+						= succeed '.' do
+							%select#album_share_type
+								%option current video
+								%option beginning
+				.center#embed_preview.hidden(style="height:315px")
 				%p
 					%button.action.test.center(type="button") Preview
 		%tr

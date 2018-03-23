@@ -24,26 +24,26 @@
 	- if current_user.is_admin?
 		%hr/
 		.actions
-			%a.button.red{href: "/admin/videos/reindex", data: {confirm: "", method: "post", title: "Reindex Videos"}}
+			%a.button.red{href: admin_path(table: :videos), data: {confirm: "", method: "post", title: "Reindex Videos"}}
 				= fw :refresh
 				Recreate Video Index
-			%a.button.green{href: "/admin/users/reindex", data: {confirm: "", method: "post", title: "Reindex Users"}}
+			%a.button.green{href: admin_path(table: :users), data: {confirm: "", method: "post", title: "Reindex Users"}}
 				= fw :refresh
 				Recreate User Index
-			%a.button.blue{href: "/admin/videos/hidden/drop", data: {confirm: "", method: "post", title: "Drop #{@hiddenvideos.count} Videos"}}
+			%a.button.blue{href: hidden_drop_admin_videos_path, data: {confirm: "", method: "post", title: "Drop #{@hiddenvideos.count} Videos"}}
 				= fw :trash_o
 				Delete Unlisted Videos
 	%hr/
 	.actions
-		%a.button(href="/videos?unlisted=1")
+		%a.button{href: videos_path(unlisted: 1)}
 			= fw :eye_slash
 			Unlisted Videos
-		%a.button(href="/videos?merged=1")
+		%a.button{href: videos_path(merged: 1)}
 			= fw :compress
 			Merged Videos
-		%a.button(href="/admin/tagtypes")
+		%a.button{href: admin_tagtypes_path}
 			= fw :tags
 			Tag Types
-		%a.button(href="/admin/sitenotices")
+		%a.button{href: admin_sitenotices_path}
 			= fw :info
 			Site Notices

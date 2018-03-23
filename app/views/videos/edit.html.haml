@@ -3,8 +3,8 @@
 	- if !@video.audio_only
 		%ul.tab-set.tabs
 			%li.button.selected(data-target="thumbupload") Upload Image
-			%li.button(data-target="thumbpick) Pick Time
-	= form_for(@video, as: "video", url: "videos/#{@video.id}/cover", html: {class: "edit_video async", method: :patch}) do |f|
+			%li.button(data-target="thumbpick") Pick Time
+	= form_for(@video, as: "video", url: video_cover_path(@video), html: {class: "edit_video async", method: :patch}) do |f|
 		= f.text_field :id, hidden: true
 		.progressor
 			.cover-block
@@ -14,7 +14,7 @@
 		#upload
 			- if !@video.audio_only
 				.tab.video#video{style: format_bg(@video.direct_thumb), data: {tab: "thumbpick", title: @video.get_title, pending: 1, video: @video.id, mime: "#{@video.file}|#{@video.mime}"}}
-					= render layout: 'video/widget/slim'
+					= render 'videos/widget/slim'
 			.cover-block.selected.tab.drag-target.file-select.image-selector#cover-upload(data-tab="thumbupload")
 				%span.preview{style: format_bg(@video.direct_thumb)}
 				%span.drop-icon
@@ -39,4 +39,4 @@
 					.bobber.bob-left
 						Cover art is required to upload audio files
 					= f.submit "Save", class: "action right green"
-			= render partial: 'video/foobar'
+			= render partial: 'videos/foobar'

@@ -12,27 +12,27 @@
 		%ul.pop-out
 			- if user_signed_in? && current_user.is_contributor?
 				%li.action
-					%a(href="/admin/videos/#{@video.id}")
+					%a{href: admin_video_path(@video)}
 						%span.icon= fa :gavel
 						%span.label Admin
 			%li.action
-				%a(href="/admin/reports/new?#{@video.reportable_params}")
+				%a{href: new_admin_report_path(@video.reportable_hash)}
 					%span.icon= fa :warning
 					%span.label Report
 			- if @modifications_allowed
 				%li.action
-					%a(href="/videos/#{@video.id}/edit")
+					%a{href: edit_video_path(@video)}
 						%span.icon= fa :pencil
 						%span.label Change Cover Image
 			%li.action
-				%a(download target="_blank" href="/download/#{@video.id}")
+				%a(download target="_blank" href="#{video_download_path @video}")
 					%span.icon= fa :download
 					%span.label
 						Download (
 						= @video.file.gsub(/\./,'')
 						)
 			%li.action
-				%a(href="/videos/#{@video.id}/changes")
+				%a{href: video_changes_path(@video)}
 					%span.icon= fa :history
 					%span.label Tag Changes
 			%li.action

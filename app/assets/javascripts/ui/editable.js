@@ -86,7 +86,10 @@ function toggleEdit(e, holder, content, textarea) {
   if (!holder.classList.contains('dirty')) return;
   
   holder.classList.add('loading');
-  ajax.patch(`/${holder.dataset.target}/${holder.dataset.id}`, {
+  let path = holder.dataset.target;
+  if (holder.dataset.id) path += `/${holder.dataset.id}`;
+  
+  ajax.patch(path, {
     field: holder.dataset.member, value: holder.querySelector('.input').value
   }).json(json => {
     content.innerHTML = json.content;

@@ -13,11 +13,11 @@
 		= fa :star
 	%a.button.action.addto.split-action.pop-out-toggle Add To
 	%ul.pop-out
-		%li.action(data-external-form="albums/new?initial=#{@video.id}" data-title="New Album")
+		%li.action(data-external-form="#{new_album_path initial: @video.id}" data-title="New Album")
 			%span.icon= fa :pencil
 			%span.label New Album
 		- current_user.albums.each do |album|
-			%li.action.toggle(data-action="add" data-target="videos" data-id="#{@video.id}" data-item="#{album.id}")
+			%li.action.toggle(data-target="#{video_add_path @video}" data-item="#{album.id}")
 				%span.icon
 					- if album.album_items.where(video_id: @video.id).first
 						= fa :check

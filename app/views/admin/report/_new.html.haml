@@ -1,4 +1,4 @@
-﻿= form_for(report, as: "report", url: "/admin/report?#{reportable.reportable_params}", html: { method: :post }) do |f|
+﻿= form_for(report, as: "report", url: admin_reports_path(reportable.reportable_hash), html: { method: :post }) do |f|
 	.group.active(data-stage="start" style="white-space:normal")
 		.notice Please select the type of report you would like to submit.
 		%table

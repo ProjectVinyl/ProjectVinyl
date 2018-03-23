@@ -48,7 +48,6 @@ Rails.application.routes.draw do
   
   # Videos #
   get 'upload' => 'videos#new'
-  get 'download/:id' => 'videos#download'
   
   resources :videos, except: [:create, :new, :destroy], id: /([0-9]+).*/ do # /
     put 'like'
@@ -58,6 +57,7 @@ Rails.application.routes.draw do
     patch 'details' => 'videos#details'
     
     get 'changes' => 'history#index'
+    get 'download'
     
     put 'add' => 'album_item#toggle'
   end
@@ -190,12 +190,12 @@ Rails.application.routes.draw do
     resources :tagtypes, except: [:show, :edit], controller: :tag_type
     resources :sitenotices, except: [:show, :edit], controller: :site_notice
     resources :users, only: [:show] do
-      put 'badges/:id' => 'users#toggle_badge'
-      put 'roles/:id' => 'users#role'
+      resources :badges, only: [:update]
+      resources :roles, only: [:update]
     end
     
     # Reporting #
-    resources :reports, only: [:new, :show, :index], controller: :report
+    resources :reports, only: [:new, :show, :index, :create], controller: :report
     
     resources :threads, only: [:destroy], controller: :thread do
       put 'pin'
@@ -226,7 +226,7 @@ Rails.application.routes.draw do
   end
   
   # Short link #
-  get '/:id' => 'videos#show', constraints: { id: /([0-9]+).*/ } # /
+  get '/:id(-:safe_title)' => 'videos#show', constraints: { id: /([0-9]+)/ } # /
   
   # Home #
   get '/' => 'welcome#index'

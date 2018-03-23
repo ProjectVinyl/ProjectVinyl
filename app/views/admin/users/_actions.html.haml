@@ -1,0 +1,47 @@
+%section.page.properties.column-right.right
+	%h1 Record Info
+	%table
+		%tr
+			%td.label Email
+			%td.field
+				- if current_user.is_contributor?
+					=email_escape @user.email
+				- else
+					%p.red Insufficient Permissions
+	%table
+		%tr
+			%td.label Roles
+			%td.field.actions
+				- if current_user.id == @user.id
+					%p.red You cannot change your own role.
+				- else
+					= render 'role_check', enable: current_user.is_admin?, value: @user.admin?, role: :admin, title: 'Administrator'
+					%br/
+					= render 'role_check', enable: current_user.is_contributor?, value: @user.contributor?, role: :contributor, title: 'Moderator'
+					%br/
+					= render 'role_check', enable: current_user.is_staff?, value: @user.staff?, role: :staff, title: 'Staff'
+					%br/
+					= render 'role_check', enable: true, value: @user.normal?, role: :normal, title: 'Normal'
+		%tr
+			%td.label Banned
+			%td.field
+				- if current_user.id == @user.id
+					%p.red You cannot ban yourself.
+				- else
+					= render partial: 'role_check', locals: { enable: true, value: @user.banned?, role: :banned, title: 'Ban User'}
+		%tr
+			%td.label Badges
+			%td
+				- had_badges = []
+				- @user.user_badges.includes(:badge).each do |i|
+					- had_badges << i.badge.id
+					= render 'badge_toggle', badge_toggle: i.badge, checked: true
+				%hr/
+				- (had_badges.length > 0 ? Badge.where.not('id IN (?)', had_badges) : Badge.all).each do |i|
+					= render 'badge_toggle', badge_toggle: i, checked: false
+		%tr.actions
+			%td.label Reindex User
+			%td.field
+				= form_for(@user, as: "user", url: admin_path(table: :users), html: { method: :put }) do |f|
+					= f.text_field :id, hidden: true
+					= f.submit "Reindex"

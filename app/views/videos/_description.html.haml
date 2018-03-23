@@ -6,7 +6,7 @@
 			.notice.alert This video has been hidden. It will not be shown on other parts of the site until being passed by moderation.
 	.post.description.resize-holder
 		- if @modifications_allowed
-			%h2.title.editable.short.post-title.resize-target(data-target="videos" data-member="title" data-id="#{@video.id}")
+			%h2.title.editable.short.post-title.resize-target(data-target="#{video_path @video}" data-member="title")
 				%span.content= @video.title
 				%span.edit= fa :pencil
 				%span.hidden 11
@@ -23,7 +23,7 @@
 				= number_with_delimiter @video.views
 				views
 	- if @modifications_allowed
-		%span.editable.post-content(data-target="videos" data-member="description" data-id="#{@video.id}")
+		%span.editable.post-content(data-target="#{video_path @video}" data-member="description")
 			%span.content= raw @video.html_description
 			%textarea.input.js-auto-resize(name="description_video_#{@video.id}")= @video.description
 			%span.edit= fa :pencil
@@ -39,7 +39,7 @@
 		%hr/
 		.normal.tags= render partial: 'tags/thumb_h', collection: @tags
 		- if user_signed_in?
-			= form_for(@video, as: "video", url: "/videos/#{@video.id}/details", html: {class: "editing async form-state-toggle js-edit-video", method: :patch}, data: {state: "editing"}) do |f|
+			= form_for(@video, as: "video", url: video_details_path(@video), html: {class: "editing async form-state-toggle js-edit-video", method: :patch}, data: {state: "editing"}) do |f|
 				= render layout: 'tags/editor', locals: {tags: @video.tags} do
 					%textarea(autocomplete="off" name="tags")= raw @video.tag_string
 				.properties

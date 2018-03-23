@@ -1,10 +1,8 @@
 module Admin
   class ReportController < ApplicationController
+    before_action :authenticate_user!, except: [:new, :create]
+    
     def show
-      if !user_signed_in?
-        return render_access_denied
-      end
-      
       if !(@report = Report.where(id: params[:id]).first)
         return render_error(
           title: 'Not Found',
@@ -32,8 +30,32 @@ module Admin
       
     end
     
+    def index
+      if !user_signed_in?
+        if params[:format] == 'json'
+          return head :unauthorized
+        end
+        
+        return render_access_denied
+      end
+      
+      if params[:reportable_class] && params[:reportable_id]
+        @reportable = Reportable.find(params)
+      end
+      
+      @records = Report.includes(:reportable).open
+      
+      if @reportable
+        @records = @records.where(reportable: @reportable)
+      end
+      
+      if params[:format] == 'json'
+        render_pagination 'thumb', @records, params[:page].to_i, 40, false
+      end
+    end
+    
     def status
-      if !user_signed_in? || !current_user.is_contributor?
+      if !current_user.is_contributor?
         return render_access_denied
       end
       
@@ -46,15 +68,6 @@ module Admin
       render json: {
         status: @report.status
       }
-    end
-    
-    def index
-      if !user_signed_in?
-        return head 401
-      end
-      
-      @records = Report.includes(:reportable).open
-      render_pagination 'thumb', @records, params[:page].to_i, 40, false
     end
     
     def new
@@ -75,7 +88,6 @@ module Admin
     end
     
     def create
-      
       if !(reportable = Reportable.find(params))
         return head :not_found
       end

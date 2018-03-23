@@ -61,7 +61,7 @@ class VideosController < ApplicationController
       return head :not_found
     end
     
-    @video = Video.where(id: params[:id].split(/-/)[0]).first
+    @video = Video.where(id: params[:id]).first
     
     if @video && @video.duplicate_id > 0
       @video = Video.where(id: @video.duplicate_id).first
@@ -314,7 +314,7 @@ class VideosController < ApplicationController
   end
   
   def download
-    if !(@video = Video.where(id: params[:id].split(/-/)[0]).first)
+    if !(@video = Video.where(id: params[:video_id]).first)
       return not_found
     end
     

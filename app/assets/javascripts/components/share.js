@@ -33,7 +33,7 @@ ready(() => {
   let frame;
   
   document.querySelector('.action.test').addEventListener('click', e => {
-    embedPreview.style.display = '';
+    embedPreview.classList.remove('hidden');
     e.target.parentNode.removeChild(e.target);
     embedPreview.innerHTML = '<iframe style="max-width:100%;" width="560px" height="100%" frameborder="0"></iframe>';
     frame = embedPreview.firstChild;
