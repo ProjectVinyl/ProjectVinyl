@@ -1,14 +1,14 @@
 ﻿%section
 	%h1.resize-target
 		%a Forum Search
-	%form.search-options#big-search(action="search" method="get")
+	%form.search-options#big-search(action="#{forum_search_path}" method="get")
 		.field
 			%input.full-width(type="text" name="title_query" placeholder="Thread Title" value="#{@title_query}")
-		.field.popper.auto-lookup.validate(data-action="/find/users")
+		.field.popper.auto-lookup.validate(data-action="#{find_users_path}")
 			%input.full-width(type="text" name="poster_query" placeholder="Poster" value="#{@poster_query}" autocomplete="off")
 			%ul.pop-out
 		.field
-			%textarea.full-width(style="resize:vertical;min-height:150px" type="text" name="text_query" placeholder="Content" value="#{@text_query}")
+			%textarea.full-width(style="resize:vertical;min-height:150px" type="text" name="text_query" placeholder="Content" value="#{@text_query}")= @text_query
 		%label
 			%span Category
 			%div

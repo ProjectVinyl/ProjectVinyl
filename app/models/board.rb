@@ -1,7 +1,8 @@
 class Board < ApplicationRecord
   has_many :comment_threads, as: :owner, dependent: :destroy
   
-  scope :listables, -> { order(:title).pluck(:id, :title) }
+  scope :sorted, -> { order(:title) }
+  scope :listables, -> { sorted.pluck(:id, :title) }
   
   def self.find_board(id)
     Board.where(title: id).first

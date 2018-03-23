@@ -3,11 +3,12 @@
 %section.page.full-width.properties
 	%h1.title
 		Notifications
-		= "(#{current_user.notifications.length})"
+		= surround '(', ')' do
+			= current_user.notifications.length
 	%ul.notifications
 		- if @all.length > 0
 			- @all.group_by(&:period).each do |week, n|
 				%b= week
-				%p= render partial: "notification/notification", collection: n
+				%p= render partial: "notification", collection: n
 		- else
 			.center You have no unread notifications

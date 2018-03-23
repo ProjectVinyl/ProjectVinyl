@@ -25,7 +25,7 @@
 				%span Forums
 				%span.icon<>= fa :caret_down
 			%ul.drop-down>
-				- Board.all.each do |board|
+				- Board.sorted.each do |board|
 					%li
 						%a{href: board.link}
 							%span.icon
