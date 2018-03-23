@@ -1,9 +1,9 @@
 %a.username{href: current_user.link}= current_user.username
-%a.notices-bell.feeds(href="/feed")
+%a.notices-bell.feeds{href: feed_path}
 	%i.fa.fa-globe
 	%span.feed-count.count{data: {count: current_user.feed_count}}
 		= safe_to_display current_user.feed_count, 999
-%a.notices-bell.notices(href="/notifications")
+%a.notices-bell.notices{href: notifications_path}
 	%i.fa.fa-bell
 		%span.notification-count.count{data: {count: current_user.notification_count}}<
 			= safe_to_display current_user.notification_count, 999
@@ -12,7 +12,7 @@
 %ul.drop-down(style="z-index:300;")
 	- if current_user.is_contributor?
 		%li
-			%a(href="/admin" rel="nofollow")
+			%a(href="#{admin_root_path}" rel="nofollow")
 				%span.icon= fw :gavel
 				%span.label Admin
 	%li
@@ -24,21 +24,21 @@
 			%span.icon= fw :envelope
 			%span.label Messages
 	%li
-		%a(href="/upload" rel="nofollow" title="upload")
+		%a(href="#{upload_path}" rel="nofollow" title="upload")
 			%span.icon= fw :upload
 			%span.label Upload
 	%li
-		%a(href="/stars")
+		%a{href: stars_path}
 			%span.icon= fw :star
 			%span.label Stars
 	%li
-		%a(href="/users/edit" rel="nofollow")
+		%a(href="#{edit_user_registration_path}" rel="nofollow")
 			%span.icon= fw :cog
 			%span.label Settings
 	%li
-		%a#sign-out(href="/users/sign_out" rel="nofollow" data-method="delete")
+		%a#sign-out(href="#{destroy_user_session_path}" rel="nofollow" data-method="delete")
 			%span.icon= fw :sign_out
 			%span.label Sign Out
-%a(href="/users/edit" rel="nofollow" title="settings")
+%a(href="#{edit_user_registration_path}" rel="nofollow" title="settings")
 	%span.avatar.small
-		%span(style="background-image:url('#{current_user.small_avatar}');")
+		%span{style: format_bg(current_user.small_avatar)}

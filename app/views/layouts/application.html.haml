@@ -4,7 +4,9 @@
 	%head
 		%meta(http-equiv="Content-type" content="text/html; charset=utf-8")
 		%title
-			= raw(content_for(:title) ? "#{content_for(:title)} -" : "")
+			- if content_for(:title)
+				!= content_for(:title)
+				\-
 			Project Vinyl - My Little Pony: FiM Songs & Animation
 		- if user_signed_in?
 			%meta(name="current_user" content="#{({ id: current_user.id }).to_json}")
@@ -23,7 +25,7 @@
 				- if user_signed_in?
 					= render partial: "layouts/signed_in_controls"
 				- else
-					%a(data-external-form="ajax/login" data-icon="sign-in" data-title="Sign In" data-thin="true" href="/users/sign_in")
+					%a(data-external-form="#{ajax_login_path}" data-icon="sign-in" data-title="Sign In" data-thin="true" href="#{new_user_session_path}")
 						%i.fa.fa-sign-in
 						Sign-in
 			= render partial: "search/small_search"
@@ -35,21 +37,23 @@
 		= render partial: "layouts/nav"
 		.layer-foreground.body
 			%main.wrapper{class: content_for?(:wrapper) && content_for(:wrapper), style: "max-width:#{content_for(:width)}"}
-				= render partial: "admin/site_notice/notices"
+				= render "admin/site_notice/notices"
 				- if @crumb
-					= render partial: 'view/breadcrumb', locals: @crumb
+					= render 'view/breadcrumb', @crumb
 				= yield
 			%span.push
 			%footer
 				%a(title="Home" href="/") projectvinyl.net
 				%div
-					%a(href="/staff")> Staff
-					%a(href="/policy")> Policy
-					%a(href="/copyright")> Copyright
+					%a{href: staff_path}> Staff
+					%a{href: policy_path}> Policy
+					%a{href: copyright_path}> Copyright
 				%span © 2018 Project Vinyl Foundation
-				.date<
+				.date
 					Page generated in 
-					%span<>= "#{load_time} seconds"
+					%span>
+						= load_time
+						seconds
 				.date
 					%span Powered by Muffins
 	.fades
