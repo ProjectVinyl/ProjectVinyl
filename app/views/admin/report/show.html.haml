@@ -2,8 +2,11 @@
 = lim "1100px"
 %section.page.full-width.resize-holder.report{class: @report.status.downcase}
 	%h1.title.resize-target
-		Report \#
-		= "#{@report.id} #{@report.comment_thread.title}"
+		Report
+		= precede '#' do
+			= @report.id
+		\-
+		= @report.comment_thread.title
 	.comment
 		.alert.resolution-status
 			%span.fa-stack.fa-3x
@@ -18,7 +21,7 @@
 		.artist-bio.bio
 			%a{class: !@report.user.is_dummy && "user-link", href: @report.user.link, data: {id: @report.user_id}}
 				%span.avatar.medium
-					%span(style="background-image:url('#{@report.user.avatar}')")
+					%span{style: format_bg(@report.user.avatar)}
 		.content
 			.name
 				%a{class: !@report.user.is_dummy && "user-link", href: @report.user.link, data: {id: @report.user.id}}

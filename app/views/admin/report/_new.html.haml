@@ -43,8 +43,10 @@
 	.group(data-stage="final" style="white-space:normal")
 		- if user_signed_in?
 			Thank you!
-			<br>
-			Your report will be sent as <a href="<%= current_user.link %>"><%= current_user.username %></a>.
+			%br\
+			Your report will be sent as
+			= succeed '.' do
+				%a{href: current_user.link}= current_user.username
 			%table
 				%tr
 					%td

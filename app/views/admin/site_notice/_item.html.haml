@@ -1,4 +1,4 @@
-= form_for(item, as: 'notice', url: "/admin/sitenotices/#{item.id}", html: {method: :patch, class: "row row-group removeable state-binary"}) do |f|
+= form_for(item, as: 'notice', url: admin_sitenotice_path(item), html: {method: :patch, class: "row row-group removeable state-binary"}) do |f|
 	= f.text_field :id, hidden: true
 	.row
 		%div(style="width:30px")
@@ -24,7 +24,7 @@
 							Is Active
 				%tr.actions
 					%td.label
-						%a.button.red.right(data-confirm data-method="delete" href="/admin/sitenotices/#{item.id}" data-title="Remove Notice")
+						%a.button.red.right(data-confirm data-method="delete" href="#{admin_sitenotice_path item}" data-title="Remove Notice")
 							= fa :trash
 							Delete
 						%button.green.left

@@ -1,4 +1,4 @@
-= form_for(@notice, as: 'notice', url: '/admin/sitenotices', html: { method: :post}) do |f|
+= form_for(@notice, as: 'notice', url: admin_sitenotices_path, html: { method: :post}) do |f|
 	.message_content
 		.properties
 			%table

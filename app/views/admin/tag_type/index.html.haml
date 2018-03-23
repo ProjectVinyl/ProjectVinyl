@@ -8,6 +8,6 @@
 			%div Implications
 		= render partial: 'item', collection: @types
 	%span.row.foot
-		%a.button.button-bub.bub(title="add" data-title="Add Tag Type" data-external-form="/admin/tagtypes/new")
+		%a.button.button-bub.bub(title="add" data-title="Add Tag Type" data-external-form="#{new_admin_tagtype_path}")
 			= fa :plus
 			Add New

@@ -4,15 +4,15 @@
 	%section.page.column-right.right.properties
 		.actions
 			%table
-				= form_for(@album, as: "item", url: "/admin/transfer?type=album", html: { method: :post }) do |f|
+				= form_for(@album, as: "item", url: admin_transfer_path(type: :album), html: { method: :post }) do |f|
 					= f.text_field :id, hidden: true
 					%tr
 						%td.label= f.label "Current Owner"
 						%td.field
-							%a(href="#{@user.link}")= "#{@user.username} (#{@user.id})"
+							%a{href: @user.link}= "#{@user.username} (#{@user.id})"
 					%tr
 						%td.label= f.label "Owner"
-						%td.field.popper.auto-lookup(data-action="/find/users")
+						%td.field.popper.auto-lookup(data-action="#{find_users_path}")
 							= f.text_field :user_id, autocomplete: "off"
 							%ul.pop-out
 					%tr.actions
@@ -29,7 +29,7 @@
 				%tr.actions
 					%td.label Delete Item
 					%td.field
-						%a.button.red{href: "admin/albums/#{@album.id}", data: {confirm: "", method: "delete", title: "Delete Album"}}
+						%a.button.red{href: admin_album_path(@album), data: {confirm: "", method: "delete", title: "Delete Album"}}
 							= fa :trash
 							Delete Album
 = render 'albums/items'

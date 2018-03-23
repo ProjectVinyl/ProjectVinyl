@@ -3,7 +3,7 @@
 	%h1
 		Editing Tag
 		= @tag.name
-	= form_for(@tag, as: "tag", url: "/admin/tags/#{@tag.id}", html: {method: :patch}) do |f|
+	= form_for(@tag, as: "tag", url: admin_tag_path(@tag), html: {method: :patch}) do |f|
 		%table
 			%tr
 				%td.label Domain

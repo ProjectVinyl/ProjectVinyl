@@ -12,6 +12,6 @@
 		= render partial: 'static_item', collection: Badge.static_badges
 		= render partial: 'item', collection: @badges
 	%span.row.foot
-		%a.button.button-bub.bub"(title="add" data-title="Add Badge" data-external-form="badge/new")
+		%a.button.button-bub.bub"(title="add" data-title="Add Badge" data-external-form="#{new_admin_badge}")
 			= fa :plus
 			Add New
