@@ -5,17 +5,17 @@ button::-moz-focus-inner {
 }
 
 /*Firefox(android)/Edge fix*/
-html.andoid-mozilla .context-3d,
+html.android-mozilla .context-3d,
 html.ms-edge .context-3d {
   perspective: none !important;
 }
-html.ms-edge .layer-background .far,
-html.ms-edge .layer-background .near,
+html.android-mozilla .layer-background .far,
+html.android-mozilla .layer-background .near,
 html.ms-edge .layer-background .far,
 html.ms-edge .layer-background .near {
   transform: none !important;
 }
-html.andoid-mozilla .context-3d .layer-foreground,
+html.android-mozilla .context-3d .layer-foreground,
 html.ms-edge .context-3d .layer-foreground {
 	position: absolute;
 }
