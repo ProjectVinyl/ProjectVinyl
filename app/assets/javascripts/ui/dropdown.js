@@ -22,7 +22,7 @@ addDelegatedEvent(document, 'click', '.popper .pop-out-toggle, .popper.pop-out-t
 });
 
 document.addEventListener('mouseup', () => all('.pop-out-shown', a => {
-	a.classList.remove('pop-out-shown');
+  if (!a.querySelector('.action.toggle:hover')) a.classList.remove('pop-out-shown');
 }));
 
 addDelegatedEvent(document, 'touchstart', '.drop-down-holder:not(.hover), .mobile-touch-toggle:not(.hover)', (e, target) => {
