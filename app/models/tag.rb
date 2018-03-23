@@ -56,7 +56,7 @@ class Tag < ApplicationRecord
 
   def self.find_matching_tags(name)
     name = name.downcase
-    Tag.jsons(Tag.includes(:tag_type, :alias).where('name LIKE ? OR short_name LIKE ?', "#{name}%", "#{PathsHelper.url_safe_for_tags(name)}%")
+    Tag.jsons(Tag.includes(:tag_type, :alias).where('name LIKE ? OR short_name LIKE ?', "#{name}%", "#{PathHelper.url_safe_for_tags(name)}%")
        .order(:video_count, :user_count).limit(10))
   end
 

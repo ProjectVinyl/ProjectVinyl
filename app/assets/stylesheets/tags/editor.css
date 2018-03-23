@@ -24,6 +24,10 @@
   background: none;
 }
 
+.properties td.field .tag-editor .tag.input {
+  width: initial;
+}
+
 .tag-editor .tags .tag i.remove {
   vertical-align: middle;
   display: inline-block;
