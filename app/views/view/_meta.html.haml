@@ -51,5 +51,5 @@
 
 - if oembed
 	- oparam = "#{url}?#{oembed.to_param}"
-	%link(rel="alternate" type="application/json+oembed" href="http://www.projectvinyl.net/oembed?#{({format: 'json', url: oparam}).to_param}" title="#{title}")
-	%link(rel="alternate" type="application/xml+oembed" href="http://www.projectvinyl.net/oembed?#{({format: 'xml', url: oparam}).to_param}" title="#{title}")
+	%link(rel="alternate" type="application/json+oembed" href="#{oembed_path format: :json, url: oparam}" title="#{title}")
+	%link(rel="alternate" type="application/xml+oembed" href="#{oembed_path format: :xml, url: oparam}" title="#{title}")
