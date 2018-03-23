@@ -17,6 +17,28 @@
 .hovercard li {
   list-style: none;
 }
+
+.hovercard li.bio {
+  box-shadow: 1px 1px 3px 0 #ccc;
+  border-radius: 3px;
+  background: repeating-linear-gradient(
+    45deg,
+    #f5f5ff,
+    #fff 25%,
+    #f8f8ff 50%,
+    #fff 75%,
+    #f8f8ff 100%
+  );
+  background: webkit-repeating-linear-gradient(
+    45deg,
+    #f5f5ff,
+    #fff 25%,
+    #f8f8ff 50%,
+    #fff 75%,
+    #f8f8ff 100%
+  );
+}
+
 .hovercard.shown {
   transform: scale(1,1);
 }
