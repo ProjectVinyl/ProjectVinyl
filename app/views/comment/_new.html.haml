@@ -1,7 +1,7 @@
 - if @thread.locked
 	Thread locked
 - else
-	= form_for(Comment.new, url: '/comments', html: {method: :post, class: "comment post-box"}) do |f|
+	= form_for(Comment.new, url: comments_path, html: {method: :post, class: "comment post-box"}) do |f|
 		%input{type: "hidden", name: "[thread_id]", value: @thread.id}
 		%input{type: "hidden", name: "order", value: @order}
 		.artist-bio.bio
