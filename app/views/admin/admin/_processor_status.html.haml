@@ -20,9 +20,9 @@
 					= i+1
 				%div= payload || "No Task"
 	%hr/
-	%button.action.blue{type: "button", data: {method: "post", confirm: "", url: "/ajax/admin/verify", title: "Verify System Integrity"}}
+	%button.action.blue{type: "button", data: {method: "post", confirm: "", url: admin_verify_path, title: "Verify System Integrity"}}
 		Verify System Integrity
-	%button.action.blue{type: "button", data: {method: "post", confirm: "", method: "post", url: "/ajax/admin/videos/requeue", title: "Rebuild Processing Queue"}}
+	%button.action.blue{type: "button", data: {method: "post", confirm: "", method: "post", url: requeue_admin_videos_path, title: "Rebuild Processing Queue"}}
 		Rebuild Processing Queue
 - rescue
 	%p Oops! Could not connect to Resque.
