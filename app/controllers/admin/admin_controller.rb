@@ -22,7 +22,7 @@ module Admin
     
     def transfer
       if !current_user.is_contributor?
-        return head 401
+        return head :unauthorized
       end
       
       if params[:type] == 'video'
