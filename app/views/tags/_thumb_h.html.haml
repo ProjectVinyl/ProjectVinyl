@@ -1,7 +1,8 @@
 %li.tag.drop-down-holder.popper{class: "tag-#{thumb_h.namespace}", "data-slug": thumb_h.name}>
 	%a{href: thumb_h.link}
 		%span= thumb_h.name
-	= "(#{number_with_delimiter thumb_h.members})"
+	= surround '(', ')' do
+		= number_with_delimiter thumb_h.members
 	- if user_signed_in?
 		= render 'tags/flags', tag: thumb_h
 	- if user_signed_in?
