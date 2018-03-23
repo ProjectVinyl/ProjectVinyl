@@ -1,6 +1,6 @@
 - title @album.title
 .wrapper.full-width
-	%section.page.resize-holder.column-left.left= render partial: 'album/album'
+	%section.page.resize-holder.column-left.left= render partial: 'albums/album'
 	%section.page.column-right.right.properties
 		.actions
 			%table
@@ -32,4 +32,4 @@
 						%a.button.red{href: "admin/albums/#{@album.id}", data: {confirm: "", method: "delete", title: "Delete Album"}}
 							= fa :trash
 							Delete Album
-= render 'album/items'
+= render 'albums/items'

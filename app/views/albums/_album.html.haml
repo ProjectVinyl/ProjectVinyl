@@ -1,11 +1,11 @@
 .post
-	.tile.stack.left= render 'tile_stack', items: @items.records
+	.tile.stack.left= render 'albums/tile_stack', items: @items.records
 	- if @modifications_allowed
 		%h1.title.editable.short{data: {target: "albums", member: "title", id: @album.id}}
-			= render 'visibility', album: @album
+			= render 'albums/visibility', album: @album
 			%span.content= @album.title
 			%span.edit= fa :pencil
-		.content.description.editable{data: {target: "albums", member: "description", id: @album.id}}
+		.content.description.editable{data: {target: album_path(@album), member: "description"}}
 			%span.content= raw @album.html_description
 			%textarea.input.js-auto-resize(name="album_description_#{@album.id}" autocomplete="false")= @album.description
 			%span.edit= fa :pencil
@@ -21,4 +21,4 @@
 		= number_with_delimiter @items.count
 		videos | last updated 
 		= since @album.updated_at
-	= render 'actions'
+	= render 'albums/actions'

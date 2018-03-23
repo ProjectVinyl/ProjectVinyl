@@ -7,7 +7,7 @@
 			\.
 	.items#items{class: @modifications_allowed && "reorderable", "data-target": "albumitems"}
 		%span.bump(data-index="-1")
-		= render partial: 'item', collection: @items.records
+		= render partial: 'albums/item', collection: @items.records
 	.load-more
 	- if @items.pages > 0
-		%button(data-page="0" data-url="albums/#{@album.id}/items" data-target="items" Load More
+		%button(data-page="0" data-url="#{album_items_path @album}" data-target="items" Load More

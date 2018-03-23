@@ -7,17 +7,17 @@
 			%ul.pop-out
 				- if current_user.is_contributor?
 					%li.action
-						%a(href="/admin/albums/#{@album.id}")
+						%a{href: admin_album_path(@album)}
 							%span.icon= fa :gavel
 							%span.label Admin
 				- if @modifications_allowed && !@album.hidden
 					%li.action
-						%a#delete_album(href="/albums/#{@album.id}" data-confirm data-title="Delete Album" data-method="delete")
+						%a#delete_album(href="#{album_path(@album)}" data-confirm data-title="Delete Album" data-method="delete")
 							%span.icon= fa :trash
 							%span.label Remove Album
 				- if @modifications_allowed
 					%li.action
-						%a(data-title="Album Settings" data-external-form="/albums/#{@album.id}/edit")
+						%a(data-title="Album Settings" data-external-form="#{edit_album_path @album}")
 							%span.icon= fa :cog
 							%span.label Settings
 	%a.button.action{style: "margin-right: 10px", href: @items.records.first && @items.records.first.link}>

@@ -1,4 +1,4 @@
-= form_for(@album, as: "album", url: "/albums/#{@album.id}/order", html: {method: :patch}) do |f|
+= form_for(@album, url: album_order_path(@album), html: {method: :patch}) do |f|
 	.message_content
 		.search-options
 			%label{disabled: @album.hidden}
