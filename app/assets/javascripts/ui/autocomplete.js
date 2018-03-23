@@ -24,11 +24,11 @@ addDelegatedEvent(document, 'focusin', '.auto-lookup:not(.loaded) input', (e, in
     autocomplete = null;
   });
   addDelegatedEvent(popout, 'click', 'li[data-index]', (e, target) => {
-    const item = results[target.dataset.index][1];
-    container.classList.remove('pop-out-shown');
+    const item = results[target.dataset.index];
     if (!item) return;
-    input.value = item.toString();
-    popout.dispatchEvent(new CustomEvent('lookup:insert', { detail: item, bubbles: true, cancellable: true }));
+    input.value = item.length ? item[1] : item.toString();
+    popout.parentNode.dispatchEvent(new CustomEvent('lookup:insert', { detail: item, bubbling: true, cancellable: true }));
+    container.classList.remove('pop-out-shown');
   });
   focus();
   
