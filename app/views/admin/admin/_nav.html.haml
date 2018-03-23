@@ -9,9 +9,6 @@
 				%span.label Read Only
 	%h1 Navigation
 	.actions
-		%a.button(href="/users")
-			= fw :users
-			Users
 		%a.button(href="/admin/files?p=encoding")
 			= fw :file_code_o
 			Encoding Folder
@@ -47,3 +44,6 @@
 		%a.button{href: admin_sitenotices_path}
 			= fw :info
 			Site Notices
+		%a.button{href: admin_badges_path}
+			= fw :money
+			User Badges

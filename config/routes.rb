@@ -188,6 +188,7 @@ Rails.application.routes.draw do
     
     resources :tags, only: [:show, :update]
     resources :tagtypes, except: [:show, :edit], controller: :tag_type
+    resources :badges, except: [:show, :edit]
     resources :sitenotices, except: [:show, :edit], controller: :site_notice
     resources :users, only: [:show] do
       resources :badges, only: [:update]
