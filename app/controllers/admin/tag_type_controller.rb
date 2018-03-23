@@ -18,7 +18,7 @@ module Admin
     def update
       if !current_user.is_contributor?
         if params[:format] == 'json'
-          return head 403
+          return head :unauthorized
         end
         return render file: '/public/403.html', layout: false
       end
@@ -37,7 +37,7 @@ module Admin
 
     def new
       if !current_user.is_contributor?
-        return head 403
+        return head :unauthorized
       end
 
       @tagtype = TagType.new
@@ -68,7 +68,7 @@ module Admin
 
     def delete
       if !current_user.is_contributor?
-        return head 403
+        return head :unauthorized
       end
       
       if !(tagtype = TagType.where(id: params[:id]).first)
@@ -79,8 +79,7 @@ module Admin
       
       Tag.where(tag_type_id: tagtype.id).update_all('tag_type_id = 0')
       tagtype.destroy
-      render json: {
-      }
+      render json: {}
     end
   end
 end

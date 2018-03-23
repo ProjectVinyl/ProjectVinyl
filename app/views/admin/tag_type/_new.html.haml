@@ -9,13 +9,12 @@
 				%td.field
 					%label.button.blue
 						= f.check_box :hidden
-							= fa :check
-							Hide prefix in tag name
+						= fa :check
+						Hide prefix in tag name
 			%tr
 				%td.label Implications
 				%td.field
 					= render layout: 'tags/editor', locals: { tags: nil } do
 						= f.text_area :tag_string
 	.foot
-		= f.submit "Save", class: "green"
-		%button.right.cancel"(type="button" data-resolve="false") Cancel
+		= f.submit "Save", class: "green right button-fw"
