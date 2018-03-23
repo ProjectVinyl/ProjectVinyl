@@ -6,7 +6,8 @@
 			Pretty much everything. If you want to help us, message @projectvinyl on twitter or punch up @ZizzyDizzyMC for a Discord link!
 		%p
 			If that's all just too much for you right now, there is always the possibility to 
-			%a(href="/donate") #donate!
+			= surround '#', '!' do
+				%a{href: donate_path} donate
 	%section.space-fix
 		%h1 Administrators
 		%ul.staff
