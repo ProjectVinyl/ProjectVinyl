@@ -34,7 +34,7 @@ module Forum
     
     def new
       @board = Board.new
-      render partial: 'new'
+      render partial: 'new', locals: {url: boards_path, method: :put}
     end
 
     def create
@@ -48,18 +48,37 @@ module Forum
       redirect_to action: "view", controller: "board", id: board.title
     end
     
-    def update
-      if !user_signed_in? || !current_user.is_contributor?
-        return head 401
-      end
-      
-      if !(board = Board.find_board(params[:board][:id]))
+    def edit
+      if !(@board = Board.where(id: params[:id]).first)
         return head :not_found
       end
       
-      board.title = params[:board][:title]
-      board.description = params[:board][:description]
-      board.save
+      render partial: 'new', locals: {url: board_path(@board), method: :patch}
+    end
+    
+    def update
+      if !user_signed_in? || !current_user.is_contributor?
+        return head :unauthorized
+      end
+      
+      if !(board = Board.where(id: params[:id]).first)
+        return head :not_found
+      end
+      
+      if params[:board]
+        board.short_name = params[:board][:short_name]
+        board.title = params[:board][:title]
+        board.description = params[:board][:description]
+        board.save
+        
+        return redirect_to action: :view
+      end
+      
+      if params[:field] == 'title'
+        board.title = params[:value]
+        board.save
+        return render json: { content: board.title }
+      end
       
       head :ok
     end

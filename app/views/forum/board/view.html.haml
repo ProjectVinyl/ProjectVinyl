@@ -5,17 +5,20 @@
 	%a{href: forum_root_path} Forum
 	= fa :chevron_right
 	- if @modifications_allowed
-		%span.editable.short.inline.title{data: {target: "board", member: "title", id: @board.id}}
+		%span.editable.short.inline.title{data: {target: board_path(@board), member: "title"}}
 			%span.content= @board.title
 			%span.edit= fa :pencil
 	- else
 		= @board.title
 .actions.space-fix
 	- if user_signed_in?
-		- if current_user.is_contributor?
+		- if @modifications_allowed
 			%a.button.mobile-friendly.red{href: board_path(@board), data: {confirm: "Any topics inside this board will be lost.", title: "Delete Board", method: "delete"}}
 				= fa :trash
-				%span Delete Board
+				%span Delete Category
+			%button.action.mobile-friendly.green(data-external-form="#{edit_board_path @board}" data-title="Edit Categoty" type="button")
+				= fa :plus
+				%span Edit Category
 		%button.action.mobile-friendly.green(data-external-form="#{new_thread_path board: @board.id}" data-title="New Topic" type="button")
 			= fa :plus
 			%span New Topic

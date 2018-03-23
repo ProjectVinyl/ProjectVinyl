@@ -110,7 +110,7 @@ Rails.application.routes.draw do
   
   # Boards/Categories #
   
-  resources :boards, only: [:index, :new, :create, :destroy], controller: 'forum/board'
+  resources :boards, only: [:index, :new, :create, :edit, :update, :destroy], controller: 'forum/board'
   
   # Threads #
   get 'thread/:id' => 'thread#view', constraints: { id: /([0-9]+).*/ } # /

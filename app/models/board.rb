@@ -5,7 +5,7 @@ class Board < ApplicationRecord
   scope :listables, -> { sorted.pluck(:id, :title) }
   
   def self.find_board(id)
-    Board.where(title: id).first
+    Board.where('id = ? OR short_name = ?', id, id).first
   end
 
   def threads
@@ -21,7 +21,7 @@ class Board < ApplicationRecord
   end
 
   def link
-    "/forum/#{self.title}"
+    "/forum/#{self.short_name}"
   end
 
   def last_comment
