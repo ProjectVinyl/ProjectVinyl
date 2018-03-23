@@ -13,19 +13,22 @@
 .actions.space-fix
 	- if user_signed_in?
 		- if @modifications_allowed
-			%a.button.mobile-friendly.red{href: board_path(@board), data: {confirm: "Any topics inside this board will be lost.", title: "Delete Board", method: "delete"}}
+			%a.button.mobile-friendly.red{href: board_path(@board), data: {confirm: "Any topics inside this category will be lost.", title: "Delete Category", method: "delete"}}>
 				= fa :trash
 				%span Delete Category
-			%button.action.mobile-friendly.green(data-external-form="#{edit_board_path @board}" data-title="Edit Categoty" type="button")
+			%button.action.mobile-friendly.green(data-external-form="#{edit_board_path @board}" data-title="Edit Categoty" type="button")>
 				= fa :plus
 				%span Edit Category
-		%button.action.mobile-friendly.green(data-external-form="#{new_thread_path board: @board.id}" data-title="New Topic" type="button")
+		%button.action.mobile-friendly.green(data-external-form="#{new_thread_path @board}" data-title="New Topic" type="button")>
 			= fa :plus
 			%span New Topic
-	%a.button.blue.mobile-friendly.right{href: forum_search_path(board: @board.id)}
+	%a.button.blue.mobile-friendly.right{href: forum_search_path(board: @board.id)}>
 		= fa :search
-		%span Find Post
+		%span Find Posts
 %hr/
+- if @board.description
+	%div= @board.description
+	%hr/
 %section.page.full-width
 	%h1
 		Topics

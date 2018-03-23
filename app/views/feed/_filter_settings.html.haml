@@ -1,5 +1,5 @@
 %h1 Filter Settings
-= form_for(current_user, as: "user", url: '/filters') do |f|
+= form_for(current_user, as: "user", url: filters_path) do |f|
 	%table
 		%tr
 			%td.label Hidden Tags
