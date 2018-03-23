@@ -22,5 +22,5 @@
  *= require ./tags/editor
  *= require_self
  *= require ./emoticons
- *= require ./compatability
+ *= require ./compatibility
  */
