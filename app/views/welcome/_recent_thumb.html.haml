@@ -1,7 +1,7 @@
 ﻿%tr.activity
-	%td(style="width:30px")
+	%td
 		%span.avatar.small.left
-			%span(style="background-image:url('#{recent_thumb.comment_thread.user.avatar}');")
+			%span{style: format_bg(recent_thumb.comment_thread.user.avatar)}
 	%td
 		%div
 			%a{class: recent_thumb.user.banned? && "banned", href: recent_thumb.user.link}= recent_thumb.user.username

@@ -1,14 +1,13 @@
 ﻿%tr.activity
-	%td(style="width:30px")
+	%td
 		%a.thumb.medium.left{href: recent_comment_thumb.comment_thread.owner.link}
-			%span(style="background-image:url('/cover/#{recent_comment_thumb.comment_thread.owner_id}-small.png')")
+			%span{style: format_bg(recent_comment_thumb.comment_thread.owner.tiny_thumb(current_user))}
 	%td
 		%div
 			%a{href: recent_comment_thumb.link}
-				\#
-				= recent_comment_thumb.get_open_id
+				= precede '#' do
+					= recent_comment_thumb.get_open_id
 			by 
 			%a{class: recent_comment_thumb.user.banned? && "banned", href: recent_comment_thumb.user.link}
 				= recent_comment_thumb.user.username
-		%div
-			= since recent_comment_thumb.updated_at
+		%div= since recent_comment_thumb.updated_at
