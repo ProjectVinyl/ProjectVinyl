@@ -89,7 +89,7 @@ class CommentController < ApplicationController
         message: "success",
         content: render_to_string(partial: 'comment/comment', locals: {
           comment: comment,
-          indirect: !params[:indirect].nil?
+          indirect: params[:indirect] == 'true'
         })
       }
     end
