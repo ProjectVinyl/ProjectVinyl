@@ -1,20 +1,20 @@
 .actions
 	- if @thread.owner_type == 'Board'
-		%button.action.toggle.blue{data: {target: "admin/threads", id: @thread.id, action: "pin"}}>
+		%button.action.toggle.blue(data-target="#{admin_thread_pin_path(@thread)}")>
 			%span.icon
 				- if @thread.pinned
 					= fa :check
 			%span.label Pin Thread
-	%button.action.toggle.blue{data: {target: "admin/threads", id: @thread.id, action: "lock"}}>
+	%button.action.toggle.blue(data-target="#{admin_thread_lock_path(@thread)}")>
 		%span.icon
 			- if @thread.locked
 				= fa :check
 		%span.label Lock Thread
-	%a.button.blue.mobile-friendly.right(href="/forum/search?board=#{@thread.owner_id}&title_query=#{@thread.title}")
+	%a.button.blue.mobile-friendly.right{href: forum_search_path(board: @thread.owner_id, title_query: @thread.title)}
 		= fa :search
-		%span Find Post
+		%span Find Posts
 	- if @thread.owner_type == 'Board'
-		.split-button.popper.action.multi-toggle{data: {target: "admin/threads", id: @thread.id, action: "move"}}>
+		.split-button.popper.action.multi-toggle(data-target="#{admin_thread_move_path(@thread)}")>
 			%button.action.options.pop-out-toggle.blue
 				%span Move Thread
 			%ul.pop-out
@@ -25,7 +25,9 @@
 								= fa :check
 						%span.label= b[1]
 		- if current_user.is_contributor?
-			%a.button.mobile-friendly.red.right(data-confirm="This thread will be lost forever." data-title="Delete Thread" data-method="delete" href="/admin/threads/#{@thread.id}")
+			%a.button.mobile-friendly.red.right{href: admin_thread_path(@thread),
+													data: {confirm: "This thread will be lost forever.",
+																	title: "Delete Thread", method: "delete"}}
 				= fa :trash
 				%span Delete Thread
 %hr/
