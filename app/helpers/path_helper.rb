@@ -20,4 +20,11 @@ module PathHelper
   def load_time
     Time.now - @start_time
   end
+  
+  def absolute_url(url)
+    if url[0] == '/'
+      url = url.gsub(/^\//,'')
+    end
+    "#{root_url}#{url}"
+  end
 end

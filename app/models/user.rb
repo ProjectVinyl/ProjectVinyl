@@ -41,7 +41,9 @@ class User < ApplicationRecord
   has_many :hidden_tags_actual, through: :hidden_tags, class_name: "Tag", source: "tag"
   has_many :spoilered_tags_actual, through: :spoilered_tags, class_name: "Tag", source: "tag"
   has_many :watched_tags_actual, through: :watched_tags, class_name: "Tag", source: "tag"
-
+  
+  has_many :api_tokens, dependent: :destroy
+  
   has_many :user_badges
   has_many :badges, through: :user_badges
   belongs_to :tag
