@@ -146,8 +146,8 @@ GEM
     multi_json (1.13.1)
     multipart-post (2.0.0)
     mustermann (1.0.2)
-    mysql2 (0.5.0)
-    mysql2 (0.5.0-x64-mingw32)
+    mysql2 (0.3.21)
+    mysql2 (0.3.21-x64-mingw32)
     nio4r (2.3.0)
     nokogiri (1.8.2)
       mini_portile2 (~> 2.3.0)
@@ -155,7 +155,7 @@ GEM
       mini_portile2 (~> 2.3.0)
     orm_adapter (0.5.0)
     parallel (1.12.1)
-    parser (2.5.0.4)
+    parser (2.5.0.5)
       ast (~> 2.4.0)
     powerpack (0.1.1)
     rack (2.0.4)
@@ -275,7 +275,7 @@ DEPENDENCIES
   haml
   jquery-rails
   listen
-  mysql2
+  mysql2 (>= 0.3.18, < 0.5)
   rails (= 5.1.2)
   rails-html-sanitizer
   recaptcha
