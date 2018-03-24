@@ -1,19 +1,5 @@
 = form_for(@badge, url: admin_badges_path, html: { method: :post}) do |f|
 	.properties
-		%table
-			%tr
-				%td.label= f.label :title
-				%td.field= f.text_field :title
-			%tr
-				%td.label= f.label :colour
-				%td.field= f.text_field :colour
-			%tr
-				%td.label= f.label :icon
-				%td.field= f.text_field :icon
-			%tr
-				%td.label= f.label :badge_type
-				%td.field
-					%select(name="badge[badge_type]")
-						= sensible_option_for_select(["Basic", "Titled"], 0)
+		%table= render 'fields', f: f
 	.foot
 		= f.submit "Save", class: "green right button-fw"

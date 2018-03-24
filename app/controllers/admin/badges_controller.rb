@@ -13,7 +13,6 @@ module Admin
         ],
         title: "Badges"
       }
-      @page = params[:page].to_i
       @badges = Badge.all
     end
     
@@ -26,34 +25,60 @@ module Admin
       render partial: 'new'
     end
     
+    def create
+      check_first do
+        @badge = params[:badge]
+        @badge = Badge.create(
+          title: @badge[:title],
+          colour: @badge[:colour],
+          icon: @badge[:icon],
+          badge_type: @badge[:badge_type],
+          note: @badge[:note],
+          description: @badge[:description],
+          hidden: @badge[:hidden]
+        )
+      end
+    end
+    
     def update
+      check_then do
+        @badge.title = params[:badge][:title]
+        @badge.colour = params[:badge][:colour]
+        @badge.icon = params[:badge][:icon]
+        @badge.badge_type = params[:badge][:badge_type]
+        @badge.note = params[:badge][:note]
+        @badge.description = params[:badge][:description]
+        @badge.hidden = params[:badge][:hidden]
+        @badge.save
+      end
+    end
+    
+    def destroy
+      check_then do
+        @badge.destroy
+        flash[:notice] = "Record deleted.";
+      end
+    end
+    
+    private
+    def check_first
+      redirect_to action: :index
+      
       if !current_user.is_contributor?
-        return head :unauthorized
+        return flash[:error] = "Error: Login required."
       end
       
-      if existing = UserBadge.where(user_id: params[:user_id], badge_id: params[:id]).first
-        existing.destroy
-        return render json: {
-          added: false
-        }
+      yield
+    end
+    
+    def check_then
+      check_first do
+        if !(@badge = Badge.where(id: params[:id]).first)
+          return flash[:error] = "Error: Record not found."
+        end
+        
+        yield
       end
-      
-      if !(user = User.where(id: params[:user_id]).first)
-        return head :not_found
-      end
-      
-      if !(badge = Badge.where(id: params[:id]).first)
-        return head :not_found
-      end
-      
-      user.user_badges.create({
-        badge_id: badge.id,
-        custom_title: badge.badge_type > 0 && params[:extra] ? params[:extra] : ""
-      })
-      
-      render json: {
-        added: true
-      }
     end
   end
 end

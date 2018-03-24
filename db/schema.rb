@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180323134902) do
+ActiveRecord::Schema.define(version: 20180324081050) do
 
   create_table "album_items", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci" do |t|
     t.integer "album_id"
@@ -53,6 +53,9 @@ ActiveRecord::Schema.define(version: 20180323134902) do
     t.integer "badge_type", default: 0
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "note"
+    t.string "description"
+    t.boolean "hidden", default: false
   end
 
   create_table "boards", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci" do |t|

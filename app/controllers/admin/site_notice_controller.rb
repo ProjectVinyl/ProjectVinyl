@@ -27,7 +27,7 @@ module Admin
         return render_access_denied
       end
       
-      redirect_to action: "index"
+      redirect_to action: :index
       
       if !params[:notice][:message]
         flash[:error] = "Error: Message field is required.";
@@ -45,7 +45,7 @@ module Admin
         return render_access_denied
       end
       
-      redirect_to action: "index"
+      redirect_to action: :index
       
       if !(@notice = SiteNotice.where(id: params[:notice][:id]).first)
         flash[:error] = "Error: Record not found.";
@@ -58,7 +58,7 @@ module Admin
     end
     
     def delete
-      redirect_to action: "view"
+      redirect_to action: :index
       
       if !current_user.is_contributor?
         return flash[:error] = "Error: Login required."

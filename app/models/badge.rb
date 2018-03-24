@@ -23,9 +23,15 @@ class BadgeInstance
   def matches(user)
     user && !user.is_dummy && @block.call(user)
   end
+  
+  def description
+    'Automatically Assigned'
+  end
 end
 
 class Badge < ApplicationRecord
+  has_many :user_badges, dependent: :destroy
+  
   Types = [
     BadgeInstance.new('Admin', 'star', 'orange', &:admin?),
     BadgeInstance.new('Moderator', 'gavel', 'orange', &:contributor?),

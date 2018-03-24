@@ -189,9 +189,10 @@ Rails.application.routes.draw do
     resources :tags, only: [:show, :update]
     resources :tagtypes, except: [:show, :edit], controller: :tag_type
     resources :badges, except: [:show, :edit]
+    resources :userbadges, only: [:update], controller: :user_badges
     resources :sitenotices, except: [:show, :edit], controller: :site_notice
     resources :users, only: [:show] do
-      resources :badges, only: [:update]
+      resources :badges, only: [:update], controller: :user_badges
       resources :roles, only: [:update]
     end
     
@@ -224,12 +225,13 @@ Rails.application.routes.draw do
     # API #
     get 'bbcode' => 'bbcode#html_to_bbcode'
     get 'html' => 'bbcode#bbcode_to_html'
+    
+    resources :videos, only: [:index, :show]
   end
   
   # Short link #
   get '/:id(-:safe_title)' => 'videos#show', constraints: { id: /([0-9]+)/ } # /
   
   # Home #
-  get '/' => 'welcome#index'
   root 'welcome#index'
 end

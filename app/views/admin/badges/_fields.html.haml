@@ -1,0 +1,33 @@
+%tr
+	%td.label= f.label :title
+	%td.field= f.text_field :title
+%tr
+	%td.label= f.label :colour
+	%td.field= f.text_field :colour
+%tr
+	%td.label= f.label :icon, "Glyph"
+	%td.field= f.text_field :icon
+%tr
+	%td.label= f.label :note, "Moderation Notes"
+	%td.field= f.text_area :note
+%tr
+	%td.label= f.label :description
+	%td.field
+		= render layout: 'comment/description_box' do
+			= f.text_area :description, class: "comment-content"
+%tr
+	%td.label= f.label :hidden, "Unlisted"
+	%td.field
+		%label.button.blue
+			= f.check_box :hidden
+			= fa :check
+			Unlisted
+%tr
+	%td.label= f.label :badge_type
+	%td.field
+		.search-options
+			%label
+				%span Type
+				%div(style="display: table-cell")
+					%select(name="badge[badge_type]")
+						= sensible_option_for_select(["Basic", "Titled"], 0)
