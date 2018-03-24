@@ -2,10 +2,6 @@ class TagHistory < ApplicationRecord
   belongs_to :tag
   belongs_to :video
   belongs_to :user
-
-  def self.destroy_for(video)
-    TagHistory.where(video_id: video.id).destroy_all
-  end
   
   def self.record_tag_changes(added_tags, removed_tags, video_id, user_id = 0)
     entries = []

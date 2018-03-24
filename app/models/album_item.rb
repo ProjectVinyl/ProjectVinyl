@@ -9,6 +9,8 @@ class AlbumItem < ApplicationRecord
     end
   }
   
+  before_destroy :shift_indices
+  
   def tiny_thumb(user)
     self.video.tiny_thumb(user)
   end
@@ -21,12 +23,6 @@ class AlbumItem < ApplicationRecord
     self.direct_user || @dummy || (@dummy = User.dummy(self.video.user_id))
   end
   
-  def remove_self
-    old_index = self.index
-    self.destroy
-    self.update_indices(self.album.album_items.where('`album_items`.index > ?', old_index), '-')
-  end
-
   def move(new_index)
     from = self.index
     to = new_index
@@ -58,6 +54,10 @@ class AlbumItem < ApplicationRecord
   end
   
   protected
+  def shift_indices
+    self.update_indices(self.album.album_items.where('`album_items`.index > ?', self.index), '-')
+  end
+  
   def update_indices(items, op)
     items.update_all("`album_items`.index = `album_items`.index #{op} 1")
   end

@@ -18,6 +18,7 @@ class Video < ApplicationRecord
   has_many :video_genres, dependent: :destroy
   has_many :tags, through: :video_genres
   has_many :votes, dependent: :destroy
+  has_many :tag_histories, dependent: :destroy
   
   belongs_to :duplicate, class_name: "Video", foreign_key: "duplicate_id"
   
@@ -41,6 +42,8 @@ class Video < ApplicationRecord
       videos: finder.where("`#{self.table_name}`.id IN (?)", selected)
     }
   }
+  
+  before_destroy :remove_assets
   
   def is_liked
     (respond_to? :is_liked_flag) && is_liked_flag
@@ -160,15 +163,6 @@ class Video < ApplicationRecord
     self.user = user
     self.save
     self.update_index(defer: false)
-  end
-  
-  def remove_self
-    del_file(self.video_path)
-    del_file(self.webm_path)
-    self.remove_cover_files
-    Tag.where('id IN (?) AND video_count > 0', self.tags.pluck(:id)).update_all('video_count = video_count - 1')
-    TagHistory.destroy_for(self)
-    self.destroy
   end
   
   def remove_cover_files
@@ -547,6 +541,13 @@ class Video < ApplicationRecord
   end
   
   protected
+  def remove_assets
+    del_file(self.video_path)
+    del_file(self.webm_path)
+    self.remove_cover_files
+    Tag.where('id IN (?) AND video_count > 0', self.tags.pluck(:id)).update_all('video_count = video_count - 1')
+  end
+  
   def do_unmerge
     if self.duplicate_id
       if other = Video.where(id: self.duplicate_id).first

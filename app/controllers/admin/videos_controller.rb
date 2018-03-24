@@ -41,15 +41,14 @@ module Admin
           return flash[:error] = "Video not be found"
         end
         
-        video.remove_self
+        video.destroy
         flash[:notice] = "1 Item(s) deleted successfully"
       end
     end
     
     def batch_drop
       badly_named_function do
-        videos = Video.where(hidden: true)
-        videos.each(&:remove_self)
+        Video.where(hidden: true).destroy
         flash[:notice] = "#{videos.length} Item(s) deleted successfully."
       end
     end

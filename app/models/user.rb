@@ -172,11 +172,6 @@ class User < ApplicationRecord
   end
   # ####################
   
-  def remove_self
-    self.all_albums.each(&:remove_self)
-    self.destroy
-  end
-  
   def hidden_tag_string
     Tag.tag_string(self.hidden_tags_actual)
   end

@@ -28,7 +28,7 @@ class AlbumItemController < ApplicationController
   
   def destroy
     check_then(AlbumItem) do |item|
-      item.remove_self
+      item.destroy
     end
   end
   

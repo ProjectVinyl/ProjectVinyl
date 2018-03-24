@@ -44,7 +44,7 @@ class Album < ApplicationRecord
 
   def toggle(video)
     if item = self.album_items.where(video_id: video.id).first
-      item.remove_self
+      item.destroy
       return false
     end
     self.add_item(video)
