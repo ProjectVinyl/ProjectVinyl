@@ -77,6 +77,7 @@
   top: 20px;
   left: -19px;
   border: solid 10px;
+  transition: border-color 0.5s ease;
   border-color: transparent rgb(247, 247, 247) transparent transparent;
 }
 .comment.basic > .content::before, .comment.basic > .content::after {
@@ -88,14 +89,23 @@
   width: 100%;
   min-height: 120px;
   border: none;
+  background: none;
+}
+
+label.focus .content {
+  background: rgba(200,200,200,0.1);
+}
+
+label.focus .content::after {
+  border-color: transparent rgb(241, 241, 241) transparent transparent;
 }
 
 .comment .content.editing .preview,
 .comment .content textarea {
-  display: none;
+  display: none !important;
 }
 .comment .content.editing textarea {
-  display: block;
+  display: block !important;
 }
 
 .comment .comment-actions {

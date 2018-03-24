@@ -19,12 +19,3 @@ ready(() => {
     }
   });
 });
-
-// Hover events for labels in the search forms (and other places, maybe, eventually)
-addDelegatedEvent(document, 'focusin', 'label input, label select', (e) => {
-  e.target.closest('label').classList.add('focus');
-});
-
-addDelegatedEvent(document, 'focusout', 'label input, label select', (e) => {
-  e.target.closest('label').classList.remove('focus');
-});

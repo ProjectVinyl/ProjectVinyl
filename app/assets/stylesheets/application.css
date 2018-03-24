@@ -7,9 +7,9 @@
  *= require ./3d/all
  *= require ./layout/all
  *= require ./windows/all
+ *= require ./lists/all
  *= require ./forums/all
  *= require ./notices
- *= require ./lists/all
  *= require ./search/all
  *= require ./thumbs/videos
  *= require ./thumbs/comments

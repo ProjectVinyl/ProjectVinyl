@@ -2,6 +2,7 @@ import './comments';
 import './fileinput';
 import './form';
 import './search';
+import './labels';
 import './share';
 import './uploadchecker';
 import './uploader';

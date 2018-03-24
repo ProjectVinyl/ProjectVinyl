@@ -8,25 +8,26 @@
 			%a{class: !visitor.is_dummy && "user-link", "data-id": visitor.id, href: visitor.link}
 				%span.avatar.medium
 					%span(style="#{format_bg visitor.avatar}")
-		.content.editing.previewable
-			.name
-				%a{class: !visitor.is_dummy && "user-link", "data-id": visitor.id, href: visitor.link}= visitor.username
-				- if user_signed_in?
-					= render 'badge/badges', user: current_user
-			= render "comment/edit_toolbar"
-			.comment-content.preview
-			%textarea.comment-content(required="true" name="comment")
-			%hr/
-			.actions
-				- if visitor.is_dummy
-					= recaptcha_tags
-					%hr/
-				%button.green.post-submitter(data-thread-id="#{@thread.id}")>
-					%span Post Comment
-					%i.posting-spinner.fa.fw.fa-spinner.fa-spin
-				- if @thread.owner_type == "Report"
-					= render 'thread/report_options', f: f
-				%button.blue.state-toggle.button-fw(type="button" data-state="editing" data-parent=".previewable")>
-					%span.on Preview
-					%span.off Edit
-				= flash[:recaptcha_error]
+		%label
+			.content.editing.previewable
+				.name
+					%a{class: !visitor.is_dummy && "user-link", "data-id": visitor.id, href: visitor.link}= visitor.username
+					- if user_signed_in?
+						= render 'badge/badges', user: current_user
+				= render "comment/edit_toolbar"
+				.comment-content.preview
+				%textarea.comment-content(required="true" name="comment")
+				%hr/
+				.actions
+					- if visitor.is_dummy
+						= recaptcha_tags
+						%hr/
+					%button.green.post-submitter(data-thread-id="#{@thread.id}")>
+						%span Post Comment
+						%i.posting-spinner.fa.fw.fa-spinner.fa-spin
+					- if @thread.owner_type == "Report"
+						= render 'thread/report_options', f: f
+					%button.blue.state-toggle.button-fw(type="button" data-state="editing" data-parent=".previewable")>
+						%span.on Preview
+						%span.off Edit
+					= flash[:recaptcha_error]
