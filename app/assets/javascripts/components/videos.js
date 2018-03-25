@@ -223,12 +223,16 @@ Player.prototype = {
     });
     
     document.addEventListener('keydown', ev => {
-      if (ev.which === Key.SPACE) {
-        if (!document.querySelector('input:focus, textarea:focus')) {
-          if (this.video) {
-            this.togglePlayback();
-            halt(ev);
-          }
+      if (this.video && !document.querySelector('input:focus, textarea:focus')) {
+        if (ev.keyCode === Key.SPACE) {
+          this.togglePlayback();
+          halt(ev);
+        } else if (ev.keyCode == Key.LEFT) {
+          this.skip(-3);
+          halt(ev);
+        } else if (ev.keyCode == Key.RIGHT) {
+          this.skip(3);
+          halt(ev);
         }
       }
     });
@@ -426,6 +430,10 @@ Player.prototype = {
     const time = duration * progress;
     this.video.currentTime = time;
     this.track(time, duration);
+  },
+  skip: function(increment) {
+    this.video.currentTime += increment;
+    this.track(this.video.currentTime, this.getDuration());
   },
   track: function(time, duration) {
     this.suspend.classList.add('hidden');
