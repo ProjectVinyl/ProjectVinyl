@@ -6,4 +6,7 @@
 	- SiteNotice.where(active: true).each do |notice|
 		%p.notice.site-notice.removeable
 			= raw notice.html_message
-			%a.remove.right.red= fa :close
+			%span.actions.right
+				- if user_signed_in? && current_user.is_contributor?
+					%a.green{href: admin_sitenotices_path}= fa :pencil
+				%a.remove.red= fa :close
