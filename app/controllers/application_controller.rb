@@ -9,7 +9,6 @@ class ApplicationController < ActionController::Base
   after_action :store_last_location, if: :content_page?
 
   def content_page?
-    
     !devise_controller? && controller_name != "imgs" && action_name != "download" && (/\/(api|ajax|.json)\// =~ request.fullpath).nil?
   end
   

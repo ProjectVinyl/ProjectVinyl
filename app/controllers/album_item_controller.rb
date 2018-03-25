@@ -49,7 +49,7 @@ class AlbumItemController < ApplicationController
   private
   def check_then(table)
     if !user_signed_in?
-      return head 401
+      return head :unauthorized
     end
     
     if !(item = table.where(id: params[:id]).first)
@@ -57,7 +57,7 @@ class AlbumItemController < ApplicationController
     end
     
     if !item.owned_by(current_user)
-      return head 401
+      return head :unauthorized
     end
     
     yield(item)

@@ -12,7 +12,7 @@ class HistoryController < ApplicationController
       return redirect_to action: 'view', id: @video.duplicate_id
     end
     
-    @history = TagHistory.where(video_id: @video.id).order(:created_at)
+    @history = @video.tag_histories.includes(:tag, :user).order(:created_at)
     @history = Pagination.paginate(@history, params[:page].to_i, 20, true)
     
     if params[:format] == 'json'
