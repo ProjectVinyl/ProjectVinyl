@@ -14,7 +14,7 @@ module Find
       
       render json: {
 				term: @query,
-        results: User.where('username LIKE ?', "%#{@query}%").limit(8).uniq.pluck(:id, :username),
+        results: User.find_matching_users(@query),
         reject: reject
       }
     end

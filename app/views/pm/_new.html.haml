@@ -3,9 +3,9 @@
 		%table
 			%tr
 				%td.label= f.label "To"
-				%td.field.popper.auto-lookup.validate(data-action="#{find_users_path}")
-					= f.text_field "recipient", value: @user ? @user.username : "", autocomplete: "off"
-					%ul.pop-out
+				%td.field.popper
+					= render 'users/editor', value: @user ? [@user] : [] do
+						= f.text_area "recipient", value: @user ? @user.username : ""
 			%tr
 				%td.label= f.label "Subject"
 				%td.field= f.text_field :title, autofocus: true, placeholder: "[no subject]"
@@ -13,6 +13,4 @@
 				%td.field(colspan="2")
 					= render layout: 'comment/description_box' do
 						= f.text_area :description, class: "comment-content"
-	.foot
-		= f.submit "Send", class: "green confirm"
-		%button.right.cancel(type="button" data-resolve="false") Cancel
+	.foot= f.submit "Send", class: "green confirm right"

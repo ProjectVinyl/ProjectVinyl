@@ -29,9 +29,9 @@ class Pm < ApplicationRecord
       .order('`comment_threads`.created_at DESC')
   }
 
-  def self.send_pm(sender, receiver, subject, message)
+  def self.send_pm(sender, receivers, subject, message)
     Pm.transaction do
-      pm = Pm.create(user_id: sender.id, sender: sender, receiver: receiver, unread: false)
+      pm = Pm.create(user: sender, sender: sender, receiver: receivers.first, unread: false)
       thread = CommentThread.create(user: sender, owner: pm, total_comments: 1)
       thread.set_title(subject.present? ? subject : '[No Subject]')
       comment = thread.comments.create(user_id: sender.id)
@@ -39,17 +39,21 @@ class Pm < ApplicationRecord
       pm.comment_thread_id = thread.id
       pm.new_comment_id = comment.id
       pm.save
-      if sender.id != receiver.id
+      
+      receivers = receivers - [sender]
+      
+      recievers.each do |receiver|
         pms = Pm.create(
-          user_id: receiver.id,
+          user: receiver,
           sender: sender,
           receiver: receiver,
           unread: true,
-          comment_thread_id: thread.id,
-          new_comment_id: comment.id
+          comment_thread: thread,
+          new_comment: comment
         )
         Notification.notify_recievers([receiver.id], pms, "#{sender.username} has sent you a Private Message: <b>#{thread.title}</b>", pms.location)
       end
+      
       return pm
     end
   end

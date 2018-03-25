@@ -1,4 +1,6 @@
 class PmController < InboxController
+  before_filter :check_requirements, only: [:markread, :destroy]
+  
   def show
     if !(user_signed_in? && @pm = Pm.find_for_user(params[:id], current_user))
       return render_error(
@@ -31,46 +33,50 @@ class PmController < InboxController
   end
   
   def create
-    if !user_signed_in? || !(user = User.where(username: params[:thread][:recipient]).first)
-      return redirect_to action: "index", controller: "welcome"
+    if !user_signed_in?
+      return redirect_to action: :index, controller: :welcome
     end
-    redirect_to action: :show, id: Pm.send_pm(current_user, user, params[:thread][:title], params[:thread][:description]).id
+    
+    recipients = params[:thread][:recipient].split(',').map {|a| a.strip}
+    recipients = recipients.uniq
+    
+    recipients = User.where('username IN ?', recipients).first
+    
+    if recipients.length == 0
+      return redirect_to action: :index, controller: :welcome
+    end
+    
+    redirect_to action: :show, id: Pm.send_pm(current_user, recipients, params[:thread][:title], params[:thread][:description]).id
   end
   
   def markread
-    check_then do |pm|
-      pm.unread = !pm.unread
-      pm.save
-      render json: {
-        added: pm.unread,
-        tabs: tab_changes
-      }
-    end
+    @pm.unread = !@pm.unread
+    @pm.save
+    render json: {
+      added: @pm.unread,
+      tabs: tab_changes
+    }
   end
   
   def destroy
-    check_then do |pm|
-      pm.toggle_deleted
-      
-      @type = params[:type]
-      @results = paginate_for_type(@type)
-      
-      @json = pagination_json_for_render 'pm/thumb', @results
-      @json[:tabs] = tab_changes
-      render json: @json
-    end
+    @pm.toggle_deleted
+    
+    @type = params[:type]
+    @results = paginate_for_type(@type)
+    
+    @json = pagination_json_for_render 'pm/thumb', @results
+    @json[:tabs] = tab_changes
+    render json: @json
   end
   
   protected
-  def check_then
+  def check_requirements
     if !user_signed_in?
-      return head 403
+      return head :unauthorized
     end
     
-    if !(pm = Pm.find_for_user(params[:message_id], current_user))
-      return head 404
+    if !(@pm = Pm.find_for_user(params[:message_id], current_user))
+      return head :not_found
     end
-    
-    yield(pm)
   end
 end

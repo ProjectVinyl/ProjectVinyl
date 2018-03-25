@@ -2,7 +2,9 @@ import { ajax } from '../utils/ajax';
 import { addDelegatedEvent } from '../jslim/events';
 
 addDelegatedEvent(document, 'lookup:complete', '.auto-lookup', (e, target) => {
-  target.querySelector('.pop-out').innerHTML = e.detail.results.map((a, i) => `<li data-index="${i}"><i class="fa fa-fw fa-user"></i> ${a[1]}</li>`).join('');
+  target.querySelector('.pop-out').innerHTML = e.detail.results.map((a, i) => `<li data-index="${i}" data-slug="${a.slug}">
+    <i class="fa fa-fw fa-user"></i> <span>${a.name.replace(e.detail.term, `<b>${e.detail.term}</b>`)}</span>
+  </li>`).join('');
 });
 
 addDelegatedEvent(document, 'focusin', '.auto-lookup:not(.loaded) input', (e, input) => {
@@ -26,7 +28,7 @@ addDelegatedEvent(document, 'focusin', '.auto-lookup:not(.loaded) input', (e, in
   addDelegatedEvent(popout, 'click', 'li[data-index]', (e, target) => {
     const item = results[target.dataset.index];
     if (!item) return;
-    input.value = item.length ? item[1] : item.toString();
+    input.value = item.name;
     popout.parentNode.dispatchEvent(new CustomEvent('lookup:insert', { detail: item, bubbling: true, cancellable: true }));
     container.classList.remove('pop-out-shown');
   });

@@ -76,6 +76,24 @@ class User < ApplicationRecord
     json
   end
   
+  def self.find_matching_users(term)
+    User.jsons(User.where('username LIKE ?', "#{term}%")
+        .order(:username).limit(10))
+  end
+  
+  def self.jsons(users)
+    users.map(&:to_json)
+  end
+  
+  def to_json
+    {
+      name: self.username,
+      namespace: 'users',
+      link: self.link,
+      slug: self.username
+    }
+  end
+  
   scope :by_name_or_id, ->(id) { where('id = ? OR username = ?', id, id).first }
   
   scope :with_badges, -> { includes(user_badges: [:badge]) }
