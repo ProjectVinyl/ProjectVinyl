@@ -43,7 +43,7 @@
   padding: 10px;
   margin-left: 70px;
   border: 1px solid rgb(204, 204, 204);
-  border-radius: 5px;
+  border-radius: 5px !important;
   box-shadow: 0px 0px 12px rgba(0, 0, 0, 0.07) inset;
   background: rgb(255, 255, 250);
   text-shadow: 1px 1px rgba(255, 255, 255, 0.8);
@@ -93,7 +93,7 @@
 }
 
 label.focus .content {
-  background: rgba(200,200,200,0.1);
+  background: rgba(200,200,200,0.1) !important;
 }
 
 label.focus .content::after {
