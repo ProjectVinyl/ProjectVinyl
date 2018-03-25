@@ -25,7 +25,7 @@ class SearchController < ApplicationController
         @results.users
       end
       
-      if @randomize && @single = @results.randomized(1).exec.first
+      if @randomize && @single = @results.randomized(1).exec.records.first
         return redirect_to action: :show, controller: @type_sym, id: @single.id
       end
       
