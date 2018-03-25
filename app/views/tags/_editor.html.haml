@@ -1,15 +1,2 @@
-.tag-editor.popper.auto-lookup(data-action="#{find_tags_path}")
-	%span.value
+= render 'view/multi_input', display: true, placeholder: "Tag list...", path: find_tags_path, type: 'tags', tags: tags.includes(:tag_type), data: Tag.jsons(tags || [], current_user) do
 		= yield
-	%ul.tags>
-		- if tags
-			- tags.includes(:tag_type).each do |tag|
-				%li.tag{class: "tag-#{tag.namespace}", "data-namespace": tag.namespace, "data-slug": tag.slug}>
-					%i.fa.fa-times-circle.remove{title: "Remove Tag", "data-name": tag.get_as_string}
-					%a{href: tag.link}= tag.get_as_string
-					%span<
-						- if user_signed_in?
-							= render partial: "tags/flags", locals: {tag: tag}
-	%input.tag.input.js-auto-resize{type: "text", placeholder: "Tag list..."}<
-		%ul.search-results.pop-out
-	.js-data-store(style="display:none")= raw Tag.jsons(tags || []).to_json

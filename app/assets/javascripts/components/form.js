@@ -48,6 +48,7 @@ function createExternalForm(url, title, icon, maxWidth, thin) {
   ajax.get(url).text(html => {
     win.setContent(html);
     win.center();
+    document.dispatchEvent(new CustomEvent('ajax:externalform'), { cancelable: true });
   });
   
   return win;

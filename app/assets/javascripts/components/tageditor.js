@@ -3,24 +3,11 @@ import { Key } from '../utils/misc';
 import { all } from '../jslim/dom';
 import { addDelegatedEvent, ready, halt } from '../jslim/events';
 
-function createTagItem(tag) {
-  return `<li class="tag tag-${tag.namespace}" data-namespace="${tag.namespace}" data-slug="${tag.slug}">
-    <i title="Remove Tag" data-name="${tag.name}" class="fa fa-times-circle remove"></i>
-    <a href="/tags/${tag.link}">${tag.name}</a>
-    <span><m></m></span>
-  </li>`;
-}
-
-function createDisplayTagItem(tag) {
-  return `<li class="tag tag-${tag.namespace} drop-down-holder popper" data-namespace="${tag.namespace}" data-slug="${tag.slug}">
-    <a href="/tags/${tag.link}">
-      <span>${tag.name}</span>${tag.members > -1 ? ` (${tag.members})` : ''}
-    </a>
-    <ul class="drop-down pop-out">${['Hide', 'Spoiler', 'Watch'].map(a =>
-      `<li class="action toggle" data-family="tag-flags" data-descriminator="${a.toLowerCase()}" data-action="${a.toLowerCase()}" data-target="tag" data-id="${tag.name}">
-        <span class="icon"></span><span class="label">${a}</span>
-      </li>`).join('')}</ul>
-  </li>`;
+function fillTemplate(obj, template) {
+  Object.keys(obj).forEach(key => {
+    template = template.replace(new RegExp(`{${key}}`, 'g'), obj[key]);
+  });
+  return template;
 }
 
 function tagSet(arr) {
@@ -98,6 +85,7 @@ function inputHandler(sender) {
   });
   
   sender.dom.addEventListener('lookup:complete', e => {
+    if (tag.members === undefined) return;
     e.stopPropagation(); //autocomplete.js
     e.target.innerHTML = e.detail.results.map((tag, i) => `<li class="tag-${tag.namespace}" data-slug="${tag.slug}" data-index="${i}">
       <span>${tag.name.replace(e.detail.term, `<b>${e.detail.term}</b>`)}</span> (${tag.members})
@@ -124,6 +112,9 @@ function TagEditor(el) {
   
   this.list = el.querySelector('ul.tags');
   this.norm = el.parentNode.parentNode.querySelector('.normal.tags');
+  
+  this.tagTemplate = el.querySelector('.js-tag-template').innerHTML;
+  if (this.norm) this.displayTemplate = el.querySelector('.js-display-template').innerHTML;
   
   addDelegatedEvent(el, 'click', 'i.remove', (e, target) => {
     removeTag(this, target.parentNode);
@@ -175,9 +166,13 @@ function removeTag(editor, item) {
 
 function save(editor) {
   editor.textarea.value = editor.tags.join(',');
-  editor.list.innerHTML = editor.tags.map(createTagItem).join('');
+  editor.list.innerHTML = editor.tags.map(tag => {
+    return fillTemplate(tag, editor.tagTemplate);
+  }).join('');
   if (editor.norm) {
-    editor.norm.innerHTML = editor.tags.map(createDisplayTagItem).join('');
+    editor.norm.innerHTML = editor.tags.map(tag => {
+      return fillTemplate(tag, editor.displayTemplate);
+    }).join('');
   }
   editor.dom.dispatchEvent(new CustomEvent('tagschange', { bubbles: true }));
 }
@@ -186,4 +181,12 @@ export function getTagEditor(el) {
   return el.getTagEditorObj ? el.getTagEditorObj() : new TagEditor(el);
 }
 
-ready(() => all('.tag-editor', a => new TagEditor(a)));
+function initEditors() {
+  console.log('inited editors');
+  all('.tag-editor', getTagEditor);
+}
+
+ready(initEditors);
+document.addEventListener('ajax:externalform', () => {
+  requestAnimationFrame(initEditors);
+});

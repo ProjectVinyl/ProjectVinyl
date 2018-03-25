@@ -24,18 +24,14 @@ class Tag < ApplicationRecord
     StringsHelper.check_and_trunk(name, "").downcase.strip.gsub(/[;,]/, '')
   end
 
-  def self.tag_json(tags)
-    Tag.actualise(tags).map(&:to_json)
-  end
-  
   scope :pluck_actual_ids, -> { (pluck(:id, :alias_id).map {|t| t[1] || t[0] }).uniq }
   
 	def self.actualise(tags)
 		tags.map(&:actual).uniq
 	end
 	
-	def self.jsons(tags)
-		Tag.actualise(tags).map(&:to_json)
+	def self.jsons(tags, sender=nil)
+		Tag.actualise(tags).map {|tag| tag.to_json(sender)}
 	end
 	
   def actual
@@ -54,10 +50,10 @@ class Tag < ApplicationRecord
     name.blank? ? [] : Tag.order(:video_count, :user_count).reverse_order.where('name = ? OR id = ? OR short_name = ?', name, name, name)
   end
 
-  def self.find_matching_tags(name)
+  def self.find_matching_tags(name, sender=nil)
     name = name.downcase
     Tag.jsons(Tag.includes(:tag_type, :alias).where('name LIKE ? OR short_name LIKE ?', "#{name}%", "#{PathHelper.url_safe_for_tags(name)}%")
-       .order(:video_count, :user_count).limit(10))
+       .order(:video_count, :user_count).limit(10), sender)
   end
 
   def self.split_tag_string(tag_string)
@@ -333,13 +329,30 @@ class Tag < ApplicationRecord
     self.user_count = ArtistGenre.where(tag_id: self.id).count
   end
 
-  def to_json
+  def to_json(sender=nil)
     {
       name: self.get_as_string,
       namespace: self.namespace,
       members: self.members,
       link: self.short_name,
-			slug: self.slug
+			slug: self.slug,
+      flags: self.flags(sender)
     }
+  end
+  
+  def flags(sender=nil)
+    if sender.nil?
+      return ''
+    end
+    
+    answer = [sender.watches(self) ? '-' : '+']
+    if sender.hides([self.id])
+      answer << 'H'
+    end
+    if sender.spoilers([self.id])
+      answer << 'S'
+    end
+    
+    answer.join(' ')
   end
 end

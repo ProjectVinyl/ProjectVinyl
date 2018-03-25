@@ -1,6 +1,1 @@
-%m<>
-	= current_user.watches(tag) ? "-" : "+"
-	- if current_user.hides([tag.id])
-		H
-	- if current_user.spoilers([tag.id])
-		S
+%m<>= tag.flags(current_user)

@@ -80,3 +80,10 @@
   width: auto !important;
   border-radius: 0 0 5px 5px;
 }
+
+.tag span.count {
+  color: inherit;
+}
+.tag span.count[data-count="-1"] {
+  display: none;
+}
