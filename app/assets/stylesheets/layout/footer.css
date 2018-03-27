@@ -43,18 +43,22 @@ footer > div a, footer span {
 }
 
 /*Gradients*/
-.header ul li:after, .header ul li.selected:after,
-footer:before, .header ul:after {
+.header ul li:hover::after,
+.header ul li.selected::after,
+footer::before, .header .drop-down::after, .header .sparkline {
   content: '';
   position: absolute;
   display: block;
   left: 0;
+  bottom: 0;
   width: 100%;
   height: 3px;
+  margin: 0;
   pointer-events: none;
+  opacity: 1 !important;
 }
 
-footer::before, .header ul::after {
+footer::before, .header ul .sparkline, .header .drop-down::after {
   background: -webkit-linear-gradient(90deg, #6aaadd 0, #e6b91f 33%, #e97135 66%, #a66ebe 100%);
   background: -moz-linear-gradient(90deg, #6aaadd 0, #e6b91f 33%, #e97135 66%, #a66ebe 100%);
   background: -o-linear-gradient(90deg, #6aaadd 0, #e6b91f 33%, #e97135 66%, #a66ebe 100%);

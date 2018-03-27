@@ -1,6 +1,6 @@
 nav {
   margin-top: 200px;
-  height: 40px;
+  min-height: 40px;
 }
 
 nav > ul > li {
@@ -8,23 +8,22 @@ nav > ul > li {
 }
 nav > ul > li:hover, nav > ul > li.selected {
   opacity: 1;
-  transition: opacity 0.25s ease;
 }
 
 nav .albums:hover:after, nav .albums:hover,
-nav .albums.selected, nav .albums.selected:after {
+nav .albums.selected, nav .albums.selected ~ .sparkline {
   background: #e6b91f;
 }
 nav .artists:hover:after, nav .artists:hover,
-nav .artists.selected, nav .artists.selected:after {
+nav .artists.selected, nav .artists.selected ~ .sparkline {
   background: #e97135;
 }
 nav .genres:hover:after, nav .genres:hover,
-nav .genres.selected, nav .genres.selected:after {
+nav .genres.selected, nav .genres.selected ~ .sparkline {
   background: #a66ebe;
 }
 nav .forum:hover:after, nav .forum:hover,
-nav .forum.selected, nav .forum.selected:after {
+nav .forum.selected, nav .forum.selected ~ .sparkline {
   background: #6aaadd;
 }
 nav ul li:hover, nav ul li.selected {
