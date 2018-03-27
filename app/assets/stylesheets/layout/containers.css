@@ -84,7 +84,9 @@ div.page .positioner {
   z-index: 1;
   position: relative;
   margin-bottom: -10px;
-  box-shadow: -5px -5px 10px -5px rgba(0,0,0,0.3), 10px -4px 10px -10px rgba(0,0,0,0.3), 10px -10px 10px -10px rgba(0,0,0,0.01);
+  box-shadow: -5px -5px 10px -5px rgba(0,0,0,0.3),
+              10px -4px 10px -10px rgba(0,0,0,0.3),
+              10px -10px 10px -10px rgba(0,0,0,0.01);
 }
 .column-left.auto-wrap > .page.split ul {
   margin-bottom: 0;
