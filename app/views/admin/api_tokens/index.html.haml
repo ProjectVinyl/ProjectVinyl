@@ -1,0 +1,17 @@
+%section.page.full-width.listing.compact
+	%p All the messages that appear on the site can be defined from here.
+	.items
+		%span.row.heads
+			%div
+			%div Id
+			%div Token
+			%div User
+			%div Hits
+			%div Total Hits
+			%div Generated
+			%div Last Hit
+		= render partial: 'item', collection: @tokens
+	%span.row.foot
+		%a.button.button-bub.bub(title="add" data-title="Add Token" data-external-form="")
+			= fa :plus
+			Add New

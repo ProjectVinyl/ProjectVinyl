@@ -7,11 +7,8 @@ module Api
     before_action :pre_filter
     
     def pre_filter
-      @include = (params[:include] || '').split(',').map {|a| a.strip.to_sym}
-      @token = ApiToken.validate_token(params[:key])
-      
-      if !@token
-        render json: {
+      if !params[:key] || !(@token = ApiToken.validate_token(params[:key]))
+        return render json: {
           success: false,
           error: {
             status: 401,
@@ -29,6 +26,8 @@ module Api
           }
         }, status: 429
       end
+      
+      @include = (params[:include] || '').split(',').map {|a| a.strip.to_sym}
     end
     
     def index
@@ -127,7 +126,7 @@ module Api
       }
       
       if @include.include?(:file)
-        json[:video][:attributes][:file] = {
+        json[:data][:attributes][:file] = {
           filename: video.title,
           mime: video.mime,
           ext: video.file,

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180324081050) do
+ActiveRecord::Schema.define(version: 20180325170848) do
 
   create_table "album_items", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci" do |t|
     t.integer "album_id"
@@ -37,6 +37,17 @@ ActiveRecord::Schema.define(version: 20180324081050) do
     t.integer "ordering", default: 0
     t.integer "listing", default: 0
     t.index ["user_id"], name: "index_albums_on_user_id"
+  end
+
+  create_table "api_tokens", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci" do |t|
+    t.integer "user_id"
+    t.string "token"
+    t.integer "hits", default: 0
+    t.datetime "reset_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "total_hits", default: 0
+    t.index ["token"], name: "index_api_tokens_on_token", unique: true
   end
 
   create_table "artist_genres", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci" do |t|
