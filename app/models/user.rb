@@ -81,6 +81,12 @@ class User < ApplicationRecord
         .order(:username).limit(10))
   end
   
+  def self.get_as_recipients(users_string)
+    users_string = users_string.split(',').map {|a| a.strip}
+    
+    User.where('username IN (?)', users_string.uniq)
+  end
+  
   def self.jsons(users)
     users.map(&:to_json)
   end

@@ -1,0 +1,11 @@
+= form_for(@token, as: 'token', url: admin_api_index_path, html: { method: :post}) do |f|
+	.message_content
+		.properties
+			%table
+				%tr
+					%td.label= f.label :user
+					%td.field.popper
+						= render 'users/editor', value: @user ? [@user] : [] do
+							= f.text_area :user
+	.foot
+		= f.submit "Save", class: "green right"

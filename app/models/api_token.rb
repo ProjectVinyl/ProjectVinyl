@@ -3,13 +3,16 @@ class ApiToken < ApplicationRecord
   
   has_secure_token
   
-  def self.get_token(user)
-    token = ApiToken.where(user_id: user.id).first
-    if !token
-      return ApiToken.create(user: user)
+  def self.create_new_token(user)
+    if ApiToken.get_token(user)
+      return false
     end
     
-    token
+    return ApiToken.create(user: user)
+  end
+  
+  def self.get_token(user)
+    ApiToken.where(user: user).first
   end
   
   def self.validate_token(key)

@@ -37,10 +37,7 @@ class PmController < InboxController
       return redirect_to action: :index, controller: :welcome
     end
     
-    recipients = params[:thread][:recipient].split(',').map {|a| a.strip}
-    recipients = recipients.uniq
-    
-    recipients = User.where('username IN ?', recipients).first
+    recipients = User.get_as_recipients(params[:thread][:recipient])
     
     if recipients.length == 0
       return redirect_to action: :index, controller: :welcome
