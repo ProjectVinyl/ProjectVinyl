@@ -1,7 +1,7 @@
 module Admin
   class CommentController < ApplicationController
     def report
-      if !(reportable = Comment.where(id: params[:comment_id])
+      if !(reportable = Comment.where(id: params[:comment_id]))
         return head :not_found
       end
       
