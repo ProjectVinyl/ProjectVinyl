@@ -1,5 +1,5 @@
 class PmController < InboxController
-  before_filter :check_requirements, only: [:markread, :destroy]
+  before_action :check_requirements, only: [:markread, :destroy]
   
   def show
     if !(user_signed_in? && @pm = Pm.find_for_user(params[:id], current_user))
