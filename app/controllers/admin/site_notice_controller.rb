@@ -31,6 +31,7 @@ module Admin
       
       if !params[:notice][:message]
         flash[:error] = "Error: Message field is required.";
+        return
       end
       
       @notice = SiteNotice.create({
@@ -57,7 +58,7 @@ module Admin
       flash[:notice] = "Changes saved.";
     end
     
-    def delete
+    def destroy
       redirect_to action: :index
       
       if !current_user.is_contributor?
