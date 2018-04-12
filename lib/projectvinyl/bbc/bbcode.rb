@@ -85,6 +85,12 @@ module ProjectVinyl
       TagGenerator.register(:html, [:url]) do |tag|
         "<a href=\"#{tag.equals_par  || tag.inner_text}\">#{tag.inner_html}</a>"
       end
+      TagGenerator.register(:html, [:a]) do |tag|
+        "<#{tag.tag_name} href=\"#{tag.attributes[:href]}\">#{tag.inner_html}</#{tag.tag_name}>"
+      end
+      TagGenerator.register(:html, [:br]) do |tag|
+        "<#{tag.tag_name} />#{tag.inner_html}"
+      end
       TagGenerator.register(:html, [:at]) do |tag|
         tag.resolve_dynamically do
           "<a class=\"user-link\" data-id=\"0\">#{tag.inner_text}</a>"

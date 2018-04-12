@@ -5,15 +5,35 @@ module ProjectVinyl
   module Web
     class Youtube
       def self.get(url, wanted_data = {})
-        if Youtube.flag_set(wanted_data, :title) || Youtube.flag_set(wanted_data, :artist)
+        if Youtube.flag_set(wanted_data, :all) ||
+            Youtube.flag_set(wanted_data, :title) ||
+            Youtube.flag_set(wanted_data, :artist) ||
+            Youtube.flag_set(wanted_data, :thumbnail) ||
+            Youtube.flag_set(wanted_data, :iframe)
           Ajax.get('https://www.youtube.com/oembed', url: 'http:' + url.sub(/http?(s):/, ''), format: 'json') do |body|
             begin
               body = JSON.parse(body)
+              if Youtube.flag_set(wanted_data, :all)
+                wanted_data[:all] = body
+              end
               if Youtube.flag_set(wanted_data, :title)
                 wanted_data[:title] = body['title']
               end
               if Youtube.flag_set(wanted_data, :artist)
-                wanted_data[:artist] = body['author_name']
+                wanted_data[:artist] = {
+                  name: body['author_name'],
+                  url: body['author_url']
+                }
+              end
+              if Youtube.flag_set(wanted_data, :thumbnail)
+                wanted_data[:thumbnail] = {
+                  url: body['thumbnail_url'],
+                  width: body['thumbnail_width'],
+                  height: body['thumbnail_height']
+                }
+              end
+              if Youtube.flag_set(wanted_data, :iframe)
+                wanted_data[:iframe] = body['html']
               end
             rescue e
             end

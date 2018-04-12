@@ -228,6 +228,8 @@ Rails.application.routes.draw do
     get 'html' => 'bbcode#bbcode_to_html'
     
     resources :videos, only: [:index, :show]
+    
+    get 'youtube' => 'youtube#show'
   end
   
   # Short link #

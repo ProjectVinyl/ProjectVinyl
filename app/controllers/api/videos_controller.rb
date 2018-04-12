@@ -1,35 +1,7 @@
 require 'projectvinyl/elasticsearch/elastic_selector'
 
 module Api
-  class VideosController < ApplicationController
-    include PathHelper
-    
-    before_action :pre_filter
-    
-    def pre_filter
-      if !params[:key] || !(@token = ApiToken.validate_token(params[:key]))
-        return render json: {
-          success: false,
-          error: {
-            status: 401,
-            message: "Unauthorized"
-          }
-        }, status: :unauthorized
-      end
-      
-      if !@token.hit
-        render json: {
-          success: false,
-          error: {
-            status: 429,
-            message: "Too Many Requests"
-          }
-        }, status: 429
-      end
-      
-      @include = (params[:include] || '').split(',').map {|a| a.strip.to_sym}
-    end
-    
+  class VideosController < ApiController
     def index
       @page = params[:page].to_i
       @limit = (params[:limit] || 10).to_i
@@ -67,13 +39,7 @@ module Api
       end
       
       if !video || video.hidden
-        return render json: {
-          success: false,
-          error: {
-            status: :not_found,
-            message: "Not Found"
-          }
-        }, status: :not_found
+        return fail :not_found, status: :not_found, message: "Not Found"
       end
       
       json = {
@@ -95,38 +61,36 @@ module Api
     private
     def video_response(video)
       json = {
-        data: {
-          id: video.id,
-          type: :video,
-          attributes: {
-            title: video.title,
-            cover: {
-              full: absolute_url(video.thumb),
-              thumbnail: absolute_url(video.tiny_thumb(current_user))
-            },
-            description: video.description,
-            source: video.source,
-            duration: video.get_duration,
-            tags: Tag.split_tag_string(video.tag_string),
-            data_modified: video.updated_at,
-            date_published: video.created_at
+        id: video.id,
+        type: :video,
+        attributes: {
+          title: video.title,
+          cover: {
+            full: absolute_url(video.thumb),
+            thumbnail: absolute_url(video.tiny_thumb(current_user))
           },
-          meta: {
-            url: absolute_url(video.link),
-          },
-          relationships: {
-            user: {
-              data: {
-                type: :user,
-                id: video.user_id
-              }
+          description: video.description,
+          source: video.source,
+          duration: video.get_duration,
+          tags: Tag.split_tag_string(video.tag_string),
+          data_modified: video.updated_at,
+          date_published: video.created_at
+        },
+        meta: {
+          url: absolute_url(video.link),
+        },
+        relationships: {
+          user: {
+            data: {
+              type: :user,
+              id: video.user_id
             }
           }
         }
       }
       
       if @include.include?(:file)
-        json[:data][:attributes][:file] = {
+        json[:attributes][:file] = {
           filename: video.title,
           mime: video.mime,
           ext: video.file,
