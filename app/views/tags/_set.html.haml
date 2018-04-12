@@ -1,5 +1,9 @@
 - if tags.length == 1
-	= render 'tags/bio', tag: tags.first
+	- @tag = tags.first
+	- @implies = @tag.implications
+	- @implied = @tag.implicators
+	- @aliases = @tag.aliases
+	= render 'tags/bio'
 - else
 	.post
 		%ul.tags= render partial: 'tags/thumb_h', collection: tags
