@@ -1,9 +1,12 @@
 - title "Settings"
 - lim "900px"
+- can_api = @user == current_user && @token = ApiToken.get_token(@user)
 %section.page.full-width.properties.tab-set
 	%ul.tab-set.tabs
 		%li.button.selected(data-target="profile") Profile
 		%li.button(data-target="account") Account
+		- if can_api
+			%li.button(data-target="api") API *
 		%li.button(data-target="filter") Content & Filter
 		%li.button(data-target="commenting") Notifications
 		%li.button(data-target="local") Local
@@ -11,6 +14,8 @@
 		%h1 Profile Information
 		= render 'users/edit', user: current_user, url: "/users/#{current_user.id}", method: :patch
 	.tab(data-tab="account")= render 'account'
+	- if can_api
+		.tab(data-tab="api")= render 'api'
 	.tab(data-tab="filter")= render 'feed/filter_settings'
 	.tab(data-tab="commenting")= render 'notifications'
 	.tab(data-tab="local")
