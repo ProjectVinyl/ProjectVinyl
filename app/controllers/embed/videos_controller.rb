@@ -30,7 +30,7 @@ module Embed
     
     def oembed
       if !(url = params[:url])
-        head 404
+        return head :not_found
       end
       
       url = url.split('?')
@@ -59,7 +59,7 @@ module Embed
       end
       
       if !@video
-        head 404
+        return head :not_found
       end
       
       if @video.hidden
@@ -89,7 +89,8 @@ module Embed
         html: "<iframe width=\"#{width.to_s}\" height=\"#{height.to_s}\" src=\"http://www.projectvinyl.net/embed/#{@video.id}#{extra}\" frameborder=\"0\" allowfullscreen></iframe>",
         width: width,
         height: height,
-        title: @video.title
+        title: @video.title,
+        tags: Tag.actualise(@video.tags.includes(:alias)).map {|a| a.get_as_string}
       }
       
       if params[:format] == 'xml'

@@ -26,7 +26,7 @@
 					= render partial: "layouts/signed_in_controls"
 				- else
 					%a(data-external-form="#{ajax_login_path}" data-icon="sign-in" data-title="Sign In" data-thin="true" href="#{new_user_session_path}")
-						%i.fa.fa-sign-in
+						= fa :sign_in
 						Sign-in
 			= render partial: "search/small_search"
 		.layer-background#banner
