@@ -132,7 +132,9 @@ module ProjectVinyl
           size: @limit,
           query: add_required_params(@elastic.to_hash)
         }
-        params[:sort] = ordering if !ordering.empty?
+        if !ordering.empty? && !@randomized
+          params[:sort] = ordering
+        end
         if @page < 0
           @page = 0
           params[:from] = 0
