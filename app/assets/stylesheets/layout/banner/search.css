@@ -40,7 +40,7 @@
   background: #fff;
 }
 
-@media(max-width: 510px) {
+@media(max-width: 570px) {
   #search {
     position: absolute;
     top: 0;
@@ -49,7 +49,7 @@
   }
   #search {
     padding-top: 11px;
-    left: 0;
+    left: 51px;
     right: 120px;
     margin: 0;
     border-radius: 0;
@@ -68,8 +68,7 @@
 
 @media(max-width: 360px) {
   #search {
-    top: auto;
-    bottom: 0;
+    top: 54px;
     left: 0;
     right: 0;
     margin: 0;

@@ -1,5 +1,12 @@
 %nav.header.layer-foreground
 	%ul
+		- if user_signed_in?
+			%li.users.dock-only<>
+				%a{href: current_user.link}
+					= fw :user
+					%span= current_user.username
+					%span.icon<>= fa :caret_down
+				= render 'layouts/signed_in_menu'
 		%li.albums{class: selected_path?('albums')}<>
 			%a{href: albums_path}
 				= fw :picture_o

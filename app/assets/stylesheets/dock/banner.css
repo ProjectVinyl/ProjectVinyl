@@ -1,0 +1,48 @@
+@media(max-width: 700px) {
+  .context-3d {
+    perspective: none;
+    -webkit-perspective: none;
+  }
+
+  .layer-background .near,
+  .layer-background .far {
+    transform: none;
+  }
+
+  .banner-background {
+    height: 200px;
+  }
+
+  #banner.layer-background {
+    height: 60px;
+    z-index: 3;
+    background: #fff;
+    box-shadow: 0 0 3px 3px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+  }
+  
+  .dock-holder.open .banner-overlay,
+  .dock-holder.open #banner {
+    position: fixed;
+  }
+  
+  .dock-holder.open .banner-overlay {
+    z-index: 4;
+  }
+
+  .layer-foreground.body {
+    margin-top: 40px;
+    min-height: calc(100% - 40px);
+  }
+}
+
+@media(max-width: 360px) {
+  #banner.layer-background {
+    height: 120px;
+  }
+  
+  .layer-foreground.body {
+    margin-top: 100px;
+    min-height: calc(100% - 100px);
+  }
+}

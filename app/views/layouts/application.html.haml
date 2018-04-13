@@ -19,8 +19,11 @@
 		= stylesheet_link_tag "application"
 		= javascript_include_tag "application"
 %body{class: !user_signed_in? && "logged-out"}
-	.context-3d
+	.context-3d.dock-holder
+		.dock-shadow
 		%header.header.banner-overlay
+			#dock-toggle
+				= fa :bars
 			#login{class: user_signed_in? && "drop-down-holder"}
 				- if user_signed_in?
 					= render partial: "layouts/signed_in_controls"

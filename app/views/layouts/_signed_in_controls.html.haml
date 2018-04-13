@@ -9,36 +9,7 @@
 			= safe_to_display current_user.notification_count, 999
 		%span.message-count.count.invert{data: {count: current_user.message_count}}
 			= safe_to_display current_user.message_count, 999
-%ul.drop-down(style="z-index:300;")
-	- if current_user.is_contributor?
-		%li
-			%a(href="#{admin_root_path}" rel="nofollow")
-				%span.icon= fw :gavel
-				%span.label Admin
-	%li
-		%a(href="#{current_user.link}" rel="nofollow" title="settings")
-			%span.icon= fw :user
-			%span.label Profile
-	%li
-		%a(href="/inbox" rel="nofollow" title="messages")
-			%span.icon= fw :envelope
-			%span.label Messages
-	%li
-		%a(href="#{upload_path}" rel="nofollow" title="upload")
-			%span.icon= fw :upload
-			%span.label Upload
-	%li
-		%a{href: stars_path}
-			%span.icon= fw :star
-			%span.label Stars
-	%li
-		%a(href="#{edit_user_registration_path}" rel="nofollow")
-			%span.icon= fw :cog
-			%span.label Settings
-	%li
-		%a#sign-out(href="#{destroy_user_session_path}" rel="nofollow" data-method="delete")
-			%span.icon= fw :sign_out
-			%span.label Sign Out
+%span.no-dock= render 'layouts/signed_in_menu'
 %a(href="#{edit_user_registration_path}" rel="nofollow" title="settings")
 	%span.avatar.small
 		%span{style: format_bg(current_user.small_avatar)}

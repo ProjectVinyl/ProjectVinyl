@@ -1,0 +1,49 @@
+@media(max-width: 700px) {
+  nav {
+    position: fixed !important;
+    top: 60px;
+    left: -400px;
+    bottom: 0;
+    width: 400px !important;
+    max-width: 100%;
+    margin: 0;
+    overflow-y: auto;
+    background: #fff;
+    box-shadow: 0 0 3px 3px rgba(0, 0, 0, 0.1);
+    transition: left 0.25s ease-in;
+  }
+
+  nav > ul {
+    height: initial !important;
+    padding-top: 10px !important;
+    padding-bottom: 10px !important;
+  }
+
+  nav ul li {
+    display: block !important;
+    text-align: left;
+    opacity: 1;
+  }
+
+  nav > ul > li {
+    border: solid 3px #eee;
+    box-shadow: 0 0 3px 0 #eee inset;
+  }
+
+  nav .drop-down {
+    position: initial;
+    visibility: visible;
+    opacity: 1;
+    box-shadow: none;
+  }
+  
+  nav .sparkline {
+    display: none !important;
+  }
+}
+
+@media(max-width: 360px) {
+  nav {
+    top: 120px;
+  }
+}

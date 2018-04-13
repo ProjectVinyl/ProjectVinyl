@@ -26,7 +26,7 @@
 		= fa :search
 		%span Find Posts
 %hr/
-- if @board.description
+- if !@board.description.empty?
 	%div= @board.description
 	%hr/
 %section.page.full-width

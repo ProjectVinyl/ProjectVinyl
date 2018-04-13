@@ -18,6 +18,10 @@ nav .artists:hover:after, nav .artists:hover,
 nav .artists.selected, nav .artists.selected ~ .sparkline {
   background: #e97135;
 }
+nav .users:hover::after, nav .users:hover,
+nav .users.selected, nav .users.selected ~ .sparkline {
+    background: #e61f8f;
+}
 nav .genres:hover:after, nav .genres:hover,
 nav .genres.selected, nav .genres.selected ~ .sparkline {
   background: #a66ebe;
@@ -30,7 +34,7 @@ nav ul li:hover, nav ul li.selected {
   color: #fff;
 }
 
-@media(max-width: 470px) {
+@media(max-width: 700px) {
   nav > ul li, nav > ul li a {
     font-size: 13px !important;
   }
@@ -40,12 +44,9 @@ nav > ul li a > i {
   display: none !important;
 }
 
-@media(max-width: 360px) {
-  nav > ul li:hover a i + span,
+@media(max-width: 700px) {
   nav > ul li a i {
+    padding-right: 10px;
     display: inline !important;
-  }
-  nav > ul li a i + span {
-    display: none;
   }
 }

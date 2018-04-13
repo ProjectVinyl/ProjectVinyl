@@ -16,3 +16,4 @@ import './autocomplete';
 import './editable';
 import './previewable';
 import './reflow';
+import './dock';

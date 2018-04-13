@@ -93,7 +93,7 @@
   }
 }
 
-@media(max-width: 510px) {
+@media(max-width: 570px) {
   #login {
     position: absolute;
     top: 0;
@@ -107,10 +107,10 @@
 
 @media(max-width: 360px) {
   #login {
-    left: 0;
+    left: 51px;
   }
   #login .username {
     display: inline;
-    width: 50%;
+    width: 40%;
   }
 }

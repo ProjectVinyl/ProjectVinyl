@@ -1,0 +1,40 @@
+@media(min-width: 700px) {
+  .dock-holder .dock-only {
+    display: none;
+  }
+}
+
+@media(max-width: 700px) {
+  .dock-holder.open nav {
+    left: 0;
+  }
+
+  .dock-holder #dock-toggle {
+    display: block !important;
+  }
+  
+  .dock-holder .no-dock {
+    display: none;
+  }
+  
+  .dock-holder.open #dock-toggle i {
+    transform: rotate(180deg);
+  }
+
+  .dock-holder .dock-shadow {
+    z-index: 2;
+    visibility: hidden;
+    position: fixed;
+    top: 60px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: #333;
+    opacity: 0;
+    transition: visibility 0.2s ease-in, opacity 0.2s ease-in
+  }
+  .dock-holder.open .dock-shadow {
+    visibility: visible;
+    opacity: 0.8;
+  }
+}

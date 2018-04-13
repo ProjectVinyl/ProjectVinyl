@@ -18,6 +18,7 @@
  *= require ./ui-elements/all
  *= require ./forms/all
  *= require ./videos/all
+ *= require ./dock/all
  *= require ./tags/tags
  *= require ./tags/editor
  *= require_self

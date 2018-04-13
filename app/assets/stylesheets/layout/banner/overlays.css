@@ -12,9 +12,3 @@
   padding: 10px;
   z-index: 999;
 }
-
-@media(max-width: 360px) {
-  .banner-overlay {
-    height: 200px;
-  }
-}

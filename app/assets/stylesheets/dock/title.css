@@ -1,0 +1,15 @@
+@media(max-width: 700px) {
+  #banner .title {
+    position: absolute;
+    opacity: 1;
+    height: 50px;
+    z-index: 200;
+    left: 50px;
+    margin: 7px;
+    padding: 0;
+  }
+
+  #banner .title img {
+    height: 40px;
+  }
+}
