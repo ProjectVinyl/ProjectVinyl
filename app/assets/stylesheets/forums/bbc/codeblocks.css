@@ -1,0 +1,8 @@
+code {
+    padding: 0 3px;
+    background: rgba(0,0,0,0.1);
+    border-radius: 6px;
+    border: dotted 1px rgba(0,0,0,0.1);
+    margin: 3px;
+    line-height: inherit;
+}
