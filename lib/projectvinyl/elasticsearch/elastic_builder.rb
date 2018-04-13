@@ -113,6 +113,13 @@ module ProjectVinyl
         dest << { term: pair }
         @dirty = true
       end
+      
+      def make_term(tag)
+        if tag.include?('*')
+          return {wildcard: { tags: tag } }
+        end
+        { term: { tags: tag } }
+      end
 
       # reads all params and children into this group
       def take_all(type, opset, sender)
@@ -192,7 +199,7 @@ module ProjectVinyl
             elsif data == ProjectVinyl::Search::Op::VOTE_U || data == ProjectVinyl::Search::Op::VOTE_D
               @votes_not.record(data, opset, sender) if type != 'user'
             else
-              @must_not << { term: { tags: data.strip } }
+              @must_not << make_term(data.strip)
             end
           end
         elsif op == ProjectVinyl::Search::Op::VOTE_U || op == ProjectVinyl::Search::Op::VOTE_D
@@ -201,7 +208,7 @@ module ProjectVinyl
           op = op.strip
           if !op.empty?
             @tags << op
-            @must << { term: { tags: op } }
+            @must << make_term(op)
             @dirty = true
           end
         end

@@ -109,11 +109,16 @@ module ProjectVinyl
           end
         end
         if @randomized
-          query[:function_score] = {
-            query: {match_all: {}},
-            functions: {random_score: {}}
+          query = {
+            function_score: {
+              query: query,
+              functions: [
+                random_score: {}
+              ]
+            }
           }
         end
+        puts query
         query
       end
 
