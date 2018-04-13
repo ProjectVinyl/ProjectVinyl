@@ -93,7 +93,7 @@
 }
 
 label.focus .content {
-  background: rgba(200,200,200,0.1) !important;
+  background: rgba(249,249,249) !important;
 }
 
 label.focus .content::after {
@@ -106,6 +106,9 @@ label.focus .content::after {
 }
 .comment .content.editing textarea {
   display: block !important;
+}
+.comment .content.editing .actions textarea {
+  display: none !important;
 }
 
 .comment .comment-actions {
