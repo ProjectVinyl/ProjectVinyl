@@ -65,6 +65,11 @@
 .popup-container .popup h1 > .fa {
   margin-right: 5px;
 }
+
+.popup-container .popup > h1 .fa::before {
+  font-size: 20px;
+}
+
 .popup-container .popup .close {
   float: right;
   cursor: pointer;
