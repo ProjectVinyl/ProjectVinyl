@@ -3,10 +3,14 @@
     position: absolute;
     opacity: 1;
     height: 50px;
-    z-index: 200;
+    z-index: 2;
     left: 50px;
     margin: 7px;
     padding: 0;
+  }
+  
+  #banner .home-link {
+    z-index: 3;
   }
 
   #banner .title img {

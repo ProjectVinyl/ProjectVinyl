@@ -1,18 +1,22 @@
 @media(max-width: 700px) {
   .context-3d {
-    perspective: none;
-    -webkit-perspective: none;
+    perspective: none !important;
+    -webkit-perspective: none !important;
   }
-
-  .layer-background .near,
-  .layer-background .far {
-    transform: none;
+  
+  .layer-background .far,
+  .layer-background .near {
+    transform: none !important;
   }
-
+  
   .banner-background {
     height: 200px;
   }
-
+  
+  .context-3d .layer-foreground {
+    position: absolute;
+  }
+  
   #banner.layer-background {
     height: 60px;
     z-index: 3;

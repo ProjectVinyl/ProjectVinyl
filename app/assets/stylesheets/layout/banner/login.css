@@ -87,24 +87,16 @@
     max-width: 200px;
   }
 }
-@media(max-width:750px) {
+@media(max-width:700px) {
+  #login {
+    border-radius: 0 !important;
+    right: 0;
+  }
+  
   #login .username {
     display: none;
   }
 }
-
-@media(max-width: 570px) {
-  #login {
-    position: absolute;
-    top: 0;
-    border-radius: 0 !important;
-    margin: 0;
-  }
-  #login {
-    right: 0;
-  }
-}
-
 @media(max-width: 360px) {
   #login {
     left: 51px;

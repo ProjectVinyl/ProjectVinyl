@@ -1,5 +1,6 @@
 #search {
   margin-right: 10px;
+  padding-top: 11px;
   border-radius: 0 0 10px 10px;
 }
 #search > form > * {
@@ -40,19 +41,15 @@
   background: #fff;
 }
 
+@media(max-width:700px) {
+  #search {
+    border-radius: 0 0 0 10px;
+  }
+}
 @media(max-width: 570px) {
   #search {
-    position: absolute;
-    top: 0;
-    border-radius: 0 !important;
-    margin: 0;
-  }
-  #search {
-    padding-top: 11px;
     left: 51px;
     right: 120px;
-    margin: 0;
-    border-radius: 0;
   }
   #search button {
     float: right;
@@ -68,10 +65,8 @@
 
 @media(max-width: 360px) {
   #search {
-    top: 54px;
+    top: 50%;
     left: 0;
     right: 0;
-    margin: 0;
-    border-radius: 0;
   }
 }

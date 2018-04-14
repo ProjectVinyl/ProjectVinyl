@@ -10,12 +10,9 @@
   margin: -1px;
 }
 .tile {
-  max-width: 250px;
-  position: relative;
-}
-.tile {
   position: relative;
   width: 100%;
+  max-width: 250px;
   max-height: 200px;
   min-height: 120px;
   padding: 0;
@@ -148,6 +145,7 @@ li.generic.mix .tile::after {
     min-height: 100px;
   }
 }
+
 @media(max-width: 700px) {
   ul.horizontal > li.generic {
     max-width: 100px;
@@ -161,4 +159,13 @@ li.generic.mix .tile::after {
   .thumb .date {
     display: none;
   }
+}
+
+.featured .tile {
+  min-height: 120px;
+}
+
+.featured ul.horizontal > li.generic {
+  max-width: 235px;
+  min-width: 190px;
 }

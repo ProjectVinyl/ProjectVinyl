@@ -8,6 +8,7 @@ button::-moz-focus-inner {
 html.android-mozilla .context-3d,
 html.ms-edge .context-3d {
   perspective: none !important;
+  -webkit-perspective: none !important;
 }
 html.android-mozilla .layer-background .far,
 html.android-mozilla .layer-background .near,

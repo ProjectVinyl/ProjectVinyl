@@ -5,12 +5,16 @@
     left: -400px;
     bottom: 0;
     width: 400px !important;
-    max-width: 100%;
+    max-width: 70%;
     margin: 0;
     overflow-y: auto;
     background: #fff;
     box-shadow: 0 0 3px 3px rgba(0, 0, 0, 0.1);
     transition: left 0.25s ease-in;
+  }
+  
+  .dock-holder.open nav {
+    min-width: 300px;
   }
 
   nav > ul {

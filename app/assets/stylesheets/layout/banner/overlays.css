@@ -11,4 +11,41 @@
   background: rgba(255,255,255,0.8);
   padding: 10px;
   z-index: 999;
+  height: 54px;
+}
+
+@media(max-width:700px) {
+  .banner-overlay > div {
+    border-radius: 0;
+    margin: 0 !important;
+  }
+  
+  #login .username {
+    display: none;
+  }
+}
+
+@media(max-width: 570px) {
+  .banner-overlay {
+    background: rgba(255,255,255,0.8);
+    height: 54px;
+    z-index: 20;
+  }
+  
+  .banner-overlay > div {
+    position: absolute;
+    top: 0;
+    border-radius: 0 !important;
+    background: none;
+  }
+}
+
+@media(max-width: 360px) {
+  .banner-overlay {
+    height: 110px;
+  }
+  
+  .banner-overlay > div {
+    height: 50%;
+  }
 }
