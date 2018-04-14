@@ -63,6 +63,12 @@ class Tag < ApplicationRecord
       i.index('uploader:') != 0 && i.index('title:') != 0
     end
   end
+  
+  def self.append_tag_strings(left, right)
+    left = left.split(',')
+    left << right
+    left.uniq.join(',')
+  end
 
   def self.get_tag_ids(names)
     return [] if names.blank?

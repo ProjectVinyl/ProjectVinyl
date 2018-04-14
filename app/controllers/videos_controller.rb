@@ -109,33 +109,27 @@ class VideosController < ApplicationController
     end
     
 		user = current_user
+    video = params[:video]
     
-    file = params[:video][:file]
+    file = video[:file]
+    cover = video[:cover]
+    
     if !file || file.size == 0
-      return check("Error", "File is empty")
+      return error("Error", "File is empty")
     end
     
     if !file.content_type.include?('video/') && !file.content_type.include?('audio/')
       return error("Error", "Mismatched content type: '#{file.content_type}'" )
     end
     
-    cover = params[:video][:cover]
-    if cover && (!cover.content_type.include?('image/') || cover.size == 0)
-      return error("Error", "Cover is empty")
+    if file.content_type.include?('audio/')
+      if !cover || cover.size == 0 || !cover.content_type.include?('image/')
+        return error("Error", "Cover art is required for audio files.")
+      end
     end
-    
-    if !file.content_type.include?('video/') && (!cover || !cover.content_type.include?('image/'))
-      return error("Error", "Cover art is required for audio files.")
-    end
-    
-    video = params[:video]
     
     if video[:tag_string].blank?
       return error("Error", "You need at least one tag.")
-    end
-    
-    if video[:title].blank?
-      return error(params[:format] == 'json', "Error", "Title is blank.")
     end
     
     data = file.read
@@ -144,7 +138,7 @@ class VideosController < ApplicationController
     end
     
     ext = File.extname(file.original_filename)
-    if ext == ''
+    if ext.blank?
       ext = Mimes.ext(file.content_type)
     end
     
@@ -160,44 +154,29 @@ class VideosController < ApplicationController
         audio_only: file.content_type.include?('audio/'),
         file: ext,
         mime: file.content_type,
-        upvotes: 0,
-        downvotes: 0,
-        views: 0,
-        hidden: false,
-        processed: false,
-        checksum: checksum[:value],
-        duplicate_id: 0
+        upvotes: 0, downvotes: 0, views: 0, duplicate_id: 0,
+        hidden: false, processed: false,
+        checksum: checksum[:value]
       )
       
       @comments = @video.comment_thread = CommentThread.create(user_id: user, title: title)
       @comments.save
       
-      if @video.source && !@video.source.blank?
-        TagHistory.record_source_changes(@video, current_user.id)
-      else
-        if !params[:video][:tag_string]
-          params[:video][:tag_string] = ''
-        elsif !params[:video][:tag_string].blank?
-          params[:video][:tag_string] << ','
-        end
-        params[:video][:tag_string] << 'source needed'
-      end
-      
-      Tag.load_tags(params[:video][:tag_string], @video)
-      
       if current_user.subscribe_on_upload?
         @comments.subscribe(current_user)
       end
+      
+      if @video.source && !@video.source.blank?
+        TagHistory.record_source_changes(@video, current_user.id)
+      else
+        video[:tag_string] = Tag.append_tag_strings(video[:tag_string], 'source needed')
+      end
+      
+      Tag.load_tags(video[:tag_string], @video)
     end
     
-    @video.save_file(data)
-    
-    if params[:video][:time] && (time = params[:video][:time].to_f) >= 0
-      @video.set_thumbnail_time(time)
-    else
-      @video.set_thumbnail(cover)
-    end
-    
+    @video.video = data
+    @video.set_thumbnail(cover, video[:time])
     @video.save
     
     if params[:format] == 'json'
@@ -291,16 +270,12 @@ class VideosController < ApplicationController
     
     if current_user.is_staff? && (file = params[:video][:file])
       video.set_file(file)
-      video.save
     end
     
-    if cover = params[:video][:cover]
-      video.set_thumbnail(cover) if cover.content_type.include?('image/')
-    elsif (time = params[:video][:time].to_f) >= 0
-      video.set_thumbnail_time(time)
-    elsif params[:erase] || file
-      video.set_thumbnail(false)
-    end
+    cover = params[:video][:cover] || !params[:erase]
+    video.set_thumbnail(cover, params[:video][:time])
+    
+    video.save
     
     flash[:notice] = "Changes saved successfully. You may need to refresh the page."
     if params[:format] == 'json'

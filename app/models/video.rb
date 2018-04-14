@@ -223,10 +223,10 @@ class Video < ApplicationRecord
     data = media.read
     hash = Ffmpeg.compute_checksum(data)
     self.checksum = hash if hash != self.checksum
-    self.save_file(data)
+    self.video = data
   end
 
-  def save_file(data)
+  def video=(data)
     File.open(self.video_path, 'wb') do |file|
       file.write(data)
       file.flush
@@ -281,26 +281,20 @@ class Video < ApplicationRecord
     Ffmpeg.locked?(self.video_path)
   end
 
-  def set_thumbnail(cover)
+  def set_thumbnail(cover = nil, time = nil)
     self.uncache
-    if cover && cover.content_type.include?('image/')
-      self.remove_cover_files
-      File.open("#{self.cover_path}.png", 'wb') do |file|
-        file.write(cover.read)
-        file.flush
-      end
+    self.remove_cover_files
+    
+    if save_file("#{self.cover_path}.png", cover, 'image/')
       Ffmpeg.extract_tiny_thumb_from_existing(self.cover_path)
-    elsif !self.audio_only
-      Ffmpeg.extract_thumbnail(self.video_path, self.cover_path, self.get_duration.to_f / 2)
+    else
+      if !self.audio_only
+        time = time ? time.to_f : self.get_duration.to_f / 2
+        Ffmpeg.extract_thumbnail(self.video_path, self.cover_path, time)
+      end
     end
   end
 
-  def set_thumbnail_time(time)
-    self.uncache
-    self.remove_cover_files
-    Ffmpeg.extract_thumbnail(self.video_path, self.cover_path, time)
-  end
-  
   def self.thumb_for(video, user)
     video ? video.tiny_thumb(user) : '/images/default-cover-g.png'
   end
@@ -379,17 +373,20 @@ class Video < ApplicationRecord
     result.map(&:name).sort.join(' | ')
   end
 
-  def pull_meta(src, tit, dsc, tgs)
+  def pull_meta(src, fields)
     if src.present?
       src = "https://www.youtube.com/watch?v=#{ProjectVinyl::Web::Youtube.video_id(src)}"
       self.set_source(src)
       
-      meta = ProjectVinyl::Web::Youtube.get(src, title: tit, description: dsc, artist: tgs)
-      self.set_title(meta[:title]) if tit && meta[:title]
-      if dsc && meta[:description]
+      fields[:artist] = fields[:tags]
+      meta = ProjectVinyl::Web::Youtube.get(src, fields)
+      if meta[:title]
+        self.set_title(meta[:title])
+      end
+      if meta[:description]
         self.set_description(meta[:description][:bbc])
       end
-      if tgs && meta[:artist]
+      if meta[:artist]
         if (artist_tag = Tag.sanitize_name(meta[:artist][:name])) && !artist_tag.empty?
           artist_tag = Tag.add_tag('artist:' + artist_tag, self)
           if !artist_tag.nil?

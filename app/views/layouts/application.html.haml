@@ -25,12 +25,7 @@
 			#dock-toggle
 				= fa :bars
 			#login{class: user_signed_in? && "drop-down-holder"}
-				- if user_signed_in?
-					= render partial: "layouts/signed_in_controls"
-				- else
-					%a(data-external-form="#{ajax_login_path}" data-icon="sign-in" data-title="Sign In" data-thin="true" href="#{new_user_session_path}")
-						= fa :sign_in
-						Sign-in
+				= render partial: user_signed_in? ? "layouts/signed_in_controls" : "layouts/signed_out_controls"
 			= render partial: "search/small_search"
 		.layer-background#banner
 			.banner-background.far
@@ -47,20 +42,21 @@
 			%span.push
 			%footer
 				%a(title="Home" href="/") projectvinyl.net
-				%div
+				%div.micro-nav
 					%a{href: staff_path}> Staff
 					%a{href: policy_path}> Policy
 					%a{href: copyright_path}> Copyright
 					%a{href: donate_path}> Donate
 				%span
-					©
-					= Time.current.year
+					= precede '©' do
+						= Time.current.year
 					Project Vinyl Foundation
 				.date
 					Page generated in 
-					%span>
-						= load_time
-						seconds
+					= load_time
+					seconds
+					= number_with_delimiter User.online.count
+					users online
 				.date
 					%span Powered by Muffins
 	.fades

@@ -1,7 +1,5 @@
 module Admin
-  class VideosController < ApplicationController
-    before_action :authenticate_user!
-
+  class VideosController < BaseAdminController
     def show
       if !current_user.is_contributor?
         return render_access_denied
@@ -61,7 +59,7 @@ module Admin
     
     def metadata
       try_to do |video|
-        video.pull_meta(params[:source], params[:title], params[:description], params[:tags])
+        video.pull_meta(params[:source], params)
       end
     end
     
@@ -73,7 +71,7 @@ module Admin
     
     def resetthumb
       try_to do |video|
-        video.set_thumbnail(false)
+        video.set_thumbnail
         flash[:notice] = "Thumbnail Reset."
       end
     end

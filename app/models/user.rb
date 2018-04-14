@@ -8,6 +8,7 @@ class User < ApplicationRecord
          authentication_keys: [:login]
   include Roleable
   include Queues
+  include Activitied
   
   include Elasticsearch::Model
   include Indexable
@@ -244,35 +245,6 @@ class User < ApplicationRecord
   def set_tags(tags)
     Tag.load_tags(tags, self) if tags
   end
-
-  def set_avatar(avatar)
-    self.uncache
-    del_file(avatar_path_small)
-    del_file(avatar_path)
-    if avatar && avatar.content_type.include?('image/')
-      ext = File.extname(avatar.original_filename)
-      ext = Mimes.ext(avatar.content_type) if ext == ''
-      if img(avatar_path, avatar)
-        self.mime = ext
-        Ffmpeg.crop_avatar(avatar_path, avatar_path)
-        Ffmpeg.scale(avatar_path, avatar_path_small, 30)
-        # normal: 240
-        # small: 30
-      else
-        self.mime = nil
-      end
-    else
-      self.mime = nil
-    end
-  end
-
-  def set_banner(banner)
-    self.uncache
-    if !banner || banner.content_type.include?('image/')
-      del_file(banner_path)
-      self.banner_set = img(banner_path, banner)
-    end
-  end
   
   def default_name
     "Background Pony ##{self.id.to_s(32)}"
@@ -311,18 +283,42 @@ class User < ApplicationRecord
     Rails.root.join('public', 'banner', "#{self.id}.png")
   end
 
-  def avatar
-    grab_avatar("/avatar/#{self.id}#{self.mime}", 240)
-  end
-
   def small_avatar
     grab_avatar("/avatar/#{self.id}-small#{self.mime}", 30)
   end
 
+  def avatar
+    grab_avatar("/avatar/#{self.id}#{self.mime}", 240)
+  end
+
+  def avatar=(avatar)
+    self.uncache
+    self.mime = nil
+    del_file(avatar_path_small)
+    
+    save_file(avatar_path, avatar, 'image/') do
+      Ffmpeg.crop_avatar(avatar_path, avatar_path)      # normal: 240
+      Ffmpeg.scale(avatar_path, avatar_path_small, 30)  # small: 30
+      
+      ext = File.extname(avatar.original_filename)
+      ext = Mimes.ext(avatar.content_type) if ext == ''
+      self.mime = ext
+    end
+  end
+  
   def banner
     self.cache_bust("/banner/#{self.id}.png")
   end
 
+  def banner=(banner)
+    self.uncache
+    self.banner_set = false
+    
+    save_file(banner_path, banner, 'image/') do
+      self.banner_set = true
+    end
+  end
+  
   def link
     "/profile/#{self.id}-#{self.safe_name || default_name}"
   end
@@ -330,7 +326,7 @@ class User < ApplicationRecord
   def is_dummy
     false
   end
-
+  
   def send_notification(message, source)
     self.notifications.create(message: message, source: source)
     self.notification_count += 1

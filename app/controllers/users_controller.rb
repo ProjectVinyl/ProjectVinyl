@@ -48,7 +48,7 @@ class UsersController < ApplicationController
   def set_banner
     check_then do |user|
       if params[:erase] || params[:user][:banner]
-        user.set_banner(params[:erase] ? false : params[:user][:banner])
+        user.banner = params[:erase] ? false : params[:user][:banner]
         user.save
       end
       
@@ -64,7 +64,7 @@ class UsersController < ApplicationController
   
   def set_avatar
     check_then do |user|
-      user.set_avatar(params[:erase] ? false : params[:user][:avatar])
+      user.avatar = params[:erase] ? false : params[:user][:avatar]
       user.save
       
       if params[:format] == 'json'
@@ -190,7 +190,7 @@ class UsersController < ApplicationController
       return render_access_denied
     end
     
-    id = params[:id] || params[:user_id]
+    id = (params[:id] || params[:user_id]).to_i
     
     if id == current_user.id
       return yield(current_user)

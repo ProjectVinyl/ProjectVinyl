@@ -19,13 +19,21 @@ module WithFiles
     "/admin/files?p=#{path}&start=#{name}%offset=-5##{self.id}"
   end
   
-  def img(path, uploaded_io)
-    if uploaded_io
-      File.open(path, 'wb') do |file|
-        file.write(uploaded_io.read)
-        return true
-      end
+  def save_file(path, uploaded_io, type)
+    del_file(path)
+    if !uploaded_io || !uploaded_io.content_type.include?(type)
+      return false
     end
-    false
+    
+    File.open(path, 'wb') do |file|
+      file.write(uploaded_io.read)
+      file.flush
+    end
+    
+    if block_given?
+      yield
+    end
+    
+    true
   end
 end
