@@ -1,7 +1,5 @@
 module Admin
-  class AlbumController < ApplicationController
-    before_action :authenticate_user!
-    
+  class AlbumController < BaseAdminController
     def show
       if !current_user.is_staff?
         return render_access_denied

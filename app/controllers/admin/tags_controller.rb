@@ -1,7 +1,5 @@
 module Admin
-  class TagsController < ApplicationController
-    before_action :authenticate_user!
-    
+  class TagsController < BaseAdminController
     def show
       if !current_user.is_contributor?
         return render_access_denied

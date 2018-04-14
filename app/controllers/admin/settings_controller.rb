@@ -1,6 +1,5 @@
 module Admin
-  class SettingsController < ApplicationController
-    before_action :authenticate_user!
+  class SettingsController < BaseAdminController
     before_action :check_permissions
     
     def set
@@ -18,7 +17,7 @@ module Admin
     private
     def check_permissions
       if !current_user.is_contributor?
-        return head :unauthorized
+        head :unauthorized
       end
     end
   end

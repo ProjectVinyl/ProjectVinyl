@@ -1,7 +1,5 @@
 module Admin
-  class UserBadgesController < ApplicationController
-    before_action :authenticate_user!
-    
+  class UserBadgesController < BaseAdminController
     def update
       if !current_user.is_contributor?
         return head :unauthorized

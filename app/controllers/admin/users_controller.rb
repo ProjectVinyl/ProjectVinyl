@@ -1,7 +1,5 @@
 module Admin
-  class UsersController < ApplicationController
-    before_action :authenticate_user!
-    
+  class UsersController < BaseAdminController
     def show
       if !current_user.is_contributor?
         return render_access_denied

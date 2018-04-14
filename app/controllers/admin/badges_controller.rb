@@ -1,7 +1,5 @@
 module Admin
-  class BadgesController < ApplicationController
-    before_action :authenticate_user!
-    
+  class BadgesController < BaseAdminController
     def index
       if !current_user.is_contributor?
         return render_access_denied

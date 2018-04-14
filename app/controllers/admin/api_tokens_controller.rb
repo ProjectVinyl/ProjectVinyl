@@ -1,7 +1,5 @@
 module Admin
-  class ApiTokensController < ApplicationController
-    before_action :authenticate_user!
-    
+  class ApiTokensController < BaseAdminController
     def index
       if !current_user.is_contributor?
         return render_access_denied

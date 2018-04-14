@@ -1,7 +1,5 @@
 module Admin
-  class RolesController < ApplicationController
-    before_action :authenticate_user!
-    
+  class RolesController < BaseAdminController
     def update
       if !current_user.is_staff? || params[:user_id].to_i == current_user.id
         return head :unauthorized

@@ -1,7 +1,5 @@
 module Admin
-  class ThreadController < ApplicationController
-    before_action :check_permission
-    
+  class ThreadController < BaseAdminController
     def pin
       toggle_action do |thread|
         thread.pinned = !thread.pinned

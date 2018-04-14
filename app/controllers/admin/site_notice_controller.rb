@@ -1,6 +1,5 @@
 module Admin
-  class SiteNoticeController < ApplicationController
-    before_action :authenticate_user!
+  class SiteNoticeController < BaseAdminController
     
     def index
       if !current_user.is_contributor?

@@ -1,9 +1,7 @@
 require 'projectvinyl/storage/video_directory'
 
 module Admin
-  class FilesController < ApplicationController
-    before_action :authenticate_user!
-    
+  class FilesController < BaseAdminController
     def index
       json = params[:format] == 'json'
       if !user_signed_in? || !current_user.is_contributor?
