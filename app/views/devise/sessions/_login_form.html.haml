@@ -5,5 +5,5 @@
 		%label.check-box
 			= f.check_box :remember_me
 			%span Remember Me
-	.actions= f.submit "Sign in", class: "confirm"
+	.actions= f.submit :login, class: :confirm
 .tiny-foot= render "devise/shared/links"
