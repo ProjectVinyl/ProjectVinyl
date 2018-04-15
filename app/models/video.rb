@@ -250,7 +250,12 @@ class Video < ApplicationRecord
     end
     
     self.set_status(nil)
-    ProcessVideoJob.perform_later(self.id)
+    
+    begin
+      ProcessVideoJob.perform_later(self.id)
+    rescue Exception => e
+      return "Error: Could not schedule action."
+    end
     "Processing Scheduled"
   end
   
