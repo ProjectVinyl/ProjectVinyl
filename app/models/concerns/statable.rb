@@ -21,7 +21,8 @@ module Statable
 			return records if !block_given?
 			return records if !records.length
 			
-			max = select("COUNT(*) AS total, date(`#{table_name}`.created_at) AS created_on").group("created_on").order('total').reverse_order.limit(1).first.total.to_f
+			max = select("COUNT(*) AS total, date(`#{table_name}`.created_at) AS created_on").group("created_on").order('total').reverse_order.limit(1).first
+			max = max.nil? ? 9 : max.total.to_f
 			
 			index = -1
 			records.each do |current|

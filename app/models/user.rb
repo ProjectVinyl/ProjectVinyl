@@ -29,8 +29,6 @@ class User < ApplicationRecord
   has_many :notifications, dependent: :destroy
   has_many :thread_subscriptions, dependent: :destroy
   
-  has_many :album_items, through: :album
-  
   has_many :all_albums, class_name: "Album", foreign_key: "user_id", dependent: :destroy
   
   has_many :user_badges
@@ -51,6 +49,7 @@ class User < ApplicationRecord
   has_many :watched_tags_actual, through: :watched_tags, class_name: "Tag", source: "tag"
   
   belongs_to :album, foreign_key: "star_id"
+  has_many :album_items, through: :album
   belongs_to :tag
 
   validates :username, presence: true, uniqueness: {
