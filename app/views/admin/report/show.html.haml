@@ -20,8 +20,7 @@
 				%span.resolved This report has been resolved.
 		.artist-bio.bio
 			%a{class: !@report.user.is_dummy && "user-link", href: @report.user.link, data: {id: @report.user_id}}
-				%span.avatar.medium
-					%span{style: format_bg(@report.user.avatar)}
+				= render 'users/avatar/medium', user: @report.user
 		.content
 			.name
 				%a{class: !@report.user.is_dummy && "user-link", href: @report.user.link, data: {id: @report.user.id}}
