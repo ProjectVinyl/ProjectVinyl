@@ -6,8 +6,8 @@ module Indirected
   end
   
   def user
-    if self.user_id < 0 
-      return @dummy || (@dummy = User.dummy(self.user_id))
+    if self.user_id.to_i <= 0 
+      return @dummy || (@dummy = User.dummy(self.user_id.to_i))
     end
     self.direct_user || @dummy || (@dummy = User.dummy(self.user_id))
   end
