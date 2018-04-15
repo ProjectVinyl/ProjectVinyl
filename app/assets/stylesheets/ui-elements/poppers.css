@@ -3,7 +3,7 @@
 }
 .popper .pop-out {
   white-space: nowrap;
-  display: none;
+  visibility: hidden;
   position: absolute;
   left: -30px;
   top: 100%;
@@ -62,7 +62,7 @@
 }
 
 .pop-out-shown .pop-out, .pop-out.shown {
-  display: block !important;
+  visibility: visible !important;
 }
 
 .pop-out-shown::before,
