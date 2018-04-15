@@ -1,6 +1,8 @@
 ul.horizontal {
   overflow: hidden;
   margin-bottom: -1px;
+  display: flex;
+  flex-wrap: wrap;
 }
 ul.horizontal > li.generic {
   display: inline-block;
