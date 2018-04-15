@@ -1,6 +1,7 @@
 class Comment < ApplicationRecord
   include Reportable
   include Indirected
+  include Statable
   
   belongs_to :comment_thread
   

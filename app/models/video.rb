@@ -10,6 +10,7 @@ class Video < ApplicationRecord
   include Periodic
   include Reportable
   include Indirected
+  include Statable
   
   has_one :comment_thread, as: :owner, dependent: :destroy
 

@@ -1,0 +1,9 @@
+%section.page.full-width.recent-uploads.resize-holder
+	%h1.title.resize-target
+		Recent Albums (
+		= number_with_delimiter @albums.count
+		)
+		%a.right{href: user_albums_path(@user)}
+			View All
+			= fa :chevron_right
+	%ul.album-list.horizontal#albums= render partial: 'albums/thumb_h', collection: @albums.records

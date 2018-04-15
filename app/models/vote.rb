@@ -1,4 +1,6 @@
 class Vote < ApplicationRecord
+  include Statable
+  
   belongs_to :user
   belongs_to :video
   

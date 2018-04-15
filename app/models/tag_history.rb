@@ -1,4 +1,6 @@
 class TagHistory < ApplicationRecord
+  include Statable
+  
   belongs_to :tag
   belongs_to :video
   belongs_to :user

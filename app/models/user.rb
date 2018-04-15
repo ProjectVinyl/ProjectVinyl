@@ -21,19 +21,26 @@ class User < ApplicationRecord
   after_destroy :remove_assets
   after_create :init_name
   
+  has_many :comments
   has_many :votes
+  has_many :videos
+  has_many :tag_histories
+  
   has_many :notifications, dependent: :destroy
   has_many :thread_subscriptions, dependent: :destroy
   
-  belongs_to :album, foreign_key: "star_id"
   has_many :album_items, through: :album
   
-  has_many :videos
   has_many :all_albums, class_name: "Album", foreign_key: "user_id", dependent: :destroy
+  
+  has_many :user_badges
+  has_many :badges, through: :user_badges
+  
   has_many :artist_genres, dependent: :destroy
   has_many :tags, through: :artist_genres
+  
+  has_many :api_tokens, dependent: :destroy
   has_many :tag_subscriptions, dependent: :destroy
-  has_many :comments
   
   has_many :hidden_tags, -> { where(hide: true) }, class_name: "TagSubscription"
   has_many :spoilered_tags, -> { where(spoiler: true) }, class_name: "TagSubscription"
@@ -43,10 +50,7 @@ class User < ApplicationRecord
   has_many :spoilered_tags_actual, through: :spoilered_tags, class_name: "Tag", source: "tag"
   has_many :watched_tags_actual, through: :watched_tags, class_name: "Tag", source: "tag"
   
-  has_many :api_tokens, dependent: :destroy
-  
-  has_many :user_badges
-  has_many :badges, through: :user_badges
+  belongs_to :album, foreign_key: "star_id"
   belongs_to :tag
 
   validates :username, presence: true, uniqueness: {

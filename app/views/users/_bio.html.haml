@@ -1,5 +1,44 @@
-%section.artist-bio.bio
-	%a{href: user.link}
-		= render 'users/avatar/avatar', user: user
-		%h1.name.resize-target{class: user.banned? && "banned"}= user.username
-	.bio.short= raw user.html_bio
+%section.page.full-width.artist-bio
+	.post
+		.space-fix
+			%span.date.registered.right.underline
+				Registered 
+				%span{title: @user.created_at}= since @user.created_at
+			= render 'users/avatar/large', user: @user
+			%h1.title
+				%a.name{class: @user.banned? && "banned", href: @user.link}
+					= @user.username
+					= render 'badge/badges', user: @user
+			%span.content.bio= raw @user.html_description
+		= render 'users/modules/stats'
+		- if @user.tag_id || @tags.length > 0
+			.details
+				%h1 Associated Tags
+				- if @user.tag_id
+					%ul.tags.artist-tags= render 'tags/thumb_h', thumb_h: @user.tag
+				%ul.tags>= render partial: 'tags/thumb_h', collection: @tags.includes(:tag_type)
+		.actions
+			- if @modifications_allowed
+				.split-button.popper>
+					%button.action.options.pop-out-toggle
+						= fa :gear
+						Options
+					%ul.pop-out
+						- if user_signed_in? && current_user.is_contributor?
+							%li.action
+								%a{href: admin_user_path(@user)}
+									%span.icon= fa :gavel
+									%span.label Admin
+						%li.action.js-banner-select(data-external-form="#{user_banner_path @user}" data-title="Select Banner Image")
+							%span.icon= fa :pencil
+							%span.label Change Banner Image
+				%button.action(data-external-form="#{new_album_path}" data-title="New Album")>
+					= fa :plus
+					New Album
+				%a.button.action{href: upload_path}
+					= fa :upload
+					Upload Video
+			- if user_signed_in?
+				%button(data-external-form="#{new_message_path user: @user}" data-title="New Message")>
+					= fa :envelope
+					Send Message

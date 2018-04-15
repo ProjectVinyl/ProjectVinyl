@@ -1,0 +1,4 @@
+.stat-bar.checkerboard
+	- records.stats(240) do |item, index|
+		.stat{title: "#{item[:count]} - #{since item[:created_at]}", style: "right:#{index * 10}px"}
+			.bar{style: "height: #{item[:total]}%;"}

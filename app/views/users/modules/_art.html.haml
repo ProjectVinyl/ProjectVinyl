@@ -1,0 +1,10 @@
+%section.page.full-width.recent-uploads.resize-holder
+	%h1.title.resize-target
+		Songs by
+		= @user.username
+		= surround '(', ')' do
+			= number_with_delimiter @art.count
+		%a.right{href: @user.tag.link}
+			View All
+			= fa :chevron_right
+	%ul.horizontal.video-list#songs= render partial: 'videos/thumb_h', collection: @art.records

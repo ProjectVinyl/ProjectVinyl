@@ -1,0 +1,9 @@
+%section.page.full-width.recent-comments.resize-holder
+	%h1.title.resize-target
+		Recent Comments (
+		= number_with_delimiter @comments.count
+		)
+		%a.right{href: user_comments_path(@user)}
+			View All
+			= fa :chevron_right
+	%ul.comment-list= render 'comment/set', thread: @comments.records, indirect: true

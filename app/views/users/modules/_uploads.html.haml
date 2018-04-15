@@ -1,0 +1,9 @@
+%section.page.full-width.recent-uploads.resize-holder
+	%h1.title.resize-target
+		Recent Uploads
+		= surround '(', ')' do
+			= number_with_delimiter @videos.count
+		%a.right{href: user_uploads_path(@user)}
+			View All
+			= fa :chevron_right
+	%ul.horizontal.video-list#uploads= render partial: 'videos/thumb_h', collection: @videos.records
