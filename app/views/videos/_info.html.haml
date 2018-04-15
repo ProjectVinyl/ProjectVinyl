@@ -3,7 +3,7 @@
 		%table.group.active
 			%tr
 				%td.label File Size
-				%td.field= "%.2f MB" % (File.size(@video.video_path).to_f / 2**20)
+				%td.field= "%.2f MB" % @video.file_size
 			%tr
 				%td.label File Type
 				%td.field= @video.file

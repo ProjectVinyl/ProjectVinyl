@@ -293,16 +293,20 @@ class User < ApplicationRecord
 
   def avatar=(avatar)
     self.uncache
-    self.mime = nil
     del_file(avatar_path_small)
+    self.mime = nil
     
-    save_file(avatar_path, avatar, 'image/') do
-      Ffmpeg.crop_avatar(avatar_path, avatar_path)      # normal: 240
-      Ffmpeg.scale(avatar_path, avatar_path_small, 30)  # small: 30
-      
+    if avatar
       ext = File.extname(avatar.original_filename)
       ext = Mimes.ext(avatar.content_type) if ext == ''
       self.mime = ext
+      
+      if save_file(avatar_path, avatar, 'image/')
+        Ffmpeg.crop_avatar(avatar_path, avatar_path)      # normal: 240
+        Ffmpeg.scale(avatar_path, avatar_path_small, 30)  # small: 30
+      else
+        self.mime = nil
+      end
     end
   end
   

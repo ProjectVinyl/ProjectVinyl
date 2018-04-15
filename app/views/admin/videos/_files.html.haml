@@ -22,11 +22,11 @@
 					%a.button{href: @video.file_link("#{@video.storage_root}/stream", "#{@video.id}.webm")} View
 		%tr
 			%td.label Cover
-			%td.field= bool File.exist?("#{@video.cover_path}.png")
+			%td.field= bool File.exist?(@video.cover_path)
 			%td
 				%a.button{href: @video.file_link('public/cover', "#{@video.id}.png")} View
 		%tr
 			%td.label Thumbnail
-			%td.field= bool File.exist?("#{@video.cover_path}-small.png")
+			%td.field= bool File.exist?(@video.tiny_cover_path)
 			%td
 				%a.button{href: @video.file_link('public/cover', "#{@video.id}-small.png")} View

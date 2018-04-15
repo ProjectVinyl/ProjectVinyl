@@ -166,8 +166,8 @@ class Video < ApplicationRecord
   end
   
   def remove_cover_files
-    del_file("#{self.cover_path}.png")
-    del_file("#{self.cover_path}-small.png")
+    del_file(cover_path)
+    del_file(tiny_cover_path)
   end
   
   def video_path
@@ -208,7 +208,11 @@ class Video < ApplicationRecord
   end
 
   def cover_path
-    Rails.root.join('public', 'cover', self.id.to_s)
+    Rails.root.join('public', 'cover', "#{self.id}.png")
+  end
+  
+  def tiny_cover_path
+    Rails.root.join('public', 'cover', "#{self.id}-small.png")
   end
 
   def set_file(media)
@@ -233,48 +237,33 @@ class Video < ApplicationRecord
     end
     self.generate_webm
   end
+  
+  def file_size
+    return 0 if !File.exist?(video_path)
+    File.size(video_path).to_f / 2**20
+  end
 
   def generate_webm
-    if !self.audio_only
-      if !self.processed.nil?
-        self.processed = nil
-        self.save
-      end
-      ProcessVideoJob.perform_later(self.id)
-      
-      return "Processing Scheduled"
+    if self.audio_only
+      self.set_status(true)
+      return "Completed"
     end
     
-    if !self.processed
-      self.processed = true
-      self.save
-    end
-    
-    "Completed"
+    self.set_status(nil)
+    ProcessVideoJob.perform_later(self.id)
+    "Processing Scheduled"
   end
-
-  def generate_webm_sync
-    if !self.audio_only
-      self.processed = false
-      self.save
-      return Ffmpeg.produce_webm(self.video_path) do ||
-        self.processed = true
-        self.save
-      end
-    end
-    
-    self.processed = true
+  
+  def set_status(status)
+    return if self.processed == status
+    self.processed = status
     self.save
-    "Completed"
   end
-
+  
   def check_index
-    if Ffmpeg.try_unlock?(self.video_path)
-      self.processed = true
-      self.save
-      return true
+    Ffmpeg.try_unlock?(self.video_path) do
+      self.set_status(true)
     end
-    false
   end
 
   def processing
@@ -285,12 +274,12 @@ class Video < ApplicationRecord
     self.uncache
     self.remove_cover_files
     
-    if save_file("#{self.cover_path}.png", cover, 'image/')
-      Ffmpeg.extract_tiny_thumb_from_existing(self.cover_path)
+    if save_file(cover_path, cover, 'image/')
+      Ffmpeg.extract_tiny_thumb_from_existing(cover_path, tiny_cover_path)
     else
       if !self.audio_only
-        time = time ? time.to_f : self.get_duration.to_f / 2
-        Ffmpeg.extract_thumbnail(self.video_path, self.cover_path, time)
+        time = time ? time.to_f : get_duration.to_f / 2
+        Ffmpeg.extract_thumbnail(video_path, cover_path, tiny_cover_path, time)
       end
     end
   end
@@ -565,11 +554,11 @@ class Video < ApplicationRecord
   end
   
   def compute_length
-    if !self.file
+    if !self.file || !File.exist?(video_path)
       return 0
     end
     
-    self.length = Ffmpeg.get_video_length(self.video_path)
+    self.length = Ffmpeg.get_video_length(video_path)
     self.save
     self.length
   end
