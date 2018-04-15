@@ -13,7 +13,9 @@ ul.horizontal > li.generic {
   min-width: 190px;
   max-height: 250px;
   min-height: 140px;
-  width: 100%;
+  width: 0;
+  flex-grow: 1;
+  flex-shrink: 1;
 }
 ul.horizontal > li.generic:hover {
   background: #fcfcfc;
