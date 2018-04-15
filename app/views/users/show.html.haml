@@ -10,8 +10,7 @@
 			%span.date.registered.right.underline
 				Registered 
 				%span{title: @user.created_at}= since @user.created_at
-			%span.avatar.large
-				%span{style: format_bg(@user.avatar)}
+			= render 'users/avatar/large', user: @user
 			%h1.title
 				%a.name{class: @user.banned? && "banned", href: @user.link}
 					= @user.username

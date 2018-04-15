@@ -1,7 +1,5 @@
 %li.thread
-	.thumb
-		.avatar.medium
-			%span(style="#{format_bg thumb.last_poster.avatar}")
+	.thumb= render 'users/avatar/medium', user: thumb.last_poster
 	.info
 		.title
 			%a{href: thumb.link}= thumb.title

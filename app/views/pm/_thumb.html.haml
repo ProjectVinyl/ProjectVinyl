@@ -1,7 +1,6 @@
 %li.thread.removeable{class: thumb.unread && "unread", data: {id: @type, target: "message/#{thumb.id}"}}
 	.thumb
-		.avatar.medium
-			%span{style: format_bg(thumb.sender.avatar)}
+		= render 'users/avatar/medium_a', user: thumb.sender
 	.info
 		.title
 			%a{href: thumb.location}= thumb.comment_thread.get_title

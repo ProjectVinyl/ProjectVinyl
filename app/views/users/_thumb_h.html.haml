@@ -1,7 +1,6 @@
 %li.bio
 	%a{href: thumb_h.link}
-		%span.avatar
-			%span{style: format_bg(thumb_h.avatar)}
+		= render 'users/avatar/avatar', user: thumb_h
 		%h2{class: thumb_h.banned? && "banned"}= thumb_h.username
 		%span.tag-set= render 'badge/badges', user: thumb_h
 	.tag-set

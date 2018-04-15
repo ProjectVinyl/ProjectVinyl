@@ -1,8 +1,15 @@
-.avatar {
+.avatar-wrapper {
   display: inline-block;
-  overflow: hidden;
+  position: relative;
   width: 150px;
   height: 150px;
+}
+
+.avatar {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
   border-radius: 100%;
   background: no-repeat center rgb(178,230,251);
 }
@@ -16,21 +23,21 @@
 .avatar span {
   box-shadow: 0 0 10px -5px #000 inset, 0 0 1px 0 #000;
 }
-.avatar.large {
+.avatar-wrapper.large {
   width: 240px;
   height: 240px;
 }
-.avatar.medium {
+.avatar-wrapper.medium {
   width: 60px;
   height: 60px;
 }
-.avatar.small {
+.avatar-wrapper.small {
   width: 30px;
   height: 30px;
 }
 
 @media(max-width:600px) {
-  .avatar.large {
+  .avatar-wrapper.large {
     float: none;
     margin: 10px 0 0 0;
   }

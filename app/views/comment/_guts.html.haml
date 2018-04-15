@@ -18,8 +18,7 @@
 				%a.bubble-link{href: comment.comment_thread.link}= comment.comment_thread.get_title
 	.artist-bio.bio
 		%a{class: !comment.user.is_dummy && "user-link", "data-id": comment.user_id, href: comment.user.link}
-			%span.avatar.medium
-				%span{style: format_bg(comment.user.avatar)}
+			= render 'users/avatar/medium', user: comment.user
 .content{style: indirect && comment.comment_thread.owner_type == 'Video' && "margin-left:200px", "data-id": comment.id, "data-o-id": comment.get_open_id, "data-comment": comment.bbc_content}
 	.comment-actions
 		- if user_signed_in?

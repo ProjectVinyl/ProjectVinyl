@@ -1,7 +1,8 @@
 ﻿%tr.activity
 	%td
-		%span.avatar.small.left
-			%span{style: format_bg(recent_thumb.comment_thread.user.avatar)}
+		.avatar-wrapper.small.left
+			.avatar
+				%span{style: format_bg(recent_thumb.comment_thread.user.avatar)}
 	%td
 		%div
 			%a{class: recent_thumb.user.banned? && "banned", href: recent_thumb.user.link}= recent_thumb.user.username

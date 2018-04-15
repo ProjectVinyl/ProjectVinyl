@@ -21,7 +21,7 @@ div.group {
   border-top: 1px solid rgba(0,0,150, 0.3);
 }
 
-.post .avatar {
+.post .avatar-wrapper {
   float: left;
   max-width: 100%;
   max-height: 240px;

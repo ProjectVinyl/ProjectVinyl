@@ -50,6 +50,10 @@ class UserDummy
     false
   end
   
+  def online?
+    false
+  end
+  
   def role
     -1
   end

@@ -1,7 +1,5 @@
 %li.thread
-	.thumb
-		.avatar.medium
-			%span{style: format_bg(thumb.user.avatar)}
+	.thumb= render 'users/avatar/medium', user: thumb.user
 	.info
 		.title
 			- if thumb.locked

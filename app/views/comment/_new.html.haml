@@ -6,8 +6,7 @@
 		%input{type: "hidden", name: "order", value: @order}
 		.artist-bio.bio
 			%a{class: !visitor.is_dummy && "user-link", "data-id": visitor.id, href: visitor.link}
-				%span.avatar.medium
-					%span(style="#{format_bg visitor.avatar}")
+				= render 'users/avatar/medium', user: visitor
 		%label
 			.content.editing.previewable
 				.name

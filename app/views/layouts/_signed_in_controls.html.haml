@@ -11,5 +11,4 @@
 			= safe_to_display current_user.message_count, 999
 %span.no-dock= render 'layouts/signed_in_menu'
 %a(href="#{edit_user_registration_path}" rel="nofollow" title="settings")
-	%span.avatar.small
-		%span{style: format_bg(current_user.small_avatar)}
+	= render 'users/avatar/small', user: current_user

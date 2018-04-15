@@ -5,6 +5,7 @@
  *= require ./dropdowns
  *= require ./poppers
  *= require ./avatars
+*= require ./onlineindicators
  *= require ./hovercard
  *= require ./featuredvideo
  *= require ./donate

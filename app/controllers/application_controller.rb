@@ -6,8 +6,8 @@ class ApplicationController < ActionController::Base
   
   before_action :set_start_time
   before_action :configure_permitted_parameters, if: :devise_controller?
+  before_action :poke_user, if: :user_signed_in?
   after_action :store_last_location, if: :content_page?
-  after_action :poke_user, if: :user_signed_in?
   
   def content_page?
     !devise_controller? && controller_name != "imgs" && action_name != "download" && (/\/(api|ajax|.json)\// =~ request.fullpath).nil?
