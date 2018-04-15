@@ -16,8 +16,9 @@
 				- payload = "#{payload[0]["job_class"]}: #{payload[0]["arguments"]}" if payload
 				%a.row{href: "/admin/resque"}
 					%div
-						%span.active-icon{class: worker.working? && "active"}#
-						= i+1
+						%span.active-icon{class: worker.working? && "active"}
+						= precede '#' do
+							= i+1
 					%div= payload || "No Task"
 	%hr/
 	%button.action.blue{type: "button", data: {method: "post", confirm: "", url: admin_verify_path, title: "Verify System Integrity"}}
