@@ -21,7 +21,7 @@ module WithFiles
   
   def save_file(path, uploaded_io, type)
     del_file(path)
-    if !uploaded_io || !uploaded_io.content_type.include?(type)
+    if !uploaded_io || uploaded_io == true || !uploaded_io.content_type.include?(type)
       return false
     end
     
