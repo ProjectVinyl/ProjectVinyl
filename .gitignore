@@ -27,6 +27,7 @@
 /shared
 *.save
 *.swp
+*.rdb
 
 .rake_tasks~
 .rbenv-vars
