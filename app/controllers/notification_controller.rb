@@ -40,6 +40,7 @@ class NotificationController < ApplicationController
     notification.destroy
     current_user.notification_count = current_user.notifications.where(unread: true).count
     current_user.save
-    head :ok
+    
+    render json: {}
   end
 end

@@ -51,7 +51,7 @@ class CommentThread < ApplicationRecord
       return "/videos/#{self.owner_id}"
     end
     if self.owner_type == 'Report'
-      return "/admin/report/#{self.owner_id}"
+      return "/admin/reports/#{self.owner_id}"
     end
     if self.owner_type == 'Pm'
       return "/message/#{self.id}"
@@ -85,7 +85,6 @@ class CommentThread < ApplicationRecord
   end
 
   def bump(sender, params, comment)
-    
     if self.owner_type == 'Report'
       return self.owner.bump(self, params, comment)
     elsif self.owner_type == 'Pm'
