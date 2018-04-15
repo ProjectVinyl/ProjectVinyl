@@ -9,11 +9,11 @@ module Statable
 	
 	included do
 		def self.stats(origin = nil)
-			records = select("COUNT(*) AS total, `#{table_name}`.created_at").group("date(`#{table_name}`.created_at)").order(:created_at).reverse_order
+			records = select("COUNT(*) AS total, date(`#{table_name}`.created_at) as created_on").group("created_on").order("created_on").reverse_order
 			
 			if !origin.nil?
 				last = Time.zone.now.beginning_of_day + 1.day
-				records = records.where("`#{table_name}`.created_at > ?", last - origin.days)
+				records = records.where("created_at > ?", last - origin.days)
 			else
 				last = records.first.created_at.beginning_of_day + 1.day
 			end
@@ -21,11 +21,11 @@ module Statable
 			return records if !block_given?
 			return records if !records.length
 			
-			max = select("COUNT(*) AS total").group("date(`#{table_name}`.created_at)").order('total').reverse_order.limit(1).first.total.to_f
+			max = select("COUNT(*) AS total, date(`#{table_name}`.created_at) AS created_on").group("created_on").order('total').reverse_order.limit(1).first.total.to_f
 			
 			index = -1
 			records.each do |current|
-				day = current.created_at.beginning_of_day
+				day = current.created_on
 				while day <= last - 1.day
 					last = last - 1.day
 					index = index + 1
