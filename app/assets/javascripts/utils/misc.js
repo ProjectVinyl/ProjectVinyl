@@ -18,10 +18,17 @@ export function stopPropa(ev) {
   ev.stopPropagation();
 }
 
+function moveAcross(to, from, func) {
+  Object.keys(from).forEach(key => to[key] = func(from[key]));
+  return to;
+}
+
+export function remapObj(obj, func) {
+  return moveAcross({}, obj, func);
+}
+
 export function extendObj(onto, overrides) {
-  let keys = Object.keys(overrides), i = keys.length;
-  for (; i--;) onto[keys[i]] = overrides[keys[i]];
-  return onto;
+  return moveAcross(onto, overrides, value => value);
 }
 
 export function extendFunc(Parent, overrides) {

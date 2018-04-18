@@ -47,6 +47,23 @@ class Notification < ApplicationRecord
       }
     end)
     User.where('id IN (?)', receivers).update_all('notification_count = (SELECT COUNT(*) FROM `notifications` WHERE user_id = `users`.id AND unread = true)')
+    NotificationReceiver.push_notifications(receivers) do |user|
+      {
+        push: {
+          title: "Project Vinyl",
+          params: {
+            badge: '/favicon.ico',
+            icon: '/favicon.ico',
+            title: message
+          }
+        },
+        counters: {
+          notices: user.notification_count,
+          feeds: user.feed_count,
+          mail: user.message_count
+        }
+      }
+    end
   end
 
   def self.notify_admins(sender, message, source)

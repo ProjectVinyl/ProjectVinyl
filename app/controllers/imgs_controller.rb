@@ -9,6 +9,10 @@ class ImgsController < ApplicationController
     serve_img('banner')
   end
   
+  def service
+    serve_asset('serviceworker.js', 'application/javascript')
+  end
+  
   def cover
     if !params[:small]
       return serve_img('default-cover')
@@ -62,5 +66,10 @@ class ImgsController < ApplicationController
       filename: File.basename(file).to_s,
       x_sendfile: true
     }
+  end
+  
+  def serve_asset(asset, mime)
+  	response.headers['Content-Type'] = mime
+    render plain: Rails.application.assets[asset].to_s
   end
 end

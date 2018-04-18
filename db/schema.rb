@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180414175021) do
+ActiveRecord::Schema.define(version: 20180418115425) do
 
   create_table "album_items", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci" do |t|
     t.integer "album_id"
@@ -113,6 +113,15 @@ ActiveRecord::Schema.define(version: 20180414175021) do
     t.boolean "hidden", default: false
     t.integer "o_comment_thread_id", default: 0
     t.integer "score"
+  end
+
+  create_table "notification_receivers", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci" do |t|
+    t.integer "user_id"
+    t.string "endpoint"
+    t.string "auth"
+    t.string "pauth"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "notifications", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci" do |t|

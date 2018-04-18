@@ -1,0 +1,2 @@
+// Application push notifications authenticated via VAPID
+const vapid_public_key = new Uint8Array(<%= Base64.urlsafe_decode64(Rails.application.secrets.vapid_public_key).bytes %>);

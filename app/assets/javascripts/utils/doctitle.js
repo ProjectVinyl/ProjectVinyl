@@ -1,12 +1,14 @@
 
 export function docTitle() {
   const title = document.getElementById('document_title');
+  let focus = true;
+  
   const me = {
     get: _ => title.innerText,
     set: text => title.innerText = text,
     change: changerFunc => changerFunc(me.get(), me.set),
     togglePrefix: on => {
-      if (on) return me.addPrefix();
+      if (!focus && on) return me.addPrefix();
       me.removePrefix();
     },
     addPrefix: _ => {
@@ -22,6 +24,15 @@ export function docTitle() {
       }
     }
   };
+  
+  window.addEventListener('focus', () => {
+    focus = true;
+    me.removePrefix();
+  });
+  window.addEventListener('blur', () => {
+    focus = false;
+  });
+  
   return me;
 }
 

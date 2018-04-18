@@ -28,18 +28,20 @@ Rails.application.routes.draw do
     get 'videos/:id' => 'videos#go_next'
   end
   
+  resource :services do
+  	post 'register'
+  	post 'deregister'
+  end
+  
   # Asset Fallbacks #
   
-  get 'cover/:id(-:small)' => 'imgs#cover', constraints: { id: /[0-9]+/ } # /
-  get 'avatar/:id(-:small)' => 'imgs#avatar', constraints: { id: /[0-9]+/ } # /
+  get 'cover/:id(-:small)' => 'imgs#cover', constraints: { id: /[0-9]+/ }
+  get 'avatar/:id(-:small)' => 'imgs#avatar', constraints: { id: /[0-9]+/ }
   get 'banner/:id' => 'imgs#banner'
-  get 'stream/:id' => 'imgs#stream', constraints: { id: /.*/ } # /
-  
-  # Filters #
-  resource :filters, only: [:edit, :update], controller: :feed
-  
+  get 'stream/:id' => 'imgs#stream', constraints: { id: /.*/ }
+  get 'serviceworker' => 'imgs#service'
   # Feeds #
-  resource :feed, only: [:show], controller: :feed do
+  resource :feed, only: [:edit, :update, :show], controller: :feed do
     get 'page'
   end
   
@@ -49,7 +51,7 @@ Rails.application.routes.draw do
   # Videos #
   get 'upload' => 'videos#new'
   
-  resources :videos, except: [:create, :new, :destroy], id: /([0-9]+).*/ do # /
+  resources :videos, except: [:create, :new, :destroy], id: /([0-9]+).*/ do
     put 'like'
     put 'dislike'
     put 'star'
@@ -75,7 +77,7 @@ Rails.application.routes.draw do
     patch 'avatar' => 'users#set_avatar'
     patch 'banner' => 'users#set_banner'
   end
-  get 'profile/:id' => 'users#show', constraints: { id: /([0-9]+).*/ } # /
+  get 'profile/:id' => 'users#show', constraints: { id: /([0-9]+).*/ }
   
   # Albums #
   resources :albums, id: /([0-9]+).*/ do # /
@@ -87,7 +89,7 @@ Rails.application.routes.draw do
   resources :albumitems, only: [:create, :update, :destroy], controller: :album_item
   
   # Tags #
-  resources :tags, only: [:index], id: /([0-9]+).*/ do # /
+  resources :tags, only: [:index], id: /([0-9]+).*/ do
     get 'videos'
     get 'users'
     
@@ -98,11 +100,11 @@ Rails.application.routes.draw do
   scope :tags, controller: :tags do
     get 'aliases'
     get 'implied'
-    get ':name', action: :show, constraints: { name: /.*/ } # /
+    get ':name', action: :show, constraints: { name: /.*/ }
   end
   
   # Forums #
-  namespace :forum, id: /[^\.\/]+/ do # /
+  namespace :forum, id: /[^\.\/]+/ do
     get 'search' => 'search#index'
     get ':id' => 'board#view'
     root 'board#index'
@@ -113,7 +115,7 @@ Rails.application.routes.draw do
   resources :boards, only: [:index, :new, :create, :edit, :update, :destroy], controller: 'forum/board'
   
   # Threads #
-  get 'thread/:id' => 'thread#view', constraints: { id: /([0-9]+).*/ } # /
+  get 'thread/:id' => 'thread#view', constraints: { id: /([0-9]+).*/ }
   resources :threads, only: [:new, :create, :update], controller: :thread do
     put 'subscribe'
   end
@@ -233,7 +235,7 @@ Rails.application.routes.draw do
   end
   
   # Short link #
-  get '/:id(-:safe_title)' => 'videos#show', constraints: { id: /([0-9]+)/ } # /
+  get '/:id(-:safe_title)' => 'videos#show', constraints: { id: /([0-9]+)/ }
   
   # Home #
   root 'welcome#index'

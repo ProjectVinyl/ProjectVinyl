@@ -20,6 +20,9 @@ end
 # User sign-in/sign-out
 gem 'devise'
 
+# For push notifications
+gem 'webpush'
+
 # Anon verification
 gem 'recaptcha', require: 'recaptcha/rails'
 

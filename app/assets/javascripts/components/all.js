@@ -8,4 +8,3 @@ import './uploadchecker';
 import './uploader';
 import './usercard';
 import './vote';
-import './notifier';
