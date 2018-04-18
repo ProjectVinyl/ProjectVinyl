@@ -55,8 +55,6 @@ function calculatePageSplit(grid, b) {
 }
 
 function resizeGrid(grid, beside) {
-  all(grid, '.page li.virtual', li => li.parentNode.removeChild(li));
-  
   all(grid, '.page.virtual', page => {
     let prev = page.previousSibling;
     prev.classList.remove('split');
@@ -71,33 +69,46 @@ function resizeGrid(grid, beside) {
   }
   
   calculatePageSplit(grid, beside.getBoundingClientRect().bottom);
+}
+
+function alignLists() {
+  all('ul.horizontal li.virtual', li => li.parentNode.removeChild(li));
   
   requestAnimationFrame(() => {
-  	all(grid, 'ul', ul => {
-	  	let ulWidth = ul.offsetWidth;
-	  	if (!ul.firstElementChild) return;
-	  	let liWidth = ul.firstElementChild.offsetWidth;
-	  	if (!liWidth) console.log(liWidth);
-	  	
-	  	let columnCount = Math.floor(ulWidth / liWidth);
-	  	let itemsLastRow = ul.children.length % columnCount;
-	  	
-	  	if (itemsLastRow == 0) return;
-	  	
-	  	while (itemsLastRow++ < columnCount) {
-	  		ul.appendChild(ul.firstElementChild.cloneNode());
-	  		ul.lastChild.classList.add('virtual');
-	  	}
-	  });
+    all('ul.horizontal', ul => {
+      let ulWidth = ul.clientWidth;
+      if (!ul.firstElementChild) return;
+      
+      const style = window.getComputedStyle(ul.firstElementChild);
+      
+      let liWidth = ul.firstElementChild.getBoundingClientRect().width + parseFloat(style.marginLeft) + parseFloat(style.marginRight);
+      
+      let columnCount = Math.floor(ulWidth / liWidth);
+      let itemsLastRow = ul.children.length % columnCount;
+      
+      console.log(columnCount);
+      
+      if (itemsLastRow == 0) return;
+      
+      while (itemsLastRow++ < columnCount) {
+        ul.appendChild(ul.firstElementChild.cloneNode());
+        ul.lastChild.classList.add('virtual');
+      }
+    });
   });
 }
 
 ready(() => {
   const columnRight = document.querySelector('.grid-root.column-right');
-  if (!columnRight) return;
+  if (!columnRight) {
+    alignLists();
+    return window.addEventListener('resize', alignLists);
+  }
+  
   const columnLeft = document.querySelector('.column-left');
   
   function resize() {
+    alignLists();
     resizeGrid(columnLeft, columnRight);
   }
   

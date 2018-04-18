@@ -3,9 +3,6 @@ ul.horizontal {
   margin-bottom: -1px;
   display: flex;
   flex-wrap: wrap;
-  /*justify-content: space-around;*/
-}
-.auto-wrap ul.horizontal {
   justify-content: space-around;
   align-items: left;
 }

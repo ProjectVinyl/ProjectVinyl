@@ -2,7 +2,7 @@
 
 li.bio, li.genre {
   float: left;
-  margin: 10px;
+  margin: 5px;
   width: 200px;
   text-align: center;
   min-height: 320px;
@@ -17,6 +17,10 @@ li.bio, li.genre {
   border: solid 1px #ccc;
   box-shadow: 1px 1px 1px 0 #ccc;
   padding: 10px;
+}
+
+li.bio.virtual {
+  opacity: 0;
 }
 
 .bio a, .genre a {
