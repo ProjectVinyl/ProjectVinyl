@@ -182,7 +182,6 @@ export function getTagEditor(el) {
 }
 
 function initEditors() {
-  console.log('inited editors');
   all('.tag-editor', getTagEditor);
 }
 
