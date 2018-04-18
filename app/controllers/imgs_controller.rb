@@ -70,6 +70,16 @@ class ImgsController < ApplicationController
   
   def serve_asset(asset, mime)
   	response.headers['Content-Type'] = mime
-    render plain: Rails.application.assets[asset].to_s
+    
+    if Rails.application.assets
+      return render plain: Rails.application.assets[asset].to_s
+    end
+    
+    file = Rails.application.assets_manifest.assets[asset]
+    
+    not_found if !file
+    
+    file = File.join(Rails.application.assets_manifest.dir, file)
+    serve_direct(file, mime)
   end
 end
