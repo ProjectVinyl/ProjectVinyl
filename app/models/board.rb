@@ -21,7 +21,7 @@ class Board < ApplicationRecord
   end
 
   def link
-    "/forum/#{self.short_name}"
+    "/#{self.short_name}"
   end
 
   def last_comment

@@ -236,6 +236,8 @@ Rails.application.routes.draw do
   
   # Short link #
   get '/:id(-:safe_title)' => 'videos#show', constraints: { id: /([0-9]+)/ }
+  get '/:id' => 'forum/board#view'
+  
   
   # Home #
   root 'welcome#index'
