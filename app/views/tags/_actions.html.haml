@@ -14,18 +14,18 @@
 	%button.action.toggle.blue(data-family="tag-flags" data-descriminator="hide" data-target="tags" data-id="#{@tag.id}" data-action="hide")>
 		%span.icon
 			- if current_user.hides([@tag.id])
-				%i.fa.fa-check
+				= fa :check
 		%span.label
 			Hide Tag
 	%button.action.toggle.blue(data-family="tag-flags" data-descriminator="spoiler" data-target="tags" data-id="#{@tag.id}" data-action="spoiler")>
 		%span.icon
 			- if current_user.spoilers([@tag.id])
-				%i.fa.fa-check
+				= fa :check
 		%span.label
 			Spoiler Tag
 	%button.action.toggle.blue(data-family="tag-flags" data-descriminator="watch" data-target="tags" data-id="#{@tag.id}" data-action="watch")>
 		%span.icon
 			- if current_user.watches(@tag)
-				%i.fa.fa-check
+				= fa :check
 		%span.label
 			Watch Tag
