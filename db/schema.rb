@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180418115425) do
+ActiveRecord::Schema.define(version: 20180419130124) do
 
   create_table "album_items", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci" do |t|
     t.integer "album_id"
@@ -142,15 +142,6 @@ ActiveRecord::Schema.define(version: 20180418115425) do
     t.integer "comment_thread_id"
     t.integer "new_comment_id"
     t.integer "user_id"
-  end
-
-  create_table "processing_workers", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci" do |t|
-    t.boolean "running", default: true
-    t.string "status", default: ""
-    t.text "message", limit: 16777215
-    t.integer "video_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
   end
 
   create_table "reports", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci" do |t|
