@@ -8,7 +8,5 @@ import './vendor/all';
 import './ujs/all';
 import './callbacks';
 import './components/all';
-
 import './ui/all';
-
 import './service/all';

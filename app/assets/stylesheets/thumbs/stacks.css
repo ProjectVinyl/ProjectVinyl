@@ -1,0 +1,38 @@
+.stack {
+  background: none !important;
+  position: relative;
+}
+.stack .stack-item {
+  display: block;
+  position: absolute;
+  background: #000 center/contain no-repeat;
+  width: 95%;
+  height: 95%;
+}
+.stack .stack-item .stack-item {
+  transform: translate(5%, 5%);
+  -ms-transform: translate(5%, 5%);
+  -webkit-transform: translate(5%, 5%);
+  -o-transform: translate(5%, 5%);
+  -moz-transform: translate(5%, 5%);
+  width: 100%;
+  height: 100%;
+}
+.stack .stack-item {
+  top: 0;
+  left: 0;
+}
+.stack:hover .stack-item::before {
+    position: absolute;
+    content: "";
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    transition: outline 0.3s ease;
+    outline: solid 3px rgba(0,0,255,0.1);
+}
+
+.post .stack {
+	margin-right: 10px;
+}

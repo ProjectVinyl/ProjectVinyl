@@ -5,3 +5,6 @@
 			= render 'albums/visibility', album: thumb_h
 			= thumb_h.title
 		%span.date{title: thumb_h.created_at}= raw since thumb_h.created_at
+		%span.tag-set.right
+			=thumb_h.album_items.count
+			Videos

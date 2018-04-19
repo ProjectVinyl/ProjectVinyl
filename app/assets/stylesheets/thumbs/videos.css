@@ -87,6 +87,7 @@ li.generic.mix .tile::after {
   color: #aaa;
   vertical-align: middle;
   padding-top: 25%;
+  text-decoration: none;
 }
 
 .thumb .tile .detail, .thumb .tile .title, .thumb .tile + .title {
