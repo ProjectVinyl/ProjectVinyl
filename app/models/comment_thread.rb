@@ -47,17 +47,31 @@ class CommentThread < ApplicationRecord
   end
   
   def location
-    if self.owner_type == 'Video'
-      return "/videos/#{self.owner_id}"
-    end
-    if self.owner_type == 'Report'
-      return "/admin/reports/#{self.owner_id}"
-    end
     if self.owner_type == 'Pm'
       return "/message/#{self.id}"
     end
     
-    "/thread/#{self.id}"
+    if self.owner
+      return owner.link
+    end
+    
+    link
+  end
+
+  def icon
+    if self.owner_type == 'Video'
+      return self.owner.thumb
+    end
+    
+    user.avatar
+  end
+  
+  def preview
+    if self.owner_type == 'Video'
+      return self.owner.title
+    end
+    
+    comment.last.preview
   end
 
   def subscribed?(user)

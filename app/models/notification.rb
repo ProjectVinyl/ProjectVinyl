@@ -33,6 +33,7 @@ class Notification < ApplicationRecord
   end
   
   def self.notify_receivers(receivers, sender, message, source, del = true)
+    sender_ob = sender
     sender = "#{sender.class.table_name}_#{sender.id}"
     if del
       Notification.where('user_id IN (?) AND sender = ?', receivers, sender).delete_all
@@ -47,23 +48,14 @@ class Notification < ApplicationRecord
       }
     end)
     User.where('id IN (?)', receivers).update_all('notification_count = (SELECT COUNT(*) FROM `notifications` WHERE user_id = `users`.id AND unread = true)')
-    NotificationReceiver.push_notifications(receivers) do |user|
-      {
-        push: {
-          title: "Project Vinyl",
-          params: {
-            badge: '/favicon.ico',
-            icon: '/favicon.ico',
-            title: message
-          }
-        },
-        counters: {
-          notices: user.notification_count,
-          feeds: user.feed_count,
-          mail: user.message_count
-        }
+    NotificationReceiver.push_notifications(receivers, {
+      title: message,
+      params: {
+        badge: '/favicon.ico',
+        icon: sender_ob.icon,
+        body: sender_ob.preview
       }
-    end
+    })
   end
 
   def self.notify_admins(sender, message, source)

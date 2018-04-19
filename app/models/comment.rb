@@ -120,6 +120,14 @@ class Comment < ApplicationRecord
     "#{comment_thread.location}#comment_#{get_open_id}"
   end
   
+  def icon
+    user.avatar
+  end
+  
+  def preview
+    html_content
+  end
+  
   def report(sender_id, params)
     Report.generate_report(
       reportable: self,
