@@ -9,29 +9,6 @@
 				%span.label Read Only
 	%h1 Navigation
 	.actions
-		%a.button(href="/admin/files?p=encoding")
-			= fw :file_code_o
-			Encoding Folder
-		%a.button(href="/admin/files?p=public")
-			= fw :file_video_o
-			Public Storage Folder
-		%a.button(href="/admin/files?p=private")
-			= fw :file_video_o
-			Private Storage Folder
-	- if current_user.is_admin?
-		%hr/
-		.actions
-			%a.button.red{href: admin_path(table: :videos), data: {confirm: "", method: "post", title: "Reindex Videos"}}
-				= fw :refresh
-				Recreate Video Index
-			%a.button.green{href: admin_path(table: :users), data: {confirm: "", method: "post", title: "Reindex Users"}}
-				= fw :refresh
-				Recreate User Index
-			%a.button.blue{href: hidden_drop_admin_videos_path, data: {confirm: "", method: "post", title: "Drop #{@hiddenvideos.count} Videos"}}
-				= fw :trash_o
-				Delete Unlisted Videos
-	%hr/
-	.actions
 		%a.button{href: videos_path(unlisted: 1)}
 			= fw :eye_slash
 			Unlisted Videos
@@ -50,3 +27,23 @@
 		%a.button{href: admin_api_index_path}
 			= fw :key
 			Api Tokens
+	%h1 Files
+	.actions
+		%a.button(href="/admin/files?p=encoding")
+			= fw :file_code_o
+			Encoding Folder
+		%a.button(href="/admin/files?p=public")
+			= fw :file_video_o
+			Public Storage Folder
+		%a.button(href="/admin/files?p=private")
+			= fw :file_video_o
+			Private Storage Folder
+	- if current_user.is_admin?
+		%h1 Indexing
+		.actions
+			%a.button.red{href: admin_path(table: :videos), data: {confirm: "", method: "post", title: "Reindex Videos"}}
+				= fw :refresh
+				Recreate Video Index
+			%a.button.green{href: admin_path(table: :users), data: {confirm: "", method: "post", title: "Reindex Users"}}
+				= fw :refresh
+				Recreate User Index

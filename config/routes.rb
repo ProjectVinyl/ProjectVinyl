@@ -200,7 +200,12 @@ Rails.application.routes.draw do
     end
     
     # Reporting #
-    resources :reports, only: [:new, :show, :index, :create], controller: :report
+    resources :reports, only: [:new, :show, :index, :create], controller: :report do
+      put "/:state" => :update
+    end
+    resource :reports, only: [], controller: :report do
+      post "closeall" => :close_all
+    end
     
     resources :threads, only: [:destroy], controller: :thread do
       put 'pin'

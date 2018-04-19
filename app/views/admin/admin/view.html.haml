@@ -6,27 +6,38 @@
 	%section.page.full-width.resize-holder= render 'processor_status'
 	%section.page.full-width.recent-uploads.resize-holder
 		%h1.title.resize-target
-			Unprocessed Videos (
-			= number_with_delimiter @unprocessed.count
-			)
+			Unprocessed Videos
+			= surround '(', ')' do
+				= number_with_delimiter @unprocessed.count
 		- if @unprocessed.count > 0
 			= render layout: 'pagination/paginated', locals: {type: unprocessed_admin_videos_path, paginated: @unprocessed, id: "unprocessed"} do
 				%ul.horizontal.video-list#videos
 					= render partial: 'admin/videos/thumb_h', collection: @unprocessed.records
 		%h1.title.resize-target
-			Open Reports (
-			= number_with_delimiter @reports.count
-			)
+			Open Reports
+			= surround '(', ')' do
+				= number_with_delimiter @reports.count
 		- if @reports.count > 0
+			.actions
+				%a.button.red{href: closeall_admin_reports_path, data: {confirm: "", method: "post", title: "Close #{@reports.count} Reports"}}
+					= fa :ban
+					Close All
+			%hr/
 			= render layout: 'pagination/paginated', locals: {type: admin_reports_path, paginated: @reports, id: "reports"} do
 				.listing.compact
 					.report-list.items#reports
-						= render partial: 'admin/report/thumb', collection: @reports.records
+						= render partial: 'admin/reports/thumb_h', collection: @reports.records
 		%h1.title.resize-target
-			Hidden Videos (
-			= number_with_delimiter @hiddenvideos.count
-			)
+			Hidden Videos
+			= surround '(', ')' do
+				= number_with_delimiter @hiddenvideos.count
 		- if @hiddenvideos.count > 0
+			- if current_user.is_admin?
+				.actions
+					%a.button.red{href: hidden_drop_admin_videos_path, data: {confirm: "", method: "post", title: "Del #{@hiddenvideos.count} Videos"}}
+						= fw :trash_o
+						Remove All
+				%hr
 			= render layout: 'pagination/paginated', locals: {type: hidden_admin_videos_path, paginated: @hiddenvideos, id: "hidden"} do
 				%ul.horizontal.video-list#videos
 					= render partial: 'admin/videos/thumb_h', collection: @hiddenvideos.records

@@ -1,8 +1,0 @@
-%a.row{href: admin_report_path(thumb)}
-	%div
-		%span.active-icon{class: thumb.open? && "active"}
-		= precede '#' do
-			= thumb.id
-	%div= thumb.status
-	%div= since thumb.updated_at
-	%div= thumb.reportable_type
