@@ -9,6 +9,9 @@
 			Unprocessed Videos
 			= surround '(', ')' do
 				= number_with_delimiter @unprocessed.count
+			%a.right{href: videos_path(unprocessed: 1)}
+				View All
+				= fa :chevron_right
 		- if @unprocessed.count > 0
 			= render layout: 'pagination/paginated', locals: {type: unprocessed_admin_videos_path, paginated: @unprocessed, id: "unprocessed"} do
 				%ul.horizontal.video-list#videos
@@ -17,6 +20,9 @@
 			Open Reports
 			= surround '(', ')' do
 				= number_with_delimiter @reports.count
+			%a.right{href: admin_reports_path}
+				View All
+				= fa :chevron_right
 		- if @reports.count > 0
 			.actions
 				%a.button.red{href: closeall_admin_reports_path, data: {confirm: "", method: "post", title: "Close #{@reports.count} Reports"}}
@@ -31,6 +37,9 @@
 			Hidden Videos
 			= surround '(', ')' do
 				= number_with_delimiter @hiddenvideos.count
+			%a.right{href: videos_path(unlisted: 1)}
+				View All
+				= fa :chevron_right
 		- if @hiddenvideos.count > 0
 			- if current_user.is_admin?
 				.actions

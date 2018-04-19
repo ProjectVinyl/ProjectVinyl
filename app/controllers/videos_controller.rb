@@ -348,6 +348,9 @@ class VideosController < ApplicationController
       elsif params[:unlisted]
         @data = 'unlisted=1'
         return yield(true, Video.where(hidden: true))
+      elsif params[:unprocessed]
+        @data = 'unprocessed=1'
+        return yield(true, Video.where(processed: nil))
       end
     end
     
