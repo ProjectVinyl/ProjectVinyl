@@ -1,0 +1,17 @@
+- if current_user.is_contributor?
+	.actions.open.space-fix
+		%button.action.toggle.state-set.right.blue(data-target="admin/reports/#{@report.id}/resolve" data-parent=".report" data-state="resolved")
+			%span.icon= fa :check
+			%span.label Mark as Resolved
+		%button.action.toggle.state-set.right.red(data-target="admin/reports/#{@report.id}/close" data-parent=".report" data-state="closed")
+			%span.icon= fa :ban
+			%span.label Close Report
+	.actions.closed.space-fix
+		%button.action.toggle.state-set.right.green(data-target="admin/reports/#{@report.id}/open" data-parent=".report" data-state="open")
+			%span.icon= fa :undo
+			%span.label Re-open Report
+	.actions.resolved.space-fix
+		%button.action.toggle.state-set.right.green(data-target="admin/reports/#{@report.id}/open" data-parent=".report" data-state="open")
+			%span.icon= fa :undo
+			%span.label Re-open Report
+	%br

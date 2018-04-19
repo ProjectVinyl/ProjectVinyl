@@ -24,8 +24,6 @@
 					%button.green.post-submitter(data-thread-id="#{@thread.id}")>
 						%span Post Comment
 						%i.posting-spinner.fa.fw.fa-spinner.fa-spin
-					- if @thread.owner_type == "Report"
-						= render 'thread/report_options', f: f
 					%button.blue.state-toggle.button-fw(type="button" data-state="editing" data-parent=".previewable")>
 						%span.on Preview
 						%span.off Edit

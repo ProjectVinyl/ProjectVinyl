@@ -5,7 +5,7 @@
   margin-bottom: 10px;
   box-shadow: 0px 0px 12px rgba(0, 0, 0, 0.07) inset;
 }
-.report.closed .resolution-status {
+.report[data-state="closed"] .resolution-status {
   background: rgb(236, 72, 72);
   border: 1px solid #a73535;
   border-bottom-color: #9d3232;
@@ -13,7 +13,7 @@
   text-shadow: -1px -1px #a73535;
   color: #fff;
 }
-.report.resolved .resolution-status {
+.report[data-state="resolved"] .resolution-status {
   background: #7bb042;
   border: 1px solid #699739;
   border-bottom-color: #638f36;
@@ -21,18 +21,18 @@
   text-shadow: -1px -1px #699739;
   color: #8f8;
 }
-.report.open .resolution-status .fa-inverse {
+.report[data-state="open"] .resolution-status .fa-inverse {
   color: rgb(236, 236, 236);
 }
-.report.closed .resolution-status .fa-inverse {
+.report[data-state="closed"] .resolution-status .fa-inverse {
   color: rgb(236, 72, 72);
 }
-.report.resolved .resolution-status .fa-inverse {
+.report[data-state="resolved"] .resolution-status .fa-inverse {
   color: rgb(72, 236, 72);
 }
 
-.report.open .closed, .report.open .resolved,
-.report.closed .open, .report.closed .resolved,
-.report.resolved .open, .report.resolved .closed {
+.report[data-state="open"] .closed, .report[data-state="open"] .resolved,
+.report[data-state="closed"] .open, .report[data-state="closed"] .resolved,
+.report[data-state="resolved"] .open, .report[data-state="resolved"] .closed {
 	display: none;
 }

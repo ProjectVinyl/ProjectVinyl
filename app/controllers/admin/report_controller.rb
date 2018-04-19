@@ -49,25 +49,36 @@ module Admin
         @records = @records.where(reportable: @reportable)
       end
       
-      if params[:format] == 'json'
-        render_pagination 'thumb', @records, params[:page].to_i, 40, false
-      end
+      render_listing_total @records, params[:page].to_i, 0, true, {
+        is_admin: true, table: :reports, label: 'Report', scope: :admin
+      }
     end
     
-    def status
+    def update
       if !current_user.is_contributor?
         return render_access_denied
       end
       
-      if !(@report = Report.where(id: params[:id]).first)
+      if !(@report = Report.where(id: params[:report_id]).first)
         return head :not_found
       end
       
-      @report.bump(current_user, params, nil)
-      
       render json: {
-        status: @report.status
+        status: @report.change_status(current_user, params[:state].to_sym)
       }
+    end
+    
+    def close_all
+      if !current_user.is_contributor?
+        return render_access_denied
+      end
+      
+      total = Report.open.count
+      Report.open.change_status(:close)
+      
+      flash["success"] = "The status for #{total} reports have been updated to Closed."
+      
+      redirect_to action: :view, controller: :admin
     end
     
     def new

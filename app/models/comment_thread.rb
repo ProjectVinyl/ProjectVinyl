@@ -99,9 +99,7 @@ class CommentThread < ApplicationRecord
   end
 
   def bump(sender, params, comment)
-    if self.owner_type == 'Report'
-      return self.owner.bump(self, params, comment)
-    elsif self.owner_type == 'Pm'
+    if self.owner_type == 'Pm'
       return self.owner.bump(sender, params, comment)
     end
     

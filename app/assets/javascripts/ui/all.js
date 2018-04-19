@@ -12,6 +12,7 @@ import './subtable';
 import './tabset';
 import './toggle';
 import './statetoggle';
+import './stateset';
 import './autocomplete';
 import './editable';
 import './previewable';

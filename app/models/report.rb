@@ -9,7 +9,9 @@ class Report < ApplicationRecord
 	scope :open, -> { where(resolved: nil) }
 	scope :closed, -> { where(resolved: false) }
 	scope :solved, -> { where(resolved: true) }
-
+	
+	scope :change_status, ->(status) { update_all(resolved: STATE_TO_STATUS[status][1]) }
+	
 	STATE_TO_STATUS = {
 		open: [:reopened, nil],
 		close: [:closed, false],
@@ -80,14 +82,23 @@ class Report < ApplicationRecord
 	def open?
 		self.resolved.nil?
 	end
-
-	def bump(sender, params, comment)
-		state = params[:resolve] == 'on' ? :resolve : params[:close] == 'on' ? :close : :open
+	
+	def icon
+		'/favicon.ico'
+	end
+	
+	def preview
+		comment_thread.title
+	end
+	
+	def change_status(sender, state)
 		status = STATE_TO_STATUS[state]
 		
 		if self.resolved != status[1]
 			self.resolved = status[1]
-			self.notify_admins("Report <b>#{sender.title}</b> has been #{status[0]}")
+			self.notify_admins("Report <b>#{comment_thread.title}</b> has been #{status[0]}")
 		end
+		
+		self.resolved
 	end
 end
