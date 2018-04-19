@@ -42,7 +42,7 @@ module Admin
       end
       
       render json: {
-        added: () > 0
+        added: album.featured > 0
       }
     end
   end
