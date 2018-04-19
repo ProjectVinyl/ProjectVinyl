@@ -9,8 +9,6 @@
 					Total workers: 
 					= Resque.info[:workers]
 				%div
-				%div
-				%div
 			- Resque.workers.each_with_index do |worker, i|
 				- payload = worker.job.dig("payload", "args")
 				- payload = "#{payload[0]["job_class"]}: #{payload[0]["arguments"]}" if payload
