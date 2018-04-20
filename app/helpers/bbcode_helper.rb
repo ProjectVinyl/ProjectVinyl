@@ -1,6 +1,8 @@
 require 'projectvinyl/bbc/bbcode'
 
 module BbcodeHelper
+  SIZE = 32
+  
   def self.emoticons
     ProjectVinyl::Bbc::Emoticons.all
   end
@@ -15,5 +17,11 @@ module BbcodeHelper
     end
     
     ProjectVinyl::Bbc::Bbcode.from_bbc(text).outer_html
+  end
+  
+  def self.each_tile_asset
+    emoticons.each_with_index do |emoticon,index|
+      yield(emoticon, (index % 7) * SIZE, (index / 7).floor * SIZE)
+    end
   end
 end

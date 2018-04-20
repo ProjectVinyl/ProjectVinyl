@@ -16,10 +16,8 @@ i.emote {
   filter: blur(0);
 }
 
-<% BbcodeHelper.emoticons.each_with_index do |emoticon,index| %>
-<% x = index % 7 %>
-<% y = (index / 7).floor %>
+<% BbcodeHelper.each_tile_asset do |emoticon,tile_x, tile_y| %>
 .emote[data-emote="<%= emoticon %>"] {
-	background-position: top -<%= y * 32 %>px left -<%= x * 34 %>px;
+	background-position: top -<%= tile_x %>px left -<%= tile_y %>px;
 }
 <% end %>

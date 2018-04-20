@@ -24,4 +24,9 @@ module StringsHelper
       "<option value=\"#{value}\"#{value == selected ? " selected" : ""}>#{label}</option>"
     }).join
   end
+  
+  def self.explode(prefixes)
+    yield('')
+    prefixes.each {|p| yield("-#{p}-")}
+  end
 end

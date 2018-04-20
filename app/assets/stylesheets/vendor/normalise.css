@@ -96,6 +96,18 @@ video {
   padding: 0;
 }
 
+/* Firefox */
+button::-moz-focus-inner {
+  border:0;
+  padding:0;
+}
+
+/* Opera/Chrome */
+:focus {
+    outline: none;
+}
+
+
 /*Chrome*/
 [type="checkbox"],
 [type="radio"] {

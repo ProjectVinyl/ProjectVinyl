@@ -1,4 +1,9 @@
 /*
+ *= require ./forums/all
+ *= require ./search/all
+ *= require ./thumbs/all
+ *= require ./inputs/all
+ *= require ./buttons/all
  *= require ./slideouts
  *= require ./slideacross
  *= require ./paginator
@@ -10,5 +15,8 @@
  *= require ./hovercard
  *= require ./featuredvideo
  *= require ./donate
+ *= require ./notices
  *= require ./tags/all
+ *= require ./forms/all
+ *= require ./videos/all
  */

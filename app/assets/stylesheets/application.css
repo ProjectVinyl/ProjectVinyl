@@ -1,23 +1,7 @@
 /*
- *= require ./font-awesome.min
- *= require ./normalise
- *= require ./animations
- *= require ./tables/all
+ *= require ./vendor/all
  *= require ./misc/all
- *= require ./3d/all
  *= require ./layout/all
- *= require ./windows/all
- *= require ./lists/all
- *= require ./forums/all
- *= require ./notices
- *= require ./search/all
- *= require ./thumbs/all
- *= require ./inputs/all
- *= require ./buttons/all
- *= require ./ui-elements/all
- *= require ./forms/all
- *= require ./videos/all
- *= require ./dock/all
- *= require ./emoticons
- *= require ./compatibility
+ *= require ./ui/all
+ *= require ./compat/all
  */

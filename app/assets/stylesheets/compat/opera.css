@@ -1,26 +1,3 @@
-/*Firefox Fix*/
-button::-moz-focus-inner {
-  border:0;
-  padding:0;
-}
-
-/*Firefox(android)/Edge fix*/
-html.android-mozilla .context-3d,
-html.ms-edge .context-3d {
-  perspective: none !important;
-  -webkit-perspective: none !important;
-}
-html.android-mozilla .layer-background .far,
-html.android-mozilla .layer-background .near,
-html.ms-edge .layer-background .far,
-html.ms-edge .layer-background .near {
-  transform: none !important;
-}
-html.android-mozilla .context-3d .layer-foreground,
-html.ms-edge .context-3d .layer-foreground {
-	position: absolute;
-}
-
 /*Opera Fix*/
 input:focus, textarea:focus, keygen:focus, select:focus {
   outline-offset:0;
@@ -53,9 +30,4 @@ html.opera label div::after {
 }
 html.opera label:hover div::after {
    background: rgba(0,0,120,0.1);
-}
-
-/*Opera/Chrome fix */
-:focus {
-    outline: none;
 }

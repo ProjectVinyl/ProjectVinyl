@@ -2,6 +2,8 @@
   .context-3d {
     perspective: none !important;
     -webkit-perspective: none !important;
+    -webkit-perspective-origin: initial;
+    perspective-origin: initial;
   }
   
   .layer-background .far,

@@ -3,6 +3,7 @@
  *= require ./notifications
  *= require ./playlists
  *= require ./tags
+ *= require ./albums
  *= require ./files
  *= require ./staff
  *= require ./history

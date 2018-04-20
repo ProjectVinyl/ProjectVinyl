@@ -1,4 +1,5 @@
 /*
+ *= require ./3d/all
  *= require ./nav
  *= require ./header
  *= require ./banner/all
@@ -9,4 +10,8 @@
  *= require ./tabs
  *= require ./tabbar
  *= require ./footer
+ *= require ./tables/all
+ *= require ./lists/all
+ *= require ./windows/all
+ *= require ./dock/all
  */
