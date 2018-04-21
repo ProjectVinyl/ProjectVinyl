@@ -11,11 +11,13 @@ class Tag < ApplicationRecord
 
   has_many :tag_implications, dependent: :destroy
   has_many :implications, through: :tag_implications, foreign_key: "implied_id"
-
+  
+  has_many :tag_histories
+  
   has_many :implying_tags, class_name: "TagImplication", foreign_key: "implied_id"
   has_many :implicators, through: :implying_tags, foreign_key: "tag_id"
   has_many :aliases, class_name: "Tag", foreign_key: "alias_id"
-
+  
   def self.sanitize_sql(arguments)
     Tag.send :sanitize_sql_for_conditions, arguments
   end
@@ -47,7 +49,7 @@ class Tag < ApplicationRecord
   end
   
   def self.by_name_or_id(name)
-    name.blank? ? [] : Tag.order(:video_count, :user_count).reverse_order.where('name = ? OR id = ? OR short_name = ?', name, name, name)
+    name.blank? ? Tag.none : Tag.order(:video_count, :user_count).reverse_order.where('name = ? OR id = ? OR short_name = ?', name, name, name)
   end
 
   def self.find_matching_tags(name, sender=nil)

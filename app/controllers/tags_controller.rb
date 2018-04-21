@@ -1,10 +1,10 @@
 class TagsController < ApplicationController
   def show
     name = params[:name].downcase
-    if !(@tag = Tag.where("short_name = ? OR name = ? OR id = ?", name, name, name).first)
+    if !(@tag = Tag.by_name_or_id(name).first)
       return render_error(
         title: 'Nothing to see here but us Fish!',
-        description: 'This This tag does not exist.'
+        description: 'This tag does not exist.'
       )
     end
     
@@ -49,7 +49,7 @@ class TagsController < ApplicationController
     if !(@tag = Tag.where(id: params[:tag_id]).first)
       return head :not_found
     end
-    @records = @tag.users.order(:updated_at_at)
+    @records = @tag.users.order(:updated_at)
     render_pagination 'users/thumb_h', @records, params[:page].to_i, 8, true
   end
   
@@ -58,7 +58,7 @@ class TagsController < ApplicationController
     @aliases = Pagination.paginate(@aliases, params[:page].to_i, 10, true)
     
     if params[:format] == 'json'
-      render_pagination_json 'tags/alias', @aliases
+      render_pagination_json 'tags/tag_alias', @aliases
     end
   end
   

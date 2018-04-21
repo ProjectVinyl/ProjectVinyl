@@ -34,12 +34,14 @@ Rails.application.routes.draw do
   end
   
   # Asset Fallbacks #
+  scope controller: :imgs, constraints: { id: /[0-9]+/ } do
+    get 'cover/:id(-:small)', action: :cover
+    get 'avatar/:id(-:small)', action: :avatar
+    get 'banner/:id', action: :banner
+    get 'stream/:id', action: :stream
+    get 'serviceworker', action: :service
+  end
   
-  get 'cover/:id(-:small)' => 'imgs#cover', constraints: { id: /[0-9]+/ }
-  get 'avatar/:id(-:small)' => 'imgs#avatar', constraints: { id: /[0-9]+/ }
-  get 'banner/:id' => 'imgs#banner'
-  get 'stream/:id' => 'imgs#stream', constraints: { id: /.*/ }
-  get 'serviceworker' => 'imgs#service'
   # Feeds #
   resource :feed, only: [:edit, :update, :show], controller: :feed do
     get 'page'
@@ -90,16 +92,18 @@ Rails.application.routes.draw do
   
   # Tags #
   resources :tags, only: [:index], id: /([0-9]+).*/ do
-    get 'videos'
-    get 'users'
-    
     put 'hide'
     put 'spoiler'
     put 'watch'
+    
+    get 'videos'
+    get 'users'
+    get 'changes', controller: :history, action: :tag
   end
-  scope :tags, controller: :tags do
+  resource :tags do
     get 'aliases'
     get 'implied'
+    
     get ':name', action: :show, constraints: { name: /.*/ }
   end
   
@@ -239,10 +243,9 @@ Rails.application.routes.draw do
     get 'youtube' => 'youtube#show'
   end
   
-  # Short link #
+  # Short links #
   get '/:id(-:safe_title)' => 'videos#show', constraints: { id: /([0-9]+)/ }
   get '/:id' => 'forum/board#view'
-  
   
   # Home #
   root 'welcome#index'
