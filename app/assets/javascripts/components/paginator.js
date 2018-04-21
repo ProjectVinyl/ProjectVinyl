@@ -1,6 +1,6 @@
 import { ajax } from '../utils/ajax';
 import { QueryParameters } from '../utils/queryparameters';
-import { ready } from '../jslim/events';
+import { ready, bindEvent } from '../jslim/events';
 import { all } from '../jslim/dom';
 
 function populatePage(context, json) {
@@ -11,6 +11,7 @@ function populatePage(context, json) {
   all(context, '.pagination', page => {
     page.innerHTML = json.paginate.replace(/%7Bpage%7D|{page}/g, context.dataset.id);
   });
+  container.dispatchEvent(new CustomEvent('pagechange', { bubbles: true, cancelable: true }));
 }
 
 function requestPage(context, page, force) {
@@ -36,20 +37,18 @@ export function repaintPagination(context, json) {
   QueryParameters.current.setItem(context.dataset.id, json.page + 1);
 }
 
-ready(() => {
-  document.addEventListener('click', event => {
-    // Left-click only, no modifiers
-    if (event.button !== 0 || event.ctrlKey || event.shiftKey) return;
-    const target = event.target.closest('.pagination .button[data-page-to], .pagination .refresh');
-    if (target) {
-      const context = target.closest('.paginator');
-      requestPage(context, target.dataset.pageTo || context.dataset.page, target.classList.contains('refresh'));
-      event.preventDefault();
-    }
-  });
-  window.addEventListener('popstate', event => {
-    all('.paginator', context => {
-      requestPage(context, QueryParameters.current.getItem(context.dataset.id));
-    });
+bindEvent(document, 'click', event => {
+  // Left-click only, no modifiers
+  if (event.button !== 0 || event.ctrlKey || event.shiftKey) return;
+  const target = event.target.closest('.pagination .button[data-page-to], .pagination .refresh');
+  if (target) {
+    const context = target.closest('.paginator');
+    requestPage(context, target.dataset.pageTo || context.dataset.page, target.classList.contains('refresh'));
+    event.preventDefault();
+  }
+});
+bindEvent(window, 'popstate', event => {
+  all('.paginator', context => {
+    requestPage(context, QueryParameters.current.getItem(context.dataset.id));
   });
 });

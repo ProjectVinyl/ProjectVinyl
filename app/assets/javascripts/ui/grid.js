@@ -1,4 +1,4 @@
-import { ready } from '../jslim/events';
+import { ready, bindEvent } from '../jslim/events';
 import { all } from '../jslim/dom';
 
 // +1 to prevent jittering
@@ -44,7 +44,11 @@ function calculatePageSplit(grid, b) {
   const page = getTargetPage(grid, b);
   if (!page) return;
   let found;
-  for (const li of page.querySelectorAll('li')) {
+  
+  const ul = page.querySelector('ul');
+  
+  for (let i = 0; i < ul.children.length; i++) {
+    const li = ul.children[i];
     if (!found && li.getBoundingClientRect().top >= b) {
       page.classList.add('split');
       page.insertAdjacentHTML('afterend', '<section class="page virtual"><div class="group"><ul class="horizontal latest"></ul></div></section>');
@@ -71,23 +75,25 @@ function resizeGrid(grid, beside) {
   calculatePageSplit(grid, beside.getBoundingClientRect().bottom);
 }
 
+function getPreferredColumnCount(ul) {
+  let ulWidth = ul.clientWidth;
+  if (!ul.firstElementChild) return 0;
+  
+  const style = window.getComputedStyle(ul.firstElementChild);
+  
+  let liWidth = ul.firstElementChild.getBoundingClientRect().width + parseFloat(style.marginLeft) + parseFloat(style.marginRight);
+  
+  return Math.floor(ulWidth / liWidth);
+}
+
 function alignLists() {
   all('ul.horizontal li.virtual', li => li.parentNode.removeChild(li));
   
   requestAnimationFrame(() => {
     all('ul.horizontal', ul => {
-      let ulWidth = ul.clientWidth;
-      if (!ul.firstElementChild) return;
-      
-      const style = window.getComputedStyle(ul.firstElementChild);
-      
-      let liWidth = ul.firstElementChild.getBoundingClientRect().width + parseFloat(style.marginLeft) + parseFloat(style.marginRight);
-      
-      let columnCount = Math.floor(ulWidth / liWidth);
+      const columnCount = getPreferredColumnCount(ul);
+      if (columnCount == 0) return;
       let itemsLastRow = ul.children.length % columnCount;
-      
-      console.log(columnCount);
-      
       if (itemsLastRow == 0) return;
       
       while (itemsLastRow++ < columnCount) {
@@ -98,11 +104,13 @@ function alignLists() {
   });
 }
 
+bindEvent(document, 'pagechange', alignLists);
+
 ready(() => {
   const columnRight = document.querySelector('.grid-root.column-right');
   if (!columnRight) {
     alignLists();
-    return window.addEventListener('resize', alignLists);
+    return bindEvent(window, 'resize', alignLists);
   }
   
   const columnLeft = document.querySelector('.column-left');
@@ -112,6 +120,6 @@ ready(() => {
     resizeGrid(columnLeft, columnRight);
   }
   
-  window.addEventListener('resize', resize);
+  bindEvent(window, 'resize', resize);
   resize();
 });
