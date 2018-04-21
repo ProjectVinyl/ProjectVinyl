@@ -1,7 +1,7 @@
 /**
  * Windows
  */
-import { addDelegatedEvent } from '../jslim/events';
+import { addDelegatedEvent, bindEvent } from '../jslim/events';
 import { all, nodeFromHTML } from '../jslim/dom';
 import { Key } from '../utils/misc';
 import { initDraggable, move } from './draggable';
@@ -74,7 +74,7 @@ export function createWindow(params) {
   return new PopupWindow(params);
 }
 
-document.addEventListener('keydown', e => {
+bindEvent(document, 'keydown', e => {
   const activeWindow = document.querySelector('.popup-container.focus');
   if (!activeWindow) return;
   if (e.which === Key.ESC) resolve(activeWindow.windowObj, false);

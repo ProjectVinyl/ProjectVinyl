@@ -1,4 +1,4 @@
-import { addDelegatedEvent, ready } from '../jslim/events';
+import { addDelegatedEvent, ready , bindEvent } from '../jslim/events';
 import { offset, all } from '../jslim/dom';
 import { clamp } from '../utils/math';
 
@@ -36,11 +36,9 @@ export function initDraggable(sender, target) {
   });
 }
 
-ready(() => {
-  window.addEventListener('resize', () => {
-    all('.ui-draggable', el => {
-      el.style.top = el.style.left = '0px'; // reposition element for size calculations
-      setPos(el, el.prefX, el.prefY); // try to get back to where the user left it (or as close as possible)
-    });
+bindEvent(window, 'resize', () => {
+  all('.ui-draggable', el => {
+    el.style.top = el.style.left = '0px'; // reposition element for size calculations
+    setPos(el, el.prefX, el.prefY); // try to get back to where the user left it (or as close as possible)
   });
 });

@@ -1,6 +1,7 @@
 /*
  * Correct page scrolling after content change
  */
+import { bindEvent } from '../jslim/events';
 
 export function scrollContext() {
   return document.querySelector('.context-3d') || document.scrollingElement;
@@ -18,6 +19,7 @@ export function reflowElement(context) {
   });
 }
 
-document.addEventListener('ajax:complete', () => {
+
+bindEvent(document, 'ajax:complete', () => {
   reflowElement(scrollContext());
 });

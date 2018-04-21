@@ -2,7 +2,7 @@ import { ajax } from '../utils/ajax';
 import { repaintPagination } from './paginator';
 import { popupConfirm, popupError } from './popup';
 import { scrollTo } from '../ui/scroll';
-import { ready } from '../jslim/events';
+import { ready, bindEvent } from '../jslim/events';
 import { all, decodeEntities } from '../jslim/dom';
 import { insertTags } from '../ui/editable';
 import { sendForm } from '../utils/xhr';
@@ -149,7 +149,7 @@ const targets = {
   '.spoiler': revealSpoiler
 };
 
-document.addEventListener('click', event => {
+bindEvent(document, 'click', event => {
   if (event.which !== 1 && event.button !== 0) return;
   
   for (const target in targets) {

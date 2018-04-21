@@ -7,7 +7,7 @@ import { ContextMenu } from '../ui/contextmenu';
 import { Key } from '../utils/misc';
 import { errorMessage, errorPresent } from '../utils/videos';
 import { all, each } from '../jslim/dom';
-import { ready, bindAll, halt } from '../jslim/events';
+import { ready, bindAll, halt, bindEvent } from '../jslim/events';
 import { isFullscreen, onFullscreenChange } from '../utils/fullscreen';
 import { cookies } from '../utils/cookies';
 import { TapToggler } from './taptoggle';
@@ -52,7 +52,7 @@ function sendMessage(sender) {
 }
 
 function attachMessageListener(sender) {
-  window.addEventListener('storage', event => {
+  bindEvent(window, 'storage', event => {
     if (event.key === '::activeplayer' && event.newValue !== sender.__seed) {
       sender.pause();
     }
@@ -222,7 +222,7 @@ Player.prototype = {
       touchcancel: onTouchEvent
     });
     
-    document.addEventListener('keydown', ev => {
+    bindEvent(document, 'keydown', ev => {
       if (this.video && !document.querySelector('input:focus, textarea:focus')) {
         if (ev.keyCode === Key.SPACE) {
           this.togglePlayback();
@@ -454,7 +454,7 @@ function resize(obj) {
   obj.style.height = `${obj.clientWidth * 9 / 16}px`;
 }
 
-window.addEventListener('resize', () => {
+bindEvent(window, 'resize', () => {
   all('.video', resize);
 });
 

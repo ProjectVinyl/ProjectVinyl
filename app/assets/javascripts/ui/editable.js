@@ -1,6 +1,6 @@
 import { ajax } from '../utils/ajax';
 import { all } from '../jslim/dom';
-import { addDelegatedEvent, ready } from '../jslim/events';
+import { addDelegatedEvent, ready, bindEvent } from '../jslim/events';
 
 let active = null;
 const keyEvents = { 66: 'b', 85: 'u', 73: 'i', 83: 's', 80: 'spoiler' };
@@ -122,7 +122,7 @@ addDelegatedEvent(document, 'dragstart', '#emoticons .emote[title]', (event, tar
   }
 });
 
-document.addEventListener('click', () => {
+bindEvent(document, 'click', () => {
   if (active && !active.closest('.editable:hover')) deactivate();
 });
 

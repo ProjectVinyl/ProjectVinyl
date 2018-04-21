@@ -1,5 +1,5 @@
 import { all, offset } from '../jslim/dom';
-import { addDelegatedEvent, halt } from '../jslim/events';
+import { addDelegatedEvent, halt, bindEvent } from '../jslim/events';
 
 addDelegatedEvent(document, 'click', '.popper .pop-out-toggle, .popper.pop-out-toggle', (e, target) => {
   if (e.which != 1) return;
@@ -21,7 +21,7 @@ addDelegatedEvent(document, 'click', '.popper .pop-out-toggle, .popper.pop-out-t
   });
 });
 
-document.addEventListener('mouseup', () => all('.pop-out-shown', a => {
+bindEvent(document, 'mouseup', () => all('.pop-out-shown', a => {
   if (!a.querySelector('.action.toggle:hover')) a.classList.remove('pop-out-shown');
 }));
 

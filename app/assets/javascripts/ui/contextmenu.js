@@ -1,4 +1,5 @@
 import { all, offset } from '../jslim/dom';
+import { bindEvent } from '../jslim/events';
 
 export function ContextMenu(dom, container) {
   this.dom = dom;
@@ -54,8 +55,8 @@ function hideAll() {
   all('.contextmenu', p => p.classList.add('hidden'));
 }
 
-window.addEventListener('resize', hideAll);
-window.addEventListener('blur', hideAll);
-document.addEventListener('click', ev => {
+bindEvent(window, 'resize', hideAll);
+bindEvent(window, 'blur', hideAll);
+bindEvent(document, 'click', ev => {
   if (ev.button === 0) hideAll();
 });

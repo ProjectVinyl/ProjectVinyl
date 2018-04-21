@@ -9,7 +9,8 @@ addDelegatedEvent(document, 'click', '.removeable .remove', function(e) {
   const me = this.closest('.removeable');
   
   if (me.classList.contains('repaintable')) {
-    return ajax.delete(`${me.dataset.target}/${me.dataset.id}`).json(json => repaintPagination(me.closest('.paginator'), json));
+    ajax.delete(`${me.dataset.target}/${me.dataset.id}`).json(json => repaintPagination(me.closest('.paginator'), json));
+    return;
   }
   
   if (me.dataset.target) {

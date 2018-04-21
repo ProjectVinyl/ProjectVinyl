@@ -1,4 +1,5 @@
 import { pushUrl } from './history';
+import { bindEvent } from '../jslim/events';
 
 export function encodeParamaters(data) {
   return Object.keys(data).map(key => `${encodeURIComponent(key)}=${encodeURIComponent(data[key])}`).join('&');
@@ -42,5 +43,5 @@ function statePopped() {
   QueryParameters.current = new QueryParameters(`${document.location.href}?`.split('?')[1], window.history);
 }
 
-window.addEventListener('popstate', statePopped);
+bindEvent(window, 'popstate', statePopped);
 statePopped();

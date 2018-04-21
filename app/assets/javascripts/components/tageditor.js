@@ -1,7 +1,6 @@
-import { ajax } from '../utils/ajax';
 import { Key } from '../utils/misc';
 import { all } from '../jslim/dom';
-import { addDelegatedEvent, ready, halt } from '../jslim/events';
+import { addDelegatedEvent, ready, halt, bindEvent } from '../jslim/events';
 
 function fillTemplate(obj, template) {
   Object.keys(obj).forEach(key => {
@@ -186,6 +185,6 @@ function initEditors() {
 }
 
 ready(initEditors);
-document.addEventListener('ajax:externalform', () => {
+bindEvent(document, 'ajax:externalform', () => {
   requestAnimationFrame(initEditors);
 });

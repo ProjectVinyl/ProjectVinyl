@@ -58,8 +58,8 @@ addDelegatedEvent(document, 'click', '.tab-set.async a.button:not([data-disabled
   });
 });
 
-bindEvent(document, 'ajax:complete', ev => {
-  const tabs = ev.detail.data.tabs;
+bindEvent(document, 'ajax:complete', e => {
+  const tabs = e.detail.data.tabs;
   if (tabs) Object.keys(tabs).forEach(key => {
     const tab = document.querySelector(`.tab-set a.button[data-live-tab="${key}"] .count`);
     if (tab) tab.innerText = tabs[key] ? `(${tabs[key]})` : '';

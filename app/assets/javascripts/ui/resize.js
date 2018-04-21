@@ -1,4 +1,4 @@
-import { ready } from '../jslim/events';
+import { ready, bindEvent } from '../jslim/events';
 import { all } from '../jslim/dom';
 import { linearInterpolate } from '../utils/math';
 
@@ -49,6 +49,6 @@ function fixFonts() {
   all('h1.resize-target', resizeFont);
 }
 
-window.addEventListener('resize', fixFonts);
-window.addEventListener('load', fixFonts);
+bindEvent(window, 'resize', fixFonts);
+bindEvent(window, 'load', fixFonts);
 ready(fixFonts);
