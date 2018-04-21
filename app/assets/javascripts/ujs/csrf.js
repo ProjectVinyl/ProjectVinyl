@@ -9,6 +9,18 @@ export function csrfParam() {
   return param && param.content;
 }
 
+export function csrfHeaders(method) {
+  return {
+    method: method,
+    credentials: 'same-origin',
+    headers: {
+      'Content-Type': method == 'GET' ? 'application/x-www-form-urlencoded' : 'application/json',
+      'X-Requested-With': 'XMLHttpRequest',
+      'X-CSRF-Token': csrfToken()
+    }
+  };
+}
+
 function sameOrigin(url) {
   const a = document.createElement('a');
   a.href = url;

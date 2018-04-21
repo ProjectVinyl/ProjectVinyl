@@ -1,5 +1,6 @@
 import { addDelegatedEvent } from '../jslim/events';
 import { sendForm } from './xhr';
+import { triggerAjaxComplete } from './ajax';
 
 export function uploadForm(form, callbacks, e) {
   if (e) e.preventDefault();
@@ -15,10 +16,7 @@ export function uploadForm(form, callbacks, e) {
     },
     success: data => {
       form.classList.remove('uploading');
-      form.dispatchEvent(new CustomEvent('ajax:complete', {
-        detail: { data: data },
-        bubbles: true, cancelable: true
-      }));
+      triggerAjaxComplete(data, form);
       if (callbacks.success) callbacks.success(data, message);
     },
     error: error => {

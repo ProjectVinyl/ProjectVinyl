@@ -1,56 +1,43 @@
 /*
- * Ajax - A cleaner wrapper to hide the nastiness of fetch/xhr
+ * Ajax - A cleaner wrapper to hide the nastiness of fetch
  */
 import { popupError } from '../components/popup';
-import { csrfToken } from '../ujs/csrf';
+import { csrfHeaders } from '../ujs/csrf';
 import { QueryParameters } from './queryparameters';
 
 export function handleError(response) {
-  if (!response.ok) {
-    throw new Error('Received error from server');
-  }
+  if (!response.ok) throw new Error('Received error from server');
   return response;
 }
 
-export function AjaxRequest(method, resource, data) {
-  const params = {
-    method: method,
-    credentials: 'same-origin',
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded', //Has to be url-encoded to prevent rails form injecting ghost parameters
-      'X-Requested-With': 'XMLHttpRequest',
-      'X-CSRF-Token': csrfToken()
-    }
-  };
+export function triggerAjaxComplete(data, sender) {
+  (sender || document).dispatchEvent(new CustomEvent('ajax:complete', {
+    detail: { data: data }, bubbles: true, cancelable: true
+  }));
+  return data;
+}
+
+function request(method, resource, data) {
+  const params = csrfHeaders(method);
   if (data) {
-    data = new QueryParameters(data);
     if (method == 'GET') {
-      resource += '?' + data.toString();
+      resource += '?' + new QueryParameters(data).toString();
     } else {
-      params.body = data.toString();
+      params.body = JSON.stringify(data);
     }
   }
   resource = `/${resource.replace(/^[\/]*/g, '')}`;
   
-  const promise = fetch(resource, params).catch(err =>
-    popupError(`${params.method} ${resource}\n\n${err}`)).then(handleError);
-  const send = (convert, callback) => promise.then(convert).then(data => {
-    document.dispatchEvent(new CustomEvent('ajax:complete', {
-      detail: { data: data }, cancelable: true
-    }));
-    return callback(data);
-  });
-  
-  return {
-    text: callback => send(r => r.text(), callback),
-    json: callback => send(r => r.json(), callback)
-  };
+  const promise = fetch(resource, params).catch(err => popupError(`${method} ${resource}\n\n${err}`)).then(handleError);
+  promise.text = callback => promise.then(r => r.text()).then(triggerAjaxComplete).then(callback);
+  promise.json = callback => promise.then(r => r.json()).then(triggerAjaxComplete).then(callback);
+  return promise;
 }
 
 export const ajax = {
-  get: (resource, data) => AjaxRequest('GET', resource, data),
-  post: (resource, data) => AjaxRequest('POST', resource, data),
-  put: (resource, data) => AjaxRequest('PUT', resource, data),
-  patch: (resource, data) => AjaxRequest('PATCH', resource, data),
-  delete: resource => AjaxRequest('DELETE', resource)
+  get: (resource, data) => request('GET', resource, data),
+  post: (resource, data) => request('POST', resource, data),
+  put: (resource, data) => request('PUT', resource, data),
+  patch: (resource, data) => request('PATCH', resource, data),
+  delete: resource => request('DELETE', resource)
 };
