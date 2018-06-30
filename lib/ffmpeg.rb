@@ -1,4 +1,5 @@
 require 'digest/md5'
+require 'open3'
 
 class Ffmpeg
   def self.escape_filter_par(par)
@@ -122,7 +123,7 @@ class Ffmpeg
   
   private
   def self.probe(variant, file)
-    stdout, status = Open3.capture2(['ffprobe', '-v', 'error', '-show_entries', "#{variant}=duration", '-of', 'default=noprint_wrappers=1:nokey=1', file])
+    stdout, error_str, status = Open3.capture3('ffprobe', '-v', 'error', '-show_entries', "#{variant}=duration", '-of', 'default=noprint_wrappers=1:nokey=1', file.to_s)
     stdout.to_i
   end
   
