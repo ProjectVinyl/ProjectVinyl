@@ -118,7 +118,7 @@ class Ffmpeg
   end
   
   def self.extract_tiny_thumb_from_existing(src, dst)
-    run_command(src, '-vf', SCALE_ONE_THIRTY, dst)
+    run_command('-i', src, '-vf', SCALE_ONE_THIRTY, dst)
   end
   
   private

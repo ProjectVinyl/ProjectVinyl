@@ -24,7 +24,7 @@ class ImgsController < ApplicationController
       return serve_img('default-cover-small')
     end
     
-    Ffmpeg.extract_tiny_thumb_from_existing(png)
+    Ffmpeg.extract_tiny_thumb_from_existing("#{png}.png", "#{png}-small.png")
     serve_direct("#{png}.png", 'image/png')
   end
   
