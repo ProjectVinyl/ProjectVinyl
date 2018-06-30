@@ -1,0 +1,13 @@
+%section.page.full-width.listing.compact
+	.items
+		%span.row.heads
+			%div
+			%div Type Name
+			%div Total Tags
+			.center Hidden
+			%div Implications
+		= render partial: 'item', collection: @types
+	%span.row.foot
+		%a.button.button-bub.bub(title="add" data-title="Add Tag Type" data-external-form="#{new_admin_tagtype_path}")
+			= fa :plus
+			Add New

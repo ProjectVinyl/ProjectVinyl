@@ -2,7 +2,7 @@ module PathHelper
   def selected_path?(type)
     if !@path_type
       @path_type = request.path.split('/')[1]
-      if @path_type == 'thread'
+      if @path_type == 'threads'
         @path_type = 'forum'
       end
     end

@@ -1,0 +1,8 @@
+%h1.title
+	Comments
+	= surround '(', ')' do
+		= @comments.count
+	= render 'threads/watch_options'
+= render 'comments/new', invert: false
+%hr/
+= render 'threads/comments'

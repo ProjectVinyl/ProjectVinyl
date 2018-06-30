@@ -6,4 +6,4 @@
 	= render partial: 'queue'
 = render partial: 'description'
 %section.page.column-left
-	= render partial: 'thread/view', locals: {identifier: @video.id, title: "#{@video.get_title} by #{@user.username}" }
+	= render partial: 'threads/view', locals: {identifier: @video.id, title: "#{@video.get_title} by #{@user.username}" }

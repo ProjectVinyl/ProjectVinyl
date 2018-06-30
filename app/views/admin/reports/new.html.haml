@@ -1,0 +1,13 @@
+= title "Reporting"
+= lim "1100px"
+%section.page.full-width
+	%h1
+		Report Content
+	%ul(class="#{@reportable.reportable_class.downcase}-list")
+		- if @reportable.class == Video
+			- @video = @reportable
+			.center= render 'videos/video'
+		- else
+			= render 'comment/comment', comment: @reportable, indirect: true
+	.properties.ribbed.slide-group.slide-holder(data-offset="0")
+		= render 'admin/reports/new', @repot

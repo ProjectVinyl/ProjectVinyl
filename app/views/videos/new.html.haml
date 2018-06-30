@@ -42,7 +42,7 @@
 						= f.text_field :title, class: "input"
 						%span.edit= fa :pencil
 						%span.hidden 11
-					= render layout: "comment/description_box" do
+					= render layout: "comments/description_box" do
 						= f.text_area :description, autofocus: true, class: "comment-content"
 					.post-tags
 						= render layout: "tags/editor", locals: {tags: nil} do

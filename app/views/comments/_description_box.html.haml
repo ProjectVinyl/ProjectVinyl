@@ -1,0 +1,10 @@
+%label.comment.basic.post-box
+	.content.editing.previewable
+		= render partial: "comments/edit_toolbar"
+		.comment-content.preview
+		= yield
+		%hr/
+		.actions
+			%button.blue.state-toggle.button-fw(data-state="editing" data-parent=".previewable")>
+				%span.on Preview
+				%span.off Edit

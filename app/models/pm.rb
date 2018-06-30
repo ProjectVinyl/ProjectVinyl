@@ -78,9 +78,13 @@ class Pm < ApplicationRecord
 
   def location
     if self.unread && self.new_comment_id
-      return "/message/#{self.id}#comment_#{Comment.encode_open_id(self.new_comment_id)}"
+      return "#{link}#comment_#{Comment.encode_open_id(new_comment_id)}"
     end
-    "/message/#{self.id}"
+    link
+  end
+  
+  def link
+    "/messages/#{self.id}"
   end
 
   def toggle_deleted

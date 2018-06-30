@@ -2,36 +2,29 @@ class InboxController < ApplicationController
   def show
     @type = params[:type] || 'new'
     @result = paginate_for_type(@type)
+    @counts = tab_changes
     
     if params[:format] == 'json'
+      if params[:tabs]
+        return render json: {
+          content: render_to_string(partial: 'inbox/list_group', locals: {
+            type: @type,
+            paginated: @result,
+            selected: true
+          }, formats: [:html]),
+          tabs: @counts
+        }
+      end
+      
       if @result.count == 0
         return render_empty_pagination 'pm/mailderpy'
       end
       
       @json = pagination_json_for_render 'pm/thumb', @result
-      @json[:tabs] = tab_changes
+      @json[:tabs] = @counts
       
       return render json: @json
     end
-    
-    @counts = tab_changes
-  end
-  
-  def tab
-    @type = params[:type] || 'new'
-    
-    if params[:format] != 'json'
-      return redirect_to action: :show, type: params[:type]
-    end
-    
-    render json: {
-      content: render_to_string(partial: 'inbox/list_group', locals: {
-        type: @type,
-        paginated: paginate_for_type(@type),
-        selected: true
-      }, formats: [:html]),
-      tabs: tab_changes
-    }
   end
   
   protected

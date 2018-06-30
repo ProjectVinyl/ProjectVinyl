@@ -1,0 +1,9 @@
+﻿.group(data-stage="duplicate" style="white-space:normal")
+	%table
+		%tr
+			%td.label Please enter the video id you think this one is a duplicate of.
+			%td.field= f.number_field :target, placeholder: "Target Video"
+		%tr
+			%td.label If there's anything else we should know add it below.
+			%td.field= f.text_area :note, placeholder: :note, required: true
+		= render 'admin/reports/slide_buttons', prev: 'start', next: 'final'

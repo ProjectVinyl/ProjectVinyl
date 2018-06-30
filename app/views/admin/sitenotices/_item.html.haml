@@ -1,0 +1,32 @@
+= form_for(item, as: :notice, url: admin_sitenotice_path(item), html: {method: :patch, class: "row row-group removeable state-binary"}) do |f|
+	= f.text_field :id, hidden: true
+	.row
+		%div(style="width:30px")
+			%a.button.button-bub.state-toggle(data-state="editing" data-parent="form")= fa :pencil
+		%div= raw item.message
+		.center
+			%i.fa{title: !item.active, class: item.active ? "fa-check" : "fa-times"}
+		%div
+	.editing.row.row-spanned
+		.content.properties
+			%table
+				%tr
+					%td.label= f.label :message
+					%td.field
+						= render layout: 'comment/description_box' do
+							= f.text_area :message, class: "comment-content"
+				%tr
+					%td.label= f.label :active
+					%td.field
+						%label.button.blue
+							= f.check_box :active
+							= fa :check
+							Is Active
+				%tr.actions
+					%td.label(colspan="2")
+						%a.button.red.right(data-confirm data-method="delete" href="#{admin_sitenotice_path item}" data-title="Remove Notice")
+							= fa :trash
+							Delete
+						%button.green.right
+							= fa :save
+							Save

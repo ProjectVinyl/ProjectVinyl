@@ -6,4 +6,4 @@
 		%a.right{href: user_comments_path(@user)}
 			View All
 			= fa :chevron_right
-	%ul.comment-list= render 'comment/set', thread: @comments.records, indirect: true
+	%ul.comment-list= render 'comments/set', thread: @comments.records, indirect: true

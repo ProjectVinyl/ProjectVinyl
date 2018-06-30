@@ -24,8 +24,6 @@ Rails.application.routes.draw do
   # Popup Windows #
   namespace :ajax do
     get 'login' => 'sessions#login'
-    get 'donate' => 'staff#donate'
-    get 'videos/:id' => 'videos#go_next'
   end
   
   resource :services do
@@ -43,17 +41,14 @@ Rails.application.routes.draw do
   end
   
   # Feeds #
-  resource :feed, only: [:edit, :update, :show], controller: :feed do
-    get 'page'
-  end
+  resource :feed, only: [:edit, :update, :show]
   
   # Badges #
-  get 'badges' => 'badge#index'
+  resources :badges, only: [:index]
   
   # Videos #
   get 'upload' => 'videos#new'
-  
-  resources :videos, except: [:create, :new, :destroy], id: /([0-9]+).*/ do
+  resources :videos, except: [:create, :destroy] do
     put 'like'
     put 'dislike'
     put 'star'
@@ -63,10 +58,11 @@ Rails.application.routes.draw do
     get 'changes' => 'history#index'
     get 'download'
     
-    put 'add' => 'album_item#toggle'
+    put 'add' => 'albumitems#toggle'
   end
   
   # Users #
+  get 'profile/:id' => 'users#show', constraints: { id: /([0-9]+).*/ }
   resources :users, only: [:index, :update] do
     get 'uploads'
     get 'videos'
@@ -79,16 +75,15 @@ Rails.application.routes.draw do
     patch 'avatar' => 'users#set_avatar'
     patch 'banner' => 'users#set_banner'
   end
-  get 'profile/:id' => 'users#show', constraints: { id: /([0-9]+).*/ }
   
   # Albums #
+  get 'stars' => 'albums#starred'
   resources :albums, id: /([0-9]+).*/ do # /
     get 'items' => 'album_item#index'
     patch 'order'
   end
-  get 'stars' => 'albums#starred'
   
-  resources :albumitems, only: [:create, :update, :destroy], controller: :album_item
+  resources :albumitems, only: [:create, :update, :destroy]
   
   # Tags #
   resources :tags, only: [:index], id: /([0-9]+).*/ do
@@ -108,46 +103,38 @@ Rails.application.routes.draw do
   end
   
   # Forums #
-  namespace :forum, id: /[^\.\/]+/ do
+  resources :forum, only: [:index, :new, :create, :edit, :update, :destroy], controller: 'forum/boards'
+  namespace :forum do
     get 'search' => 'search#index'
-    get ':id' => 'board#view'
-    root 'board#index'
   end
   
-  # Boards/Categories #
-  
-  resources :boards, only: [:index, :new, :create, :edit, :update, :destroy], controller: 'forum/board'
-  
   # Threads #
-  get 'thread/:id' => 'thread#view', constraints: { id: /([0-9]+).*/ }
-  resources :threads, only: [:new, :create, :update], controller: :thread do
+  resources :threads, only: [:show, :new, :create, :update] do
     put 'subscribe'
+    get '/:order', action: :show
   end
   
   # Comments #
-  resources :comments, only: [:create, :update, :destroy], controller: :comment do
+  resources :comments, only: [:create, :update, :destroy] do
     put 'like(/:incr)', action: 'like'
   end
-  get 'comments/:thread_id/:order' => 'comment#page'
   
   # Private Messages #
-  scope 'inbox', controller: :inbox do
-    get ':type/tabs', action: :tab
-    get '(:type)', action: :show
+  namespace :inbox do
+    get '(:type)(/:tabs)', action: :show
   end
   
-  resources :message, only: [:create, :new, :show], controller: :pm do
+  resources :messages, only: [:create, :new, :show], controller: :pm do
     put 'markread'
     delete ':type', action: :destroy
   end
   
   # Notifications #  
-  resources :notifications, only: [:index, :destroy], controller: :notification
+  resources :notifications, only: [:index, :destroy]
   
   # Technically shouldn't be a get since it has a side-effect, but eh.
   # A bit of a trick to get notifications to mark themselves read when you click on them.
-  get 'review' => 'notification#view'
-  get 'ajax/notifications' => 'ajax/notification#view'
+  get 'review' => 'notifications#view'
   
   # Main Search #
   get 'search' => 'search#index'
@@ -171,7 +158,7 @@ Rails.application.routes.draw do
       put 'toggle/:key', action: :toggle
     end
     
-    resources :albums, only: [:show], controller: :album do
+    resources :albums, only: [:show] do
       put 'feature'
     end
     
@@ -193,10 +180,10 @@ Rails.application.routes.draw do
     end
     
     resources :tags, only: [:show, :update]
-    resources :tagtypes, except: [:show, :edit], controller: :tag_type
+    resources :tagtypes, except: [:show, :edit]
     resources :badges, except: [:show, :edit]
-    resources :userbadges, only: [:update], controller: :user_badges
-    resources :sitenotices, except: [:show, :edit], controller: :site_notice
+    resources :userbadges, only: [:update]
+    resources :sitenotices, except: [:show, :edit]
     resources :api, except: [:show, :edit], controller: :api_tokens
     resources :users, only: [:show] do
       resources :badges, only: [:update], controller: :user_badges
@@ -204,14 +191,14 @@ Rails.application.routes.draw do
     end
     
     # Reporting #
-    resources :reports, only: [:new, :show, :index, :create], controller: :report do
+    resources :reports, only: [:new, :show, :index, :create] do
       put "/:state" => :update
     end
-    resource :reports, only: [], controller: :report do
+    resource :reports, only: [] do
       post "closeall" => :close_all
     end
     
-    resources :threads, only: [:destroy], controller: :thread do
+    resources :threads, only: [:destroy] do
       put 'pin'
       put 'lock'
       put 'move'
@@ -224,8 +211,8 @@ Rails.application.routes.draw do
   
   # Embeds #
   namespace :embed do
-    get 'twitter' => 'twitter#view'
-    get ':id' => 'videos#view'
+    get 'twitter' => 'twitter#show'
+    get ':id' => 'videos#show'
   end
   get 'oembed' => 'embed/videos#oembed'
   
@@ -245,7 +232,7 @@ Rails.application.routes.draw do
   
   # Short links #
   get '/:id(-:safe_title)' => 'videos#show', constraints: { id: /([0-9]+)/ }
-  get '/:id' => 'forum/board#view'
+  get '/:id' => 'forum/boards#show'
   
   # Home #
   root 'welcome#index'

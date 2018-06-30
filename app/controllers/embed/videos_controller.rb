@@ -1,6 +1,6 @@
 module Embed
   class VideosController < Embed::EmbedController
-    def view
+    def show
       if params[:list]
         if @album = Album.where(id: params[:list]).first
           @items = @album.all_items
@@ -35,7 +35,7 @@ module Embed
       
       url = url.split('?')
       url[0] = url[0].split('/')
-      is_album = url[0][url[0].length - 2] == 'album'
+      is_album = url[0][url[0].length - 2] == 'albums'
       
       url[0] = url[0].last.split('-')[0].to_i
       
@@ -77,16 +77,16 @@ module Embed
       end
       
       @result = {
-        provider_url: 'http://www.projectvinyl.net/',
+        provider_url: root_url,
         author_name: @video.user.username,
-        thumbnail_url: "http://www.projectvinyl.net/cover/#{@video.id}.png",
+        thumbnail_url: absolute_url(@video.thumb),
         type: 'video',
-        author_url: "https://www.projectvinyl.net/profile/#{@video.user.username}",
+        author_url: absolute_url(@video.user.link),
         provider_name: 'Project Vinyl',
         version: '1.0',
         thumbnail_width: width,
         thumbnail_height: height,
-        html: "<iframe width=\"#{width.to_s}\" height=\"#{height.to_s}\" src=\"http://www.projectvinyl.net/embed/#{@video.id}#{extra}\" frameborder=\"0\" allowfullscreen></iframe>",
+        html: "<iframe width=\"#{width.to_s}\" height=\"#{height.to_s}\" src=\"#{root_url}embed/#{@video.id}#{extra}\" frameborder=\"0\" allowfullscreen></iframe>",
         width: width,
         height: height,
         title: @video.title,

@@ -13,7 +13,7 @@
 %tr
 	%td.label= f.label :description
 	%td.field
-		= render layout: 'comment/description_box' do
+		= render layout: 'comments/description_box' do
 			= f.text_area :description, class: "comment-content"
 %tr
 	%td.label= f.label :hidden, "Unlisted"

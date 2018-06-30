@@ -270,7 +270,7 @@ Player.prototype = {
     return this;
   },
   navTo: function(sender) {
-    ajax.get('ajax/view' + sender.getAttribute('href')).json(json => {
+    ajax.get(`videos/${sender.dataset.videoId}.json`).json(json => {
       const next = document.querySelector('#playlist_next');
       const prev = document.querySelector('#playlist_prev');
       
@@ -279,12 +279,18 @@ Player.prototype = {
       
       var selected = document.querySelector('.playlist a.selected');
       if (selected) selected.classList.remove('selected');
-      selected = document.querySelector('.playlist a[data-id="' + json.id + '"]');
+      selected = document.querySelector(`.playlist a[data-id="${json.id}"]`);
       selected.classList.add('selected');
       scrollTo(selected, document.querySelector('.playlist .scroll-container'));
       
-      if (next && json.next) next.href = json.next;
-      if (prev && json.prev) prev.href = json.prev;
+      if (next && json.next) {
+        next.href = json.next.link;
+        next.dataset.videoId = json.next.id;
+      }
+      if (prev && json.prev) {
+        prev.href = json.prev.link;
+        prev.dataset.videoId = json.prev.id;
+      }
       
       if (!this.embedded) {
         if (next && !json.next) {
@@ -307,7 +313,7 @@ Player.prototype = {
       this.controls.dom.style.opacity = '';
       if (this.redirect) {
         if (this.video) {
-          this.redirect += (this.redirect.indexOf('?') >= 0 ? '&' : '?') + 't=' + this.video.currentTime;
+          this.redirect += `${this.redirect.indexOf('?') >= 0 ? '&' : '?'}t=${this.video.currentTime}`;
         }
         document.location.replace(this.redirect);
       }
@@ -454,9 +460,7 @@ function resize(obj) {
   obj.style.height = `${obj.clientWidth * 9 / 16}px`;
 }
 
-bindEvent(window, 'resize', () => {
-  all('.video', resize);
-});
+bindEvent(window, 'resize', () => all('.video', resize));
 
 onFullscreenChange(() => {
   if (fullscreenPlayer) fullscreenPlayer.fullscreen(isFullscreen());

@@ -4,7 +4,7 @@
 	%tr
 		%td.label Avatar
 		%td.field.center
-			= form_for(user, as: "user", url: user_avatar_path(user), html: { class: "async js-avatar-select", method: :patch }, data: {id: user.id}) do |f|
+			= form_for(user, as: :user, url: user_avatar_path(user), html: { class: "async js-avatar-select", method: :patch }, data: {id: user.id}) do |f|
 				.file-select-container
 					.avatar-wrapper
 						.avatar.drag-target.file-select.auto-submit.image-selector.uploaded-preview.revertable#avatar-upload
@@ -21,7 +21,7 @@
 						.message Uploading...
 						.progress
 							.fill
-= form_for(user, as: "user", url: url, html: {method: method}) do |f|
+= form_for(user, as: :user, url: url, html: {method: method}) do |f|
 	= f.text_field :id, hidden: true
 	%table
 		%tr.section
@@ -38,12 +38,12 @@
 		%tr
 			%td.label= f.label "Description"
 			%td.field
-				= render layout: 'comment/description_box' do
+				= render layout: 'comments/description_box' do
 					= f.text_area :description, class: "comment-content", autocomplete: "off"
 		%tr
 			%td.label= f.label "Short Bio"
 			%td.field
-				= render layout: 'comment/description_box' do
+				= render layout: 'comments/description_box' do
 					= f.text_area :bio, class: "comment-content", autocomplete: "off"
 		%tr
 			%td.label= f.label :associated_tags

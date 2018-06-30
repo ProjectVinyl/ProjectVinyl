@@ -1,10 +1,10 @@
 %section.listing.compact.playlist.column-mobile-shown{class: @album.virtual? && "virtual"}
 	.controls
 		- if @prev_video
-			%a.slide-left#playlist_prev{title: "Previous", href: @prev_video.link}= fw :step_backward
+			%a.slide-left#playlist_prev{title: "Previous", href: @prev_video.link, "data-video-id": @prev_video.id}= fw :step_backward
 		%a.title{class: @next_video && "buff-right", href: !@album.virtual? && @album.link}= @album.title
 		- if @next_video
-			%a.slide-right#playlist_next{title: "Next", href: @next_video.link}= fw :step_forward
+			%a.slide-right#playlist_next{title: "Next", href: @next_video.link, "data-video-id": @next_video.id}= fw :step_forward
 	.scroll-container(data-document-scroll-y="200")
 		.items{class: @album_editable && "reorderable", "data-target": "albumitem"}
 			= render partial: 'albums/album_item', collection: @items

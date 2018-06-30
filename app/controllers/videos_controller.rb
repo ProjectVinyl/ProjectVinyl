@@ -1,6 +1,10 @@
 class VideosController < ApplicationController
   def show
     if !(@video = Video.where(id: params[:id]).with_likes(current_user).first)
+      if params[:format] == 'json'
+        return head :not_found
+      end
+      
       return render_error(
         title: 'Nothing to see here!',
         description: 'This is not the video you are looking for.'
@@ -9,7 +13,7 @@ class VideosController < ApplicationController
     
     if @video.duplicate_id > 0
       flash[:alert] = 'The video you are looking for has been marked as a duplicate of the one below.'
-      return redirect_to action: 'show', id: @video.duplicate_id
+      return redirect_to action: :show, id: @video.duplicate_id
     end
     
     if @video.hidden && (!user_signed_in? || !@video.owned_by(current_user))
@@ -20,6 +24,29 @@ class VideosController < ApplicationController
     end
     
     load_album
+    
+    if params[:format] == 'json'
+      if !@album
+        return head :not_found
+      end
+      
+      return render json: {
+        id: @album.album_items.where(index: @index).first.id,
+        prev: @prev_video ? {
+          link: @prev_video.link,
+          id: @prev_video.id
+        } : nil,
+        next: @next_video ? {
+          link: @next_video.link,
+          id: @next_video.id
+        } : nil,
+        title: @video.title,
+        artist: @video.user.username,
+        audioOnly: @video.audio_only,
+        source: @video.id,
+        mime: [@video.file, @video.mime]
+      }
+    end
     
     @order = '1'
     @time = (params[:t] || params[:resume]).to_i
@@ -39,7 +66,7 @@ class VideosController < ApplicationController
       title: @video.title,
       description: @video.description,
       url: url_for(action: :show, controller: :videos, id: @video.id, only_path: false) + "-" + (@video.safe_title || "untitled-video"),
-      embed_url: url_for(action: :view, controller: "embed/videos", only_path: false, id: @video.id),
+      embed_url: url_for(action: :show, controller: "embed/videos", only_path: false, id: @video.id),
       cover: "#{url_for(action: :cover, controller: :imgs, only_path: false, id: @video.id)}.png",
       tags: @tags,
       oembed: @album ? {
@@ -52,35 +79,6 @@ class VideosController < ApplicationController
       @video.views += 1
       @video.compute_hotness.save
     end
-  end
-    
-  def go_next
-    load_album
-    
-    if !@album
-      return head :not_found
-    end
-    
-    @video = Video.where(id: params[:id]).first
-    
-    if @video && @video.duplicate_id > 0
-      @video = Video.where(id: @video.duplicate_id).first
-    end
-    
-    if !@video
-      return head :not_found
-    end
-    
-    render json: {
-      id: @album.album_items.where(index: @index).first.id,
-      prev: @prev_video ? @prev_video.link : nil,
-      next: @next_video ? @next_video.link : nil,
-      title: @video.title,
-      artist: @video.user.username,
-      audioOnly: @video.audio_only,
-      source: @video.id,
-      mime: [@video.file, @video.mime]
-    }
   end
   
   def new
@@ -185,7 +183,7 @@ class VideosController < ApplicationController
         ref: @video.link
       }
     end
-    redirect_to action: :view, id: @video.id
+    redirect_to action: :show, id: @video.id
   end
 	
   def update
@@ -285,7 +283,7 @@ class VideosController < ApplicationController
       }
     end
     
-    redirect_to action: "view", id: video.id
+    redirect_to action: :show, id: video.id
   end
   
   def download

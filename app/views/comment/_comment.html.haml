@@ -1,3 +1,0 @@
-- cache(comment.reportable_name, expires_in: 1.minute) do
-	%li.comment.transitional{class: comment.hidden && "deleted", id: "comment_#{comment.get_open_id}", "data-user": comment.user.username}
-		= render partial: comment.hidden ? 'comment/guts_hidden' : 'comment/guts', locals: {comment: comment, indirect: indirect}

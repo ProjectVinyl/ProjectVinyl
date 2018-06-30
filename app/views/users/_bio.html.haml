@@ -8,7 +8,7 @@
 			%h1.title
 				%a.name{class: @user.banned? && "banned", href: @user.link}
 					= @user.username
-					= render 'badge/badges', user: @user
+					= render 'badges/badges', user: @user
 			%span.content.bio= raw @user.html_description
 		= render 'users/modules/stats'
 		- if @user.tag_id || @tags.length > 0

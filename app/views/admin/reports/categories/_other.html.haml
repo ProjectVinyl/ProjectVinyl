@@ -1,0 +1,8 @@
+﻿.group(data-stage="other" style="white-space:normal")
+	.notice Please provide as much detail as possible so as to help the moderation team resolve your issue as quickly as possible.
+	%table
+		%tr
+			%td.field(colspan="2")= f.text_field :subject, placeholder: "Subject"
+		%tr
+			%td.field(colspan="2")= f.text_area :other
+		= render partial: 'admin/reports/slide_buttons', locals: {prev: 'start', next: 'final'}

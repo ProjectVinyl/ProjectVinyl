@@ -1,4 +1,4 @@
-%li.thread.removeable{class: thumb.unread && "unread", data: {id: @type, target: "message/#{thumb.id}"}}
+%li.thread.removeable{class: thumb.unread && "unread", data: {id: @type, target: message_path(thumb.id)}}
 	.thumb
 		= render 'users/avatar/medium_a', user: thumb.sender
 	.info

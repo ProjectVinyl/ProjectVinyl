@@ -1,0 +1,69 @@
+﻿= form_for(report, as: :report, url: admin_reports_path(reportable.reportable_hash), html: { method: :post }) do |f|
+	.group.active(data-stage="start" style="white-space:normal")
+		.notice Please select the type of report you would like to submit.
+		%table
+			- if reportable.class == Video
+				%tr
+					%td
+						%label
+							= f.radio_button :first, "duplicate", data: {to: "duplicate"}
+							%i.fa
+							Updated or previously uploaded
+				%tr
+					%td
+						%label
+							= f.radio_button :first, "stolen", data: {to: "stolen"}
+							%i.fa
+							This uses my intellectual Property
+				%tr
+					%td
+						%label
+							= f.radio_button :first, "copy", data: {to: "copy"}
+							%i.fa
+							This uses copyrighted material
+			%tr
+				%td
+					%label
+						= f.radio_button :first, "content", data: {to: "content"}
+						%i.fa
+						This features content of an inapropriate/disturbing nature
+			%tr
+				%td
+					%label
+						= f.radio_button :first, "other", data: {to: "other"}
+						%i.fa
+						Other
+	- locals = {reportable: reportable, report: report, f: f}
+	- if reportable.class == Video
+		= render "admin/reports/categories/duplicate", locals
+		= render "admin/reports/categories/stolen", locals
+		= render "admin/reports/categories/copy", locals
+	= render "admin/reports/categories/content", locals
+	= render "admin/reports/categories/other", locals
+	.group(data-stage="final" style="white-space:normal")
+		- if user_signed_in?
+			Thank you!
+			%br\
+			Your report will be sent as
+			= succeed '.' do
+				%a{href: current_user.link}= current_user.username
+			%table
+				%tr
+					%td
+						%button.goto.right.send.slide-right(data-to="end") Send
+		- else
+			.notice Please enter your contact details, in case we need to get into contact with you.
+			%table
+				%tr
+					%td.field(colspan="2")= f.text_field :name, placeholder: "Name", required: true
+				%tr
+					%td.field(colspan="2")= f.text_field :contact, placeholder: "Email", required: true
+				= render 'admin/reports/slide_buttons', prev: 'start', next: 'end'
+	.group(data-stage="end" style="white-space:normal")
+		%table
+			%tr
+				%td
+					.progressor
+						%span.message.plain Sending...
+						.progress
+							.fill

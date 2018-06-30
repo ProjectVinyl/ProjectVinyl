@@ -11,6 +11,10 @@ class CommentThread < ApplicationRecord
     self.owner_type == 'Pm'
   end
 
+  def video?
+    self.owner_type == 'Video'
+  end
+  
   def contributing?(user)
     !private_message? || (Pm.where('comment_thread_id = ? AND (sender_id = ? OR receiver_id = ?)', self.id, user.id, user.id).count > 0)
   end
@@ -43,12 +47,12 @@ class CommentThread < ApplicationRecord
   end
 
   def link
-    "/thread/#{self.id}-#{self.safe_title}"
+    "/threads/#{self.id}-#{self.safe_title}"
   end
   
   def location
-    if self.owner_type == 'Pm'
-      return "/message/#{self.id}"
+    if self.private_message?
+      return owner.location
     end
     
     if self.owner
@@ -59,7 +63,7 @@ class CommentThread < ApplicationRecord
   end
 
   def icon
-    if self.owner_type == 'Video'
+    if self.video?
       return self.owner.thumb
     end
     
@@ -67,7 +71,7 @@ class CommentThread < ApplicationRecord
   end
   
   def preview
-    if self.owner_type == 'Video'
+    if self.video?
       return self.owner.title
     end
     
@@ -75,15 +79,15 @@ class CommentThread < ApplicationRecord
   end
 
   def subscribed?(user)
-    user && (self.thread_subscriptions.where(user_id: user.id).count > 0)
+    user && (self.thread_subscriptions.where(user_id: user_id).count > 0)
   end
 
   def subscribe(user)
-    self.thread_subscriptions.create(user_id: user.id)
+    self.thread_subscriptions.create(user_id: user_id)
   end
 
   def unsubscribe(user)
-    self.thread_subscriptions.where('user_id = ?', user.id).destroy_all
+    self.thread_subscriptions.where(user_id: user_id).destroy_all
   end
 
   def toggle_subscribe(user)

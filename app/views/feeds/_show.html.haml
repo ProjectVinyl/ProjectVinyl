@@ -1,0 +1,11 @@
+﻿%section.page
+	.group.feed.auto-wrap-contents
+		%h1
+			Followed Videos
+			= surround '(', ')' do
+				= number_with_delimiter @feed.length
+			%a.right{href: feed_path}
+				View All
+				= fa :chevron_right
+		%ul.horizontal.latest
+			= render partial: 'videos/thumb_h', collection: @feed

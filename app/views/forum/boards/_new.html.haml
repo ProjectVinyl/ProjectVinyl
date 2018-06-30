@@ -1,0 +1,22 @@
+= form_for(@board, url: url, html: {method: method}) do |f|
+	.properties
+		%table
+			%tr
+				%td.label= f.label :title
+				%td.field= f.text_field :title, autofocus: true, placeholder: :title
+			%tr
+				%td.label= f.label :short_name, "Path"
+				%td.field
+					= f.text_field :short_name, placeholder: :path
+					.notice
+						Short alias for use in links. eg. /b/
+						%br
+						Should not contain any slashes, spaces, or punctuation.
+			%tr
+				%td.label(colspan="2") Description
+			%tr
+				%td.field(colspan="2")
+					= render layout: 'comments/description_box' do
+						= f.text_area :description, class: "comment-content"
+	.foot
+		= f.submit "Save Category", class: "green confirm right"
