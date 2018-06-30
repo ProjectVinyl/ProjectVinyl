@@ -1,6 +1,6 @@
 .emote {
-	margin-left: -4px;
-	margin-top: -2px;
+  margin-left: -4px;
+  margin-top: -2px;
   display: block;
   width: 34px;
   height: 32px;
@@ -9,15 +9,16 @@
   vertical-align: bottom;
 }
 i.emote {
-	display: inline-block;
+  display: inline-block;
 }
 #emoticons .emote:hover {
   transform: rotate(15deg);
   filter: blur(0);
 }
 
-<% BbcodeHelper.each_tile_asset do |emoticon,tile_x, tile_y| %>
+<% BbcodeHelper.each_tile_asset do |emoticon, tile_x, tile_y| %>
 .emote[data-emote="<%= emoticon %>"] {
-	background-position: top -<%= tile_x %>px left -<%= tile_y %>px;
+	background-position: top -<%= tile_y * 32 %>px left -<%= tile_x * 34 %>px;
+	
 }
 <% end %>
