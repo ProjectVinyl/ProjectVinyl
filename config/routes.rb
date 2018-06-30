@@ -3,7 +3,8 @@ require 'resque/server'
 Rails.application.routes.draw do
   devise_for :users, controllers: {
     passwords: 'users/passwords',
-    registrations: 'users/registrations'
+    registrations: 'users/registrations',
+    sessions: 'users/sessions'
   }
     
   scope controller: :staff do
@@ -19,11 +20,6 @@ Rails.application.routes.draw do
     
     get 'donate'
     get 'staff'
-  end
-  
-  # Popup Windows #
-  namespace :ajax do
-    get 'login' => 'sessions#login'
   end
   
   resource :services do
