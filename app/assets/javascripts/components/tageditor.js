@@ -84,7 +84,6 @@ function inputHandler(sender) {
   });
   
   sender.dom.addEventListener('lookup:complete', e => {
-    if (tag.members === undefined) return;
     e.stopPropagation(); //autocomplete.js
     e.target.innerHTML = e.detail.results.map((tag, i) => `<li class="tag-${tag.namespace}" data-slug="${tag.slug}" data-index="${i}">
       <span>${tag.name.replace(e.detail.term, `<b>${e.detail.term}</b>`)}</span> (${tag.members})
