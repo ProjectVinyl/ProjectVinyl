@@ -1,5 +1,10 @@
 ul.horizontal.tag-list {
   overflow: visible;
+  display: block;
+}
+
+li.tag.virtual {
+  opacity: 0;
 }
 
 li.genre {
