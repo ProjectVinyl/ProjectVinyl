@@ -8,7 +8,7 @@
 			- if part[:last]
 				= part[:name]
 			- else 
-				%a{href: admin_files_path(part[:path].join('/'))}= part[:name]
+				%a{href: admin_files_path(p: part[:path].join('/'))}= part[:name]
 	.infinite-page.items#files{data: {url: admin_files_path, path: @public.full_path, "start-ref": @public.start_ref, ref: @public.end_ref}}
 		.row.header
 			%div Name
