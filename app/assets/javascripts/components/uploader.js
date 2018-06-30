@@ -8,6 +8,7 @@ import { all, nodeFromHTML } from '../jslim/dom';
 import { ready } from '../jslim/events';
 import { Validator } from './validator';
 import { UploadQueue } from './uploadqueue';
+import { setupEditable } from '../ui/editable';
 
 const INSTANCES = [];
 let uploadingQueue = null;
@@ -60,6 +61,8 @@ function Uploader() {
   
   this.source = this.el.querySelector('#video_source');
   this.srcNeeded = true;
+  
+  all(this.el, '.editable', setupEditable);
   
   // FIXME
   requestAnimationFrame(() => this.tab.classList.remove('hidden'));

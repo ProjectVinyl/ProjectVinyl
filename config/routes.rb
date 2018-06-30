@@ -44,7 +44,7 @@ Rails.application.routes.draw do
   
   # Videos #
   get 'upload' => 'videos#new'
-  resources :videos, except: [:create, :destroy] do
+  resources :videos, except: [:new, :destroy] do
     put 'like'
     put 'dislike'
     put 'star'

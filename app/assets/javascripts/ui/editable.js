@@ -87,6 +87,12 @@ function toggleEdit(e, holder, content, textarea) {
   
   holder.classList.add('loading');
   let path = holder.dataset.target;
+  
+  if (!path) {
+    content.innerHTML = textarea.value;
+    return;
+  }
+  
   if (holder.dataset.id) path += `/${holder.dataset.id}`;
   
   ajax.patch(path, {

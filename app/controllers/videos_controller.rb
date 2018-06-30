@@ -132,7 +132,7 @@ class VideosController < ApplicationController
     
     data = file.read
     if !(checksum = Video.ensure_uniq(data))[:valid]
-      return error(params[:format] == 'json', "Duplication Error", "The uploaded video already exists.")
+      return error("Duplication Error", "The uploaded video already exists.")
     end
     
     ext = File.extname(file.original_filename)
