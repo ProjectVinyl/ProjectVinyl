@@ -1,5 +1,5 @@
 footer, .push {
-  height: 132px;
+  height: 202px;
   margin-top: 50px;
   display: block;
 }
@@ -18,28 +18,54 @@ footer::before {
   opacity: 0.6;
 }
 
-footer > a {
+footer a {
+  color: #aaa;
+}
+footer a:not(:hover) {
+  text-decoration: none;
+}
+
+footer .logo {
   display: block;
   font-weight: bold;
   background: #ddd;
   color: #fff;
-  padding: 5px;
   text-shadow: 0px 1px 3px #000;
   vertical-align: top;
   opacity: 0.3;
-  text-decoration: none;
-  border-bottom: solid 1px #aaa;
-  font-size: 1.8em;
-}
-footer > div {
-  line-height: 2.2em;
-  font-size: 0.8em;
-}
-footer > div a, footer span {
-  color: #aaa;
-  padding: 5px;
   vertical-align: middle;
   text-decoration: none;
+  border-bottom: solid 1px #aaa;
+  transition: color 1s ease;
+  font-size: 2em;
+  padding: 5px;
+}
+
+footer .block {
+  vertical-align: top;
+  display: inline-block;
+  width: 30%;
+  text-align: left;
+  font-size: 0.8em;
+  line-height: 2.2em;
+  height: 172px;
+  color: #aaa;
+  background: #fff;
+  transition: background 0.5s ease;
+  padding: 20px;
+  overflow-y: auto;
+}
+footer .block:hover {
+  background: #efe;
+}
+
+
+footer .block + .block {
+  border-left: solid 1px #eee;
+}
+
+footer .block ol {
+  list-style: none;
 }
 
 /*Gradients*/

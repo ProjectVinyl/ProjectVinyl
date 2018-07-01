@@ -42,22 +42,45 @@
 				= yield
 			%span.push
 			%footer
-				%a(title="Home" href="/") projectvinyl.net
-				%div.micro-nav
-					%a{href: staff_path}> Staff
-					%a{href: policy_path}> Policy
-					%a{href: copyright_path}> Copyright
-					%a{href: donate_path}> Donate
-				%span
-					= precede '©' do
-						= Time.current.year
-					Project Vinyl Foundation
-				.date
-					Page generated in 
-					= load_time
-					seconds
-					= number_with_delimiter User.online.count
-					users online
-				.date
-					%span Powered by Muffins
+				%a.logo(title="Home" href="/") projectvinyl.net
+				.block.r>
+					%b Stats for Nerds
+					%ol
+						%li
+							= render partial: 'layouts/revision'
+						%li
+							Page generated in 
+							%i= load_time
+							seconds
+						%li
+							%i= number_with_delimiter User.online.count
+							users online
+						%li
+							= number_with_delimiter Ahoy::Visit.today.count
+							hits today
+							= number_with_delimiter Ahoy::Visit.yesterday.count
+							hits yesterday
+				.block.g>
+					%b Navigation
+					%ul
+						%li
+							%a{href: staff_path} Staff
+						%li
+							%a{href: policy_path} Policy
+						%li
+							%a{href: copyright_path} Copyright
+						%li
+							%a{href: donate_path} Donate
+				.block.b>
+					%ol
+						%li
+							= precede '©' do
+								= Time.current.year
+							Project Vinyl Foundation
+						%li
+							Proud members of 
+							%a.tpa(href="http://www.theponyarchive.com/") The Pony Archive
+						%li
+							MLP: Friendship is Magic® - © 2018 Hasbro Inc.®
+							Project Vinyl is in no way affiliated with or endorsed by Hasbro Inc.® 
 	.fades
