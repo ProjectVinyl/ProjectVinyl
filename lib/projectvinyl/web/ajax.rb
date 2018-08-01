@@ -32,10 +32,12 @@ module ProjectVinyl
                               verify_mode: OpenSSL::SSL::VERIFY_NONE) do |connection|
           connection.request(@req)
         end
-        if res.code == '200'
+        
+        if (res.code.to_i / 100).floor == 2
           yield(res.body)
           return true
         end
+        
         false
       end
 
@@ -47,9 +49,15 @@ module ProjectVinyl
         end
       end
 
-      def post(params = {})
-        @req = Net::HTTP::Post.new(@url)
-        @req.set_form_data(@params.merge(params))
+      def post(params = {}, headers = nil)
+        if headers.nil?
+          @req = Net::HTTP::Post.new(@url)
+          @req.set_form_data(@params.merge(params))
+        else
+          @req = Net::HTTP::Post.new(@url, headers)
+          @req.body = params
+        end
+        
         self.request do |body|
           yield(body)
         end
