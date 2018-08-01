@@ -33,7 +33,7 @@ class ApiToken < ApplicationRecord
   end
   
   def on_cooldown?
-    !self.reset_at.nil? && self.reset_at >= Time.zone.now - self.reset_interval
+    self.reset_at.nil? || self.reset_at >= Time.zone.now - self.reset_interval
   end
   
   def hit
