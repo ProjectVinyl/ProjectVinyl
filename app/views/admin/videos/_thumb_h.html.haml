@@ -1,5 +1,5 @@
 %li.generic.thumb{class: thumb_h.processed == false && "working"}
-	%a.thumb{href: admin_video_path(thumb_h)}
+	%a.thumb{href: admin_video_path(thumb_h), title: thumb_h.moderation_note}
 		.tile{style: format_bg(thumb_h.tiny_thumb(current_user))}
 			%span.tag-set.duration= duration thumb_h.get_duration
 		.title
