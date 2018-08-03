@@ -32,6 +32,31 @@
 				= absolute_url '/api/videos'
 	%tr
 		%td.label
+			%b Parameters
+			%table
+				%thead
+					%tr
+						%td Name
+						%td Type
+						%td Description
+						%td Default
+				%tbody
+					%tr
+						%td page
+						%td optional
+						%td Page number to request
+						%td 0
+					%tr
+						%td limit
+						%td optional
+						%td Page size when paging. Minimum 1 and maximum 100.
+						%td 10
+					%tr
+						%td q
+						%td optional
+						%td Optional search query to filter results.
+	%tr
+		%td.label
 			%b Optional Include Parameters
 			%ul
 				%li user
@@ -50,6 +75,22 @@
 		%td.field
 			%a(href="/api/youtube?key=#{@token.token}&url=https://www.youtube.com/watch?v=-wekCRyFH40")
 				= absolute_url '/api/youtube?url=[youtube_video_url]'
+	%tr
+		%td.label
+			%b Parameters
+			%table
+				%thead
+					%tr
+						%td Name
+						%td Type
+						%td Description
+						%td Default
+				%tbody
+					%tr
+						%td url
+						%td required
+						%td A link to any video hosted on youtube. Mobile and desktop formats both supported.
+						%td
 	%tr
 		%td.label
 			%b Optional Include Parameters
