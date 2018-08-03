@@ -25,7 +25,7 @@ module Api
       
       if @include.include?(:user)
         json[:included] = {}
-        json[:included][:user] = User.where('id IN ?', @videos.records.pluck(:user_id)).map {|u| user_response}
+        json[:included][:user] = User.where('id IN ?', @videos.records.pluck(:user_id)).map {|u| user_response(u)}
       end
       
       render json: json
@@ -58,16 +58,19 @@ module Api
       render json: json
     end
     
-    private
     def video_response(video)
+      VideosController.video_response(video, root_url, current_user, @include)
+    end
+    
+    def self.video_response(video, root, current_user, include = {})
       json = {
         id: video.id,
         type: :video,
         attributes: {
           title: video.title,
           cover: {
-            full: absolute_url(video.thumb),
-            thumbnail: absolute_url(video.tiny_thumb(current_user))
+            full: PathHelper.absolute_url(video.thumb, root),
+            thumbnail: PathHelper.absolute_url(video.tiny_thumb(current_user), root)
           },
           description: video.description,
           source: video.source,
@@ -77,7 +80,7 @@ module Api
           date_published: video.created_at
         },
         meta: {
-          url: absolute_url(video.link),
+          url: PathHelper.absolute_url(video.link, root),
         },
         relationships: {
           user: {
@@ -89,7 +92,7 @@ module Api
         }
       }
       
-      if @include.include?(:file)
+      if include.include?(:file)
         json[:attributes][:file] = {
           filename: video.title,
           mime: video.mime,

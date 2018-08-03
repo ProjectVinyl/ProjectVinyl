@@ -21,10 +21,15 @@ module PathHelper
     Time.now - @start_time
   end
   
-  def absolute_url(url)
+  
+  def self.absolute_url(url, root)
     if url[0] == '/'
       url = url.gsub(/^\//,'')
     end
-    "#{root_url}#{url}"
+    "#{root}#{url}"
+  end
+  
+  def absolute_url(url, root = nil)
+    PathHelper.absolute_url(url, root_url)
   end
 end

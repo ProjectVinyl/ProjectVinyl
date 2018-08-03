@@ -19,7 +19,7 @@ class VideosController < ApplicationController
     if @video.hidden && (!user_signed_in? || !@video.owned_by(current_user))
       return render_error(
         title: 'Content Removed',
-        description: "The video you are trying to access is currently not available."
+        description: "The video you are trying to access is currently not available. Reason: #{@video.moderation_note}"
       )
     end
     
@@ -27,6 +27,13 @@ class VideosController < ApplicationController
     
     if params[:format] == 'json'
       if !@album
+        if !(params[:list] || params[:q])
+          return render json: {
+            success: true,
+            data: Api::VideosController.video_response(@video, root_url, current_user)
+          }
+        end
+        
         return head :not_found
       end
       
