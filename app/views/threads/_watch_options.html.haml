@@ -1,5 +1,4 @@
 - if user_signed_in?
 	- @subscribed = @thread.subscribed?(current_user)
-	%button.action.button.button-bub.subscribe.right.toggle{title: @subscribed ? "Unsubscribe" : "Subscribe",
-					data: {target: thread_subscribe_path(@thread), "unchecked-icon": "bell-slash"}}
+	%button.action.button.button-bub.subscribe.right.toggle{title: @subscribed ? "Unsubscribe" : "Subscribe", data: { target: thread_subscribe_path(@thread), "unchecked-icon": "bell-slash", "unchecked-title": "Unsubscribed", "checked-title": "Unsubscribe"} }
 		%span.icon= fa @subscribed ? :check : :bell

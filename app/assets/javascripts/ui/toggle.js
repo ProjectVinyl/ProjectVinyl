@@ -18,8 +18,13 @@ function getIcon(element, state) {
   return state ? (element.dataset.checkedIcon || 'check') : (element.dataset.uncheckedIcon || '');
 }
 
+function getTitle(element, state) {
+  return state ? (element.dataset.checkedTitle || '') : (element.dataset.uncheckedTitle || '');
+}
+
 function updateCheck(element, state) {
   const icon = getIcon(element, state);
+  element.title = getTitle(element, state);
   element.querySelector('.icon').innerHTML = icon.length ? `<i class="fa fa-${icon}"></i>` : '';
 }
 
