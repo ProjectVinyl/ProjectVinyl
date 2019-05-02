@@ -35,7 +35,7 @@ class CommentThread < ApplicationRecord
   end
 
   def get_comments(all)
-    result = comments.includes(direct_user: [user_badges: [:badge]]).includes(:mentions)
+    result = comments.includes(direct_user: [user_badges: [:badge]]).includes(:mentions).order(:created_at)
     if all
       return result
     end
