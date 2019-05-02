@@ -90,6 +90,7 @@
   min-height: 120px;
   border: none;
   background: none;
+  word-wrap: break-word;
 }
 
 label.focus .content {
