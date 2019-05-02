@@ -86,14 +86,14 @@ module Admin
         return head :not_found
       end
       
-      @repot = {
+      @report = {
         reportable: @reportable,
         report: Report.new
       }
       
       if params[:format] == 'json'
         render json: {
-          content: render_to_string(partial: 'new', locals: @repot)
+          content: render_to_string(partial: 'new', locals: @report)
         }
       end
     end

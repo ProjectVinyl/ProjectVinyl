@@ -8,6 +8,6 @@
 			- @video = @reportable
 			.center= render 'videos/video'
 		- else
-			= render 'comment/comment', comment: @reportable, indirect: true
+			= render 'comments/comment', comment: @reportable, indirect: true
 	.properties.ribbed.slide-group.slide-holder(data-offset="0")
-		= render 'admin/reports/new', @repot
+		= render 'admin/reports/new', @report
