@@ -38,6 +38,7 @@ class CommentsController < ApplicationController
       indirect: false
     }
     @json[:focus] = comment.get_open_id
+
     render json: @json
   end
   

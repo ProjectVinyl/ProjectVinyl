@@ -75,7 +75,7 @@ class CommentThread < ApplicationRecord
       return self.owner.title
     end
     
-    comment.last.preview
+    last_comment.preview
   end
 
   def subscribed?(user)
