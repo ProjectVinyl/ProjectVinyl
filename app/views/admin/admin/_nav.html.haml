@@ -2,11 +2,16 @@
 	%h1 Application Settings
 	.actions
 		%div
-			%button.action.toggle(data-action="readonly" data-target="admin/settings/toggle")<
+			%button.action.toggle(data-action="read_only" data-target="admin/settings/toggle")<
 				%span.icon
 					- if ApplicationHelper.read_only
 						= fa :check
 				%span.label Read Only
+			%button.action.toggle(data-action="bg_ponies" data-target="admin/settings/toggle")<
+				%span.icon
+					- if ApplicationHelper.bg_ponies
+						= fa :check
+				%span.label BG Ponies
 	%h1 Navigation
 	.actions
 		%a.button{href: videos_path(unlisted: 1)}

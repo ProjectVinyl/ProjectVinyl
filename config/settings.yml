@@ -1,7 +1,4 @@
 ---
-values:
-  read_only: false
+values: 
+:bg_ponies: true
 :read_only: false
-readonly: true
-:readonly: false
-:anonposts: false

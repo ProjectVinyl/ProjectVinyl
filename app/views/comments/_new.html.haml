@@ -1,5 +1,10 @@
 - if @thread.locked
 	Thread locked
+- if !ApplicationHelper.bg_ponies && visitor.is_dummy
+	Please 
+	%a(data-external-form="#{new_user_session_path}.json" data-icon="sign-in" data-title="Login" data-thin="true" href="#{new_user_session_path}")
+		sign in
+	to comment.
 - else
 	= form_for(Comment.new, url: comments_path, html: {method: :post, class: "comment post-box"}) do |f|
 		%input{type: "hidden", name: "[thread_id]", value: @thread.id}
