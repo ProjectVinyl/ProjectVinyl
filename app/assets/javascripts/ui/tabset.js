@@ -26,16 +26,29 @@ addDelegatedEvent(document, 'click', '.tab-set > li.button:not([data-disabled])'
 addDelegatedEvent(document, 'click', '.tab-set > li.button i.fa-close',  (e, target) => {
   if (e.button !== 0) return;
   e.preventDefault();
-  
+
   const tabset = target.parentNode;
   const toRemove = document.querySelector(`div[data-tab="${tabset.dataset.target}"]`);
+
+  if (tabset.classList.contains('selected')) {
+    const otherTabs = tabset.parentNode.querySelectorAll('li.button:not([data-disabled])[data-target]');
+
+    if (otherTabs.length) {
+      const index = [].indexOf.call(otherTabs, tabset);
+
+      if (index < otherTabs.length - 1) {
+        focusTab(otherTabs[index + 1]);
+      } else if (index > 0) {
+        focusTab(otherTabs[index - 1]);
+      }
+    }
+  }
   
   toRemove.parentNode.removeChild(toRemove);
+
   tabset.classList.add('hidden');
-  
+
   setTimeout(() => tabset.parentNode.removeChild(tabset), 25);
-  
-  focusTab(tabset.parentNode.querySelector('li.button:not([data-disabled]):not(.hidden)[data-target]'));
 });
 addDelegatedEvent(document, 'click', '.tab-set.async a.button:not([data-disabled])', function(e) {
   if (e.button !== 0) return;
@@ -50,7 +63,7 @@ addDelegatedEvent(document, 'click', '.tab-set.async a.button:not([data-disabled
   other.classList.remove('selected');
   this.classList.add('selected');
   holder.classList.add('waiting');
-  
+
   pushUrl(url);
   ajax.get(`${url}/tabs.json`, { page: this.dataset.page || 0 }).json(json => {
     holder.innerHTML = json.content;

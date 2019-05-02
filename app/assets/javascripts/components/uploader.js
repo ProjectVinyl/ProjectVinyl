@@ -192,7 +192,10 @@ Uploader.prototype = extendObj({
   },
   dispose: function() {
     INSTANCES.splice(INSTANCES.indexOf(this), 1);
-    if (!INSTANCES.length) setTimeout(() => new Uploader(), 100);
+
+    if (!INSTANCES.length) {
+      setTimeout(() => new Uploader(), 100);
+    }
   }
 }, Validator.prototype);
 
