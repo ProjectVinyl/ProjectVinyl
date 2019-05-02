@@ -30,6 +30,10 @@ div.group {
   margin-bottom: 5px;
 }
 
+.post-content {
+  word-wrap: break-word;
+}
+
 .post .subheading {
   margin-bottom: 10px;
 }
