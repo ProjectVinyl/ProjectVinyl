@@ -54,8 +54,11 @@
 			%a.report-comment(title="Report" href="#{new_admin_report_path comment.reportable_hash}" data-id="#{comment.get_open_id}" data-title="Report Comment")= fa :warning
 		
 	.name{class: comment.user.banned? && "banned"}
-		%a{class: !comment.user.is_dummy && "user-link", "data-id": comment.user_id, href: comment.user.link}
-			= comment.user.username
+		- if comment.user.is_dummy
+			%b= comment.user.username
+		- else
+			%a{class: !comment.user.is_dummy && "user-link", "data-id": comment.user_id, href: comment.user.link}
+				= comment.user.username
 		= render 'badges/badges', user: comment.user
 		
 		- comment.mentions.each do |mention|
