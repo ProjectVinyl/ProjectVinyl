@@ -31,7 +31,7 @@ li.bio h2, li.genre h2 {
   text-overflow: ellipsis;
   -o-text-overflow: ellipsis;
   overflow: hidden;
-  line-height: 25px;
+  line-height: 28px;
 }
 
 .bio.short {
