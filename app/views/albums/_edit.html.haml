@@ -20,4 +20,4 @@
 						= sensible_option_for_select(["Ascending", "Descending"], @ordering)
 	.foot
 		= f.submit "Save", class: "green confirm"
-		%button.right.cancel(type="button") Cancel
+		%button.right.cancel{type: :button, "data-resolve": "false"} Cancel
