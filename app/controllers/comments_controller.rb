@@ -7,6 +7,10 @@ class CommentsController < ApplicationController
     user = user_signed_in? ? current_user : UserAnon.new(session)
     
     if !user_signed_in?
+      if !ApplicationHelper.bg_ponies
+        return render json: { error: "BG Ponies are disabled" }
+      end
+
       if !verify_recaptcha(model: user)
         return render json: { error: user.error }
       end
