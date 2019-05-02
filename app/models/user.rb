@@ -15,6 +15,7 @@ class User < ApplicationRecord
   include Uncachable
   include Taggable
   include WithFiles
+  include Tinted
 	
   prefs :preferences, subscribe_on_reply: true, subscribe_on_thread: true, subscribe_on_upload: true
   
@@ -368,7 +369,7 @@ class User < ApplicationRecord
   def init_name
     self.set_name(self.username)
   end
-  
+
   private
   def grab_avatar(url, size)
     if self.mime

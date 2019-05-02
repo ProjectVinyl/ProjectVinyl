@@ -1,3 +1,6 @@
 .avatar-wrapper.medium
 	.avatar
-		%span{style: format_bg(user.avatar)}
+		- if user.is_dummy
+			= render 'users/avatar/avatar_bg_pony', user: user
+		- else
+			%span{style: format_bg(user.avatar)}

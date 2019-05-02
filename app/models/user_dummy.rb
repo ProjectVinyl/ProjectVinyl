@@ -3,6 +3,7 @@ class UserDummy
   include Queues
   include WithFiles
   include Taggable
+  include Tinted
   
   def initialize(id)
     @id = id < 0 ? -id : id
