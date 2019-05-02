@@ -5,7 +5,10 @@ const shares = {
   facebook: 'http://www.facebook.com/sharer/sharer.php?href={url}',
   twitter: 'https://twitter.com/intent/tweet?url={url}&via=ProjectVinyl&related=ProjectVInyl,Brony,Music',
   googleplus: 'https://plus.google.com/u/0/share?url={url}&hl=en-GB&caption={title}',
-  tumblr: 'https://www.tumblr.com/widgets/share/tool?canonicalUrl={url}&posttype=video&title={title}&content={url}'
+  tumblr: 'https://www.tumblr.com/widgets/share/tool?canonicalUrl={url}&posttype=video&title={title}&content={url}',
+  instagram: 'https://www.instagram.com/share?url={url}',
+  reddit: 'https://www.reddit.com/submit?url={url}&title={title}',
+  vk: 'https://vk.com/share.php?url={url}'
 };
 
 // https://medium.com/@jitbit/target-blank-the-most-underestimated-vulnerability-ever-96e328301f4c
