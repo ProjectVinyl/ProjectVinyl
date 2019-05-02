@@ -6,11 +6,15 @@ class AlbumsController < ApplicationController
         description: 'This album appears to have been  moved or deleted.'
       )
     end
+
+    if (user_signed_in? && @album.id == current_user.star_id)
+      return redirect_to action: :starred
+    end
     
     if @album.hidden
       return render_access_denied
     end
-    
+
     if @album.listing == 2 && !@album.owned_by(current_user)
       return render_error(
         title: 'Album Hidden',
