@@ -1,6 +1,6 @@
 
 .header ul {
-  background: #fff;
+  background: rgba(255,255,255,0.9);
   color: #aaa;
   font-weight: bold;
   padding: 0px;
@@ -22,12 +22,13 @@
 }
 .header ul li .icon {
   cursor: pointer;
+  padding: 12px;
+  padding-right: 2px;
 }
 .header ul li {
   position: relative;
-  padding-left: 5px;
-  padding-right: 5px;
-  margin: 0 10px;
+  padding-left: 15px;
+  padding-right: 15px;
   color: #008;
 }
 
@@ -56,6 +57,9 @@
   margin: 0;
   width: 100%;
   padding: 0;
+}
+.header .drop-down .icon {
+  padding: 2px;
 }
 
 .header ul li::after {
