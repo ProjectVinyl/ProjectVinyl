@@ -50,20 +50,20 @@ function PopupWindow(dom) {
   this.show();
 }
 PopupWindow.prototype = {
-  show: function() {
+  show() {
     document.querySelector('.fades').insertAdjacentElement('beforebegin', this.dom);
     requestAnimationFrame(() => {
       focus(this.dom);
       this.center();
     });
   },
-  setContent: function(content) {
+  setContent(content) {
     this.content.innerHTML = content;
   },
-  setOnAccept: function(func) {
+  setOnAccept(func) {
     this.accept = func;
   },
-  center: function() {
+  center() {
     const x = (document.body.offsetWidth - this.dom.offsetWidth) / 2;
     const y = (document.body.offsetHeight - this.dom.offsetHeight) / 2;
     move(this.dom, x, y);

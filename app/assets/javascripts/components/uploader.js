@@ -105,11 +105,11 @@ function Uploader() {
   INSTANCES.push(this);
 }
 Uploader.prototype = extendObj({
-  initPlayer: function() {
+  initPlayer() {
     this.player = new ThumbPicker();
     this.player.constructor(this.el.querySelector('.video'));
   },
-  showUI: function(file) {
+  showUI(file) {
     all(this.el, '.ui.hidden, .ui.shown', e => {
       e.classList.toggle('hidden');
       e.classList.remove('shown');
@@ -120,7 +120,7 @@ Uploader.prototype = extendObj({
     this.videoTitle.value = title;
     this.tab.label.innerText = `${file.title}.${file.type}`;
   },
-  accept: function(file) {
+  accept(file) {
     this.hasFile = true;
     
     if (this.video.classList.contains('shown')) this.showUI(file);
@@ -143,7 +143,7 @@ Uploader.prototype = extendObj({
     
     this.validateInput();
   },
-  validateInput: function() {
+  validateInput() {
     const title = this.videoTitle.value;
     this.ready = false;
     
@@ -168,12 +168,12 @@ Uploader.prototype = extendObj({
     this.ready = true;
     this.el.notify.classList.remove('shown');
   },
-  update: function(percentage) {
+  update(percentage) {
     this.tab.classList.add('uploading');
     this.tab.progress.fill.style.width = percentage;
     if (percentage >= 100) this.tab.classList.add('waiting');
   },
-  complete: function(ref) {
+  complete(ref) {
     this.form.classList.remove('uploading');
     this.tab.classList.remove('uploading');
     this.ready = false;
@@ -187,10 +187,10 @@ Uploader.prototype = extendObj({
       this.el.innerHTML = `Uploading Complete. You can see your new video over <a target="_blank" href="${ref}">here</a>.`;
     }
   },
-  error: function() {
+  error() {
     this.tab.classList.add('error');
   },
-  dispose: function() {
+  dispose() {
     INSTANCES.splice(INSTANCES.indexOf(this), 1);
 
     if (!INSTANCES.length) {

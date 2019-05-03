@@ -9,22 +9,22 @@ export function uploadForm(form, callbacks, e) {
   
   form.classList.add('uploading');
   sendForm(form, {
-    progress: function(percentage, secondsRemaining) {
+    progress(percentage, secondsRemaining) {
       if (!message.classList.contains('plain')) message.classList.add('bobber');
       form.classList.toggle('waiting', percentage >= 100);
       if (callbacks.progress) callbacks.progress(percentage, secondsRemaining, message, fill);
     },
-    success: data => {
+    success(data) {
       form.classList.remove('uploading');
       triggerAjaxComplete(data, form);
       if (callbacks.success) callbacks.success(data, message);
     },
-    error: error => {
+    error(error) {
       form.classList.add('error');
       message.style.marginLeft = '';
       callbacks.error(error, message);
     },
-    complete: () => {
+    complete() {
       if (form.classList.contains('form-state-toggle')) {
         form.parentNode.classList.toggle(form.dataset.state);
       }

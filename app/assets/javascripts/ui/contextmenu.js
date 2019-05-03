@@ -7,7 +7,7 @@ export function ContextMenu(dom, container) {
   this.container.addEventListener('contextmenu', e => this.show(e));
 }
 ContextMenu.prototype = {
-  addItem: function(title, initial, callback) {
+  addItem(title, initial, callback) {
     this.dom.insertAdjacentHTML('beforeend', `<li><div class="label">${title}</div><div class="value"></div></li>`);
     this.dom.lastChild.addEventListener('click', e => {
       callback(val);
@@ -24,7 +24,7 @@ ContextMenu.prototype = {
     
     val(initial);
   },
-  show: function(ev) {
+  show(ev) {
     ev.preventDefault();
     
     let x = ev.clientX, y = ev.clientY;
@@ -44,7 +44,7 @@ ContextMenu.prototype = {
     this.dom.style.left = `${x}px`;
     this.dom.classList.remove('hidden');
   },
-  hide: function(ev) {
+  hide(ev) {
     if (ev.which !== 1 || this.dom.classList.contains('hidden')) return;
     this.dom.classList.add('hidden');
     return true;

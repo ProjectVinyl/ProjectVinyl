@@ -21,20 +21,20 @@ export function QueryParameters(raw, historyObj) {
 }
 
 QueryParameters.prototype = {
-  getItem: function(key) {
+  getItem(key) {
     return this.values[key];
   },
-  setItem: function(key, value) {
+  setItem(key, value) {
     this.values[key] = value;
     if (this.historyObj && this.historyObj.pushState) {
       pushUrl(`${document.location.href.split('?')[0]}?${this.toString()}`);
     }
     return this;
   },
-  clone: function() {
+  clone() {
     return new QueryParameters(this);
   },
-  toString: function() {
+  toString() {
     return encodeParamaters(this.values);
   }
 };

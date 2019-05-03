@@ -4,7 +4,10 @@ function noise(canvas, ctx) {
       idata = ctx.createImageData(w, h),
       buffer32 = new Uint32Array(idata.data.buffer),
       len = buffer32.length;
-  for (let i = 0; i < len;) buffer32[i++] = ((255 * Math.random()) | 0) << 24;
+  for (let i = 0; i < len;) {
+    buffer32[i++] = ((255 * Math.random()) | 0) << 24;
+  }
+ 
   ctx.putImageData(idata, 0, 0);
 }
 

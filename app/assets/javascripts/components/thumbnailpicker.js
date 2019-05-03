@@ -2,30 +2,30 @@ import { extendFunc } from '../utils/misc';
 import { Player } from './videos';
 
 export const ThumbPicker = extendFunc(Player, {
-  constructor: function(el) {
+  constructor(el) {
     ThumbPicker.Super.constructor.call(this, el, true);
     this.timeInput = el.querySelector('input');
     this.controls.fullscreen.parentNode.removeChild(this.controls.fullscreen);
     this.controls.volume.parentNode.removeChild(this.controls.volume);
   },
-  pause: function() {
+  pause() {
     if (this.video) this.video.pause();
     return false;
   },
-  createMediaElement: function() {
+  createMediaElement() {
     let result = ThumbPicker.Super.createMediaElement.call(this);
     result.addEventListener('loadedmetadata', () => this.jump(0.5));
     return result;
   },
-  play: function() {
+  play() {
     ThumbPicker.Super.play.call(this);
     this.pause();
   },
-  track: function(time, duration) {
+  track(time, duration) {
     ThumbPicker.Super.track.call(this, time, duration);
     this.timeInput.value = time;
   },
-  load: function(d, isVideo) {
+  load(d, isVideo) {
     ThumbPicker.Super.load.call(this, d, isVideo);
     this.volume(0, true);
   }

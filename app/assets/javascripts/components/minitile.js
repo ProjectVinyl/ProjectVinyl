@@ -21,7 +21,7 @@ export function createMiniTile(player) {
           
           video.addEventListener('loadeddata', loadTime);
           video.addEventListener('seeked', () => {
-           context.drawImage(video, 0, 0, canvas.width, canvas.height);
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
           });
         } else if (player.isReady()) {
           video.currentTime = time;

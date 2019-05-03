@@ -14,12 +14,12 @@ function UploadChecker(el) {
   this.initPlayer();
 }
 UploadChecker.prototype = extendObj({
-  initPlayer: function() {
+  initPlayer() {
     this.player = new ThumbPicker();
     this.player.constructor(this.el.querySelector('.video'));
     this.player.play();
   },
-  accept: function(file) {
+  accept(file) {
     if (this.needsCover && !this.player) this.initPlayer();
     if (canPlayType(file.mime)) {
       this.player.load(file.data);
@@ -32,7 +32,7 @@ UploadChecker.prototype = extendObj({
     
     this.validateInput();
   },
-  validateInput: function() {
+  validateInput() {
     if (this.needsCover && !this.hasCover) return this.notify('Audio files require a cover image.');
     this.el.notify.classList.remove('shown');
   }

@@ -42,14 +42,14 @@ export function Validator(el) {
   });
 }
 Validator.prototype = {
-  isReady: function() {
+  isReady() {
     return this.hasFile && (this.hasCover || !this.needsCover) && this.ready;
   },
-  notify: function(msg) {
+  notify(msg) {
     this.el.notify.classList.add('shown');
     this.el.notify.bobber.innerText = msg;
   },
-  info: function(msg) {
+  info(msg) {
     this.el.info.classList.remove('hidden');
     this.el.info.innerText = msg;
   }

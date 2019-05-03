@@ -140,7 +140,7 @@ function addSource(video, src, type) {
 export function Player() { }
 Player.prototype = {
   // FIXME: way too much happening here
-  constructor: function(el, standalone) {
+  constructor(el, standalone) {
     this.dom = el;
     this.embedded = !!el.dataset.embed;
     this.audioOnly = !!el.dataset.audio;
@@ -269,7 +269,7 @@ Player.prototype = {
     
     return this;
   },
-  navTo: function(sender) {
+  navTo(sender) {
     ajax.get(`videos/${sender.dataset.videoId}.json`).json(json => {
       const next = document.querySelector('#playlist_next');
       const prev = document.querySelector('#playlist_prev');
@@ -303,7 +303,7 @@ Player.prototype = {
       }
     });
   },
-  fullscreen: function(on) {
+  fullscreen(on) {
     this.controls.fullscreen.innerHTML = `<i class="fa fa-${on ? 'restore' : 'arrows-alt'}"></i>`;
     this.player.media.style.cursor = on ? 'none' : '';
     
@@ -323,7 +323,7 @@ Player.prototype = {
     setFullscreen(on ? this : null);
     return on;
   },
-  maximise: function() {
+  maximise() {
     const holder = this.dom.closest('.slim');
     let state = holder.classList.contains('column-left');
     holder.classList.toggle('column-left', !state);
@@ -335,27 +335,27 @@ Player.prototype = {
     }
     setTimeout(_ => resize(this.dom), 250);
   },
-  changeSpeed: function(speed) {
+  changeSpeed(speed) {
     this.__speed = speed % speeds.length;
     speed = speeds[this.__speed];
     if (this.video) this.video.playbackRate = speed.value;
     return speed.name;
   },
-  setAutoplay: function(on) {
+  setAutoplay(on) {
     this.__autoplay = on;
     if (on) this.setLoop(false);
     return on;
   },
-  setAutostart: function(on) {
+  setAutostart(on) {
     this.__autostart = on;
     return on;
   },
-  setLoop: function(on) {
+  setLoop(on) {
     this.__loop = on;
     if (this.video) this.video.loop = on;
     return on;
   },
-  loadAttributesAndRestart: function(attr) {
+  loadAttributesAndRestart(attr) {
     this.dom.style.backgroundImage = `url('/cover/${attr.source}.png')`;
     this.source = attr.source;
     this.mime = attr.mime;
@@ -365,7 +365,7 @@ Player.prototype = {
     this.unload();
     this.play();
   },
-  load: function(data, isVideo) {
+  load(data, isVideo) {
     if (this.source) URL.revokeObjectURL(this.source);
     if (!data) return;
     this.source = URL.createObjectURL(data);
@@ -373,16 +373,16 @@ Player.prototype = {
     this.unload();
     this.play();
   },
-  unload: function() {
+  unload() {
     if (this.video) {
       this.video.parentNode.removeChild(this.video);
       this.video = null;
     }
   },
-  isReady: function() {
+  isReady() {
     return this.video && this.video.readyState === 4;
   },
-  createMediaElement: function() {
+  createMediaElement() {
     const media = document.createElement(this.audioOnly && this.source ? 'AUDIO' : 'VIDEO');
     
     if (!this.source || this.source === '0') return media;
@@ -395,7 +395,7 @@ Player.prototype = {
     
     return media;
   },
-  play: function() {
+  play() {
     if (!this.video) {
       this.video = readyVideo(this);
       this.volume(this.video.volume, this.video.muted);
@@ -407,13 +407,13 @@ Player.prototype = {
     }
     this.video.play();
   },
-  pause: function() {
+  pause() {
     if (this.video) this.video.pause();
     this.player.dataset.state = 'paused';
     this.suspend.classList.add('hidden');
     return true;
   },
-  error: function(e) {
+  error(e) {
     console.error(e);
     this.pause();
     if (errorPresent(this.video)) {
@@ -424,24 +424,24 @@ Player.prototype = {
       if (!this.noise) this.noise = setupNoise(this.player.error);
     }
   },
-  togglePlayback: function() {
+  togglePlayback() {
     if (this.player.dataset.state == 'playing') return this.pause();
     this.play();
   },
-  getDuration: function() {
+  getDuration() {
     return parseFloat(this.video.duration) || 0;
   },
-  jump: function(progress) {
+  jump(progress) {
     const duration = this.getDuration();
     const time = duration * progress;
     this.video.currentTime = time;
     this.track(time, duration);
   },
-  skip: function(increment) {
+  skip(increment) {
     this.video.currentTime += increment;
     this.track(this.video.currentTime, this.getDuration());
   },
-  track: function(time, duration) {
+  track(time, duration) {
     this.suspend.classList.add('hidden');
     this.controls.repaintTrackBar((time / duration) * 100);
     if (this.noise) {
@@ -449,7 +449,7 @@ Player.prototype = {
       this.noise = null;
     }
   },
-  volume: function(volume, muted) {
+  volume(volume, muted) {
     if (this.video) this.video.volume = volume;
     this.controls.repaintVolumeSlider(muted ? 0 : volume);
   }

@@ -105,15 +105,15 @@ export function PlayerControls(player, dom) {
   addDelegatedEvent(dom, 'click', 'li', halt);
 }
 PlayerControls.prototype = {
-  hide: function() {
+  hide() {
     this.dom.style.opacity = 0;
     this.player.player.querySelector('.playing').style.cursor = 'none';
   },
-  show: function() {
+  show() {
     this.dom.style.opacity = 1;
     this.player.player.querySelector('.playing').style.cursor = '';
   },
-  evToProgress: function(ev) {
+  evToProgress(ev) {
     const width = this.track.clientWidth;
     if (width === 0) return -1;
     
@@ -125,7 +125,7 @@ PlayerControls.prototype = {
     x -= this.track.getBoundingClientRect().left + window.pageXOffset;
     return clampPercentage(x, width);
   },
-  evToVolume: function(ev) {
+  evToVolume(ev) {
     const height = this.volume.slider.clientHeight;
     if (height === 0) return -1;
     
@@ -137,27 +137,27 @@ PlayerControls.prototype = {
     y -= this.volume.slider.getBoundingClientRect().top + window.pageYOffset;
     return clampPercentage(height - y, height);
   },
-  drawPreview: function(progress) {
+  drawPreview(progress) {
     if (!this.player.video) return;
     this.track.preview.style.left = (progress * 100) + '%';
     const time = (parseInt(this.player.video.duration) || 0) * progress;
     this.track.preview.dataset.time = toHMS(time);
     if (!this.player.audioOnly) this.preview.draw(time);
   },
-  repaintVolumeSlider: function(volume) {
+  repaintVolumeSlider(volume) {
     this.volume.indicator.setAttribute('class', 'fa fa-volume-' + getVolumeIcon(volume));
     volume *= 100;
     this.volume.slider.bob.style.bottom = volume + '%';
     this.volume.slider.fill.style.top = (100 - volume) + '%';
   },
-  repaintTrackBar: function(percentFill) {
+  repaintTrackBar(percentFill) {
     this.track.bob.style.left = percentFill + '%';
     this.track.fill.style.right = (100 - percentFill) + '%';
     if (didBufferChange(this.buffer, this.player.video.buffered)) {
       this.repaintProgress(this.player.video);
     }
   },
-  repaintProgress: function(video) {
+  repaintProgress(video) {
     const duration = this.player.getDuration();
     const videoBuffer = video.buffered;
     const result = [];
