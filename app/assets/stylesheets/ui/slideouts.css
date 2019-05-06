@@ -4,15 +4,15 @@
   overflow: hidden;
   clear: both;
   opacity: 0;
-  background: #fff;
+  background: var(--content-background);
   transition: max-height 0.25s linear, min-height 0.25s linear, opacity 0.5s linear 0.25s, background 0.5s linear;
-  border-radius: 3px;
+  border-radius: var(--block-radius);
   margin-top: 5px;
   white-space: nowrap;
 }
 .slideout.shown {
   opacity: 1;
-  background: #f8f8f8;
+  background: var(--form-background);
 }
 .slideout:not(.shown) {
   min-height: 0 !important;

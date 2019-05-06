@@ -8,7 +8,7 @@
     max-width: 70%;
     margin: 0;
     overflow-y: auto;
-    background: #fff;
+    background: var(--content-background);
     box-shadow: 0 0 3px 3px rgba(0, 0, 0, 0.1);
     transition: left 0.25s ease-in;
   }
@@ -30,8 +30,8 @@
   }
 
   nav > ul > li {
-    border: solid 3px #eee;
-    box-shadow: 0 0 3px 0 #eee inset;
+    border: solid 3px var(--block-border-color);
+    box-shadow: 0 0 3px 0 var(--block-border-color) inset;
   }
 
   nav .drop-down {

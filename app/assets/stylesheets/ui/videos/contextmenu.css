@@ -1,6 +1,6 @@
 .video .contextmenu {
   position: absolute;
-  background: rgba(28,28,28,0.9);
+  background: var(--video-background-color);
   text-shadow: 0 0 2px rgba(0,0,0,.5);
   color: #eee;
   white-space: nowrap;

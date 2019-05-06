@@ -19,7 +19,7 @@
   font-size: 0;
 }
 .drag .drop-icon i {
-  color: #fff;
+  color: var(--content-background);
 }
 .drop-icon i {
   position: relative;

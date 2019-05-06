@@ -1,4 +1,5 @@
 /*
+ *= require ./theme/default
  *= require ./vendor/all
  *= require ./misc/all
  *= require ./layout/all

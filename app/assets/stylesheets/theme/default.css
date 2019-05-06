@@ -1,0 +1,25 @@
+
+html {
+  --site-background: #eee;
+
+  --content-background: #fff;
+  --content-highlight: #fef;
+
+  --block-shadow-color: #ccc;
+  --block-hover-color: #eee;
+  --block-border-color: #eee;
+  --block-radius: 3px;
+
+  --form-background: #f8f8f8;
+  
+  --header-color: rgb(102,102,184);
+  --header-overlay-fill: var(--content-background);
+  
+  --no-link-color: #aaa;
+  
+  --input-shadow: rgba(255, 255, 255, 0.8);
+  --input-border: rgb(204, 204, 204);
+  --input-background: rgb(255, 255, 250);
+  --input-background-focus: rgba(200,200,200,0.1);
+
+}

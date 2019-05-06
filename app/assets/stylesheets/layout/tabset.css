@@ -6,9 +6,16 @@ ul.tab-set li {
   display: inline-block;
 }
 
+.tab-set {
+  --tabbar-background: rgba(100,100,120,0.1);
+  --tab-background-inactive: #f8f8f8;
+  --tab-background-inactive-hover: #fcfcfc;
+  --tab-background-active: var(--content-background);
+}
+
 .tab-set > .tab-set.tabs {
   overflow-y: hidden;
-  background: rgba(100,100,120,0.1);
+  background: var(--tabbar-background);
   padding: 15px 15px 0 15px;
   margin: -20px -20px 20px -20px;
 }
@@ -16,8 +23,8 @@ ul.tab-set li {
   margin: 0 0 20px 0;
 }
 .tab-set .tab-set .tabs {
-  background: #fff;
-  box-shadow: 0 -2px 2px #eee inset;
+  background: var(--content-background);
+  box-shadow: 0 -2px 2px var(--block-border-color) inset;
 }
 
 .tab-set > .tab-set.tabs .button {
@@ -49,33 +56,57 @@ ul.tab-set li {
   top: 0;
   width: 0;
   height: 0;
-  border: solid #f8f8f8;
+  border: solid var(--tab-background-inactive);
   border-bottom-width: 30px;
   transition: border 0.125s ease;
 }
 
 .tab-set > .tab-set.tabs .button:hover::before {
-	border-color: transparent #fcfcfc #fcfcfc transparent;
+	border-color:
+    transparent
+    var(--tab-background-inactive-hover)
+    var(--tab-background-inactive-hover)
+    transparent;
 }
 .tab-set > .tab-set.tabs .button:hover::after {
-	border-color: transparent transparent #fcfcfc #fcfcfc;
+	border-color:
+    transparent
+    transparent
+    var(--tab-background-inactive-hover)
+    var(--tab-background-inactive-hover);
 }
 
 .tab-set > .tab-set.tabs .button.selected::before {
-  border-color: transparent #fff #fff transparent;
+  border-color:
+    transparent
+    var(--tab-background-active)
+    var(--tab-background-active)
+    transparent;
 }
 .tab-set > .tab-set.tabs .button.selected::after {
-  border-color: transparent transparent #fff #fff;
+  border-color:
+    transparent
+    transparent
+    var(--tab-background-active)
+    var(--tab-background-active);
 }
 .tab-set > .tab-set.tabs .button:active::before,
 .tab-set > .tab-set.tabs .button::before {
   right: 100%;
-  border-color: transparent #f8f8f8 #f8f8f8 transparent;
+  border-color:
+    transparent
+    var(--tab-background-inactive)
+    var(--tab-background-inactive)
+    transparent;
 }
 .tab-set > .tab-set.tabs .button:active::after,
 .tab-set > .tab-set.tabs .button::after {
   left: 100%;
-  border-color: transparent transparent #f8f8f8 #f8f8f8;
+  border-color:
+    transparent
+    transparent
+    var(--tab-background-inactive)
+    var(--tab-background-inactive);
 }
 
 .tab-set > .tab-set.tabs .button span {

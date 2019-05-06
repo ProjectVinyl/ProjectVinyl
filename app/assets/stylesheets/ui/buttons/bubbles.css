@@ -1,13 +1,15 @@
 .button.button-bub, .toolbar .button {
   line-height: 27px;
   border: none;
-  background: none;
   border-radius: 100%;
   padding: 5px;
   width: 37px;
   height: 37px;
   text-align: center;
-  color: #333;
+  
+  --button-background: none;
+  --button-background-hover: var(--block-hover-color);
+  --button-background-active: #efefef;
 }
 
 .button.button-bub.bub {
@@ -16,18 +18,19 @@
   padding: 5px 10px;
 }
 
-.toolbar .button:hover, .toolbar .button.pop-out-shown,
-.button.button-bub:hover, .button.button-bub.pop-out-shown {
-  background: #eee;
+.toolbar .button.pop-out-shown {
+  background: var(--button-background-hover);
 }
 
 .button.button-bub.subscribe {
   margin-top: -10px;
-  color: #ccc;
+  color: var(--block-shadow-color);
+  --on-color: #00f;
+  --off-color: #f00;
 }
 .button.button-bub.subscribe .fa.fa-check {
-  color: #00f;
+  color: var(--on-color);
 }
 .button.button-bub.subscribe .fa.fa-bell-slash {
-  color: #f00;
+  color: var(--off-color);
 }

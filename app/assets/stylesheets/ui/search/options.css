@@ -1,10 +1,13 @@
 .search-options {
   display: block;
+  
+  --block-border-color: #ccc;
+  --label-focus-color: rgba(200,200,200,0.1);
 }
 
 .search-options label {
   display: inline-block;
-  border: 1px solid #ccc;
+  border: 1px solid var(--block-border-color);
   margin-top: 10px;
   margin-bottom: 10px;
   color: #444;
@@ -27,7 +30,7 @@
 }
 
 .search-options label.focus {
-  background: rgba(200,200,200,0.1);
+  background: var(--label-focus-color);
 }
 
 .search-options label span:first-child {
@@ -35,8 +38,8 @@
   display: table-cell;
   min-width: 90px;
   padding: 10px;
-  background: rgba(200,200,200,0.1);
-  border-right: 1px solid #ccc;
+  background: var(--label-focus-color);
+  border-right: 1px solid var(--block-border-color);
   font-size: 0.9em;
   border-top-left-radius: 2px;
   border-bottom-left-radius: 2px;

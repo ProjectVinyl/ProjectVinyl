@@ -9,6 +9,10 @@
   margin: -20px;
   font-style: initial;
   font-size: 13px;
+  
+  --gradient-light: var(--content-background);
+  --gradient-dark: #f5f5ff;
+  --gradient-middle: #f8f8ff;
 }
 .post .hovercard .avatar-wrapper {
   float: none;
@@ -19,23 +23,23 @@
 }
 
 .hovercard li.bio {
-  box-shadow: 1px 1px 3px 0 #ccc;
-  border-radius: 3px;
+  box-shadow: 1px 1px var(--block-radius) 0 var(--block-shadow-color);
+  border-radius: var(--block-radius);
   background: repeating-linear-gradient(
     45deg,
-    #f5f5ff,
-    #fff 25%,
-    #f8f8ff 50%,
-    #fff 75%,
-    #f8f8ff 100%
+    var(--gradient-dark) 0%,
+    var(--gradient-light) 25%,
+    var(--gradient-middle) 50%,
+    var(--gradient-light) 75%,
+    var(--gradient-middle) 100%
   );
   background: webkit-repeating-linear-gradient(
     45deg,
-    #f5f5ff,
-    #fff 25%,
-    #f8f8ff 50%,
-    #fff 75%,
-    #f8f8ff 100%
+    var(--gradient-dark) 0%,
+    var(--gradient-light) 25%,
+    var(--gradient-middle) 50%,
+    var(--gradient-light) 75%,
+    var(--gradient-middle) 100%
   );
 }
 

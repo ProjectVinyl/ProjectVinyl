@@ -2,7 +2,7 @@
   position: relative;
   min-height: 100%;
   display: inline-block;
-  background: white;
+  background: var(--content-background);
   padding: 20px;
   box-shadow: 0 0 5px 0 rgba(0,0,0,0.3);
   border-radius: 2px;

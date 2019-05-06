@@ -7,11 +7,11 @@ input[type=password],
 label.text-input {
   transition: background 0.125s ease;
   padding: 10px;
-  border: 1px solid rgb(204, 204, 204);
+  border: 1px solid var(--input-border);
   border-radius: 5px;
   box-shadow: 0px 0px 12px rgba(0, 0, 0, 0.07) inset;
-  background: rgb(255, 255, 250);
-  text-shadow: 1px 1px rgba(255, 255, 255, 0.8);
+  background: var(--input-background);
+  text-shadow: 1px 1px var(--input-shadow);
   vertical-align: middle;
   font-family: MS Shell Dlg \32, monospace;
   font-size: 13.3333px;
@@ -25,7 +25,7 @@ input[type=email]:focus,
 input[type=password]:focus,
 label.text-input.focus,
 label.focus {
-  background: rgba(200,200,200,0.1);
+  background: var(--input-background-focus);
 }
 
 label.text-input {

@@ -11,7 +11,6 @@
   z-index: 2000;
 }
 
-
 .popup-container:not(.hidden) ~ .fades {
   visibility: visible;
   opacity: 1;

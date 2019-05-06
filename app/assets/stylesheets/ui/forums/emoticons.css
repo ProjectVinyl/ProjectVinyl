@@ -23,7 +23,7 @@
   cursor: pointer;
 }
 #emoticons li:hover {
-  background: #eee;
+  background: var(--block-hover-color);
 }
 
 img.emoticon {

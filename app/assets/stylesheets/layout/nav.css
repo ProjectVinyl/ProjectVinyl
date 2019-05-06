@@ -1,6 +1,12 @@
 nav {
   margin-top: 160px;
   min-height: 40px;
+  
+  --tint-album: #e6b91f;
+  --tint-artist: #e97135;
+  --tint-user: #e61f8f;
+  --tint-genre: #a66ebe;
+  --tint-forum: #6aaadd;
 }
 
 nav > ul > li {
@@ -12,26 +18,26 @@ nav > ul > li:hover, nav > ul > li.selected {
 
 nav .albums:hover:after, nav .albums:hover,
 nav .albums.selected, nav .albums.selected ~ .sparkline {
-  background: #e6b91f;
+  background: var(--tint-album);
 }
 nav .artists:hover:after, nav .artists:hover,
 nav .artists.selected, nav .artists.selected ~ .sparkline {
-  background: #e97135;
+  background: var(--tint-artist);
 }
 nav .users:hover::after, nav .users:hover,
 nav .users.selected, nav .users.selected ~ .sparkline {
-    background: #e61f8f;
+    background: var(--tint-user);
 }
 nav .genres:hover:after, nav .genres:hover,
 nav .genres.selected, nav .genres.selected ~ .sparkline {
-  background: #a66ebe;
+  background: var(--tint-genre);
 }
 nav .forum:hover:after, nav .forum:hover,
 nav .forum.selected, nav .forum.selected ~ .sparkline {
-  background: #6aaadd;
+  background: var(--tint-forum);
 }
 nav ul li:hover, nav ul li.selected {
-  color: #fff;
+  color: var(--content-background);
 }
 
 @media(max-width: 700px) {

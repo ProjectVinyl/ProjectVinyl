@@ -1,3 +1,9 @@
+.editable {
+  --editable-outline: var(--no-link-color);
+  --editable-border: #ccc;
+  --editable-text-color: #444;
+}
+
 .editable.editing {
   display: block;
   position: relative;
@@ -10,7 +16,7 @@
   display: none;
   background: none;
   border: none;
-  outline: solid 2px #aaa;
+  outline: solid 2px var(--editable-outline);
   width: 100%;
   max-width: 100%;
   resize: none;
@@ -48,8 +54,8 @@
 
 .content.editing textarea {
   padding: 8px;
-  color: #444;
-  border: solid 1px #ccc;
+  color: var(--editable-text-color);
+  border: solid 1px var(--editable-border);
   font-size: 1.1em;
   vertical-align: middle;
   border-radius: 2px;

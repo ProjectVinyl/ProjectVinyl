@@ -1,17 +1,32 @@
-button, .button, input[type=submit], .tag {
+button, .button, input[type=submit], .tag, .foobar {
+  --button-background: #f8f8f8;
+  --button-background-hover: #fcfcfc;
+  --button-background-active: #f7f7f7;
+  --button-background-selected: var(--content-background);
+
+  --button-border-color: #d6d6d6;
+  --button-bottom-color: #cacaca;
+  --button-top-color: #e2e2e2;
+  --button-shadow-color: #fafafa;
+  --button-shine-color: rgba(255,255,255,0.2)
+  --button-foreground: #333;
+  
   display: inline-block;
-  background: #f8f8f8;
+  background: var(--button-background);
   padding: 5px 15px;
-  border: 1px solid #d6d6d6;
-  border-bottom-color: #cacaca;
-  border-top-color: #e2e2e2;
+  border: solid 1px var(--button-border-color);
+  border-bottom-color: var(--button-bottom-color);
+  border-top-color: var(--button-top-color);
   border-radius: 3px;
-  box-shadow: 0 1px 0 rgba(255,255,255,0.2) inset;
-  text-shadow: 1px 1px #fafafa;
+  box-shadow: 0 1px 0 var(--button-shine-color) inset;
+  text-shadow: 1px 1px var(--button-shadow-color);
   text-decoration: none;
-  color: #333;
+  color: var(--button-foreground) !important;
   font-weight: initial;
   line-height: 20px;
+}
+
+button, .button, input[type=submit], .tag {
   transition: background 0.5s ease, border 0.5s ease, color 0.5s ease, text-shadow 0.5s ease;
 }
 
@@ -21,17 +36,6 @@ button > span, .button > span {
 
 /* fake buttons, for show only*/
 .foobar {
-  display: inline-block;
-  border: solid 1px #aaa;
-  padding: 5px 15px;
-  text-decoration: none;
-  border-radius: 2px;
-  border: 1px solid #e6e6e6;
-  color: #303030;
-  background: #e6e6e6;
-  color: #303030;
-  font-weight: initial;
-  line-height: 20px;
   opacity: 0.3;
   pointer-events: none;
 }
@@ -47,15 +51,15 @@ button.right, .foobar.right, .button.right, input[type=submit].right {
 }
 
 button:hover, .button:hover, input[type=submit]:hover {
-  background: #fcfcfc;
+  background: var(--button-background-hover);
 }
 
 button.selected, .button.selected, input[type=submit].selected {
-   background: #fff;
+   background: var(--button-background-selected);
 }
 
 button:active, .button:active, input[type=submit]:active {
-   background: #f7f7f7;
+   background: var(--button-background-active);
    box-shadow: 0 0 5px 0 rgba(0,0,0,0.1) inset;
 }
 
@@ -100,6 +104,7 @@ button.disable, .button.disable, button.working, .button.working {
 
 .actions {
 	line-height: 19px;
+  --divider-color: rgba(0,0,255,0.1);
 }
 
 .actions > .button, .actions > button, .actions > .split-button {
@@ -112,7 +117,7 @@ button.disable, .button.disable, button.working, .button.working {
 
 .actions .divider {
   height: 30px;
-  border-left: 1px solid rgba(0,0,255,0.1);
+  border-left: 1px solid var(--divider-color);
   margin: 0 10px;
 }
 

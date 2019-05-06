@@ -29,6 +29,6 @@ input, select {
 }
 
 select[disabled] {
-  background: #eee;
-  color: #aaa;
+  background: var(--block-hover-color);
+  color: var(--no-link-color);
 }

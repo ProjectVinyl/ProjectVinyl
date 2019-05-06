@@ -2,8 +2,8 @@
   display: block;
   position: relative;
   padding: 0;
-  background: rgb(255, 255, 250);
-  border: 1px solid rgb(204, 204, 204);
+  background: var(--input-background);
+  border: 1px solid var(--input-border);
   border-radius: 5px;
   box-shadow: 0px 0px 12px rgba(0, 0, 0, 0.07) inset;
   text-shadow: 1px 1px #fafafa;
@@ -12,7 +12,7 @@
   white-space: normal !important;
 }
 .tag-editor.focus {
-  background: rgba(200,200,200,0.1);
+  background: var(--input-background-focus);
 }
 .tag-editor .value {
   display: none !important;
@@ -38,7 +38,7 @@
   text-align: center;
   line-height: 1.35em;
   font-size: 1.5em;
-  color: #faa;
+  color: #f88;
   text-shadow: none;
   cursor: pointer;
   opacity: 0.8;

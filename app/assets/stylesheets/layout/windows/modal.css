@@ -2,6 +2,8 @@
   padding: 0px;
   border-radius: 5px;
   text-align: center;
+  
+  --modal-footer-background: #efefef;
 }
 .modal form, .tiny-foot {
   padding: 20px;
@@ -21,7 +23,7 @@
   padding-top: 10px;
 }
 .tiny-foot {
-  background: #efefef;
+  background: var(--modal-footer-background);
 }
 .tiny-foot a {
   text-decoration: none;

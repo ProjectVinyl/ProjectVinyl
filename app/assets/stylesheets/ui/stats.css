@@ -1,5 +1,8 @@
 .stats {
 	padding: 5px;
+  --highlight-color: rgba(120,120,260,0.2);
+  --bar-fill: #aa0;
+  --bar-fill-hover: #066;
 }
 .stats + .stats {
 	border-top: solid 1px #eee;
@@ -9,32 +12,32 @@
 }
 .stat-bar {
 	position: relative;
-    height: 30px;
-    border: solid 1px #aaa;
-    border-right: solid 1px #ccc;
-    border-top: solid 1px #ccc;
-    overflow: hidden;
-    border-radius: 3px;
-    box-shadow: inset 0 0 2px rgba(0, 0, 0, 0.2);
+  height: 30px;
+  border: solid 1px #aaa;
+  border-right: solid 1px #ccc;
+  border-top: solid 1px #ccc;
+  overflow: hidden;
+  border-radius: 3px;
+  box-shadow: inset 0 0 2px rgba(0, 0, 0, 0.2);
 }
 .stat {
 	position: absolute;
 	transition: background 1s linear;
 	background: transparent;
 	bottom: 0;
-    width: 10px;
-    height: 100%;
+  width: 10px;
+  height: 100%;
 }
 .stat:hover {
 	transition: background 0.125s ease;
-	background: rgba(120,120,260,0.2);
+	background: var(--highlight-color);
 }
 .stat .bar {
 	position: absolute;
 	bottom: 0;
 	width: 100%;
-	background: #aa0;
+	background: var(--bar-fill);
 }
 .stat:hover .bar {
-	background: #066;
+	background: var(--bar-fill-hover);
 }

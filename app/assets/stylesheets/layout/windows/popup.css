@@ -38,7 +38,7 @@
 }
 
 .modal {
-  background: #fff;
+  background: var(--content-background);
   min-height: 100px;
 }
 .popup-container .popup .content .message_content {
@@ -55,7 +55,7 @@
 .popup-container .popup > h1 {
   border: none;
   cursor: move;
-  background: #fff;
+  background: var(--content-background);
   position: relative;
   margin: 0;
   padding: 15px;

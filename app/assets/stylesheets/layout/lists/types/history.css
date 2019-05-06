@@ -1,15 +1,22 @@
+
+.item.history {
+  --positive-tint: rgba(0,255,0,0.3);
+  --negative-tint: rgba(255,0,0,0.3);
+  --neutral-tint: rgba(0,0,255,0.3);
+}
+
 .items.history .added, .items.history .removed, .items.history .altered {
-  border-left: solid 1px #eee;
-  border-right: solid 1px #eee;
+  border-left: solid 1px var(--block-border-color);
+  border-right: solid 1px var(--block-border-color);
 }
 .items.history .added {
-  background: rgba(0,255,0,0.3);
+  background: var(--positive-tint);
 }
 .items.history .removed {
-  background: rgba(255,0,0,0.3);
+  background: var(--negative-tint);
 }
 .items.history .altered {
-  background: rgba(0,0,255,0.3);
+  background: var(--neutral-tint);
 }
 .items.history .duration,
 .items.history .author {

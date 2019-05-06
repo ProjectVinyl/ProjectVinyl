@@ -19,7 +19,7 @@
 }
 
 .row[data-stack-size="0"] {
-  background: #eee;
+  background: var(--block-border-color);
 }
 .row[data-type="Folder"] {
   background: #efe;

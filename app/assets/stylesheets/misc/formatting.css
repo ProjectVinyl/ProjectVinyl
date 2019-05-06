@@ -11,7 +11,7 @@
 
 .tiny-link {
   font-style: italic;
-  color: #aaa;
+  color: var(--no-link-color);
   font-weight: normal;
   font-size: 0.8em;
   text-decoration: none;
@@ -22,20 +22,23 @@
 }
 
 .bubble-link {
+  --bubble-color: #fafafa;
+  --bubble-hover-color: #efefef;
+
   display: inline-block;
   padding: 5px;
   border-radius: 15px;
   transition: background 0.5s ease;
   text-decoration: none;
-  background: #fafafa;
+  background: var(--bubble-color);
   box-shadow: 0 0 3px 3px rgba(255, 255, 255, 0.05) inset;
 }
 .bubble-link:hover {
-  background: #efefef;
+  background: var(--bubble-hover-color);
 }
 
 .underline > span, .underline a {
-  border-bottom: dotted 1px #aaa;
+  border-bottom: dotted 1px var(--no-link-color);
 }
 
 a.source {
@@ -44,5 +47,5 @@ a.source {
 
 h1.banned, h2.banned, a.banned, .banned a.user-link, .comment .name a.user-link.banned, .name.banned {
   text-decoration: line-through !important;
-  color: #aaa !important;
+  color: var(--no-link-color) !important;
 }

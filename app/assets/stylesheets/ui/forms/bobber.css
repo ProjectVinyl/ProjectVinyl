@@ -1,7 +1,7 @@
 .progressor div.message, .bobber {
   position: absolute;
-  background: #fff;
-  box-shadow: 0 0 3px 0px #aaa;
+  background: var(--content-background);
+  box-shadow: 0 0 3px 0px var(--bobber-border-color);
   border-radius: 10px;
   text-align: center;
   font-weight: bold;
@@ -12,13 +12,15 @@
   margin-left: -54px;
   z-index: 20;
   white-space: nowrap;
+  
+  --bobber-border-color: #aaa;
 }
 .bobber::after {
   position: absolute;
   content: '';
   display: block;
   border: solid 10px;
-  border-color: #fff transparent transparent transparent;
+  border-color: var(--content-background) transparent transparent transparent;
   bottom: -20px;
   left: 50%;
   margin-left: -10px;
@@ -28,7 +30,7 @@
   content: '';
   display: block;
   border: solid 10px;
-  border-color: #bbb transparent transparent transparent;
+  border-color: var(--bobber-border-color) transparent transparent transparent;
   bottom: -21px;
   left: 50%;
   margin-left: -10px;

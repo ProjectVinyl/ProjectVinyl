@@ -9,8 +9,8 @@ footer {
   bottom: 0;
   left: 0;
   right: 0;
-  color: #fff;
-  background: #fff;
+  color: var(--content-background);
+  background: var(--content-background);
 }
 
 footer::before {
@@ -29,7 +29,7 @@ footer .logo {
   display: block;
   font-weight: bold;
   background: #ddd;
-  color: #fff;
+  color: var(--content-background);
   text-shadow: 0px 1px 3px #000;
   vertical-align: top;
   opacity: 0.3;
@@ -50,13 +50,13 @@ footer .block {
   line-height: 2.2em;
   height: 172px;
   color: #aaa;
-  background: #fff;
+  background: var(--content-background);
   transition: background 0.5s ease;
   padding: 20px;
   overflow-y: auto;
 }
 footer .block:hover {
-  background: #efe;
+  background: var(--content-highlight);
 }
 
 
@@ -85,8 +85,29 @@ footer::before, .header .drop-down::after, .header .sparkline {
 }
 
 footer::before, .header ul .sparkline, .header .drop-down::after {
-  background: -webkit-linear-gradient(90deg, #6aaadd 0, #e6b91f 33%, #e97135 66%, #a66ebe 100%);
-  background: -moz-linear-gradient(90deg, #6aaadd 0, #e6b91f 33%, #e97135 66%, #a66ebe 100%);
-  background: -o-linear-gradient(90deg, #6aaadd 0, #e6b91f 33%, #e97135 66%, #a66ebe 100%);
-  background: linear-gradient(90deg, #6aaadd 0, #e6b91f 33%, #e97135 66%, #a66ebe 100%);
+  --gradient-color-start: #6aaadd;
+  --gradiant-color-stop-a: #e6b91f;
+  --gradiant-color-stop-b: #e97135;
+  --gradient-color-end: #a66ebe;
+
+  background: -webkit-linear-gradient(90deg,
+        var(--gradient-color-start) 0,
+        var(--gradiant-color-stop-a) 33%,
+        var(--gradiant-color-stop-b) 66%,
+        var(--gradient-color-end) 100%);
+  background: -moz-linear-gradient(90deg,
+        var(--gradient-color-start) 0,
+        var(--gradiant-color-stop-a) 33%,
+        var(--gradiant-color-stop-b) 66%,
+        #a66ebe 100%);
+  background: -o-linear-gradient(90deg,
+        var(--gradient-color-start) 0,
+        var(--gradiant-color-stop-a) 33%,
+        var(--gradiant-color-stop-b) 66%,
+        var(--gradient-color-end) 100%);
+  background: linear-gradient(90deg,
+        var(--gradient-color-start) 0,
+        var(--gradiant-color-stop-a) 33%,
+        var(--gradiant-color-stop-b) 66%,
+        var(--gradient-color-end) 100%);
 }

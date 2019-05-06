@@ -15,24 +15,23 @@
   line-height: 1em;
   overflow: hidden;
   background: rgba(0,0,255,0.1);
+  
+  --offset-padding: -30%;
 }
 .file-select::before {
   content: '';
   display: block;
   border-radius: 100% /30%;
-  background: #fef;
+  background: var(--content-highlight);
   position: absolute;
-  top: -30%;
-  left: -30%;
-  bottom: -30%;
-  right: -30%;
+  top: var(--offset-padding);
+  left: var(--offset-padding);
+  bottom: var(--offset-padding);
+  right: var(--offset-padding);
   transition: all 0.4s ease;
 }
-.file-select.drag::before {
-  top: -0%;
-  left: -0%;
-  bottom: -0%;
-  right: -0%;
+.file-select.drag {
+  --offset-padding: 0;
 }
 
 .image-selector.avatar .drop-icon {

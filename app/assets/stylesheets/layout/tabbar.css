@@ -15,7 +15,7 @@
 }
 .tab-bar .actions {
   border-radius: 5px;
-  border: solid 1px #eee;
+  border: solid 1px var(--block-border-color);
   padding: 5px;
   margin: -5px;
 }

@@ -1,7 +1,7 @@
 
 .pagination .pages {
   border-radius: 3px;
-  border: 1px solid #ccc;
+  border: 1px solid var(--block-shadow-color);
   display: inline-block;
   vertical-align: bottom;
 }
@@ -18,5 +18,5 @@
   border-bottom-right-radius: 3px;
 }
 .pagination .pages .button ~ .button {
-  border-left: solid 1px #ccc;
+  border-left: solid 1px var(--block-shadow-color);
 }

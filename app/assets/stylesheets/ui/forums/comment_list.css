@@ -12,7 +12,7 @@
   margin-bottom: 5px;
   border-radius: 5px;
   border: solid 1px #ccc;
-  box-shadow: 0px 0px 12px #0000001a inset;
+  box-shadow: 0px 0px 12px var(--box-shadow-color) inset;
 }
 .comment-list li.comment {
   list-style: none;

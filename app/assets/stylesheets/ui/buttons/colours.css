@@ -1,81 +1,51 @@
 
 .actions .dislike.liked,
 button.red, .button.red, input[type=submit].red {
-  color: #fff;
-  border: 1px solid #a73535;
-  border-bottom-color: #9d3232;
-  border-top-color: #b03838;
-  text-shadow: -1px -1px #a73535;
-  background: rgb(236, 72, 72);
-}
-
-.actions .dislike.liked:hover,
-button.red:hover, .button.red:hover, input[type=submit].red:hover {
-  background: rgb(252, 87, 87);
-}
-
-.actions .dislike.liked:active,
-button.red:active, .button.red:active, input[type=submit].red:active {
-  background: rgb(236, 72, 72);
-  box-shadow: 0 0 5px 0 rgba(0,0,0,0.2) inset;
+  --button-foreground: #fff;
+  --button-border-color: #a73535;
+  --button-bottom-color: #9d3232;
+  --button-top-color: #b03838;
+  --button-shadow-color: #a73535;
+  --button-background: rgb(236, 72, 72);
+  --button-background-hover: rgb(252, 87, 87);
+  --button-background-active: rgb(236, 72, 72);
+  --button-shine-color: rgba(0,0,0,0.2);
 }
 
 .actions .like.liked,
 button.green, .button.green, input[type=submit].green {
-  color: #fff;
-  border: 1px solid #699739;
-  border-bottom-color: #638f36;
-  border-top-color: #6fa03c;
-  text-shadow: -1px -1px #699739;
-  background: #7bb042;
-}
-
-.actions .like.liked:hover,
-button.green:hover, .button.green:hover, input[type=submit].green:hover {
-  background: #8bc052;
-}
-
-.actions .like.liked:active,
-button.green:active, .button.green:active, input[type=submit].green:active {
-   background: #7bb042;
-   box-shadow: 0 0 5px 0 rgba(0,0,0,0.2) inset;
+  --button-foreground: #fff;
+  --button-border-color: #699739;
+  --button-bottom-color: #638f36;
+  --button-top-color: #6fa03c;
+  --button-shadow-color: #699739;
+  --button-background: #7bb042;
+  --button-background-hover: #8bc052;
+  --button-background-active: #7bb042;
+  --button-shine-color: rgba(0,0,0,0.2);
 }
 
 button.blue, .button.blue, input.blue[type="submit"] {
-  color: #fff;
-  border: 1px solid #3480b5;
-  border-bottom-color: #3179ab;
-  border-top-color: #3787bf;
-  text-shadow: -1px -1px #3480b5;
-  background: #3d95d3;
-}
-
-button.blue:hover, .button.blue:hover, input[type=submit].blue:hover {
-  background: #4da5e3;
-}
-
-button.blue:active, .button.blue:active, input[type=submit].blue:active {
-  background: #3d95d3;
-  box-shadow: 0 0 5px 0 rgba(0,0,0,0.2) inset;
+  --button-foreground: #fff;
+  --button-border-color: #3480b5;
+  --button-bottom-color: #3179ab;
+  --button-top-color: #3787bf;
+  --button-shadow-color: #3480b5;
+  --button-background: #3d95d3;
+  --button-background-hover: #4da5e3;
+  --button-background-active: #2d85c3;
+  --button-shine-color: rgba(0,0,0,0.2);
 }
 
 .actions .star.starred,
 button.yellow, .button.yellow, input.yellow[type="submit"] {
-  color: #fff;
-  border: 1px solid #c7c739;
-  border-bottom-color: #b7b736;
-  border-top-color: #c7c73c;
-  text-shadow: -1px -1px #c7c739;
-  background: #e0e046;
-}
-
-.actions .star.starred:hover,
-button.yellow:hover, .button.yellow:hover, input[type=submit].yellow:hover {
-  background: #f0f056;
-}
-
-.actions .star.starred:active,
-button.yellow:active, .button.yellow:active, input[type=submit].yellow:active {
-  background: #e0e046;
-  box-shadow: 0 0 5px 0 rgba(0,0,0,0.2) inset;
+  --button-foreground: #fff;
+  --button-border-color: #c7c739;
+  --button-bottom-color: #b7b736;
+  --button-top-color: #c7c73c;
+  --button-shadow-color: #c7c739;
+  --button-background: #e0e046;
+  --button-background-hover: #f0f056;
+  --button-background-active: #e0e046;
+  --button-shine-color: rgba(0,0,0,0.2);
 }

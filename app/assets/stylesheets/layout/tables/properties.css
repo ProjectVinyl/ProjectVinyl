@@ -1,3 +1,7 @@
+.properties {
+  --label-background: rgba(180,180,180,0.1);
+  --rib-color: rgba(240,240,255,0.1);
+}
 .page.properties {
   padding: 0;
 }
@@ -10,12 +14,12 @@
 }
 .properties tr td {
   padding: 10px;
-  border-top: solid 1px #eee;
+  border-top: solid 1px var(--block-border-color);
 }
 .properties td.label {
-  background: rgba(180,180,180,0.1);
+  background: var(--label-background);
   width: 25%;
-  border-right: solid 1px #eee;
+  border-right: solid 1px var(--block-border-color);
 }
 .properties td.field {
   width: 75%;
@@ -35,5 +39,5 @@
 }
 
 .properties.ribbed tr:nth-child(2n + 1) {
-  background: rgba(240,240,255,0.1);
+  background: var(--rib-color);
 }

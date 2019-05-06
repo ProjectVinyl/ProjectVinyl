@@ -2,13 +2,15 @@
   position: absolute;
   width: 100%;
   height: 0;
+
+  --overlay-color: rgba(255,255,255,0.8);
 }
 
 .banner-overlay > div {
   position: relative;
   display: inline-block;
   float: right;
-  background: rgba(255,255,255,0.8);
+  background: var(--overlay-color);
   padding: 10px;
   z-index: 999;
   height: 54px;
@@ -27,7 +29,7 @@
 
 @media(max-width: 570px) {
   .banner-overlay {
-    background: rgba(255,255,255,0.8);
+    background: var(--overlay-color);
     height: 54px;
     z-index: 20;
   }

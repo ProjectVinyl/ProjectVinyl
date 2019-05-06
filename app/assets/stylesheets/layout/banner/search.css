@@ -38,7 +38,7 @@
 
 #search:hover, #login:hover,
 #login.drop-down-holder.hover {
-  background: #fff;
+  background: var(--header-overlay-fill);
 }
 
 @media(max-width:700px) {

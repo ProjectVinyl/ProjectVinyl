@@ -7,7 +7,7 @@ label.check-box {
   text-align: left;
   transition: color 0.1s ease;
   color: #444;
-  box-shadow: 0 0 7px -4px #fff inset;
+  box-shadow: 0 0 7px -4px var(--content-background) inset;
 }
 label.check-box:hover, label.check-box.focus {
   background: rgba(200,200,255,0.2);
