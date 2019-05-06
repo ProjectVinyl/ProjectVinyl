@@ -1,6 +1,10 @@
 div.group {
   overflow: hidden;
 }
+.page > div.group {
+  margin: -20px;
+  padding: 20px;
+}
 
 .post {
   width: 100%;

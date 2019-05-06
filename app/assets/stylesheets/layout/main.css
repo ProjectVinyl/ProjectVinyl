@@ -1,3 +1,7 @@
+html, body {
+  background: var(--site-background);
+}
+
 main {
   display: inline-block;
   position: relative;

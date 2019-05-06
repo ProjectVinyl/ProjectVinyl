@@ -5,15 +5,17 @@
 				Registered 
 				%span{title: @user.created_at}= since @user.created_at
 			= render 'users/avatar/large', user: @user
-			%h1.title
+			%h2.title
 				%a.name{class: @user.banned? && "banned", href: @user.link}
 					= @user.username
 					= render 'badges/badges', user: @user
+			%hr
 			%span.content.bio= raw @user.html_description
+			%hr
 		= render 'users/modules/stats'
 		- if @user.tag_id || @tags.length > 0
 			.details
-				%h1 Associated Tags
+				%h2 Associated Tags
 				- if @user.tag_id
 					%ul.tags.artist-tags= render 'tags/thumb_h', thumb_h: @user.tag
 				%ul.tags>= render partial: 'tags/thumb_h', collection: @tags.includes(:tag_type)
