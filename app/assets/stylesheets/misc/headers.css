@@ -2,6 +2,8 @@ h1 {
   background: var(--heading-background);
   border-bottom: solid 1px var(--heading-border-color);
   padding: 20px;
+}
+.page h1 {
   margin: -20px;
   margin-bottom: -20px;
   margin-bottom: 10px;
