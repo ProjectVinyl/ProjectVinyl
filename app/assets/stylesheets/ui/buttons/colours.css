@@ -1,7 +1,16 @@
+.actions .dislike.liked, button.red, .button.red, input[type=submit].red,
+.actions .like.liked, button.green, .button.green, input[type=submit].green,
+.actions .star.starred, button.yellow, .button.yellow, input.yellow[type="submit"],
+button.blue, .button.blue, input.blue[type="submit"] {
+  --button-foreground: #fff;
+  --button-foreground-hover: var(--button-foreground);
+  --button-foreground-active: var(--button-foreground);
+  --button-shine-color: rgba(0,0,0,0.2);
+}
+
 
 .actions .dislike.liked,
 button.red, .button.red, input[type=submit].red {
-  --button-foreground: #fff;
   --button-border-color: #a73535;
   --button-bottom-color: #9d3232;
   --button-top-color: #b03838;
@@ -9,12 +18,10 @@ button.red, .button.red, input[type=submit].red {
   --button-background: rgb(236, 72, 72);
   --button-background-hover: rgb(252, 87, 87);
   --button-background-active: rgb(236, 72, 72);
-  --button-shine-color: rgba(0,0,0,0.2);
 }
 
 .actions .like.liked,
 button.green, .button.green, input[type=submit].green {
-  --button-foreground: #fff;
   --button-border-color: #699739;
   --button-bottom-color: #638f36;
   --button-top-color: #6fa03c;
@@ -22,11 +29,9 @@ button.green, .button.green, input[type=submit].green {
   --button-background: #7bb042;
   --button-background-hover: #8bc052;
   --button-background-active: #7bb042;
-  --button-shine-color: rgba(0,0,0,0.2);
 }
 
 button.blue, .button.blue, input.blue[type="submit"] {
-  --button-foreground: #fff;
   --button-border-color: #3480b5;
   --button-bottom-color: #3179ab;
   --button-top-color: #3787bf;
@@ -34,12 +39,10 @@ button.blue, .button.blue, input.blue[type="submit"] {
   --button-background: #3d95d3;
   --button-background-hover: #4da5e3;
   --button-background-active: #2d85c3;
-  --button-shine-color: rgba(0,0,0,0.2);
 }
 
 .actions .star.starred,
 button.yellow, .button.yellow, input.yellow[type="submit"] {
-  --button-foreground: #fff;
   --button-border-color: #c7c739;
   --button-bottom-color: #b7b736;
   --button-top-color: #c7c73c;
@@ -47,5 +50,4 @@ button.yellow, .button.yellow, input.yellow[type="submit"] {
   --button-background: #e0e046;
   --button-background-hover: #f0f056;
   --button-background-active: #e0e046;
-  --button-shine-color: rgba(0,0,0,0.2);
 }

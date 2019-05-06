@@ -131,19 +131,21 @@ label.focus .content {
   padding: 0;
   margin: 0;
   margin-right: 10px;
-  color: #337287;
+
+  --button-foreground: #337287;
+  --button-foreground-hover: #72c733;
+  --button-foreground-active: #2362ef;
 }
 .comment .content .like.liked,
 .comment .content .like.liked:hover,
 .comment .content .like.liked:active {
-  color: #3372ff;
   border: none;
   background: none;
   text-shadow: none;
   box-shadow: none;
 }
-.comment .content .like.liked:active {
-  color: #2362ef;
+.comment .content .like.liked {
+  --button-foreground: var(--button-foreground-active);
 }
 
 .comment .content .posting-spinner {

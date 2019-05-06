@@ -8,8 +8,11 @@ button, .button, input[type=submit], .tag, .foobar {
   --button-bottom-color: #cacaca;
   --button-top-color: #e2e2e2;
   --button-shadow-color: #fafafa;
-  --button-shine-color: rgba(255,255,255,0.2)
+  --button-shine-color: rgba(255,255,255,0.2);
   --button-foreground: #333;
+  --button-foreground-hover: #444;
+  --button-foreground-active: #222;
+  --button-foreground-selected: var(--button-foreground-active);
   
   display: inline-block;
   background: var(--button-background);
@@ -52,14 +55,17 @@ button.right, .foobar.right, .button.right, input[type=submit].right {
 
 button:hover, .button:hover, input[type=submit]:hover {
   background: var(--button-background-hover);
+  color: var(--button-foreground-hover) !important;
 }
 
 button.selected, .button.selected, input[type=submit].selected {
    background: var(--button-background-selected);
+   color: var(--button-foreground-selected) !important;
 }
 
 button:active, .button:active, input[type=submit]:active {
    background: var(--button-background-active);
+   color: var(--button-foreground-active) !important;
    box-shadow: 0 0 5px 0 rgba(0,0,0,0.1) inset;
 }
 
