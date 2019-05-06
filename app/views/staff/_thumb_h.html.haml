@@ -1,7 +1,10 @@
 %li.bio
 	.avatar-wrapper
 		.avatar
-			%span{style: format_bg(avatar)}
+			- if avatar == ''
+				%span= render 'users/avatar/avatar_bg_pony', user: nil
+			- else
+				%span{style: format_bg(avatar)}
 	.description
 		%a
 			%h2= name
