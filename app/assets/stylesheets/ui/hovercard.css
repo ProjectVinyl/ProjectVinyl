@@ -33,14 +33,6 @@
     var(--gradient-light) 75%,
     var(--gradient-middle) 100%
   );
-  background: webkit-repeating-linear-gradient(
-    45deg,
-    var(--gradient-dark) 0%,
-    var(--gradient-light) 25%,
-    var(--gradient-middle) 50%,
-    var(--gradient-light) 75%,
-    var(--gradient-middle) 100%
-  );
 }
 
 .hovercard.shown {
