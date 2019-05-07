@@ -299,6 +299,7 @@ class User < ApplicationRecord
   def avatar=(avatar)
     self.uncache
     del_file(avatar_path_small)
+    del_file(avatar_path)
     self.mime = nil
     
     if avatar
