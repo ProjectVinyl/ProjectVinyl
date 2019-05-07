@@ -1,0 +1,5 @@
+.details
+	%h2 Associated Tags
+	- if @user.tag_id
+		%ul.tags.artist-tags= render 'tags/thumb_h', thumb_h: @user.tag
+	%ul.tags>= render partial: 'tags/thumb_h', collection: @tags.includes(:tag_type)
