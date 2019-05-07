@@ -1,5 +1,5 @@
 %section.page.tab-bar.column-right.column-mobile-shown.right
-	%h1 Application Settings
+	%h2 Settings
 	.actions
 		%div
 			%button.action.toggle(data-action="read_only" data-target="admin/settings/toggle")<
@@ -12,7 +12,7 @@
 					- if ApplicationHelper.bg_ponies
 						= fa :check
 				%span.label BG Ponies
-	%h1 Navigation
+	%h2 Navigation
 	.actions
 		%a.button{href: videos_path(unlisted: 1)}
 			= fw :eye_slash
@@ -35,7 +35,7 @@
 		%a.button{href: admin_api_index_path}
 			= fw :key
 			Api Tokens
-	%h1 Files
+	%h2 Files
 	.actions
 		%a.button(href="/admin/files?p=encoding")
 			= fw :file_code_o
@@ -47,11 +47,11 @@
 			= fw :file_video_o
 			Private Storage Folder
 	- if current_user.is_admin?
-		%h1 Indexing
+		%h2 Indexing
 		.actions
-			%a.button.red{href: admin_path(table: :videos), data: {confirm: "", method: "post", title: "Reindex Videos"}}
+			%a.button.red{href: admin_path(table: :videos), data: {confirm: "", method: "put", title: "Reindex Videos"}}
 				= fw :refresh
 				Recreate Video Index
-			%a.button.green{href: admin_path(table: :users), data: {confirm: "", method: "post", title: "Reindex Users"}}
+			%a.button.green{href: admin_path(table: :users), data: {confirm: "", method: "put", title: "Reindex Users"}}
 				= fw :refresh
 				Recreate User Index
