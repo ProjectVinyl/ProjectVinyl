@@ -43,6 +43,8 @@
   padding-top: 0;
 }
 .column-right.wrap-around-fixed {
+  z-index: 10 !important;
+  position: relative;
   margin-left: 15px !important;
 }
 
