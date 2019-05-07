@@ -1,0 +1,11 @@
+%h1.title.resize-target
+	Unprocessed Videos
+	= surround '(', ')' do
+		= number_with_delimiter @unprocessed.count
+	%a.right{href: videos_path(unprocessed: 1)}
+		View All
+		= fa :chevron_right
+- if @unprocessed.count > 0
+	= render layout: 'pagination/paginated', locals: {type: unprocessed_admin_videos_path, paginated: @unprocessed, id: "unprocessed"} do
+		%ul.horizontal.video-list#videos
+			= render partial: 'admin/videos/thumb_h', collection: @unprocessed.records

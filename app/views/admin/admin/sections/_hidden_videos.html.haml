@@ -1,0 +1,17 @@
+%h1.title.resize-target
+	Hidden Videos
+	= surround '(', ')' do
+		= number_with_delimiter @hiddenvideos.count
+	%a.right{href: videos_path(unlisted: 1)}
+		View All
+		= fa :chevron_right
+- if @hiddenvideos.count > 0
+	- if current_user.is_admin?
+		.actions
+			%a.button.red{href: hidden_drop_admin_videos_path, data: {confirm: "", method: "post", title: "Del #{@hiddenvideos.count} Videos"}}
+				= fw :trash_o
+				Remove All
+		%hr/
+	= render layout: 'pagination/paginated', locals: {type: hidden_admin_videos_path, paginated: @hiddenvideos, id: "hidden"} do
+		%ul.horizontal.video-list#videos
+			= render partial: 'admin/videos/thumb_h', collection: @hiddenvideos.records

@@ -1,0 +1,17 @@
+%h1.title.resize-target
+	Open Reports
+	= surround '(', ')' do
+		= number_with_delimiter @reports.count
+	%a.right{href: admin_reports_path}
+		View All
+		= fa :chevron_right
+- if @reports.count > 0
+	.actions
+		%a.button.red{href: closeall_admin_reports_path, data: {confirm: "", method: "post", title: "Close #{@reports.count} Reports"}}
+			= fa :ban
+			Close All
+	%hr/
+	= render layout: 'pagination/paginated', locals: {type: admin_reports_path, paginated: @reports, id: "reports"} do
+		.listing.compact
+			.report-list.items#reports
+				= render partial: 'admin/reports/thumb_h', collection: @reports.records
