@@ -1,10 +1,10 @@
 /**
  * External forms.
  */
-import { ajax} from '../utils/ajax';
-import { createWindow } from './window';
-import { popupError } from '../components/popup';
-import { addDelegatedEvent } from '../jslim/events';
+import { ajax} from '../../utils/ajax';
+import { createWindow } from '../window';
+import { popupError } from '../popup';
+import { addDelegatedEvent } from '../../jslim/events';
 
 export function checkFormPrerequisits(group) {
   const required = group.querySelectorAll('[required], [data-required]');

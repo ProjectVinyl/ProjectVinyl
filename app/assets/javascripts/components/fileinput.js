@@ -16,6 +16,7 @@ addDelegatedEvent(document, 'change', '.file-select input[type="file"]', (event,
   
   if (!preview) return;
   if (preview.src) URL.revokeObjectURL(preview.src);
-  preview.src = URL.createObjectURL(target.files[0]);
+
+  preview.src = target.files.length ? URL.createObjectURL(target.files[0]) : '';
   preview.style.backgroundImage = `url(${preview.src})`;
 });

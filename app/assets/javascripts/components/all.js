@@ -1,6 +1,6 @@
 import './comments';
 import './fileinput';
-import './form';
+import './forms/all';
 import './search';
 import './labels';
 import './share';
