@@ -1,7 +1,7 @@
 .wrapper.center
 	%section.page.half-width.modal
 		= devise_error_messages!
-		%h1 Resend unlock instructions
+		%h2 Resend unlock instructions
 		= form_for(resource, as: resource_name, url: unlock_path(resource_name), html: { method: :post }) do |f|
 			= f.email_field :email, placeholder: :email, autofocus: true
 			.actions= f.submit "Resend unlock instructions"

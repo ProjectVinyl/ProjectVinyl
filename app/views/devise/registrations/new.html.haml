@@ -1,7 +1,7 @@
 .wrapper.center
 	= devise_error_messages!
 	%section.page.half-width.modal
-		%h1 Sign up
+		%h2 Sign up
 		= form_for(resource, as: resource_name, url: registration_path(resource_name)) do |f|
 			= f.text_field :username, autofocus: true, placeholder: :nickname
 			= f.email_field :email, placeholder: :email
