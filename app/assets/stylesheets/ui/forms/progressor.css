@@ -7,20 +7,11 @@ form.uploading .drop-icon, form.uploading input {
 form.uploading .progressor {
   display: block !important;
   width: 100%;
-  margin-top: 37%;
   position: relative;
 }
 form.uploading .avatar ~ .progressor,
 form.uploading .uploaded-preview + .progressor {
   padding-top: 0;
-}
-form.uploading .progressor + div {
-  display: block;
-  position: absolute;
-  width: 50%;
-  left: 50%;
-  top: 30%;
-  margin-left: -25%;
 }
 
 .progress {

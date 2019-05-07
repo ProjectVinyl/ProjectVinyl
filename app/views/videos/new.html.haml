@@ -16,11 +16,6 @@
 				%ul.ui.hidden.tab-set.tabs
 					%li.button.selected(data-target="thumbpick_{id}") Pick Thumbnail
 					%li.button(data-target="thumbupload_{id}") Upload Image
-				.progressor
-					.cover-block
-						.message Uploading...
-						.progress
-							.fill
 				.preview-selective-selected#upload
 					.ui.hidden
 						.tab.selected.video#video(data-tab="thumbpick_{id}" data-pending="1" data-video="0")
@@ -36,6 +31,11 @@
 							= fa :upload
 							%div Select an Audio/Video file to upload
 						= f.file_field :file, accept: "audio/*,video/*"
+				.progressor
+					.cover-block
+						.message Uploading...
+						.progress
+							.fill
 				.ui.hidden.post.description.resize-holder
 					%h1.title.editable.short.post-title.resize-target#video_title
 						%span.content Title
