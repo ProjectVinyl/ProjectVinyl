@@ -48,7 +48,7 @@ module Admin
         return redirect_to action: "view"
       end
       
-      if !(table = params[:table] == 'user' ? User : params[:table] == 'video' ? Video : nil)
+      if !(table = params[:table] == 'users' ? User : params[:table] == 'videos' ? Video : nil)
         flash[:notice] = "Error: Table #{params[:table]} was not found."
         return redirect_to action: "view"
       end
@@ -61,11 +61,18 @@ module Admin
         
         table.update_index(defer: false)
         flash[:notice] = "Success! Indexes for record #{params[:table]}.#{params[params[:table]][:id]} have been completed."
+
         return redirect_to action: 'view', controller: 'admin/' + params[:table], id: params[params[:table]][:id]
       end
       
-      RecreateIndexJob.perform_later(current_user.id, table.to_s)
-      flash[:notice] = "Success! Indexes for table #{params[:table]} has been scheduled. Check back later for a completion report."
+      begin
+        RecreateIndexJob.perform_later(current_user.id, table.to_s)
+        flash[:notice] = "Success! Indexes for table #{params[:table]} has been scheduled. Check back later for a completion report."
+      rescue
+        flash[:notice] = "Error: Elasti-search does not appear to be running."
+      end
+
+      return redirect_to action: 'view'
     end
     
     def verify
