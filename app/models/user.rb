@@ -67,7 +67,7 @@ class User < ApplicationRecord
 
   settings index: { number_of_shards: 1 } do
     mappings dynamic: 'true' do
-      indexes :username
+      indexes :username, type: 'string'
       indexes :created_at, type: 'date'
       indexes :updated_at, type: 'date'
     end

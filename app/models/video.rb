@@ -56,8 +56,8 @@ class Video < ApplicationRecord
   
   settings index: { number_of_shards: 1 } do
     mappings dynamic: 'true' do
-      indexes :title
-      indexes :source
+      indexes :title, type: 'string'
+      indexes :source, type: 'string'
       indexes :audio_only, type: 'boolean'
       indexes :user_id, type: 'integer'
       indexes :length, type: 'integer'
