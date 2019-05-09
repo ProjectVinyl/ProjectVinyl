@@ -1,5 +1,6 @@
 require 'projectvinyl/web/ajax'
 require 'projectvinyl/bbc/bbcode'
+require 'uri'
 
 module ProjectVinyl
   module Web
@@ -16,15 +17,18 @@ module ProjectVinyl
               if Youtube.flag_set(wanted_data, :all)
                 wanted_data[:all] = body
               end
+
               if Youtube.flag_set(wanted_data, :title)
                 wanted_data[:title] = body['title']
               end
+
               if Youtube.flag_set(wanted_data, :artist)
                 wanted_data[:artist] = {
                   name: body['author_name'],
                   url: body['author_url']
                 }
               end
+
               if Youtube.flag_set(wanted_data, :thumbnail)
                 wanted_data[:thumbnail] = {
                   url: body['thumbnail_url'],
@@ -32,6 +36,7 @@ module ProjectVinyl
                   height: body['thumbnail_height']
                 }
               end
+
               if Youtube.flag_set(wanted_data, :iframe)
                 wanted_data[:iframe] = body['html']
               end
@@ -39,29 +44,65 @@ module ProjectVinyl
             end
           end
         end
-        if Youtube.flag_set(wanted_data, :description)
+
+        if Youtube.flag_set(wanted_data, :description) ||
+            Youtube.flag_set(wanted_data, :source)
           Ajax.get(url) do |body|
-            if desk = Youtube.description_from_html(body)
-              desc_node = ProjectVinyl::Bbc::Bbcode.from_html(desk)
-              desc_node.getElementsByTagName('a').each do |a|
-                if a.attributes[:href].index('redirect?')
-                  a.attributes[:href] = extract_uri_parameter(a.attributes[:href], 'q')
+            if Youtube.flag_set(wanted_data, :description)
+              if desk = Youtube.description_from_html(body)
+                desc_node = ProjectVinyl::Bbc::Bbcode.from_html(desk)
+
+                desc_node.getElementsByTagName('a').each do |a|
+                  if a.attributes[:href].index('redirect?')
+                    a.attributes[:href] = extract_uri_parameter(a.attributes[:href], 'q')
+                  end
+                  a.inner_text = a.attributes[:href]
                 end
-                a.inner_text = a.attributes[:href]
+
+                wanted_data[:description] = {
+                  html: desc_node.outer_html,
+                  bbc: desc_node.outer_bbc
+                }
               end
-              wanted_data[:description] = {
-                html: desc_node.outer_html,
-                bbc: desc_node.outer_bbc
-              }
+            end
+
+            if Youtube.flag_set(wanted_data, :source)
+              if src = Youtube.source_from_html(body)
+                wanted_data[:source] = src
+              end
             end
           end
         end
         wanted_data
       end
       
+      def self.source_from_html(html)
+        map_index = html.index('url_encoded_fmt_stream_map')
+        return nil if !map_index
+
+        html = html[map_index..html.length]
+        html = html.split('<')[0]
+        html = html.split('"')[2]
+        html = html.split(',')
+        html = html.map {|s| URI.unescape(s)}
+        html = html.map {|s| s.split('\\u0026')}
+
+        html.map do |el|
+          o = {}
+
+          el.each do |s|
+            key = s.split('=')[0]
+            o[key.to_sym] = s.gsub(key + '=', '')
+          end
+
+          o
+        end
+      end
+      
       def self.description_from_html(html)
         description_index = html.index('id="eow-description"')
         return nil if !description_index
+
         html = html[description_index..html.length]
         html = html.split('</p>')[0].split('>')
         html.shift
@@ -83,7 +124,7 @@ module ProjectVinyl
       def self.flag_set(hash, key)
         hash.key?(key) && hash[key]
       end
-      
+
       def self.extract_uri_parameter(url, parameter)
         Rack::Utils.parse_nested_query(URI.parse(url).query)[parameter]
       end

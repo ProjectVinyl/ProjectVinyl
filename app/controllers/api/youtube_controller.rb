@@ -14,7 +14,7 @@ module Api
       end
       
       succeed id: tube.video_id(@url),
-        attributes: tube.get(@url, include_hash([:title, :description, :artist, :thumbnail, :iframe])),
+        attributes: tube.get(@url, include_hash([:title, :description, :artist, :thumbnail, :iframe, :source])),
         meta: {
           url: @url
       }
