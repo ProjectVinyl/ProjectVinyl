@@ -100,17 +100,17 @@ GEM
       railties (>= 4.1.0, < 6.0)
       responders
       warden (~> 1.2.3)
-    elasticsearch (6.3.1)
-      elasticsearch-api (= 6.3.1)
-      elasticsearch-transport (= 6.3.1)
-    elasticsearch-api (6.3.1)
+    elasticsearch (5.0.5)
+      elasticsearch-api (= 5.0.5)
+      elasticsearch-transport (= 5.0.5)
+    elasticsearch-api (5.0.5)
       multi_json
     elasticsearch-model (6.0.0)
       activesupport (> 3)
       elasticsearch (> 1)
       hashie
     elasticsearch-rails (6.0.0)
-    elasticsearch-transport (6.3.1)
+    elasticsearch-transport (5.0.5)
       faraday
       multi_json
     errbase (0.1.1)
@@ -295,7 +295,7 @@ DEPENDENCIES
   binding_of_caller
   byebug
   devise
-  elasticsearch (< 7.0.0)
+  elasticsearch (< 6.0.0)
   elasticsearch-model
   elasticsearch-rails
   eye
