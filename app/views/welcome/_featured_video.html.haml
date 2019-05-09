@@ -2,16 +2,16 @@
 	%h1 Featured Video
 	%ul.horizontal.center
 		= render 'videos/thumb_f', thumb_f: @featured
-	.scoring.tag-set
-		%span.like(title="Likes")<>
+	.description.fade-away= raw @featured.html_description
+	.scoring
+		%span.button.green.like(title="Likes")<>
 			%b= safe_to_display @featured.upvotes, 9999
 			= fw :thumbs_up
-		%span.score(title="Score")<>
+		%span.button.score(title="Score")<>
 			%b= safe_to_display  @featured.score, 9999
-		%span.dislike(title="Dislikes")<>
+		%span.button.red.dislike(title="Dislikes")<>
 			%b= safe_to_display  @featured.downvotes, 9999
 			= fw :thumbs_down
-		%a.comments{href: @featured.comment_thread.link, title: "Comments"}<>
+		%a.button.blue.comments{href: @featured.comment_thread.link, title: "Comments"}<>
 			%b= safe_to_display  @featured.comment_thread.total_comments, 9999
 			= fw :comments
-	.description.fade-away= raw @featured.html_description
