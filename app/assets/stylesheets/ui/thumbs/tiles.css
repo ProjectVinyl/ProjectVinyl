@@ -1,0 +1,31 @@
+.tile {
+  --thumb-height: 120px;
+  --thumb-width: 250px;
+
+  position: relative;
+  display: inline-block;
+  vertical-align: top;
+
+  width: 100%;
+  max-width: var(--thumb-width);
+  max-height: calc(var(--thumb-height) + 80px);
+  min-height: var(--thumb-height);
+  padding: 0;
+
+  text-align: left;
+  text-decoration: none;
+  background: #000 center/cover no-repeat;
+  color: #fff;
+}
+
+@media(max-width: 900px) {
+  .tile {
+    --thumb-height: 100px;
+  }
+}
+
+@media(max-width: 700px) {
+  .tile {
+    --thumb-height: 80px;
+  }
+}

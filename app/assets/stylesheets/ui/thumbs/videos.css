@@ -9,26 +9,6 @@
   border: solid 1px #ccc !important;
   margin: -1px;
 }
-.tile {
-  position: relative;
-  width: 100%;
-  max-width: 250px;
-  max-height: 200px;
-  min-height: 120px;
-  padding: 0;
-}
-.tile, .queue .thumb .tile {
-  text-align: left;
-  display: inline-block;
-  text-decoration: none;
-  background: #000 center/cover no-repeat;
-  color: #fff;
-  vertical-align: top;
-}
-.queue .thumb .tile {
-  max-width: 55%;
-  margin: 5px;
-}
 
 li.generic.mix {
   background: rgba(0,0,200,0.01);
@@ -46,7 +26,6 @@ li.generic.mix .tile::after {
   text-align: center;
   text-shadow: 0 0 3px #000;
 }
-
 
 .thumb .tile .detail {
   display: none;
@@ -126,6 +105,7 @@ li.generic.mix .tile::after {
     font-weight: normal;
   }
 }
+
 @media(max-width: 900px) {
   .queue .thumb .tile {
     margin-bottom: 3.1em;
@@ -141,10 +121,6 @@ li.generic.mix .tile::after {
   ul.horizontal > li.generic {
     max-width: 135px;
   }
-  
-  .tile {
-    min-height: 100px;
-  }
 }
 
 @media(max-width: 700px) {
@@ -152,18 +128,10 @@ li.generic.mix .tile::after {
     max-width: 100px;
     min-width: 90px;
   }
-  
-  .tile {
-    min-height: 80px;
-  }
-  
+
   .thumb .date {
     display: none;
   }
-}
-
-.featured .tile {
-  min-height: 120px;
 }
 
 .featured ul.horizontal > li.generic {

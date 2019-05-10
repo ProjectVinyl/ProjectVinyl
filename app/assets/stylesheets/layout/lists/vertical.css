@@ -1,6 +1,6 @@
 .queue > li {
   display: block;
   position: relative;
-  padding: 0;
+  padding: 5px 3px;
   overflow: hidden;
 }
