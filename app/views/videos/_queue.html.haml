@@ -5,7 +5,7 @@
 			%h2.resize-target.slide-nav
 				%a Uploader
 				%a.slide-right.goto(data-to="global" title="Anyone")= fw :chevron_right
-			%ul.queue
+			%ul.vertical
 				- if (@mix_string = @video.mix_string(current_user)).length > 0
 					%li.generic.mix>
 						%a.thumb(href="#{@video.link}?q=#{@mix_string}&index=0" data-href="#{@video.link}?q=#{@mix_string}&index=0")
@@ -19,5 +19,5 @@
 			%h2.resize-target.slide-nav
 				%a.goto.slide-left(data-to="user" title="Uploader")= fa :chevron_left
 				%a Anyone
-			%ul.queue
+			%ul.vertical
 				= render partial: 'videos/thumb_v', collection: @queue[:global]

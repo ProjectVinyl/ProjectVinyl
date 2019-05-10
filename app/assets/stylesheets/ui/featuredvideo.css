@@ -18,3 +18,11 @@
 .featured .description div {
   display: none;
 }
+
+.featured .thumb {
+  --thumb-width: 100% !important;
+}
+.featured .thumb .tile {
+  --thumb-height: 150px;
+  --thumb-width: 100%;
+}

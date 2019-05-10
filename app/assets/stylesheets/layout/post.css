@@ -105,6 +105,15 @@ div.group {
   }
 }
 
+@media(max-width:850px) {
+  .page > div.group {
+    padding: 0;
+  }
+  .page > div.group h1 {
+    margin: 0;
+  }
+}
+
 
 @media(max-width:750px) {
   .post .action.mobile-friendly span {

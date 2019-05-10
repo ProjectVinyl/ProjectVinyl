@@ -6,19 +6,9 @@ ul.horizontal {
   justify-content: space-around;
   align-items: left;
 }
-
-ul.horizontal > li.generic {
-  display: inline-block;
-  padding: 10px;
-  max-width: 100%;
-  min-width: 190px;
-  max-height: 250px;
-  min-height: 140px;
-  width: 235px;
-}
-ul.horizontal > li.generic.virtual,
-ul.horizontal > li.generic:hover {
-  background: #fcfcfc;
+ul.horizontal, .controls ul {
+  list-style: none;
+  padding: 0;
 }
 
 ul.horizontal.center > li {
@@ -31,13 +21,4 @@ ul.horizontal.center > li {
   ul.horizontal {
     text-align: center;
   }
-  ul.horizontal li.generic {
-    text-align: left;
-  }
 }
-
-ul.horizontal, ul.queue, .controls ul, li.generic {
-  list-style: none;
-  padding: 0;
-}
-

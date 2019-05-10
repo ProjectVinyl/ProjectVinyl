@@ -1,4 +1,9 @@
-.queue > li {
+ul.vertical {
+  list-style: none;
+  padding: 0;
+}
+
+ul.vertical > li {
   display: block;
   position: relative;
   padding: 5px 3px;

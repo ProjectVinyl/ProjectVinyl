@@ -1,4 +1,7 @@
-.thumb {
+.thumb, li.generic.thumb {
+  --thumb-height: 230px;
+  --thumb-width: 250px;
+
   text-decoration: none;
 }
 .thumb-hidden {
@@ -76,7 +79,7 @@ li.generic.mix .tile::after {
   -o-text-overflow: ellipsis;
 }
 
-.queue .thumb .tile .details {
+ul.vertical .thumb .tile .details {
   vertical-align: top;
   margin-bottom: 0 !important;
   color: #000;
@@ -87,19 +90,19 @@ li.generic.mix .tile::after {
 }
 
 @media(min-width: 900px) {
-  .queue .thumb .tile {
+  ul.vertical .thumb .tile {
     width: 50%;
     max-width: 50%;
     min-width: 50%;
     min-height: 110px;
     float: left;
   }
-  .queue .thumb .tile .details {
+  ul.vertical .thumb .tile .details {
     width: 100%;
     left: 100%;
     bottom: auto;
   }
-  .queue .details .detail {
+  ul.vertical .details .detail {
     display: block;
     color: #aaa;
     font-weight: normal;
@@ -107,34 +110,20 @@ li.generic.mix .tile::after {
 }
 
 @media(max-width: 900px) {
-  .queue .thumb .tile {
+  ul.vertical .thumb .tile {
     margin-bottom: 3.1em;
   }
-  .queue .thumb .tile {
+  ul.vertical .thumb .tile {
     min-width: 0 !important;
   }
-  .queue .thumb .tile {
-    max-width: 100% !important;
+  ul.vertical .thumb .tile {
+    --thumb-width: 100%;
     padding: 0 0 45% 0 !important;
-  }
-  
-  ul.horizontal > li.generic {
-    max-width: 135px;
   }
 }
 
 @media(max-width: 700px) {
-  ul.horizontal > li.generic {
-    max-width: 100px;
-    min-width: 90px;
-  }
-
   .thumb .date {
     display: none;
   }
-}
-
-.featured ul.horizontal > li.generic {
-  max-width: 235px;
-  min-width: 190px;
 }

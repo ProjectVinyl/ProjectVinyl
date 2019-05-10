@@ -1,0 +1,35 @@
+li.generic {
+  --thumb-height: 250px;
+  --thumb-width: 250px;
+  --thumb-width-min: var(--thumb-width);
+
+  list-style: none;
+  display: inline-block;
+  padding: 10px;
+  margin: 4px;
+
+  max-width: var(--thumb-width);
+  min-width: var(--thumb-width-min);
+
+  max-height: var(--thumb-height);
+  min-height: calc(var(--thumb-height) - 110px);
+}
+
+li.generic.virtual,
+li.generic:hover {
+  background: var(--thumb-hover-color);
+}
+
+@media(max-width: 900px) {
+  li.generic {
+    --thumb-width: 135px !important;
+  }
+}
+
+@media(max-width: 700px) {
+  li.generic {
+    --thumb-width: 100px !important;
+    --thumb-width-min: 90px !important;
+  }
+}
+
