@@ -20,6 +20,10 @@ li.generic:hover {
   background: var(--thumb-hover-color);
 }
 
+ul.vertical li.generic {
+  --thumb-width: 100%;
+}
+
 @media(max-width: 900px) {
   li.generic {
     --thumb-width: 135px !important;
