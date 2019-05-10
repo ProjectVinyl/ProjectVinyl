@@ -16,10 +16,23 @@ class Ffmpeg
   end
   
   def self.get_video_length(file)
-    output = probe("stream", file)
+    get_attribute(file, "duration")
+  end
+  
+  def self.get_video_width(file)
+    get_attribute(file, "width")
+  end
+  
+  def self.get_video_height(file)
+    get_attribute(file, "height")
+  end
+  
+  def self.get_attribute(file, attribute)
+    output = probe("stream", file, attribute)
     if output == 0
-      output = probe("format", file)
+      output = probe("format", file, attribute)
     end
+
     output.floor
   end
   
@@ -122,8 +135,8 @@ class Ffmpeg
   end
   
   private
-  def self.probe(variant, file)
-    stdout, error_str, status = Open3.capture3('ffprobe', '-v', 'error', '-show_entries', "#{variant}=duration", '-of', 'default=noprint_wrappers=1:nokey=1', file.to_s)
+  def self.probe(variant, file, field)
+    stdout, error_str, status = Open3.capture3('ffprobe', '-v', 'error', '-show_entries', "#{variant}=#{field}", '-of', 'default=noprint_wrappers=1:nokey=1', file.to_s)
     stdout.to_i
   end
   
