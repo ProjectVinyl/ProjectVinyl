@@ -1,5 +1,7 @@
 .regular-region
-	%h1.title.resize-target= featured_album.title
+	%h1.title.resize-target
+		= fw :music
+		= featured_album.title
 	%ul.horizontal.video-list#videos
 		= render partial: 'videos/thumb_h', collection: featured_album.sample_videos
 		%li.generic.thumb

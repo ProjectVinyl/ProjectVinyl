@@ -1,5 +1,7 @@
 ﻿%section.page.full-width.featured.column-mobile-shown
-	%h1 Featured Video
+	%h1
+		= fw :star
+		Featured Video
 	%ul.horizontal.center
 		= render 'videos/thumb_f', thumb_f: @featured
 	.description.fade-away= raw @featured.html_description
