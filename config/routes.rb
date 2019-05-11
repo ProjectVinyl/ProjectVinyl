@@ -8,12 +8,9 @@ Rails.application.routes.draw do
   }
     
   scope controller: :staff do
-    scope action: :copyright do
+    scope action: :policy do
       get 'copyright'
       get 'fairuse'
-    end
-    
-    scope action: :policy do
       get 'policy'
       get 'terms'
     end
