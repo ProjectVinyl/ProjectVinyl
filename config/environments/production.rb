@@ -22,7 +22,7 @@ Rails.application.configure do
   config.action_mailer.delivery_method = :sendmail
   config.action_mailer.default_url_options = { host: 'projectvinyl.net' }
 
-  config.i18n.fallbacks = true
+  config.i18n.fallbacks = [I18n.default_locale]
 
   config.active_support.deprecation = :notify
   config.log_formatter = ::Logger::Formatter.new

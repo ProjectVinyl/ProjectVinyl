@@ -1,6 +1,6 @@
 source 'http://rubygems.org'
 
-gem 'rails', '5.1.2'
+gem 'rails', '5.1.6.2'
 gem 'mysql2', '>= 0.3.18', '< 0.5'
 
 # Use Html sanitizer
