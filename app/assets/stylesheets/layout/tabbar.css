@@ -1,10 +1,10 @@
 .wrapper .wrapper.column-right.tab-bar,
 .wrapper .page.column-right.tab-bar {
-  width: 250px;
+  width: calc(100% / 4 - 10px);
 }
 .wrapper .wrapper.column-left.tab-bar-beside,
 .wrapper .page.column-left.tab-bar-beside {
-  width: calc(100% - 255px);
+  width: calc(300% / 4 - 10px);
 }
 @media(max-width: 600px) {
   .wrapper .wrapper.column-left.tab-bar-beside,
