@@ -197,6 +197,7 @@ Rails.application.routes.draw do
       put 'move'
     end
     
+    put 'rethumb'
     put ':table/reindex', action: :reindex
     
     root 'admin#view'

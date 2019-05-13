@@ -41,6 +41,24 @@ module Admin
       
       item.transfer_to(user)
     end
+
+    def rethumb
+      if !current_user.is_contributor?
+        flash[:notice] = "Access Denied: You do not have the required permissions."
+        return redirect_to action: "view"
+      end
+
+      begin
+        Video.all.pluck(:id).find_each(batch_size: 500) do |id|
+          RethumbThumbJob.perform_later(id)
+        end
+        flash[:notice] = "All thumbnails have been queue for a refresh"
+      rescue Exception => e
+        flash[:error] = "Error: Could not schedule action."
+      end
+
+      redirect_to action: "view"
+    end
     
     def reindex
       if !current_user.is_contributor?
