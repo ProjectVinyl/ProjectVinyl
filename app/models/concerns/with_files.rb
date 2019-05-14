@@ -6,13 +6,17 @@ module WithFiles
   end
   
   def del_file(path)
-    File.delete(path) if File.exist?(path)
+    File.delete(path) if has_file(path)
   end
   
   def rename_file(from, to)
-    if File.exist?(from)
+    if has_file(from)
       FileUtils.mv(from, to)
     end
+  end
+  
+  def has_file(path)
+    File.exist?(path)
   end
   
   def file_link(path, name)

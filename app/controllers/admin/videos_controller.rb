@@ -46,8 +46,9 @@ module Admin
     
     def batch_drop
       badly_named_function do
+        len = Video.where(hidden: true).count
         Video.where(hidden: true).destroy
-        flash[:notice] = "#{videos.length} Item(s) deleted successfully."
+        flash[:notice] = "#{len} item(s) deleted successfully."
       end
     end
     
@@ -56,7 +57,7 @@ module Admin
         flash[:notice] = "#{Video.rebuild_queue} videos in queue."
       end
     end
-    
+
     def metadata
       try_to do |video|
         video.pull_meta(params[:source], params)

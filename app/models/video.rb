@@ -289,6 +289,25 @@ class Video < ApplicationRecord
       end
     end
   end
+  
+  def recreate_thumbs(time = nil)
+    self.uncache
+
+    if !self.audio_only
+      if has_file(cover_path)
+        if !has_file(tiny_cover_path)
+          Ffmpeg.extract_tiny_thumb_from_existing(cover_path, tiny_cover_path)
+        end
+      else
+        if has_file(video_path)
+          del_file(tiny_cover_path)
+
+          time = time ? time.to_f : get_duration.to_f / 2
+          Ffmpeg.extract_thumbnail(video_path, cover_path, tiny_cover_path, time)
+        end
+      end
+    end
+  end
 
   def self.thumb_for(video, user)
     video ? video.tiny_thumb(user) : '/images/default-cover-g.png'
