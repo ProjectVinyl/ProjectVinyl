@@ -1,6 +1,6 @@
 Board.create([
   { id: 2, title: 'General', description: '' },
-  { id: 9, title: 'Site and Policty', description: '' }
+  { id: 9, title: 'Site and Policy', description: '' }
 ])
 TagType.create([
   { id: 1, prefix: 'artist', hidden: 0 },
