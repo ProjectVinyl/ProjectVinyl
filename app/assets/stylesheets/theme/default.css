@@ -1,5 +1,8 @@
 
 html, body {
+  --site-banner: url(../images/banner-image.png) no-repeat top left / auto 200%,
+                 url(../images/banner-image.png) bottom right / auto 200% var(--content-background);
+
   --site-background: #f1f1f1;
 
   --content-background: #fff;

@@ -1,5 +1,13 @@
 html, body {
+  --site-width: 1300px;
   background: var(--site-background);
+}
+
+body[data-site-width] {
+  --site-width: attr(data-site-width);
+}
+body[data-custom-banner] {
+  --site-banner: attr(data-custom-banner);
 }
 
 main {
@@ -8,5 +16,5 @@ main {
   text-align: left;
   width: 90%;
   min-height: 100%;
-  max-width: 1300px;
+  max-width: var(--site-width);
 }

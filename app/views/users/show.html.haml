@@ -1,9 +1,6 @@
 - title @user.username
 - if @user.banner_set
-	:css
-		.banner-background {
-			background: url('#{@user.banner}') center center/cover #000;
-		}
+	- banner("url('#{@user.banner}') center center/cover #000")
 = render 'users/bio'
 = render 'users/modules/stats'
 - if @art

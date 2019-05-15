@@ -37,8 +37,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: url(../images/banner-image.png) no-repeat top left / auto 200%,
-              url(../images/banner-image.png) bottom right / auto 200% var(--content-background);
+  background: var(--site-banner);
 }
 
 @media(max-width: 1300px) {

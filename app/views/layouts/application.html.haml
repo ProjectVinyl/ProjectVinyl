@@ -19,6 +19,16 @@
 		= content_for(:metadata)
 		= stylesheet_link_tag "application"
 		= javascript_include_tag "application"
+		- if content_for?(:width)
+			:css
+				body {
+					--site-width: #{content_for(:width)};
+				}
+		- if content_for?(:custom_banner)
+			:css
+				body {
+						--site-banner: #{content_for(:custom_banner)};
+				}
 %body{class: !user_signed_in? && "logged-out"}
 	.context-3d.dock-holder
 		.dock-shadow
@@ -35,7 +45,7 @@
 				%img(src="/images/logo.svg")
 		= render partial: "layouts/nav"
 		.layer-foreground.body
-			%main.wrapper{class: content_for?(:wrapper) && content_for(:wrapper), style: "max-width:#{content_for(:width)}"}
+			%main.wrapper{class: content_for?(:wrapper) && content_for(:wrapper)}
 				= render "admin/sitenotices/notices"
 				- if @crumb
 					= render 'view/breadcrumb', @crumb

@@ -1,6 +1,6 @@
 module ValuesHelper
   include IconsHelper
-  
+
   # Sets a descriptive page title
   def title(page_title)
     content_for(:title) { page_title }
@@ -14,6 +14,11 @@ module ValuesHelper
   # Applies a class to the main content wrapper for the page
   def wrapper(wrapper_class)
     content_for(:wrapper) { wrapper_class }
+  end
+
+  # Applies a custom banner image to the main content
+  def banner(banner_src)
+    content_for(:custom_banner) { banner_src.html_safe }
   end
   
   # Gets the current search query
