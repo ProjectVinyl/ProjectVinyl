@@ -215,3 +215,7 @@
 .listing.compact .row div.tag-editor {
   display: block !important;
 }
+
+.listing.compact + section h1 {
+  margin-top: 10px;
+}
