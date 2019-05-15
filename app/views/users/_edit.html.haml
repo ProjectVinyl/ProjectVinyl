@@ -29,7 +29,7 @@
 		%tr
 			%td.label= f.label :display_name
 			%td.field.popper.auto-lookup.validate(data-action="#{find_users_path}")
-				= f.text_field :username, autofocus: true, autocomplete: "off"
+				= f.text_field :username, autocomplete: "off"
 				%ul.pop-out
 		- if current_user.is_contributor?
 			%tr
