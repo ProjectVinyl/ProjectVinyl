@@ -1,4 +1,4 @@
-﻿.wrapper.resize-holder.column-right.right.column-mobile-fragmented.wrap-around-fixed.grid-root(style="width:23%")
+﻿.wrapper.resize-holder.column-right.right.column-mobile-fragmented.wrap-around-fixed.grid-root
 	- if @featured
 		= render 'featured_video'
 	- if @threads.length > 0
@@ -24,7 +24,7 @@
 			= fw :newspaper_o
 			Twitter Feed
 		%iframe.twitter(src="/embed/twitter")
-.wrapper.column-left.auto-wrap.resize-holder(style="width: 76%")
+.wrapper.column-left.auto-wrap.resize-holder.grid-root
 	%section.page
 		= render 'section', collection: @popular, type: 'popular', label: 'Popular'
 	- if @featured_album

@@ -1,0 +1,28 @@
+
+.grid-root {
+  --grid-spacing: 60px;
+  --grid-column-width: 215px;
+}
+
+.grid-root.column-left {
+  width: 76%;
+}
+
+
+@media(max-width: 700px) {
+  .grid-root {
+    --grid-column-width: 100px;
+  }
+}
+@media(max-width: 900px) {
+  .grid-root {
+    --grid-column-width: 190px;
+  }
+}
+
+
+.grid-root.column-right {
+  width: var(--grid-column-width);
+  --grid-spacing: 15px;
+  --grid-column-width: 310px;
+}
