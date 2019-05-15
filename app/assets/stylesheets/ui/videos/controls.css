@@ -1,18 +1,26 @@
 .playback-controls {
-  display: none;
-  position: absolute;
+  --controls-foreground: #fff;
+
+  position: fixed;
   left: 0;
   right: 0;
   bottom: 0;
   padding: 0;
+  color: var(--controls-foreground);
+}
+.video .playback-controls {
+  display: none;
+  position: absolute;
   opacity: 0;
   transition: opacity 0.5s linear;
   padding-top: 50px;
   box-shadow: 0 -50px 40px -40px #000 inset;
 }
-.playback-controls ul {
+
+.video .playback-controls ul {
   margin: 0 15px 15px 15px;
 }
+
 .video:hover .playback-controls, .video.hover .playback-controls, .video.audio-only .playback-controls {
   opacity: 1;
 }
@@ -42,6 +50,7 @@
   cursor: pointer;
   border-radius: 4px;
 }
+
 .slim .playback-controls .track {
   width: calc(100% - 85px);
 }
@@ -117,7 +126,7 @@
 }
 
 .playback-controls .icon .indicator {
-  color: #fff;
+  color: var(--controls-foreground);
   font-size: 1.5em;
 }
 

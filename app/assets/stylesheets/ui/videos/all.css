@@ -7,4 +7,5 @@
  *= require ./suspend
  *= require ./embed_actions
  *= require ./uploading
+ *= require ./floating_player
  */

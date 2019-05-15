@@ -1,4 +1,4 @@
-import { uploadForm } from '../utils/progressform';
+import { uploadForm } from '../../utils/progressform';
 
 function tick(next) {
   const uploader = next();

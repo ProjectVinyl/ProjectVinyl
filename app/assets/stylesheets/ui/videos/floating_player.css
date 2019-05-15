@@ -1,0 +1,14 @@
+
+.floating-player .playback-controls {
+  background: var(--content-background);
+  border-top: solid 1px var(--block-border-color);
+  box-shadow: 0 0 3px var(--block-shadow-color);
+  padding: 0 10px;
+  transition: bottom 0.5s ease;
+  
+  --controls-foreground: #444;
+}
+
+.floating-player.hiding .playback-controls {
+  bottom: -100%;
+}

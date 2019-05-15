@@ -5,13 +5,15 @@ export function TapToggler(owner) {
   
   const toggler = {
     update: function() {
-      if (!touching) touching = true;
+      touching = true;
+
       owner.classList.add('hover');
       hoverFlag++;
+
       if (hoverTimeout) {
         clearTimeout(hoverTimeout);
-        hoverTimeout = null;
       }
+
       hoverTimeout = setTimeout(() => {
         owner.classList.add('hover');
         hoverTimeout = null;
@@ -22,7 +24,7 @@ export function TapToggler(owner) {
     interactable: _ => !touching || hoverFlag > 1
   };
   
-  owner.addEventListener('touchstart', ev => toggler.update(ev));
+  owner.addEventListener('touchstart', toggler.update);
   
   return owner.toggler = toggler;
 }

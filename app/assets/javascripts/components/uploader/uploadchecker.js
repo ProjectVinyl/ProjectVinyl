@@ -1,8 +1,8 @@
 import { ThumbPicker } from './thumbnailpicker';
-import { extendObj } from '../utils/misc';
-import { canPlayType } from '../utils/videos';
-import { all } from '../jslim/dom';
-import { ready } from '../jslim/events';
+import { extendObj } from '../../utils/misc';
+import { canPlayType } from '../../utils/videos';
+import { all } from '../../jslim/dom';
+import { ready } from '../../jslim/events';
 import { Validator } from './validator';
 
 function UploadChecker(el) {

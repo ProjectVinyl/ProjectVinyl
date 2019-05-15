@@ -1,14 +1,14 @@
-import { getTagEditor } from './tageditor';
+import { getTagEditor } from '../tageditor';
 import { ThumbPicker } from './thumbnailpicker';
-import { resizeFont } from '../ui/resize';
-import { focusTab } from '../ui/tabset';
-import { extendObj } from '../utils/misc';
-import { canPlayType } from '../utils/videos';
-import { all, nodeFromHTML } from '../jslim/dom';
-import { ready } from '../jslim/events';
+import { resizeFont } from '../../ui/resize';
+import { focusTab } from '../../ui/tabset';
+import { extendObj } from '../../utils/misc';
+import { canPlayType } from '../../utils/videos';
+import { all, nodeFromHTML } from '../../jslim/dom';
+import { ready } from '../../jslim/events';
 import { Validator } from './validator';
-import { UploadQueue } from './uploadqueue';
-import { setupEditable } from '../ui/editable';
+import { UploadQueue } from './queue';
+import { setupEditable } from '../../ui/editable';
 
 const INSTANCES = [];
 let uploadingQueue = null;
@@ -39,7 +39,9 @@ function Uploader() {
   
   // Deselect prior tab and insert
   const selectedTab = document.querySelector('#uploader_frame > .tab.selected');
-  if (selectedTab) selectedTab.classList.remove('selected');
+  if (selectedTab) {
+    selectedTab.classList.remove('selected');
+  }
   
   document.getElementById('uploader_frame').appendChild(this.el);
   document.getElementById('new_tab_button').insertAdjacentElement('beforebegin', this.tab);

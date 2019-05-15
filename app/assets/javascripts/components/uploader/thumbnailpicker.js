@@ -1,5 +1,5 @@
-import { extendFunc } from '../utils/misc';
-import { Player } from './videos';
+import { extendFunc } from '../../utils/misc';
+import { Player } from '../videos/player';
 
 export const ThumbPicker = extendFunc(Player, {
   constructor(el) {

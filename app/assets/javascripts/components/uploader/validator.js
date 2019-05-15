@@ -1,4 +1,4 @@
-import { toBool } from '../utils/misc';
+import { toBool } from '../../utils/misc';
 
 export function Validator(el) {
   this.el = el;

@@ -1,10 +1,19 @@
 import { all, offset } from '../jslim/dom';
 import { bindEvent } from '../jslim/events';
 
-export function ContextMenu(dom, container) {
+export function ContextMenu(dom, container, items) {
   this.dom = dom;
   this.container = container || document.body;
   this.container.addEventListener('contextmenu', e => this.show(e));
+  
+  if (items) {
+    Object.keys(items).forEach(key => {
+      const item = items[key];
+      if (item.display !== false) {
+        this.addItem(key, item.initial, item.callback);
+      }
+    });
+  }
 }
 ContextMenu.prototype = {
   addItem(title, initial, callback) {

@@ -9,21 +9,6 @@
 		- if embed
 			%h1.resize-target
 				%a.title(target="_blank" href="#{@video.link}")= @video.title
-.controls.playback-controls
-	%ul
-		%li.track
-			%span.fill
-			%span.load
-			.previewer
-			%span.bob
-		%li.icon.volume
-			%span.indicator= fa :volume_up
-			.slider
-				%span.fill
-				%span.bob
-		%li.icon.maximise
-			%span.indicator= fa :square_o
-		%li.icon.fullscreen
-			%span.indicator= fa :arrows_alt
+= render 'videos/widget/controls'
 %ul.contextmenu.transitional.hidden
 = yield

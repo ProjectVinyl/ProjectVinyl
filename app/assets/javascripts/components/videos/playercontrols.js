@@ -1,8 +1,8 @@
-import { isFullscreen } from '../utils/fullscreen';
-import { addDelegatedEvent, halt } from '../jslim/events';
-import { TapToggler } from './taptoggle';
-import { toHMS } from '../utils/duration';
-import { Slider } from './slider';
+import { isFullscreen } from '../../utils/fullscreen';
+import { addDelegatedEvent, halt } from '../../jslim/events';
+import { TapToggler } from '../taptoggle';
+import { toHMS } from '../../utils/duration';
+import { Slider } from '../slider';
 import { createMiniTile } from './minitile';
 
 export function PlayerControls(player, dom) {
