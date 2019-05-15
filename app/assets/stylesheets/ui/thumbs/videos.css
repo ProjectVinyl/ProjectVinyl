@@ -62,14 +62,17 @@ li.generic.mix .tile::after {
 }
 
 .thumb .tile.link {
+  display: flex;
+  align-items: center;
   background: none;
   border: solid 1px #aaa;
   text-align: center;
-  line-height: 100%;
   color: #aaa;
   vertical-align: middle;
-  padding-top: 21%;
   text-decoration: none;
+}
+.thumb .tile.link span {
+  width: 100%;
 }
 
 .thumb .tile .detail, .thumb .tile .title, .thumb .tile + .title {
