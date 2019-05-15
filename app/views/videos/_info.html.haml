@@ -13,3 +13,9 @@
 			%tr
 				%td.label Duration
 				%td.field= duration @video.get_duration
+			%tr
+				%td.label Dimensions
+				%td.field
+					= @video.get_width
+					x
+					= @video.get_height

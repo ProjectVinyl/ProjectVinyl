@@ -440,8 +440,15 @@ class Video < ApplicationRecord
       video: !self.audio_only && self.id,
       mime: "#{self.file}|#{self.mime}",
       embed: embed,
-      autoplay: (!album.nil?).to_s
+      autoplay: (!album.nil?).to_s,
+      aspect: self.aspect
     }
+  end
+  
+  def aspect
+    return 1 if self.audio_only
+    return 1 if self.get_height == 0
+    self.get_width.to_f / self.get_height.to_f
   end
   
   def is_hidden_by(user)
@@ -484,6 +491,22 @@ class Video < ApplicationRecord
     return 0 if self.hidden
     return compute_length if self.length.nil? || self.length == 0
     self.length
+  end
+  
+  def get_width
+    return 1 if self.audio_only
+    if self.width.nil?
+      compute_dimensions
+    end
+    self.width
+  end
+  
+  def get_height
+    return 1 if self.audio_only
+    if self.height.nil?
+      compute_dimensions
+    end
+    self.height
   end
   
   def set_description(text)
@@ -579,13 +602,23 @@ class Video < ApplicationRecord
   end
   
   def compute_length
-    if !self.file || !File.exist?(video_path)
+    if !self.file || !has_file(video_path)
       return 0
     end
     
     self.length = Ffmpeg.get_video_length(video_path)
     self.save
     self.length
+  end
+  
+  def compute_dimensions
+    if !self.file || !has_file(video_path)
+      return
+    end
+    
+    self.width = Ffmpeg.get_video_width(video_path)
+    self.height = Ffmpeg.get_video_height(video_path)
+    self.save
   end
 
   def compute_score

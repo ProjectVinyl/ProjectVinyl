@@ -7,8 +7,12 @@
 
 .video {
   background: #000 center/contain no-repeat;
+  max-height: 70vh;
   -ms-touch-action: pan-x pan-y;
   touch-action: pan-x pan-y;
+}
+.page.slim.full-width .video {
+  max-height: 100vh;
 }
 
 .video .player, .video .player h1 a {
