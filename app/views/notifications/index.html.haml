@@ -1,10 +1,11 @@
 - title "Notifications"
 - lim "900px"
-%section.page.full-width.properties
+%section.page.full-width.properties{ data: {count_targets: "notifs"}}
 	%h1.title
 		Notifications
-		= surround '(', ')' do
-			= current_user.notifications.length
+		%span.count
+			= surround '(', ')' do
+				%span.number= current_user.notifications.length
 	%ul.notifications
 		- if @all.length > 0
 			- @all.group_by(&:period).each do |week, n|

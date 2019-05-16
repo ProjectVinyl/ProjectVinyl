@@ -1,6 +1,7 @@
 %li.removeable.notification{class: [notification.sender, notification.unread && "unread"],
 														data: { target: "notifications",
-																		id: notification.id}}
+																		id: notification.id,
+																		countable: "notifs"}}
 	%a.remove.right(href="#" title="Remove")
 		= fa :times
 	- if notification.sender.index('comment_threads_') == 0
