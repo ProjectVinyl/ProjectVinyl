@@ -74,6 +74,7 @@ function Uploader() {
   this.form.addEventListener('submit', event => {
     if (!uploadingQueue) uploadingQueue = new UploadQueue();
     uploadingQueue.enqueue(this);
+    document.querySelector('.tabs').scrollIntoView();
     event.preventDefault();
   });
   
