@@ -1,7 +1,7 @@
 import { getTagEditor } from '../tageditor';
 import { ThumbPicker } from './thumbnailpicker';
 import { resizeFont } from '../../ui/resize';
-import { focusTab } from '../../ui/tabset';
+import { focusTab } from '../../ui/tabsets/tabset';
 import { extendObj } from '../../utils/misc';
 import { canPlayType } from '../../utils/videos';
 import { all, nodeFromHTML } from '../../jslim/dom';

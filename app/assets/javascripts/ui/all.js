@@ -9,7 +9,7 @@ import './slide';
 import './slideacross';
 import './removeable';
 import './subtable';
-import './tabset';
+import './tabsets/all';
 import './toggle';
 import './statetoggle';
 import './stateset';

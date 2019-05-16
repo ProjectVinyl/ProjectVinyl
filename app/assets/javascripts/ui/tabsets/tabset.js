@@ -1,6 +1,4 @@
-import { ajax } from '../utils/ajax';
-import { addDelegatedEvent, bindEvent } from '../jslim/events';
-import { pushUrl } from '../utils/history';
+import { addDelegatedEvent } from '../../jslim/events';
 
 export function focusTab(me) {
   if (!me || me.classList.contains('selected') || !me.dataset.target) return;
@@ -12,7 +10,7 @@ export function focusTab(me) {
     otherTab.classList.remove('selected');
     otherTab.dispatchEvent(new CustomEvent('tabblur', { bubbles: true }));
   }
-  
+
   me.classList.add('selected');
   const thisTab = document.querySelector(`div[data-tab="${me.dataset.target}"]`);
   thisTab.classList.add('selected');
@@ -23,6 +21,7 @@ addDelegatedEvent(document, 'click', '.tab-set > li.button:not([data-disabled])'
   if (e.button !== 0) return;
   if (!e.target.closest('.fa-close')) focusTab(target);
 });
+
 addDelegatedEvent(document, 'click', '.tab-set > li.button i.fa-close',  (e, target) => {
   if (e.button !== 0) return;
   e.preventDefault();
@@ -43,38 +42,10 @@ addDelegatedEvent(document, 'click', '.tab-set > li.button i.fa-close',  (e, tar
       }
     }
   }
-  
+
   toRemove.parentNode.removeChild(toRemove);
 
   tabset.classList.add('hidden');
 
   setTimeout(() => tabset.parentNode.removeChild(tabset), 25);
-});
-addDelegatedEvent(document, 'click', '.tab-set.async a.button:not([data-disabled])', function(e) {
-  if (e.button !== 0) return;
-  if (this.classList.contains('selected')) return;
-  e.preventDefault();
-  
-  const parent = this.parentNode;
-  const other = parent.querySelector('.selected');
-  const holder = document.querySelector(`.tab[data-tab="${parent.dataset.target}"]`);
-  const url = this.getAttribute('href');
-  
-  other.classList.remove('selected');
-  this.classList.add('selected');
-  holder.classList.add('waiting');
-
-  pushUrl(url);
-  ajax.get(`${url}/tabs.json`, { page: this.dataset.page || 0 }).json(json => {
-    holder.innerHTML = json.content;
-    holder.classList.remove('waiting');
-  });
-});
-
-bindEvent(document, 'ajax:complete', e => {
-  const tabs = e.detail.data.tabs;
-  if (tabs) Object.keys(tabs).forEach(key => {
-    const tab = document.querySelector(`.tab-set a.button[data-live-tab="${key}"] .count`);
-    if (tab) tab.innerText = tabs[key] ? `(${tabs[key]})` : '';
-  });
 });
