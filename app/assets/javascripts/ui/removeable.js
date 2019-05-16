@@ -28,8 +28,9 @@ function remove(me, recurse) {
   if (!recurse) {
     container.dispatchEvent(new CustomEvent('removed', {
       data: {target: me},
-      bubbles: true }
-    ));
+      bubbles: true,
+      cancellable: true
+    }));
   }
 
   if (container.classList.contains('group') && !container.querySelector('.removeable, .group')) {
