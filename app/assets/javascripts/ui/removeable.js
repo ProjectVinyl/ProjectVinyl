@@ -20,12 +20,16 @@ addDelegatedEvent(document, 'click', '.removeable .remove', function(e) {
   }
 });
 
-function remove(me) {
+function remove(me, recurse) {
   const container = me.parentNode;
 
+  if (!recurse) {
+    me.dispatchEvent(new CustomEvent('removed', { bubbles: true }));
+  }
+
   container.removeChild(me);
-  
+
   if (container.classList.contains('group') && !container.querySelector('.removeable, .group')) {
-    remove(container);
+    remove(container, true);
   }
 }

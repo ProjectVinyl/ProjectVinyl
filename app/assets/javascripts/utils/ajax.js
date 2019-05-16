@@ -6,7 +6,9 @@ import { csrfHeaders } from '../ujs/csrf';
 import { QueryParameters } from './queryparameters';
 
 export function handleError(response) {
-  if (!response.ok) throw new Error('Received error from server');
+  if (!response.ok) {
+    throw new Error('Received error from server');
+  }
   return response;
 }
 
@@ -27,7 +29,7 @@ function request(method, resource, data) {
     }
   }
   resource = `/${resource.replace(/^[\/]*/g, '')}`;
-  
+
   const promise = fetch(resource, params).catch(err => popupError(`${method} ${resource}\n\n${err}`)).then(handleError);
   promise.text = callback => promise.then(r => r.text()).then(triggerAjaxComplete).then(callback);
   promise.json = callback => promise.then(r => r.json()).then(triggerAjaxComplete).then(callback);
