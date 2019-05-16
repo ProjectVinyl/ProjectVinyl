@@ -23,11 +23,14 @@ addDelegatedEvent(document, 'click', '.removeable .remove', function(e) {
 function remove(me, recurse) {
   const container = me.parentNode;
 
-  if (!recurse) {
-    me.dispatchEvent(new CustomEvent('removed', { bubbles: true }));
-  }
-
   container.removeChild(me);
+
+  if (!recurse) {
+    container.dispatchEvent(new CustomEvent('removed', {
+      data: {target: me},
+      bubbles: true }
+    ));
+  }
 
   if (container.classList.contains('group') && !container.querySelector('.removeable, .group')) {
     remove(container, true);
