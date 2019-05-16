@@ -10,5 +10,6 @@
 			%h1.resize-target
 				%a.title(target="_blank" href="#{@video.link}")= @video.title
 = render 'videos/widget/controls'
+%span.control-ref.hidden
 %ul.contextmenu.transitional.hidden
 = yield

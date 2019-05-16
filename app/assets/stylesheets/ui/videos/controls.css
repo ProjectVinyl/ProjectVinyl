@@ -17,6 +17,11 @@
   box-shadow: 0 -50px 40px -40px #000 inset;
 }
 
+.playback-controls ul {
+  display: flex;
+  align-items: center;
+}
+
 .video .playback-controls ul {
   margin: 0 15px 15px 15px;
 }
@@ -44,15 +49,11 @@
 .playback-controls .track {
   transition: background 0.5s ease;
   position: relative;
-  width: calc(100% - 70px);
   margin-left: 5px;
   height: 10px;
   cursor: pointer;
   border-radius: 4px;
-}
-
-.slim .playback-controls .track {
-  width: calc(100% - 85px);
+  flex-grow: 1;
 }
 
 .playback-controls .track:hover {
@@ -119,10 +120,11 @@
   width: 20px;
   height: 100%;
   cursor: pointer;
-  float: right;
-}
-.playback-controls .icon + .icon {
   margin-right: 5px;
+}
+.playback-controls * + .icon {
+  margin-left: 5px;
+  margin-right: 0px;
 }
 
 .playback-controls .icon .indicator {

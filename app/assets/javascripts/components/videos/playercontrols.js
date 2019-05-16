@@ -86,22 +86,25 @@ export function PlayerControls(player, dom) {
   });
   
   this.fullscreen = dom.querySelector('.fullscreen .indicator');
-  dom.querySelector('.fullscreen').addEventListener('click', ev => {
+  this.play = dom.querySelector('.play .indicator');
+
+  addDelegatedEvent(dom, 'click', '.fullscreen', ev => {
     if (ev.button !== 0) return;
     if (!player.contextmenu.hide(ev)) {
       player.fullscreen(!isFullscreen());
       halt(ev);
     }
   });
-  
-  dom.querySelector('.maximise').addEventListener('click', ev => {
+  addDelegatedEvent(dom, 'click', '.maximise', ev => {
     if (ev.button !== 0) return;
     if (!player.contextmenu.hide(ev)) {
       player.maximise();
-      halt(ev);
     }
-  })
-  
+  });
+  addDelegatedEvent(dom, 'click', '.play', ev => {
+    if (ev.button !== 0) return;
+    player.togglePlayback();
+  });
   addDelegatedEvent(dom, 'click', 'li', halt);
 }
 PlayerControls.prototype = {

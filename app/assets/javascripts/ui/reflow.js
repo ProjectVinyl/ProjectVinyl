@@ -3,7 +3,10 @@
  */
 import { bindEvent } from '../jslim/events';
 
-export function scrollContext() {
+export function scrollContext(element) {
+  if (element) {
+    return element.closest('.context-3d') || document.scrollingElement;
+  }
   return document.querySelector('.context-3d') || document.scrollingElement;
 }
 

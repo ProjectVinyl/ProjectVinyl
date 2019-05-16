@@ -8,6 +8,9 @@
   
   --controls-foreground: #444;
 }
+.floating-player .playback-controls .previewer {
+  display: none;
+}
 
 .floating-player.hiding .playback-controls {
   bottom: -100%;

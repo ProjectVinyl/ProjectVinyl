@@ -1,7 +1,8 @@
 import { ready } from '../jslim/events';
 import { ajax } from '../utils/ajax';
+import { scrollContext } from './reflow';
 
-function throttleFunc(func, ms) {
+export function throttleFunc(func, ms) {
   let scheduled = null;
   return () => {
     if (!scheduled) scheduled = setTimeout(() => {
@@ -36,7 +37,7 @@ function scrollListener(target, ref, position, test, data) {
 ready(() => {
   const target = document.querySelector('.infinite-page');
   if (!target) return;
-  const context = target.closest('.context-3d') || document.scrollingElement;
+  const context = scrollContext(target);
   const top = scrollListener(target, target.querySelector('.row.header'), 'before', () => context.scrollTop == 0);
   const bottom = scrollListener(target, target, 'after', () => (context.scrollTop + context.offsetHeight) >= context.scrollHeight);
   

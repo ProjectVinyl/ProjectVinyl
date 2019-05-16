@@ -16,7 +16,7 @@ function fadeOut() {
   }, 1000);
 }
 
-function setFullscreen(sender) {
+export function setFullscreen(sender) {
   fullscreenPlayer = sender;
   document.removeEventListener('mousemove', fadeOut);
   if (sender) {

@@ -11,13 +11,14 @@ import { ready, bindAll, halt, bindEvent } from '../../jslim/events';
 import { isFullscreen } from '../../utils/fullscreen';
 import { cookies } from '../../utils/cookies';
 import { TapToggler } from '../taptoggle';
-import { fullscreenPlayer } from './fullscreen';
+import { fullscreenPlayer, setFullscreen } from './fullscreen';
 import { PlayerControls } from './playercontrols';
 import { setupNoise } from './noise';
 import { attachMessageListener } from './itc';
 import { resize } from './resize';
 import { createVideoElement, addSource } from './video_element';
 import { onPlaylistNavigate } from './playlist';
+import { attachFloater } from './floatingplayer';
 
 const speeds = [
   {name: '0.25x', value: 0.25},
@@ -129,6 +130,8 @@ function playerHeader(sender) {
 export function Player() { }
 Player.prototype = {
   constructor(el, standalone) {
+    this.floater = document.querySelector('.floating-player');
+    
     this.dom = el;
     this.embedded = !!el.dataset.embed;
     this.audioOnly = !!el.dataset.audio;
@@ -164,6 +167,10 @@ Player.prototype = {
     });
     
     attachMessageListener(this, !standalone);
+    
+    if (!el.dataset.pending) {
+      attachFloater(this);
+    }
 
     new TapToggler(this.dom);
     
@@ -312,6 +319,8 @@ Player.prototype = {
     return media;
   },
   play() {
+    this.controls.play.innerHTML = `<i class="fa fa-pause"></i>`;
+    
     if (!this.video) {
       this.video = createVideoElement(this);
       this.volume(this.video.volume, this.video.muted);
@@ -324,6 +333,8 @@ Player.prototype = {
     this.video.play();
   },
   pause() {
+    this.controls.play.innerHTML = `<i class="fa fa-play"></i>`;
+    
     if (this.video) {
       this.video.pause();
     }
