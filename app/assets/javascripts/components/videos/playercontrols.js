@@ -4,17 +4,81 @@ import { TapToggler } from '../taptoggle';
 import { toHMS } from '../../utils/duration';
 import { Slider } from '../slider';
 import { createMiniTile } from './minitile';
+import { clampPercentage } from '../../utils/math';
+
+function evToProgress(track, ev) {
+  const width = track.clientWidth;
+  if (width === 0) return -1;
+  
+  let x = ev.pageX;
+  if (!x && ev.touches) {
+    x = ev.touches[0].pageX || 0;
+  }
+  
+  x -= track.getBoundingClientRect().left + window.pageXOffset;
+
+  return clampPercentage(x, width);
+}
+
+function evToVolume(volume, ev) {
+  const height = volume.slider.clientHeight;
+  if (height === 0) return -1;
+  
+  let y = ev.pageY;
+  if (!y && ev.touches) {
+    y = ev.touches[0].pageY || 0;
+  }
+  
+  y -= volume.slider.getBoundingClientRect().top + window.pageYOffset;
+
+  return clampPercentage(height - y, height);
+}
+
+function didBufferChange(old, neu) {
+  return !old
+    || old.length != neu.length
+    || (neu.length && old.start != neu.start(0) || old.end != neu.end(neu.length - 1));
+}
+
+function drawPreview(controls, progress) {
+  if (!controls.player.video) {
+    return;
+  }
+
+  const time = (parseInt(controls.player.video.duration) || 0) * progress;
+
+  controls.track.preview.style.left = (progress * 100) + '%';
+  controls.track.preview.dataset.time = toHMS(time);
+
+  if (!controls.player.audioOnly) {
+    controls.preview.draw(time);
+  }
+}
+
+function getVolumeIcon(level) {
+  if (level <= 0) return 'off';
+  if (level < 0.33) return 'down';
+  if (level < 0.66) return 'mid';
+  return 'up';
+}
 
 export function PlayerControls(player, dom) {
   this.dom = dom;
   this.player = player;
   this.rangeEnd = 0;
-  
+
+  this.fullscreen = dom.querySelector('.fullscreen .indicator');
+  this.play = dom.querySelector('.play .indicator');
+
   this.track = dom.querySelector('.track');
   this.track.bob = dom.querySelector('.track .bob');
   this.track.load = dom.querySelector('.track .load');
   this.track.fill = dom.querySelector('.track .fill');
   this.track.preview = dom.querySelector('.track .previewer');
+  
+  this.volume = dom.querySelector('.volume');
+  this.volume.indicator = dom.querySelector('.volume .indicator i');
+  this.volume.slider = dom.querySelector('.volume .slider');
   
   if (player.audioOnly) {
     this.preview = document.createElement('img');
@@ -24,13 +88,13 @@ export function PlayerControls(player, dom) {
     this.preview = createMiniTile(player);
     this.track.preview.appendChild(this.preview.dom);
   }
-  
+
   Slider(this.track, ev => {
     if (!player.contextmenu.hide(ev)) {
       if (!player.video) player.play();
-      const progress = this.evToProgress(ev);
+      const progress = evToProgress(this.track, ev);
       if (ev.touches) {
-        this.drawPreview(progress);
+        drawPreview(this, progress);
       }
       player.jump(progress);
     }
@@ -38,23 +102,40 @@ export function PlayerControls(player, dom) {
     if (!player.contextmenu.hide(ev)) {
       player.dom.classList.add('tracking');
       next(ev => {
-        const progress = this.evToProgress(ev);
-        this.drawPreview(progress);
+        const progress = evToProgress(this.track, ev);
+        drawPreview(this, progress);
         player.jump(progress);
       }, () => {
         player.dom.classList.remove('tracking');
       });
     }
   });
+
+  new TapToggler(this.volume);
   
-  this.track.addEventListener('mousemove', ev => {
-    this.drawPreview(this.evToProgress(ev));
+  Slider(this.volume.slider, ev => {
+    if (!player.contextmenu.hide(ev)) {
+      const volume = evToVolume(this.volume, ev);
+      if (volume >= 0) player.volume(volume);
+    }
+    halt(ev);
+  }, (ev, next) => {
+    if (!player.contextmenu.hide(ev)) {
+      player.dom.classList.add('voluming');
+      next(ev => {
+        const volume = evToVolume(this.volume, ev);
+        if (volume >= 0) player.volume(volume);
+      }, () => {
+        player.dom.classList.remove('voluming');
+      });
+    }
+    halt(ev);
   });
-  
-  this.volume = dom.querySelector('.volume');
-  this.volume.indicator = dom.querySelector('.volume .indicator i');
-  this.volume.slider = dom.querySelector('.volume .slider');
-  this.volume.addEventListener('click', ev => {
+
+  addDelegatedEvent(dom, 'mousemove', '.track', ev => {
+    drawPreview(this, evToProgress(this.track, ev));
+  });
+  addDelegatedEvent(dom, 'click', '.volume', ev => {
     if (ev.button !== 0) return;
     if (!player.contextmenu.hide(ev)) {
       if (this.volume.toggler.interactable()) {
@@ -63,31 +144,6 @@ export function PlayerControls(player, dom) {
       }
     }
   });
-  
-  new TapToggler(this.volume);
-  
-  Slider(this.volume.slider, ev => {
-    if (!player.contextmenu.hide(ev)) {
-      const volume = this.evToVolume(ev);
-      if (volume >= 0) player.volume(volume);
-    }
-    halt(ev);
-  }, (ev, next) => {
-    if (!player.contextmenu.hide(ev)) {
-      player.dom.classList.add('voluming');
-      next(ev => {
-        const volume = this.evToVolume(ev);
-        if (volume >= 0) player.volume(volume);
-      }, () => {
-        player.dom.classList.remove('voluming');
-      });
-    }
-    halt(ev);
-  });
-  
-  this.fullscreen = dom.querySelector('.fullscreen .indicator');
-  this.play = dom.querySelector('.play .indicator');
-
   addDelegatedEvent(dom, 'click', '.fullscreen', ev => {
     if (ev.button !== 0) return;
     if (!player.contextmenu.hide(ev)) {
@@ -109,43 +165,10 @@ export function PlayerControls(player, dom) {
 }
 PlayerControls.prototype = {
   hide() {
-    this.dom.style.opacity = 0;
-    this.player.player.querySelector('.playing').style.cursor = 'none';
+    this.player.dom.dataset.hideControls = '1'
   },
   show() {
-    this.dom.style.opacity = 1;
-    this.player.player.querySelector('.playing').style.cursor = '';
-  },
-  evToProgress(ev) {
-    const width = this.track.clientWidth;
-    if (width === 0) return -1;
-    
-    let x = ev.pageX;
-    if (!x && ev.touches) {
-      x = ev.touches[0].pageX || 0;
-    }
-    
-    x -= this.track.getBoundingClientRect().left + window.pageXOffset;
-    return clampPercentage(x, width);
-  },
-  evToVolume(ev) {
-    const height = this.volume.slider.clientHeight;
-    if (height === 0) return -1;
-    
-    let y = ev.pageY;
-    if (!y && ev.touches) {
-      y = ev.touches[0].pageY || 0;
-    }
-    
-    y -= this.volume.slider.getBoundingClientRect().top + window.pageYOffset;
-    return clampPercentage(height - y, height);
-  },
-  drawPreview(progress) {
-    if (!this.player.video) return;
-    this.track.preview.style.left = (progress * 100) + '%';
-    const time = (parseInt(this.player.video.duration) || 0) * progress;
-    this.track.preview.dataset.time = toHMS(time);
-    if (!this.player.audioOnly) this.preview.draw(time);
+    this.player.dom.dataset.hideControls = '0'
   },
   repaintVolumeSlider(volume) {
     this.volume.indicator.setAttribute('class', 'fa fa-volume-' + getVolumeIcon(volume));
@@ -156,6 +179,7 @@ PlayerControls.prototype = {
   repaintTrackBar(percentFill) {
     this.track.bob.style.left = percentFill + '%';
     this.track.fill.style.right = (100 - percentFill) + '%';
+
     if (didBufferChange(this.buffer, this.player.video.buffered)) {
       this.repaintProgress(this.player.video);
     }
@@ -179,20 +203,3 @@ PlayerControls.prototype = {
     };
   }
 };
-
-function didBufferChange(old, neu) {
-  return !old || old.length != neu.length || (neu.length && old.start != neu.start(0) || old.end != neu.end(neu.length - 1));
-}
-
-function getVolumeIcon(level) {
-  if (level <= 0) return 'off';
-  if (level < 0.33) return 'down';
-  if (level < 0.66) return 'mid';
-  return 'up';
-}
-
-function clampPercentage(p, max) {
-  if (p < 0) return 0;
-  if (p > max) return 1;
-  return p / max;
-}

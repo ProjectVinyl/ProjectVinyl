@@ -9,12 +9,34 @@
   color: var(--controls-foreground);
 }
 .video .playback-controls {
-  display: none;
+  visibility: hidden;
   position: absolute;
   opacity: 0;
-  transition: opacity 0.5s linear;
+  transition: opacity 0.5s linear, visibility 0.5s linear;
   padding-top: 50px;
   box-shadow: 0 -50px 40px -40px #000 inset;
+}
+
+.video .player[data-state=playing] + .playback-controls,
+.video .player[data-state=paused] + .playback-controls {
+  visibility: visible;
+}
+
+.video .player[data-state=paused] + .playback-controls {
+  opacity: 1;
+}
+
+.video:hover .playback-controls, .video.hover .playback-controls, .video.audio-only .playback-controls,
+.video .playback-controls:hover {
+  opacity: 1;
+  visibility: visible;
+}
+.video[data-hide-controls="1"] .playback-controls {
+  opacity: 0;
+  visibility: hidden;
+}
+.video[data-hide-controls="1"] .playing {
+  cursor: none;
 }
 
 .playback-controls ul {
@@ -26,21 +48,6 @@
   margin: 0 15px 15px 15px;
 }
 
-.video:hover .playback-controls, .video.hover .playback-controls, .video.audio-only .playback-controls {
-  opacity: 1;
-}
-.video .playback-controls:hover {
-  opacity: 1 !important;
-}
-
-.video .player[data-state=playing] + .playback-controls,
-.video .player[data-state=paused] + .playback-controls {
-  display: block;
-}
-
-.video .player[data-state=paused] + .playback-controls {
-  opacity: 1 !important;
-}
 
 .playback-controls li {
   display: inline-block;

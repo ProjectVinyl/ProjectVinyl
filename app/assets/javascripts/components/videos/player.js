@@ -198,8 +198,7 @@ Player.prototype = {
   },
   fullscreen(on) {
     this.controls.fullscreen.innerHTML = `<i class="fa fa-${on ? 'restore' : 'arrows-alt'}"></i>`;
-    this.player.media.style.cursor = on ? 'none' : '';
-    
+
     if (fullscreenPlayer && fullscreenPlayer !== this) {
       fullscreenPlayer.fullscreen(false);
     }

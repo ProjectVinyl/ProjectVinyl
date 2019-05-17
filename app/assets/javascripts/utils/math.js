@@ -15,3 +15,7 @@ export function ease(t) {
 export function clamp(x, min, max) {
   return Math.max(Math.min(x, max), min);
 }
+
+export function clampPercentage(p, max) {
+  return clamp(p, 0, max) / max;
+}
