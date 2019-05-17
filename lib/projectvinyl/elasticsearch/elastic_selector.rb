@@ -118,7 +118,7 @@ module ProjectVinyl
             }
           }
         end
-        puts query
+
         query
       end
 
