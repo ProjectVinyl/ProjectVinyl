@@ -44,10 +44,11 @@ module ProjectVinyl
       end
       
       def order_by(ordering)
+        @ascending = true
         @ordering = [ordering]
         self
       end
-      
+
       def random_order(session, _ordering, possibles)
         if @page == 0
           session[:random_ordering] = possibles[rand(0..possibles.length)].to_s + ';' + possibles[rand(0..possibles.length)].to_s
