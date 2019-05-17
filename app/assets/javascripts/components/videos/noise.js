@@ -4,6 +4,7 @@ function noise(canvas, ctx) {
       idata = ctx.createImageData(w, h),
       buffer32 = new Uint32Array(idata.data.buffer),
       len = buffer32.length;
+
   for (let i = 0; i < len;) {
     buffer32[i++] = ((255 * Math.random()) | 0) << 24;
   }
@@ -22,7 +23,9 @@ export function setupNoise(parent) {
   
   function loop() {
     noise(canvas, ctx);
-    if (running) requestAnimationFrame(loop);
+    if (running) {
+      requestAnimationFrame(loop);
+    }
   }
   
   loop();
@@ -33,4 +36,4 @@ export function setupNoise(parent) {
       running = false;
     }
   };
-};
+}

@@ -28,4 +28,3 @@ export function setFullscreen(sender) {
 onFullscreenChange(() => {
   if (fullscreenPlayer) fullscreenPlayer.fullscreen(isFullscreen());
 });
-
