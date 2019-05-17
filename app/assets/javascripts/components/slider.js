@@ -10,10 +10,12 @@ function iterateEvents(mode, ender, change) {
 export function Slider(dom, jump, grab) {
   const grabCallback = (change, end) => {
     const ender = () => {
+      dom.classList.remove('interacting');
       iterateEvents('remove', ender, change);
       end();
     };
     
+    dom.classList.add('interacting');
     iterateEvents('add', ender, change);
   };
   const grabEvent = ev => {

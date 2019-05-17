@@ -116,7 +116,6 @@
   margin: -5px 0 0 -10px;
   transition: left 0.25s linear;
 }
-
 .playback-controls .track .fill {
   top: 0;
   right: 100%;
@@ -169,6 +168,12 @@
   top: 100%;
   right: 0;
   transition: top 0.25s linear;
+}
+
+.playback-controls .interacting,
+.playback-controls .interacting .fill,
+.playback-controls .interacting .bob {
+  transition: none !important;
 }
 
 .playback-controls .maximise {
