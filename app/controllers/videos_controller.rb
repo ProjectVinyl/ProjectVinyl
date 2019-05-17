@@ -365,7 +365,8 @@ class VideosController < ApplicationController
   def load_album
     if params[:list] || params[:q]
       if params[:q]
-        @album = VirtualAlbum.new(params[:q], params[:id], params[:index].to_i)
+        @album = VirtualAlbum.new(params[:q], @video, params[:index].to_i)
+        @video = @album.current(@video)
       else
         @album = Album.where(id: params[:list]).first
       end
@@ -373,6 +374,7 @@ class VideosController < ApplicationController
       if @album
         @items = params[:q] ? @album.album_items : @album.album_items.order(:index)
         @index = params[:index].to_i || (@items.first ? @items.first.index : 0)
+        @index = @album.current_index(@index)
         
         if @index > 0
           @prev_video = @album.get_prev(current_user, @index)

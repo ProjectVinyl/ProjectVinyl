@@ -109,6 +109,10 @@ class Album < ApplicationRecord
     items
   end
   
+  def current_index(defau)
+    defau
+  end
+  
   def get_next(user, current)
     self.all_items.discriminate('>', current, user).first
   end

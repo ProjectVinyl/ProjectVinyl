@@ -98,16 +98,29 @@ module ProjectVinyl
         if @type != 'video'
           return query
         end
+
         if !query.key?(:bool)
           query = { term: { hidden: false } }
         else
           if !query[:bool].key?(:must)
             query[:bool][:must] = []
           end
+
           if !@elastic.uses(:hidden)
             query[:bool][:must] << { term: { hidden: false } }
           end
+          
+          if !@search_after.nil?
+            query[:bool][:must] << {
+              range: {
+                created_at: {
+                  gte: @search_after
+                }
+              }
+            }
+          end
         end
+
         if @randomized
           query = {
             function_score: {
@@ -121,34 +134,46 @@ module ProjectVinyl
 
         query
       end
+      
+      def following(obj)
+        @search_after = obj.created_at.to_i
+        
+        self
+      end
 
       def exec
-        if !@elastic
-          @elastic = ElasticBuilder.interpret_opset(@type, @opset, @user)
-        end
         @page = 0 if @page.nil?
+        @elastic = ElasticBuilder.interpret_opset(@type, @opset, @user) if !@elastic
+
         params = {
           from: @offset + @limit * @page,
           size: @limit,
           query: add_required_params(@elastic.to_hash)
         }
+
         if !ordering.empty? && !@randomized
           params[:sort] = ordering
         end
+
         if @page < 0
           @page = 0
           params[:from] = 0
           @search = table.search(params)
+
           return self if @search.results.total <= @limit
+
           @page = (@search.results.total / @limit).floor
           params[:from] = @page * @limit
         end
+
         @search = table.search(params)
+
         if @search.count == 0 && @search.results.total > 0 && @page > 0
           @page = (@search.results.total / @limit).floor
           params[:from] = @page * @limit
           @search = table.search(params)
         end
+
         self
       rescue ProjectVinyl::Search::LexerError => e
         @exception = e
