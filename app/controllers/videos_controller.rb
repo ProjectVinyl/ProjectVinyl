@@ -365,7 +365,7 @@ class VideosController < ApplicationController
   def load_album
     if params[:list] || params[:q]
       if params[:q]
-        @album = VirtualAlbum.new(params[:q], params[:index].to_i)
+        @album = VirtualAlbum.new(params[:q], params[:id], params[:index].to_i)
       else
         @album = Album.where(id: params[:list]).first
       end

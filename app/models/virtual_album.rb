@@ -1,9 +1,9 @@
 require 'projectvinyl/elasticsearch/elastic_selector'
 
 class VirtualAlbum < Album
-  def initialize(query, index)
+  def initialize(query, id, index)
     @index = index < 0 ? 0 : index
-    @offset = index < 20 ? 0 : index - 20
+    @offset = @index < 20 ? 0 : @index - 20
     @query = query.strip
     @items = []
     @videos = []
@@ -11,7 +11,11 @@ class VirtualAlbum < Album
       self.fetch_items.each_with_index do |item, i|
         @videos << item
         @items << VirtualAlbumItem.new(self, item, @offset + i)
-        @current = item if @offset + i == @index
+        
+        if item.id == id
+          @current = item
+          @index = i
+        end
       end
     end
   end
