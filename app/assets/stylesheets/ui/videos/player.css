@@ -22,79 +22,12 @@
 .video .player video {
   pointer-events: none;
 }
-.video .player h1,
-.video .player::after {
-  transition:
-    opacity 0.25s linear,
-    top 0.25s linear,
-    left 0.25s linear,
-    transform 0.25s ease, -ms-transform 0.25s ease,
-    -o-transform 0.25s ease,
-    -webkit-transform 0.25s ease,
-    -moz-transform 0.25s ease;
-}
-.video .player.playing::after {
-  transition:
-    opacity 0.125s linear,
-    transform 0.25s ease,
-    -ms-transform 0.25s ease,
-    -o-transform 0.25s ease,
-    -webkit-transform 0.25s ease,
-    -moz-transform 0.25s ease;
-}
-
-.video:not(.unplayable) .player::after {
-  cursor: pointer;
-  content: "\f04b";
-  display: block;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  border-radius: 100%;
-  background: red;
-  width: 100px;
-  height: 100px;
-  margin: -50px 0 0 -50px;
-  text-align: center;
-  line-height: 100px;
-  font-size: 4em;
-  font-family: 'FontAwesome';
-  text-indent: 3px;
-  opacity: 0.6;
-}
-.video:not(.unplayable) .player[data-state=paused]::after {
-  content: "\f04c";
-  top: 50px;
-  left: 50px;
-  transform: scale(0.5);
-}
-.video:not(.unplayable) .player[data-state=stopped]::after {
-  content: "\f01e";
-}
-.video:not(:hover) .player.error::after,
-.video:not(.unplayable) .player[data-state=playing]::after {
-  cursor: default;
-  transform: scale(0.5);
-  top: 50px;
-  left: 50px;
-  opacity: 0;
-}
-
-@media(max-width: 500px) {
-  .video:not(.unplayable) .player::after {
-    transform: scale(0.65);
-  }
-}
 
 .video .player h1 {
   white-space: nowrap;
   opacity: 0.7;
   border: none;
   box-shadow: 0 50px 40px -40px #000 inset;
-}
-
-.video .player:hover h1, .video .player:hover::after {
-  opacity: 0.99;
 }
 
 .video .player span.pause {
