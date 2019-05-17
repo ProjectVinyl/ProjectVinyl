@@ -39,11 +39,13 @@
   text-indent: 3px;
   opacity: 0.6;
 }
+.video .player:hover h1,
+.video .player:hover::after {
+  opacity: 0.99;
+}
+
 .video:not(.unplayable) .player[data-state=paused]::after {
-  content: "\f04c";
-  top: 50px;
-  left: 50px;
-  transform: scale(0.5);
+  display: none;
 }
 .video:not(.unplayable) .player[data-state=stopped]::after {
   content: "\f01e";
@@ -62,8 +64,3 @@
     transform: scale(0.65);
   }
 }
-
-.video .player:hover h1, .video .player:hover::after {
-  opacity: 0.99;
-}
-
