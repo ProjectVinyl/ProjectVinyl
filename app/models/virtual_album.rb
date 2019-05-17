@@ -92,7 +92,7 @@ class VirtualAlbum < Album
   def fetch_items
     ProjectVinyl::ElasticSearch::ElasticSelector.new(nil, @query)
       .order_by(:created_at)
-      .query(0, 20)
+      .query(0, @index + 5)
       .videos
       .following(current(nil))
       .offset(@offset)
