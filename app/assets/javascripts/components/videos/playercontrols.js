@@ -1,5 +1,5 @@
 import { isFullscreen } from '../../utils/fullscreen';
-import { addDelegatedEvent, halt } from '../../jslim/events';
+import { addDelegatedEvent, bindEvent, halt } from '../../jslim/events';
 import { TapToggler } from '../taptoggle';
 import { toHMS } from '../../utils/duration';
 import { Slider } from '../slider';
@@ -106,7 +106,7 @@ export function PlayerControls(player, dom) {
         drawPreview(this, progress);
         player.jump(progress);
       }, () => {
-        player.dom.classList.remove('tracking');
+        requestAnimationFrame(() => player.dom.classList.remove('tracking'));
       });
     }
   });
@@ -126,7 +126,7 @@ export function PlayerControls(player, dom) {
         const volume = evToVolume(this.volume, ev);
         if (volume >= 0) player.volume(volume);
       }, () => {
-        player.dom.classList.remove('voluming');
+        requestAnimationFrame(() => player.dom.classList.remove('voluming'));
       });
     }
     halt(ev);
@@ -161,7 +161,7 @@ export function PlayerControls(player, dom) {
     if (ev.button !== 0) return;
     player.togglePlayback();
   });
-  addDelegatedEvent(dom, 'click', 'li', halt);
+  bindEvent(dom, 'click', halt);
 }
 PlayerControls.prototype = {
   hide() {

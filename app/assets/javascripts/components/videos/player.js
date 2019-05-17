@@ -54,7 +54,7 @@ function registerEvents(player, el) {
           return player.playlist.classList.toggle('visible');
         }
         
-        if (ev.target.closest('.action')) {
+        if (ev.target.closest('.action, .voluming, .tracking')) {
           return;
         }
 
