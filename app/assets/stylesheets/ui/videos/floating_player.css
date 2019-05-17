@@ -8,6 +8,7 @@
   
   --controls-foreground: #444;
 }
+.floating-player .playback-controls .fullscreen,
 .floating-player .playback-controls .previewer {
   display: none;
 }
