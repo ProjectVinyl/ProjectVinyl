@@ -1,7 +1,6 @@
 
 html, body {
-  --site-banner: url(../images/banner-image.png) no-repeat top left / auto 200%,
-                 url(../images/banner-image.png) bottom right / auto 200% var(--content-background);
+  --site-banner: url(../images/new-banner.jpg) no-repeat top center / auto var(--content-background);
 
   --site-background: #f1f1f1;
 
@@ -26,7 +25,7 @@ html, body {
   --no-link-color: #aaa;
   
   --input-shadow: rgba(255, 255, 255, 0.8);
-  --input-border: rgb(204, 204, 204);
+  --input-border: #ccc;
   --input-background: rgb(255, 255, 250);
   --input-background-focus: rgba(200,200,200,0.1);
 }
