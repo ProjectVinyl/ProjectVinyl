@@ -56,7 +56,8 @@
 .playback-controls .track {
   transition: background 0.5s ease;
   position: relative;
-  margin-left: 5px;
+  margin-left: 15px;
+  margin-right: 15px;
   height: 10px;
   cursor: pointer;
   border-radius: 4px;
@@ -127,11 +128,8 @@
   width: 20px;
   height: 100%;
   cursor: pointer;
-  margin-right: 5px;
-}
-.playback-controls * + .icon {
-  margin-left: 5px;
-  margin-right: 0px;
+  margin-left: 2px;
+  margin-right: 2px;
 }
 
 .playback-controls .icon .indicator {
