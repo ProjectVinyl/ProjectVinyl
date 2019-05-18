@@ -258,7 +258,7 @@ Player.prototype = {
   },
   setAutostart(on) {
     this.__autostart = on;
-    cookies.set('autoplay', on);
+    cookies.set('autostart', on);
 
     return on;
   },
