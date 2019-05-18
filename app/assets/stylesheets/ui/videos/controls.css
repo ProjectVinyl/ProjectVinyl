@@ -15,7 +15,7 @@
   opacity: 0;
   transition: opacity 0.5s linear, visibility 0.5s linear;
 }
-.controls.playback-controls::before {
+.video .playback-controls::before {
   display: block;
   content: '';
   box-shadow: 0 -50px 40px -40px var(--controls-background) inset;
