@@ -133,7 +133,7 @@ Player.prototype = {
     this.floater = document.querySelector('.floating-player');
     
     this.dom = el;
-    this.embedded = !!el.dataset.embed;
+    this.embedded = !!el.dataset.embed || !!el.closest('.featured');
     this.audioOnly = !!el.dataset.audio;
     this.source = el.dataset.video || el.dataset.audio;
     this.video = null;
