@@ -2,17 +2,30 @@
 	%h1
 		= fw :star
 		Featured Video
-	%ul.horizontal.center
-		= render 'videos/thumb_f', thumb_f: @featured
-	.description.fade-away= raw @featured.html_description
-	.scoring
-		%span.button.green.like(title="Likes")<>
-			%b= safe_to_display @featured.upvotes, 9999
+	- @video = @featured
+	= render partial: 'videos/widget/full', locals: {embed: false}
+	.post.resize-holder
+		%h2.title.post-title.resize-target
+			%a{href: @featured.link}= @featured.title
+		.tag-set.subheading
+			%span.uploaded
+				Uploaded on
+				= @featured.created_at.to_time.strftime('%e %B %Y')
+				by
+				%a.user-link.link{href: @video.user.link, data: {id: @video.user.id}}= @video.user.username
+			%span.views.right
+				= number_with_delimiter @featured.views
+				views
+		.description.post-content.content.fade-away
+			= raw @video.html_description
+	.scoring.actions
+		%span.button.action.green.like{class: @featured.is_upvoted && "liked", title: "Likes", data: {count: @featured.upvotes, action: "like", id: @featured.id}}<>
+			%b.count= safe_to_display @featured.upvotes, 9999
 			= fw :thumbs_up
 		%span.button.score(title="Score")<>
 			%b= safe_to_display  @featured.score, 9999
-		%span.button.red.dislike(title="Dislikes")<>
-			%b= safe_to_display  @featured.downvotes, 9999
+		%span.button.action.red.dislike{class: @featured.is_downvoted && "liked", title: "Dislikes", data: {count: @featured.downvotes, action: "dislike", id: @featured.id}}<>
+			%b.count= safe_to_display  @featured.downvotes, 9999
 			= fw :thumbs_down
 		%a.button.blue.comments{href: @featured.comment_thread.link, title: "Comments"}<>
 			%b= safe_to_display  @featured.comment_thread.total_comments, 9999
