@@ -1,5 +1,6 @@
 .playback-controls {
   --controls-foreground: #fff;
+  --controls-background: #000;
 
   position: fixed;
   left: 0;
@@ -13,8 +14,17 @@
   position: absolute;
   opacity: 0;
   transition: opacity 0.5s linear, visibility 0.5s linear;
-  padding-top: 50px;
-  box-shadow: 0 -50px 40px -40px #000 inset;
+}
+.controls.playback-controls::before {
+  display: block;
+  content: '';
+  box-shadow: 0 -50px 40px -40px var(--controls-background) inset;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 50px;
+  pointer-events: none;
 }
 
 .video .player[data-state=playing] + .playback-controls,
