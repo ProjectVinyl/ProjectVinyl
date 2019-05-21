@@ -36,7 +36,7 @@ class AlbumsController < ApplicationController
       embed_url: url_for({
         action: :show,
         controller: 'embed/videos',
-        id: @items.records.first.video_id,
+        id: @items.count > 0 ? @items.records.first.video_id : 0,
         list: @album.id,
         index: 0,
         only_path: false
