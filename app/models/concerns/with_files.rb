@@ -20,7 +20,7 @@ module WithFiles
   end
   
   def file_link(path, name)
-    "/admin/files?p=#{path}&start=#{name}%offset=-5##{self.id}"
+    "/admin/files?p=#{path}&start=#{name}&offset=-5##{self.id}"
   end
   
   def save_file(path, uploaded_io, type)
