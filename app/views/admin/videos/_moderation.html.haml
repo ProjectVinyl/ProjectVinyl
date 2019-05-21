@@ -1,0 +1,11 @@
+%section.page.properties.column-left
+	%h1 Moderation Notes
+	= form_for(@video, as: "video", url: admin_video_moderation_path(@video), html: { method: :put }) do |f|
+		%table
+			%tr
+				%td.field
+					= render layout: "comments/description_box" do
+						= f.text_area :moderation_note, class: "comment-content"
+			%tr
+				%td
+					= f.submit "Save", class: "right green"

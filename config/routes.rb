@@ -170,6 +170,7 @@ Rails.application.routes.draw do
       put 'resetthumb'
       put 'merge'
       put 'metadata'
+      put 'moderation'
     end
     
     resources :tags, only: [:show, :update]

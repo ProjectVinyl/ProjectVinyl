@@ -4,7 +4,7 @@
 			.notice.pending This video is still being processed by our background ponies. If it does not play correctly try again later.
 		- if @video.hidden
 			.notice.alert This video has been hidden. It will not be shown on other parts of the site until being passed by moderation.
-		- if @video.moderation_note
+		- if @video.moderation_note && !@video.moderation_note.empty?
 			.notice.alert
 				%b Reason:
 				= @video.moderation_note

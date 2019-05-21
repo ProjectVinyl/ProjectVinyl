@@ -24,23 +24,30 @@ module Admin
         title: @video.title
       }
     end
-    
+
     def hidden
       page(Video.where(hidden: true), true)
     end
-    
+
     def unprocessed
       page(Video.where("(processed IS NULL or processed = false) AND hidden = false"), true)
     end
-    
+
     def destroy
       badly_named_function do
         if !(video = Video.where(id: params[:id]).first)
           return flash[:error] = "Video not be found"
         end
-        
+
         video.destroy
         flash[:notice] = "1 Item(s) deleted successfully"
+      end
+    end
+
+    def moderation
+      try_to do |video|
+        video.moderation_note = params[:video][:moderation_note]
+        video.save
       end
     end
     
