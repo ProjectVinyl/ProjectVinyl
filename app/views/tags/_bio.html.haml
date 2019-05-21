@@ -21,15 +21,18 @@
 		%span.content.bio= @tag.get_description
 	- if @implies.length > 0
 		%div
-			%h1 Implies
+			%h2 Implies
+			%hr
 			%ul.tags= render partial: "tags/thumb_h", collection: @implies
 	- if @implied.length > 0
 		%div
-			%h1 Implied by
+			%h2 Implied by
+			%hr
 			%ul.tags= render partial: "tags/thumb_h", collection: @implied
 	- if @aliases.length > 0
 		%div
-			%h1 Aliases
+			%h2 Aliases
+			%hr
 			%ul.tags= render partial: "tags/thumb_h", collection: @aliases
 	- if user_signed_in?
 		= render 'tags/actions'

@@ -74,7 +74,7 @@ div.group {
 
 .tag-header {
   vertical-align: middle;
-  height: 8em;
+  min-height: 8em;
   padding-top: 1em;
 }
 .tag-header .title {
