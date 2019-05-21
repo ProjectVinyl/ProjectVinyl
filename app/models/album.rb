@@ -13,14 +13,14 @@ class Album < ApplicationRecord
   
   def set_description(text)
     self.description = text
-    self.html_description = bbcodeHelper.emotify(text)
+    self.html_description = BbcodeHelper.emotify(text)
     self
   end
 
   def set_title(title)
     title = StringsHelper.check_and_trunk(title, self.title || "Untitled Album")
     self.title = title
-    self.safe_title = PathsHelper.url_safe(title)
+    self.safe_title = PathHelper.url_safe(title)
     self.save
   end
 
