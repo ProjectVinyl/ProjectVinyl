@@ -14,7 +14,7 @@ addDelegatedEvent(document, 'click', '.removeable .remove', function(e) {
   }
 
   if (me.dataset.target) {
-    ajax.delete(`${me.dataset.target}/${me.dataset.id}`).json(() => remove(me));
+    ajax.delete(`${me.dataset.target}/${me.dataset.id}`).text(() => remove(me));
   } else {
     remove(me);
   }
