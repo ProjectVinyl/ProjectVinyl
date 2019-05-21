@@ -6,6 +6,8 @@ module ProjectVinyl
   module Web
     class Youtube
       def self.get(url, wanted_data = {})
+        output_data = {}
+
         if Youtube.flag_set(wanted_data, :all) ||
             Youtube.flag_set(wanted_data, :title) ||
             Youtube.flag_set(wanted_data, :artist) ||
@@ -14,23 +16,24 @@ module ProjectVinyl
           Ajax.get('https://www.youtube.com/oembed', url: 'http:' + url.sub(/http?(s):/, ''), format: 'json') do |body|
             begin
               body = JSON.parse(body)
+
               if Youtube.flag_set(wanted_data, :all)
-                wanted_data[:all] = body
+                output_data[:all] = body
               end
 
               if Youtube.flag_set(wanted_data, :title)
-                wanted_data[:title] = body['title']
+                output_data[:title] = body['title']
               end
 
               if Youtube.flag_set(wanted_data, :artist)
-                wanted_data[:artist] = {
+                output_data[:artist] = {
                   name: body['author_name'],
                   url: body['author_url']
                 }
               end
 
               if Youtube.flag_set(wanted_data, :thumbnail)
-                wanted_data[:thumbnail] = {
+                output_data[:thumbnail] = {
                   url: body['thumbnail_url'],
                   width: body['thumbnail_width'],
                   height: body['thumbnail_height']
@@ -38,7 +41,7 @@ module ProjectVinyl
               end
 
               if Youtube.flag_set(wanted_data, :iframe)
-                wanted_data[:iframe] = body['html']
+                output_data[:iframe] = body['html']
               end
             rescue e
             end
@@ -59,7 +62,7 @@ module ProjectVinyl
                   a.inner_text = a.attributes[:href]
                 end
 
-                wanted_data[:description] = {
+                output_data[:description] = {
                   html: desc_node.outer_html,
                   bbc: desc_node.outer_bbc
                 }
@@ -68,14 +71,15 @@ module ProjectVinyl
 
             if Youtube.flag_set(wanted_data, :source)
               if src = Youtube.source_from_html(body)
-                wanted_data[:source] = src
+                output_data[:source] = src
               end
             end
           end
         end
-        wanted_data
+
+        output_data
       end
-      
+
       def self.source_from_html(html)
         map_index = html.index('url_encoded_fmt_stream_map')
         return nil if !map_index

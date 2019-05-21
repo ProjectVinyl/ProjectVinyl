@@ -391,18 +391,22 @@ class Video < ApplicationRecord
     if src.present?
       src = "https://www.youtube.com/watch?v=#{ProjectVinyl::Web::Youtube.video_id(src)}"
       self.set_source(src)
-      
+
       fields[:artist] = fields[:tags]
       meta = ProjectVinyl::Web::Youtube.get(src, fields)
+
       if meta[:title]
         self.set_title(meta[:title])
       end
+
       if meta[:description]
         self.set_description(meta[:description][:bbc])
       end
+
       if meta[:artist]
         if (artist_tag = Tag.sanitize_name(meta[:artist][:name])) && !artist_tag.empty?
           artist_tag = Tag.add_tag('artist:' + artist_tag, self)
+
           if !artist_tag.nil?
             TagHistory.record_tag_changes(artist_tag[0], artist_tag[1], self.id)
           end
@@ -411,7 +415,15 @@ class Video < ApplicationRecord
       
       TagHistory.record_source_changes(self)
       self.save
+
+      if meta.empty?
+        return :not_found
+      end
+
+      return :ok
     end
+
+    :no_action
   end
 
   def set_source(s)

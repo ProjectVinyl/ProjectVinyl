@@ -60,7 +60,15 @@ module Admin
 
     def metadata
       try_to do |video|
-        video.pull_meta(params[:source], params)
+        result = video.pull_meta(params[:source], params)
+
+        if result == :ok
+          flash[:notice] = "The video was updated succesfully."
+        elsif result == :not_found
+          flash[:error] = "Video source was not found."
+        else
+          flash[:error] = "Error #{result}."
+        end
       end
     end
     
