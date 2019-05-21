@@ -78,7 +78,7 @@ class AlbumsController < ApplicationController
         initial = params[:album][:initial]
         if initial && (initial = Video.where(id: initial).first)
           album.add_item(initial)
-          return redirect_to action: :view, controller: :video, id: initial.id
+          return redirect_to action: :show, controller: :video, id: initial.id
         end
       end
       redirect_to action: :show, id: album.id
@@ -126,7 +126,7 @@ class AlbumsController < ApplicationController
       end
       
       album.destroy
-      redirect_to action: :view, controller: :user, id: album.user_id
+      redirect_to action: :show, controller: :users, id: album.user_id
     end
   end
   
