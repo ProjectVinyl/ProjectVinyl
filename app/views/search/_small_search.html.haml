@@ -3,5 +3,5 @@
 		%input#search_small(name="tagquery" type="search" placeholder="Tag Search" value="#{query}")
 		%label.select
 			%select#search_type_small(name="type")
-				= sensible_option_for_select %w[ Song Album User Tag ], search_type
+				= sensible_option_for_select %w[ Video Album User Tag ], search_type
 		%button(type="submit")= fa :search
