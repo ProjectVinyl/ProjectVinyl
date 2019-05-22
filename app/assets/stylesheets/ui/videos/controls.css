@@ -1,6 +1,10 @@
 .playback-controls {
   --controls-foreground: #fff;
   --controls-background: #000;
+  --bob-tint: #f00;
+  --bob-highlight: #f00;
+  --bob-outline: transparent;
+  --progress-fill-color: red;
 
   position: fixed;
   left: 0;
@@ -85,8 +89,9 @@
 
 .playback-controls .bob {
   position: absolute;
-  background: #f00;
-  box-shadow: 0 0 3px 5px #f00 inset;
+  background: var(--bob-tint);
+  box-shadow: 0 0 3px 5px var(--bob-highlight) inset;
+  border: 1px solid var(--bob-outline);
   border-radius: 100%;
   width: 20px;
   height: 20px;
@@ -116,7 +121,7 @@
   box-shadow: -15px 0 15px -15px #ffe inset;
 }
 .playback-controls .fill {
-    background: red;
+    background: var(--progress-fill-color);
     opacity: 1;
 }
 
