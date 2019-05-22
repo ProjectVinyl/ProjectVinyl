@@ -45,6 +45,9 @@
   opacity: 1;
   visibility: visible;
 }
+
+.video .player[data-state=ready] + .playback-controls,
+.video .player[data-state=stopped] + .playback-controls,
 .video[data-hide-controls="1"] .playback-controls {
   opacity: 0;
   visibility: hidden;
