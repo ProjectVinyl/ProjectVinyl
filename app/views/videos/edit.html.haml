@@ -18,8 +18,9 @@
 			.cover-block.selected.tab.drag-target.file-select.image-selector#cover-upload(data-tab="thumbupload")
 				%span.preview{style: format_bg(@video.direct_thumb)}
 				%span.drop-icon
-					= fa :picture_o
-					%div Select Cover Art
+					%div
+						= fa :picture_o
+						.msg Select Cover Art
 				= f.file_field :cover, accept: 'image/*'
 			- if current_user.is_staff?
 				.hidden.cover-block.drag-target.file-select.video-drop#video-upload
