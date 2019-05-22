@@ -55,19 +55,18 @@
 					.properties
 						%table
 							%tr
-								%td(colspan="2")
+								%td
 									= render layout: "comments/description_box" do
 										= f.text_area :description, autofocus: true, class: "comment-content"
 							%tr
-								%td(colspan="2")
+								%td
 									.post-tags
 										= render layout: "tags/editor", locals: {tags: nil} do
 											= f.text_area :tag_string
 							%tr
-								%td.label= f.label :source
 								%td.field
-									= f.text_field :source, class: "input"
-									%span.info.hidden(style="color:red")
+									= f.text_field :source, class: "input", placeholder: "Source"
+									%span.notice.alert.info.hidden(style="color:red")
 					.actions
 						%button.action.change-video(type="button") Change Main File
 						%span.notify.bob-holder
