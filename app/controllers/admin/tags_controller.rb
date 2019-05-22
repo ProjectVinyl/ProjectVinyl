@@ -31,7 +31,7 @@ module Admin
       
       @tag.description = params[:tag][:description]
       
-      if params[:tag][:alias_tag] && (@alias = Tag.by_name_or_id(params[:tag][:alias_tag])).first
+      if params[:tag][:alias_tag] && (@alias = Tag.by_name_or_id(params[:tag][:alias_tag]).first)
         @tag.set_alias(@alias)
       else
         @tag.unset_alias
