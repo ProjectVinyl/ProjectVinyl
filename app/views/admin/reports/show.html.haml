@@ -29,7 +29,7 @@
 			.date.right= since @report.created_at
 			%table(style="table-layout:auto" class="properties comment-content preview")
 				- if @video
-					= render 'layouts/video_thumb_h', video_thumb_h: @video
+					= render 'videos/thumb_h', thumb_h: @video
 				%tr
 					%td Report Type:
 					%td= @report.first
