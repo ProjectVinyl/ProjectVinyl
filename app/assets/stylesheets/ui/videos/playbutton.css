@@ -36,7 +36,7 @@
   line-height: 100px;
   font-size: 4em;
   font-family: 'FontAwesome';
-  text-indent: 3px;
+  text-indent: 10px;
   opacity: 0.6;
 }
 .video .player:hover h1,
