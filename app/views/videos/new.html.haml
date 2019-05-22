@@ -37,18 +37,32 @@
 						.progress
 							.fill
 				.ui.hidden.post.description.resize-holder
-					%h1.title.editable.short.post-title.resize-target#video_title
+					%hr
+					%h2.title.editable.short.post-title.resize-target#video_title
 						%span.content Title
 						= f.text_field :title, class: "input"
 						%span.edit= fa :pencil
 						%span.hidden 11
-					= render layout: "comments/description_box" do
-						= f.text_area :description, autofocus: true, class: "comment-content"
-					.post-tags
-						= render layout: "tags/editor", locals: {tags: nil} do
-							= f.text_area :tag_string
+					.tag-set.subheading
+						%span.uploaded
+							Uploaded on
+							= Time.now.strftime('%e %B %Y')
+							by
+							%a.user-link.link{href: current_user.link, data: {id: current_user.id}}= current_user.username
+						%span.views.right
+							= number_with_delimiter @video.views
+							views
 					.properties
 						%table
+							%tr
+								%td(colspan="2")
+									= render layout: "comments/description_box" do
+										= f.text_area :description, autofocus: true, class: "comment-content"
+							%tr
+								%td(colspan="2")
+									.post-tags
+										= render layout: "tags/editor", locals: {tags: nil} do
+											= f.text_area :tag_string
 							%tr
 								%td.label= f.label :source
 								%td.field
