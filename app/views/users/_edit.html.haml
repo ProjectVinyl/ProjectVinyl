@@ -9,7 +9,8 @@
 					.avatar-wrapper
 						.avatar.drag-target.file-select.auto-submit.image-selector.uploaded-preview.revertable#avatar-upload
 							%span.preview(style="#{format_bg user.avatar}")
-							%span.drop-icon(style="box-shadow: none")= fa :camera
+							%span.drop-icon
+								%div= fa :camera
 							= f.file_field :avatar, accept: 'image/*'
 						.buttons.file-select-options
 							%label.link.red

@@ -23,13 +23,15 @@
 						.cover-block.tab.drag-target.file-select.image-selector#cover-upload(data-tab="thumbupload_{id}")
 							%span.preview
 							%span.drop-icon
-								= fa :picture_o
-								%div Select Cover Art
+								%div
+									= fa :picture_o
+									.msg Select Cover Art
 							= f.file_field :cover, accept: "image/*"
 					.ui.shown.cover-block.drag-target.file-select.video-drop#video-upload
 						%span.drop-icon
-							= fa :upload
-							%div Select an Audio/Video file to upload
+							%div
+								= fa :upload
+								.msg Select an Audio/Video file to upload
 						= f.file_field :file, accept: "audio/*,video/*"
 				.progressor
 					.cover-block

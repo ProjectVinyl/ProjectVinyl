@@ -35,8 +35,13 @@
 }
 
 .image-selector.avatar .drop-icon {
-  display: none;
+  box-shadow: none;
+  transform: rotate(-45deg) scale(0, 0);
+  display: flex;
+  transition: transform 0.25s ease, opacity 0.25s ease;
+  opacity: 0;
 }
 .image-selector.avatar:hover .drop-icon {
-  display: block;
+  opacity: 1;
+  transform: rotate(0deg) scale(1, 1);
 }
