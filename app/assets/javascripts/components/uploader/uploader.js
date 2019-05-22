@@ -27,7 +27,12 @@ function cleanup(title) {
   // 3. Replace non-alpha/non-whitespace with a single space
   // 4. Convert first letters to uppercase
   // 5. Strip whitespace
-  return title.toLowerCase().replace(/^[0-9]*/g, '').replace(/[-_]|[^a-z\s]/gi, ' ').replace(/(^|\s)[a-z]/g, i => i.toUpperCase()).trim();
+  return title
+    .toLowerCase()
+    .replace(/^[0-9]*/g, '')
+    .replace(/[-_]|[^a-z\s]/gi, ' ')
+    .replace(/(^|\s)[a-z]/g, i => i.toUpperCase())
+    .trim() || "Untitled";
 }
 
 function Uploader() {
