@@ -178,7 +178,7 @@ Rails.application.routes.draw do
     resources :badges, except: [:show, :edit]
     resources :userbadges, only: [:update]
     resources :sitenotices, except: [:show, :edit]
-    resources :api, except: [:show, :edit], controller: :api_tokens
+    resources :api, except: [:show], controller: :api_tokens
     resources :users, only: [:show] do
       resources :badges, only: [:update], controller: :user_badges
       resources :roles, only: [:update]

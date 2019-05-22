@@ -50,5 +50,20 @@ module Admin
       @token.destroy
       flash[:notice] = "Record deleted.";
     end
+    
+    def update
+      redirect_to action: :index
+      
+      if !current_user.is_contributor?
+        return flash[:error] = "Error: Login required."
+      end
+      
+      if !(@token = ApiToken.where(id: params[:id]).first)
+        return flash[:error] = "Error: Record not found."
+      end
+      
+      @token.reset
+      flash[:notice] = "Token reset.";
+    end
   end
 end

@@ -28,6 +28,12 @@ class ApiToken < ApplicationRecord
     50
   end
   
+  def reset
+    self.reset_at = Time.zone.now
+    self.hits = 0
+    self.save
+  end
+  
   def reset_interval
     1.hour
   end
@@ -38,8 +44,7 @@ class ApiToken < ApplicationRecord
   
   def hit
     if self.on_cooldown?
-      self.reset_at = Time.zone.now
-      self.hits = 0
+      self.reset
     end
     
     self.hits = self.hits + 1
