@@ -34,18 +34,16 @@ module Forum
     
     def new
       @board = Board.new
-      render partial: 'new', locals: {url: forum_index_path, method: :put}
+      render partial: 'new', locals: {url: forum_index_path, method: :post}
     end
 
     def create
       if !user_signed_in? && !current_user.is_contributor?
         return redirect_to action: :index, controller: :welcome
       end
-      board = Board.create(
-        title: params[:board][:title],
-        description: params[:board][:description]
-      )
-      redirect_to action: :show, controller: :board, id: board.title
+      board = Board.create(params[:board].permit(:title, :short_name, :description))
+
+      redirect_to action: :show, id: board.short_name
     end
     
     def edit

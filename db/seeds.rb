@@ -1,5 +1,7 @@
 Board.create([
+  { id: 1, title: 'Administration', description: '' },
   { id: 2, title: 'General', description: '' },
+  { id: 3, title: 'Forum Games', description: '' },
   { id: 9, title: 'Site and Policy', description: '' }
 ])
 TagType.create([
