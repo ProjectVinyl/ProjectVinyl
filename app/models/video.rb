@@ -230,6 +230,15 @@ class Video < ApplicationRecord
     self.checksum = hash if hash != self.checksum
     self.video = data
   end
+  
+  def realise_checksum
+    if (self.checksum.nil? || self.checksum.blank?) && self.has_file(self.video_path)
+      self.checksum = Ffmpeg.compute_checksum(File.read(self.video_path))
+      self.save
+    end
+    
+    return self.checksum
+  end
 
   def video=(data)
     File.open(self.video_path, 'wb') do |file|
@@ -559,7 +568,7 @@ class Video < ApplicationRecord
       self.drop_tags(mytags)
     end
     receivers = self.comment_thread.comments.pluck(:user_id) | [self.user_id]
-    Notification.notify_recievers_without_delete(receivers, self.comment_thread, "#{user.username} has merged <b>#{self.title}</b> into <b>#{other.title}</b>", other.comment_thread.location)
+    Notification.notify_receivers_without_delete(receivers, self.comment_thread, "#{user.username} has merged <b>#{self.title}</b> into <b>#{other.title}</b>", other.comment_thread.location)
     self.save
     self
   end

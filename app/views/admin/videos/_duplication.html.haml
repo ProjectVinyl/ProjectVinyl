@@ -4,12 +4,12 @@
 		%table
 			%tr
 				%td.label Unique Hash
-				%td.field= @video.checksum
+				%td.field= @video.realise_checksum
 			%tr
 				%td.label Duplicate Hash
 				%td.field
 					- if @video.duplicate_id > 0
-						= Video.where(id: @video.duplicate_id).first.checksum
+						= Video.where(id: @video.duplicate_id).first.realise_checksum
 			%tr.actions
 				%td.label Merging
 				%td.field
