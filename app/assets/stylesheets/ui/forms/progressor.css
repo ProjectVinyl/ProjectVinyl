@@ -47,13 +47,13 @@ form.uploading .uploaded-preview + .progressor {
 
 .waiting .progress .fill {
   animation: 1s linear infinite intermediate;
-  background: repeating-linear-gradient(
+  background: -webkit-repeating-linear-gradient(
     45deg,
     var(--stripe-color-one), var(--stripe-color-one) 30%,
     var(--stripe-color-two) 30%, var(--stripe-color-two) 71%,
     var(--stripe-color-one) 71%, var(--stripe-color-one) 100%
   );
-  background: webkit-repeating-linear-gradient(
+  background: repeating-linear-gradient(
     45deg,
     var(--stripe-color-one), var(--stripe-color-one) 30%,
     var(--stripe-color-two) 30%, var(--stripe-color-two) 71%,
