@@ -344,7 +344,6 @@ Player.prototype = {
   },
   error(e) {
     console.error(e);
-    this.pause();
 
     if (errorPresent(this.video)) {
       const message = errorMessage(this.video);
@@ -352,10 +351,13 @@ Player.prototype = {
 
       this.player.dataset.state = 'error';
       this.player.error.message.innerText = message;
+      this.suspend.classList.add('hidden');
 
       if (!this.noise) {
         this.noise = setupNoise(this.player.error);
       }
+    } else {
+      this.pause();
     }
   },
   togglePlayback() {

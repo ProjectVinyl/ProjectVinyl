@@ -44,13 +44,15 @@
   opacity: 0.99;
 }
 
+.video .player[data-state=error]::after,
+.video .player[data-state=error] .suspend,
 .video:not(.unplayable) .player[data-state=paused]::after {
   display: none;
 }
 .video:not(.unplayable) .player[data-state=stopped]::after {
   content: "\f01e";
 }
-.video:not(:hover) .player.error::after,
+
 .video:not(.unplayable) .player[data-state=playing]::after {
   cursor: default;
   transform: scale(0.25);
