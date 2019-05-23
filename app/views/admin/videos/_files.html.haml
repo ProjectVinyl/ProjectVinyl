@@ -10,6 +10,12 @@
 			%td.field= "#{@video.mime} (#{@video.file})"
 			%td
 		%tr
+			%td.label Dimensions
+			%td.field= "#{@video.get_width}x#{@video.get_height}"
+		%tr
+			%td.label Size
+			%td.field= "%.2f MB" % @video.file_size
+		%tr
 			%td.label Source
 			%td.field= bool File.exist?(@video.video_path)
 			%td
