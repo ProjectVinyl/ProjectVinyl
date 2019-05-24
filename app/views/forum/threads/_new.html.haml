@@ -1,4 +1,4 @@
-= form_for(@thread, as: :thread, url: threads_path, html: {method: :post}) do |f|
+= form_for(@thread, as: :thread, url: forum_threads_path, html: {method: :post}) do |f|
 	= f.text_field :owner_id, hidden: true
 	.properties
 		%table

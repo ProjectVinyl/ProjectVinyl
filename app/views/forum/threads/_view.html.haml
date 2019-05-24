@@ -2,7 +2,7 @@
 	Comments
 	= surround '(', ')' do
 		= @comments.count
-	= render 'threads/watch_options'
+	= render 'forum/threads/watch_options'
 = render 'comments/new', invert: false
 %hr/
-= render 'threads/comments'
+= render 'forum/threads/comments'

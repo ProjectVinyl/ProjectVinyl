@@ -47,7 +47,10 @@ class CommentThread < ApplicationRecord
   end
 
   def link
-    "/threads/#{self.id}-#{self.safe_title}"
+    if self.owner_type == 'Board' && !self.owner.nil?
+      return "/#{self.owner.short_name}/#{self.id}-#{self.safe_title}"
+    end
+    "/forum/threads/#{self.id}-#{self.safe_title}"
   end
   
   def location

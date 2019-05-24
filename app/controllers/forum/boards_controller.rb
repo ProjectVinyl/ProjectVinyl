@@ -69,7 +69,7 @@ module Forum
         board.description = params[:board][:description]
         board.save
         
-        return redirect_to action: :show
+        return redirect_to action: :show, id: board.short_name
       end
       
       if params[:field] == 'title'

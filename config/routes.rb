@@ -55,7 +55,7 @@ Rails.application.routes.draw do
   end
   
   # Users #
-  get 'profile/:id' => 'users#show', constraints: { id: /([0-9]+).*/ }
+  get 'profile/:id' => 'users#show', constraints: { id: /([0-9]+).*/ }#*/
   resources :users, only: [:index, :update] do
     get 'uploads'
     get 'videos'
@@ -71,7 +71,7 @@ Rails.application.routes.draw do
   
   # Albums #
   get 'stars' => 'albums#starred'
-  resources :albums, id: /([0-9]+).*/ do # /
+  resources :albums, id: /([0-9]+).*/ do #*/
     get 'items' => 'album_item#index'
     patch 'order'
   end
@@ -79,7 +79,7 @@ Rails.application.routes.draw do
   resources :albumitems, only: [:create, :update, :destroy]
   
   # Tags #
-  resources :tags, only: [:index], id: /([0-9]+).*/ do
+  resources :tags, only: [:index], id: /([0-9]+).*/ do #*/
     put 'hide'
     put 'spoiler'
     put 'watch'
@@ -92,19 +92,19 @@ Rails.application.routes.draw do
     get 'aliases'
     get 'implied'
     
-    get ':name', action: :show, constraints: { name: /.*/ }
+    get ':name', action: :show, constraints: { name: /.*/ } #*/
   end
   
   # Forums #
   resources :forum, only: [:index, :new, :create, :edit, :update, :destroy], controller: 'forum/boards'
   namespace :forum do
     get 'search' => 'search#index'
-  end
-  
-  # Threads #
-  resources :threads, only: [:show, :new, :create, :update] do
-    put 'subscribe'
-    get '/:order', action: :show
+    
+    # Threads #
+    resources :threads, only: [:show, :new, :create, :update] do
+      put 'subscribe'
+      get '/:order', action: :show
+    end
   end
   
   # Comments #
@@ -228,6 +228,7 @@ Rails.application.routes.draw do
   # Short links #
   get '/:id(-:safe_title)' => 'videos#show', constraints: { id: /([0-9]+)/ }
   get '/:id' => 'forum/boards#show'
+  get '/:board_name/:id' => 'forum/threads#show'
   
   # Home #
   root 'welcome#index'
