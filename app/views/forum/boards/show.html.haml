@@ -19,7 +19,7 @@
 			%button.action.mobile-friendly.green(data-external-form="#{edit_forum_path @board}" data-title="Edit Categoty" type="button")>
 				= fa :plus
 				%span Edit Category
-		%button.action.mobile-friendly.green(data-external-form="#{new_forum_thread_path @board}" data-title="New Topic" type="button")>
+		%button.action.mobile-friendly.green(data-external-form="#{new_forum_thread_path(board: @board.id)}" data-title="New Topic" type="button")>
 			= fa :plus
 			%span New Topic
 	%a.button.blue.mobile-friendly.right{href: forum_search_path(board: @board.id)}>
