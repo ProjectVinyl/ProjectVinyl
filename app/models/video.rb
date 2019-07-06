@@ -150,8 +150,8 @@ class Video < ApplicationRecord
     report.write("Missing video files: #{total - sources.length}")
     report.write("Missing webm files : #{total_vid - webms.length}")
     
-    Video.where('id NOT IN (?) AND audio_only = false AND processed = true AND NOT file = ".webm"', webms).update_all(processed: nil)
-    Video.where('id NOT IN (?) AND hidden = false AND NOT file = ".webm"', sources).update_all(hidden: true)
+    Video.where("id NOT IN (?) AND audio_only = false AND processed = true AND NOT file = '.webm'", webms).update_all(processed: nil)
+    Video.where("id NOT IN (?) AND hidden = false AND NOT file = '.webm'", sources).update_all(hidden: true)
     Video.reset_hidden_flags
     
     if (total - sources.length) > 0
