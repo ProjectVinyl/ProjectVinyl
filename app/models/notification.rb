@@ -47,7 +47,7 @@ class Notification < ApplicationRecord
         unread: true
       }
     end)
-    User.where('id IN (?)', receivers).update_all('notification_count = (SELECT COUNT(*) FROM `notifications` WHERE user_id = `users`.id AND unread = true)')
+    User.where('id IN (?)', receivers).update_all('notification_count = (SELECT COUNT(*) FROM notifications WHERE user_id = users.id AND unread = true)')
     NotificationReceiver.push_notifications(receivers, {
       title: message,
       params: {

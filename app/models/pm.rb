@@ -8,7 +8,7 @@ class Pm < ApplicationRecord
   STATE_NORMAL = 0
   STATE_DELETED = 1
   
-  scope :find_for_user, ->(id, user) { includes(:comment_thread, :new_comment).where('`pms`.id = ? AND `pms`.user_id = ?', id, user.id).first }
+  scope :find_for_user, ->(id, user) { includes(:comment_thread, :new_comment).where('pms.id = ? AND pms.user_id = ?', id, user.id).first }
   
   scope :find_for_tab_counter, ->(type, user) {
     listing_selector = where(user_id: user.id, state: type == 'deleted' ? STATE_DELETED : STATE_NORMAL)
@@ -23,10 +23,10 @@ class Pm < ApplicationRecord
   }
   
   scope :find_for_tab, ->(type, user) {
-    joins('LEFT JOIN `comment_threads` ON `comment_threads`.id = `pms`.comment_thread_id AND `comment_threads`.owner_type = "Pm"')
-      .select('`pms`.*').includes(:comment_thread, :sender, new_comment: [:direct_user])
+    joins("LEFT JOIN comment_threads ON comment_threads.id = pms.comment_thread_id AND comment_threads.owner_type = 'Pm'")
+      .select('pms.*').includes(:comment_thread, :sender, new_comment: [:direct_user])
       .find_for_tab_counter(type, user)
-      .order('`comment_threads`.created_at DESC')
+      .order('comment_threads.created_at DESC')
   }
 
   def self.send_pm(sender, receivers, subject, message)
