@@ -53,11 +53,12 @@ class Video < ApplicationRecord
   def is_like_negative
     (respond_to? :is_like_negative_flag) && is_like_negative_flag
   end
-  
+
+  document_type 'video'
   settings index: { number_of_shards: 1 } do
-    mappings dynamic: 'true' do
-      indexes :title, type: 'string'
-      indexes :source, type: 'string'
+    mappings dynamic: 'false' do
+      indexes :title, type: 'keyword'
+      indexes :source, type: 'keyword'
       indexes :audio_only, type: 'boolean'
       indexes :user_id, type: 'integer'
       indexes :length, type: 'integer'
@@ -65,8 +66,6 @@ class Video < ApplicationRecord
       indexes :created_at, type: 'date'
       indexes :updated_at, type: 'date'
       indexes :hidden, type: 'boolean'
-    end
-    mappings dynamic: 'false' do
       indexes :tags, type: 'keyword'
       indexes :likes, type: 'keyword'
       indexes :dislikes, type: 'keyword'

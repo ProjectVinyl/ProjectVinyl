@@ -27,5 +27,5 @@ production:
   pool: 10
   timeout: 5000
   username: vinyl
-  password: <%= File.read("/home/vinylscratch/.mysqlpwd") rescue nil %>
+  password: <%= File.read("/home/ubuntu/.mysqlpwd") rescue nil %>
   database: projectvinyl

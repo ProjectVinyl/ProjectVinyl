@@ -65,13 +65,12 @@ class User < ApplicationRecord
   SANITIZE = /[^a-zA-Z0-9]+/
   BP_PONY = /^background pony #([0-9a-z]+)/
 
+  document_type 'user'
   settings index: { number_of_shards: 1 } do
-    mappings dynamic: 'true' do
-      indexes :username, type: 'string'
+    mappings dynamic: 'false' do
+      indexes :username, type: 'keyword'
       indexes :created_at, type: 'date'
       indexes :updated_at, type: 'date'
-    end
-    mappings dynamic: 'false' do
       indexes :tags, type: 'keyword'
     end
   end
