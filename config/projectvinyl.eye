@@ -1,12 +1,12 @@
 Eye.config do
-  logger '/home/vinylscratch/ProjectVinyl/log/eye.log'
+  logger '/home/ubuntu/ProjectVinyl/log/eye.log'
 end
 
 resque_count = 2
 
 Eye.application 'ProjectVinyl' do
-  working_dir '/home/vinylscratch/ProjectVinyl'
-  stdall '/home/vinylscratch/ProjectVinyl/log/background.log'
+  working_dir '/home/ubuntu/ProjectVinyl'
+  stdall '/home/ubuntu/ProjectVinyl/log/background.log'
   trigger :flapping, times: 10, within: 1.minute, retry_in: 10.minutes
   env 'RAILS_ENV' => ENV['RAILS_ENV'] || 'production'
   stop_on_delete true
