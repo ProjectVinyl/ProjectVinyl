@@ -18,10 +18,12 @@
 %meta(property="og:image" content="#{cover}")
 %meta(property="og:description" content="#{description}")
 %meta(property="og:type" content="#{type}")
-%meta(property="og:#{type}:type" content="text/html")
 
 - if type == 'video'
 	%meta(property="og:#{type}:type" content="#{mime}")
+- else
+	%meta(property="og:#{type}:type" content="text/html")
+
 
 %meta(property="og:#{type}:width" content="#{width}")
 %meta(property="og:#{type}:height" content="#{height}")
