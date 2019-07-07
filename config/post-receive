@@ -14,27 +14,36 @@ export RAILS_ENV=production
 read oldrev newrev ref
 echo "Updating $oldrev -> $newrev ($ref)"
 
+# Clear variable set to '.' so git commands don't complain
+unset GIT_DIR
+
+die() {
+    echo "$*" 1>&2
+    exit 1
+}
+
 if git diff --name-only $oldrev $newrev | grep "^Gemfile"; then
   echo "Running bundler"
-  bundle install --quiet --without development test
+  bundle install --quiet --without development test || die "bundler failed to update"
+  bundle exec rails assets:precompile || die "assets compile failed"
 fi
 
 # Run migrations
 if git diff --name-only $oldrev $newrev | grep "^db/"; then
   echo "Running database migrations"
-  bundle exec rake db:migrate
+  bundle exec rails db:migrate || die "db:migrate failed"
 fi
 
 # Reset assets
 if git diff --name-only $oldrev $newrev | grep "^app/assets/"; then
   echo "Compiling assets"
-  bundle exec rake assets:precompile
+  bundle exec rails assets:precompile || die "assets compile failed"
 fi
 
 # Restart unicorn
 echo "Restarting webserver"
-systemctl --user restart unicorn
+systemctl --user restart unicorn.service
 
 # Restart background workers
 bundle exec eye quit --stop_all
-bundle exec eye load /home/vinylscratch/ProjectVinyl/config/projectvinyl.eye
+bundle exec eye load /home/ubuntu/ProjectVinyl/config/projectvinyl.eye
