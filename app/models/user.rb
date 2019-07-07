@@ -105,7 +105,7 @@ class User < ApplicationRecord
     }
   end
   
-  scope :by_name_or_id, ->(id) { where('id = ? OR username = ?', id, id).first }
+  scope :by_name_or_id, ->(id) { where('id::text = ? OR username = ?', id, id).first }
   
   scope :with_badges, -> { includes(user_badges: [:badge]) }
   

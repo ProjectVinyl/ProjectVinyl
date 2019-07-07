@@ -49,7 +49,7 @@ class Tag < ApplicationRecord
   end
   
   def self.by_name_or_id(name)
-    name.blank? ? Tag.none : Tag.order(:video_count, :user_count).reverse_order.where('name = ? OR id = ? OR short_name = ?', name, name, name)
+    name.blank? ? Tag.none : Tag.order(:video_count, :user_count).reverse_order.where('name = ? OR id::text = ? OR short_name = ?', name, name, name)
   end
 
   def self.find_matching_tags(name, sender=nil)
