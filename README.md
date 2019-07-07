@@ -1,6 +1,6 @@
 # Project Vinyl: Premium Pony Tunes
 
-Built using Ruby on Rails and MySQL.
+Built using Ruby on Rails and PostgreSQL.
 
 ## Setup
 
