@@ -15,8 +15,8 @@ class TagSubscription < ApplicationRecord
   end
 
   def self.get_feed_items(user)
-    video_ids = VideoGenre.joins('INNER JOIN `tag_subscriptions` ON `video_genres`.tag_id = `tag_subscriptions`.tag_id')
-                          .where('`tag_subscriptions`.user_id = ? AND `tag_subscriptions`.watch = true AND `tag_subscriptions`.hide = false', user.id)
+    video_ids = VideoGenre.joins('INNER JOIN tag_subscriptions ON video_genres.tag_id = tag_subscriptions.tag_id')
+                          .where('tag_subscriptions.user_id = ? AND tag_subscriptions.watch = true AND tag_subscriptions.hide = false', user.id)
                           .uniq.pluck(:video_id)
     Video.finder.where('id IN (?)', video_ids).order(:updated_at, :created_at)
   end
@@ -52,9 +52,9 @@ class TagSubscription < ApplicationRecord
   protected
   def self.update_users(op, tags, preserved_receivers)
     if !tags.empty?
-      User.joins('INNER JOIN `tag_subscriptions` ON user_id = `users`.id')
-          .where("`tag_subscriptions`.tag_id IN (?) AND `users`.id NOT IN (?)#{op ? '' : ' AND feed_count > 0'}", tags, preserved_receivers)
-          .group('`users`.id').update_all("feed_count = feed_count #{op ? "+" : "-"} 1")
+      User.joins('INNER JOIN tag_subscriptions ON user_id = users.id')
+          .where("tag_subscriptions.tag_id IN (?) AND users.id NOT IN (?)#{op ? '' : ' AND feed_count > 0'}", tags, preserved_receivers)
+          .group('users.id').update_all("feed_count = feed_count #{op ? "+" : "-"} 1")
     end
   end
   

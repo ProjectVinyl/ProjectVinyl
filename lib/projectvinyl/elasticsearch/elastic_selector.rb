@@ -205,7 +205,7 @@ module ProjectVinyl
           return @search.records
         end
         
-        @records || (@records = Video.includes(:tags).where('`videos`.id IN (?)', @search.records.ids).with_likes(@user))
+        @records || (@records = Video.includes(:tags).where('videos.id IN (?)', @search.records.ids).with_likes(@user))
       end
 
       attr_reader :page

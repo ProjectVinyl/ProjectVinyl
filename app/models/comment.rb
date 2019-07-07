@@ -13,16 +13,16 @@ class Comment < ApplicationRecord
     includes(:likes, :direct_user, :mentions)
   }
   scope :visible, -> {
-    joins(:comment_thread).where('`comments`.hidden = false AND `comment_threads`.owner_type != "Report" AND `comment_threads`.owner_type != "Pm"')
+    joins(:comment_thread).where("comments.hidden = false AND comment_threads.owner_type != 'Report' AND comment_threads.owner_type != 'Pm'")
   }
   scope :with_likes, ->(user) { 
     if !user.nil?
-      return joins("LEFT JOIN `comment_votes` ON `comment_votes`.comment_id = `comments`.id AND `comment_votes`.user_id = #{user.id}")
-        .select('`comments`.*, `comment_votes`.user_id AS is_liked_flag')
+      return joins("LEFT JOIN comment_votes ON comment_votes.comment_id = comments.id AND comment_votes.user_id = #{user.id}")
+        .select('comments.*, comment_votes.user_id AS is_liked_flag')
     end
   }
   scope :with_threads, ->(owner_type) {
-    visible.includes(:direct_user, :comment_thread).where("`comment_threads`.owner_type = ?", owner_type)
+    visible.includes(:direct_user, :comment_thread).where("comment_threads.owner_type = ?", owner_type)
   }
   
   def is_liked
@@ -84,7 +84,7 @@ class Comment < ApplicationRecord
         Notification.notify_receivers(receivers, self,
           "#{self.user.username} has <b>replied</b> to your comment on <b>#{self.comment_thread.get_title}</b>",
           self.comment_thread.location)
-        ApplicationRecord.connection.execute("INSERT INTO comment_replies (`comment_id`,`parent_id`) VALUES #{replied_to}")
+        ApplicationRecord.connection.execute("INSERT INTO comment_replies (comment_id, parent_id) VALUES #{replied_to}")
       end
     end
   end

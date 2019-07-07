@@ -28,8 +28,8 @@ class Video < ApplicationRecord
   scope :popular, -> { finder.order(:heat).reverse_order.limit(4) }
   scope :with_likes, ->(user) {
     if !user.nil? 
-      return joins("LEFT JOIN `votes` ON `votes`.video_id = `videos`.id AND `votes`.user_id = #{user.id}")
-        .select('`videos`.*, `votes`.user_id AS is_liked_flag, `votes`.negative AS is_like_negative_flag')
+      return joins("LEFT JOIN votes ON votes.video_id = videos.id AND votes.user_id = #{user.id}")
+        .select('videos.*, votes.user_id AS is_liked_flag, votes.negative AS is_like_negative_flag')
     end
   }
   scope :random, ->(limit) {
@@ -40,7 +40,7 @@ class Video < ApplicationRecord
     
     {
       ids: selected,
-      videos: finder.where("`#{self.table_name}`.id IN (?)", selected)
+      videos: finder.where("#{self.table_name}.id IN (?)", selected)
     }
   }
   
@@ -150,8 +150,8 @@ class Video < ApplicationRecord
     report.write("Missing video files: #{total - sources.length}")
     report.write("Missing webm files : #{total_vid - webms.length}")
     
-    Video.where('id NOT IN (?) AND audio_only = false AND processed = true AND NOT file = ".webm"', webms).update_all(processed: nil)
-    Video.where('id NOT IN (?) AND hidden = false AND NOT file = ".webm"', sources).update_all(hidden: true)
+    Video.where("id NOT IN (?) AND audio_only = false AND processed = true AND NOT file = '.webm'", webms).update_all(processed: nil)
+    Video.where("id NOT IN (?) AND hidden = false AND NOT file = '.webm'", sources).update_all(hidden: true)
     Video.reset_hidden_flags
     
     if (total - sources.length) > 0

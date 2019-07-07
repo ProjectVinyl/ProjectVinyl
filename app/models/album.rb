@@ -82,7 +82,7 @@ class Album < ApplicationRecord
 
   def ordered(items)
     if self.ordering == SCORE
-      items = items.joins(:video).order('`videos`.score')
+      items = items.joins(:video).order('videos.score')
       items = items.reverse_order if self.reverse_ordering
       return self.recalculate_ordering(items)
     end
@@ -91,7 +91,7 @@ class Album < ApplicationRecord
 
   def repaint_ordering(items)
     if self.ordering == CREATED
-      items = items.joins(:video).order('`videos`.created_at')
+      items = items.joins(:video).order('videos.created_at')
     elsif self.ordering == ADDED
       items = items.order(:created_at)
     end

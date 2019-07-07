@@ -25,7 +25,7 @@ class Board < ApplicationRecord
   end
 
   def last_comment
-    @last_comment || (@last_comment = Comment.joins(:comment_thread).where('`comments`.hidden = false AND `comment_threads`.owner_type = "Board" AND `comment_threads`.owner_id = ?', self.id).order(:created_at, :updated_at).reverse_order.limit(1).first)
+    @last_comment || (@last_comment = Comment.joins(:comment_thread).where("comments.hidden = false AND comment_threads.owner_type = 'Board' AND comment_threads.owner_id = ?", self.id).order(:created_at, :updated_at).reverse_order.limit(1).first)
   end
 
   def last_poster

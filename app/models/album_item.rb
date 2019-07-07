@@ -4,7 +4,7 @@ class AlbumItem < ApplicationRecord
   has_one :direct_user, through: :video
   
   scope :discriminate, ->(comparitor, current, user) {
-    where('`album_items`.index ' + comparitor + ' ?', current).reject do |i|
+    where('album_items.index ' + comparitor + ' ?', current).reject do |i|
       (i.video.is_hidden_by(user) || i.video.hidden)
     end
   }
@@ -28,9 +28,9 @@ class AlbumItem < ApplicationRecord
     to = new_index
     if to != from
       if to < from
-        self.update_indices(self.album.album_items.where('`album_items`.index >= ? AND `album_items`.index < ?', to, from), '+')
+        self.update_indices(self.album.album_items.where('album_items.index >= ? AND album_items.index < ?', to, from), '+')
       else
-        self.update_indices(self.album.album_items.where('`album_items`.index > ? AND `album_items`.index <= ?', from, to), '-')
+        self.update_indices(self.album.album_items.where('album_items.index > ? AND album_items.index <= ?', from, to), '-')
       end
       if self.album.ordering && self.album.ordering > 0
         self.album.ordering = 0
@@ -55,10 +55,10 @@ class AlbumItem < ApplicationRecord
   
   protected
   def shift_indices
-    self.update_indices(self.album.album_items.where('`album_items`.index > ?', self.index), '-')
+    self.update_indices(self.album.album_items.where('album_items.index > ?', self.index), '-')
   end
   
   def update_indices(items, op)
-    items.update_all("`album_items`.index = `album_items`.index #{op} 1")
+    items.update_all("album_items.index = album_items.index #{op} 1")
   end
 end
