@@ -1,12 +1,12 @@
 - if tags.length == 1
-	- @tag = tags.first
-	- @implies = @tag.implications
-	- @implied = @tag.implicators
+  - @tag = tags.first
+  - @implies = @tag.implications
+  - @implied = @tag.implicators
   - @total_videos = @tag.videos.length
   - @total_users = @tag.users.length
-	- @aliases = @tag.aliases
-	= render 'tags/bio'
+  - @aliases = @tag.aliases
+  = render 'tags/bio'
 - else
-	.post
-		%ul.tags= render partial: 'tags/thumb_h', collection: tags
+  .post
+    %ul.tags= render partial: 'tags/thumb_h', collection: tags
 %hr
