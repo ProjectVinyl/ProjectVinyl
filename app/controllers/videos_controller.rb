@@ -71,6 +71,7 @@ class VideosController < ApplicationController
       type: "video",
       mime: @video.mime,
       title: @video.title,
+      file: PathHelper.absolute_url(@video.webm_url, root_url),
       description: @video.description,
       url: url_for(action: :show, controller: :videos, id: @video.id, only_path: false) + "-" + (@video.safe_title || "untitled-video"),
       embed_url: url_for(action: :show, controller: "embed/videos", only_path: false, id: @video.id),

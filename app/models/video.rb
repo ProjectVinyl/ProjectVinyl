@@ -450,7 +450,7 @@ class Video < ApplicationRecord
       }
     }
   end
-  
+ 
   def widget_header(time, resume, embed, album)
     {
       title: self.get_title,
@@ -464,7 +464,11 @@ class Video < ApplicationRecord
       aspect: self.aspect
     }
   end
-  
+
+  def webm_url
+    "stream/#{self.id}.webm"
+  end
+
   def aspect
     return 1 if self.audio_only
     return 1 if self.get_height == 0

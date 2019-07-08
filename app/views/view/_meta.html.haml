@@ -21,6 +21,7 @@
 
 - if type == 'video'
 	%meta(property="og:#{type}:type" content="#{mime}")
+	%meta(property="og:#{type}" content="#{file}")
 - else
 	%meta(property="og:#{type}:type" content="text/html")
 
