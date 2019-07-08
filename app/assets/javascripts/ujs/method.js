@@ -28,5 +28,8 @@ document.addEventListener('click', event => {
   document.body.appendChild(form);
   event.preventDefault();
   
+  // Dispatch an event so the auth token can be appended
   form.dispatchEvent(new Event('submit', event));
+  // Submit the form
+  form.submit();
 });
