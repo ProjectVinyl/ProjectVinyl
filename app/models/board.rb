@@ -5,7 +5,7 @@ class Board < ApplicationRecord
   scope :listables, -> { sorted.pluck(:id, :title) }
   
   def self.find_board(id)
-    Board.where('id = ? OR short_name = ?', id, id).first
+    Board.where('id::text = ? OR short_name = ?', id, id).first
   end
 
   def threads
