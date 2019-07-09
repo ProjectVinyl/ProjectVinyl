@@ -35,6 +35,7 @@ function asTag(ans) {
     slug: ans.replace(`${namespace}:`, ''),
     namespace: namespace,
     members: -1,
+    flags: '',
     link: ans
   };
 }
