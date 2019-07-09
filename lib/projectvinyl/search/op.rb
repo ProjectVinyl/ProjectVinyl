@@ -130,62 +130,87 @@ module ProjectVinyl
         __shift
       end
 
+      def slurp_quoted_text(quote_char, slurp)
+
+        until @terms.empty?
+          i = @terms.shift
+
+          if i == quote_char
+            return slurp
+          end
+
+          slurp += i
+        end
+
+        slurp
+      end
+
       def __shift
         slurp = ""
         prev = !@old.empty? ? @old.last : ''
         until @terms.empty?
           i = @terms.shift
           @old << i
-          if i == ' '
-            if prev == ',' || prev == '&' || prev == '|'
-              prev = i
-              next
+
+          if i == '"' || i == '\''
+            slurp = slurp_quoted_text(i, slurp)
+          else
+            if i == ' '
+              if prev == ',' || prev == '&' || prev == '|'
+                prev = i
+                next
+              end
             end
-          end
-          if !slurp.empty?
-            if i == ',' || (prev == ' ' && i == '&')
-              o = slurp_system_tags(slurp)
-              @opset << Op::AND
-              return o
-            elsif prev == ' ' && i == '|'
-              o = slurp_system_tags(slurp)
-              @opset << Op::OR
-              return o
+
+            if !slurp.empty?
+              if i == ',' || (prev == ' ' && i == '&')
+                o = slurp_system_tags(slurp)
+                @opset << Op::AND
+                return o
+              elsif prev == ' ' && i == '|'
+                o = slurp_system_tags(slurp)
+                @opset << Op::OR
+                return o
+              elsif i == ')' && prev != '\\'
+                if @open_count > 0
+                  @open_count -= 1
+                  o = slurp_system_tags(slurp)
+                  @opset << Op::GROUP_END
+                  return o
+                else
+                  slurp << i
+                end
+              else
+                slurp << i
+              end
+            elsif i == '(' && prev != '\\'
+              @open_count += 1
+              return Op::GROUP_START
             elsif i == ')' && prev != '\\'
               if @open_count > 0
                 @open_count -= 1
-                o = slurp_system_tags(slurp)
-                @opset << Op::GROUP_END
-                return o
+                return Op::GROUP_END
               else
                 slurp << i
               end
             else
-              slurp << i
-            end
-          elsif i == '(' && prev != '\\'
-            @open_count += 1
-            return Op::GROUP_START
-          elsif i == ')' && prev != '\\'
-            if @open_count > 0
-              @open_count -= 1
-              return Op::GROUP_END
-            else
-              slurp << i
-            end
-          else
-            if i == '-'
-              return Op::NOT
-            else
-              slurp << i
+              if i == '-'
+                return Op::NOT
+              else
+                slurp << i
+              end
             end
           end
+
           prev = i
         end
+
         return slurp_system_tags(slurp) if !slurp.empty?
+
         if @open_count != 0
           raise LexerError, "Unmatched '(' for + '" + @old + "|" + @terms.join('') + "'!"
         end
+
         raise "Pointer overrun!"
       end
     end

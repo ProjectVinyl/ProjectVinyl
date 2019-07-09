@@ -70,6 +70,26 @@ module ProjectVinyl
         result
       end
 
+      def absorb_textual(dest, opset, key)
+        if (data = opset.shift) && !data.empty?
+          dest << { match: { key.to_sym => ".*#{data.strip}.*" } }
+          @dirty = true
+        else
+          raise LexerError, key + " Operator requires a data parameter"
+        end
+      end
+
+      def absorb_textual_if(dest, opset, key, condition)
+        if (data = opset.shift) && !data.empty?
+          if condition
+            dest << { match: { key.to_sym => ".*#{data.strip}.*" } }
+            @dirty = true
+          end
+        else
+          raise LexerError, key + " Operator requires a data parameter"
+        end
+      end
+
       def absorb_param(dest, opset, key)
         if (data = opset.shift) && !data.empty?
           dest << { term: { key.to_sym => data.strip } }
@@ -171,13 +191,13 @@ module ProjectVinyl
       # reads all the data operators into a group
       def take_param(type, op, opset, sender)
         if op == ProjectVinyl::Search::Op::TITLE
-          self.absorb_param(@must, opset, type == 'user' ? 'username' : 'title')
+          self.absorb_textual(@must, opset, type == 'user' ? 'username' : 'title')
         elsif op == ProjectVinyl::Search::Op::UPLOADER
           if op = self.absorb_param_if(@must_owner, opset, 'user_id', type != 'user')
             self.root.cache_user(op)
           end
         elsif op == ProjectVinyl::Search::Op::SOURCE
-          self.absorb_param_if(@must, opset, 'source', type != 'user')
+          self.absorb_textual_if(@must, opset, 'source', type != 'user')
         elsif ProjectVinyl::Search::Op.primitive?(op)
           self.take_prim(type, op, true, sender)
         elsif ProjectVinyl::Search::Op.ranged?(op)
@@ -185,13 +205,13 @@ module ProjectVinyl
         elsif op == ProjectVinyl::Search::Op::NOT
           self.absorb(opset, "not") do |data|
             if data == ProjectVinyl::Search::Op::TITLE
-              self.absorb_param(@must_not, opset, type == 'user' ? 'username' : 'title')
+              self.absorb_textual(@must_not, opset, type == 'user' ? 'username' : 'title')
             elsif data == ProjectVinyl::Search::Op::UPLOADER
               if op = self.absorb_param_if(@must_not_owner, opset, 'user_id', type != 'user')
                 self.root.cache_user(op)
               end
             elsif data == ProjectVinyl::Search::Op::SOURCE
-              self.absorb_param_if(@must_not, opset, 'source', type != 'user')
+              self.absorb_textual_if(@must_not, opset, 'source', type != 'user')
             elsif ProjectVinyl::Search::Op.primitive?(data)
               self.take_prim(type, data, false, sender)
             elsif ProjectVinyl::Search::Op.ranged?(data)
