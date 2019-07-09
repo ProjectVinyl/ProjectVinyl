@@ -138,19 +138,23 @@ Rails.application.routes.draw do
     get 'comments' => 'comment#find'
     get 'tags' => 'tags#find'
   end
-  
+
   # Admin Actions #
   namespace :admin, controller: :admin do
     post 'transfer'
-    post 'verify'
-    
+
+    scope :verify, controller: :verification do
+      put 'users', action: :verify_users
+      put 'videos', action: :verify_videos
+    end
+
     get 'files' => 'files#index'
-    
+
     resource :settings, only: [] do
       put 'set/:key', action: :set
       put 'toggle/:key', action: :toggle
     end
-    
+
     resources :albums, only: [:show] do
       put 'feature'
     end
@@ -183,7 +187,7 @@ Rails.application.routes.draw do
       resources :badges, only: [:update], controller: :user_badges
       resources :roles, only: [:update]
     end
-    
+
     # Reporting #
     resources :reports, only: [:new, :show, :index, :create] do
       put "/:state" => :update
@@ -191,19 +195,19 @@ Rails.application.routes.draw do
     resource :reports, only: [] do
       post "closeall" => :close_all
     end
-    
+
     resources :threads, only: [:destroy] do
       put 'pin'
       put 'lock'
       put 'move'
     end
-    
+
     put 'rethumb'
     put ':table/reindex', action: :reindex
     
     root 'admin#view'
   end
-  
+
   # Embeds #
   namespace :embed do
     get 'twitter' => 'twitter#show'

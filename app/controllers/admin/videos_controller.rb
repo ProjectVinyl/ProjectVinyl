@@ -61,7 +61,7 @@ module Admin
     
     def requeue
       badly_named_function do
-        flash[:notice] = "#{Video.rebuild_queue} videos in queue."
+        flash[:notice] = "#{Verification::Video.rebuild_queue} videos in queue."
       end
     end
 

@@ -101,64 +101,7 @@ class Video < ApplicationRecord
     end
     { valid: false }
   end
-	
-  def self.rebuild_queue
-    webms = []
-    location = Rails.root.join('public', 'stream')
-    Dir.entries(location.to_s).each do |name|
-      next unless name.index('.')
-      split = name.split('.')
-      if (id = split[0].to_i) && id > 0
-        webms << id if split[1] == 'webm'
-      end
-    end
-    workings = []
-    location = Rails.root.join('encoding')
-    Dir.entries(location.to_s).each do |name|
-      next unless name.index('.')
-      split = name.split('.')
-      next unless (id = split[0].to_i) && id > 0
-      if split[1] == 'webm'
-        webms << id
-        workings << id
-      end
-    end
-    Video.where('id NOT IN (?) AND audio_only = false', webms).update_all(processed: nil)
-    Video.where('id IN (?)', workings).update_all(processed: false)
-    Video.where(processed: nil, hidden: false).count # return count
-  end
 
-  def self.verify_integrity(report)
-    webms = []
-    sources = []
-    
-    location = Rails.root.join('public', 'stream')
-    Dir.entries(location.to_s).each do |name|
-      next unless name.index('.')
-      split = name.split('.')
-      if (id = split[0].to_i) && id > 0
-        if split[1] == 'webm'
-          webms << id
-        else
-          sources << id
-        end
-      end
-    end
-    total = Video.all.count
-    total_vid = Video.where(audio_only: false).count
-    
-    report.write("Missing video files: #{total - sources.length}")
-    report.write("Missing webm files : #{total_vid - webms.length}")
-    
-    Video.where("id NOT IN (?) AND audio_only = false AND processed = true AND NOT file = '.webm'", webms).update_all(processed: nil)
-    Video.where("id NOT IN (?) AND hidden = false AND NOT file = '.webm'", sources).update_all(hidden: true)
-    Video.reset_hidden_flags
-    
-    if (total - sources.length) > 0
-      report.write("<br>Damaged videos have been removed from public listings until they can be repaired.")
-    end
-  end
-  
   def transfer_to(user)
     self.user = user
     self.save

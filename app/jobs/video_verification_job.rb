@@ -1,4 +1,4 @@
-class VerificationJob < ApplicationJob
+class VideoVerificationJob < ApplicationJob
   queue_as :default
 
   def perform(user_id)
@@ -8,8 +8,7 @@ class VerificationJob < ApplicationJob
       { user_id: user_id, first: "System", other: "Working..." }
     ) do |report|
       report.other = ""
-      User.verify_integrity(report)
-      Video.verify_integrity(report)
+      Verification::Video.verify_integrity(report)
     end
   end
 end

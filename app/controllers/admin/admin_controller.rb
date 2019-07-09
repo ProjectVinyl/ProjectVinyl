@@ -100,7 +100,7 @@ module Admin
         return flash[:notice] = "Access Denied: You do not have the required permissions."
       end
       
-      VerificationJob.perform_later(current_user.id)
+      VideoVerificationJob.perform_later(current_user.id)
       flash[:notice] = "Success! An integrity check has been launched. A report will be generated upon completion."
     end
   end

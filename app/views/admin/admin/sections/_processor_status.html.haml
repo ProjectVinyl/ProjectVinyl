@@ -18,10 +18,15 @@
 						= precede '#' do
 							= i+1
 					%div= payload || "No Task"
-	%hr/
-	%button.action.blue{type: "button", data: {method: "post", confirm: "", url: admin_verify_path, title: "Verify System Integrity"}}
-		Verify System Integrity
-	%button.action.blue{type: "button", data: {method: "post", confirm: "", url: requeue_admin_videos_path, title: "Rebuild Processing Queue"}}
-		Rebuild Processing Queue
 - rescue
 	%p Oops! Could not connect to Resque.
+%hr/
+%button.action.blue{type: "button", data: {method: "put", confirm: "", url: "/admin/verify/videos", title: "Verify Video Files"}}
+	= fa :wrench
+	Verify Videos
+%button.action.blue{type: "button", data: {method: "put", confirm: "", url: "/admin/verify/users", title: "Verify User Files"}}
+	= fa :wrench
+	Verify Users
+%button.action.blue{type: "button", data: {method: "post", confirm: "", url: requeue_admin_videos_path, title: "Rebuild Processing Queue"}}
+	= fa :wrench
+	Rebuild Processing Queue
