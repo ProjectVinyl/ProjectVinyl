@@ -4,7 +4,7 @@ class RecreateIndexJob < ApplicationJob
   def perform(user_id, table)
     table = table.constantize
     
-    # TODO: How can we check is the index exists?
+    # TODO: How can we check if the index exists?
     begin
       table.__elasticsearch__.delete_index!
     rescue

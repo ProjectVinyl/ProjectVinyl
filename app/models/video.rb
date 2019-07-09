@@ -57,8 +57,9 @@ class Video < ApplicationRecord
   document_type 'video'
   settings index: { number_of_shards: 1 } do
     mappings dynamic: 'false' do
-      indexes :title, type: 'keyword'
-      indexes :source, type: 'keyword'
+      indexes :title, analyzer: 'english', index_options: 'offsets'
+      indexes :source, analyzer: 'english', index_options: 'offsets'
+      indexes :description, analyzer: 'english', index_options: 'offsets'
       indexes :audio_only, type: 'boolean'
       indexes :user_id, type: 'integer'
       indexes :length, type: 'integer'
@@ -73,7 +74,7 @@ class Video < ApplicationRecord
   end
 
   def as_indexed_json(_options = {})
-    json = as_json(only: %w[title user_id source audio_only length score created_at updated_at hidden])
+    json = as_json(only: %w[title description user_id source audio_only length score created_at updated_at hidden])
     json["tags"] = self.tags.pluck(:name)
     json["likes"] = self.votes.up.pluck(:user_id)
     json["dislikes"] = self.votes.down.pluck(:user_id)

@@ -68,7 +68,7 @@ class User < ApplicationRecord
   document_type 'user'
   settings index: { number_of_shards: 1 } do
     mappings dynamic: 'false' do
-      indexes :username, type: 'keyword'
+      indexes :username, analyzer: 'english', index_options: 'offsets'
       indexes :created_at, type: 'date'
       indexes :updated_at, type: 'date'
       indexes :tags, type: 'keyword'
