@@ -25,7 +25,7 @@ module Admin
       @order = '0'
       
       @comments = Pagination.paginate(@thread.get_comments(true), (params[:page] || -1).to_i, 10, false)
-      @video = @report.reportable
+      @reportable = @report.reportable
       @user = @report.user
       
     end

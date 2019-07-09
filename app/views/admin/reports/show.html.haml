@@ -28,8 +28,11 @@
 					= @report.user.username
 			.date.right= since @report.created_at
 			%table(style="table-layout:auto" class="properties comment-content preview")
-				- if @video
-					= render 'videos/thumb_h', thumb_h: @video
+				- if @reportable
+					- if @reportable.class == Video
+						= render 'videos/thumb_h', thumb_h: @reportable
+					- elsif @reportable.class == Comment
+						= render 'comments/comment', comment: @reportable, level: 1, indirect: true
 				%tr
 					%td Report Type:
 					%td= @report.first
