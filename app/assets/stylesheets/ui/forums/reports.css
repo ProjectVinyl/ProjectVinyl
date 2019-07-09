@@ -1,7 +1,7 @@
 .resolution-status {
 	background: rgb(236, 236, 236);
   border-radius: 5px;
-	padding: 20px;
+	padding: 5px;
   margin-bottom: 10px;
   box-shadow: 0px 0px 12px rgba(0, 0, 0, 0.07) inset;
 }
@@ -29,6 +29,16 @@
 }
 .report[data-state="resolved"] .resolution-status .fa-inverse {
   color: rgb(72, 236, 72);
+}
+
+.report .resolution-status span {
+  vertical-align: middle;
+}
+
+.report .resolution-status span i.fa.fa-stack-1x {
+  font-size: 140%;
+  padding-left: 2px;
+  padding-top: 1px;
 }
 
 .report[data-state="open"] .closed, .report[data-state="open"] .resolved,
