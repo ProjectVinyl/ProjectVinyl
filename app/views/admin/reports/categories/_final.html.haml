@@ -1,0 +1,19 @@
+﻿.group(data-stage="final" style="white-space:normal")
+	- if user_signed_in?
+		Thank you!
+		%br
+		Your report will be sent as
+		= succeed '.' do
+			%a{href: current_user.link}= current_user.username
+		%table
+			%tr
+				%td
+					%button.goto.right.send.slide-right(data-to="end") Send
+	- else
+		.notice Please enter your contact details, in case we need to get into contact with you.
+		%table
+			%tr
+				%td.field(colspan="2")= f.text_field :name, placeholder: "Name", required: true
+			%tr
+				%td.field(colspan="2")= f.text_field :contact, placeholder: "Email", required: true
+			= render 'admin/reports/slide_buttons', prev: 'start', next: 'end'
