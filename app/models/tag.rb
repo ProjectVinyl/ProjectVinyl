@@ -124,7 +124,7 @@ class Tag < ApplicationRecord
   # We don't use Tag.create any more because that can create duplicates
   def self.make(hash)
     values = Tag.hash_to_values(hash)
-    sql = 'INSERT INTO tags (' + values[:keys].join(',') + ') VALUES (?) ON DUPLICATE KEY UPDATE name = name;'
+    sql = 'INSERT INTO tags (' + values[:keys].join(',') + ') VALUES (?) ON CONFLICT (name) DO UPDATE SET name = excluded.name;'
     sql = Tag.sanitize_sql([sql, values[:values]])
     ApplicationRecord.connection.execute(sql)
     Tag.where(name: hash[:name]).first
