@@ -9,13 +9,13 @@ Built using Ruby on Rails and PostgreSQL.
 * `sudo ruby-install ruby 2.6.3`
 * `chruby ruby-2.6.3`
 * `bundle install`
-* <start postgres> (see below)
-* <somehow start elasticsearch> (see below)
+* < start postgres> (see below)
+* < somehow start elasticsearch> (see below)
 * ???
 * `rake db:seed`
 * `foreman start` (will host at localhost:8080)
 
-### -If- When foreman fails:
+### --If-- When foreman fails:
 * `rails server` (will host at localhost:3000 - but will be missing risque)
 
 ## DB Setup
