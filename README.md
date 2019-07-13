@@ -15,7 +15,7 @@ Built using Ruby on Rails and PostgreSQL.
 * `rake db:seed`
 * `foreman start` (will host at localhost:8080)
 
-### --If-- When foreman fails:
+### ~If~ When foreman fails:
 * `rails server` (will host at localhost:3000 - but will be missing risque)
 
 ## DB Setup
