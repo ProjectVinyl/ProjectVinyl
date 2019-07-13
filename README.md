@@ -12,7 +12,8 @@ Built using Ruby on Rails and PostgreSQL.
 * < start postgres> (see below)
 * < somehow start elasticsearch> (see below)
 * ???
-* `rake db:seed`
+* `rails db:create`
+* `rails db:seed`
 * `foreman start` (will host at localhost:8080)
 
 ### ~If~ When foreman fails:
