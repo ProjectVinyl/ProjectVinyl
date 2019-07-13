@@ -40,7 +40,7 @@ Alternatively, to access the db through the console:
 You can find elasticsearch (.zip) download over <a href="https://www.elastic.co/downloads/past-releases/elasticsearch-6-8-0">here</a>
 
 * Unzip and run elasticsearch (`elasticsearch-dir/bin/elastisearch.bat`)
-* Intall SWL and use the bash terminal (`bash`) for the remaining commands for setup.
+* Intall WSL and use the bash terminal (`bash`) for the remaining commands for setup.
 * May need to run `sudo service postgresql start` to get the database running.
 
 ## Elasticsearch (Linux)
