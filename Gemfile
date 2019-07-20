@@ -44,6 +44,7 @@ gem 'tzinfo-data', platforms: %i[mingw mswin x64_mingw jruby]
 # Searching with elasicsearch
 gem 'elasticsearch-model'
 
+gem 'puma'
 gem 'resque'
 gem 'foreman'
 gem 'eye'
