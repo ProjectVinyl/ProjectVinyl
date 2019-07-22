@@ -2,7 +2,7 @@ class AlbumItem < ApplicationRecord
   belongs_to :album
   belongs_to :video
   has_one :direct_user, through: :video
-  
+
   scope :discriminate, ->(comparitor, current, user) {
     where('album_items.index ' + comparitor + ' ?', current).reject do |i|
       (i.video.is_hidden_by(user) || i.video.hidden)
@@ -59,6 +59,6 @@ class AlbumItem < ApplicationRecord
   end
   
   def update_indices(items, op)
-    items.update_all("album_items.index = album_items.index #{op} 1")
+    items.update_all("index = index #{op} 1")
   end
 end
