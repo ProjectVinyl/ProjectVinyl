@@ -7,6 +7,7 @@ class ApplicationController < ActionController::Base
   before_action :set_start_time
   before_action :configure_permitted_parameters, if: :devise_controller?
   before_action :poke_user, if: :user_signed_in?
+  after_action :allow_cors
   after_action :store_last_location, if: :content_page?
   
   def content_page?
@@ -35,5 +36,21 @@ class ApplicationController < ActionController::Base
   
   def poke_user
     current_user.poke
+  end
+
+  private
+
+  def allow_cors
+
+    gateway = Rails.application.config.gateway
+    gateway_no_port = gateway.split(':')[0]
+
+    host = gateway.remove('upload.')
+    host_no_port = host.split(':')[0]
+
+    if (request.host == host_no_port || request.host == gateway_no_port)
+      response.headers['Access-Control-Allow-Origin'] = request.host == host_no_port ? gateway : host
+      response.headers['Vary'] = 'Origin'
+    end
   end
 end

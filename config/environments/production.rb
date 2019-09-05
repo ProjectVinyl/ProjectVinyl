@@ -13,6 +13,7 @@ Rails.application.configure do
   config.assets.compile = false
   config.assets.digest = true
 
+  config.gateway = 'upload.projectvinyl.net'
   config.log_level = :debug
 
   # Actually log things

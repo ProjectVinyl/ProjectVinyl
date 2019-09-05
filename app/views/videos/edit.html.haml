@@ -4,7 +4,7 @@
 		%ul.tab-set.tabs
 			%li.button.selected(data-target="thumbupload") Upload Image
 			%li.button(data-target="thumbpick") Pick Time
-	= form_for(@video, as: "video", url: video_cover_path(@video), html: {class: "edit_video async", method: :patch}) do |f|
+	= form_for(@video, as: "video", url: @upload_path, html: {class: "edit_video async", method: :patch}) do |f|
 		= f.text_field :id, hidden: true
 		.progressor
 			.cover-block

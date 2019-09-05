@@ -101,6 +101,7 @@ class VideosController < ApplicationController
       )
     end
     
+    @upload_path = '//' + Rails.application.config.gateway + videos_path
     @user = current_user
     @video = Video.new
   end
@@ -258,6 +259,7 @@ class VideosController < ApplicationController
       return render_access_denied
     end
     
+    @upload_path = '//' + Rails.application.config.gateway + video_cover_path(@video)
     @user = @video.user
   end
   
