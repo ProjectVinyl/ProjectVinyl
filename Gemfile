@@ -6,6 +6,8 @@ gem 'pg'
 # Use Html sanitizer
 gem 'rails-html-sanitizer'
 
+gem 'rack-cors', :require => 'rack/cors'
+
 gem 'sdoc', '~> 0.4.0', group: :doc
 gem 'jquery-rails'
 gem 'uglifier'

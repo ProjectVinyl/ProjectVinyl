@@ -12,6 +12,16 @@ module Projectvinyl
       g.assets false
     end
     
+    # CORS
+    config.middleware.use Rack::Cors do
+      allow do
+        origins ['upload.lvh.me:3000', 'upload.projectvinyl.net', 'lvh.me:3000', 'projectvinyl.net', 'www.projectvinyl.net']
+        resource %r{/videos.json},
+          :headers => ['Origin', 'Accept', 'Content-Type'],
+          :methods => [:put, :delete, :post]
+      end
+    end
+
     # Special headers
     config.action_dispatch.default_headers = {
       'X-Frame-Options' => 'SAMEORIGIN',
