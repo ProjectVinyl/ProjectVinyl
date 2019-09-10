@@ -9,6 +9,7 @@
 			%span.fill
 		%span.label Untitled {index}
 		= fa :close
+		= fa :undo
 .hidden#template
 	.tab.selected(data-tab="new[{id}]")
 		= form_for(@video, url: @upload_path, html: {class: "new_video", method: :post}) do |f|

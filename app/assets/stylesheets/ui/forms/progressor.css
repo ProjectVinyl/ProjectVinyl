@@ -19,9 +19,13 @@ form.uploading .uploaded-preview + .progressor {
   --stripe-color-two: rgba(255, 165, 0, 1);
 
   --status-tint: orange;
+  --status-progress: 0%;
 }
 .error .progress {
   --status-tint: red;
+}
+.error .progress .fill {
+  --status-progress: 0%;
 }
 
 .progressor .progress {
@@ -39,7 +43,8 @@ form.uploading .uploaded-preview + .progressor {
   left: 0;
   bottom: 0;
   background: var(--status-tint);
-  width: 50%;
+  width: 100%;
+  max-width: var(--status-progress) !important;
   text-align: right;
   vertical-align: top;
   line-height: 0px;

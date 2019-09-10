@@ -1,4 +1,4 @@
-import { uploadForm } from '../../utils/progressform';
+import { uploadForm, defaultCallbacks } from '../../utils/progressform';
 
 function tick(next) {
   const uploader = next();
@@ -6,16 +6,18 @@ function tick(next) {
   uploader.tab.classList.add('loading');
   uploader.tab.classList.add('waiting');
   uploadForm(uploader.form, {
-    progress: percentage => {
+    progress(percentage, secondsRemaining, message, fill) {
       uploader.update(percentage);
+      defaultCallbacks.progress(percentage, secondsRemaining, message, fill);
       if (next && percentage >= 100) next = tick(next);
     },
-    success: data => {
+    success(data) {
       uploader.complete(data.ref);
       if (next) next = tick(next);
     },
-    error: error => {
+    error(error, message, percentage) {
       uploader.error();
+      defaultCallbacks.error(error, message, percentage);
       if (next) next = tick(next);
       return error;
     }
@@ -40,7 +42,7 @@ export function UploadQueue() {
     enqueue: function(me) {
       if (me.isReady()) this.enqueueAll([me]);
     },
-    enqueueAll: function(args) {
+    enqueueAll(args) {
       items.push.apply(items, args);
       poke();
     }

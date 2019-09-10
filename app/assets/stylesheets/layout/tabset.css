@@ -42,8 +42,12 @@ ul.tab-set li {
   max-width: 200px;
   max-height: 1.3em;
 }
+.tab-set > .tab-set.tabs .button i.fa-undo,
 .tab-set > .tab-set.tabs .button i.fa-close {
   margin-left: 20px;
+}
+.tab-set > .tab-set.tabs .button i.fa-undo {
+  display: none;
 }
 .tab-set > .tab-set.tabs .button[data-disabled] {
   opacity: 0.3;
@@ -139,4 +143,7 @@ ul.tab-set li {
 }
 .tab-set > .tab-set.tabs .button.uploading i {
   display: none;
+}
+.tab-set > .tab-set.tabs .button.error i.fa-undo {
+  display: initial;
 }

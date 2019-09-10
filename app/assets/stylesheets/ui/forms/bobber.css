@@ -8,11 +8,11 @@
   color: #888;
   padding: 10px;
   bottom: 20px;
-  left: 50%;
-  margin-left: -54px;
+  left: var(--content-offset);
   z-index: 20;
   white-space: nowrap;
   
+  --content-offset: calc(50% -54px);
   --bobber-border-color: #aaa;
 }
 .bobber::after {

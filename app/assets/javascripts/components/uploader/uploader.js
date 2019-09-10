@@ -75,7 +75,8 @@ function Uploader() {
   requestAnimationFrame(() => this.tab.classList.remove('hidden'));
   
   // Close button click
-  this.tab.querySelector('i').addEventListener('click', () => this.dispose());
+  this.tab.querySelector('i.fa-close').addEventListener('click', () => this.dispose());
+  this.tab.querySelector('i.fa-undo').addEventListener('click', () => this.startOver());
   this.form.addEventListener('submit', event => {
     if (!uploadingQueue) uploadingQueue = new UploadQueue();
     uploadingQueue.enqueue(this);
@@ -176,10 +177,14 @@ Uploader.prototype = extendObj({
     this.ready = true;
     this.el.notify.classList.remove('shown');
   },
+  startOver() {
+    this.tab.classList.remove('uploading', 'error', 'waiting');
+    this.form.classList.remove('uploading', 'error', 'waiting');
+  },
   update(percentage) {
     this.tab.classList.add('uploading');
-    this.tab.progress.fill.style.width = percentage;
-    if (percentage >= 100) this.tab.classList.add('waiting');
+    this.tab.progress.fill.style.setProperty('--status-progress', `${percentage}%`);
+    this.tab.classList.toggle('waiting', percentage >= 100);
   },
   complete(ref) {
     this.form.classList.remove('uploading');
@@ -197,6 +202,7 @@ Uploader.prototype = extendObj({
   },
   error() {
     this.tab.classList.add('error');
+    this.tab.classList.remove('waiting');
   },
   dispose() {
     INSTANCES.splice(INSTANCES.indexOf(this), 1);
