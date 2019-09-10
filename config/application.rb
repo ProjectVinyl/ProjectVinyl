@@ -11,14 +11,15 @@ module Projectvinyl
     config.generators do |g|
       g.assets false
     end
-    
-    # CORS
+
     config.middleware.use Rack::Cors do
       allow do
-        origins ['upload.lvh.me:3000', 'upload.projectvinyl.net', 'lvh.me:3000', 'projectvinyl.net', 'www.projectvinyl.net']
-        resource %r{/videos.json},
-          :headers => ['Origin', 'Accept', 'Content-Type'],
-          :methods => [:put, :delete, :post]
+        origins ['lvh.me:3000','upload.lvh.me:3000','projectvinyl.net','upload.projectvinyl.net','www.projectvinyl.net']
+        resource '*',
+          :headers => :any,
+          :credentials  => true,
+          :methods => [:put, :post, :patch],
+          :expose  => ['x-csrf-token', 'access-token', 'expiry', 'token-type', 'uid', 'client']
       end
     end
 

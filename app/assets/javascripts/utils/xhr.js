@@ -31,6 +31,7 @@ export function xhr(method, url, data, callbacks) {
       callbacks.progress(Math.min((e.loaded / e.total) * 100, 100), secondsRemaining);
     });
   }
+  xhr.withCredentials = true;
   xhr.open(method, url, true);
   xhr.setRequestHeader('X-CSRF-Token', csrfToken());
   xhr.send(data);
