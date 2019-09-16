@@ -26,7 +26,7 @@ Rails.application.routes.draw do
     end
 
     # Asset Fallbacks #
-    scope controller: :imgs, constraints: { id: /[0-9]+/ } do
+    scope controller: :imgs, constraints: { id: /[0-9]+/ } do #*/
       get 'cover/:id(-:small)', action: :cover
       get 'avatar/:id(-:small)', action: :avatar
       get 'banner/:id', action: :banner
@@ -34,10 +34,7 @@ Rails.application.routes.draw do
       get 'serviceworker', action: :service
     end
 
-    # Feeds #
     resource :feed, only: [:edit, :update, :show]
-
-    # Badges #
     resources :badges, only: [:index]
 
     # Videos #
@@ -81,30 +78,36 @@ Rails.application.routes.draw do
 
     # Tags #
     resources :tags, only: [:index], id: /([0-9]+).*/ do #*/
-      put 'hide'
-      put 'spoiler'
-      put 'watch'
+      scope module: 'tags' do
+        scope controller: :actions do
+          put 'hide'
+          put 'spoiler'
+          put 'watch'
+        end
 
-      get 'videos'
-      get 'users'
-      get 'changes', controller: :history, action: :tag
+        resources :videos, only: [:index]
+        resources :users, only: [:index]
+        resources :changes, only: [:index]
+      end
     end
-    resource :tags do
-      get 'aliases'
-      get 'implied'
+    scope :tags do
+      scope module: 'tags' do
+        resources :aliases, only: [:index]
+        resources :implied, only: [:index]
+      end
 
-      get ':name', action: :show, constraints: { name: /.*/ } #*/
+      get ':id', action: :show, controller: :tags, id: /.*/ #*/
     end
 
     # Forums #
-    resources :forum, only: [:index, :new, :create, :edit, :update, :destroy], controller: 'forum/boards'
+    resources :forum, only: [:index, :new, :create, :edit, :update, :destroy], controller: :boards, module: :forum
     namespace :forum do
-      get 'search' => 'search#index'
+      resources :search, only: [:index]
 
       # Threads #
-      resources :threads, only: [:show, :new, :create, :update] do
-        put 'subscribe'
-        get '/:order', action: :show
+      resources :threads, only: [:new, :create, :update] do
+        resource :subscribe, only: [:update]
+        get '(/:order)', action: :show
       end
     end
 
@@ -130,27 +133,25 @@ Rails.application.routes.draw do
     # A bit of a trick to get notifications to mark themselves read when you click on them.
     get 'review' => 'notifications#view'
 
-    # Main Search #
-    get 'search' => 'search#index'
+    resources :search, only: [:index]
 
     # Lookup Actions #
     namespace :find do
-      get 'users' => 'users#find'
-      get 'comments' => 'comment#find'
-      get 'tags' => 'tags#find'
+      resources :users, only: [:index]
+      resources :comments, only: [:index]
+      resources :tags, only: [:index]
     end
 
     # Admin Actions #
     namespace :admin, controller: :admin do
-      post 'transfer'
+      put 'transfer'
 
-      scope :verify, controller: :verification do
-        put 'users', action: :verify_users
-        put 'videos', action: :verify_videos
+      namespace :verify do
+        resource :users, only: [:update]
+        resource :videos, only: [:update]
       end
 
-      get 'files' => 'files#index'
-
+      resources :files, only: [:index]
       resource :settings, only: [] do
         put 'set/:key', action: :set
         put 'toggle/:key', action: :toggle
@@ -160,22 +161,22 @@ Rails.application.routes.draw do
         put 'feature'
       end
 
-      resource :videos, only: [] do
-        get 'hidden'
-        get 'unprocessed'
-
-        post 'hidden/drop', action: :batch_drop
-        post 'requeue'
+      namespace :videos do
+        resources :unprocessed, only: [:index], controller: :unprocessed_videos
+        resources :hidden, only: [:index, :destroy], controller: :hidden_videos
+        resource :requeue, only: [:update], controller: :requeue_videos
       end
 
       resources :videos, only: [:show, :destroy] do
-        put 'hide'
-        put 'feature'
-        put 'reprocess'
-        put 'resetthumb'
-        put 'merge'
-        put 'metadata'
-        put 'moderation'
+        scope module: :videos do
+          resource :hide, only: [:update], controller: :hidden_videos
+          resource :feature, only: [:update], controller: :featured_videos
+          resource :reprocess, only: [:update], controller: :unprocessed_videos
+          resource :merge, only: [:update], controller: :merged_videos
+          resource :thumbnail, only: [:destroy]
+          resource :metadata, only: [:update]
+          resource :moderation, only: [:update]
+        end
       end
 
       resources :tags, only: [:show, :update]
@@ -191,10 +192,10 @@ Rails.application.routes.draw do
 
       # Reporting #
       resources :reports, only: [:new, :show, :index, :create] do
-        put "/:state" => :update
+        put '/:state' => :update
       end
       resource :reports, only: [] do
-        post "closeall" => :close_all
+        post 'closeall' => :close_all
       end
 
       resources :threads, only: [:destroy] do
@@ -220,8 +221,8 @@ Rails.application.routes.draw do
       mount Resque::Server.new, at: '/admin/resque'
     end
 
+    # API #
     namespace :api do
-      # API #
       get 'bbcode' => 'bbcode#html_to_bbcode'
       get 'html' => 'bbcode#bbcode_to_html'
       get 'youtube' => 'youtube#show'
@@ -240,8 +241,6 @@ Rails.application.routes.draw do
     get '/*any', to: redirect(subdomain: '')
     root to: redirect(subdomain: '')
   end
-
-
 
   # Home #
   root 'welcome#index'

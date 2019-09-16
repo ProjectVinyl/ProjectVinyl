@@ -1,6 +1,6 @@
 module Find
   class TagsController < ApplicationController
-    def find
+    def index
 			term = params[:q].strip.split(/,|;/).last.strip.downcase
       render json: {
 				term: term,

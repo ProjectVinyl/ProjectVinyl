@@ -1,6 +1,6 @@
 module Find
   class UsersController < ApplicationController
-    def find
+    def index
       @query = params[:q]
       reject = params[:validate] && user_signed_in? ? !current_user.validate_name(@query) : false
       

@@ -8,10 +8,10 @@
 - if @hiddenvideos.count > 0
 	- if current_user.is_admin?
 		.actions
-			%a.button.red{href: hidden_drop_admin_videos_path, data: {confirm: "", method: "post", title: "Del #{@hiddenvideos.count} Videos"}}
+			%a.button.red{href: admin_videos_hidden, data: {confirm: "", method: :delete, title: "Delete #{@hiddenvideos.count} Videos"}}
 				= fw :trash_o
 				Remove All
 		%hr/
-	= render layout: 'pagination/paginated', locals: {type: hidden_admin_videos_path, paginated: @hiddenvideos, id: "hidden"} do
+	= render layout: 'pagination/paginated', locals: {type: admin_videos_hidden_index_path, paginated: @hiddenvideos, id: "hidden"} do
 		%ul.horizontal.video-list#videos
 			= render partial: 'admin/videos/thumb_h', collection: @hiddenvideos.records

@@ -33,7 +33,7 @@ module Admin
         return head :not_found
       end
       
-      redirect_to action: params[:type], id: params[:item][:id]
+      redirect_to action: :show, controller: '/admin/' + params[:type].pluralize, id: params[:item][:id]
       
       if !(user = User.by_name_or_id(params[:item][:user_id]))
         return flash[:alert] = "Error: Destination user was not found."
@@ -91,17 +91,6 @@ module Admin
       end
 
       return redirect_to action: 'view'
-    end
-    
-    def verify
-      redirect_to url_for(action: 'view')
-      
-      if !current_user.is_admin?
-        return flash[:notice] = "Access Denied: You do not have the required permissions."
-      end
-      
-      VideoVerificationJob.perform_later(current_user.id)
-      flash[:notice] = "Success! An integrity check has been launched. A report will be generated upon completion."
     end
   end
 end

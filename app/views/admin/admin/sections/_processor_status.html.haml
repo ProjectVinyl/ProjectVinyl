@@ -21,12 +21,12 @@
 - rescue
 	%p Oops! Could not connect to Resque.
 %hr/
-%button.action.blue{type: "button", data: {method: "put", confirm: "", url: "/admin/verify/videos", title: "Verify Video Files"}}
+%button.action.blue{type: "button", data: {method: "put", confirm: "", url: admin_verify_videos_path, title: "Verify Video Files"}}
 	= fa :wrench
 	Verify Videos
-%button.action.blue{type: "button", data: {method: "put", confirm: "", url: "/admin/verify/users", title: "Verify User Files"}}
+%button.action.blue{type: "button", data: {method: "put", confirm: "", url: admin_verify_users_path, title: "Verify User Files"}}
 	= fa :wrench
 	Verify Users
-%button.action.blue{type: "button", data: {method: "post", confirm: "", url: requeue_admin_videos_path, title: "Rebuild Processing Queue"}}
+%button.action.blue{type: "button", data: {method: "post", confirm: "", url: admin_videos_requeue_path, title: "Rebuild Processing Queue"}}
 	= fa :wrench
 	Rebuild Processing Queue

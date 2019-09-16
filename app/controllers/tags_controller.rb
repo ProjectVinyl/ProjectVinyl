@@ -1,6 +1,6 @@
 class TagsController < ApplicationController
   def show
-    name = params[:name].downcase
+    name = params[:id].downcase
     if !(@tag = Tag.by_name_or_id(name).first)
       return render_error(
         title: 'Nothing to see here but us Fish!',
@@ -34,78 +34,6 @@ class TagsController < ApplicationController
     @records = Tag.includes(:videos, :tag_type).where('alias_id IS NULL').order(:name)
     render_listing_total @records, params[:page].to_i, 100, false, {
       table: 'tags', label: 'Tag'
-    }
-  end
-  
-  def videos
-    if !(@tag = Tag.where(id: params[:tag_id]).first)
-      return head :not_found
-    end
-    @records = @tag.videos.where(hidden: false).includes(:tags).order(:created_at)
-    render_pagination 'videos/thumb_h', @records, params[:page].to_i, 8, true
-  end
-  
-  def users
-    if !(@tag = Tag.where(id: params[:tag_id]).first)
-      return head :not_found
-    end
-    @records = @tag.users.order(:updated_at)
-    render_pagination 'users/thumb_h', @records, params[:page].to_i, 8, true
-  end
-  
-  def aliases
-    @aliases = Tag.includes(:alias => [:videos, :users]).where('alias_id > 0').order(:name)
-    @aliases = Pagination.paginate(@aliases, params[:page].to_i, 10, true)
-    
-    if params[:format] == 'json'
-      render_pagination_json 'tags/tag_alias', @aliases
-    end
-  end
-  
-  def implied
-    @implied = Tag.includes(:implications).references(:implications).where('tag_implications.id IS NOT NULL').order(:name)
-    @implied = Pagination.paginate(@implied, params[:page].to_i, 10, true)
-    
-    if params[:format] == 'json'
-      render_pagination_json 'tags/tag_implication', @implied
-    end
-  end
-  
-  def hide
-    toggle_action {|subscription| subscription.toggle_hidden }
-  end
-
-  def spoiler
-    toggle_action {|subscription| subscription.toggle_spoilered }
-  end
-
-  def watch
-    toggle_action {|subscription| subscription.toggle_watched }
-  end
-  
-  private
-  def toggle_action
-    if !user_signed_in?
-      return head 401
-    end
-    
-    if params[:tag_id].to_i.to_s != params[:tag_id]
-      params[:tag_id] = Tag.where(name: params[:tag_id]).first.id
-    end
-    if !(subscription = TagSubscription.where(user_id: current_user.id, tag_id: params[:tag_id]).first)
-      subscription = TagSubscription.new(
-        user_id: current_user.id,
-        tag_id: params[:tag_id],
-        hide: false,
-        spoiler: false,
-        watch: false
-      )
-    end
-    yield(subscription)
-    render json: {
-      hide: subscription.hide,
-      spoiler: subscription.spoiler,
-      watch: subscription.watch
     }
   end
 end

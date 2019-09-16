@@ -32,12 +32,12 @@
 				= "(#{@video.processed ? "Yes" : @video.processed.nil? ? "No" : "In Progress"})"
 			%td.field
 				= form_for(@video, as: "video", url: admin_video_reprocess_path(@video), html: { method: :put }) do |f|
-					= f.submit "Restart"
+					= f.submit "Reset"
 		%tr.actions
 			%td.label Reset Thumbnail
 			%td.field
-				= form_for(@video, as: "video", url: admin_video_resetthumb_path(@video), html: { method: :put }) do |f|
-					= f.submit "Restart"
+				= form_for(@video, as: "video", url: admin_video_thumbnail_path(@video), html: { method: :delete }) do |f|
+					= f.submit "Reset"
 					%div Thumbnail will be regenerated from source
 		%tr.actions
 			%td.label Reindex Video

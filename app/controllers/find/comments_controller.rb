@@ -1,6 +1,6 @@
 module Find
   class CommentsController < ApplicationController
-    def find
+    def index
       if !(comment = Comment.where(id: params[:id]).first)
         return head :not_found
       end
