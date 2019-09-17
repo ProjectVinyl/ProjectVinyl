@@ -62,7 +62,7 @@ Rails.application.routes.draw do
         resources :comments, only: [:index]
 
         resource :hovercard, only: [:show]
-        resource :banner, only: [:get, :update]
+        resource :banner, only: [:show, :update]
         resource :avatar, only: [:update]
         resource :prefs, only: [:update]
       end
