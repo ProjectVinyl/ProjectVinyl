@@ -55,16 +55,17 @@ Rails.application.routes.draw do
     # Users #
     get 'profile/:id' => 'users#show', constraints: { id: /([0-9]+).*/ }#*/
     resources :users, only: [:index, :update] do
-      get 'uploads'
-      get 'videos'
-      get 'albums'
-      get 'comments'
+      scope module: :users do
+        resources :uploads, only: [:index]
+        resources :videos, only: [:index]
+        resources :albums, only: [:index]
+        resources :comments, only: [:index]
 
-      get 'hovercard'
-      get 'banner'
-      put 'prefs'
-      patch 'avatar' => 'users#set_avatar'
-      patch 'banner' => 'users#set_banner'
+        resource :hovercard, only: [:show]
+        resource :banner, only: [:get, :update]
+        resource :avatar, only: [:update]
+        resource :prefs, only: [:update]
+      end
     end
 
     # Albums #
@@ -144,14 +145,13 @@ Rails.application.routes.draw do
 
     # Admin Actions #
     namespace :admin, controller: :admin do
-      put 'transfer'
-
+      resource :transfer, only: [:update]
+      resources :files, only: [:index]
       namespace :verify do
         resource :users, only: [:update]
         resource :videos, only: [:update]
       end
 
-      resources :files, only: [:index]
       resource :settings, only: [] do
         put 'set/:key', action: :set
         put 'toggle/:key', action: :toggle
@@ -165,6 +165,7 @@ Rails.application.routes.draw do
         resources :unprocessed, only: [:index], controller: :unprocessed_videos
         resources :hidden, only: [:index, :destroy], controller: :hidden_videos
         resource :requeue, only: [:update], controller: :requeue_videos
+        resource :thumbnail, only: [:update]
       end
 
       resources :videos, only: [:show, :destroy] do
@@ -204,8 +205,7 @@ Rails.application.routes.draw do
         put 'move'
       end
 
-      put 'rethumb'
-      put ':table/reindex', action: :reindex
+      resources :reindex, only: [:update]
 
       root 'admin#view'
     end

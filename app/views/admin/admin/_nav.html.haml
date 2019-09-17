@@ -49,12 +49,12 @@
 	- if current_user.is_admin?
 		%h2 Indexing
 		.actions
-			%a.button.red{href: admin_path(table: :videos), data: {confirm: "", method: "put", title: "Reindex Videos"}}
+			%a.button.red{href: admin_reindex_path(id: :videos), data: {confirm: "", method: :put, title: "Reindex Videos"}}
 				= fw :refresh
 				Recreate Video Index
-			%a.button.green{href: admin_path(table: :users), data: {confirm: "", method: "put", title: "Reindex Users"}}
+			%a.button.green{href: admin_reindex_path(id: :users), data: {confirm: "", method: :put, title: "Reindex Users"}}
 				= fw :refresh
 				Recreate User Index
-			%a.button.blue{href: admin_rethumb_path, data: {confirm: "", method: "put", title: "Rethumb Videos"}}
+			%a.button.blue{href: admin_videos_thumbnail_path, data: {confirm: "", method: :put, title: "Rethumb Videos"}}
 				= fw :refresh
 				Recreate Video Thumbs
