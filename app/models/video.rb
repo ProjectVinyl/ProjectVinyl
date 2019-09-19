@@ -429,11 +429,11 @@ class Video < ApplicationRecord
   
   # virtual fields added by .with_likes(user)
   def is_upvoted
-    self.is_liked && self.is_like_negative != 1
+    self.is_liked && !self.is_like_negative
   end
 
   def is_downvoted
-    self.is_liked && self.is_like_negative != 0
+    self.is_liked && self.is_like_negative
   end
   #
   
