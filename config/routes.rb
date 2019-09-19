@@ -39,15 +39,13 @@ Rails.application.routes.draw do
 
     # Videos #
     get 'upload' => 'videos#new'
-    resources :videos, except: [:new, :destroy, :create, :update] do
-      put 'like'
-      put 'dislike'
-      put 'star'
-      patch 'cover' => 'videos#cover'
-      patch 'details' => 'videos#details'
-
-      get 'changes' => 'history#index'
-      get 'download'
+    resources :videos, except: [:new, :destroy, :create] do
+      scope module: :videos do
+        resources :actions, only: [:update]
+        resource :details, only: [:update]
+        resource :download, only: [:show]
+        resources :changes, only: [:index]
+      end
 
       put 'add' => 'albumitems#toggle'
     end
@@ -114,7 +112,7 @@ Rails.application.routes.draw do
 
     # Comments #
     resources :comments, only: [:create, :update, :destroy] do
-      put 'like(/:incr)', action: 'like'
+      put 'like'
     end
 
     # Private Messages #
@@ -236,7 +234,11 @@ Rails.application.routes.draw do
     get '/:board_name/:id' => 'forum/threads#show'
   end
   constraints :subdomain => "upload" do
-    resources :videos, only: [:create, :update]
+    resources :videos, only: [:create, :update] do
+      scope module: :videos do
+        resource :cover, only: [:update]
+      end
+    end
 
     get '/*any', to: redirect(subdomain: '')
     root to: redirect(subdomain: '')

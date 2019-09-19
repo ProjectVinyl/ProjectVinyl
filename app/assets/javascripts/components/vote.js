@@ -31,7 +31,7 @@ function count(me, offset, save) {
 }
 
 function save(sender, data) {
-  return ajax.put(`${sender.dataset.target || 'videos'}/${sender.dataset.id}/${sender.dataset.action}`, data);
+  return ajax.put(sender.dataset.action, data);
 }
 
 addDelegatedEvent(document, 'click', '.action.like, .action.dislike', (e, target) => {

@@ -4,6 +4,6 @@
 		.listing.compact
 			%ul.items.history{id: "history-#{@video.id}"}
 				- if @history.count > 0
-					= render partial: 'change', collection: @history.records
+					= render partial: 'history/change', collection: @history.records
 				- else
-					= render partial: 'wardenderpy'
+					= render partial: 'history/wardenderpy'
