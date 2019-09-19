@@ -27,7 +27,7 @@ module Forum
       @order = params[:order] == '1'
       @modifications_allowed = user_signed_in? && (current_user.id == @thread.user_id || current_user.is_contributor?)
       @comments = Pagination.paginate(
-        @thread.get_comments(user_signed_in? && current_user.is_contributor?)
+        @thread.get_comments(current_user)
                .with_likes(current_user),
         @page, 10, @order)
       

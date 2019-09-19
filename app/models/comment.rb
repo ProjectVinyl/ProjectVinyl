@@ -2,8 +2,9 @@ class Comment < ApplicationRecord
   include Reportable
   include Indirected
   include Statable
+  include UserCachable
   
-  belongs_to :comment_thread
+  belongs_to :comment_thread, touch: true
   
   has_many :comment_replies, dependent: :destroy
   has_many :mentions, class_name: "CommentReply", foreign_key: "comment_id"

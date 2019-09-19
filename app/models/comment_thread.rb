@@ -1,5 +1,6 @@
 class CommentThread < ApplicationRecord
   include Indirected
+  include UserCachable
 
   has_many :comments, dependent: :destroy, counter_cache: "total_comments"
   has_many :thread_subscriptions, dependent: :destroy
@@ -34,12 +35,14 @@ class CommentThread < ApplicationRecord
     @last_comment || @last_comment = comments.order(:created_at, :updated_at).reverse_order.limit(1).first
   end
 
-  def get_comments(all)
-    result = comments.includes(direct_user: [user_badges: [:badge]]).includes(:mentions).order(:created_at)
-    if all
-      return result
+  def get_comments(user)
+    Rails.cache.fetch(cache_key_with_user(user), expires_in: 1.hour) do
+      result = comments.includes(direct_user: [user_badges: [:badge]]).includes(:mentions).order(:created_at)
+      if user && (user == true || user.is_contributor?)
+        return result
+      end
+      result.where(hidden: false)
     end
-    result.where(hidden: false)
   end
 
   def description

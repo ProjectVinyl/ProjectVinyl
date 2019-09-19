@@ -11,7 +11,7 @@ class PmController < InboxController
     
     @order = '0'
     @thread = @pm.comment_thread
-    @comments = Pagination.paginate(@thread.get_comments(user_signed_in? && current_user.is_contributor?), (params[:page] || -1).to_i, 10, false)
+    @comments = Pagination.paginate(@thread.get_comments(current_user), (params[:page] || -1).to_i, 10, false)
     @crumb = {
       stack: [
         { link: "/inbox", title: "Messages" }

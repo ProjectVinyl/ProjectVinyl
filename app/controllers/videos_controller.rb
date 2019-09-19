@@ -63,7 +63,7 @@ class VideosController < Videos::BaseVideosController
     @tags = @video.tags
     @user = @video.user
     @thread = @video.comment_thread
-    @comments = @thread.get_comments(user_signed_in? && current_user.is_contributor?).with_likes(current_user)
+    @comments = @thread.get_comments(current_user).with_likes(current_user)
     @comments = Pagination.paginate(@comments, @page, 10, true)
     @queue = @user.queue(@video.id, current_user)
 

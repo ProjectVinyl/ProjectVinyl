@@ -31,7 +31,7 @@ class CommentsController < ApplicationController
     @thread.bump(user, params, comment)
     
     @reverse = params[:order] == '1'
-    @records = @thread.get_comments(user_signed_in? && current_user.is_contributor?).with_likes(current_user)
+    @records = @thread.get_comments(current_user).with_likes(current_user)
     @records = Pagination.paginate(@records, @reverse ? 0 : -1, 10, @reverse)
     
     @json = pagination_json_for_render 'comments/comment', @records, {
