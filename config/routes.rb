@@ -216,10 +216,9 @@ Rails.application.routes.draw do
 
     # API #
     namespace :api do
-      get 'bbcode' => 'bbcode#html_to_bbcode'
-      get 'html' => 'bbcode#bbcode_to_html'
-      get 'youtube' => 'youtube#show'
-
+      resource :bbcode, only: [:show]
+      resource :html, only: [:show]
+      resource :youtube, only: [:show]
       resources :videos, only: [:index, :show]
     end
 

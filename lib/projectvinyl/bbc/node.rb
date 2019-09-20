@@ -142,6 +142,10 @@ module ProjectVinyl
       def even
         depth % 2 == 0
       end
+      
+      def to_json
+        { html: outer_html, bbc: outer_bbc }
+      end
     end
   end
 end
