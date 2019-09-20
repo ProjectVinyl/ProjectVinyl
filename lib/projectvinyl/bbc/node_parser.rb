@@ -53,11 +53,22 @@ module ProjectVinyl
               next
             end
             
+            if result = self.parse_url(node, index, content, open, close)
+                if text.length > 0
+                  node.append_text(text)
+                  text = ''
+                end
+                content = result
+                index = -1
+                next
+            end
+
             if content[index] == open || ((index == 0 || content[index - 1].strip == '' || content[index - 1] == close) && (content[index] == '@' || content[index] == ':'))
               if text.length > 0
                 node.append_text(text)
                 text = ''
               end
+              
               if content[index] == '@'
                 content = self.parse_at_tag(node, content[(index + 1)..content.length])
               elsif content[index] == ':'
@@ -166,6 +177,18 @@ module ProjectVinyl
         return content.gsub(reply_tag, '')
       end
       
+      def parse_url(node, index, content, open, close)
+        protocol = content[index..[content.length, (index+5)].min]
+
+        if protocol == 'http:/' || protocol == 'https:'
+          url = content[index..content.length].split(open)[0].split(close)[0].split(' ')[0]
+          node.append_node('a').set_attribute('href', url)
+          return content.sub(url, '')
+        end
+        
+        return false
+      end
+
       def parse_emoticon_alias(node, content)
         emote = content.split(':')
         if emote.length > 1
