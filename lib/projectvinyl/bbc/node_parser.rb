@@ -53,6 +53,17 @@ module ProjectVinyl
               next
             end
             
+            if content[index] == '\r' || content[index] == '\n'
+              if text.length > 0
+                node.append_text(text)
+                text = ''
+              end
+              node.append_node('br')
+              content = content.content[index..content.length].gsub(/^[\r\n]+/, '')
+              index = -1
+              next
+            end
+            
             if result = self.parse_url(node, index, content, open, close)
                 if text.length > 0
                   node.append_text(text)
@@ -178,11 +189,17 @@ module ProjectVinyl
       end
       
       def parse_url(node, index, content, open, close)
+        if node.tag_name == 'a' || node.tag_name == 'url'
+          return false
+        end
+
         protocol = content[index..[content.length, (index+5)].min]
 
         if protocol == 'http:/' || protocol == 'https:'
           url = content[index..content.length].split(open)[0].split(close)[0].split(' ')[0]
-          node.append_node('a').set_attribute('href', url)
+          
+          node.append_node('a').set_attribute('href', url).append_text(' ' + TextNode.truncate_link(url))
+
           return content.sub(url, '')
         end
         

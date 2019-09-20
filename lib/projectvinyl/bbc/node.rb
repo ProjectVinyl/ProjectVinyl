@@ -70,6 +70,8 @@ module ProjectVinyl
         if name == :class
           @classes = value.split(/\s/)
         end
+        
+        self
       end
       
       def inner(type)
