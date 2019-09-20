@@ -1,5 +1,5 @@
 module Api
-  class ApiController < ApplicationController
+  class BaseApiController < ApplicationController
     include PathHelper
     
     before_action :pre_filter

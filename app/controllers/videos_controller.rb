@@ -74,8 +74,8 @@ class VideosController < Videos::BaseVideosController
       file: PathHelper.absolute_url(@video.webm_url, root_url),
       description: @video.description,
       url: url_for(action: :show, controller: :videos, id: @video.id, only_path: false) + "-" + (@video.safe_title || "untitled-video"),
-      embed_url: url_for(action: :show, controller: "embed/videos", only_path: false, id: @video.id),
-      cover: "#{url_for(action: :cover, controller: :imgs, only_path: false, id: @video.id)}.png",
+      embed_url: url_for(action: :show, controller: 'embed/videos', only_path: false, id: @video.id),
+      cover: "#{url_for(action: :show, controller: 'assets/cover', only_path: false, id: @video.id)}.png",
       tags: @tags,
       oembed: @album ? {
         list: @album.id,

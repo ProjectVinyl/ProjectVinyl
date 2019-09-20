@@ -21,7 +21,7 @@ module Admin
         return render file: '/public/403.html', layout: false
       end
       
-      redirect_to action: 'index'
+      redirect_to action: :index
       
       if !(tagtype = TagType.where(id: params[:tag_type][:id]).first)
         flash[:error] = "Error: Record not be found."
@@ -43,7 +43,7 @@ module Admin
     end
 
     def create
-      redirect_to 'index'
+      redirect_to action: :index
       
       if !current_user.is_contributor?
         return flash[:error] = "Error: Login required."

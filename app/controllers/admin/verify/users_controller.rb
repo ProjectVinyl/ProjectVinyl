@@ -3,7 +3,7 @@ module Admin
     class UsersController < BaseAdminController
 
       def update
-        redirect_to url_for(controller: '/admin/admin', action: 'view')
+        redirect_to url_for(controller: '/admin/admin', action: :index)
 
         if !current_user.is_admin?
           return flash[:notice] = "Access Denied: You do not have the required permissions."

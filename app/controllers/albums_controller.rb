@@ -1,4 +1,4 @@
-class AlbumsController < ApplicationController
+class AlbumsController < Albums::BaseAlbumsController
   def show
     if !(@album = Album.where(id: params[:id].split(/-/)[0]).first)
       return render_error(
@@ -48,20 +48,7 @@ class AlbumsController < ApplicationController
       }
     }
   end
-  
-  def starred
-    check_and do
-      @user = current_user
-      @album = current_user.stars
-      
-      @records = @album.ordered(@album.album_items.includes(:direct_user))
-      @items = Pagination.paginate(@records, 0, 50, false)
-      @modifications_allowed = true
-      
-      render template: 'albums/show'
-    end
-  end
-  
+
   def new
     @album = Album.new
     @initial = Video.where(id: params[:initial]).first if params[:initial]
@@ -95,17 +82,7 @@ class AlbumsController < ApplicationController
       render partial: 'edit'
     end
   end
-  
-  def order
-    check_then :album_id do |album|
-      album.set_ordering(params[:album][:sorting], params[:album][:direction])
-      album.listing = params[:album][:privacy].to_i
-      album.save
-      
-      redirect_to action: :show, id: album.id
-    end
-  end
-  
+
   def update
     check_then :id do |album|
       if params[:field] == 'description'
@@ -135,31 +112,5 @@ class AlbumsController < ApplicationController
     render_listing_total @records, params[:page].to_i, 50, true, {
       table: 'albums', label: 'Album'
     }
-  end
-  
-  private
-  def check_and
-    if !user_signed_in?
-      flash[:error] = "You need to sign in to do that."
-      return redirect_to action: :index, controller: :welcome
-    end
-    
-    yield
-  end
-  
-  def check_then(id)
-    if !user_signed_in?
-      return head :unauthorized
-    end
-    
-    if !(album = Album.where(id: params[id]).first)
-      return head :not_found
-    end
-    
-    if !album.owned_by(current_user)
-      return head :unauthorized
-    end
-    
-    yield(album)
   end
 end

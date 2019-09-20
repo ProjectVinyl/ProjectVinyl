@@ -26,28 +26,26 @@ Rails.application.routes.draw do
     end
 
     # Asset Fallbacks #
-    scope controller: :imgs, constraints: { id: /[0-9]+/ } do #*/
-      get 'cover/:id(-:small)', action: :cover
-      get 'avatar/:id(-:small)', action: :avatar
-      get 'banner/:id', action: :banner
-      get 'stream/:id', action: :stream
-      get 'serviceworker', action: :service
+    scope module: :assets, constraints: { id: /[0-9]+/ } do #*/
+      get 'cover/:id(-:small)', action: :show, controller: :cover
+      get 'avatar/:id(-:small)', action: :show, controller: :avatar
+      get 'banner/:id', action: :show, controller: :banner
+      resource :stream, only: [:show]
+      resource :serviceworker, only: [:show]
     end
 
     resource :feed, only: [:edit, :update, :show]
     resources :badges, only: [:index]
 
     # Videos #
-    get 'upload' => 'videos#new'
-    resources :videos, except: [:new, :destroy, :create] do
+    resources :videos, except: [:destroy, :create] do
       scope module: :videos do
         resources :actions, only: [:update]
         resource :details, only: [:update]
         resource :download, only: [:show]
         resources :changes, only: [:index]
+        resource :add, only: [:update]
       end
-
-      put 'add' => 'albumitems#toggle'
     end
 
     # Users #
@@ -67,10 +65,14 @@ Rails.application.routes.draw do
     end
 
     # Albums #
-    get 'stars' => 'albums#starred'
+    scope module: :albums do
+      resource :stars, only: [:show]
+    end
     resources :albums, id: /([0-9]+).*/ do #*/
-      get 'items' => 'album_item#index'
-      patch 'order'
+      scope module: :albums do
+        resources :items, only: [:index]
+        resource :order, only: [:update]
+      end
     end
 
     resources :albumitems, only: [:create, :update, :destroy]
@@ -78,12 +80,7 @@ Rails.application.routes.draw do
     # Tags #
     resources :tags, only: [:index], id: /([0-9]+).*/ do #*/
       scope module: 'tags' do
-        scope controller: :actions do
-          put 'hide'
-          put 'spoiler'
-          put 'watch'
-        end
-
+        resources :actions, only: [:update], id: /([a-zA-Z]+).*/ #*/
         resources :videos, only: [:index]
         resources :users, only: [:index]
         resources :changes, only: [:index]
@@ -120,18 +117,14 @@ Rails.application.routes.draw do
       get '(:type)(/:tabs)', action: :show
     end
 
-    resources :messages, only: [:create, :new, :show], controller: :pm do
-      put 'markread'
-      delete ':type', action: :destroy
+    scope module: :inbox do
+      resources :messages, only: [:create, :new, :show], controller: :pm do
+        resource :markread, only: [:update]
+        delete ':type', action: :destroy
+      end
     end
 
-    # Notifications #
-    resources :notifications, only: [:index, :destroy]
-
-    # Technically shouldn't be a get since it has a side-effect, but eh.
-    # A bit of a trick to get notifications to mark themselves read when you click on them.
-    get 'review' => 'notifications#view'
-
+    resources :notifications, only: [:show, :index, :destroy]
     resources :search, only: [:index]
 
     # Lookup Actions #
@@ -156,7 +149,9 @@ Rails.application.routes.draw do
       end
 
       resources :albums, only: [:show] do
-        put 'feature'
+        scope module: :albums do
+          resource :feature, only: [:update]
+        end
       end
 
       namespace :videos do
@@ -190,11 +185,9 @@ Rails.application.routes.draw do
       end
 
       # Reporting #
+      resource :reports, only: [:destroy]
       resources :reports, only: [:new, :show, :index, :create] do
         put '/:state' => :update
-      end
-      resource :reports, only: [] do
-        post 'closeall' => :close_all
       end
 
       resources :threads, only: [:destroy] do
@@ -205,15 +198,17 @@ Rails.application.routes.draw do
 
       resources :reindex, only: [:update]
 
-      root 'admin#view'
+      root 'admin#index'
     end
 
     # Embeds #
     namespace :embed do
-      get 'twitter' => 'twitter#show'
+      resource :twitter, only: [:show]
       get ':id' => 'videos#show'
     end
-    get 'oembed' => 'embed/videos#oembed'
+    scope module: :embed do
+      resource :oembed, only: [:show]
+    end
 
     constraints CanAccessJobs do
       mount Resque::Server.new, at: '/admin/resque'

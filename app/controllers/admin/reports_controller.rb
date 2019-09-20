@@ -68,7 +68,7 @@ module Admin
       }
     end
     
-    def close_all
+    def destroy
       if !current_user.is_contributor?
         return render_access_denied
       end
@@ -78,7 +78,7 @@ module Admin
       
       flash["success"] = "The status for #{total} reports have been updated to Closed."
       
-      redirect_to action: :view, controller: :admin
+      redirect_to action: :index, controller: :admin
     end
     
     def new

@@ -1,17 +1,17 @@
 module Tags
   class ActionsController < ApplicationController
-    def hide
-      toggle_action {|subscription| subscription.toggle_hidden }
+    def update
+      toggle_action do |subscription|
+        if params[:id] == 'hide'
+          subscription.toggle_hidden
+        elsif params[:id] == 'spoiler'
+          subscription.toggle_spoilered
+        elsif params[:id] == 'watch'
+          subscription.toggle_watched
+        end
+      end
     end
 
-    def spoiler
-      toggle_action {|subscription| subscription.toggle_spoilered }
-    end
-
-    def watch
-      toggle_action {|subscription| subscription.toggle_watched }
-    end
-    
     private
     def toggle_action
       if !user_signed_in?

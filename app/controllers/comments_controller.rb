@@ -84,8 +84,7 @@ class CommentsController < ApplicationController
       }
     end
   end
-  
-  
+
   private
   def check_then
     if !user_signed_in?

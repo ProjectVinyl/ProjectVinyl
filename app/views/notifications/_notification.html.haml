@@ -10,5 +10,5 @@
 				data: {target: forum_thread_subscribe_path(notification.comment_thread),
 					"unchecked-icon": "bell", "checked-icon": "bell-slash"}}
 				%span.icon= fa :bell_slash
-	%a(href="/review?n=#{notification.id}")
+	%a{href: notification_path(notification)}
 		= raw notification.message

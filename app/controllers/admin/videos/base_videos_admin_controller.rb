@@ -22,7 +22,7 @@ module Admin
       end
 
       def check_access_then
-        redirect_to action: :view, controller: 'admin/admin'
+        redirect_to action: :index, controller: 'admin/admin'
 
         if !current_user.is_contributor?
           return flash[:error] = "Error: Login required."

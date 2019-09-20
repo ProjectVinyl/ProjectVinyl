@@ -20,7 +20,7 @@ module Admin
         table.update_index(defer: false)
         flash[:notice] = "Success! Indexes for record #{params[:id]}.#{params[params[:id]][:id]} have been completed."
 
-        return redirect_to action: 'view', controller: 'admin/' + params[:id], id: params[params[:id]][:id]
+        return redirect_to action: :show, controller: 'admin/' + params[:id], id: params[params[:id]][:id]
       end
       
       begin
@@ -30,7 +30,7 @@ module Admin
         flash[:notice] = "Error: Elasti-search does not appear to be running."
       end
 
-      return redirect_to action: :view, controller: 'admin/admin'
+      return redirect_to action: :index, controller: 'admin/admin'
     end
   end
 end

@@ -7,7 +7,7 @@
 		= fa :chevron_right
 - if @reports.count > 0
 	.actions
-		%a.button.red{href: closeall_admin_reports_path, data: {confirm: "", method: "post", title: "Close #{@reports.count} Reports"}}
+		%a.button.red{href: admin_reports_path, data: {confirm: "", method: :delete, title: "Close #{@reports.count} Reports"}}
 			= fa :ban
 			Close All
 	%hr/

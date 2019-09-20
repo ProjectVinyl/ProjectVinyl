@@ -4,7 +4,7 @@ module Admin
 
       def update
 
-        redirect_to action: :view, controller: '/admin/admin'
+        redirect_to action: :index, controller: '/admin/admin'
 
         if !current_user.is_contributor?
           flash[:notice] = "Access Denied: You do not have the required permissions."

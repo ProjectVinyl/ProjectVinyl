@@ -1,5 +1,6 @@
 module Embed
   class EmbedController < ActionController::Base
+    include ApplicationHelper
     protect_from_forgery with: :exception
     after_action :allow_embeds
     
