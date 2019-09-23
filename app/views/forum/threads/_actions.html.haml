@@ -10,7 +10,7 @@
 			- if @thread.locked
 				= fa :check
 		%span.label Lock Thread
-	%a.button.blue.mobile-friendly.right{href: forum_search_path(board: @thread.owner_id, title_query: @thread.title)}
+	%a.button.blue.mobile-friendly.right{href: forum_search_index_path(board: @thread.owner_id, title_query: @thread.title)}
 		= fa :search
 		%span Find Posts
 	- if @thread.owner_type == 'Board'

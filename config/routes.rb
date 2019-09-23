@@ -34,10 +34,10 @@ Rails.application.routes.draw do
       resource :serviceworker, only: [:show]
     end
 
-    resource :feed, only: [:edit, :update, :show]
-    resources :badges, only: [:index]
-
     # Videos #
+    namespace :videos do
+      resource :feed, only: [:edit, :update, :show]
+    end
     resources :videos, except: [:destroy, :create] do
       scope module: :videos do
         resources :actions, only: [:update]
@@ -49,7 +49,6 @@ Rails.application.routes.draw do
     end
 
     # Users #
-    get 'profile/:id' => 'users#show', constraints: { id: /([0-9]+).*/ }#*/
     resources :users, only: [:index, :update] do
       scope module: :users do
         resources :uploads, only: [:index]
@@ -65,21 +64,20 @@ Rails.application.routes.draw do
     end
 
     # Albums #
-    scope module: :albums do
-      resource :stars, only: [:show]
-    end
+    resource :stars, only: [:show], module: :albums
     resources :albums, id: /([0-9]+).*/ do #*/
       scope module: :albums do
         resources :items, only: [:index]
         resource :order, only: [:update]
       end
     end
-
-    resources :albumitems, only: [:create, :update, :destroy]
+    namespace :albums do
+      resources :items, only: [:create, :update, :destroy]
+    end
 
     # Tags #
     resources :tags, only: [:index], id: /([0-9]+).*/ do #*/
-      scope module: 'tags' do
+      scope module: :tags do
         resources :actions, only: [:update], id: /([a-zA-Z]+).*/ #*/
         resources :videos, only: [:index]
         resources :users, only: [:index]
@@ -87,7 +85,7 @@ Rails.application.routes.draw do
       end
     end
     scope :tags do
-      scope module: 'tags' do
+      scope module: :tags do
         resources :aliases, only: [:index]
         resources :implied, only: [:index]
       end
@@ -98,6 +96,7 @@ Rails.application.routes.draw do
     # Forums #
     resources :forum, only: [:index, :new, :create, :edit, :update, :destroy], controller: :boards, module: :forum
     namespace :forum do
+      resources :badges, only: [:index]
       resources :search, only: [:index]
 
       # Threads #
@@ -109,7 +108,7 @@ Rails.application.routes.draw do
 
     # Comments #
     resources :comments, only: [:create, :update, :destroy] do
-      put 'like'
+      resource :like, only: [:update], module: :comments
     end
 
     # Private Messages #
@@ -138,6 +137,12 @@ Rails.application.routes.draw do
     namespace :admin, controller: :admin do
       resource :transfer, only: [:update]
       resources :files, only: [:index]
+      resources :tags, only: [:show, :update]
+      resources :tagtypes, except: [:show, :edit]
+      resources :sitenotices, except: [:show, :edit]
+      resources :api, except: [:show], controller: :api_tokens
+      resources :reindex, only: [:update]
+
       namespace :verify do
         resource :users, only: [:update]
         resource :videos, only: [:update]
@@ -149,9 +154,7 @@ Rails.application.routes.draw do
       end
 
       resources :albums, only: [:show] do
-        scope module: :albums do
-          resource :feature, only: [:update]
-        end
+        resource :feature, only: [:update], module: :albums
       end
 
       namespace :videos do
@@ -160,7 +163,6 @@ Rails.application.routes.draw do
         resource :requeue, only: [:update], controller: :requeue_videos
         resource :thumbnail, only: [:update]
       end
-
       resources :videos, only: [:show, :destroy] do
         scope module: :videos do
           resource :hide, only: [:update], controller: :hidden_videos
@@ -173,15 +175,11 @@ Rails.application.routes.draw do
         end
       end
 
-      resources :tags, only: [:show, :update]
-      resources :tagtypes, except: [:show, :edit]
-      resources :badges, except: [:show, :edit]
-      resources :userbadges, only: [:update]
-      resources :sitenotices, except: [:show, :edit]
-      resources :api, except: [:show], controller: :api_tokens
       resources :users, only: [:show] do
-        resources :badges, only: [:update], controller: :user_badges
-        resources :roles, only: [:update]
+        scope module: :users do
+          resources :badges, only: [:update]
+          resources :roles, only: [:update]
+        end
       end
 
       # Reporting #
@@ -190,24 +188,23 @@ Rails.application.routes.draw do
         put '/:state' => :update
       end
 
-      resources :threads, only: [:destroy] do
-        put 'pin'
-        put 'lock'
-        put 'move'
+      scope module: :forum do
+        resources :badges, except: [:show, :edit]
+        resources :threads, only: [:destroy] do
+          put 'pin'
+          put 'lock'
+          put 'move'
+        end
       end
-
-      resources :reindex, only: [:update]
 
       root 'admin#index'
     end
 
     # Embeds #
+    resource :oembed, only: [:show], module: :embed
     namespace :embed do
       resource :twitter, only: [:show]
       get ':id' => 'videos#show'
-    end
-    scope module: :embed do
-      resource :oembed, only: [:show]
     end
 
     constraints CanAccessJobs do
@@ -223,15 +220,14 @@ Rails.application.routes.draw do
     end
 
     # Short links #
+    get 'profile/:id' => 'users#show', constraints: { id: /([0-9]+).*/ }#*/
     get '/:id(-:safe_title)' => 'videos#show', constraints: { id: /([0-9]+)/ }
     get '/:id' => 'forum/boards#show'
     get '/:board_name/:id' => 'forum/threads#show'
   end
   constraints :subdomain => "upload" do
     resources :videos, only: [:create, :update] do
-      scope module: :videos do
-        resource :cover, only: [:update]
-      end
+      resource :cover, only: [:update], module: :videos
     end
 
     get '/*any', to: redirect(subdomain: '')

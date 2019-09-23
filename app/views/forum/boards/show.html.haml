@@ -22,7 +22,7 @@
 		%button.action.mobile-friendly.green(data-external-form="#{new_forum_thread_path(board: @board.id)}" data-title="New Topic" type="button")>
 			= fa :plus
 			%span New Topic
-	%a.button.blue.mobile-friendly.right{href: forum_search_path(board: @board.id)}>
+	%a.button.blue.mobile-friendly.right{href: forum_search_index_path(board: @board.id)}>
 		= fa :search
 		%span Find Posts
 %hr/

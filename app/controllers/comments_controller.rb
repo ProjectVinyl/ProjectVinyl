@@ -1,4 +1,4 @@
-class CommentsController < ApplicationController
+class CommentsController < Comments::BaseCommentsController
   def create
     if !(@thread = CommentThread.where(id: params[:thread_id]).first) || @thread.locked
       return head :not_found
@@ -49,15 +49,7 @@ class CommentsController < ApplicationController
       }
     end
   end
-  
-  def like
-    check_then do |comment|
-      render json: {
-        count: comment.upvote(current_user, params[:incr])
-      }
-    end
-  end
-  
+
   def destroy
     check_then do |comment|
       if !current_user.is_contributor? && current_user.id != comment.user_id
@@ -83,18 +75,5 @@ class CommentsController < ApplicationController
         })
       }
     end
-  end
-
-  private
-  def check_then
-    if !user_signed_in?
-      return head :unauthorized
-    end
-    
-    if !(comment = Comment.where(id: params[:id] || params[:comment_id]).first)
-      return head :not_found
-    end
-    
-    yield(comment)
   end
 end

@@ -1,5 +1,5 @@
 %a.username{href: current_user.link}= current_user.username
-%a.notices-bell.feeds{href: feed_path}
+%a.notices-bell.feeds{href: videos_feed_path}
 	%i.fa.fa-globe
 	%span.feed-count.count{data: {count: current_user.feed_count}}
 		= safe_to_display current_user.feed_count, 999

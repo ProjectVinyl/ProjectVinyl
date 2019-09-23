@@ -2,7 +2,7 @@
 	%a{href: thumb_h.link}
 		= render 'users/avatar/avatar', user: thumb_h
 		%h2{class: thumb_h.banned? && "banned"}= thumb_h.username
-		%span.tag-set= render 'badges/badges', user: thumb_h
+		%span.tag-set= render 'forum/badges/badges', user: thumb_h
 	.tag-set
 		- c = thumb_h.videos.count
 		= number_with_delimiter c
