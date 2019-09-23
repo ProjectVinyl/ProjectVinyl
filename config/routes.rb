@@ -191,9 +191,11 @@ Rails.application.routes.draw do
       scope module: :forum do
         resources :badges, except: [:show, :edit]
         resources :threads, only: [:destroy] do
-          put 'pin'
-          put 'lock'
-          put 'move'
+          scope module: :threads do
+            resource :pin, only: [:update]
+            resource :lock, only: [:update]
+            resource :move, only: [:update]
+          end
         end
       end
 
