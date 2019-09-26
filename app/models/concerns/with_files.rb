@@ -1,5 +1,9 @@
 module WithFiles
   extend ActiveSupport::Concern
+
+  def self.storage_path(date)
+    [date.year.to_s, date.month.to_s, date.day.to_s].join('/')
+  end
   
   def storage_root
     self.hidden ? 'private' : 'public'
@@ -11,6 +15,7 @@ module WithFiles
   
   def rename_file(from, to)
     if has_file(from)
+      FileUtils.mkdir_p(File.dirname(to))
       FileUtils.mv(from, to)
     end
   end

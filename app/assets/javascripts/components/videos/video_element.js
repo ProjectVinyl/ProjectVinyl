@@ -18,12 +18,12 @@ export function createVideoElement(sender) {
   const video = sender.createMediaElement();
   sender.player.media.appendChild(video);
   
-  if (sender.time) {
+  if (sender.params.time) {
     if (sender.isReady()) {
-      video.currentTime = sender.time;
+      video.currentTime = sender.params.time;
     } else {
       const setTime = () => {
-        video.currentTime = sender.time;
+        video.currentTime = sender.params.time;
         video.removeEventListener('canplay', setTime);
       };
       video.addEventListener('canplay', setTime);

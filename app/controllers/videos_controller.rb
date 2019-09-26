@@ -25,6 +25,9 @@ class VideosController < Videos::BaseVideosController
 
     load_album
 
+    @time = (params[:t] || params[:resume]).to_i
+    @resume = !params[:resume].nil?
+
     if params[:format] == 'json'
       if !@album
         if !(params[:list] || params[:q])
@@ -47,17 +50,12 @@ class VideosController < Videos::BaseVideosController
           link: @next_video.link,
           id: @next_video.id
         } : nil,
-        title: @video.title,
-        artist: @video.user.username,
-        audioOnly: @video.audio_only,
-        source: @video.id,
-        mime: [@video.file, @video.mime]
+        current: @video.widget_parameters(@time, @resume, false, @album)
       }
     end
 
     @order = '1'
-    @time = (params[:t] || params[:resume]).to_i
-    @resume = !params[:resume].nil?
+
     @page = params[:page] ? params[:page].to_i - 1 : 0
 
     @tags = @video.tags
@@ -75,7 +73,7 @@ class VideosController < Videos::BaseVideosController
       description: @video.description,
       url: url_for(action: :show, controller: :videos, id: @video.id, only_path: false) + "-" + (@video.safe_title || "untitled-video"),
       embed_url: url_for(action: :show, controller: 'embed/videos', only_path: false, id: @video.id),
-      cover: "#{url_for(action: :show, controller: 'assets/cover', only_path: false, id: @video.id)}.png",
+      cover: PathHelper.absolute_url(@video.thumb, root_url),
       tags: @tags,
       oembed: @album ? {
         list: @album.id,

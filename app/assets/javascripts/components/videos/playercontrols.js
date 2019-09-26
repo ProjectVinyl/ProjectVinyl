@@ -82,7 +82,7 @@ export function PlayerControls(player, dom) {
   
   if (player.audioOnly) {
     this.preview = document.createElement('img');
-    this.preview.src = `/cover/${player.source}-small.png`;
+    this.preview.src = `/stream/${player.params.path}/${player.params.id}/thumb.png`;
     this.track.preview.appendChild(this.preview);
   } else {
     this.preview = createMiniTile(player);
@@ -165,10 +165,10 @@ export function PlayerControls(player, dom) {
 }
 PlayerControls.prototype = {
   hide() {
-    this.player.dom.dataset.hideControls = '1'
+    this.player.dom.dataset.hideControls = '1';
   },
   show() {
-    this.player.dom.dataset.hideControls = '0'
+    this.player.dom.dataset.hideControls = '0';
   },
   repaintVolumeSlider(volume) {
     this.volume.indicator.setAttribute('class', 'fa fa-volume-' + getVolumeIcon(volume));

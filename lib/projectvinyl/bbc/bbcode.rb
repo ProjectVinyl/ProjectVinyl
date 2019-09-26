@@ -110,6 +110,9 @@ module ProjectVinyl
       TagGenerator.register(:html, [:emote]) do |tag|
         Emoticons.emoticon_tag(tag.inner_text)
       end
+      TagGenerator.register(:html, [:size]) do |tag|
+        "<span data-size=\"#{tag.equals_par}\">#{tag.inner_html}</span>"
+      end
       
       def self.from_html(html)
         NodeParser.parse(html, '<', '>')

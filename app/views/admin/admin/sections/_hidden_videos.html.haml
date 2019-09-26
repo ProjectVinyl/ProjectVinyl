@@ -8,7 +8,7 @@
 - if @hiddenvideos.count > 0
 	- if current_user.is_admin?
 		.actions
-			%a.button.red{href: admin_videos_hidden, data: {confirm: "", method: :delete, title: "Delete #{@hiddenvideos.count} Videos"}}
+			%a.button.red{href: admin_videos_hidden_index_path, data: {confirm: "", method: :delete, title: "Delete #{@hiddenvideos.count} Videos"}}
 				= fw :trash_o
 				Remove All
 		%hr/

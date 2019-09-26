@@ -120,11 +120,19 @@ function playerHeader(sender) {
   const heading = sender.dom.querySelector('h1 .title');
   if (heading) heading.addEventListener('mouseover', () => {
     if (sender.video && sender.video.currentTime) {
-      heading.href = `/videos/${this.source}-${this.title}?resume=${this.video.currentTime}`;
+      heading.href = `/videos/${this.params.id}-${this.params.title}?resume=${this.video.currentTime}`;
     }
   });
   
   return heading;
+}
+
+function fillRequiredParams(params, el) {
+  params.type = params.type || 'video';
+  params.embedded = params.embedded || !!el.closest('.featured');
+  params.mime = params.mime || ['.mp4', 'video/m4v'];
+  params.time = params.time || 0;
+  return params;
 }
 
 export function Player() { }
@@ -132,14 +140,12 @@ Player.prototype = {
   constructor(el, standalone) {
     this.floater = document.querySelector('.floating-player');
     
+    this.params = fillRequiredParams(JSON.parse(unescape((el.dataset.source || '{}').replace('+', ' '))), el);
+    delete el.dataset.source;
+
     this.dom = el;
-    this.embedded = !!el.dataset.embed || !!el.closest('.featured');
-    this.audioOnly = !!el.dataset.audio;
-    this.source = el.dataset.video || el.dataset.audio;
     this.video = null;
-    this.mime = (el.dataset.mime || '.mp4|video/m4v').split('|');
-    this.time = parseInt(el.dataset.time || '0') || 0;
-    this.title = el.dataset.title;
+    this.audioOnly = this.params.type === 'audio';
     
     this.suspend = el.querySelector('.suspend');
     this.player = playerElement(this);
@@ -161,7 +167,7 @@ Player.prototype = {
       },
       'Next Automatically': {
         initial: this.setAutoplay(!!cookies.get('autoplay')),
-        display: el.dataset.autoplay == 'true',
+        display: this.params.autoplay,
         callback: val => val(this.setAutoplay(!this.__autoplay))
       }
     });
@@ -184,7 +190,7 @@ Player.prototype = {
     resize(el);
     
     if (!this.embedded) {
-      if (el.dataset.resume === 'true' || this.__autostart || this.__autoplay) {
+      if (this.params.resume || this.__autostart || this.__autoplay) {
         this.play();
       }
     }
@@ -272,14 +278,14 @@ Player.prototype = {
     return on;
   },
   loadAttributesAndRestart(attr) {
-    this.dom.style.backgroundImage = `url('/cover/${attr.source}.png')`;
-    this.source = attr.source;
-    this.mime = attr.mime;
-    this.title = attr.title;
-    this.audioOnly = attr.audioOnly;
+    this.params = fillRequiredParams(attr, this.dom);
+
+    this.dom.style.backgroundImage = `url('/stream/${attr.path}/${attr.id}/cover.png')`;
+    this.source = null;
+    this.audioOnly = this.params.type === 'audio';
 
     if (this.heading) {
-      this.heading.innerText = this.title;
+      this.heading.innerText = this.params.title;
     }
 
     this.unload();
@@ -303,16 +309,15 @@ Player.prototype = {
     return this.video && this.video.readyState === 4;
   },
   createMediaElement() {
-    const media = document.createElement(this.audioOnly && this.source ? 'AUDIO' : 'VIDEO');
-    
-    if (!this.source || this.source === '0') return media;
+    const media = document.createElement(this.audioOnly ? 'AUDIO' : 'VIDEO');
+
     if (typeof this.source === 'string' && this.source.indexOf('blob') === 0) {
       media.src = this.source;
     } else {
       if (!this.audioOnly) {
-        addSource(media, `/stream/${this.source}.webm`, 'video/webm');
+        addSource(media, `/stream/${this.params.path}/${this.params.id}/video.webm`, 'video/webm');
       }
-      addSource(media, `/stream/${this.source}${this.mime[0]}`, this.mime[1]);
+      addSource(media, `/stream/${this.params.path}/${this.params.id}/source${this.params.mime[0]}`, this.params.mime[1]);
     }
     
     return media;

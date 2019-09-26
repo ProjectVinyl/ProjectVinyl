@@ -11,7 +11,7 @@ class Video < ApplicationRecord
   include Reportable
   include Indirected
   include Statable
-  
+
   has_one :comment_thread, as: :owner, dependent: :destroy
 
   has_many :album_items, dependent: :destroy
@@ -20,14 +20,14 @@ class Video < ApplicationRecord
   has_many :tags, through: :video_genres
   has_many :votes, dependent: :destroy
   has_many :tag_histories, dependent: :destroy
-  
+
   belongs_to :duplicate, class_name: "Video", foreign_key: "duplicate_id"
-  
+
   scope :listable, -> { where(hidden: false, duplicate_id: 0) }
   scope :finder, -> { listable.includes(:tags) }
   scope :popular, -> { finder.order(:heat).reverse_order.limit(4) }
   scope :with_likes, ->(user) {
-    if !user.nil? 
+    if !user.nil?
       return joins("LEFT JOIN votes ON votes.video_id = videos.id AND votes.user_id = #{user.id}")
         .select('videos.*, votes.user_id AS is_liked_flag, votes.negative AS is_like_negative_flag')
     end
@@ -35,21 +35,21 @@ class Video < ApplicationRecord
   scope :random, ->(limit) {
     selection = pluck(:id)
     return { ids: [], videos: Video.none } if selection.blank?
-    
+
     selected = selection.length < limit ? selection : selection.sample(limit)
-    
+
     {
       ids: selected,
       videos: finder.where("#{self.table_name}.id IN (?)", selected)
     }
   }
-  
+
   before_destroy :remove_assets
-  
+
   def is_liked
     (respond_to? :is_liked_flag) && is_liked_flag
   end
-  
+
   def is_like_negative
     (respond_to? :is_like_negative_flag) && is_like_negative_flag
   end
@@ -80,19 +80,19 @@ class Video < ApplicationRecord
     json["dislikes"] = self.votes.down.pluck(:user_id)
     json
   end
-  
+
   def self.clean_url(s)
     if s.blank?
       return ''
     end
-    
+
     if s.index('http:') != 0 && s.index('https:') != 0
       return "https:#{s}"
     end
-    
+
     s
   end
-	
+
   def self.ensure_uniq(data)
     if data
       hash = Ffmpeg.compute_checksum(data)
@@ -108,12 +108,12 @@ class Video < ApplicationRecord
     self.save
     self.update_index(defer: false)
   end
-  
+
   def remove_cover_files
     del_file(cover_path)
     del_file(tiny_cover_path)
   end
-  
+
   def video_path
     Video.video_file_path(storage_root, self)
   end
@@ -123,11 +123,11 @@ class Video < ApplicationRecord
   end
 
   def self.video_file_path(root, video)
-    Rails.root.join(root, 'stream', "#{video.id}#{video.file || '.mp4'}")
+    Rails.root.join(root, 'stream', WithFiles.storage_path(video.created_at), video.id.to_s, "source#{video.file || '.mp4'}")
   end
 
   def self.webm_file_path(root, video)
-    Rails.root.join(root, 'stream', "#{video.id}.webm")
+    Rails.root.join(root, 'stream', WithFiles.storage_path(video.created_at), video.id.to_s, "video.webm")
   end
 
   def self.reset_hidden_flags
@@ -147,16 +147,24 @@ class Video < ApplicationRecord
     if self.hidden
       return move_files('public', 'private')
     end
-    
+
     move_files('private', 'public')
   end
 
   def cover_path
-    Rails.root.join('public', 'cover', "#{self.id}.png")
+    Video.cover_file_path(storage_root, self)
   end
-  
+
   def tiny_cover_path
-    Rails.root.join('public', 'cover', "#{self.id}-small.png")
+    Video.thumb_file_path(storage_root, self)
+  end
+
+  def self.cover_file_path(root, video)
+    Rails.root.join(root, 'stream', WithFiles.storage_path(video.created_at), video.id.to_s, "cover.png")
+  end
+
+  def self.thumb_file_path(root, video)
+    Rails.root.join(root, 'stream', WithFiles.storage_path(video.created_at), video.id.to_s, "thumb.png")
   end
 
   def set_file(media)
@@ -173,13 +181,13 @@ class Video < ApplicationRecord
     self.checksum = hash if hash != self.checksum
     self.video = data
   end
-  
+
   def realise_checksum
     if (self.checksum.nil? || self.checksum.blank?) && self.has_file(self.video_path)
       self.checksum = Ffmpeg.compute_checksum(File.read(self.video_path))
       self.save
     end
-    
+
     return self.checksum
   end
 
@@ -190,7 +198,7 @@ class Video < ApplicationRecord
     end
     self.generate_webm
   end
-  
+
   def file_size
     return 0 if !File.exist?(video_path)
     File.size(video_path).to_f / 2**20
@@ -201,9 +209,9 @@ class Video < ApplicationRecord
       self.set_status(true)
       return "Completed"
     end
-    
+
     self.set_status(nil)
-    
+
     begin
       ProcessVideoJob.perform_later(self.id)
     rescue Exception => e
@@ -211,13 +219,13 @@ class Video < ApplicationRecord
     end
     "Processing Scheduled"
   end
-  
+
   def set_status(status)
     return if self.processed == status
     self.processed = status
     self.save
   end
-  
+
   def check_index
     Ffmpeg.try_unlock?(self.video_path) do
       self.set_status(true)
@@ -231,7 +239,7 @@ class Video < ApplicationRecord
   def set_thumbnail(cover = nil, time = nil)
     self.uncache
     self.remove_cover_files
-    
+
     if save_file(cover_path, cover, 'image/')
       Ffmpeg.extract_tiny_thumb_from_existing(cover_path, tiny_cover_path)
     else
@@ -241,7 +249,7 @@ class Video < ApplicationRecord
       end
     end
   end
-  
+
   def recreate_thumbs(time = nil)
     self.uncache
 
@@ -268,18 +276,18 @@ class Video < ApplicationRecord
   def thumb
     self.hidden ? '/images/default-cover.png' : self.direct_thumb
   end
-  
+
   def direct_thumb
-    self.cache_bust("/cover/#{self.id}.png")
+    cache_bust(['/stream', WithFiles.storage_path(created_at), id.to_s, "cover.png"].join('/'))
   end
 
   def tiny_thumb(user)
-    if (self.hidden && (!user || self.user_id != user.id)) || self.is_spoilered_by(user)
+    if (hidden && (!user || user_id != user.id)) || is_spoilered_by(user)
       return '/images/default-cover-small.png'
     end
-    self.cache_bust("/cover/#{self.id}-small.png")
+    cache_bust(['/stream', WithFiles.storage_path(created_at), id.to_s, "thumb.png"].join('/'))
   end
-  
+
   # Overrides Taggable
   def drop_tags(ids)
     Tag.where('id IN (?) AND video_count > 0', ids).update_all('video_count = video_count - 1')
@@ -291,15 +299,15 @@ class Video < ApplicationRecord
     self.video_genres
   end
   # #################
-  
+
   def link
     "/#{self.id}-#{self.safe_title}"
   end
-  
+
   def ref
     "/videos/#{self.id}"
   end
-  
+
   def artists_string
     Tag.tag_string(self.tags.where(tag_type_id: 1))
   end
@@ -327,7 +335,7 @@ class Video < ApplicationRecord
     compute_score
     self.downvotes
   end
-  
+
   def star(user)
     user.stars.toggle(self)
   end
@@ -364,7 +372,7 @@ class Video < ApplicationRecord
           end
         end
       end
-      
+
       TagHistory.record_source_changes(self)
       self.save
 
@@ -394,23 +402,30 @@ class Video < ApplicationRecord
       }
     }
   end
- 
+
+  def widget_parameters(time, resume, embed, album)
+    {
+        title: self.get_title,
+        time: time,
+        resume: resume,
+        path: WithFiles.storage_path(self.created_at),
+        type: self.audio_only ? 'audio' : 'video',
+        id: self.id,
+        mime: [self.file, self.mime],
+        embedded: embed,
+        autoplay: !album.nil?
+      }
+  end
+
   def widget_header(time, resume, embed, album)
     {
-      title: self.get_title,
-      time: time,
-      resume: resume,
-      audio: self.audio_only && self.id,
-      video: !self.audio_only && self.id,
-      mime: "#{self.file}|#{self.mime}",
-      embed: embed,
-      autoplay: (!album.nil?).to_s,
-      aspect: self.aspect
+      aspect: self.aspect,
+      source: CGI::escape(widget_parameters(time, resume, embed, album).to_json)
     }
   end
 
   def webm_url
-    "stream/#{self.id}.webm"
+    "/stream/#{self.id}.webm"
   end
 
   def aspect
@@ -418,7 +433,7 @@ class Video < ApplicationRecord
     return 1 if self.get_height == 0
     self.get_width.to_f / self.get_height.to_f
   end
-  
+
   def is_hidden_by(user)
     user && user.hides(@tag_ids || (@tag_ids = self.tags.map(&:id)))
   end
@@ -426,7 +441,7 @@ class Video < ApplicationRecord
   def is_spoilered_by(user)
     user && user.spoilers(@tag_ids || (@tag_ids = self.tags.map(&:id)))
   end
-  
+
   # virtual fields added by .with_likes(user)
   def is_upvoted
     self.is_liked && !self.is_like_negative
@@ -436,7 +451,7 @@ class Video < ApplicationRecord
     self.is_liked && self.is_like_negative
   end
   #
-  
+
   def is_starred_by(user)
     user && user.album_items.where(video_id: self.id).count > 0
   end
@@ -454,13 +469,13 @@ class Video < ApplicationRecord
       self.comment_thread.save
     end
   end
-  
+
   def get_duration
     return 0 if self.hidden
     return compute_length if self.length.nil? || self.length == 0
     self.length
   end
-  
+
   def get_width
     return 1 if self.audio_only
     if self.width.nil?
@@ -468,7 +483,7 @@ class Video < ApplicationRecord
     end
     self.width
   end
-  
+
   def get_height
     return 1 if self.audio_only
     if self.height.nil?
@@ -476,7 +491,7 @@ class Video < ApplicationRecord
     end
     self.height
   end
-  
+
   def set_description(text)
     self.description = text
     text = Comment.parse_bbc_with_replies_and_mentions(text, self.comment_thread)
@@ -484,7 +499,7 @@ class Video < ApplicationRecord
     Comment.send_mentions(text[:mentions], self.comment_thread, self.get_title, self.ref)
     self
   end
-  
+
   def compute_hotness
     x = self.views || 0
     x += 2 * (self.upvotes || 0)
@@ -523,7 +538,7 @@ class Video < ApplicationRecord
   def unmerge
     self.save if self.do_unmerge
   end
-  
+
   def report(sender_id, params)
     @report = params[:report]
     Report.generate_report(
@@ -541,7 +556,7 @@ class Video < ApplicationRecord
       user_id: sender_id
     )
   end
-  
+
   protected
   def remove_assets
     del_file(self.video_path)
@@ -549,7 +564,7 @@ class Video < ApplicationRecord
     self.remove_cover_files
     Tag.where('id IN (?) AND video_count > 0', self.tags.pluck(:id)).update_all('video_count = video_count - 1')
   end
-  
+
   def do_unmerge
     if self.duplicate_id
       if other = Video.where(id: self.duplicate_id).first
@@ -562,28 +577,30 @@ class Video < ApplicationRecord
     end
     false
   end
-  
+
   private
   def move_files(from, to)
     rename_file(Video.video_file_path(from, self), Video.video_file_path(to, self))
-    rename_file(Video.webm_file_path(from, self), Video.webm_file_path(to, self))
+    rename_file(Video.webm_file_path(from,  self), Video.webm_file_path(to,  self))
+    rename_file(Video.cover_file_path(from, self), Video.cover_file_path(to, self))
+    rename_file(Video.thumb_file_path(from, self), Video.thumb_file_path(to, self))
   end
-  
+
   def compute_length
     if !self.file || !has_file(video_path)
       return 0
     end
-    
+
     self.length = Ffmpeg.get_video_length(video_path)
     self.save
     self.length
   end
-  
+
   def compute_dimensions
     if !self.file || !has_file(video_path)
       return
     end
-    
+
     self.width = Ffmpeg.get_video_width(video_path)
     self.height = Ffmpeg.get_video_height(video_path)
     self.save

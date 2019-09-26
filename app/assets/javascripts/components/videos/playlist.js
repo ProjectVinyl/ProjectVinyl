@@ -29,7 +29,7 @@ export function onPlaylistNavigate(player, sender, json) {
   }
   
   player.redirect = sender.href;
-  player.loadAttributesAndRestart(json);
+  player.loadAttributesAndRestart(json.current);
   
   if (!player.embedded) {
     if (next && !json.next) {

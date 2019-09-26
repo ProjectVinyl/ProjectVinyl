@@ -5,22 +5,42 @@ module Assets
     def show
       id = params[:id].split('.')[0]
 
-      if !(video = Video.where(id: id).first)
-        return not_found
+      if (video = Video.where(id: id).first)
+
+        if video.hidden
+          if !(user_signed_in? && current_user.is_contributor?)
+            return forbidden
+          end
+
+          if params[:file_name] == 'video' || params[:file_name] == 'audio' || params[:file_name] == 'source'
+            path = video.video_path
+
+            if File.exist?(path)
+              serve_direct path, video.mime
+            end
+          end
+        end
+
+        if params[:file_name] == 'thumb'
+          png = video.cover_path
+
+          if File.exist?(png)
+            Ffmpeg.extract_tiny_thumb_from_existing(png, video.tiny_cover_path)
+
+            return serve_direct(png, 'image/png')
+          end
+        end
       end
 
-      if video.hidden && (!user_signed_in? || !current_user.is_contributor?)
-        return forbidden
+      if params[:file_name] == 'cover'
+        return serve_img('default-cover.png')
       end
 
-      ext = video.file
-      if params[:id].index('.')
-        ext = ".#{params[:id].split('.')[1]}"
+      if params[:file_name] == 'thumb'
+        return serve_img('default-cover-small.png')
       end
 
-      file = ext == '.webm' ? video.webm_path : video.video_path
-      mime = ext == '.webm' ? 'video/webm' : video.mime
-      serve_direct file, mime
+      return not_found
     end
   end
 end
