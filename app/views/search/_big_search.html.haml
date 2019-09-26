@@ -1,4 +1,4 @@
-﻿%form#big-search(action="#{search_path}" method="get")
+﻿%form#big-search(action="#{search_index_path}" method="get")
 	%span
 		%input.full-width(name="query" type="search" placeholder="Title" title="Search by title (alias for title:{search_term})" value="#{@title_query}")
 	%span#search_tags{class: (@type == 1 || @type == 3) && "hidden"}
