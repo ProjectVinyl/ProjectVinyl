@@ -1,7 +1,7 @@
 require 'resque/server'
 
 Rails.application.routes.draw do
-  constraints :subdomain => "" do
+  constraints :subdomain => /|www/ do
     devise_for :users, controllers: {
       passwords: 'users/passwords',
       registrations: 'users/registrations',
