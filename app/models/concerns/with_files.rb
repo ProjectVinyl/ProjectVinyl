@@ -34,15 +34,20 @@ module WithFiles
       return false
     end
     
-    File.open(path, 'wb') do |file|
-      file.write(uploaded_io.read)
-      file.flush
-    end
+    store_file(path, uploaded_io.read)
     
     if block_given?
       yield
     end
     
     true
+  end
+
+  def store_file(path, data)
+    FileUtils.mkdir_p(File.dirname(path))
+    File.open(path, 'wb') do |file|
+      file.write(data)
+      file.flush
+    end
   end
 end

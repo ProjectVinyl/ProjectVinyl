@@ -192,11 +192,8 @@ class Video < ApplicationRecord
   end
 
   def video=(data)
-    File.open(self.video_path, 'wb') do |file|
-      file.write(data)
-      file.flush
-    end
-    self.generate_webm
+    store_file(video_path, data)
+    generate_webm
   end
 
   def file_size
