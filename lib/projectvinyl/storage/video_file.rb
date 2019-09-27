@@ -2,7 +2,7 @@ require 'projectvinyl/storage/video_folder'
 
 module ProjectVinyl
   module Storage
-    class VideoFile
+    class VideoFile < BaseVideoFile
       def self.directory?(parent, item)
         File.directory?(Rails.root.join(parent.full_path, item).to_s)
       end
@@ -17,59 +17,15 @@ module ProjectVinyl
         self.raw = item
       end
 
-      def stack_size
-        @entries ? @entries.length : 0
-      end
-
-      def each
-        if @entries
-          if !@sorted
-            @sorted = true
-            @entries.sort_by! do |i|
-              i.name.length
-            end
-          end
-          @entries.each do |i|
-            yield(i)
-          end
-        end
-      end
-
-      def consume(item)
-        if @saved
-          @entries = [] if !@entries
-          created = VideoFile.new(@parent, item)
-          @entries << created
-          if item.length < @raw.length
-            created.raw = @raw
-            self.raw = item
-          end
-        end
-      end
-
       def directory?
         false
-      end
-
-      def commit
-        @saved = true
-        @parent.items << self
       end
 
       attr_reader :type
       attr_reader :name
 
-      def special_name
-        return @parent.names[@key] if @parent.names.key?(@key)
-        nil
-      end
-
       def link
         @parent.path + @name + '.' + @type
-      end
-
-      def ref
-        @raw
       end
 
       def icon
@@ -91,8 +47,7 @@ module ProjectVinyl
       protected
 
       def raw=(item)
-        @raw = item
-        @key = item.split(/\.|-/)[0]
+        super(item)
         item = item.split('.')
         if item.length == 1
           @type = 'file'

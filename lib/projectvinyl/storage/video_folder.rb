@@ -1,12 +1,11 @@
+require 'projectvinyl/storage/base_video_file'
+
 module ProjectVinyl
   module Storage
-    class VideoFolder
+    class VideoFolder < BaseVideoFile
       def initialize(parent, item)
         @parent = parent
-        @raw = item
-      end
-
-      def each
+        self.raw = item
       end
 
       def link
@@ -21,24 +20,12 @@ module ProjectVinyl
         true
       end
 
-      def commit
-        @parent.items << self
-      end
-
       def name
         @raw
       end
 
-      def special_name
-        ''
-      end
-
       def type
         'Folder'
-      end
-
-      def ref
-        @raw
       end
 
       def icon

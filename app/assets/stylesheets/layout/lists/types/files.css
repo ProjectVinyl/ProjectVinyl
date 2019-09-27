@@ -18,9 +18,6 @@
   padding-top: 30px;
 }
 
-.row[data-stack-size="0"] {
-  background: var(--block-border-color);
-}
 .row[data-type="Folder"] {
   background: #efe;
 }
