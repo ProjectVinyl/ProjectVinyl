@@ -422,7 +422,7 @@ class Video < ApplicationRecord
   end
 
   def webm_url
-    "/stream/#{self.id}.webm"
+    ['stream', WithFiles.storage_path(created_at), id.to_s, "video.webm"].join('/')
   end
 
   def aspect
