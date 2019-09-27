@@ -9,6 +9,8 @@ module Indexable
     after_commit(on: :create) do
 			begin
 				__elasticsearch__.index_document
+      rescue Elasticsearch::Transport::Transport::Errors::Forbidden => e
+        logger.warn e
 			rescue Faraday::Error::ConnectionFailed => e
 				logger.fatal e
 			end
@@ -17,6 +19,8 @@ module Indexable
     after_commit(on: :destroy) do
       begin
         __elasticsearch__.delete_document
+      rescue Elasticsearch::Transport::Transport::Errors::Forbidden => e
+        logger.warn e
       rescue Faraday::Error::ConnectionFailed => e
         logger.fatal e
       end
