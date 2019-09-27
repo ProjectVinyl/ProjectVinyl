@@ -28,7 +28,7 @@ module ProjectVinyl
         @parents.each_with_index.map do |item, index|
           {
             name: item,
-            path: @parents[index..(@parents.length - 1)],
+            path: @parents[0..index],
             last: index == (@parents.length - 1)
           }
         end
