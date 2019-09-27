@@ -14,20 +14,33 @@ export function throttleFunc(func, ms) {
 
 function scrollListener(target, ref, position, test, data) {
   const path = target.dataset.url + '.json';
-  let busy = false;
+  let blocked = false;
   return () => {
-    if (busy || !test()) return false;
-    busy = true;
+    if (blocked || !test()) {
+      return false;
+    }
+
+    blocked = true;
     target.classList.add('loading-' + position);
     ajax.get(path, {
-      path: target.dataset.path, end: target.dataset.startRef, start: target.dataset.ref, position: position
+      offset: 50,
+      path: target.dataset.path,
+      end: target.dataset.end,
+      start: target.dataset.start,
+      position: position
     }).json(json => {
       if (json.content) {
-        if (json.start) target.dataset.startRef = json.start;
-        if (json.end) target.dataset.ref = json.end;
+        if (json.start && position == 'after') {
+          target.dataset.start = json.start;
+        }
+
+        if (json.end && position == 'before') {
+          target.dataset.end = json.end;
+        }
+
         ref.insertAdjacentHTML(position + 'end', json.content);
+        blocked = false;
       }
-      busy = false;
       target.classList.remove('loading-' + position);
     });
     return true;
@@ -38,12 +51,10 @@ ready(() => {
   const target = document.querySelector('.infinite-page');
   if (!target) return;
   const context = scrollContext(target);
-  const top = scrollListener(target, target.querySelector('.row.header'), 'before', () => context.scrollTop == 0);
-  const bottom = scrollListener(target, target, 'after', () => (context.scrollTop + context.offsetHeight) >= context.scrollHeight);
+  const top = scrollListener(target, target.querySelector('.row.header'), 'after', () => context.scrollTop == 0);
+  const bottom = scrollListener(target, target, 'before', () => (context.scrollTop + context.offsetHeight) >= context.scrollHeight);
   
   context.addEventListener('scroll', throttleFunc(() => {
-    if (!top()) {
-      bottom();
-    }
+    (top() || bottom());
   }, 200));
 });

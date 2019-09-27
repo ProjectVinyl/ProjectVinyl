@@ -12,7 +12,7 @@
 		- if @video
 			%ul.horizontal
 				= render partial: 'videos/thumb_h', locals: {thumb_h: @video}
-	.infinite-page.items#files{data: {url: admin_files_path, path: @public.full_path, "start-ref": @public.start_ref, ref: @public.end_ref}}
+	.infinite-page.items#files{data: {url: admin_files_path, path: @public.full_path, start: @public.start_ref, end: @public.end_ref}}
 		.row.header
 			%div Name
 			%div(style="width:10%") Type

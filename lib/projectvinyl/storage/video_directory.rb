@@ -12,9 +12,11 @@ module ProjectVinyl
           path += '/'
         end
 
-        @parent = path.split('/')
+        limit(-1)
 
-        @full = path
+        @parents = path.split('/')
+
+        @full_path = path
 
         @path = path.sub('public/', '').sub('private/', '')
 
@@ -23,32 +25,20 @@ module ProjectVinyl
       end
 
       def parent
-        result = @parent.map {|p| { path: [], last: false }}
-
-        @parent.each_with_index do |item, index|
-          i = @parent.length - 1
-          result[index][:name] = item
-
-          while i >= index
-            result[i][:path] << item
-            i -= 1
-          end
+        @parents.each_with_index.map do |item, index|
+          {
+            name: item,
+            path: @parents[index..(@parents.length - 1)],
+            last: index == (@parents.length - 1)
+          }
         end
-
-        if !result.empty?
-          result.last[:last] = true
-        end
-
-        result
       end
 
       def path
         !@path.empty? ? '/' + @path : ''
       end
 
-      def full_path
-        @full
-      end
+      attr_reader :full_path
 
       def items
         gen if !@items
@@ -62,7 +52,7 @@ module ProjectVinyl
 
         if @resolver && !@resolved
           @resolved = true
-          @resolver.call(@names, @names_arr, @parent)
+          @resolver.call(@names, @names_arr, @parents)
         end
 
         @names
@@ -92,35 +82,48 @@ module ProjectVinyl
         self
       end
 
-      def start_from(filename, offset)
-        index = @raw_items.index(filename)
-        if index
-          index += (offset || '0').to_i
-          
-          if index < 0
-            return false
-          end
+      def buffer_before(filename, offset)
 
-          @raw_items.shift(index + 1)
-        else
+        stop = @raw_items.index(filename)
+
+        if !stop || stop == 0
           return false
         end
 
-        self
+        stop = [stop + 1,(@raw_items.length - 1)].min
+        start = stop - ((offset.nil? ? @limit : offset.to_i) | 0)
+        start = [start,0].max
+
+        buffer_range(start, stop)
       end
 
-      def end_with(filename)
-        index = @raw_items.index(filename)
-        if index
-          @raw_items = @raw_items.shift(index)
-          while @limit && @limit > 0 && @raw_items.length > @limit
-            @raw_items.shift(@limit)
-          end
-          @limit = -1
-        else
+      def buffer_after(filename, offset)
+
+        start = @raw_items.index(filename)
+
+        if !start
           return false
         end
-        self
+
+        start = start + 1
+
+        stop = start + ((offset.nil? ? @limit : offset.to_i) | 0)
+        stop = [stop, @raw_items.length].min
+
+        buffer_range(start, stop)
+      end
+
+      def buffer_range(start, stop)
+        lower = [stop,start].min
+        upper = [stop,start].max
+
+        @raw_items = @raw_items[lower..@raw_items.length]
+
+        if (upper - lower) == 0
+          return false
+        end
+
+        limit(upper - lower)
       end
 
       def start_ref
@@ -147,9 +150,10 @@ module ProjectVinyl
         data = {}
         @names_arr = []
         @names = {}
+
         @raw_items.each do |i|
 
-          if @limit && @limit > -1 && @items.length >= @limit
+          if @limit && @items.length >= @limit
             break
           end
 
@@ -166,7 +170,7 @@ module ProjectVinyl
 
               data[key] = VideoFile.create(self, i)
 
-              @names_arr << key 
+              @names_arr << key
 
               data[key].commit
               @end = i

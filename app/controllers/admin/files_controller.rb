@@ -2,38 +2,44 @@ require 'projectvinyl/storage/video_directory'
 
 module Admin
   class FilesController < BaseAdminController
-  
+
     ALLOW_ROOTS = ['public','private','encoding']
     ALLOW_DIRS = ['stream', 'cover', 'avatar', 'banner']
-    
+
     def index
       json = params[:format] == 'json'
 
       if !user_signed_in? || !current_user.is_contributor?
         return render_error_file 403, json
       end
-      
+
       load_location
-      
+
       if !ALLOW_ROOTS.include?(@location[0]) && @location.length > 1 && !ALLOW_DIRS.include?(@location[1])
         return render_error_file 403, json
       end
 
       begin
         @public = ProjectVinyl::Storage::VideoDirectory.entries(@path).limit(50)
-        if json
-          if (params[:start] && !@public.start_from(params[:start], params[:offset])) || (params[:end] && !@public.end_with(params[:end]) && json)
+        if params[:start] && (!json || params[:position] == 'after')
+          if !@public.buffer_before(params[:start], params[:offset]) && json
             return render json: {}
           end
         end
-        
+
+        if params[:end] && params[:position] == 'before'
+          if !@public.buffer_after(params[:end], params[:offset]) && json
+            return render json: {}
+          end
+        end
+
         if ALLOW_ROOTS.include?(@path)
           @public.filter do |loc|
             name = loc.split('.')[0]
             loc.index('.').nil? && ALLOW_DIRS.include?(name)
           end
         end
-        
+
         if @path.index('public/avatar') == 0 || @path.index('public/banner') == 0
           @public.names_resolver do |names, ids, path|
             User.where('id IN (' + ids.join(',') + ')').pluck(:id, :username).each do |i|
@@ -56,21 +62,21 @@ module Admin
             end
           end
         end
-        
+
       rescue Exception => e
         return render_error_file 404, json
       end
-      
+
       if json
         render json: {
-          content: render_to_string(partial: 'file', collection: @public.items),
+          content: render_to_string(partial: 'file', formats: [:html], collection: @public.items),
           start: @public.start_ref,
           end: @public.end_ref
         }
       end
-      
+
       @public.names
-      
+
       @crumb = {
         stack: [
           { link: '/admin', title: 'Admin' },
@@ -78,21 +84,21 @@ module Admin
         title: "Control Panel"
       }
     end
-    
+
     private
     def load_location
-      @location = (params[:p] || "public/stream").strip
+      @location = (params[:p] || params[:path] || "public/stream").strip
 
       if @location == ''
         @location = ['public']
       else
         @location = @location.split(/\/|\\/)
       end
-      
+
       if @location.empty? && @location[0] != 'encoding'
         @location = ['public'] + @location
       end
-      
+
       @path = @location.join('/')
     end
   end

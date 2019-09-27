@@ -1,5 +1,8 @@
-#files.loading-before::before,
-#files.loading-after::after {
+.infinite-page {
+  position: relative;
+}
+.infinite-page.loading-before::before,
+.infinite-page.loading-after::before {
   position: absolute;
   content: 'Loading...';
   display: block;
@@ -11,11 +14,17 @@
   left: 0;
   right: 0;
 }
-#files.loading-after {
+.infinite-page.loading-before {
   padding-bottom: 30px;
 }
-#files.loading-before {
+.infinite-page.loading-before::before {
+  bottom: 0;
+}
+.infinite-page.loading-after {
   padding-top: 30px;
+}
+.infinite-page.loading-after::before {
+  top: 0;
 }
 
 .row[data-type="Folder"] {
