@@ -48,7 +48,28 @@ module Admin
           end
         else
           @public.names_resolver do |names, ids, path|
-            if path.length == 6 && path[1] == 'stream'
+            if path.length == 3 && path[1] == 'stream'
+              year = path[2].to_i
+              if (year)
+                ids.each do |id|
+                  month = id.to_i
+                  if month
+                    names[id] = Date.new(year, month, 1).strftime("%B, %Y")
+                  end
+                end
+              end
+            elsif path.length == 4 && path[1] == 'stream'
+              year = path[2].to_i
+              month = path[3].to_i
+              if (year && month)
+                ids.each do |id|
+                  day = id.to_i
+                  if day
+                    names[id] = Date.new(year, month, day).strftime("%A, %d-%m-%Y")
+                  end
+                end
+              end
+            elsif path.length == 6 && path[1] == 'stream'
               if @video = Video.where(id: path.last.to_i).first
                 ids.each do |id|
                   names[id] = @video.title
