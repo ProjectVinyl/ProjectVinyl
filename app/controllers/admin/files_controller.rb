@@ -40,52 +40,10 @@ module Admin
           end
         end
 
-        if @path.index('public/avatar') == 0 || @path.index('public/banner') == 0
-          @public.names_resolver do |names, ids, path|
-            User.where('id IN (' + ids.join(',') + ')').pluck(:id, :username).each do |i|
-              names[i[0].to_s] = i[1]
-            end
-          end
-        else
-          @public.names_resolver do |names, ids, path|
-            if path.length == 3 && path[1] == 'stream'
-              year = path[2].to_i
-              if (year)
-                ids.each do |id|
-                  month = id.to_i
-                  if month
-                    names[id] = Date.new(year, month, 1).strftime("%B, %Y")
-                  end
-                end
-              end
-            elsif path.length == 4 && path[1] == 'stream'
-              year = path[2].to_i
-              month = path[3].to_i
-              if (year && month)
-                ids.each do |id|
-                  day = id.to_i
-                  if day
-                    names[id] = Date.new(year, month, day).strftime("%A, %d-%m-%Y")
-                  end
-                end
-              end
-            elsif path.length == 6 && path[1] == 'stream'
-              if @video = Video.where(id: path.last.to_i).first
-                ids.each do |id|
-                  names[id] = @video.title
-                end
-              end
-            elsif path.length == 5 && path[1] == 'stream'
-              ids = ids.map {|id| id.to_i }.uniq
-              Video.where('id IN (?)', ids).pluck(:id, :title).each do |i|
-                names[i[0].to_s] = i[1]
-              end
-            end
-          end
-        end
+        add_resolver
 
       rescue Exception => e
-        return render_error_file 404, json
+        return render_error_file :not_found, json
       end
 
       if json
@@ -107,6 +65,53 @@ module Admin
     end
 
     private
+    def add_resolver
+      if @location[1] == 'avatar' || @location[1] == 'banner'
+        @public.names_resolver do |names, ids, path|
+          ids = ids.map {|id| id.to_i }.uniq
+          User.where('id IN (?)', ids).pluck(:id, :username).each {|i| names[i[0].to_s] = i[1] }
+        end
+      elsif @location[1] == 'stream'
+        if @location.length == 3
+          @public.names_resolver do |names, ids, path|
+            year = path[2].to_i
+            if (year && year > 0)
+              ids.each do |id|
+                month = id.to_i
+                if month
+                  names[id] = Date.new(year, month, 1).strftime("%B, %Y")
+                end
+              end
+            end
+          end
+        elsif @location.length == 4
+          @public.names_resolver do |names, ids, path|
+            year = path[2].to_i
+            month = path[3].to_i
+            if (year && month)
+              ids.each do |id|
+                day = id.to_i
+                if day
+                  names[id] = Date.new(year, month, day).strftime("%A, %d-%m-%Y")
+                end
+              end
+            end
+          end
+        elsif @location.length == 5
+          @public.names_resolver do |names, ids, path|
+            ids = ids.map {|id| id.to_i }.uniq
+            Video.where('id IN (?)', ids).pluck(:id, :title).each {|i| names[i[0].to_s] = i[1] }
+          end
+        elsif @location.length == 6
+          @public.names_resolver do |names, ids, path|
+            if @video = Video.where(id: path.last.to_i).first
+              ids.each {|id| names[id] = @video.title }
+            end
+          end
+        end
+      end
+    end
+
     def load_location
       @location = (params[:p] || params[:path] || "public/stream").strip
 

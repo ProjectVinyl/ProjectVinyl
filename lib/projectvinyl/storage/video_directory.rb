@@ -20,8 +20,17 @@ module ProjectVinyl
 
         @path = path.sub('public/', '').sub('private/', '')
 
-        @raw_items = items.reject { |i| i.index('.') == 0 }.group_by { |i| i.index('.').nil? }
-        @raw_items = (@raw_items[true] || []) + (@raw_items[false] || []).sort_by { |i| i.split('.')[0] }
+        @raw_items = items
+          .reject { |i| i.index('.') == 0 }
+          .sort_by do |i|
+            first = [(VideoFile.directory?(self, i) ? 0 : 1)]
+
+            if i =~ /^\d+$/
+              first + [0, $&.to_i]
+            else
+              first + [1, i]
+            end
+          end
       end
 
       def parent
