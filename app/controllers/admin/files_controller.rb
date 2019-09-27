@@ -43,9 +43,9 @@ module Admin
         else
           @public.names_resolver do |names, ids, path|
             if path.length == 6 && path[1] == 'stream'
-              if vid = Video.where(id: path.last.to_i).first
+              if @video = Video.where(id: path.last.to_i).first
                 ids.each do |id|
-                  names[id] = vid.title
+                  names[id] = @video.title
                 end
               end
             elsif path.length == 5 && path[1] == 'stream'
@@ -68,6 +68,8 @@ module Admin
           end: @public.end_ref
         }
       end
+      
+      @public.names
       
       @crumb = {
         stack: [
