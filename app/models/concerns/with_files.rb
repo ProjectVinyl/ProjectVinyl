@@ -5,6 +5,10 @@ module WithFiles
     [date.year.to_s, date.month.to_s, date.day.to_s].join('/')
   end
   
+  def storage_path
+    [WithFiles.storage_path(created_at), id].join('/')
+  end
+  
   def storage_root
     self.hidden ? 'private' : 'public'
   end
