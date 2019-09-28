@@ -9,6 +9,15 @@ module Assets
 
         if video.hidden
           if !(user_signed_in? && current_user.is_contributor?)
+
+            if params[:file_name] == 'cover'
+              return redirect_to '/images/default-cover-g.png'
+            end
+
+            if params[:file_name] == 'thumb'
+              return redirect_to '/images/default-cover-small-g.png'
+            end
+
             return forbidden
           end
 
@@ -33,11 +42,11 @@ module Assets
       end
 
       if params[:file_name] == 'cover'
-        return serve_img('default-cover.png')
+        return redirect_to '/images/default-cover.png'
       end
 
       if params[:file_name] == 'thumb'
-        return serve_img('default-cover-small.png')
+        return redirect_to '/images/default-cover-small.png'
       end
 
       return not_found

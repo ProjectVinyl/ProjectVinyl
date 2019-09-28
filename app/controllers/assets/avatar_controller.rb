@@ -1,9 +1,13 @@
 module Assets
-  class ImagesController < ApplicationController
+  class AvatarController < ApplicationController
     include Assetable
 
     def show
-      serve_img('default-avatar.png')
+      if params[:file_name] == 'banner'
+        redirect_to '/images/new-banner.jpg'
+      else
+        redirect_to '/images/default-avatar.png'
+      end
     end
   end
 end
