@@ -11,6 +11,9 @@ class Video < ApplicationRecord
   include Reportable
   include Indirected
   include Statable
+  include Heated
+  include Duplicateable
+  include Likeable
 
   has_one :comment_thread, as: :owner, dependent: :destroy
 
@@ -21,17 +24,10 @@ class Video < ApplicationRecord
   has_many :votes, dependent: :destroy
   has_many :tag_histories, dependent: :destroy
 
-  belongs_to :duplicate, class_name: "Video", foreign_key: "duplicate_id"
-
   scope :listable, -> { where(hidden: false, duplicate_id: 0) }
   scope :finder, -> { listable.includes(:tags) }
   scope :popular, -> { finder.order(:heat).reverse_order.limit(4) }
-  scope :with_likes, ->(user) {
-    if !user.nil?
-      return joins("LEFT JOIN votes ON votes.video_id = videos.id AND votes.user_id = #{user.id}")
-        .select('videos.*, votes.user_id AS is_liked_flag, votes.negative AS is_like_negative_flag')
-    end
-  }
+  
   scope :random, ->(limit) {
     selection = pluck(:id)
     return { ids: [], videos: Video.none } if selection.blank?
@@ -43,16 +39,6 @@ class Video < ApplicationRecord
       videos: finder.where("#{self.table_name}.id IN (?)", selected)
     }
   }
-
-  before_destroy :remove_assets
-
-  def is_liked
-    (respond_to? :is_liked_flag) && is_liked_flag
-  end
-
-  def is_like_negative
-    (respond_to? :is_like_negative_flag) && is_like_negative_flag
-  end
 
   document_type 'video'
   settings index: { number_of_shards: 1 } do
@@ -75,32 +61,10 @@ class Video < ApplicationRecord
 
   def as_indexed_json(_options = {})
     json = as_json(only: %w[title description user_id source audio_only length score created_at updated_at hidden])
-    json["tags"] = self.tags.pluck(:name)
-    json["likes"] = self.votes.up.pluck(:user_id)
-    json["dislikes"] = self.votes.down.pluck(:user_id)
+    json["tags"] = tags.pluck(:name)
+    json["likes"] = votes.up.pluck(:user_id)
+    json["dislikes"] = votes.down.pluck(:user_id)
     json
-  end
-
-  def self.clean_url(s)
-    if s.blank?
-      return ''
-    end
-
-    if s.index('http:') != 0 && s.index('https:') != 0
-      return "https:#{s}"
-    end
-
-    s
-  end
-
-  def self.ensure_uniq(data)
-    if data
-      hash = Ffmpeg.compute_checksum(data)
-      if Video.where(checksum: hash).count == 0
-        return { valid: true, value: hash }
-      end
-    end
-    { valid: false }
   end
 
   def transfer_to(user)
@@ -109,86 +73,64 @@ class Video < ApplicationRecord
     self.update_index(defer: false)
   end
 
-  def remove_cover_files
-    del_file(cover_path)
-    del_file(tiny_cover_path)
+  def video_path(root = nil)
+    file_path("source#{video.file || '.mp4'}", root)
   end
 
-  def video_path
-    Video.video_file_path(storage_root, self)
+  def webm_path(root = nil)
+    file_path('video.webm', root)
   end
 
-  def webm_path
-    Video.webm_file_path(storage_root, self)
-  end
-
-  def self.video_file_path(root, video)
-    Rails.root.join(root, 'stream', WithFiles.storage_path(video.created_at), video.id.to_s, "source#{video.file || '.mp4'}")
-  end
-
-  def self.webm_file_path(root, video)
-    Rails.root.join(root, 'stream', WithFiles.storage_path(video.created_at), video.id.to_s, "video.webm")
-  end
-
-  def self.reset_hidden_flags
-    Video.where(hidden: true).find_each(&:update_file_locations)
-    Video.where(hidden: true).count # return count
+  def webm_url
+    public_url('video.webm')
   end
 
   def set_hidden(val)
-    if self.hidden != val
+    if hidden != val
       self.hidden = val
-      self.update_file_locations
-      self.update_index(defer: false)
+      update_file_locations
+      update_index(defer: false)
     end
   end
 
-  def update_file_locations
-    if self.hidden
-      return move_files('public', 'private')
-    end
-
-    move_files('private', 'public')
+  def cover_path(root = nil)
+    file_path('cover.png', root)
   end
 
-  def cover_path
-    Video.cover_file_path(storage_root, self)
-  end
-
-  def tiny_cover_path
-    Video.thumb_file_path(storage_root, self)
-  end
-
-  def self.cover_file_path(root, video)
-    Rails.root.join(root, 'stream', WithFiles.storage_path(video.created_at), video.id.to_s, "cover.png")
-  end
-
-  def self.thumb_file_path(root, video)
-    Rails.root.join(root, 'stream', WithFiles.storage_path(video.created_at), video.id.to_s, "thumb.png")
+  def tiny_cover_path(root = nil)
+    file_path('thumb.png', root)
   end
 
   def set_file(media)
-    if self.file
-      del_file(self.video_path.to_s)
-      del_file(self.webm_path.to_s)
+    if file
+      del_file(video_path.to_s)
+      del_file(webm_path.to_s)
     end
+
     ext = File.extname(media.original_filename)
-    ext = Mimes.ext(media.content_type) if ext == ''
+    if ext == ''
+      ext = Mimes.ext(media.content_type)
+    end
+
     self.file = ext
     self.mime = media.content_type
+
     data = media.read
     hash = Ffmpeg.compute_checksum(data)
-    self.checksum = hash if hash != self.checksum
+    
+    if hash != checksum
+      self.checksum = hash
+    end
     self.video = data
   end
 
   def realise_checksum
-    if (self.checksum.nil? || self.checksum.blank?) && self.has_file(self.video_path)
-      self.checksum = Ffmpeg.compute_checksum(File.read(self.video_path))
+    if (checksum.nil? || checksum.blank?) && has_file(video_path)
+      self.checksum = Ffmpeg.compute_checksum(File.read(video_path))
       self.save
     end
 
-    return self.checksum
+    return checksum
   end
 
   def video=(data)
@@ -202,35 +144,30 @@ class Video < ApplicationRecord
   end
 
   def generate_webm
-    if self.audio_only
-      self.set_status(true)
+    if audio_only
+      set_status(true)
       return "Completed"
     end
 
-    self.set_status(nil)
+    set_status(nil)
 
     begin
-      ProcessVideoJob.perform_later(self.id)
+      ProcessVideoJob.perform_later(id)
     rescue Exception => e
       return "Error: Could not schedule action."
     end
+
     "Processing Scheduled"
   end
 
   def set_status(status)
-    return if self.processed == status
+    return if processed == status
     self.processed = status
     self.save
   end
 
-  def check_index
-    Ffmpeg.try_unlock?(self.video_path) do
-      self.set_status(true)
-    end
-  end
-
   def processing
-    Ffmpeg.locked?(self.video_path)
+    Ffmpeg.locked?(video_path)
   end
 
   def set_thumbnail(cover = nil, time = nil)
@@ -239,30 +176,9 @@ class Video < ApplicationRecord
 
     if save_file(cover_path, cover, 'image/')
       Ffmpeg.extract_tiny_thumb_from_existing(cover_path, tiny_cover_path)
-    else
-      if !self.audio_only
-        time = time ? time.to_f : get_duration.to_f / 2
-        Ffmpeg.extract_thumbnail(video_path, cover_path, tiny_cover_path, time)
-      end
-    end
-  end
-
-  def recreate_thumbs(time = nil)
-    self.uncache
-
-    if !self.audio_only
-      if has_file(cover_path)
-        if !has_file(tiny_cover_path)
-          Ffmpeg.extract_tiny_thumb_from_existing(cover_path, tiny_cover_path)
-        end
-      else
-        if has_file(video_path)
-          del_file(tiny_cover_path)
-
-          time = time ? time.to_f : get_duration.to_f / 2
-          Ffmpeg.extract_thumbnail(video_path, cover_path, tiny_cover_path, time)
-        end
-      end
+    elsif !audio_only
+      time = time ? time.to_f : get_duration.to_f / 2
+      Ffmpeg.extract_thumbnail(video_path, cover_path, tiny_cover_path, time)
     end
   end
 
@@ -271,24 +187,28 @@ class Video < ApplicationRecord
   end
 
   def thumb
-    self.hidden ? '/images/default-cover.png' : self.direct_thumb
+    hidden ? '/images/default-cover.png' : direct_thumb
   end
 
   def direct_thumb
-    cache_bust(['/stream', WithFiles.storage_path(created_at), id.to_s, "cover.png"].join('/'))
+    cache_bust(public_url('cover.png'))
   end
 
   def tiny_thumb(user)
     if (hidden && (!user || user_id != user.id)) || is_spoilered_by(user)
       return '/images/default-cover-small.png'
     end
-    cache_bust(['/stream', WithFiles.storage_path(created_at), id.to_s, "thumb.png"].join('/'))
+    cache_bust(public_url('thumb.png'))
+  end
+  
+  def model_path
+    'stream'
   end
 
   # Overrides Taggable
   def drop_tags(ids)
     Tag.where('id IN (?) AND video_count > 0', ids).update_all('video_count = video_count - 1')
-    VideoGenre.where('video_id = ? AND tag_id IN (?)', self.id, ids).delete_all
+    VideoGenre.where('video_id = ? AND tag_id IN (?)', id, ids).delete_all
   end
 
   def pick_up_tags(ids)
@@ -298,15 +218,15 @@ class Video < ApplicationRecord
   # #################
 
   def link
-    "/#{self.id}-#{self.safe_title}"
+    "/#{id}-#{safe_title}"
   end
 
   def ref
-    "/videos/#{self.id}"
+    "/videos/#{id}"
   end
 
   def artists_string
-    Tag.tag_string(self.tags.where(tag_type_id: 1))
+    Tag.tag_string(tags.where(tag_type_id: 1))
   end
 
   def artists
@@ -316,99 +236,39 @@ class Video < ApplicationRecord
     end
   end
 
-  def get_computed_score
-    compute_score if self.score.nil?
-    self.score
-  end
-
-  def upvote(user, incr)
-    Vote.vote(user, self, incr, false)
-    compute_score
-    self.upvotes
-  end
-
-  def downvote(user, incr)
-    Vote.vote(user, self, incr, true)
-    compute_score
-    self.downvotes
-  end
-
-  def star(user)
-    user.stars.toggle(self)
-  end
-
   def mix_string(user)
-    result = self.tags.select do |t|
+    result = tags.select do |t|
       !(user && (user.hides([t.id]) || user.spoilers([t.id]))) && t.video_count > 1
     end
     result.map(&:name).sort.join(' | ')
   end
 
-  def pull_meta(src, fields)
-    if src.present?
-      src = "https://www.youtube.com/watch?v=#{ProjectVinyl::Web::Youtube.video_id(src)}"
-      self.set_source(src)
-
-      fields[:artist] = fields[:tags]
-      meta = ProjectVinyl::Web::Youtube.get(src, fields)
-
-      if meta[:title]
-        self.set_title(meta[:title])
-      end
-
-      if meta[:description]
-        self.set_description(meta[:description][:bbc])
-      end
-
-      if meta[:artist]
-        if (artist_tag = Tag.sanitize_name(meta[:artist][:name])) && !artist_tag.empty?
-          artist_tag = Tag.add_tag('artist:' + artist_tag, self)
-
-          if !artist_tag.nil?
-            TagHistory.record_tag_changes(artist_tag[0], artist_tag[1], self.id)
-          end
-        end
-      end
-
-      TagHistory.record_source_changes(self)
-      self.save
-
-      if meta.empty?
-        return :not_found
-      end
-
-      return :ok
-    end
-
-    :no_action
-  end
-
   def set_source(s)
-    self.source = Video.clean_url(s)
+    self.source = PathHelper.clean_url(s)
   end
 
   def json
     {
-      id: self.id,
-      title: self.title,
-      description: self.description,
-      tags: self.tag_string,
+      id: id,
+      title: title,
+      description: description,
+      tags: tag_string,
       uploader: {
-        id: self.user.id,
-        username: self.user.username
+        id: user.id,
+        username: user.username
       }
     }
   end
 
   def widget_parameters(time, resume, embed, album)
     {
-        title: self.get_title,
+        title: get_title,
         time: time,
         resume: resume,
-        path: WithFiles.storage_path(self.created_at),
-        type: self.audio_only ? 'audio' : 'video',
-        id: self.id,
-        mime: [self.file, self.mime],
+        path: WithFiles.storage_path(created_at),
+        type: audio_only ? 'audio' : 'video',
+        id: id,
+        mime: [file, mime],
         embedded: embed,
         autoplay: !album.nil?
       }
@@ -416,65 +276,40 @@ class Video < ApplicationRecord
 
   def widget_header(time, resume, embed, album)
     {
-      aspect: self.aspect,
+      aspect: aspect,
       source: CGI::escape(widget_parameters(time, resume, embed, album).to_json)
     }
   end
 
-  def webm_url
-    ['stream', WithFiles.storage_path(created_at), id.to_s, "video.webm"].join('/')
-  end
-
   def aspect
-    return 1 if self.audio_only
-    return 1 if self.get_height == 0
-    self.get_width.to_f / self.get_height.to_f
-  end
+    return 1 if audio_only
+    return 1 if get_height == 0
 
-  def is_hidden_by(user)
-    user && user.hides(@tag_ids || (@tag_ids = self.tags.map(&:id)))
-  end
-
-  def is_spoilered_by(user)
-    user && user.spoilers(@tag_ids || (@tag_ids = self.tags.map(&:id)))
-  end
-
-  # virtual fields added by .with_likes(user)
-  def is_upvoted
-    self.is_liked && !self.is_like_negative
-  end
-
-  def is_downvoted
-    self.is_liked && self.is_like_negative
-  end
-  #
-
-  def is_starred_by(user)
-    user && user.album_items.where(video_id: self.id).count > 0
+    get_width.to_f / get_height.to_f
   end
 
   def get_title
-    self.title || "Untitled Video"
+    title || "Untitled Video"
   end
 
   def set_title(title)
     title = StringsHelper.check_and_trunk(title, get_title)
     self.title = title
     self.safe_title = PathHelper.url_safe(title)
-    if self.comment_thread_id
-      self.comment_thread.title = title
-      self.comment_thread.save
+    if comment_thread_id
+      comment_thread.title = title
+      comment_thread.save
     end
   end
 
   def get_duration
-    return 0 if self.hidden
+    return 0 if hidden
     return compute_length if self.length.nil? || self.length == 0
     self.length
   end
 
   def get_width
-    return 1 if self.audio_only
+    return 1 if audio_only
     if self.width.nil?
       compute_dimensions
     end
@@ -491,49 +326,10 @@ class Video < ApplicationRecord
 
   def set_description(text)
     self.description = text
-    text = Comment.parse_bbc_with_replies_and_mentions(text, self.comment_thread)
+    text = Comment.parse_bbc_with_replies_and_mentions(text, comment_thread)
     self.html_description = text[:html]
-    Comment.send_mentions(text[:mentions], self.comment_thread, self.get_title, self.ref)
+    Comment.send_mentions(text[:mentions], comment_thread, get_title, ref)
     self
-  end
-
-  def compute_hotness
-    x = self.views || 0
-    x += 2 * (self.upvotes || 0)
-    x += 2 * (self.downvotes || 0)
-    x += 3 * self.comment_thread.comments.count
-    basescore = Math.log([x, 1].max)
-
-    n = DateTime.now
-    c = self.created_at.to_datetime
-    if c < (n - 3.weeks)
-      x = ((n - c).to_f / 7) - 1
-      basescore *= Math.exp(-8 * x * x)
-    end
-    self.heat = basescore * 1000
-    self
-  end
-
-  def merge(user, other)
-    self.do_unmerge
-    self.duplicate_id = other.id
-    AlbumItem.where(video_id: self.id).update_all('video_id = ' + other.id.to_s)
-    Comment.where(comment_thread_id: self.comment_thread_id).update_all(comment_thread_id: other.comment_thread_id)
-    mytags = Tag.relation_to_ids(self.tags)
-    tags = mytags - Tag.relation_to_ids(other.tags)
-    tags = tags.uniq
-    if !tags.empty?
-      Tag.send_pickup_event(other, tags)
-      self.drop_tags(mytags)
-    end
-    receivers = self.comment_thread.comments.pluck(:user_id) | [self.user_id]
-    Notification.notify_receivers_without_delete(receivers, self.comment_thread, "#{user.username} has merged <b>#{self.title}</b> into <b>#{other.title}</b>", other.comment_thread.location)
-    self.save
-    self
-  end
-
-  def unmerge
-    self.save if self.do_unmerge
   end
 
   def report(sender_id, params)
@@ -554,37 +350,29 @@ class Video < ApplicationRecord
     )
   end
 
-  protected
-  def remove_assets
-    del_file(self.video_path)
-    del_file(self.webm_path)
-    self.remove_cover_files
-    Tag.where('id IN (?) AND video_count > 0', self.tags.pluck(:id)).update_all('video_count = video_count - 1')
+  def remove_cover_files
+    del_file(cover_path)
+    del_file(tiny_cover_path)
   end
 
-  def do_unmerge
-    if self.duplicate_id
-      if other = Video.where(id: self.duplicate_id).first
-        Tag.send_pickup_event(self, Tag.relation_to_ids(other.tags))
-        AlbumItem.where(video_id: other.id, o_video_id: self.id).update_all('video_id = o_video_id')
-        Comment.where(comment_thread_id: other.comment_thread_id, o_comment_thread_id: self.comment_thread_id).update_all('comment_thread_id = o_comment_thread_id')
-      end
-      self.duplicate_id = 0
-      return true
-    end
-    false
+  protected
+  def remove_assets
+    del_file(video_path)
+    del_file(webm_path)
+    self.remove_cover_files
+    Tag.where('id IN (?) AND video_count > 0', tags.pluck(:id)).update_all('video_count = video_count - 1')
+  end
+
+  def move_assets(from, to)
+    rename_file(video_path(from), video_path(to))
+    rename_file(webm_path(from), webm_path(to))
+    rename_file(cover_path(from), cover_path(to))
+    rename_file(tiny_cover_path(from), tiny_cover_path(to))
   end
 
   private
-  def move_files(from, to)
-    rename_file(Video.video_file_path(from, self), Video.video_file_path(to, self))
-    rename_file(Video.webm_file_path(from,  self), Video.webm_file_path(to,  self))
-    rename_file(Video.cover_file_path(from, self), Video.cover_file_path(to, self))
-    rename_file(Video.thumb_file_path(from, self), Video.thumb_file_path(to, self))
-  end
-
   def compute_length
-    if !self.file || !has_file(video_path)
+    if !file || !has_file(video_path)
       return 0
     end
 
@@ -594,18 +382,12 @@ class Video < ApplicationRecord
   end
 
   def compute_dimensions
-    if !self.file || !has_file(video_path)
+    if !file || !has_file(video_path)
       return
     end
 
     self.width = Ffmpeg.get_video_width(video_path)
     self.height = Ffmpeg.get_video_height(video_path)
     self.save
-  end
-
-  def compute_score
-    self.score = self.upvotes - self.downvotes
-    self.update_index(defer: false)
-    self.compute_hotness.save
   end
 end

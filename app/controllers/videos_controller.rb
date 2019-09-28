@@ -138,7 +138,7 @@ class VideosController < Videos::BaseVideosController
     end
 
     data = file.read
-    if !(checksum = Video.ensure_uniq(data))[:valid]
+    if !(checksum = Verification::Video.ensure_uniq(data))[:valid]
       return error("Duplication Error", "The uploaded video already exists.")
     end
 
@@ -155,7 +155,7 @@ class VideosController < Videos::BaseVideosController
         safe_title: PathHelper.url_safe(title),
         description: video[:description],
         html_description: BbcodeHelper.emotify(video[:description]),
-        source: Video.clean_url(video[:source]),
+        source: PathHelper.clean_url(video[:source]),
         audio_only: file.content_type.include?('audio/'),
         file: ext,
         mime: file.content_type,
