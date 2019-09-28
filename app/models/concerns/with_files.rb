@@ -6,7 +6,7 @@ module WithFiles
   end
 
   def update_file_locations
-    if hidden
+    if respond_to?(:hidden) && hidden
       return move_assets('public', 'private')
     end
 
@@ -22,7 +22,7 @@ module WithFiles
   end
 
   def storage_root
-    self.hidden ? 'private' : 'public'
+    (respond_to?(:hidden) && hidden) ? 'private' : 'public'
   end
 
   def del_file(path)
