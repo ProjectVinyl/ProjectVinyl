@@ -11,13 +11,13 @@ class Tag < ApplicationRecord
 
   has_many :tag_implications, dependent: :destroy
   has_many :implications, through: :tag_implications, foreign_key: "implied_id"
-  
+
   has_many :tag_histories
-  
+
   has_many :implying_tags, class_name: "TagImplication", foreign_key: "implied_id"
   has_many :implicators, through: :implying_tags, foreign_key: "tag_id"
   has_many :aliases, class_name: "Tag", foreign_key: "alias_id"
-  
+
   def self.sanitize_sql(arguments)
     Tag.send :sanitize_sql_for_conditions, arguments
   end
@@ -27,35 +27,39 @@ class Tag < ApplicationRecord
   end
 
   scope :pluck_actual_ids, -> { (pluck(:id, :alias_id).map {|t| t[1] || t[0] }).uniq }
-  
-	def self.actualise(tags)
-		tags.map(&:actual).uniq
-	end
-	
-	def self.jsons(tags, sender=nil)
-		Tag.actualise(tags).map {|tag| tag.to_json(sender)}
-	end
-	
+
+  def self.actualise(tags)
+    tags.map(&:actual).uniq
+  end
+
+  def self.jsons(tags, sender=nil)
+    Tag.actualise(tags).map {|tag| tag.to_json(sender)}
+  end
+
   def actual
     alias_id ? (self.alias || self) : self
   end
-  
+
   def actual_id
-    self.alias_id || self.id
+    alias_id || id
   end
-  
+
   def self.tag_string(tags)
     tags.map(&:get_as_string).join(',')
   end
-  
+
   def self.by_name_or_id(name)
     name.blank? ? Tag.none : Tag.order(:video_count, :user_count).reverse_order.where('name = ? OR id::text = ? OR short_name = ?', name, name, name)
   end
 
   def self.find_matching_tags(name, sender=nil)
     name = name.downcase
-    Tag.jsons(Tag.includes(:tag_type, :alias).where('name LIKE ? OR short_name LIKE ?', "#{name}%", "#{PathHelper.url_safe_for_tags(name)}%")
-       .order(:video_count, :user_count).limit(10), sender)
+    Tag.jsons(
+      Tag.includes(:tag_type, :alias)
+          .where('name LIKE ? OR short_name LIKE ?', "#{name}%", "#{PathHelper.url_safe_for_tags(name)}%")
+          .order(:video_count, :user_count)
+          .limit(10),
+      sender)
   end
 
   def self.split_tag_string(tag_string)
@@ -65,7 +69,7 @@ class Tag < ApplicationRecord
       i.index('uploader:') != 0 && i.index('title:') != 0
     end
   end
-  
+
   def self.append_tag_strings(left, right)
     left = left.split(',')
     left << right
@@ -76,14 +80,14 @@ class Tag < ApplicationRecord
     return [] if names.blank?
     Tag.where('name IN (?)', names.uniq).pluck_actual_ids
   end
-  
+
   def self.get_tags(names)
     if names.nil? || (names = names.uniq).empty?
       return []
     end
     Tag.actualise(Tag.includes(:alias).where('name IN (?) OR short_name IN (?)', names, names))
   end
-  
+
   def self.get_name_mappings(names)
     return {} if names.blank?
     result = {}
@@ -153,11 +157,11 @@ class Tag < ApplicationRecord
   def self.expand_implications(tag_ids)
     tag_ids | TagImplication.where('tag_id IN (?)', tag_ids).pluck(:implied_id)
   end
-  
+
   def self.relation_to_ids(tags)
     tags.pluck_actual_ids
   end
-  
+
   def self.send_pickup_event(receiver, tags)
     tags = tags.uniq
     receiver = receiver.pick_up_tags(tags)
@@ -215,152 +219,151 @@ class Tag < ApplicationRecord
     sender.tags_changed
     TagSubscription.notify_subscribers(added, removed, existing - removed)
     sender.save
+
     [added, removed]
   end
 
   def members
-    self.video_count
+    video_count
   end
 
   def get_as_string
-    self.name
+    name
   end
 
   def suffex
-    if self.has_type
-      prefix = self.tag_type.prefix
-      if self.name.index(prefix) == 0
-        return self.name.sub(prefix + ":", '')
+    if has_type
+      prefix = tag_type.prefix
+      if name.index(prefix) == 0
+        return name.sub("#{prefix}:", '')
       end
     end
-    self.name
+
+    name
   end
 
   def tag_string
-    Tag.tag_string(self.implications)
+    Tag.tag_string(implications)
   end
 
   def has_type
-    self.tag_type_id && self.tag_type_id > 0
+    tag_type_id && tag_type_id > 0
   end
 
   def namespace
-    return self.has_type ? self.tag_type.prefix : ''
+    return has_type ? tag_type.prefix : ''
   end
-	
-	def slug
-		return self.name.sub(self.namespace + ':', '')
-	end
-	
+
+  def slug
+    return name.sub(namespace + ':', '')
+  end
+
   def identifier
-    return self.name.split(':')[1] if self.name.index(':')
-    self.name
+    return name.split(':')[1] if name.index(':')
+    name
   end
 
   def link
-    if StringsHelper.valid_string?(self.short_name)
-      return "/tags/#{self.short_name}"
+    if StringsHelper.valid_string?(short_name)
+      return "/tags/#{short_name}"
     end
-    if StringsHelper.valid_string?(self.name)
-      self.set_name(self.name)
-      return "/tags/#{self.name}"
+    if StringsHelper.valid_string?(name)
+      set_name(name)
+      return "/tags/#{name}"
     end
-    "/tags/${self.id}"
+
+    "/tags/#{id}"
   end
 
   def set_name(name)
     name = Tag.sanitize_name(name)
-    if self.has_type
-      name = name.sub(self.tag_type.prefix + ':', '').delete(':')
-      if !self.tag_type.hidden
-        name = self.tag_type.prefix + ":" + name
+    if has_type
+      name = name.sub(tag_type.prefix + ':', '').delete(':')
+      if !tag_type.hidden
+        name = tag_type.prefix + ":" + name
       end
     else
       name = name.delete(':')
     end
-    if Tag.where('name = ? AND NOT id = ?', name, self.id).count > 0
+    if Tag.where('name = ? AND NOT id = ?', name, id).count > 0
       return false
     end
     self.short_name = PathHelper.url_safe_for_tags(name)
     self.name = name
-    self.save
-    Tag.reindex_for(self.videos, self.users)
+    save
+    Tag.reindex_for(videos, users)
     self
   end
 
   def get_description
-    if self.description.blank?
-      return "No description Provided"
-    end
-    self.description
+    description || "No description Provided"
   end
 
   def self.reindex_for(videos, users)
-    videos.each do |v|
-      v.update_index(defer: false)
-    end
-    users.each do |u|
-      u.update_index(defer: false)
-    end
+    videos.each {|v| v.update_index(defer: false) }
+    users.each {|u| u.update_index(defer: false) }
   end
 
   def set_alias(tag)
     tag_o = tag.actual
     tag = tag.actual_id
-    if tag && tag != self.id
+
+    if tag && tag != id
       self.alias_id = tag
-      Tag.where(alias_id: self.id).update_all(alias_id: tag)
-      User.where(tag_id: self.id).update_all(tag_id: tag)
-      ArtistGenre.where(o_tag_id: self.id).update_all(tag_id: tag)
-      VideoGenre.where(o_tag_id: self.id).update_all(tag_id: tag)
-      Tag.reindex_for(Video.joins(:video_genres).where('video_genres.o_tag_id = ?', self.id), User.joins(:artist_genres).where('artist_genres.o_tag_id = ?', self.id))
+
+      Tag.where(alias_id: id).update_all(alias_id: tag)
+      User.where(tag_id: id).update_all(tag_id: tag)
+      ArtistGenre.where(o_tag_id: id).update_all(tag_id: tag)
+      VideoGenre.where(o_tag_id: id).update_all(tag_id: tag)
+      Tag.reindex_for(Video.joins(:video_genres).where('video_genres.o_tag_id = ?', id), User.joins(:artist_genres).where('artist_genres.o_tag_id = ?', id))
+
       self.video_count = self.user_count = 0
       tag_o.recount
     end
   end
 
   def unset_alias
-    if self.alias_id
-      ArtistGenre.where(o_tag_id: self.id).update_all('tag_id = o_tag_id')
-      VideoGenre.where(o_tag_id: self.id).update_all('tag_id = o_tag_id')
+    if alias_id
+      ArtistGenre.where(o_tag_id: id).update_all('tag_id = o_tag_id')
+      VideoGenre.where(o_tag_id: id).update_all('tag_id = o_tag_id')
       self.alias_id = nil
       self.recount
     end
   end
 
   def alias_tag
-    self.alias_id ? self.alias.name : ""
+    self.alias_id && self.alias ? self.alias.name : ""
   end
 
   def recount
-    self.video_count = VideoGenre.where(tag_id: self.id).count
-    self.user_count = ArtistGenre.where(tag_id: self.id).count
+    self.video_count = VideoGenre.where(tag_id: id).count
+    self.user_count = ArtistGenre.where(tag_id: id).count
   end
 
   def to_json(sender=nil)
     {
-      name: self.get_as_string,
-      namespace: self.namespace,
-      members: self.members,
-      link: self.short_name,
-			slug: self.slug,
-      flags: self.flags(sender)
+      name: get_as_string,
+      namespace: namespace,
+      members: members,
+      link: short_name,
+      slug: slug,
+      flags: flags(sender)
     }
   end
-  
+
   def flags(sender=nil)
     if sender.nil?
       return ''
     end
-    
+
     answer = [sender.watches(self) ? '-' : '+']
-    if sender.hides([self.id])
+    if sender.hides([id])
       answer << 'H'
     end
-    if sender.spoilers([self.id])
+    if sender.spoilers([id])
       answer << 'S'
     end
-    
+
     answer.join(' ')
   end
 end
