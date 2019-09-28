@@ -2,7 +2,9 @@ module WithFiles
   extend ActiveSupport::Concern
 
   included do
-    before_destroy :remove_assets
+    if respond_to? :before_destroy
+      before_destroy :remove_assets
+    end
   end
 
   def update_file_locations
