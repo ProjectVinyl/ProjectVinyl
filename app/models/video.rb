@@ -74,7 +74,7 @@ class Video < ApplicationRecord
   end
 
   def video_path(root = nil)
-    file_path("source#{video.file || '.mp4'}", root)
+    file_path("source#{file || '.mp4'}", root)
   end
 
   def webm_path(root = nil)
