@@ -4,7 +4,7 @@ module Admin
   class FilesController < BaseAdminController
 
     ALLOW_ROOTS = ['public','private','encoding']
-    ALLOW_DIRS = ['stream', 'cover', 'avatar', 'banner']
+    ALLOW_DIRS = ['stream', 'avatar']
 
     def index
       json = params[:format] == 'json'
@@ -66,43 +66,51 @@ module Admin
 
     private
     def add_resolver
-      if @location[1] == 'avatar' || @location[1] == 'banner'
+      if @location.length == 3
         @public.names_resolver do |names, ids, path|
-          ids = ids.map {|id| id.to_i }.uniq
-          User.where('id IN (?)', ids).pluck(:id, :username).each {|i| names[i[0].to_s] = i[1] }
+          year = path[2].to_i
+          if (year && year > 0)
+            ids.each do |id|
+              month = id.to_i
+              if month
+                names[id] = Date.new(year, month, 1).strftime("%B, %Y")
+              end
+            end
+          end
         end
-      elsif @location[1] == 'stream'
-        if @location.length == 3
-          @public.names_resolver do |names, ids, path|
-            year = path[2].to_i
-            if (year && year > 0)
-              ids.each do |id|
-                month = id.to_i
-                if month
-                  names[id] = Date.new(year, month, 1).strftime("%B, %Y")
-                end
+      elsif @location.length == 4
+        @public.names_resolver do |names, ids, path|
+          year = path[2].to_i
+          month = path[3].to_i
+          if (year && month)
+            ids.each do |id|
+              day = id.to_i
+              if day
+                names[id] = Date.new(year, month, day).strftime("%A, %d-%m-%Y")
               end
             end
           end
-        elsif @location.length == 4
+        end
+      elsif @location.length == 5
+        if @location[1] == 'avatar'
           @public.names_resolver do |names, ids, path|
-            year = path[2].to_i
-            month = path[3].to_i
-            if (year && month)
-              ids.each do |id|
-                day = id.to_i
-                if day
-                  names[id] = Date.new(year, month, day).strftime("%A, %d-%m-%Y")
-                end
-              end
-            end
+            ids = ids.map {|id| id.to_i }.uniq
+            User.where('id IN (?)', ids).pluck(:id, :username).each {|i| names[i[0].to_s] = i[1] }
           end
-        elsif @location.length == 5
+        else
           @public.names_resolver do |names, ids, path|
             ids = ids.map {|id| id.to_i }.uniq
             Video.where('id IN (?)', ids).pluck(:id, :title).each {|i| names[i[0].to_s] = i[1] }
           end
-        elsif @location.length == 6
+        end
+      elsif @location.length == 6
+        if @location[1] == 'avatar'
+          @public.names_resolver do |names, ids, path|
+            if @user = User.where(id: path.last.to_i).first
+              ids.each {|id| names[id] = @user.username }
+            end
+          end
+        else
           @public.names_resolver do |names, ids, path|
             if @video = Video.where(id: path.last.to_i).first
               ids.each {|id| names[id] = @video.title }
