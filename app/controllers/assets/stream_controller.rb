@@ -25,7 +25,7 @@ module Assets
             path = video.video_path
 
             if File.exist?(path)
-              serve_direct path, video.mime
+              return serve_direct path, video.mime
             end
           end
         end
