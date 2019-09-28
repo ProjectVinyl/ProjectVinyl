@@ -66,20 +66,39 @@ module Admin
 
     private
     def add_resolver
-      if @location.length == 3
-        @public.names_resolver do |names, ids, path|
-          year = path[2].to_i
-          if (year && year > 0)
-            ids.each do |id|
-              month = id.to_i
-              if month
-                names[id] = Date.new(year, month, 1).strftime("%B, %Y")
-              end
+
+      if @location.length == 6
+        if @location[1] == 'avatar'
+          return @public.names_resolver do |names, ids, path|
+            if @user = User.where(id: path.last.to_i).first
+              ids.each {|id| names[id] = @user.username }
             end
           end
         end
-      elsif @location.length == 4
-        @public.names_resolver do |names, ids, path|
+
+        return @public.names_resolver do |names, ids, path|
+          if @video = Video.where(id: path.last.to_i).first
+            ids.each {|id| names[id] = @video.title }
+          end
+        end
+      end
+
+      if @location.length == 5 || (@location.length == 3 && @location[2] == 'lostnfound')
+        if @location[1] == 'avatar'
+          return @public.names_resolver do |names, ids, path|
+            ids = ids.map {|id| id.to_i }.uniq
+            User.where('id IN (?)', ids).pluck(:id, :username).each {|i| names[i[0].to_s] = i[1] }
+          end
+        end
+
+        return @public.names_resolver do |names, ids, path|
+          ids = ids.map {|id| id.to_i }.uniq
+          Video.where('id IN (?)', ids).pluck(:id, :title).each {|i| names[i[0].to_s] = i[1] }
+        end
+      end
+
+      if @location.length == 4
+        return @public.names_resolver do |names, ids, path|
           year = path[2].to_i
           month = path[3].to_i
           if (year && month)
@@ -91,29 +110,17 @@ module Admin
             end
           end
         end
-      elsif @location.length == 5
-        if @location[1] == 'avatar'
-          @public.names_resolver do |names, ids, path|
-            ids = ids.map {|id| id.to_i }.uniq
-            User.where('id IN (?)', ids).pluck(:id, :username).each {|i| names[i[0].to_s] = i[1] }
-          end
-        else
-          @public.names_resolver do |names, ids, path|
-            ids = ids.map {|id| id.to_i }.uniq
-            Video.where('id IN (?)', ids).pluck(:id, :title).each {|i| names[i[0].to_s] = i[1] }
-          end
-        end
-      elsif @location.length == 6
-        if @location[1] == 'avatar'
-          @public.names_resolver do |names, ids, path|
-            if @user = User.where(id: path.last.to_i).first
-              ids.each {|id| names[id] = @user.username }
-            end
-          end
-        else
-          @public.names_resolver do |names, ids, path|
-            if @video = Video.where(id: path.last.to_i).first
-              ids.each {|id| names[id] = @video.title }
+      end
+
+      if @location.length == 3
+        return @public.names_resolver do |names, ids, path|
+          year = path[2].to_i
+          if (year && year > 0)
+            ids.each do |id|
+              month = id.to_i
+              if month
+                names[id] = Date.new(year, month, 1).strftime("%B, %Y")
+              end
             end
           end
         end
