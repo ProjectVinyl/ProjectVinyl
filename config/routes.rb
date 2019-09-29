@@ -35,8 +35,17 @@ Rails.application.routes.draw do
 
   # Asset Fallbacks #
   scope module: :assets, constraints: { id: /[0-9]+/ } do #*/
-    get 'avatar/:year/:month/:day/:id/:file_name', action: :show, controller: :avatar
-    get 'stream/:year/:month/:day/:id/:file_name', action: :show, controller: :stream
+    scope 'avatar/:year/:month/:day/:id/', module: :users do
+      resource :avatar, only: [:show]
+      resource :thumb, only: [:show]
+      resource :banner, only: [:show]
+    end
+    scope 'stream/:year/:month/:day/:id', module: :videos do
+      resource :cover, only: [:show]
+      resource :thumb, only: [:show]
+      resource :source, only: [:show]
+      resource :video, only: [:show]
+    end
     resource :serviceworker, only: [:show]
   end
 
