@@ -24,7 +24,7 @@ class Video < ApplicationRecord
   has_many :votes, dependent: :destroy
   has_many :tag_histories, dependent: :destroy
 
-  before_save :dispatch_mentions, if: :will_save_change_to_description?
+  after_save :dispatch_mentions, if: :will_save_change_to_description?
 
   scope :listable, -> { where(hidden: false, duplicate_id: 0) }
   scope :finder, -> { listable.includes(:tags) }
@@ -366,8 +366,15 @@ class Video < ApplicationRecord
 
   private
   def dispatch_mentions
-    text = Comment.parse_bbc_with_replies_and_mentions(description, comment_thread)
-    Comment.send_mentions(text[:mentions], comment_thread, get_title, ref)
+    if !(sender = comment_thread)
+      sender = CommentThread.new({
+        user_id: user_id,
+        owner: self,
+        title: get_title
+      })
+    end
+    text = Comment.parse_bbc_with_replies_and_mentions(description, sender)
+    Comment.send_mentions(text[:mentions], sender, get_title, ref)
   end
 
   def compute_length
