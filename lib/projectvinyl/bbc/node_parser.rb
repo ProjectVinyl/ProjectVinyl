@@ -64,14 +64,19 @@ module ProjectVinyl
               next
             end
             
-            if result = self.parse_url(node, index, content, open, close)
+            if node.tag_name != 'a' && node.tag_name != 'url'
+              if content.index('https:') == index || content.index('http:') == index
                 if text.length > 0
                   node.append_text(text)
                   text = ''
                 end
-                content = result
-                index = -1
-                next
+
+                if result = self.parse_url(node, content[index..content.length], open, close)
+                  content = result
+                  index = -1
+                  next
+                end
+              end
             end
 
             if content[index] == open || ((index == 0 || content[index - 1].strip == '' || content[index - 1] == close) && (content[index] == '@' || content[index] == ':'))
@@ -188,22 +193,13 @@ module ProjectVinyl
         return content.gsub(reply_tag, '')
       end
       
-      def parse_url(node, index, content, open, close)
-        if node.tag_name == 'a' || node.tag_name == 'url'
-          return false
-        end
+      def parse_url(node, content, open, close)
+        url = content.split(open)[0].split(close)[0].split(' ')[0].split('\n')[0].split('\r')[0]
 
-        protocol = content[index..[content.length, (index+5)].min]
+        node.append_text(' ')
+        node.append_node('a').set_attribute('href', url).append_text(TextNode.truncate_link(url))
 
-        if protocol == 'http:/' || protocol == 'https:'
-          url = content[index..content.length].split(open)[0].split(close)[0].split(' ')[0]
-          
-          node.append_node('a').set_attribute('href', url).append_text(' ' + TextNode.truncate_link(url))
-
-          return content.sub(url, '')
-        end
-        
-        return false
+        return content.sub(url, '')
       end
 
       def parse_emoticon_alias(node, content)
