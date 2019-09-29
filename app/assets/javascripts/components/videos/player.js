@@ -174,7 +174,7 @@ Player.prototype = {
     
     attachMessageListener(this, !standalone);
     
-    if (!el.dataset.pending && !params.embedded) {
+    if (!el.dataset.pending && !this.params.embedded) {
       attachFloater(this);
     }
 
