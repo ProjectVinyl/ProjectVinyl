@@ -1,5 +1,5 @@
 module Verification
-  class Video
+  class VideoVerification
 
     def self.ensure_uniq(data)
       if data

@@ -1,5 +1,5 @@
 module Verification
-  class User
+  class UserVerification
     def self.verify_integrity(report)
       avatars_reset = 0
       banners_reset = 0

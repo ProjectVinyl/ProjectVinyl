@@ -8,7 +8,7 @@ class UserVerificationJob < ApplicationJob
       { user_id: user_id, first: "System", other: "Working..." }
     ) do |report|
       report.other = ""
-      Verification::User.verify_integrity(report)
+      Verification::UserVerification.verify_integrity(report)
     end
   end
 end

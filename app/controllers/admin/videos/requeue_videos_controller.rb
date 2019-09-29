@@ -3,7 +3,7 @@ module Admin
     class RequeueideosController < BaseVideosAdminController
       def update
         check_access_then do
-          flash[:notice] = "#{Verification::Video.rebuild_queue} videos in queue."
+          flash[:notice] = "#{Verification::VideoVerification.rebuild_queue} videos in queue."
         end
       end
     end

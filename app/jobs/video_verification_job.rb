@@ -8,7 +8,7 @@ class VideoVerificationJob < ApplicationJob
       { user_id: user_id, first: "System", other: "Working..." }
     ) do |report|
       report.other = ""
-      Verification::Video.verify_integrity(report)
+      Verification::VideoVerification.verify_integrity(report)
     end
   end
 end

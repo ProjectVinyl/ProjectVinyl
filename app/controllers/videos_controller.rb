@@ -138,7 +138,7 @@ class VideosController < Videos::BaseVideosController
     end
 
     data = file.read
-    if !(checksum = Verification::Video.ensure_uniq(data))[:valid]
+    if !(checksum = Verification::VideoVerification.ensure_uniq(data))[:valid]
       return error("Duplication Error", "The uploaded video already exists.")
     end
 
