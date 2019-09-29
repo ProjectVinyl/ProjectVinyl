@@ -12,5 +12,5 @@
 		= number_with_delimiter c
 		= "album".pluralize(c)
 	%br/
-	.bio= thumb_h.html_bio
+	.bio= emotify thumb_h.bio
 	= render 'tags/taglist', collection: thumb_h.tags.limit(3)

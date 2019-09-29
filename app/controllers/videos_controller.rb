@@ -154,7 +154,6 @@ class VideosController < Videos::BaseVideosController
         title: title,
         safe_title: PathHelper.url_safe(title),
         description: video[:description],
-        html_description: BbcodeHelper.emotify(video[:description]),
         source: PathHelper.clean_url(video[:source]),
         audio_only: file.content_type.include?('audio/'),
         file: ext,
@@ -207,8 +206,8 @@ class VideosController < Videos::BaseVideosController
 		end
 
 		if params[:field] == 'description'
-			video.set_description(params[:value])
-			render json: { content: video.html_description }
+			video.description = params[:value]
+			render json: { content: BbcodeHelper.emotify(video.description) }
 		elsif params[:field] == 'title'
 			video.set_title(params[:value])
 			render json: { content: video.title }

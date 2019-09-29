@@ -45,12 +45,8 @@ class VirtualAlbum < Album
     ""
   end
 
-  def html_description
-    self.description
-  end
-
-  def set_description(_text)
-    self
+  def description=(text)
+    ""
   end
 
   def set_title(title)

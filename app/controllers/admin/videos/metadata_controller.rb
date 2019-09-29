@@ -21,7 +21,7 @@ module Admin
           end
 
           if meta[:description]
-            video.set_description(meta[:description][:bbc])
+            video.description = meta[:description][:bbc]
           end
 
           if meta[:artist]

@@ -10,12 +10,6 @@ class Album < ApplicationRecord
   def sample_videos
     self.ordered(self.videos.where(hidden: false).limit(4))
   end
-  
-  def set_description(text)
-    self.description = text
-    self.html_description = BbcodeHelper.emotify(text)
-    self
-  end
 
   def set_title(title)
     title = StringsHelper.check_and_trunk(title, self.title || "Untitled Album")

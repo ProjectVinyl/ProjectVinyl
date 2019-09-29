@@ -20,10 +20,6 @@ class UserDummy
   
   attr_reader :id, :username
 
-  def html_bio
-    ''
-  end
-  
   def avatar
     '/images/default-avatar.png'
   end

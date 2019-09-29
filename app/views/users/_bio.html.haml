@@ -10,7 +10,7 @@
 					= @user.username
 					= render 'forum/badges/badges', user: @user
 			%hr
-			%span.content.bio= raw @user.html_description
+			%span.content.bio= emotify @user.description
 			%hr
 			= render 'users/actions'
 		- if @user.tag_id || @tags.length > 0

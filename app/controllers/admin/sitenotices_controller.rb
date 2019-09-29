@@ -51,7 +51,7 @@ module Admin
         flash[:error] = "Error: Record not found.";
       end
       
-      @notice.set_message(params[:notice][:message])
+      @notice.message = params[:notice][:message]
       @notice.active = params[:notice][:active]
       @notice.save
       flash[:notice] = "Changes saved.";

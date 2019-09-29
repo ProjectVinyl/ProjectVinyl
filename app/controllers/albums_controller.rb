@@ -58,7 +58,7 @@ class AlbumsController < Albums::BaseAlbumsController
   def create
     check_and do
       album = current_user.albums.create
-      album.set_description(album[:description])
+      album.description = params[:album][:description]
       album.set_title(params[:album][:title])
       
       if params[:include_initial]
@@ -86,8 +86,8 @@ class AlbumsController < Albums::BaseAlbumsController
   def update
     check_then :id do |album|
       if params[:field] == 'description'
-        album.set_description(params[:value])
-				render json: { content: album.html_description }
+        album.description = params[:value]
+				render json: { content: BbcodeHelper.emotify(album.description) }
       elsif params[:field] == 'title'
         album.set_title(params[:value])
 				render json: { content: album.title }

@@ -6,14 +6,14 @@
 			%span.content= @album.title
 			%span.edit= fa :pencil
 		.content.description.editable{data: {target: album_path(@album), member: "description"}}
-			%span.content= raw @album.html_description
+			%span.content= emotify @album.description
 			%textarea.input.js-auto-resize(name="album_description_#{@album.id}" autocomplete="false")= @album.description
 			%span.edit= fa :pencil
 	- else
 		%h1.title
 			= render 'visibility', album: @album
 			= @album.title
-		.content.description= raw @album.html_description
+		.content.description= emotify @album.description
 	%span.tag-set.underline
 		By
 		%a{href: @user.link}= @user.username

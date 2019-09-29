@@ -36,11 +36,12 @@ class Comment < ApplicationRecord
   def update_comment(bbc)
     self.bbc_content = bbc
     bbc = Comment.parse_bbc_with_replies_and_mentions(bbc, self.comment_thread)
-    self.html_content = bbc[:html]
+
     self.save
     self.send_reply_tos(bbc[:replies])
     Comment.send_mentions(bbc[:mentions], self.comment_thread, self.comment_thread.get_title, self.comment_thread.location)
-    self.html_content
+    
+    bbc[:html]
   end
   
   def self.parse_bbc_with_replies_and_mentions(bbc, sender)
@@ -126,7 +127,7 @@ class Comment < ApplicationRecord
   end
   
   def preview
-    html_content
+    BbcodeHelper.emotify content
   end
   
   def report(sender_id, params)

@@ -21,7 +21,7 @@ class CommentThread < ApplicationRecord
   end
 
   def get_title
-    self.title.present? ? self.title : "Untitled"
+    self.title || "Untitled"
   end
 
   def set_title(name)

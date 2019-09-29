@@ -24,6 +24,8 @@ class Video < ApplicationRecord
   has_many :votes, dependent: :destroy
   has_many :tag_histories, dependent: :destroy
 
+  before_save :dispatch_mentions, if: :will_save_change_to_description?
+
   scope :listable, -> { where(hidden: false, duplicate_id: 0) }
   scope :finder, -> { listable.includes(:tags) }
   scope :popular, -> { finder.order(:heat).reverse_order.limit(4) }
@@ -324,14 +326,6 @@ class Video < ApplicationRecord
     self.height
   end
 
-  def set_description(text)
-    self.description = text
-    text = Comment.parse_bbc_with_replies_and_mentions(text, comment_thread)
-    self.html_description = text[:html]
-    Comment.send_mentions(text[:mentions], comment_thread, get_title, ref)
-    self
-  end
-
   def report(sender_id, params)
     @report = params[:report]
     Report.generate_report(
@@ -371,6 +365,11 @@ class Video < ApplicationRecord
   end
 
   private
+  def dispatch_mentions
+    text = Comment.parse_bbc_with_replies_and_mentions(description, comment_thread)
+    Comment.send_mentions(text[:mentions], comment_thread, get_title, ref)
+  end
+
   def compute_length
     if !file || !has_file(video_path)
       return 0

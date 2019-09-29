@@ -243,18 +243,6 @@ class User < ApplicationRecord
     update_index(defer: false)
   end
 
-  def set_description(text)
-    self.description = text
-    self.html_description = BbcodeHelper.emotify(text)
-    self
-  end
-
-  def set_bio(text)
-    self.bio = text
-    self.html_bio = BbcodeHelper.emotify(text)
-    self
-  end
-
   def avatar_path
     file_path("avatar#{mime}")
   end

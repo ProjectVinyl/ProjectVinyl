@@ -16,8 +16,7 @@
 			%span.views.right
 				= number_with_delimiter @featured.views
 				views
-		.description.post-content.content.fade-away
-			= raw @video.html_description
+		.description.post-content.content.fade-away= emotify @video.description
 	.scoring.actions
 		%span.button.action.green.like{class: @featured.is_upvoted && "liked", title: "Likes", data: {count: @featured.upvotes, action: "like", id: @featured.id}}<>
 			%b.count= safe_to_display @featured.upvotes, 9999

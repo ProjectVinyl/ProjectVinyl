@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190928143218) do
+ActiveRecord::Schema.define(version: 20190929133247) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -71,7 +71,6 @@ ActiveRecord::Schema.define(version: 20190928143218) do
     t.integer "featured", default: 0
     t.boolean "hidden", default: false
     t.string "safe_title", limit: 340
-    t.text "html_description"
     t.boolean "reverse_ordering", default: false
     t.integer "ordering", default: 0
     t.integer "listing", default: 0
@@ -145,7 +144,6 @@ ActiveRecord::Schema.define(version: 20190928143218) do
   create_table "comments", id: :serial, force: :cascade do |t|
     t.integer "user_id"
     t.integer "comment_thread_id"
-    t.text "html_content"
     t.text "bbc_content"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -209,7 +207,6 @@ ActiveRecord::Schema.define(version: 20190928143218) do
   create_table "site_notices", force: :cascade do |t|
     t.boolean "active", default: true
     t.string "message"
-    t.string "html_message"
   end
 
   create_table "tag_histories", id: :serial, force: :cascade do |t|
@@ -295,8 +292,6 @@ ActiveRecord::Schema.define(version: 20190928143218) do
     t.boolean "banner_set", default: false, null: false
     t.integer "tag_id"
     t.integer "star_id"
-    t.text "html_description"
-    t.text "html_bio"
     t.integer "feed_count", default: 0, null: false
     t.integer "role", default: 0, null: false
     t.string "preferences"
@@ -339,7 +334,6 @@ ActiveRecord::Schema.define(version: 20190928143218) do
     t.integer "user_id"
     t.string "safe_title", limit: 340
     t.integer "comment_thread_id"
-    t.text "html_description"
     t.boolean "featured", default: false
     t.string "checksum", limit: 32
     t.integer "heat"

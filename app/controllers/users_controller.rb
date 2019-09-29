@@ -32,8 +32,8 @@ class UsersController < Users::BaseUsersController
         user.tag = Tag.by_name_or_id(input[:tag]).first
       end
       user.set_name(input[:username])
-      user.set_description(input[:description])
-      user.set_bio(input[:bio])
+      user.description = input[:description]
+      user.bio = input[:bio]
       user.set_tags(input[:tag_string])
       user.save
 
