@@ -4,6 +4,7 @@ module Admin
   class FilesController < BaseAdminController
 
     ALLOW_ROOTS = ['public','private','encoding']
+    FILTERED_ROOTS = ['public','private']
     ALLOW_DIRS = ['stream', 'avatar']
 
     def index
@@ -33,7 +34,7 @@ module Admin
           end
         end
 
-        if ALLOW_ROOTS.include?(@path)
+        if FILTERED_ROOTS.include?(@path)
           @public.filter do |loc|
             name = loc.split('.')[0]
             loc.index('.').nil? && ALLOW_DIRS.include?(name)
