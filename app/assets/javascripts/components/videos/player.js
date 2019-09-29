@@ -174,7 +174,7 @@ Player.prototype = {
     
     attachMessageListener(this, !standalone);
     
-    if (!el.dataset.pending) {
+    if (!el.dataset.pending && !params.embedded) {
       attachFloater(this);
     }
 
@@ -189,7 +189,7 @@ Player.prototype = {
 
     resize(el);
     
-    if (!this.embedded) {
+    if (!this.params.embedded) {
       if (this.params.resume || this.__autostart || this.__autoplay) {
         this.play();
       }
