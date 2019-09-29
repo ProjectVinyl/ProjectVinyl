@@ -41,9 +41,9 @@
 			= render partial: "search/small_search"
 		.layer-background#banner
 			.banner-background.far
-			%a.home-link(href="/")
 			%span.title.near
 				%img(src="/images/logo.svg")
+			%a.home-link(href="/")
 		= render partial: "layouts/nav"
 		.layer-foreground.body
 			%main.wrapper{class: content_for?(:wrapper) && content_for(:wrapper)}
