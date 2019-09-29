@@ -9,6 +9,7 @@
 .featured .scoring span,
 .featured .scoring a {
   display: table-cell;
+  min-height: 0px;
 }
 .featured .description {
   overflow: hidden;
