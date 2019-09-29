@@ -1,4 +1,4 @@
-class RemoveStoredHtml < ActiveRecord::Migration[5.1]
+class RemoveStoredTwo < ActiveRecord::Migration[5.1]
   def change
     remove_column :users, :html_description
     remove_column :users, :html_bio
