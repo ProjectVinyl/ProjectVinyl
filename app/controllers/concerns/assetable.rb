@@ -5,9 +5,7 @@ module Assetable
   end
 
   def serve_direct(file, mime)
-    if !File.exist?(file)
-      not_found
-    end
+    not_found if !File.exist?(file)
 
     response.headers['Content-Length'] = File.size(file).to_s
     send_file file.to_s, {
@@ -21,9 +19,7 @@ module Assetable
   def serve_asset(asset, mime)
   	response.headers['Content-Type'] = mime
 
-    if Rails.application.assets
-      return render plain: Rails.application.assets[asset].to_s
-    end
+    return render plain: Rails.application.assets[asset].to_s if Rails.application.assets
 
     file = Rails.application.assets_manifest.assets[asset]
 
