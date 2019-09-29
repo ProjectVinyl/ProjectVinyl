@@ -60,7 +60,9 @@ class Ffmpeg
   end
   
   def self.produce_webm(record, file, webm)
-    temp = Rails.root.join('encoding', record.storage_path, File.basename(webm).to_s).to_s
+    FileUtils.mkdir_p(File.dirname(webm))
+
+    temp = Rails.root.join('encoding', "#{record.id}.webm").to_s
 
     if File.exist?(webm)
       yield
