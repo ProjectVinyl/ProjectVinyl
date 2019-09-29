@@ -59,14 +59,16 @@ class Ffmpeg
     end
   end
   
-  def self.produce_webm(file)
-    webm = "#{file.to_s.split('.')[0]}.webm"
-    temp = Rails.root.join('encoding', File.basename(webm).to_s).to_s
+  def self.produce_webm(record, file, webm)
+    temp = Rails.root.join('encoding', record.storage_path, File.basename(webm).to_s).to_s
+
     if File.exist?(webm)
       yield
       return "Completed"
     end
+
     return "File Not Found" if !File.exist?(file)
+
     if File.exist?(temp)
       if File.mtime(temp) < Time.now.ago(1800)
         File.rename(temp, webm)
@@ -75,6 +77,7 @@ class Ffmpeg
         return "Conversion Complete (Unlocked Index)"
       end
     end
+
     begin
       IO.popen([Rails.root.join('encode').to_s, file.to_s, temp, webm]) do |io|
         begin

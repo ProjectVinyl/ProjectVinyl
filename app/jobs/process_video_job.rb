@@ -10,7 +10,7 @@ class ProcessVideoJob < ApplicationJob
     end
     
     video.set_status(false)
-    return Ffmpeg.produce_webm(video.video_path) do
+    Ffmpeg.produce_webm(video, video.video_path, video.webm_path) do
       video = Video.find(video_id)
       video.set_status(true)
       video.update_file_locations
