@@ -81,7 +81,7 @@ class Ffmpeg
     end
 
     begin
-      IO.popen([Rails.root.join('encode').to_s, file.to_s, temp, webm]) do |io|
+      IO.popen([Rails.root.join('encode').to_s, file.to_s, temp.to_s, webm.to_s]) do |io|
         begin
           while line = io.gets
             line.chomp!
