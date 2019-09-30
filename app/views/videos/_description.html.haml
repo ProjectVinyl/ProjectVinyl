@@ -26,14 +26,14 @@
 			%span.views.right
 				= number_with_delimiter @video.views
 				views
-	- if @modifications_allowed
-		%span.editable.post-content(data-target="#{video_path @video}" data-member="description")
-			%span.content= emotify @video.description
-			%textarea.input.js-auto-resize(name="description_video_#{@video.id}")= @video.description
-			%span.edit= fa :pencil
-	- else
-		%span.post-content
-			%span.content= emotify @video.description
+		- if @modifications_allowed
+			%span.editable.post-content(data-target="#{video_path @video}" data-member="description")
+				%span.content= emotify @video.description
+				%textarea.input.js-auto-resize(name="description_video_#{@video.id}")= @video.description
+				%span.edit= fa :pencil
+		- else
+			%span.post-content
+				%span.content= emotify @video.description
 	%br/
 	%br/
 	.post-tags
