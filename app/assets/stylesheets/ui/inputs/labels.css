@@ -31,6 +31,9 @@ label input[type=checkbox]:checked + i + i {
 label input[type=checkbox] ~ i {
   color: rgba(0,0,150, 0.3);
 }
+label.button input[type="checkbox"] ~ i {
+  color: inherit;
+}
 
 label[disabled] span::after {
   content: '\f023';
