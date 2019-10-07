@@ -5,7 +5,7 @@
 - cache('site_notices', expires_in: 1.minute) do
 	- SiteNotice.where(active: true).each do |notice|
 		%p.notice.site-notice.removeable
-			= raw notice.html_message
+			= emotify notice.message
 			%span.actions.right
 				- if user_signed_in? && current_user.is_contributor?
 					%a.green{href: admin_sitenotices_path}= fa :pencil

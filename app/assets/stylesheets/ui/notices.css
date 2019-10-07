@@ -35,3 +35,7 @@
 .notice.site-notice {
   background: rgba(200,200,255,0.2);
 }
+
+.notice .remove {
+  cursor: pointer;
+}
