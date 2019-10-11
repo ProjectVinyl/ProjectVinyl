@@ -1,7 +1,7 @@
 require 'projectvinyl/web/youtube'
 
 module Api
-  class YoutubeController < BaseApiController
+  class YoutubesController < BaseApiController
     def tube
       ProjectVinyl::Web::Youtube
     end
