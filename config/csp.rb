@@ -20,7 +20,7 @@ module ProjectVinyl
         frame_src: [ 'self', 'https://www.youtube.com', 'https://www.google.com/recaptcha/' ],
         media_src: [ 'self', 'blob:' ],
         img_src: [ '*', 'blob:', 'data:' ],
-        script_src: [ 'self', 'https://www.google.com/recaptcha/api.js', 'https://www.gstatic.com' ],
+        script_src: [ 'self', 'https://www.google.com/recaptcha/api.js', 'https://www.gstatic.com', 'https://www.recaptcha.net/recaptcha/api.js' ],
         style_src: [ 'self', 'unsafe-inline' ]
       }),
       embed: Csp.parse({
