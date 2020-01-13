@@ -19,7 +19,7 @@ module Heated
   end
 
   def compute_hotness
-    x = views || 0
+    x = play_count || 0
     x += 2 * (upvotes || 0)
     x += 2 * (downvotes || 0)
     x += 3 * comment_thread.comments.count

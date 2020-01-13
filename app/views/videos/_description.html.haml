@@ -23,8 +23,8 @@
 				= @video.created_at.to_time.strftime('%e %B %Y')
 				by
 				%a.user-link.link{href: @user.link, data: {id: @user.id}}= @user.username
-			%span.views.right
-				= number_with_delimiter @video.views
+			%span.views.right.js-play-counter
+				= number_with_delimiter @video.play_count
 				views
 		- if @modifications_allowed
 			%span.editable.post-content(data-target="#{video_path @video}" data-member="description")

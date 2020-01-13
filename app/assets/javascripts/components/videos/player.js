@@ -335,6 +335,14 @@ Player.prototype = {
       this.video.load();
     }
     this.video.play();
+
+    if (this.player.dataset.state !== 'paused') {
+      ajax.put(`videos/${this.params.id}/play_count`).json(json => {
+        all('.js-play-counter', counter => {
+          counter.innerText = `${json.count} views`;
+        });
+      });
+    }
   },
   pause() {
     this.controls.play.innerHTML = `<i class="fa fa-play"></i>`;

@@ -3,7 +3,7 @@ module Videos
     protected
     def check_then
       if !user_signed_in?
-        return head 401
+        return head :unauthorized
       end
 
       if !(video = Video.where(id: params[:video_id]).first)

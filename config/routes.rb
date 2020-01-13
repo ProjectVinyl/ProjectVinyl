@@ -57,6 +57,7 @@ Rails.application.routes.draw do
     scope module: :videos do
       resources :actions, only: [:update]
       resource :details, only: [:update]
+      resource :play_count, only: [:update]
       resource :download, only: [:show]
       resources :changes, only: [:index]
       resource :add, only: [:update]
