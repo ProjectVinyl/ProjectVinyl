@@ -37,3 +37,6 @@ ul.vertical li.generic {
   }
 }
 
+tr.activity td + td {
+  width: 100%;
+}
