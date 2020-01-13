@@ -1,4 +1,5 @@
+import './current_user';
+
 //= require ./emoticonsarray
 //= require ./notifierurl
-//= require ./current_user
 //= require ./vapid_public_key

@@ -51,4 +51,7 @@ gem 'resque'
 gem 'foreman'
 gem 'eye'
 
+# Sprockets 4 is broken
+gem 'sprockets', '~>3.0'
+
 gem 'sprockets-rollup'
