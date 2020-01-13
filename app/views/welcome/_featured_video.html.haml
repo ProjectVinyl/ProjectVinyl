@@ -13,8 +13,8 @@
 				= @featured.created_at.to_time.strftime('%e %B %Y')
 				by
 				%a.user-link.link{href: @video.user.link, data: {id: @video.user.id}}= @video.user.username
-			%span.views.right
-				= number_with_delimiter @featured.views
+			%span.views.right.js-play-counter
+				= number_with_delimiter @featured.play_count
 				views
 		.description.post-content.content.fade-away= emotify @video.description
 	.scoring.actions

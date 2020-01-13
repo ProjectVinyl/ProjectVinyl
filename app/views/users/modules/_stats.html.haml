@@ -1,15 +1,7 @@
 %section.page.full-width.resize-holder
-	%h1 Stats
+	%h1 Statistics
 	- cache(@user, expires_in: 30.minutes) do
-		.stats
-			%h3 Uploads
-			= render 'users/modules/stat_bar', records: @user.videos
-		.stats
-			%h3 Comments
-			= render 'users/modules/stat_bar', records: @user.comments
-		.stats
-			%h3 Votes
-			= render 'users/modules/stat_bar', records: @user.votes
-		.stats
-			%h3 Tag Changes
-			= render 'users/modules/stat_bar', records: @user.tag_histories
+		= render 'users/modules/stat_bar', records: @user.videos, title: 'Uploads'
+		= render 'users/modules/stat_bar', records: @user.comments, title: 'Comments'
+		= render 'users/modules/stat_bar', records: @user.votes, title: 'Votes'
+		= render 'users/modules/stat_bar', records: @user.tag_histories, title: 'Tag Changes'

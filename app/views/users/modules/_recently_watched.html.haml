@@ -1,0 +1,6 @@
+%section.page.full-width.recent-uploads.resize-holder
+	%h1.title.resize-target
+		Recently Watched
+		= surround '(', ')' do
+			= number_with_delimiter @watched.count
+	%ul.horizontal.video-list#uploads= render partial: 'videos/thumb_h', collection: @watched.records

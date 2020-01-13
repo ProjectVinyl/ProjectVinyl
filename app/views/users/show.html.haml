@@ -7,6 +7,8 @@
 	= render 'users/modules/art'
 - if @modifications_allowed
 	= render 'users/modules/favourites'
+- if @watched
+	= render 'users/modules/recently_watched'
 = render 'users/modules/uploads'
 = render 'users/modules/albums'
 = render 'users/modules/comments'

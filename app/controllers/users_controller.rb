@@ -18,6 +18,9 @@ class UsersController < Users::BaseUsersController
       @videos = edits_allowed ? @user.videos.includes(:tags).where(duplicate_id: 0) : @user.videos.listable
       @videos = Pagination.paginate(@videos.order(:created_at).with_likes(current_user), 0, 8, true)
 
+      @watched = edits_allowed ? @user.watched_videos.includes(:tags).where(duplicate_id: 0) : @user.watched_videos.listable
+      @watched = Pagination.paginate(@watched.order(:created_at).with_likes(current_user), 0, 8, true)
+
       @albums = edits_allowed ? @user.albums : @user.albums.where(hidden: false, listing: 0)
       @albums = Pagination.paginate(@albums.order(:created_at), 0, 8, true)
       @comments = Pagination.paginate(@user.comments.visible.decorated.with_likes(current_user).order(:created_at), 0, 3, true)

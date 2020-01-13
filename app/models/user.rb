@@ -26,6 +26,9 @@ class User < ApplicationRecord
   has_many :videos
   has_many :tag_histories
 
+  has_many :watch_histories
+  has_many :watched_videos, through: :watch_histories, source: 'video'
+
   has_many :notification_receivers, dependent: :destroy
   has_many :notifications, dependent: :destroy
   has_many :thread_subscriptions, dependent: :destroy

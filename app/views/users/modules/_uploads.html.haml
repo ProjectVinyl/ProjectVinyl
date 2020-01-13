@@ -1,6 +1,6 @@
 %section.page.full-width.recent-uploads.resize-holder
 	%h1.title.resize-target
-		Recent Uploads
+		Uploads
 		= surround '(', ')' do
 			= number_with_delimiter @videos.count
 		%a.right{href: user_uploads_path(@user)}

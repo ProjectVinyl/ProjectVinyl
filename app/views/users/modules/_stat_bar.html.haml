@@ -1,4 +1,9 @@
-.stat-bar.checkerboard
-	- records.stats(240) do |item, index|
-		.stat{title: "#{item[:count]} - #{since item[:created_at]}", style: "right:#{index * 10}px"}
-			.bar{style: "height: #{item[:total]}%;"}
+.stats
+	%h3
+		= title
+		= surround '(', ')' do
+			= number_with_delimiter records.count
+	.stat-bar.checkerboard
+		- records.stats(240) do |item, index|
+			.stat{title: "#{item[:count]} - #{since item[:created_at]}", style: "right:#{index * 10}px"}
+				.bar{style: "height: #{item[:total]}%;"}
