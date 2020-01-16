@@ -12,15 +12,20 @@
     box-shadow: 0 0 3px 3px rgba(0, 0, 0, 0.1);
     transition: left 0.25s ease-in;
   }
-  
+
   .dock-holder.open nav {
     min-width: 300px;
   }
 
+  .header ul, .header ul li {
+    padding: 0;
+  }
+  .header ul li > a {
+    padding-left: 10px;
+  }
+
   nav > ul {
     height: initial !important;
-    padding-top: 10px !important;
-    padding-bottom: 10px !important;
   }
 
   nav ul li {
@@ -30,7 +35,6 @@
   }
 
   nav > ul > li {
-    border: solid 3px var(--block-border-color);
     box-shadow: 0 0 3px 0 var(--block-border-color) inset;
   }
 
