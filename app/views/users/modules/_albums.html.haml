@@ -6,4 +6,8 @@
 		%a.right{href: user_albums_path(@user)}
 			View All
 			= fa :chevron_right
-	%ul.album-list.horizontal#albums= render partial: 'albums/thumb_h', collection: @albums.records
+	%ul.album-list.horizontal#albums
+		- if @albums.count > 0
+			= render partial: 'albums/thumb_h', collection: @albums.records
+		- else
+			%li.generic.virtual.keep

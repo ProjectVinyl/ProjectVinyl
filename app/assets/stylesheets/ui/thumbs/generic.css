@@ -20,6 +20,15 @@ li.generic:hover {
   background: var(--thumb-hover-color);
 }
 
+li.generic.virtual.keep::after {
+    content: "No Content";
+    position: absolute;
+    top: calc(50% + 0.5em);
+    left: calc(50% - 2.5em);
+    font-size: 2em;
+    color: #6666b8;
+}
+
 ul.vertical li.generic {
   --thumb-width: 100%;
 }

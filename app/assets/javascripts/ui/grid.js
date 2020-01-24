@@ -111,7 +111,7 @@ function getPreferredColumnCount(ul) {
 }
 
 function alignLists() {
-  all('ul.horizontal li.virtual', li => li.parentNode.removeChild(li));
+  all('ul.horizontal li.virtual:not(.keep)', li => li.parentNode.removeChild(li));
   
   requestAnimationFrame(() => {
     all('ul.horizontal', ul => {
@@ -127,6 +127,7 @@ function alignLists() {
       while (itemsLastRow++ < columnCount) {
         ul.appendChild(ul.firstElementChild.cloneNode());
         ul.lastChild.classList.add('virtual');
+        ul.lastChild.classList.remove('keep');
       }
     });
   });

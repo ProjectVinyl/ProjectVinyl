@@ -6,4 +6,8 @@
 		%a.right{href: user_uploads_path(@user)}
 			View All
 			= fa :chevron_right
-	%ul.horizontal.video-list#uploads= render partial: 'videos/thumb_h', collection: @videos.records
+	%ul.horizontal.video-list#uploads
+		- if @videos.count > 0
+			= render partial: 'videos/thumb_h', collection: @videos.records
+		- else
+			%li.generic.virtual.keep

@@ -3,4 +3,8 @@
 		Recently Watched
 		= surround '(', ')' do
 			= number_with_delimiter @watched.count
-	%ul.horizontal.video-list#uploads= render partial: 'videos/thumb_h', collection: @watched.records
+	%ul.horizontal.video-list#uploads
+		- if @watched.count > 0
+			= render partial: 'videos/thumb_h', collection: @watched.records
+		- else
+			%li.generic.virtual.keep

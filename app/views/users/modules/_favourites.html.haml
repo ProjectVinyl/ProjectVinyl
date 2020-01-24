@@ -7,4 +7,8 @@
 		%a.right(href="/stars")
 			View All
 			= fa :chevron_right
-	%ul.horizontal.video-list#uploads= render partial: 'videos/thumb_h', collection: @user.stars.videos.limit(8)
+	%ul.horizontal.video-list#uploads
+		- if @user.stars.album_items.count > 0
+			= render partial: 'videos/thumb_h', collection: @user.stars.videos.limit(8)
+		- else
+			%li.generic.virtual.keep

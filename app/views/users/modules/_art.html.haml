@@ -7,4 +7,8 @@
 		%a.right{href: @user.tag.link}
 			View All
 			= fa :chevron_right
-	%ul.horizontal.video-list#songs= render partial: 'videos/thumb_h', collection: @art.records
+	%ul.horizontal.video-list#songs
+		- if @art.count > 0
+			= render partial: 'videos/thumb_h', collection: @art.records
+		- else
+			%li.generic.virtual.keep
