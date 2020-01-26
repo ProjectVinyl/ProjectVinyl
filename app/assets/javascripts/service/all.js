@@ -1,6 +1,10 @@
+import { getAppKey } from '../data/all';
 import { initWorker } from './client';
 import { deregisterWorker } from './service';
 import { ready } from '../jslim/events';
+
+// The current signed-in user.
+const current_user = getAppKey('current_user');
 
 ready(() => {
   const key = 'give_me_notifications';

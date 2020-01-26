@@ -1,6 +1,10 @@
+import { getAppKey } from '../data/all';
 import { ajax } from '../utils/ajax';
 
 let workerStatus = 0;
+
+// Application push notifications authenticated via VAPID
+const vapid_public_key = new Uint8Array(getAppKey('vapid_public_key'));
 
 const STOPPED = 0, CHANGING = 1, STARTED = 2;
 

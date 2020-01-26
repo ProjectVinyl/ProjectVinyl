@@ -1,6 +1,3 @@
-//  Due to ERB parsing (this can be eliminated later)
-import './data/all';
-
 // Not part of the codebase
 import './vendor/all';
 

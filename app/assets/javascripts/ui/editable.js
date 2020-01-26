@@ -1,9 +1,11 @@
+import { getAppKey } from '../data/all';
 import { ajax } from '../utils/ajax';
 import { all } from '../jslim/dom';
 import { addDelegatedEvent, ready, bindEvent } from '../jslim/events';
 
 let active = null;
 const keyEvents = { 66: 'b', 85: 'u', 73: 'i', 83: 's', 80: 'spoiler' };
+const emoticons = getAppKey('emoticons_array');
 
 const specialActions = {
   tag: (sender, textarea) => {

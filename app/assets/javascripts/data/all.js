@@ -1,5 +1,4 @@
-import './current_user';
-
-//= require ./emoticonsarray
-//= require ./notifierurl
-//= require ./vapid_public_key
+export function getAppKey(key) {
+	const meta = document.querySelector('meta[name="' + key + '"]');
+	return meta ? JSON.parse(meta.getAttribute('content')) : null;
+}

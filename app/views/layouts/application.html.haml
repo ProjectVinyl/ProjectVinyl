@@ -10,6 +10,8 @@
 			Project Vinyl - My Little Pony: FiM Songs & Animation
 		- if user_signed_in?
 			%meta(name="current_user" content="#{({ id: current_user.id }).to_json}")
+		%meta(name="vapid_public_key" content="#{Base64.urlsafe_decode64(Rails.application.secrets.vapid_public_key).bytes}")
+		%meta(name="emoticons_array" content="#{raw BbcodeHelper.emoticons}")
 		= csrf_meta_tags
 		%meta(name="theme-color" content="#a66ebe")
 		%meta(name="viewport" content="width=device-width, initial-scale=1")
