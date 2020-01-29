@@ -32,12 +32,8 @@ module Admin
         flash[:error] = "Error: Message field is required.";
         return
       end
-      
-      @notice = SiteNotice.create({
-          active: params[:notice][:active],
-          message: text,
-          html_message: BbcodeHelper.emotify(text)
-      })
+
+      @notice = SiteNotice.create(params[:notice].permit(:active, :message))
     end
     
     def update
