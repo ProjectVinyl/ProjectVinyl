@@ -5,6 +5,7 @@ import { ajax } from '../../utils/ajax';
 import { scrollTo } from '../../ui/scroll';
 import { ContextMenu } from '../../ui/contextmenu';
 import { Key } from '../../utils/misc';
+import { clamp } from '../../utils/math';
 import { errorMessage, errorPresent } from '../../utils/videos';
 import { all } from '../../jslim/dom';
 import { ready, bindAll, halt, bindEvent } from '../../jslim/events';
@@ -92,15 +93,21 @@ function registerEvents(player, el) {
     
   bindEvent(document, 'keydown', ev => {
     if (player.video && !document.querySelector('input:focus, textarea:focus')) {
-      if (ev.keyCode === Key.SPACE) {
+      if (ev.key == 'MediaPlayPause' || ev.keyCode === Key.SPACE) {
         player.togglePlayback();
-        halt(ev);
-      } else if (ev.keyCode == Key.LEFT) {
-        player.skip(-3);
-        halt(ev);
-      } else if (ev.keyCode == Key.RIGHT) {
-        player.skip(3);
-        halt(ev);
+        return halt(ev);
+      } else if (ev.key == 'MediaTrackPrevious' || ev.keyCode == Key.LEFT) {
+        player.skip(-5);
+        return halt(ev);
+      } else if (ev.key == 'MediaTrackNext' || ev.keyCode == Key.RIGHT) {
+        player.skip(5);
+        return halt(ev);
+      } else if (ev.keyCode == Key.UP) {
+        player.skip(0, 0.1);
+        return halt(ev);
+      } else if (ev.keyCode == Key.DOWN) {
+        player.skip(0, -0.1);
+        return halt(ev);
       }
     }
   });
@@ -389,9 +396,18 @@ Player.prototype = {
     this.video.currentTime = time;
     this.track(time, duration);
   },
-  skip(increment) {
-    this.video.currentTime += increment;
-    this.track(this.video.currentTime, this.getDuration());
+  skip(time, volume) {
+    if (this.video) {
+      if (time) {
+        this.video.currentTime += time;
+        this.track(this.video.currentTime, this.getDuration());
+        this.controls.track.touch();
+      }
+      if (volume) {
+        this.volume(this.video.volume + volume, this.video.muted);
+        this.controls.volume.slider.touch();
+      }
+    }
   },
   track(time, duration) {
     this.suspend.classList.add('hidden');
@@ -403,6 +419,7 @@ Player.prototype = {
     }
   },
   volume(volume, muted) {
+    volume = clamp(volume, 0, 1)
     if (this.video) {
       this.video.volume = volume;
     }

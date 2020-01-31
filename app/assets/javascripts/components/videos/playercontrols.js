@@ -2,7 +2,7 @@ import { isFullscreen } from '../../utils/fullscreen';
 import { addDelegatedEvent, bindEvent, halt } from '../../jslim/events';
 import { TapToggler } from '../taptoggle';
 import { toHMS } from '../../utils/duration';
-import { Slider } from '../slider';
+import { Slider, SliderSensitive } from '../slider';
 import { createMiniTile } from './minitile';
 import { clampPercentage } from '../../utils/math';
 
@@ -131,6 +131,8 @@ export function PlayerControls(player, dom) {
     }
     halt(ev);
   });
+  SliderSensitive(this.volume);
+  SliderSensitive(player.dom);
 
   addDelegatedEvent(dom, 'mousemove', '.track', ev => {
     drawPreview(this, evToProgress(this.track, ev));

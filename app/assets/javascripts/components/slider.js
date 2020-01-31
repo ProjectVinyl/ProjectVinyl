@@ -14,7 +14,7 @@ export function Slider(dom, jump, grab) {
       iterateEvents('remove', ender, change);
       end();
     };
-    
+
     dom.classList.add('interacting');
     iterateEvents('add', ender, change);
   };
@@ -29,4 +29,20 @@ export function Slider(dom, jump, grab) {
   dom.addEventListener('click', jump);
   dom.bob.addEventListener('mousedown', grabEvent);
   dom.bob.addEventListener('touchstart', grabEvent);
+  dom.touch = () => {
+    dom.dispatchEvent(new CustomEvent("transitive", {bubbles: true}));
+  };
+}
+
+export function SliderSensitive(dom) {
+  let interactingTimeout;
+  dom.addEventListener('transitive', () => {
+    dom.classList.add('hover');
+    if (interactingTimeout) {
+      interactingTimeout = clearTimeout(interactingTimeout);
+    }
+    interactingTimeout = setTimeout(() => {
+      dom.classList.remove('hover');
+    }, 500);
+  });
 }
