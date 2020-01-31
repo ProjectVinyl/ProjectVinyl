@@ -8,7 +8,9 @@ module ProjectVinyl
       def self.get(url, wanted_data = {})
         output_data = {}
 
-        if Youtube.flag_set(wanted_data, :all) ||
+        @all = Youtube.flag_set(wanted_data, :all)
+
+        if @all ||
             Youtube.flag_set(wanted_data, :title) ||
             Youtube.flag_set(wanted_data, :artist) ||
             Youtube.flag_set(wanted_data, :thumbnail) ||
@@ -17,30 +19,28 @@ module ProjectVinyl
             begin
               body = JSON.parse(body)
 
-              if Youtube.flag_set(wanted_data, :all)
-                output_data[:all] = body
-              end
-
-              if Youtube.flag_set(wanted_data, :title)
+              if @all || Youtube.flag_set(wanted_data, :title)
                 output_data[:title] = body['title']
               end
 
-              if Youtube.flag_set(wanted_data, :artist)
+              if @all || Youtube.flag_set(wanted_data, :artist)
                 output_data[:artist] = {
+                  id: body['author_url'].split('/').last,
                   name: body['author_name'],
                   url: body['author_url']
                 }
               end
 
-              if Youtube.flag_set(wanted_data, :thumbnail)
+              if @all || Youtube.flag_set(wanted_data, :thumbnail)
                 output_data[:thumbnail] = {
                   url: body['thumbnail_url'],
+                  maxres: body['thumbnail_url'].sub("/hqdefault.jpg", "/maxresdefault.jpg"),
                   width: body['thumbnail_width'],
                   height: body['thumbnail_height']
                 }
               end
 
-              if Youtube.flag_set(wanted_data, :iframe)
+              if @all || Youtube.flag_set(wanted_data, :iframe)
                 output_data[:iframe] = body['html']
               end
             rescue e
@@ -48,10 +48,19 @@ module ProjectVinyl
           end
         end
 
-        if Youtube.flag_set(wanted_data, :description) ||
-            Youtube.flag_set(wanted_data, :source)
+        if @all ||
+            Youtube.flag_set(wanted_data, :description) ||
+            Youtube.flag_set(wanted_data, :source) ||
+            Youtube.flag_set(wanted_data, :coppa) ||
+            Youtube.flag_set(wanted_data, :tags)
           Ajax.get(url) do |body|
-            if Youtube.flag_set(wanted_data, :description)
+            body = body.force_encoding('utf-8')
+
+            if @all || Youtube.flag_set(wanted_data, :coppa)
+              output_data[:coppa] = !!body.index('made for children')
+            end
+
+            if @all || Youtube.flag_set(wanted_data, :description)
               if desk = Youtube.description_from_html(body)
                 desc_node = ProjectVinyl::Bbc::Bbcode.from_html(desk)
 
@@ -69,7 +78,16 @@ module ProjectVinyl
               end
             end
 
-            if Youtube.flag_set(wanted_data, :source)
+            if @all || Youtube.flag_set(wanted_data, :tags)
+              if (tgs = Youtube.header_from_html(body))
+                output_data[:tags] = ProjectVinyl::Bbc::Bbcode.from_html(tgs)
+                    .getElementsByTagName('meta')
+                    .filter{ |meta| meta.attributes[:property] == "og:video:tag" }
+                    .map{ |meta| meta.attributes[:content] }
+              end
+            end
+
+            if @all || Youtube.flag_set(wanted_data, :source)
               if src = Youtube.source_from_html(body)
                 output_data[:source] = src
               end
@@ -82,7 +100,7 @@ module ProjectVinyl
 
       def self.source_from_html(html)
         map_index = html.index('url_encoded_fmt_stream_map')
-        return nil if !map_index
+        return Youtube.source_from_html_two(html) if !map_index
 
         html = html[map_index..html.length]
         html = html.split('<')[0]
@@ -102,7 +120,21 @@ module ProjectVinyl
           o
         end
       end
-      
+
+      def self.source_from_html_two(html)
+        map_index = html.index('ytplayer.config = ')
+        return nil if !map_index
+
+        html = html[(map_index + 'ytplayer.config = '.length)..html.length]
+        html = html.split('ytplayer.load = ')[0]
+        while html[html.length - 1] == ';'
+          html = html[0..(html.length - 2)]
+        end
+        html = JSON.parse(html)['args']
+        html = JSON.parse(html['player_response'])
+        html['streamingData']
+      end
+
       def self.description_from_html(html)
         description_index = html.index('id="eow-description"')
         return nil if !description_index
@@ -112,19 +144,23 @@ module ProjectVinyl
         html.shift
         html.join('>')
       end
-      
+
+      def self.header_from_html(html)
+        html.split('</head>')[0]
+      end
+
       def self.is_video_link(url)
         if url.nil? || (url = url.strip).empty?
           return false
         end
         !(url =~ /http?(s):\/\/(www\.|m\.)(youtube\.[^\/]+\/watch\?.*v=|youtu\.be\/)([^&]+)/).nil?
       end
-      
+
       def self.video_id(url)
         return url.split('v=')[1].split('&')[0] if url.index('v=')
         url.split('?')[0].split('/').last
       end
-      
+
       def self.flag_set(hash, key)
         hash.key?(key) && hash[key]
       end
