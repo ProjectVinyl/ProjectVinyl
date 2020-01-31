@@ -57,7 +57,7 @@ module ProjectVinyl
             body = body.force_encoding('utf-8')
 
             if @all || Youtube.flag_set(wanted_data, :coppa)
-              output_data[:coppa] = !!body.index('made for children')
+              output_data[:coppa] = !!body.index('isFamilySafe\\":true')
             end
 
             if @all || Youtube.flag_set(wanted_data, :description)
