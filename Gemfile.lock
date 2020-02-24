@@ -1,5 +1,5 @@
 GIT
-  remote: https://github.com/charliesome/better_errors.git
+  remote: git://github.com/charliesome/better_errors.git
   revision: 5e1d687e3cabcc39dcfe8be2e729b4eb4ec5e7cb
   specs:
     better_errors (2.5.1)
@@ -154,9 +154,9 @@ GEM
     mustermann (1.1.1)
       ruby2_keywords (~> 0.0.1)
     nio4r (2.5.2)
-    nokogiri (1.10.7)
+    nokogiri (1.10.8)
       mini_portile2 (~> 2.4.0)
-    nokogiri (1.10.7-x64-mingw32)
+    nokogiri (1.10.8-x64-mingw32)
       mini_portile2 (~> 2.4.0)
     orm_adapter (0.5.0)
     parallel (1.19.1)
