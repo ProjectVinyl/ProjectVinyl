@@ -1,8 +1,8 @@
 GIT
-  remote: https://github.com/charliesome/better_errors.git
-  revision: 5e1d687e3cabcc39dcfe8be2e729b4eb4ec5e7cb
+  remote: git://github.com/charliesome/better_errors.git
+  revision: 86c19fcb607336fec78c18816ae663f8d8d492e8
   specs:
-    better_errors (2.5.1)
+    better_errors (2.7.1)
       coderay (>= 1.0.0)
       erubi (>= 1.0.0)
       rack (>= 0.9.0)
@@ -80,7 +80,7 @@ GEM
       timers (>= 4.1.1)
     celluloid-supervision (0.20.6)
       timers (>= 4.1.1)
-    coderay (1.1.2)
+    coderay (1.1.3)
     concurrent-ruby (1.1.5)
     crass (1.0.6)
     debug_inspector (0.0.3)
@@ -166,7 +166,7 @@ GEM
     pg (1.2.2-x64-mingw32)
     puma (4.3.1)
       nio4r (~> 2.0)
-    rack (2.1.1)
+    rack (2.2.3)
     rack-cors (1.1.1)
       rack (>= 2.0.0)
     rack-protection (2.0.8.1)
