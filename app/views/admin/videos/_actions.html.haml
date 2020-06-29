@@ -10,6 +10,17 @@
 							= fa :check
 					%span.label Unlist Video
 		%tr.actions
+			%td.label
+			%td.field
+				= form_for(@video, as: "video", url: admin_videos_listing_path(@video), html: { method: :put }) do |f|
+					%span.search-options
+						%label
+							%span Visibility
+							%div
+								%select{name: "video[listing]"}
+									= sensible_option_for_select(["Public", "Unlisted", "Private"], @video.listing)
+					= f.submit "Apply"
+		%tr.actions
 			%td.label Featured
 			%td.field
 				%button.action.toggle.blue(data-target="#{admin_video_feature_path @video}")

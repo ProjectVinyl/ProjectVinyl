@@ -5,8 +5,10 @@
 			.tile{style: format_bg(thumb_h.tiny_thumb(current_user))}
 				%span.tag-set.duration= duration thumb_h.get_duration
 			.title{title: !spoilered && thumb_h.get_title}
-				- if thumb_h.hidden
+				- if thumb_h.privated?
 					%span.icon(title="Private - Only you can see this item")= fa :lock
+				- if thumb_h.unlisted?
+					%span.icon(title="Unlisted - Only you and people with a direct link can see this item")= fa :unlock
 				= spoilered ? "Spoilered" : thumb_h.get_title
 			%span.date{title: thumb_h.created_at}= since thumb_h.created_at
 			%span.tag-set.right

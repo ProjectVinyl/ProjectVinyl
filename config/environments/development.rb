@@ -27,8 +27,12 @@ Rails.application.configure do
   config.active_support.deprecation = :log
   config.active_record.migration_error = :page_load
 
+  config.sass.preferred_syntax = :scss
+  config.sass.line_comments = false
+  config.sass.cache = false
+
   config.assets.debug = false
-  config.assets.compress = false
+  config.assets.compress = true
   config.assets.quiet = true
 
   config.file_watcher = ActiveSupport::EventedFileUpdateChecker

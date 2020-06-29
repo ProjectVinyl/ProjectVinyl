@@ -7,8 +7,8 @@ Rails.application.configure do
 
   config.serve_static_files = ENV['RAILS_SERVE_STATIC_FILES'].present?
 
+  config.sass.preferred_syntax = :scss
   config.assets.js_compressor = Uglifier.new(harmony: true)
-  config.assets.css_compressor = :yui
 
   config.assets.compile = false
   config.assets.digest = true

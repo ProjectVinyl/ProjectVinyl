@@ -14,6 +14,7 @@ class Video < ApplicationRecord
   include Heated
   include Duplicateable
   include Likeable
+  include Unlistable
 
   has_one :comment_thread, as: :owner, dependent: :destroy
 
@@ -28,8 +29,8 @@ class Video < ApplicationRecord
 
   scope :listable, -> { where(hidden: false, duplicate_id: 0) }
   scope :finder, -> { listable.includes(:tags) }
-  scope :popular, -> { finder.order(:heat).reverse_order.limit(4) }
-  
+  scope :popular, -> { listed.finder.order(:heat).reverse_order.limit(4) }
+
   scope :random, ->(limit) {
     selection = pluck(:id)
     return { ids: [], videos: Video.none } if selection.blank?
@@ -38,7 +39,7 @@ class Video < ApplicationRecord
 
     {
       ids: selected,
-      videos: finder.where("#{self.table_name}.id IN (?)", selected)
+      videos: listed.finder.where("#{self.table_name}.id IN (?)", selected)
     }
   }
 

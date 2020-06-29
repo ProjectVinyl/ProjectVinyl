@@ -18,7 +18,7 @@ class TagSubscription < ApplicationRecord
     video_ids = VideoGenre.joins('INNER JOIN tag_subscriptions ON video_genres.tag_id = tag_subscriptions.tag_id')
                           .where('tag_subscriptions.user_id = ? AND tag_subscriptions.watch = true AND tag_subscriptions.hide = false', user.id)
                           .uniq.pluck(:video_id)
-    Video.finder.where('id IN (?)', video_ids).order(:updated_at, :created_at)
+    Video.unprivated.finder.where('id IN (?)', video_ids).order(:updated_at, :created_at)
   end
 
   def toggle_hidden

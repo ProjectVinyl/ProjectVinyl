@@ -27,7 +27,7 @@ module Videos
         end
       end
 
-      yield(false, Video.finder)
+      yield(false, Video.listed.finder)
     end
 
     def load_album

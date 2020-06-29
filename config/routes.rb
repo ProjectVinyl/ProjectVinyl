@@ -178,6 +178,7 @@ Rails.application.routes.draw do
       resources :hidden, only: [:index, :destroy], controller: :hidden_videos
       resource :requeue, only: [:update], controller: :requeue_videos
       resource :thumbnail, only: [:update]
+      resource :listing, only: [:update]
     end
     resources :videos, only: [:show, :destroy] do
       scope module: :videos do

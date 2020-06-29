@@ -5,7 +5,7 @@
 				%span Visibility
 				%div
 					%select#privacy{name: "album[privacy]", disabled: @album.hidden}
-						= sensible_option_for_select(["Public", "Unlisted","Private"], @listing)
+						= sensible_option_for_select(["Public", "Unlisted", "Private"], @listing)
 			%hr/
 			%label
 				%span Sorting

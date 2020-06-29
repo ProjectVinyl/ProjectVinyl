@@ -37,11 +37,16 @@ class UsersController < Users::BaseUsersController
       user.set_name(input[:username])
       user.description = input[:description]
       user.bio = input[:bio]
+      user.default_listing = (input[:default_listing] || 0).to_i
       user.set_tags(input[:tag_string])
       user.save
 
       if current_user.is_staff? && params[:user_id]
         return redirect_to action: "view", id: user.id
+      end
+      
+      if (params[:video][:apply_to_all] == '1') 
+        Video.where(user_id: user).update_all(listing: user.default_listing)
       end
 
       redirect_to action: :edit, controller: "users/registrations"

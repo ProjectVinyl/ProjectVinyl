@@ -51,6 +51,23 @@
 			%td.field
 				= render layout: 'tags/editor', locals: { tags: user.tags } do
 					= f.text_area :tag_string, autocomplete: "off"
+		%tr.section
+			%td(colspan="2") Uploading
+		%tr
+			%td.label= f.label :default_listing
+			%td.field
+				I would like any videos I upload to be made 
+				%select{name: "user[default_listing]"}
+					= sensible_option_for_select(["Public", "Unlisted", "Private"], user.default_listing)
+		%tr
+			%td.label
+			%td.field
+				%label.button.red
+					= check_box :video, :apply_to_all
+					= fa :check
+					Apply my selection to all uploads under this account
+		%tr.section
+			%td(colspan="2") Finish
 		%tr.actions
 			%td.label
 			%td.field= f.submit "Save Changes", class: "green"

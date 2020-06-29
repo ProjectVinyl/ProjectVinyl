@@ -15,18 +15,18 @@ class AlbumsController < Albums::BaseAlbumsController
       return render_access_denied
     end
 
-    if @album.listing == 2 && !@album.owned_by(current_user)
+    if !@album.visible_to?(current_user)
       return render_error(
         title: 'Album Hidden',
         description: "This album is private."
       )
     end
-    
+
     @user = @album.user
     @records = @album.ordered(@album.album_items.includes(:direct_user))
     @items = Pagination.paginate(@records, 0, 50, false)
     @modifications_allowed = user_signed_in? && @album.owned_by(current_user)
-    
+
     @metadata = {
       type: :album,
       title: @album.title,
@@ -54,13 +54,13 @@ class AlbumsController < Albums::BaseAlbumsController
     @initial = Video.where(id: params[:initial]).first if params[:initial]
     render partial: 'new'
   end
-  
+
   def create
     check_and do
       album = current_user.albums.create
       album.description = params[:album][:description]
       album.set_title(params[:album][:title])
-      
+
       if params[:include_initial]
         initial = params[:album][:initial]
         if initial && (initial = Video.where(id: initial).first)
@@ -71,14 +71,14 @@ class AlbumsController < Albums::BaseAlbumsController
       redirect_to action: :show, id: album.id
     end
   end
-  
+
   def edit
     check_then :id do |album|
       @album = album
       @listing = @album.hidden ? 2 : @album.listing
       @sorting = !@album.ordering || @album.ordering < 1 || @album.ordering > 3 ? 0 : @album.ordering
       @ordering = @album.reverse_ordering ? 0 : 1
-      
+
       render partial: 'edit'
     end
   end
@@ -95,7 +95,7 @@ class AlbumsController < Albums::BaseAlbumsController
 			album.save
     end
   end
-  
+
   def destroy
     check_then :id do |album|
       if album.hidden
@@ -108,7 +108,7 @@ class AlbumsController < Albums::BaseAlbumsController
   end
   
   def index
-    @records = Album.where(hidden: false, listing: 0).order(:created_at)
+    @records = Album.listed.order(:created_at)
     render_listing_total @records, params[:page].to_i, 50, true, {
       table: 'albums', label: 'Album'
     }

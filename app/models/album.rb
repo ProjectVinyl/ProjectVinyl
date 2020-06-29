@@ -2,11 +2,13 @@ class Album < ApplicationRecord
   belongs_to :user
   has_many :album_items
   has_many :videos, through: :album_items
-  
+
+  include Unlistable
+
   CREATED = 1
   ADDED = 2
   SCORE = 3
-  
+
   def sample_videos
     self.ordered(self.videos.where(hidden: false).limit(4))
   end
@@ -16,10 +18,6 @@ class Album < ApplicationRecord
     self.title = title
     self.safe_title = PathHelper.url_safe(title)
     self.save
-  end
-
-  def owned_by(user)
-    user && (self.user_id == user.id || (self.hidden == false && user.is_staff?))
   end
 
   def transfer_to(user)

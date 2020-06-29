@@ -1,4 +1,4 @@
-- if (album.hidden || album.listing == 2) && (user_signed_in? && album.user_id == current_user.id)
+- if album.privated? && (user_signed_in? && album.user_id == current_user.id)
 	%span.icon(title="Private - Only you can see this album")= fa :lock
-- elsif album.listing == 1
+- elsif album.unlisted?
 	%span.icon(title="Unlisted - This album will not appear on the site but can be still accessed directly")= fa :unlock
