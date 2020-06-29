@@ -228,6 +228,16 @@ GEM
     ruby2_keywords (0.0.2)
     safely_block (0.3.0)
       errbase (>= 0.1.1)
+    sassc (2.2.1)
+      ffi (~> 1.9)
+    sassc (2.2.1-x64-mingw32)
+      ffi (~> 1.9)
+    sassc-rails (2.1.2)
+      railties (>= 4.0.0)
+      sassc (>= 2.0)
+      sprockets (> 3.0)
+      sprockets-rails
+      tilt
     sdoc (0.4.2)
       json (~> 1.7, >= 1.7.7)
       rdoc (~> 4.0)
@@ -271,7 +281,6 @@ GEM
     websocket-driver (0.6.5)
       websocket-extensions (>= 0.1.0)
     websocket-extensions (0.1.4)
-    yui-compressor (0.12.0)
 
 PLATFORMS
   ruby
@@ -297,6 +306,7 @@ DEPENDENCIES
   recaptcha
   resque
   rubocop
+  sassc-rails
   sdoc (~> 0.4.0)
   sprockets (~> 3.0)
   sprockets-rollup
@@ -304,7 +314,6 @@ DEPENDENCIES
   uglifier
   unicorn
   webpush
-  yui-compressor
 
 BUNDLED WITH
    1.17.2

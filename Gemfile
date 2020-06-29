@@ -8,7 +8,7 @@ gem 'rack-cors', :require => 'rack/cors'
 gem 'sdoc', '~> 0.4.0', group: :doc
 gem 'jquery-rails'
 gem 'uglifier'
-gem 'yui-compressor'
+gem 'sassc-rails' # only for compression. Please don't use sass in our stylesheets
 gem 'haml'
 
 platforms :ruby do
