@@ -221,7 +221,7 @@ class Video < ApplicationRecord
   # #################
 
   def link
-    "/#{id}-#{safe_title}"
+    "/#{id}"
   end
 
   def ref
