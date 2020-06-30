@@ -120,7 +120,7 @@ class Video < ApplicationRecord
 
     data = media.read
     hash = Ffmpeg.compute_checksum(data)
-    
+
     if hash != checksum
       self.checksum = hash
     end
