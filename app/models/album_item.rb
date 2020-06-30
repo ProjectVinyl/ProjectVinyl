@@ -52,7 +52,15 @@ class AlbumItem < ApplicationRecord
   def virtual?
     self.album.virtual?
   end
-  
+
+  def get_tooltip
+    video.hidden ? "hidden" : "#{video.get_title} - #{video.user.username}"
+  end
+
+  def get_title
+    video.hidden ? "hidden" : video.get_title
+  end
+
   protected
   def shift_indices
     self.update_indices(self.album.album_items.where('album_items.index > ?', self.index), '-')

@@ -2,10 +2,11 @@
 	%a.row{href: (!album_item.video.hidden && !album_item.video.is_spoilered_by(current_user)) && album_item.link,
          class: [album_item.video.hidden && "hidden-item", @index == album_item.index && "selected scroll-focus"],
           data: {id: album_item.id, index: album_item.index, "video-id": album_item.video_id}}
-		.title(title="#{album_item.video.get_title}&#010; - #{album_item.video.user.username}")
-			%div>=album_item.video.get_title
-			.author
-				%span= album_item.video.user.username
+		.title(title="#{album_item.get_tooltip}")
+			%div>=album_item.get_title
+			- if !album_item.video.hidden
+				.author
+					%span= album_item.video.user.username
 		- if @album_editable
 			.remove(title="Remove" data-id="#{album_item.id}")
 				%span= fa :times
