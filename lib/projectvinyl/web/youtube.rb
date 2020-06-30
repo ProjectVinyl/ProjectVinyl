@@ -68,6 +68,9 @@ module ProjectVinyl
                   if a.attributes[:href].index('redirect?')
                     a.attributes[:href] = extract_uri_parameter(a.attributes[:href], 'q')
                   end
+                  if a.attributes[:href].index('/') == 0
+                    a.attributes[:href] = 'https://www.youtube.com' + a.attributes[:href]
+                  end
                   a.inner_text = a.attributes[:href]
                 end
 
@@ -122,25 +125,47 @@ module ProjectVinyl
       end
 
       def self.source_from_html_two(html)
+        player_response(html)['streamingData']
+      end
+
+      def self.player_response(html)
         map_index = html.index('ytplayer.config = ')
         return nil if !map_index
 
         html = html[(map_index + 'ytplayer.config = '.length)..html.length]
-        html = html.split('ytplayer.load = ')[0]
+        html = html.split(';ytplayer.')[0]
         while html[html.length - 1] == ';'
           html = html[0..(html.length - 2)]
         end
         html = JSON.parse(html)['args']
-        html = JSON.parse(html['player_response'])
-        html['streamingData']
+
+        JSON.parse(html['player_response'])
       end
 
       def self.description_from_html(html)
+        close = '</p>'
         description_index = html.index('id="eow-description"')
-        return nil if !description_index
+        if !description_index
+          close = '</div>'
+          description_index = html.index('id="description"')
+        end
+
+        if !description_index
+          player_resp = player_response(html)
+
+          if player_resp
+            player_resp = player_resp["videoDetails"]
+            if player_resp
+              player_resp = player_resp["shortDescription"]
+              return player_resp if player_resp
+            end
+          end
+
+          return nil
+        end
 
         html = html[description_index..html.length]
-        html = html.split('</p>')[0].split('>')
+        html = html.split(close)[0].split('>')
         html.shift
         html.join('>')
       end
