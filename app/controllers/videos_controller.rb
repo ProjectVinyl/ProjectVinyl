@@ -66,9 +66,16 @@ class VideosController < Videos::BaseVideosController
     @queue = @user.queue(@video.id, current_user)
 
     @metadata = {
-      type: "video",
+      og: {
+        type: @video.audio_only ? 'music.song' : 'video.other',
+        album: @album ? {
+          track: @index
+        } : {}
+      },
+      type: @video.audio_only ? :music : :video,
       mime: @video.mime,
       title: @video.title,
+      duration: @video.get_duration,
       file: PathHelper.absolute_url(@video.webm_url, root_url),
       description: @video.description,
       url: url_for(action: :show, controller: :videos, id: @video.id, only_path: false) + "-" + (@video.safe_title || "untitled-video"),

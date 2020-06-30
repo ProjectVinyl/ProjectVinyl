@@ -17,14 +17,18 @@
 %meta(property="og:title" content="#{title}")
 %meta(property="og:image" content="#{cover}")
 %meta(property="og:description" content="#{description}")
-%meta(property="og:type" content="#{type}")
+%meta(property="og:type" content="#{og[:type]}")
 
-- if type == 'video'
+- if type == :video
 	%meta(property="og:#{type}:type" content="#{mime}")
 	%meta(property="og:#{type}" content="#{file}")
 - else
 	%meta(property="og:#{type}:type" content="text/html")
 
+- if type != :album
+	%meta(property="og:#{type}:duration" content="#{duration}")
+- if og[:album] && og[:album][:track]
+	%meta(property="og:album:track" content="#{og[:album][:track]}")
 
 %meta(property="og:#{type}:width" content="#{width}")
 %meta(property="og:#{type}:height" content="#{height}")

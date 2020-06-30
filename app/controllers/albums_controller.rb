@@ -28,6 +28,9 @@ class AlbumsController < Albums::BaseAlbumsController
     @modifications_allowed = user_signed_in? && @album.owned_by(current_user)
 
     @metadata = {
+      og: {
+        type: 'music.album'
+      },
       type: :album,
       title: @album.title,
       description: @album.description,
