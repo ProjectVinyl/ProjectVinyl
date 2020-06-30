@@ -16,7 +16,7 @@ class VideosController < Videos::BaseVideosController
       return redirect_to action: :show, id: @video.duplicate_id
     end
 
-    if !@video.visible_to?(current_user)
+    if !@video.unlisted? && !@video.visible_to?(current_user)
       return render_error(
         title: 'Content Removed',
         description: "The video you are trying to access is currently not available. Reason: #{@video.moderation_note}"
