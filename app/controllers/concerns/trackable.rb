@@ -16,10 +16,12 @@ module Trackable
   end
 
   def after_sign_in_path_for(resource)
+    return root_url if request.referrer == request.url
     request.referrer
   end
 
   def after_sign_out_path_for(resource_or_scope)
+    return root_url if request.referrer == request.url
     request.referrer
   end
 end
