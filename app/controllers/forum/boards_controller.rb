@@ -2,15 +2,7 @@ module Forum
   class BoardsController < ApplicationController
     def show
       if !(@board = Board.find_board(params[:id]))
-        
-        if params[:format] == 'json'
-          return head :not_found
-        end
-        
-        return render_error(
-          title: 'Nothing to see here!',
-          description: 'That forum does not exist.'
-        )
+        return render_error_file 404, params[:format] == 'json'
       end
       
       @threads = Pagination.paginate(@board.threads, params[:page].to_i, 50, false)
