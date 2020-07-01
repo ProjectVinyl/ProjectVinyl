@@ -116,9 +116,8 @@ Rails.application.routes.draw do
     resources :search, only: [:index]
 
     # Threads #
-    resources :threads, only: [:new, :create, :update] do
+    resources :threads, only: [:new, :create, :update, :show] do
       resource :subscribe, only: [:update]
-      get '(/:order)', action: :show
     end
   end
 

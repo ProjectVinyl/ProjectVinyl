@@ -1,5 +1,5 @@
 - title "#{@thread.title} - Private Messages"
-= render layout: "pagination/paginated", locals: {type: "forum/threads/#{@thread.id}/#{@order}", paginated: @comments, id: "page"} do
+= render layout: "pagination/paginated", locals: {type: forum_thread_path(@thread), order: @order, paginated: @comments, id: "page"} do
 	%ul.comment-list{id: "thread-#{@thread.id}"}
 		= render partial: "comments/set", locals: {thread: @comments.records, indirect: false}
 %hr/

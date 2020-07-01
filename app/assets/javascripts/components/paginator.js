@@ -25,7 +25,7 @@ function requestPage(context, page, force) {
   
   context.querySelector('.pagination .pages .button.selected').classList.remove('selected');
   
-  ajax.get(`${context.dataset.type}.json?page=${page}${context.dataset.args ? `&${context.dataset.args}` : ''}`).json(json => {
+  ajax.get(`${context.dataset.type}.json?order=${context.dataset.order}&page=${page}${context.dataset.args ? `&${context.dataset.args}` : ''}`).json(json => {
     populatePage(context, json);
     QueryParameters.current.setItem(context.dataset.id, json.page + 1);
   });

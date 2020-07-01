@@ -127,7 +127,7 @@ class Comment < ApplicationRecord
   end
   
   def preview
-    BbcodeHelper.emotify content
+    BbcodeHelper.emotify bbc_content
   end
   
   def report(sender_id, params)
