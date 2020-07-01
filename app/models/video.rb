@@ -180,7 +180,7 @@ class Video < ApplicationRecord
     self.remove_cover_files
 
     begin
-      ProcessVideoJob.perform_later(id, cover, time)
+      ThumbVideoJob.perform_later(id, cover, time)
     rescue Exception => e
       return "Error: Could not schedule action."
     end

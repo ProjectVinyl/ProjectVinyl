@@ -5,9 +5,9 @@ class ProcessVideoJob < ApplicationJob
     video = Video.find(video_id)
     video.set_status(false)
 
-    encode_file(video_id, video.webm_path, 'webm') do |a|
-      encode_file(video_id, a.mpeg_path, 'mp4') do |b|
-        encode_file(video_id, b.audio_path, 'mp3') do |c|
+    encode_file(video_id, video.webm_path, 'webm', !video.audio_only) do |a|
+      encode_file(video_id, a.mpeg_path, 'mp4', !video.audio_only) do |b|
+        encode_file(video_id, b.audio_path, 'mp3', true) do |c|
           c.set_status(true)
           c.update_file_locations
         end
@@ -15,9 +15,9 @@ class ProcessVideoJob < ApplicationJob
     end
   end
 
-  def encode_file(video_id, output, ext)
+  def encode_file(video_id, output, ext, must_do)
     video = Video.find(video_id)
-    if video.file == '.' + ext
+    if !must_do || video.file == '.' + ext
       return yield(video)
     end
 

@@ -10,7 +10,12 @@ class Ffmpeg
   SQUARE_CROP_COM = escape_filter_par('crop=min(iw,ih):min(iw,ih)').freeze
   SQUARE_TWO_FORTY = escape_filter_par('scale=min(min(iw,ih),240):min(min(iw,ih),240)').freeze
   SCALE_ONE_THIRTY = 'scale=-1:130'.freeze
-  
+  ARGS_BY_FORMAT = {
+    webm: '-c:v libvpx -crf 10 -b:v 1M -c:a libvorbis',
+    mp4: '-vcodec libx264 -strict -2',
+    mp3: ''
+  }.freeze
+
   def self.compute_checksum(data)
     Digest::MD5.hexdigest(data)
   end
@@ -81,14 +86,14 @@ class Ffmpeg
     end
 
     begin
-      IO.popen([Rails.root.join('encode').to_s, input.to_s, temp.to_s, output.to_s]) do |io|
+      IO.popen([Rails.root.join('encode').to_s, input.to_s, temp.to_s, output.to_s, ARGS_BY_FORMAT[ext.to_sym]]) do |io|
         begin
           while line = io.gets
             line.chomp!
           end
           io.close
           yield
-          puts "Conversion complete (#{input})"
+          puts "Conversion complete (#{output})"
         rescue Exception => e
           puts e
           puts e.backtrace
