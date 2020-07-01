@@ -13,4 +13,5 @@
 		= "album".pluralize(c)
 	%br/
 	.bio= emotify thumb_h.bio
+	%br/
 	= render 'tags/taglist', collection: thumb_h.tags.limit(3)
