@@ -16,14 +16,39 @@
 			%td.label Size
 			%td.field= "%.2f MB" % @video.file_size
 		%tr
-			%td.label Source
+			%td.label
+				SRC
+				= surround '(', ')' do
+					= @video.file
 			%td.field= bool File.exist?(@video.video_path)
 			%td
 				%a.button{href: @video.file_link("#{@video.storage_root}/stream/#{@video.storage_path}", "source#{@video.file}")} View
+		%tr
+			%td.label MP3
+			%td.field
+				- if @video.file == '.mp3'
+					N/A
+				- else
+					= bool File.exist?(@video.audio_path)
+			%td
+				%a.button{href: @video.file_link("#{@video.storage_root}/stream/#{@video.storage_path}", "source.mp3")} View
 		- if !@video.audio_only
 			%tr
-				%td.label Webm
-				%td.field= bool File.exist?(@video.webm_path)
+				%td.label MP4
+				%td.field
+					- if @video.file == '.mp4'
+						N/A
+					- else
+						= bool File.exist?(@video.mpeg_path)
+				%td
+					%a.button{href: @video.file_link("#{@video.storage_root}/stream/#{@video.storage_path}", "source.mp4")} View
+			%tr
+				%td.label WEBM
+				%td.field
+					- if @video.file == '.webm'
+						N/A
+					- else
+						= bool File.exist?(@video.webm_path)
 				%td
 					%a.button{href: @video.file_link("#{@video.storage_root}/stream/#{@video.storage_path}", "source.webm")} View
 		%tr

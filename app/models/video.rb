@@ -76,12 +76,20 @@ class Video < ApplicationRecord
     self.update_index(defer: false)
   end
 
+  def audio_path(root = nil)
+    file_path('audio.mp3', root)
+  end
+  
   def video_path(root = nil)
     file_path("source#{file || '.mp4'}", root)
   end
 
   def webm_path(root = nil)
     file_path('video.webm', root)
+  end
+
+  def mpeg_path(root = nil)
+    file_path('video.mp4', root)
   end
 
   def webm_url
@@ -106,8 +114,7 @@ class Video < ApplicationRecord
 
   def set_file(media)
     if file
-      del_file(video_path.to_s)
-      del_file(webm_path.to_s)
+      self.remove_media
     end
 
     ext = File.extname(media.original_filename)
@@ -147,11 +154,6 @@ class Video < ApplicationRecord
   end
 
   def generate_webm
-    if audio_only
-      set_status(true)
-      return "Completed"
-    end
-
     set_status(nil)
 
     begin
@@ -177,12 +179,13 @@ class Video < ApplicationRecord
     self.uncache
     self.remove_cover_files
 
-    if save_file(cover_path, cover, 'image/')
-      Ffmpeg.extract_tiny_thumb_from_existing(cover_path, tiny_cover_path)
-    elsif !audio_only
-      time = time ? time.to_f : get_duration.to_f / 2
-      Ffmpeg.extract_thumbnail(video_path, cover_path, tiny_cover_path, time)
+    begin
+      ProcessVideoJob.perform_later(id, cover, time)
+    rescue Exception => e
+      return "Error: Could not schedule action."
     end
+
+    "Processing Scheduled"
   end
 
   def self.thumb_for(video, user)
@@ -350,10 +353,16 @@ class Video < ApplicationRecord
     del_file(tiny_cover_path)
   end
 
+  def remove_media
+    del_file(video_path)
+    del_file(mpeg_path)
+    del_file(webm_path)
+    del_file(audio_path)
+  end
+
   protected
   def remove_assets
-    del_file(video_path)
-    del_file(webm_path)
+    self.remove_media
     self.remove_cover_files
     Tag.where('id IN (?) AND video_count > 0', tags.pluck(:id)).update_all('video_count = video_count - 1')
   end
@@ -361,6 +370,8 @@ class Video < ApplicationRecord
   def move_assets(from, to)
     rename_file(video_path(from), video_path(to))
     rename_file(webm_path(from), webm_path(to))
+    rename_file(mpeg_path(from), mpeg_path(to))
+    rename_file(audio_path(from), audio_path(to))
     rename_file(cover_path(from), cover_path(to))
     rename_file(tiny_cover_path(from), tiny_cover_path(to))
   end

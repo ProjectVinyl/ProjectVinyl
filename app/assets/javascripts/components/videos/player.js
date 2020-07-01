@@ -322,7 +322,14 @@ Player.prototype = {
       media.src = this.source;
     } else {
       if (!this.audioOnly) {
-        addSource(media, `/stream/${this.params.path}/${this.params.id}/video.webm`, 'video/webm');
+        if (this.params.mime[0] != 'mp4') {
+          addSource(media, `/stream/${this.params.path}/${this.params.id}/video.mp4`, 'video/mp4');
+        }
+        if (this.params.mime[0] != 'webm') {
+          addSource(media, `/stream/${this.params.path}/${this.params.id}/video.webm`, 'video/webm');
+        }
+      } else if (this.params.mime[0] != 'mp3') {
+        addSource(media, `/stream/${this.params.path}/${this.params.id}/audio.mp3`, 'audio/mp3');
       }
       addSource(media, `/stream/${this.params.path}/${this.params.id}/source${this.params.mime[0]}`, this.params.mime[1]);
     }

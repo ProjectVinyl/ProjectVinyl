@@ -3,17 +3,26 @@ class ProcessVideoJob < ApplicationJob
 
   def perform(video_id)
     video = Video.find(video_id)
-    
-    if video.audio_only
-      video.set_status(true)
-      return
-    end
-    
     video.set_status(false)
-    Ffmpeg.produce_webm(video, video.video_path, video.webm_path) do
-      video = Video.find(video_id)
-      video.set_status(true)
-      video.update_file_locations
+
+    encode_file(video_id, video.webm_path, 'webm') do |a|
+      encode_file(video_id, a.mpeg_path, 'mp4') do |b|
+        encode_file(video_id, b.audio_path, 'mp3') do |c|
+          c.set_status(true)
+          c.update_file_locations
+        end
+      end
+    end
+  end
+
+  def encode_file(video_id, output, ext)
+    video = Video.find(video_id)
+    if video.file == '.' + ext
+      return yield(video)
+    end
+
+    Ffmpeg.encode_file(video, video.video_path, output, ext) do
+      yield(Video.find(video_id)) if block_given?
     end
   end
 end

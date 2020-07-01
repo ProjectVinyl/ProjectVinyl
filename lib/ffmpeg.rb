@@ -59,21 +59,21 @@ class Ffmpeg
     end
   end
   
-  def self.produce_webm(record, file, webm)
-    FileUtils.mkdir_p(File.dirname(webm))
+  def self.encode_file(record, input, output, ext)
+    FileUtils.mkdir_p(File.dirname(output))
 
-    temp = Rails.root.join('encoding', "#{record.id}.webm").to_s
+    temp = Rails.root.join('encoding', "#{record.id}.#{ext}").to_s
 
-    if File.exist?(webm)
+    if File.exist?(output)
       yield
       return "Completed"
     end
 
-    return "File Not Found" if !File.exist?(file)
+    return "File Not Found" if !File.exist?(input)
 
     if File.exist?(temp)
       if File.mtime(temp) < Time.now.ago(1800)
-        File.rename(temp, webm)
+        File.rename(temp, output)
         yield
         puts "Existing file found (#{temp})"
         return "Conversion Complete (Unlocked Index)"
@@ -81,14 +81,14 @@ class Ffmpeg
     end
 
     begin
-      IO.popen([Rails.root.join('encode').to_s, file.to_s, temp.to_s, webm.to_s]) do |io|
+      IO.popen([Rails.root.join('encode').to_s, input.to_s, temp.to_s, output.to_s]) do |io|
         begin
           while line = io.gets
             line.chomp!
           end
           io.close
           yield
-          puts "Conversion complete (#{file})"
+          puts "Conversion complete (#{input})"
         rescue Exception => e
           puts e
           puts e.backtrace
