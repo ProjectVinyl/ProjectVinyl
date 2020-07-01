@@ -1,4 +1,4 @@
-require 'projectvinyl/search/op'
+require 'projectvinyl/elasticsearch/op'
 
 module ProjectVinyl
   module ElasticSearch
@@ -28,10 +28,10 @@ module ProjectVinyl
       end
 
       def field_for(op)
-        if op == ProjectVinyl::Search::Op::LENGTH_GT || op == ProjectVinyl::Search::Op::LENGTH_LT
+        if op == Op::LENGTH_GT || op == Op::LENGTH_LT
           return :length
         end
-        if op == ProjectVinyl::Search::Op::SCORE_GT || op == ProjectVinyl::Search::Op::SCORE_LT
+        if op == Op::SCORE_GT || op == Op::SCORE_LT
           return :score
         end
         puts op
@@ -39,7 +39,7 @@ module ProjectVinyl
       end
 
       def is_gt(op)
-        op == ProjectVinyl::Search::Op::LENGTH_GT || op == ProjectVinyl::Search::Op::SCORE_GT
+        op == Op::LENGTH_GT || op == Op::SCORE_GT
       end
 
       def to_sql

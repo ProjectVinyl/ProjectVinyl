@@ -1,4 +1,4 @@
-require 'projectvinyl/search/op'
+require 'projectvinyl/elasticsearch/op'
 require 'projectvinyl/elasticsearch/elastic_builder'
 
 module ProjectVinyl
@@ -6,10 +6,10 @@ module ProjectVinyl
     class ElasticSelector
       def initialize(sender, search_terms)
         @user = sender
-        @opset = ProjectVinyl::Search::Op.load_ops(search_terms.downcase)
+        @opset = Op.load_ops(search_terms.downcase)
         @elastic = nil
         @exception = nil
-        @lexer_error = false
+        @lexer_error = 0
         @offset = 0
         @type = "unknown"
         @randomized = false
@@ -176,9 +176,13 @@ module ProjectVinyl
         end
 
         self
-      rescue ProjectVinyl::Search::LexerError => e
+      rescue InputError => e
         @exception = e
-        @lexer_error = true
+        @lexer_error = 1
+        self
+      rescue LexerError => e
+        @exception = e
+        @lexer_error = 2
         self
       rescue Faraday::ConnectionFailed => e
         @exception = e
@@ -213,9 +217,13 @@ module ProjectVinyl
       def error
         @exception
       end
-      
+
       def lexer_error?
-        @lexer_error
+        @lexer_error == 2
+      end
+
+      def input_error?
+        @lexer_error == 1
       end
       
       def page_size

@@ -1,4 +1,4 @@
-require 'projectvinyl/search/op'
+require 'projectvinyl/elasticsearch/op'
 
 module ProjectVinyl
   module ElasticSearch
@@ -15,14 +15,14 @@ module ProjectVinyl
         if sender
           if user == 'nil'
             user = sender.id
-          elsif ProjectVinyl::Search::Op.is?(user)
+          elsif Op.is?(user)
             user = sender.id
           else
             return if !sender.is_staff?
             @owner.root.cache_user(user)
           end
 
-          if op == ProjectVinyl::Search::Op::VOTE_U
+          if op == Op::VOTE_U
             @likes << user
           else
             @dislikes << user

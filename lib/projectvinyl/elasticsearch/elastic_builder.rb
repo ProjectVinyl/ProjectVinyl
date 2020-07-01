@@ -1,7 +1,8 @@
 require 'projectvinyl/elasticsearch/range_query'
 require 'projectvinyl/elasticsearch/vote_query'
-require 'projectvinyl/search/lexer_error'
-require 'projectvinyl/search/op'
+require 'projectvinyl/elasticsearch/lexer_error'
+require 'projectvinyl/elasticsearch/input_error'
+require 'projectvinyl/elasticsearch/op'
 
 module ProjectVinyl
   module ElasticSearch
@@ -76,7 +77,7 @@ module ProjectVinyl
           dest << { match: { key.to_sym => ".*#{data.strip}.*" } }
           @dirty = true
         else
-          raise ProjectVinyl::Search::LexerError, key + " Operator requires a data parameter"
+          raise LexerError, key + " Operator requires a data parameter"
         end
       end
 
@@ -87,7 +88,7 @@ module ProjectVinyl
             @dirty = true
           end
         else
-          raise ProjectVinyl::Search::LexerError, key + " Operator requires a data parameter"
+          raise LexerError, key + " Operator requires a data parameter"
         end
       end
 
@@ -96,7 +97,7 @@ module ProjectVinyl
           dest << { term: { key.to_sym => data.strip } }
           @dirty = true
         else
-          raise ProjectVinyl::Search::LexerError, key + " Operator requires a data parameter"
+          raise LexerError, key + " Operator requires a data parameter"
         end
       end
 
@@ -109,7 +110,7 @@ module ProjectVinyl
             return data
           end
         else
-          raise ProjectVinyl::Search::LexerError, key + " Operator requires a data parameter"
+          raise LexerError, key + " Operator requires a data parameter"
         end
         nil
       end
@@ -119,7 +120,7 @@ module ProjectVinyl
           yield(data)
           @dirty = true
         else
-          raise ProjectVinyl::Search::LexerError, name + " Operator requires a data parameter"
+          raise LexerError, name + " Operator requires a data parameter"
         end
       end
 
@@ -146,29 +147,29 @@ module ProjectVinyl
       def take_all(type, opset, sender)
         until opset.length == 0
           op = opset.shift
-          return if op == ProjectVinyl::Search::Op::GROUP_END
-          if op == ProjectVinyl::Search::Op::OR
+          return if op == Op::GROUP_END
+          if op == Op::OR
             op_n = opset.peek(2)
             neg = false
-            if op_n[0] == ProjectVinyl::Search::Op::NOT && op_n[1] == ProjectVinyl::Search::Op::GROUP_START
+            if op_n[0] == Op::NOT && op_n[1] == Op::GROUP_START
               neg = true
               op_n.shift
             end
-            opset.shift if op_n[0] == ProjectVinyl::Search::Op::GROUP_START
+            opset.shift if op_n[0] == Op::GROUP_START
             child_group = ElasticBuilder.new(self)
             child_group.negate if neg
             child_group.take_all(type, opset, sender)
             @children << child_group
             next
           end
-          if op == ProjectVinyl::Search::Op::AND
+          if op == Op::AND
             op_n = opset.peek(2)
             neg = false
-            if op_n[0] == ProjectVinyl::Search::Op::NOT
+            if op_n[0] == Op::NOT
               neg = true
               op_n.shift
             end
-            if op_n[0] == ProjectVinyl::Search::Op::GROUP_START
+            if op_n[0] == Op::GROUP_START
               opset.shift
               child_group = ElasticBuilder.new(self)
               child_group.negate if neg
@@ -177,53 +178,53 @@ module ProjectVinyl
             end
             next
           end
-          next if op == ProjectVinyl::Search::Op::GROUP_START
-          next if op == ProjectVinyl::Search::Op::GROUP_END
+          next if op == Op::GROUP_START
+          next if op == Op::GROUP_END
           take_param(type, op, opset, sender)
         end
       end
 
       def take_prim(type, op, v, sender)
-        if (op == ProjectVinyl::Search::Op::AUDIO_ONLY && type != 'user') || (op == ProjectVinyl::Search::Op::HIDDEN && sender && sender.is_staff?)
-          self.absorb_prim(@must, ProjectVinyl::Search::Op.name_of(op), v)
+        if (op == Op::AUDIO_ONLY && type != 'user') || (op == Op::HIDDEN && sender && sender.is_staff?)
+          self.absorb_prim(@must, Op.name_of(op), v)
         end
       end
 
       # reads all the data operators into a group
       def take_param(type, op, opset, sender)
-        if op == ProjectVinyl::Search::Op::TITLE
+        if op == Op::TITLE
           self.absorb_textual(@must, opset, type == 'user' ? 'username' : 'title')
-        elsif op == ProjectVinyl::Search::Op::UPLOADER
+        elsif op == Op::UPLOADER
           if op = self.absorb_param_if(@must_owner, opset, 'user_id', type != 'user')
             self.root.cache_user(op)
           end
-        elsif op == ProjectVinyl::Search::Op::SOURCE
+        elsif op == Op::SOURCE
           self.absorb_textual_if(@must, opset, 'source', type != 'user')
-        elsif ProjectVinyl::Search::Op.primitive?(op)
+        elsif Op.primitive?(op)
           self.take_prim(type, op, true, sender)
-        elsif ProjectVinyl::Search::Op.ranged?(op)
+        elsif Op.ranged?(op)
           @ranges.record(op, opset, false)
-        elsif op == ProjectVinyl::Search::Op::NOT
+        elsif op == Op::NOT
           self.absorb(opset, "not") do |data|
-            if data == ProjectVinyl::Search::Op::TITLE
+            if data == Op::TITLE
               self.absorb_textual(@must_not, opset, type == 'user' ? 'username' : 'title')
-            elsif data == ProjectVinyl::Search::Op::UPLOADER
+            elsif data == Op::UPLOADER
               if op = self.absorb_param_if(@must_not_owner, opset, 'user_id', type != 'user')
                 self.root.cache_user(op)
               end
-            elsif data == ProjectVinyl::Search::Op::SOURCE
+            elsif data == Op::SOURCE
               self.absorb_textual_if(@must_not, opset, 'source', type != 'user')
-            elsif ProjectVinyl::Search::Op.primitive?(data)
+            elsif Op.primitive?(data)
               self.take_prim(type, data, false, sender)
-            elsif ProjectVinyl::Search::Op.ranged?(data)
+            elsif Op.ranged?(data)
               @ranges.record(data, opset, true)
-            elsif data == ProjectVinyl::Search::Op::VOTE_U || data == ProjectVinyl::Search::Op::VOTE_D
+            elsif data == Op::VOTE_U || data == Op::VOTE_D
               @votes_not.record(data, opset, sender) if type != 'user'
             else
               @must_not << make_term(data.strip)
             end
           end
-        elsif op == ProjectVinyl::Search::Op::VOTE_U || op == ProjectVinyl::Search::Op::VOTE_D
+        elsif op == Op::VOTE_U || op == Op::VOTE_D
           @votes.record(op, opset, sender) if type != 'user'
         else
           op = op.strip
@@ -258,7 +259,7 @@ module ProjectVinyl
             o[:term][:user_id] = i
             m << o
           else
-            raise ProjectVinyl::Search::LexerError, "User " + o[:term][:user_id] + " does not exist."
+            raise InputError, "User " + o[:term][:user_id] + " does not exist."
           end
         end
         @anded_children.each do |ac|
@@ -275,7 +276,7 @@ module ProjectVinyl
             o[:term][:user_id] = i
             m << o
           else
-            raise ProjectVinyl::Search::LexerError, "User " + o[:term][:user_id] + " does not exist."
+            raise InputError, "User " + o[:term][:user_id] + " does not exist."
           end
         end
         m

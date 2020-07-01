@@ -1,5 +1,5 @@
 module ProjectVinyl
-  module Search
+  module ElasticSearch
     class LexerError < RuntimeError
     end
   end

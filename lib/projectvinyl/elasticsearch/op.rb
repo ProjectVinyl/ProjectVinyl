@@ -1,7 +1,7 @@
-require 'projectvinyl/search/lexer_error'
+require 'projectvinyl/elasticsearch/lexer_error'
 
 module ProjectVinyl
-  module Search
+  module ElasticSearch
     class Op
       OR = -1
       AND = -2
