@@ -15,7 +15,7 @@ export function TapToggler(owner) {
       }
 
       hoverTimeout = setTimeout(() => {
-        owner.classList.add('hover');
+        owner.classList.remove('hover');
         hoverTimeout = null;
         hoverFlag = 0;
       }, 1700);

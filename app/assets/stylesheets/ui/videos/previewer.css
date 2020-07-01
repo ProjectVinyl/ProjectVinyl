@@ -3,7 +3,8 @@
 }
 
 .video .previewer {
-  transition: opacity 0.1s linear;
+  transition: opacity 0.1s linear, visibility 0.1s linear;
+  visibility: hidden;
   position: absolute;
   width: 70px;
   height: 50px;
@@ -44,6 +45,7 @@
   height: 100%;
   border-radius: 3px;
 }
-.video .track:hover .previewer, .video.hover .track .previewer {
-  opacity: 1
+.video .track:hover .previewer {
+  opacity: 1;
+  visibility: visible;
 }
