@@ -65,7 +65,7 @@ Rails.application.routes.draw do
   end
 
   # Users #
-  resources :users, only: [:index, :update] do
+  resources :users, only: [:index, :update, :show] do
     scope module: :users do
       resources :uploads, only: [:index]
       resources :videos, only: [:index]
