@@ -5,6 +5,7 @@
 	%button.action.share.mobile-friendly.slider-toggle(data-target=".slideout.share")>
 		= fa :share
 		%span Share
+	= render partial: 'videos/downloads'
 	.split-button.popper>
 		%button.action.options.mobile-friendly.pop-out-toggle
 			= fa :gear
@@ -24,13 +25,6 @@
 					%a{href: edit_video_path(@video)}
 						%span.icon= fa :pencil
 						%span.label Change Cover Image
-			%li.action
-				%a(download target="_blank" href="#{video_download_path @video}")
-					%span.icon= fa :download
-					%span.label
-						Download (
-						= @video.file.gsub(/\./,'')
-						)
 			%li.action
 				%a{href: video_changes_path(@video)}
 					%span.icon= fa :history

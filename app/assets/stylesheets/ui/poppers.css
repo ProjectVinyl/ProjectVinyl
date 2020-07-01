@@ -6,6 +6,7 @@
   white-space: nowrap;
   visibility: hidden;
   position: absolute;
+  cursor: initial;
   left: -30px;
   top: 100%;
   z-index: 999;
@@ -28,6 +29,7 @@
 
 .popper .pop-out li {
   cursor: pointer;
+  padding: 10px;
 }
 .popper .pop-out li .icon {
   display: inline-block;
@@ -49,9 +51,6 @@
   -o-text-overflow: ellipsis;
 }
 
-.popper .pop-out li {
-  padding: 10px;
-}
 .popper .pop-out li:nth-child(2n+1) {
   background: #fff;
 }
@@ -66,10 +65,19 @@
   visibility: visible !important;
 }
 
+.pop-out li.divider {
+  height: 1px;
+  border-left: none;
+  border-top: 1px solid var(--divider-color);
+  padding: 0;
+  cursor: initial;
+}
+
 .pop-out-shown::before,
 .pop-out-shown::after {
   content: '';
   position: absolute;
+  cursor: initial;
   bottom: 0;
   left: 50%;
   border-right: 11px solid transparent;
