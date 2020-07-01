@@ -184,7 +184,7 @@ module ProjectVinyl
         @exception = e
         
         self
-      rescue e
+      rescue => e
         @exception = e
         puts "Exception raised #{e}"
         puts "Backtrace:\n\t#{e.backtrace[0..8].join("\n\t")}"

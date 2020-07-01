@@ -52,12 +52,13 @@ module ProjectVinyl
       end
 
       def user_id_for(username)
-        return username if 1.is_a?(username.class)
+        id = username.to_i
+        return id if id.to_s == username
         return self.root.user_id_for(username) if !@parent.nil?
         username = username.downcase
         if !@users.empty? && @user_ids_cache.nil?
           @user_ids_cache = {}
-          User.where('username IN (?)', @users).pluck(:id, :username).each do |u|
+          User.where('LOWER(username) IN (?)', @users).pluck(:id, :username).each do |u|
             @user_ids_cache[u[1].downcase] = u[0]
           end
         end
@@ -75,7 +76,7 @@ module ProjectVinyl
           dest << { match: { key.to_sym => ".*#{data.strip}.*" } }
           @dirty = true
         else
-          raise LexerError, key + " Operator requires a data parameter"
+          raise ProjectVinyl::Search::LexerError, key + " Operator requires a data parameter"
         end
       end
 
@@ -86,7 +87,7 @@ module ProjectVinyl
             @dirty = true
           end
         else
-          raise LexerError, key + " Operator requires a data parameter"
+          raise ProjectVinyl::Search::LexerError, key + " Operator requires a data parameter"
         end
       end
 
@@ -95,7 +96,7 @@ module ProjectVinyl
           dest << { term: { key.to_sym => data.strip } }
           @dirty = true
         else
-          raise LexerError, key + " Operator requires a data parameter"
+          raise ProjectVinyl::Search::LexerError, key + " Operator requires a data parameter"
         end
       end
 
@@ -108,7 +109,7 @@ module ProjectVinyl
             return data
           end
         else
-          raise LexerError, key + " Operator requires a data parameter"
+          raise ProjectVinyl::Search::LexerError, key + " Operator requires a data parameter"
         end
         nil
       end
@@ -118,7 +119,7 @@ module ProjectVinyl
           yield(data)
           @dirty = true
         else
-          raise LexerError, name + " Operator requires a data parameter"
+          raise ProjectVinyl::Search::LexerError, name + " Operator requires a data parameter"
         end
       end
 
@@ -256,6 +257,8 @@ module ProjectVinyl
           if i = self.user_id_for(o[:term][:user_id])
             o[:term][:user_id] = i
             m << o
+          else
+            raise ProjectVinyl::Search::LexerError, "User " + o[:term][:user_id] + " does not exist."
           end
         end
         @anded_children.each do |ac|
@@ -271,6 +274,8 @@ module ProjectVinyl
           if i = self.user_id_for(o[:term][:user_id])
             o[:term][:user_id] = i
             m << o
+          else
+            raise ProjectVinyl::Search::LexerError, "User " + o[:term][:user_id] + " does not exist."
           end
         end
         m
@@ -286,15 +291,6 @@ module ProjectVinyl
         m = @neg ? baked_inclusions : baked_exclusions
         holder[:must_not] = m if !m.empty?
         holder
-      end
-
-      def to_hash
-        hash = {
-          bool: {}
-        }
-        must hash[:bool]
-        must_not hash[:bool]
-        hash
       end
 
       def bools
