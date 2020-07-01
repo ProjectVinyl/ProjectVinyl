@@ -1,6 +1,6 @@
 
 html, body {
-  --site-banner: url(/images/new-banner.jpg) no-repeat top center / auto var(--content-background);
+  --site-banner: url(/images/new-banner.jpg) no-repeat top center / cover var(--content-background);
 
   --site-background: #f1f1f1;
 
