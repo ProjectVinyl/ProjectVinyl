@@ -9,14 +9,18 @@ export function xhr(method, url, data, callbacks) {
     if (xhr.readyState === XMLHttpRequest.DONE) {
       try {
         if (xhr.status >= 200 && xhr.status < 300) {
-          if (callbacks.success) callbacks.success(tryUnmarshal(xhr.responseXML || xhr.responseText));
-        } else if (xhr.responseText) {
-          if (callbacks.error) callbacks.error(xhr.responseText);
+          if (callbacks.success) {
+            callbacks.success(tryUnmarshal(xhr.responseXML || xhr.responseText));
+          }
+        } else if (callbacks.error) {
+          callbacks.error(xhr.responseText || 'Unspecified error');
         }
       } catch (e) {
         console.error(e);
       }
-      if (callbacks.complete) callbacks.complete();
+      if (callbacks.complete) {
+        callbacks.complete();
+      }
     }
   };
   
