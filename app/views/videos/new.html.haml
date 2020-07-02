@@ -73,7 +73,7 @@
 							%tr.premier-input
 								%td.field
 									%label.button.state-toggle.toggled{data: {parent: ".premier-input",state: :enabled, bubble: :true}}
-										%input(name="premier[premier]" type="checkbox")
+										= check_box :premier, :premier
 										%span.on= fa :check
 										%span.off= fa :close
 										Schedule a Premier
