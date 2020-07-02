@@ -1,9 +1,11 @@
 import { addDelegatedEvent } from '../jslim/events';
 
 addDelegatedEvent(document, 'click', '.state-toggle', (e, target) => {
-  if (e.which != 1 && e.button != 0) return;
-  e.preventDefault();
-  
+  if (e.target.tagName == 'INPUT' || (e.which != 1 && e.button != 0)) return;
+  if (target.dataset.bubble !== 'true') {
+    e.preventDefault();
+  }
+
   target.classList.toggle('toggled');
   
   let parent = target.dataset.parent;

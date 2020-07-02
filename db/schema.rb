@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20200629151545) do
+ActiveRecord::Schema.define(version: 20200702120109) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -345,6 +345,7 @@ ActiveRecord::Schema.define(version: 20200629151545) do
     t.integer "height"
     t.integer "play_count", default: 0
     t.integer "listing", default: 0
+    t.datetime "premiered_at"
     t.index ["checksum"], name: "index_videos_on_checksum"
     t.index ["created_at"], name: "index_videos_on_created_at"
     t.index ["user_id"], name: "index_videos_on_user_id"

@@ -9,10 +9,14 @@
 					%span.icon(title="Private - Only you can see this item")= fa :lock
 				- if thumb_h.unlisted?
 					%span.icon(title="Unlisted - Only you and people with a direct link can see this item")= fa :unlock
-				= spoilered ? "Spoilered" : thumb_h.get_title
+				- if spoilered
+					Spoilered
+				- else 
+					= thumb_h.get_title
+			%a.link.date{href: thumb_h.user.link, data: {id: thumb_h.user.id}}= thumb_h.user.username
 			%span.date{title: thumb_h.created_at}= since thumb_h.created_at
 			%span.tag-set.right
 				- if thumb_h.is_liked
 					= fa "fa-thumbs-#{thumb_h.is_downvoted ? 'down red' : 'up green'}"
-				= number_with_delimiter thumb_h.views
+				= fuzzy_big_number_with_delimiter thumb_h.play_count
 				views

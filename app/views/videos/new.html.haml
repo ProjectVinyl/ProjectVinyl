@@ -70,6 +70,20 @@
 								%td.field
 									= f.text_field :source, class: "input", placeholder: "Source"
 									.notice.alert.info.hidden(style="color:red")
+							%tr.premier-input
+								%td.field
+									%label.button.state-toggle.toggled{data: {parent: ".premier-input",state: :enabled, bubble: :true}}
+										%input(name="premier[premier]" type="checkbox")
+										%span.on= fa :check
+										%span.off= fa :close
+										Schedule a Premier
+									%span.premier-fields
+										%label.button
+											Date
+											%input(name="premier[date]" type="date")
+										%label.button
+											Time
+											%input(name="premier[time]" type="time")
 					.actions
 						%button.action.change-video(type="button") Change Main File
 						%span.notify.bob-holder

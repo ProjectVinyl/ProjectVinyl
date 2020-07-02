@@ -1,0 +1,3 @@
+.premier-input:not(.enabled) .premier-fields {
+  display: none;
+}

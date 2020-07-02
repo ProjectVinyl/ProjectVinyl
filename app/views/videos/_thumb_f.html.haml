@@ -7,5 +7,5 @@
 		%span.tag-set.right
 			- if thumb_f.is_liked
 				%i.fa{class: "fa-thumbs-#{thumb_f.is_downvoted ? 'down red' : 'up green'}"}
-			= number_with_delimiter thumb_f.views
+			= fuzzy_big_number_with_delimiter thumb_f.play_count
 			views

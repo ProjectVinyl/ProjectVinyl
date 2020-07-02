@@ -140,6 +140,16 @@ class VideosController < Videos::BaseVideosController
       end
     end
 
+    premier_time = nil
+    
+    if params[:premier][:premier] == '1'
+      begin
+        premier_time = DateTime.parse(params[:premier][:date] + ' ' + params[:premier][:time])
+      rescue ArgumentError => e
+        return error("Error", "Premier was not specified in a valid date-time format")
+      end
+    end
+
     if video[:tag_string].blank?
       return error("Error", "You need at least one tag.")
     end
@@ -166,7 +176,9 @@ class VideosController < Videos::BaseVideosController
         file: ext,
         mime: file.content_type,
         upvotes: 0, downvotes: 0, views: 0, duplicate_id: 0,
-        hidden: false, processed: false,
+        hidden: premier_time != nil,
+        premiered_at: premier_time,
+        processed: false,
         checksum: checksum[:value]
       )
 
@@ -189,6 +201,10 @@ class VideosController < Videos::BaseVideosController
     @video.video = data
     @video.set_thumbnail(cover, video[:time])
     @video.save
+    
+    if @video.premiered_at != 0
+      PremierVideoJob.set(wait_until: @video.premiered_at).perform_later(@video.id)
+    end
 
     if params[:format] == 'json'
       return render json: {

@@ -10,7 +10,7 @@
 						= spoilered ? "Spoilered" : thumb_v.get_title
 					.published.detail= since thumb_v.created_at
 					.views.detail
-						= number_with_delimiter thumb_v.views
+						= fuzzy_big_number_with_delimiter thumb_v.play_count
 						views
 				%span.tag-set.duration
 					- if thumb_v.is_liked

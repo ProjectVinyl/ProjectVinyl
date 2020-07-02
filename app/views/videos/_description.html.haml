@@ -19,12 +19,20 @@
 				%span.content= @video.title
 		.tag-set.subheading
 			%span.uploaded
-				Uploaded on
-				= @video.created_at.to_time.strftime('%e %B %Y')
-				by
+		.tag-set.subheading
+			%span.uploaded
+				Uploaded
+				%span{title: @video.created_at.to_time.strftime('%e %B %Y at %H:%m:%S')}
+					= since @video.created_at
+				\-
+				- if @video.premiered_at
+					Premiered
+					%span{title: @video.premiered_at.to_time.strftime('%e %B %Y at %H:%m:%S')}
+						= since @video.premiered_at
+					\-
 				%a.user-link.link{href: @user.link, data: {id: @user.id}}= @user.username
-			%span.views.right.js-play-counter
-				= number_with_delimiter @video.play_count
+			%span.views.right.js-play-counter{title: number_with_delimiter(@video.play_count) + ' views'}
+				= fuzzy_big_number_with_delimiter @video.play_count
 				views
 		- if @modifications_allowed
 			%span.editable.post-content(data-target="#{video_path @video}" data-member="description")
