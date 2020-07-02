@@ -44,7 +44,7 @@ module Admin
         add_resolver
 
       rescue Exception => e
-        return render_error_file :not_found, json
+        return render_error_file 404, json
       end
 
       if json
