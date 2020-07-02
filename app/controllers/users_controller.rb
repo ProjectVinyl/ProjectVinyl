@@ -40,16 +40,15 @@ class UsersController < Users::BaseUsersController
       user.default_listing = (input[:default_listing] || 0).to_i
       user.set_tags(input[:tag_string])
       user.save
-
-      if current_user.is_staff? && params[:user_id]
-        return redirect_to action: "view", id: user.id
-      end
       
       if (params[:video][:apply_to_all] == '1') 
         Video.where(user_id: user).update_all(listing: user.default_listing)
       end
 
-      redirect_to action: :edit, controller: "users/registrations"
+      if user.id == current_user.id
+        return redirect_to action: :edit, controller: "users/registrations"
+      end
+      redirect_to action: :show, controller: "admin/users"
     end
   end
 end
