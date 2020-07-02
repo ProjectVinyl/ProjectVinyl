@@ -114,7 +114,7 @@ function alignLists() {
   all('ul.horizontal li.virtual:not(.keep)', li => li.parentNode.removeChild(li));
   
   requestAnimationFrame(() => {
-    all('ul.horizontal', ul => {
+    all('ul.horizontal:not([data-aligned="false"])', ul => {
       const columnCount = getPreferredColumnCount(ul);
       if (!columnCount) {
         return;

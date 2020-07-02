@@ -1,4 +1,11 @@
 %section.page.properties.column-left
 	%h1 Edit Profile
 	= render 'users/edit', user: @user, url: user_path(@user), method: :patch
-= render 'actions'
+.wrapper.column-right.right
+	%section.page.full-width.properties
+		%h1 Thumbnail Preview
+		%ul.horizontal.user-list.center(data-aligned="false")
+			= render partial: 'users/thumb_h', locals: {thumb_h: @user}
+	= render 'info'
+	= render 'roles'
+	= render 'badges'

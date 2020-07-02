@@ -11,7 +11,7 @@ ul.horizontal, .controls ul {
   padding: 0;
 }
 
-ul.horizontal.center > li {
+ul.horizontal.center > li:not(.bio, .genre) {
   text-align: left;
   float: none;
   display: inline-block;

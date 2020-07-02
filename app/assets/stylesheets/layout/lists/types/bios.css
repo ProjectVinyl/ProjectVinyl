@@ -34,6 +34,11 @@ li.bio h2, li.genre h2 {
   overflow: hidden;
   line-height: 28px;
 }
+li.bio .bio {
+  color: #aaa;
+  font-weight: normal;
+  text-align: center;
+}
 
 .bio.short {
   vertical-align: top;

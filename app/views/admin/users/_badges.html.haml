@@ -1,0 +1,13 @@
+%section.page.full-width.properties
+	%h1 Badges
+	%table
+		%tr
+			%td.label Badges
+			%td
+				- had_badges = []
+				- @user.user_badges.includes(:badge).each do |i|
+					- had_badges << i.badge.id
+					= render 'badge_toggle', badge_toggle: i.badge, checked: true
+				%hr/
+				- (had_badges.length > 0 ? Badge.where.not('id IN (?)', had_badges) : Badge.all).each do |i|
+					= render 'badge_toggle', badge_toggle: i, checked: false

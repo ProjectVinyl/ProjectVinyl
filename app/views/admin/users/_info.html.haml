@@ -1,0 +1,46 @@
+%section.page.full-width.properties
+	%h1 Record Info
+	%table
+		%tr
+			%td.label Email
+			%td.field
+				- if current_user.is_contributor?
+					=email_escape @user.email
+				- else
+					%p.red Insufficient Permissions
+		%tr
+			%td.label Verified
+			%td.field= bool @user.confirmed_at
+		%tr
+			%td.label Created
+			%td.field= @user.created_at
+		%tr
+			%td.label Last Signed In
+			%td.field= @user.last_sign_in_at
+		%tr
+			%td.label Preferences
+			%td.field= @user.preferences
+		%tr
+			%td.label Videos
+			%td.field= @user.videos.count
+		%tr
+			%td.label Albums
+			%td.field= @user.albums.count
+	%table
+		%tr.actions
+			%td.label Reindex User
+			%td.field
+				= form_for(@user, as: "user", url: admin_reindex_path(id: :users), html: { method: :put }) do |f|
+					= f.text_field :id, hidden: true
+					= f.submit "Reindex"
+		- if current_user.is_admin?
+			%tr.actions
+				%td.label Delete
+				%td.field
+					- if current_user.id == @user.id
+						%p.red You cannot delete your own account.
+					- elsif !(@user.banned? || @user.normal?)
+						%p.red You can only delete normal or banned users.
+					- else
+						%a.button.red{href: admin_user_path(@user), data: {confirm: "The user " + @user.username + " will be permanently deleted. Are you sure?", method: :delete, title: "Delete User"}}
+							Delete Account
