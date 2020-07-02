@@ -191,7 +191,7 @@ Rails.application.routes.draw do
       end
     end
 
-    resources :users, only: [:show] do
+    resources :users, only: [:show,:destroy] do
       scope module: :users do
         resources :badges, only: [:update]
         resources :roles, only: [:update]
