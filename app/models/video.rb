@@ -280,6 +280,14 @@ class Video < ApplicationRecord
       }
   end
 
+  def thumb_picker_header
+    {
+      tab: :thumbpick,
+      pending: 1,
+      source: CGI::escape(widget_parameters(0, false, false, nil).to_json)
+    }
+  end
+
   def widget_header(time, resume, embed, album)
     {
       aspect: aspect,

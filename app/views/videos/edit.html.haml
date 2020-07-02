@@ -13,7 +13,7 @@
 					.fill
 		#upload
 			- if !@video.audio_only
-				.tab.video#video{style: format_bg(@video.direct_thumb), data: {tab: "thumbpick", title: @video.get_title, pending: 1, video: @video.id, mime: "#{@video.file}|#{@video.mime}"}}
+				.tab.video#video{style: format_bg(@video.direct_thumb), data: @video.thumb_picker_header}
 					= render 'videos/widget/slim'
 			.cover-block.selected.tab.drag-target.file-select.image-selector#cover-upload(data-tab="thumbupload")
 				%span.preview{style: format_bg(@video.direct_thumb)}
