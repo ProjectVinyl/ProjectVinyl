@@ -1,7 +1,7 @@
 ﻿%section
 	%h1.resize-target
 		%a Forum Search
-	%form.search-options#big-search(action="#{forum_search_path}" method="get")
+	%form.search-options#big-search(action="#{forum_search_index_path}" method="get")
 		.field
 			%input.full-width(type="text" name="title_query" placeholder="Thread Title" value="#{@title_query}")
 		.field.popper.auto-lookup.validate(data-action="#{find_users_path}")
@@ -9,14 +9,14 @@
 			%ul.pop-out
 		.field
 			%textarea.full-width(style="resize:vertical;min-height:150px" type="text" name="text_query" placeholder="Content" value="#{@text_query}")= @text_query
-		%label
+		%label.options
 			%span Category
 			%div
 				%select(name="board")
 					%option{value:0, selected: @category == 0} Everywhere
 					- Board.listables.each do |d|
 						%option{value: d[0], selected: @category == d[0]}= d[1]
-		%label
+		%label.options
 			%span Order
 			%div
 				%select(name="order")= sensible_option_for_select(["Ascending", "Descending"], @ascending ? 0 : 1)
