@@ -62,7 +62,7 @@ class CommentThread < ApplicationRecord
     end
     
     if self.owner
-      return owner.link
+      return "#{owner.link}/#{self.id}-#{self.safe_title}"
     end
     
     link
