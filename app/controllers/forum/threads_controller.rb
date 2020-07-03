@@ -12,9 +12,9 @@ module Forum
       
       if params[:format] != 'json'
         if @thread.private_message?
-          return redirect_to action: :show, controller: :pm, id: @thread.owner_id
+          return redirect_to action: :show, controller: "inbox/pm", id: @thread.owner_id
         elsif @thread.video?
-          return redirect_to action: :show, controller: :videos, id: @thread.owner_id
+          return redirect_to action: :show, controller: "/videos", id: @thread.owner_id
         end
       end
       
