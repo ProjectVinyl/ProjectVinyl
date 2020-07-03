@@ -3,7 +3,7 @@
 		.tile(style="background-image:url('#{thumb_f.is_hidden_by(current_user) ? 'images/default-cover' : thumb_f.tiny_thumb(current_user)}');")
 			%span.tag-set.duration= duration thumb_f.get_duration
 		.title= thumb_f.is_spoilered_by(current_user) || thumb_f.is_hidden_by(current_user) ? "Spoilered" : thumb_f.get_title
-		%span.date{title: thumb_f.created_at}= since thumb_f.created_at
+		%span.date{title: thumb_f.created_at.in_time_zone}= since thumb_f.created_at
 		%span.tag-set.right
 			- if thumb_f.is_liked
 				%i.fa{class: "fa-thumbs-#{thumb_f.is_downvoted ? 'down red' : 'up green'}"}

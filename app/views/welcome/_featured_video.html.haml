@@ -10,7 +10,7 @@
 		.tag-set.subheading
 			%span.uploaded
 				Uploaded on
-				= @featured.created_at.to_time.strftime('%e %B %Y')
+				= @featured.created_at.in_time_zone.to_time.strftime('%e %B %Y')
 				by
 				%a.user-link.link{href: @video.user.link, data: {id: @video.user.id}}= @video.user.username
 			%span.views.right.js-play-counter

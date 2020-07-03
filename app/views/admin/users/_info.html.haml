@@ -10,13 +10,13 @@
 					%p.red Insufficient Permissions
 		%tr
 			%td.label Verified
-			%td.field= bool @user.confirmed_at
+			%td.field= bool @user.confirmed_at.in_time_zone
 		%tr
 			%td.label Created
-			%td.field= @user.created_at
+			%td.field= @user.created_at.in_time_zone
 		%tr
 			%td.label Last Signed In
-			%td.field= @user.last_sign_in_at
+			%td.field= @user.last_sign_in_at.in_time_zone
 		%tr
 			%td.label Preferences
 			%td.field= @user.preferences

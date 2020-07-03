@@ -39,6 +39,7 @@ class UsersController < Users::BaseUsersController
       user.bio = input[:bio]
       user.default_listing = (input[:default_listing] || 0).to_i
       user.set_tags(input[:tag_string])
+      user.time_zone = input[:time_zone]
       user.save
       
       if (params[:video][:apply_to_all] == '1') 

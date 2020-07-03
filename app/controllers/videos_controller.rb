@@ -202,8 +202,8 @@ class VideosController < Videos::BaseVideosController
     @video.set_thumbnail(cover, video[:time])
     @video.save
     
-    if @video.premiered_at != 0
-      PremierVideoJob.set(wait_until: @video.premiered_at).perform_later(@video.id)
+    if @video.premiered_at != nil
+      PremierVideoJob.set(wait_until: @video.premiered_at.in_time_zone).perform_later(@video.id)
     end
 
     if params[:format] == 'json'
