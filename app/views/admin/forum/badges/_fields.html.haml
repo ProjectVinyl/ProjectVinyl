@@ -25,9 +25,8 @@
 %tr
 	%td.label= f.label :badge_type
 	%td.field
-		.search-options
-			%label
-				%span Type
-				%div(style="display: table-cell")
-					%select(name="badge[badge_type]")
-						= sensible_option_for_select(["Basic", "Titled"], 0)
+		%label.options
+			%span Type
+			%div(style="display: table-cell")
+				%select(name="badge[badge_type]")
+					= sensible_option_for_select(["Basic", "Titled"], 0)

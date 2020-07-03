@@ -5,15 +5,15 @@
 		%input.full-width(name="tagquery" type="search" placeholder="Tags" style="margin-top:10px" title="Search by one or more tags" value="#{@tag_query}")
 		= render partial: 'search/big_search_explanation'
 	%span.search-options
-		%label
+		%label.options
 			%span Type
 			%div
 				%select#search_type(name="type")= sensible_option_for_select %w[ Video Album User Tag ], @type
-		%label
+		%label.options
 			%span Order
 			%div
 				%select(name="order")= sensible_option_for_select %w[ Descending Ascending ], @ascending ? 1 : 0
-		%label
+		%label.options
 			%span Order By
 			%div
 				%select(name="orderby")= sensible_option_for_select %w[ - Date Rating Length Random Relevance ], @orderby

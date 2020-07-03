@@ -1,23 +1,22 @@
 = form_for(@album, url: album_order_path(@album), html: {method: :patch}) do |f|
 	.message_content
-		.search-options
-			%label{disabled: @album.hidden}
-				%span Visibility
-				%div
-					%select#privacy{name: "album[privacy]", disabled: @album.hidden}
-						= sensible_option_for_select(["Public", "Unlisted", "Private"], @listing)
-			%hr/
-			%label
-				%span Sorting
-				%div
-					%select#sorting(name="album[sorting]")
-						= sensible_option_for_select(["Custom", "Date Created", "Date Added","Score"], @sorting)
-			%hr/
-			%label
-				%span Direction
-				%div
-					%select#direction(name="album[direction]")
-						= sensible_option_for_select(["Ascending", "Descending"], @ordering)
+		%label.options{disabled: @album.hidden}
+			%span Visibility
+			%div
+				%select#privacy{name: "album[privacy]", disabled: @album.hidden}
+					= sensible_option_for_select(["Public", "Unlisted", "Private"], @listing)
+		%hr/
+		%label.options
+			%span Sorting
+			%div
+				%select#sorting(name="album[sorting]")
+					= sensible_option_for_select(["Custom", "Date Created", "Date Added","Score"], @sorting)
+		%hr/
+		%label.options
+			%span Direction
+			%div
+				%select#direction(name="album[direction]")
+					= sensible_option_for_select(["Ascending", "Descending"], @ordering)
 	.foot
 		= f.submit "Save", class: "green confirm"
 		%button.right.cancel{type: :button, "data-resolve": "false"} Cancel

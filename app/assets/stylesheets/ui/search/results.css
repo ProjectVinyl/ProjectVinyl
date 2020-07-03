@@ -1,3 +1,7 @@
+.search-options {
+  display: block;
+}
+
 .search-result {
   min-height: 500px;
   margin: 10px 0;

@@ -8,5 +8,6 @@
  *= require ./labels
  *= require ./checkboxes
  *= require ./autolookup
+ *= require ./options
  */
  

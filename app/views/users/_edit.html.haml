@@ -56,10 +56,9 @@
 		%tr
 			%td.label= f.label :time_zone
 			%td.field
-				%span.search-options
-					%label
-						%span Time Zone
-						%div= f.time_zone_select :time_zone
+				%label.options
+					%span Time Zone
+					%div= f.time_zone_select :time_zone
 		%tr
 			%td.label= f.label :default_listing
 			%td.field

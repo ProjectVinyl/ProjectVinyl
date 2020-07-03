@@ -1,11 +1,10 @@
-.search-options {
-  display: block;
-  
+
+label.options {
   --block-border-color: #ccc;
   --label-focus-color: rgba(200,200,200,0.1);
 }
 
-.search-options label {
+label.options {
   display: inline-block;
   border: 1px solid var(--block-border-color);
   margin-top: 10px;
@@ -15,25 +14,25 @@
   width: 300px;
 }
 
-.search-options label select {
+label.options select {
   width: 100%;
 }
 
 @media(max-width: 400px) {
-  .search-options label {
+  label.options {
     width: 100%;
   }
 }
 
-.search-options label {
+label.options {
   transition: background 0.125s ease;
 }
 
-.search-options label.focus {
+label.options.focus {
   background: var(--label-focus-color);
 }
 
-.search-options label span:first-child {
+label.options span:first-child {
   width: 90px;
   display: table-cell;
   min-width: 90px;
@@ -45,12 +44,13 @@
   border-bottom-left-radius: 2px;
 }
 
-.search-options label div {
+label.options div {
   width: 100%;
   display: table-cell;
 }
 
-.search-options input, .search-options select {
+.search-options input,
+label.options select {
   border: none;
   background: none;
   color: inherit;
