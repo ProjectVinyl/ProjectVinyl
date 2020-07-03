@@ -12,7 +12,7 @@ class UserAnon < UserDummy
   
   def initialize(session)
     @id = -UserAnon.anon_id(session)
-    @username = "Background Pony ##{Comment.encode_open_id(@id)}"
+    @username = "Background Pony ##{Comment.encode_open_id(@id).upcase}"
   end
   
   def videos

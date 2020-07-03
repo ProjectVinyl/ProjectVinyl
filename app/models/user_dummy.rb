@@ -7,7 +7,7 @@ class UserDummy
   
   def initialize(id)
     @id = id < 0 ? -id : id
-    @username = "Background Pony ##{Comment.encode_open_id(@id)}"
+    @username = "Background Pony ##{Comment.encode_open_id(@id).upcase}"
   end
 
   def videos
