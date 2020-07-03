@@ -7,7 +7,7 @@ class CommentThread < ApplicationRecord
   has_many :subscribers, through: :thread_subscriptions, class_name: 'User'
 
   belongs_to :owner, polymorphic: true
-  
+
   def private_message?
     self.owner_type == 'Pm'
   end
@@ -15,7 +15,11 @@ class CommentThread < ApplicationRecord
   def video?
     self.owner_type == 'Video'
   end
-  
+
+  def board?
+    self.owner_type == 'Board'
+  end
+
   def contributing?(user)
     !private_message? || (Pm.where('comment_thread_id = ? AND (sender_id = ? OR receiver_id = ?)', self.id, user.id, user.id).count > 0)
   end
@@ -50,37 +54,41 @@ class CommentThread < ApplicationRecord
   end
 
   def link
-    if self.owner_type == 'Board' && !self.owner.nil?
+    if self.board? && !self.owner.nil?
       return "/#{self.owner.short_name}/#{self.id}-#{self.safe_title}"
     end
     "/forum/threads/#{self.id}-#{self.safe_title}"
   end
-  
+
   def location
     if self.private_message?
       return owner.location
     end
-    
-    if self.owner
-      return "#{owner.link}/#{self.id}-#{self.safe_title}"
+
+    if self.video?
+      return owner.link
     end
-    
-    link
+
+    if !self.owner
+      return link
+    end
+
+    "#{owner.link}/#{self.id}-#{self.safe_title}"
   end
 
   def icon
     if self.video?
       return self.owner.thumb
     end
-    
+
     user.avatar
   end
-  
+
   def preview
     if self.video?
       return self.owner.title
     end
-    
+
     last_comment.preview
   end
 
@@ -112,13 +120,13 @@ class CommentThread < ApplicationRecord
     if self.owner_type == 'Pm'
       return self.owner.bump(sender, params, comment)
     end
-    
+
     if !sender.is_dummy && sender.subscribe_on_reply? && !self.subscribed?(sender)
       self.subscribe(sender)
     end
-    
+
     receivers = self.thread_subscriptions.pluck(:user_id) - [sender.id]
-    
+
     Notification.notify_receivers(receivers, self,
       "#{sender.username} has posted a reply to <b>#{self.title}</b>", self.location)
   end
