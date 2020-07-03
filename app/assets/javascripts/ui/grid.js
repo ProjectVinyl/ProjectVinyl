@@ -26,6 +26,9 @@ function calculateNewWidth(grid, beside) {
   } while (calculatedWidth > maxWidth);
 
   let besideWidth = beside.parentNode.clientWidth - (calculatedWidth + sideMargin);
+  if (besideWidth > 700) {
+    besideWidth = 700;
+  }
   if (besideWidth < sideWidth) {
     calculatedWidth == besideWidth - sideWidth;
     besideWidth = sideWidth;

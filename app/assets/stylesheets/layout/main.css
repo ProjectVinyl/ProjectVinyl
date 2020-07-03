@@ -1,20 +1,12 @@
 html, body {
-  --site-width: 1300px;
+  --site-width: 85vw;
   background: var(--site-background);
-}
-
-body[data-site-width] {
-  --site-width: attr(data-site-width);
-}
-body[data-custom-banner] {
-  --site-banner: attr(data-custom-banner);
 }
 
 main {
   display: inline-block;
   position: relative;
   text-align: left;
-  width: 90%;
+  width: var(--site-width);
   min-height: 100%;
-  max-width: var(--site-width);
 }
