@@ -19,8 +19,18 @@ Rails.application.configure do
   # Actually log things
   RAILS_DEFAULT_LOGGER = Logger.new('log/production.log')
   config.logger = RAILS_DEFAULT_LOGGER
-  
-  config.action_mailer.delivery_method = :sendmail
+
+  config.action_mailer.logger = Logger.new('log/mailer.log')
+  config.action_mailer.delivery_method = :smtp
+  config.action_mailer.smtp_settings = {
+    address: 'smtp.gmail.com',
+    port: 587,
+    domain: 'projectvinyl.net',
+    user_name: Rails.application.secrets.gmail_public_key,
+    password: Rails.application.secrets.gmail_private_key,
+    authentication: :plain,
+    enable_starttls_auto: true
+  }
   config.action_mailer.default_url_options = { host: 'projectvinyl.net' }
 
   config.i18n.fallbacks = [I18n.default_locale]
