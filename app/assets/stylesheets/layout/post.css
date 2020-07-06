@@ -5,6 +5,9 @@ div.group {
   margin: -20px;
   padding: 20px;
 }
+.page > div.group h3 a {
+  text-decoration: none;
+}
 
 .post {
   width: 100%;
