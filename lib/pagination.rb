@@ -35,6 +35,10 @@ class Pagination
     @pages = pages
   end
   
+  def error
+    false
+  end
+
   def length
     @count
   end
