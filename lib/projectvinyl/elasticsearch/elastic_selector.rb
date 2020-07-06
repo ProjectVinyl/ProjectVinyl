@@ -1,5 +1,6 @@
 require 'projectvinyl/elasticsearch/op'
 require 'projectvinyl/elasticsearch/elastic_builder'
+require 'projectvinyl/elasticsearch/order'
 
 module ProjectVinyl
   module ElasticSearch
@@ -43,55 +44,17 @@ module ProjectVinyl
         self
       end
       
-      def order_by(ordering)
-        @ascending = true
-        @ordering = [ordering]
+      def order_by(order)
+        @ordering = [ { order => {order: 'asc' }} ]
         self
       end
 
-      def random_order(session, _ordering, possibles)
-        if @page == 0
-          session[:random_ordering] = possibles[rand(0..possibles.length)].to_s + ';' + possibles[rand(0..possibles.length)].to_s
-        end
-        session[:random_ordering].split(';')
-      end
-
       def ordering
-        direction = @ascending ? 'asc' : 'desc'
-        @ordering.map do |i|
-          { i => { order: direction } }
-        end
+        @ordering
       end
 
       def order(session, ordering, ascending)
-        @ascending = ascending
-        if ordering == 5
-          @ordering = []
-          return self
-        end
-        @ordering = [:created_at]
-        if @type == 'video'
-          if ordering == 4
-            @ordering = random_order(session, ordering, %i[length created_at updated_at score])
-            return self
-          end
-          @ordering << :updated_at
-          if ordering == 2
-            @ordering.unshift(:score)
-          elsif ordering == 3
-            @ordering.unshift(:length)
-          end
-        elsif @type == 'user'
-          if ordering == 4
-            @ordering = random_order(session, ordering, %i[created_at updated_at])
-            return self
-          end
-          if ordering < 4
-            @ordering = %i[created_at updated_at]
-          else
-            @ordering = %i[created_at updated_at]
-          end
-        end
+        @ordering = Order.parse(@type, session, ordering, ascending)
         self
       end
 
@@ -152,8 +115,8 @@ module ProjectVinyl
           query: add_required_params(@elastic.to_hash)
         }
 
-        if !ordering.empty? && !@randomized
-          params[:sort] = ordering
+        if !@ordering.empty? && !@randomized
+          params[:sort] = @ordering
         end
 
         if @page < 0
@@ -204,12 +167,12 @@ module ProjectVinyl
         if @exception
           return table.none
         end
-        
+
         if @type == 'user'
           return @search.records
         end
         
-        @records || (@records = Video.includes(:tags).where('videos.id IN (?)', @search.records.ids).with_likes(@user))
+        @search.records.includes(:tags).with_likes(@user)
       end
 
       attr_reader :page
@@ -250,6 +213,7 @@ module ProjectVinyl
         if !@elastic
           @elastic = ElasticBuilder.interpret_opset(@type, @opset, @user)
         end
+
         Tag.get_tags(@elastic.tags)
       end
     end

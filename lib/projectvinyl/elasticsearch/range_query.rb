@@ -17,6 +17,8 @@ module ProjectVinyl
         else
           if field == :length
             value = Ffmpeg.from_h_m_s(value)
+          elsif field == :created_at || field == :updated_at
+            value = DateTime.parse(value)
           else
             value = value.to_i
           end
@@ -34,12 +36,14 @@ module ProjectVinyl
         if op == Op::SCORE_GT || op == Op::SCORE_LT
           return :score
         end
-        puts op
-        raise "Bad OP"
+        if op == Op::CREATED_GT || op == Op::CREATED_LT
+          return :created_at
+        end
+        raise "Bad OP: " + op
       end
 
       def is_gt(op)
-        op == Op::LENGTH_GT || op == Op::SCORE_GT
+        op == Op::LENGTH_GT || op == Op::SCORE_GT || op == Op::CREATED_GT
       end
 
       def to_sql

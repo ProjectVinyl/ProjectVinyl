@@ -13,19 +13,23 @@ module ProjectVinyl
       GROUP_END = -8
       AUDIO_ONLY = -9
       HIDDEN = -10
-      LENGTH_GT = -11
-      LENGTH_LT = -12
-      SCORE_GT = -13
-      SCORE_LT = -14
-      VOTE_U = -15
-      VOTE_D = -16
+      VOTE_U = -11
+      VOTE_D = -12
+
+      LENGTH_GT = -113
+      LENGTH_LT = -114
+      SCORE_GT = -115
+      SCORE_LT = -116
+      CREATED_GT = -117
+      CREATED_LT = -118
+
 
       def self.is?(op)
-        1.is_a?(op.class) && op < 0 && op >= Op::VOTE_D
+        1.is_a?(op.class) && op < 0 && (op >= Op::VOTE_D || (op <= Op::LENGTH_GT && op >= Op::CREATED_LT))
       end
 
       def self.ranged?(op)
-        Op.is?(op) && op <= Op::LENGTH_GT && op >= Op::SCORE_LT
+        Op.is?(op) && op <= Op::LENGTH_GT
       end
 
       def self.primitive?(op)
@@ -65,6 +69,12 @@ module ProjectVinyl
         elsif slurp.index('score>') == 0
           @opset << slurp.sub(/score>/, '')
           return Op::SCORE_GT
+        elsif slurp.index('uploaded<') == 0
+          @opset << slurp.sub(/uploaded</, '')
+          return Op::CREATED_LT
+        elsif slurp.index('uploaded>') == 0
+          @opset << slurp.sub(/uploaded>/, '')
+          return Op::CREATED_GT
         elsif slurp == 'is:audio'
           return Op::AUDIO_ONLY
         elsif slurp == 'is:hidden'

@@ -16,7 +16,7 @@
 		%label.options
 			%span Order By
 			%div
-				%select(name="orderby")= sensible_option_for_select %w[ - Date Rating Length Random Relevance ], @orderby
+				%select(name="orderby")= sensible_option_for_select %w[ Date Rating Heat Length Random Relevance ], @orderby
 	%span
 		%button(type="submit")
 			= fa :search

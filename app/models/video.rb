@@ -53,6 +53,7 @@ class Video < ApplicationRecord
       indexes :user_id, type: 'integer'
       indexes :length, type: 'integer'
       indexes :score, type: 'integer'
+      indexes :heat, type: 'integer'
       indexes :created_at, type: 'date'
       indexes :updated_at, type: 'date'
       indexes :hidden, type: 'boolean'
