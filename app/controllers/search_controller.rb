@@ -6,7 +6,7 @@ class SearchController < ApplicationController
   
   def index
     read_params(params)
-    
+
     if @type_sym == :albums || @type_sym == :tags
       @results = Pagination.paginate(search_basic, @page, 20, !@ascending)
       
@@ -44,6 +44,14 @@ class SearchController < ApplicationController
       orderby: @orderby,
       query: @query
     )
+    @crumb = {
+      stack: [
+        {
+          title: "Search"
+        }
+      ],
+      title: @type_sym.to_s.titlecase.pluralize
+    }
   end
   
   private
