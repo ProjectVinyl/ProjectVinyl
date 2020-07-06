@@ -1,6 +1,6 @@
 .thumb, li.generic.thumb {
-  --thumb-height: 230px;
   --thumb-width: 250px;
+  --thumb-height: calc(var(--thumb-width) * 0.92);
 
   text-decoration: none;
 }
