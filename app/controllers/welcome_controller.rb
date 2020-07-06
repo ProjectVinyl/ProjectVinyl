@@ -1,6 +1,6 @@
 class WelcomeController < ApplicationController
   def index
-    @all = Video.listed.finder.with_likes(current_user).order(:created_at).reverse_order.limit(50)
+    @all = Video.listed.finder.with_likes(current_user).order(:created_at).reverse_order.limit(90)
     @comments = Comment.with_threads("Video").order(:created_at).reverse_order.limit(5)
     @threads = Comment.with_threads("Board").order(:created_at).reverse_order.limit(5)
     @popular = Video.with_likes(current_user).popular
