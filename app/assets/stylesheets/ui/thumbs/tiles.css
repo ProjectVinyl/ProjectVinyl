@@ -1,6 +1,5 @@
 .tile {
-  --thumb-height: 120px;
-  --thumb-width: 250px;
+  --thumb-height: calc(var(--thumb-width) * 0.48);
 
   position: relative;
   display: inline-block;

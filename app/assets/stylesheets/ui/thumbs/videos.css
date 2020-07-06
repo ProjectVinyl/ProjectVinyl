@@ -4,6 +4,12 @@
 
   text-decoration: none;
 }
+.thumb.tiny {
+  --thumb-width: 85px;
+  width: var(--thumb-width);
+  height: 100%;
+}
+
 .thumb-hidden {
   opacity: 0.3;
 }

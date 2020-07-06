@@ -1,5 +1,4 @@
 li.generic {
-  --thumb-height: 250px;
   --thumb-width: 250px;
   --thumb-width-min: var(--thumb-width);
 
