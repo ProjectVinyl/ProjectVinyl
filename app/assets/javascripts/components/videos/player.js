@@ -7,7 +7,7 @@ import { ContextMenu } from '../../ui/contextmenu';
 import { clamp } from '../../utils/math';
 import { errorMessage, errorPresent } from '../../utils/videos';
 import { all } from '../../jslim/dom';
-import { ready, bindAll, halt, bindEvent } from '../../jslim/events';
+import { ready, bindAll, bindEvent } from '../../jslim/events';
 import { isFullscreen } from '../../utils/fullscreen';
 import { cookies } from '../../utils/cookies';
 import { TapToggler } from '../taptoggle';
@@ -19,7 +19,7 @@ import { resize } from './resize';
 import { createVideoElement, addSource } from './video_element';
 import { onPlaylistNavigate } from './playlist';
 import { attachFloater } from './floatingplayer';
-import { bindGestures } from './gestures';
+import { registerEvents } from './gestures';
 
 const speeds = [
   {name: '0.25x', value: 0.25},
@@ -29,70 +29,6 @@ const speeds = [
   {name: '1.5x', value: 1.5},
   {name: 'Double', value: 2}
 ];
-
-function registerEvents(player, el) {
-  let tapped = false;
-  let activeTouches = [];
-
-  function onTouchEvent(ev) {
-    activeTouches = activeTouches.filter(t => t.identifier !== ev.identifier)
-  }
-
-  bindAll(el, {
-    click: ev => {
-      if (ev.button !== 0) {
-        return;
-      }
-
-      if (!player.contextmenu.hide(ev)) {
-        let target = ev.target.closest('.items a, #playlist_next, #playlist_prev');
-        if (target) {
-          halt(ev);
-          return player.navTo(target);
-        }
-
-        if (player.playlist && ev.target.closest('.playlist-toggle')) {
-          return player.playlist.classList.toggle('visible');
-        }
-        
-        if (ev.target.closest('.action, .voluming, .tracking')) {
-          return;
-        }
-
-        if (player.player.dataset.state != 'playing' || player.dom.toggler.interactable()) {
-          if (player.playlist && player.playlist.classList.contains('visible')) {
-            return player.playlist.classList.remove('visible');
-          }
-
-          player.togglePlayback();
-        }
-      }
-    },
-    touchstart: ev => {
-      if (fullscreenPlayer === player && activeTouches.length) {
-        return halt(ev);
-      }
-
-      if (!tapped) {
-        tapped = setTimeout(() => tapped = null, 500);
-        activeTouches.push({identifier: ev.identifier});
-
-        return;
-      }
-      
-      clearTimeout(tapped);
-      tapped = null;
-      player.fullscreen(!isFullscreen());
-
-      halt(ev);
-    },
-    touchmove: onTouchEvent,
-    touchend: onTouchEvent,
-    touchcancel: onTouchEvent
-  });
-    
-  bindGestures(player);
-}
 
 function playerElement(sender) {
   const player = sender.dom.querySelector('.player');

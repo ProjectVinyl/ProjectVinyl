@@ -1,8 +1,73 @@
-import { bindEvent } from '../../jslim/events';
+import { bindAll, halt, bindEvent } from '../../jslim/events';
 import { Key, isNumberKey, getNumberKeyValue } from '../../utils/key';
 import { triggerDrop } from './waterdrop';
+import { fullscreenPlayer } from './fullscreen';
 
-export function bindGestures(player) {
+export function registerEvents(player, el) {
+  let tapped = false;
+  let activeTouches = [];
+
+  function onTouchEvent(ev) {
+    activeTouches = activeTouches.filter(t => t.identifier !== ev.identifier)
+  }
+
+  bindAll(el, {
+    click: ev => {
+      if (ev.button !== 0) {
+        return;
+      }
+
+      if (!player.contextmenu.hide(ev)) {
+        let target = ev.target.closest('.items a, #playlist_next, #playlist_prev');
+        if (target) {
+          halt(ev);
+          return player.navTo(target);
+        }
+
+        if (player.playlist && ev.target.closest('.playlist-toggle')) {
+          return player.playlist.classList.toggle('visible');
+        }
+
+        if (ev.target.closest('.action, .voluming, .tracking')) {
+          return;
+        }
+
+        if (player.player.dataset.state != 'playing' || player.dom.toggler.interactable()) {
+          if (player.playlist && player.playlist.classList.contains('visible')) {
+            return player.playlist.classList.remove('visible');
+          }
+
+          triggerDrop(player.waterdrop, player.togglePlayback() ? 'pause' : 'play');
+        }
+      }
+    },
+    touchstart: ev => {
+      if (fullscreenPlayer === player && activeTouches.length) {
+        return halt(ev);
+      }
+
+      if (!tapped) {
+        tapped = setTimeout(() => tapped = null, 500);
+        activeTouches.push({identifier: ev.identifier});
+
+        return;
+      }
+
+      clearTimeout(tapped);
+      tapped = null;
+      player.fullscreen(!isFullscreen());
+
+      halt(ev);
+    },
+    touchmove: onTouchEvent,
+    touchend: onTouchEvent,
+    touchcancel: onTouchEvent
+  });
+
+  bindGestures(player);
+}
+
+function bindGestures(player) {
   bindEvent(document, 'keydown', ev => {
     if (player.video && !document.querySelector('input:focus, textarea:focus')) {
       const oldVolume = player.getVolume();
