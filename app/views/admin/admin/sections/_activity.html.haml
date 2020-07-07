@@ -4,10 +4,11 @@
 		.row.heads
 			%div Name
 			%div Created
+			%div Updated
 			%div Last Active
 			%div Votes
 			%div Sign ins
-		- @users.each do |user|
+		- @users.records.each do |user|
 			%a.row{href: admin_user_path(user)}
 				%div
 					= user.username
@@ -15,5 +16,9 @@
 						= user.id
 				%div{title: user.created_at.in_time_zone}= since user.created_at
 				%div{title: user.updated_at.in_time_zone}= since user.updated_at
+				- if user.last_active_at.nil?
+					%div null
+				- else
+					%div{title: user.last_active_at.in_time_zone}= since user.last_active_at
 				%div= user.votes.count
 				%div= user.sign_in_count

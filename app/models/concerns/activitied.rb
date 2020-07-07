@@ -3,6 +3,10 @@ module Activitied
   
   included do
     scope :online, -> { where('last_active_at > ?', Time.zone.now - 3.minutes) }
+    scope :active_since, ->since {
+      where('last_active_at > ? OR updated_at > ?', since, since)
+      .order('last_active_at IS NOT NULL', :last_active_at, :updated_at)
+    }
   end
   
   def poke
