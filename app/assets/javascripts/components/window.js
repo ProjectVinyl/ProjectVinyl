@@ -3,7 +3,7 @@
  */
 import { addDelegatedEvent, bindEvent } from '../jslim/events';
 import { all, nodeFromHTML } from '../jslim/dom';
-import { Key } from '../utils/misc';
+import { Key } from '../utils/key';
 import { initDraggable, move } from './draggable';
 
 function createPopupContent(params) {

@@ -1,4 +1,4 @@
-import { Key } from '../utils/misc';
+import { Key } from '../utils/key';
 import { all } from '../jslim/dom';
 import { addDelegatedEvent, ready, halt, bindEvent } from '../jslim/events';
 

@@ -4,7 +4,6 @@
 import { ajax } from '../../utils/ajax';
 import { scrollTo } from '../../ui/scroll';
 import { ContextMenu } from '../../ui/contextmenu';
-import { Key } from '../../utils/misc';
 import { clamp } from '../../utils/math';
 import { errorMessage, errorPresent } from '../../utils/videos';
 import { all } from '../../jslim/dom';
@@ -20,6 +19,7 @@ import { resize } from './resize';
 import { createVideoElement, addSource } from './video_element';
 import { onPlaylistNavigate } from './playlist';
 import { attachFloater } from './floatingplayer';
+import { bindGestures } from './gestures';
 
 const speeds = [
   {name: '0.25x', value: 0.25},
@@ -91,26 +91,7 @@ function registerEvents(player, el) {
     touchcancel: onTouchEvent
   });
     
-  bindEvent(document, 'keydown', ev => {
-    if (player.video && !document.querySelector('input:focus, textarea:focus')) {
-      if (ev.key == 'MediaPlayPause' || ev.keyCode === Key.SPACE) {
-        player.togglePlayback();
-        return halt(ev);
-      } else if (ev.key == 'MediaTrackPrevious' || ev.keyCode == Key.LEFT) {
-        player.skip(-5);
-        return halt(ev);
-      } else if (ev.key == 'MediaTrackNext' || ev.keyCode == Key.RIGHT) {
-        player.skip(5);
-        return halt(ev);
-      } else if (ev.keyCode == Key.UP) {
-        player.skip(0, 0.1);
-        return halt(ev);
-      } else if (ev.keyCode == Key.DOWN) {
-        player.skip(0, -0.1);
-        return halt(ev);
-      }
-    }
-  });
+  bindGestures(player);
 }
 
 function playerElement(sender) {
@@ -155,6 +136,7 @@ Player.prototype = {
     this.audioOnly = this.params.type === 'audio';
     
     this.suspend = el.querySelector('.suspend');
+    this.waterdrop = el.querySelector('.water-drop');
     this.player = playerElement(this);
     this.playlist = document.querySelector('.playlist');
     this.heading = playerHeader(this);
@@ -395,6 +377,9 @@ Player.prototype = {
   },
   getDuration() {
     return parseFloat(this.video.duration) || 0;
+  },
+  getVolume() {
+    return this.video.muted ? 0 : this.video.volume;
   },
   jump(progress) {
     const duration = this.getDuration();

@@ -1,14 +1,3 @@
-export const Key = {
-  ENTER: 13,
-  ESC: 27,
-  SPACE: 32,
-  COMMA: 188,
-  BACKSPACE: 8,
-  Z: 90,
-  Y: 89,
-  LEFT: 37, UP: 38, RIGHT: 39, DOWN: 40
-};
-
 export function toBool(string) {
   return string && string.length && (string == '1' || string.toLowerCase() == 'true');
 }

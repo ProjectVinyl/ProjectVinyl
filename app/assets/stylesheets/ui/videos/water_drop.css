@@ -1,0 +1,29 @@
+
+.video .water-drop {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100px;
+  height: 100px;
+  margin: -50px 0 0 -50px;
+  line-height: 100px;
+  font-size: 4em;
+  text-align: center;
+  background: #000;
+  border-radius: 100%;
+  visibility: visible;
+  opacity: 0.4;
+  transform: scale(0.5);
+  pointer-events: none;
+}
+.video .water-drop.hidden {
+  display: block !important;
+  visibility: hidden;
+  opacity: 0;
+  transform: scale(1);
+  
+  transition:
+    opacity 0.25s linear,
+    visibility 0.25s linear,
+    transform 0.25s ease;
+}

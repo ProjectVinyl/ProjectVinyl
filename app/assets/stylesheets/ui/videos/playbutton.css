@@ -4,19 +4,12 @@
     opacity 0.25s linear,
     top 0.25s linear,
     left 0.25s linear,
-    transform 0.25s ease, -ms-transform 0.25s ease,
-    -o-transform 0.25s ease,
-    -webkit-transform 0.25s ease,
-    -moz-transform 0.25s ease;
+    transform 0.25s ease;
 }
 .video .player.playing::after {
   transition:
     opacity 0.125s linear,
-    transform 0.25s ease,
-    -ms-transform 0.25s ease,
-    -o-transform 0.25s ease,
-    -webkit-transform 0.25s ease,
-    -moz-transform 0.25s ease;
+    transform 0.25s ease;
 }
 
 .video:not(.unplayable) .player::after {
@@ -27,7 +20,7 @@
   top: 50%;
   left: 50%;
   border-radius: 100%;
-  background: red;
+  background: #b00;
   color: #fff;
   width: 100px;
   height: 100px;
@@ -51,6 +44,7 @@
 }
 .video:not(.unplayable) .player[data-state=stopped]::after {
   content: "\f01e";
+  text-indent: 0;
 }
 
 .video:not(.unplayable) .player[data-state=playing]::after {
