@@ -4,6 +4,7 @@ class ProcessVideoJob < ApplicationJob
   def perform(video_id)
     video = Video.find(video_id)
     video.set_status(false)
+    video.read_media_attributes!
 
     encode_file(video_id, video.webm_path, 'webm', !video.audio_only) do |a|
       encode_file(video_id, a.mpeg_path, 'mp4', !video.audio_only) do |b|

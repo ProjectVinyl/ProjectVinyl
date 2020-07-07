@@ -319,24 +319,17 @@ class Video < ApplicationRecord
 
   def get_duration
     return 0 if hidden
-    return compute_length if self.length.nil? || self.length == 0
-    self.length
+    length || 0
   end
 
   def get_width
     return 1 if audio_only
-    if self.width.nil?
-      compute_dimensions
-    end
-    self.width
+    width || 1
   end
 
   def get_height
-    return 1 if self.audio_only
-    if self.height.nil?
-      compute_dimensions
-    end
-    self.height
+    return 1 if audio_only
+    height || 1
   end
 
   def report(sender_id, params)
@@ -369,6 +362,15 @@ class Video < ApplicationRecord
     del_file(audio_path)
   end
 
+  def read_media_attributes!
+    return if audio_only || !file || !has_file(video_path)
+
+    self.length = Ffmpeg.get_video_length(video_path)
+    self.width = Ffmpeg.get_video_width(video_path)
+    self.height = Ffmpeg.get_video_height(video_path)
+    self.save
+  end
+
   protected
   def remove_assets
     self.remove_media
@@ -396,25 +398,5 @@ class Video < ApplicationRecord
     end
     text = Comment.parse_bbc_with_replies_and_mentions(description, sender)
     Comment.send_mentions(text[:mentions], sender, get_title, ref)
-  end
-
-  def compute_length
-    if !file || !has_file(video_path)
-      return 0
-    end
-
-    self.length = Ffmpeg.get_video_length(video_path)
-    self.save
-    self.length
-  end
-
-  def compute_dimensions
-    if !file || !has_file(video_path)
-      return
-    end
-
-    self.width = Ffmpeg.get_video_width(video_path)
-    self.height = Ffmpeg.get_video_height(video_path)
-    self.save
   end
 end
