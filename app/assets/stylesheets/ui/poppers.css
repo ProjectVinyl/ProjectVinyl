@@ -129,3 +129,7 @@
   left: 0;
   right: auto;
 }
+.popper.pop-down .pop-out {
+  left: -100px;
+  right: auto;
+}
