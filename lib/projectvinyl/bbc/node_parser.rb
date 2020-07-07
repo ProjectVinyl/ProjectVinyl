@@ -21,7 +21,7 @@ module ProjectVinyl
           index += 1
           
           if state == 1
-            if node.tag_name == 'br' || node.tag_name == 'img'
+            if node.self_closed?
               if content[index] == '/'
                 index += 1
               end
@@ -64,7 +64,7 @@ module ProjectVinyl
               next
             end
             
-            if node.tag_name != 'a' && node.tag_name != 'url'
+            if !node.handles_urls?
               if content.index('https:') == index || content.index('http:') == index
                 if text.length > 0
                   node.append_text(text)
