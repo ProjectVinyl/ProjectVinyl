@@ -1,0 +1,27 @@
+/*
+ Disabled for the time being.
+*/
+@media(max-width: 900px) {
+  .grid-root {
+    --grid-column-width: 190px;
+  }
+  li.generic {
+    --thumb-width: 135px !important;
+  }
+  .tile {
+    --thumb-height: 100px;
+  }
+}
+
+@media(max-width: 700px) {
+  .grid-root {
+    --grid-column-width: 100px;
+  }
+  li.generic {
+    --thumb-width: 100px !important;
+    --thumb-width-min: 90px !important;
+  }
+  .tile {
+    --thumb-height: 80px;
+  }
+}
