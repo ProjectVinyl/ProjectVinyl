@@ -18,7 +18,7 @@
 				%span.icon<>= fa :caret_down
 			%ul.drop-down>
 				%li
-					%a{href: search_index_path(tagquery: '*', type: 0, random: 'y')}
+					%a{href: search_index_path(q: '*', random: 'y')}
 						%span.icon= fw :random
 						%span.label Random
 				- if user_signed_in?

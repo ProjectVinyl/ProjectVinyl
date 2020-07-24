@@ -6,7 +6,7 @@
 	= @results.page_offset_end
 	of
 	= number_with_delimiter c
-	= @type_label.downcase.pluralize(c)
+	= 'video'.pluralize(c)
 	- if @query.length > 0
 		matching
 		= surround "'", "'" do
@@ -16,5 +16,5 @@
 	= render 'tags/set', tags: @tags
 = render layout: 'pagination/paginated', locals: { type: 'search', paginated: @results, id: "page"} do
 	%section.search-result
-		%ul.horizontal{id: @table, class: "#{@type_label.underscore}-list"}
+		%ul.horizontal{id: @table, class: "video-list"}
 			= render partial: @partial, collection: @results.records
