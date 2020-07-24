@@ -8,7 +8,11 @@
 		of
 		- c = items.count
 		= number_with_delimiter c
-		= label.pluralize(c)
+		= label.downcase.pluralize(c)
+		- if @query.length > 0
+			matching
+			= surround "'", "'" do
+				= @query
 	= render 'search/slug_search'
 	%hr
 	= render layout: 'pagination/paginated', locals: { type: type, paginated: items, id: :page } do

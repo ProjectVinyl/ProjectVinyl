@@ -1,12 +1,16 @@
 ﻿%h1
 	- c = @results.count
-	- if @query.length == 0
-		Showing
-	- else
-		= "Searching for #{@type_label.pluralize} matching '#{@query}'"
-		found 
+	Showing
+	= @results.page_offset_start
+	to
+	= @results.page_offset_end
+	of
 	= number_with_delimiter c
-	= "match".pluralize(c)
+	= @type_label.downcase.pluralize(c)
+	- if @query.length > 0
+		matching
+		= surround "'", "'" do
+			= @query
 = yield
 - if @tags && @tags.length > 0
 	= render 'tags/set', tags: @tags
