@@ -1,4 +1,8 @@
 class VideosController < Videos::BaseVideosController
+  include Searchable
+
+  configure_ordering [ :date, :rating, :heat, :length, :random, :relevance ]
+
   def show
     if !(@video = Video.where(id: params[:id]).with_likes(current_user).first)
       if params[:format] == 'json'
@@ -261,6 +265,8 @@ class VideosController < Videos::BaseVideosController
   end
 
   def index
+    read_search_params params
+
     by_type do |is_admin, results|
       render_listing_total results.with_likes(current_user).order(:created_at), params[:page].to_i, 50, true, {
         is_admin: is_admin, table: 'videos', label: 'Video',

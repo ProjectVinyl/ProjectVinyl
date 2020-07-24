@@ -14,7 +14,10 @@
 = yield
 - if @tags && @tags.length > 0
 	= render 'tags/set', tags: @tags
-= render layout: 'pagination/paginated', locals: { type: 'search', paginated: @results, id: "page"} do
-	%section.search-result
-		%ul.horizontal{id: @table, class: "video-list"}
-			= render partial: @partial, collection: @results.records
+- if @results.count > 0
+	= render layout: 'pagination/paginated', locals: { type: 'search', paginated: @results, id: "page"} do
+		%section.search-result
+			%ul.horizontal{id: @table, class: "video-list"}
+				= render partial: @partial, collection: @results.records
+- else
+	= render 'pagination/warden_derpy'

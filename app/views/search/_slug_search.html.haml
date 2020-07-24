@@ -8,7 +8,7 @@
 		%label.options
 			%span Order By
 			%div
-				%select(name="orderby")= sensible_option_for_select @orderings, @orderby
+				%select(name="orderby")= sensible_option_for_select @ordering_labels, @orderby
 	%button(type="submit")
 		= fa :search
 		Search
