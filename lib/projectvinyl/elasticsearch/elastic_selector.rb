@@ -188,6 +188,14 @@ module ProjectVinyl
       def input_error?
         @lexer_error == 1
       end
+
+      def page_offset_start
+        @page * page_size
+      end
+      
+      def page_offset_end
+        [count, page_offset_start + page_size].min
+      end
       
       def page_size
         @limit

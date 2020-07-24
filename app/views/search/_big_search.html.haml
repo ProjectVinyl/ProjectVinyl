@@ -1,19 +1,17 @@
-﻿%form#big-search(action="#{search_index_path}" method="get")
-	%span
-		%input.full-width(name="tq" type="search" placeholder="Title" title="Search by title (alias for title:{search_term})" value="#{@title_query}")
-	%span#search_tags{class: (@type == 1 || @type == 3) && "hidden"}
-		%input.full-width(name="q" type="search" placeholder="Tags" style="margin-top:10px" title="Search by one or more tags" value="#{@tag_query}")
-		= render partial: 'search/big_search_explanation'
-	%span.search-options
-		%label.options
-			%span Order
-			%div
-				%select(name="order")= sensible_option_for_select %w[ Ascending Descending ], @ascending ? 0 : 1
-		%label.options
-			%span Order By
-			%div
-				%select(name="orderby")= sensible_option_for_select %w[ Date Rating Heat Length Random Relevance ], @orderby
-	%span
-		%button(type="submit")
-			= fa :search
-			Search
+﻿%form#slug-search(action="#{search_index_path}" method="get")
+	%input(name="q" type="search" placeholder="tag1, tag2, title:example, upvoted_by:user, ..." style="margin-top:10px" title="Search by one or more tags" value="#{@tag_query}")
+	%label.options
+		%span Order
+		%div
+			%select(name="order")= sensible_option_for_select %w[ Ascending Descending ], @ascending ? 0 : 1
+	%label.options
+		%span Order By
+		%div
+			%select(name="orderby")= sensible_option_for_select %w[ Date Rating Heat Length Random Relevance ], @orderby
+	%button(type="submit")
+		= fa :search
+		Search
+%a.tiny-link.slider-toggle(href="#" data-target=".explanation") Syntax Help
+.slideout.explanation.properties
+	.group.active(style="padding:10px;white-space:normal")
+		= render 'search/syntaxes/content'

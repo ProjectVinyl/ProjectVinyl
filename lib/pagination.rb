@@ -23,12 +23,13 @@ class Pagination
     if page_number < 0
       page_number = 0
     end
-    
+
     Pagination.new(records.offset(page_number * page_size).limit(page_size), page_size, pages, page_number, reverse, count)
   end
   
   def initialize(records, limit, pages, page, reverse, count)
     @page_size = limit
+    @offset = page * limit
     @count = count
     @records = reverse ? records.reverse_order : records
     @page = page
@@ -41,5 +42,13 @@ class Pagination
 
   def length
     @count
+  end
+  
+  def page_offset_start
+    @offset
+  end
+  
+  def page_offset_end
+    [length, page_offset_start + @page_size].min
   end
 end

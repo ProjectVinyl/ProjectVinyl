@@ -263,7 +263,8 @@ class VideosController < Videos::BaseVideosController
   def index
     by_type do |is_admin, results|
       render_listing_total results.with_likes(current_user).order(:created_at), params[:page].to_i, 50, true, {
-        is_admin: is_admin, table: 'videos', label: 'Video'
+        is_admin: is_admin, table: 'videos', label: 'Video',
+        template: 'pagination/omni_search'
       }
     end
   end

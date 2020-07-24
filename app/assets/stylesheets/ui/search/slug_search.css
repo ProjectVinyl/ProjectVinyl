@@ -3,6 +3,7 @@
   flex-direction: row;
   padding-bottom: 10px;
   align-items: baseline;
+  flex-wrap: wrap;
   margin: -5px;
 }
 #slug-search > * {
