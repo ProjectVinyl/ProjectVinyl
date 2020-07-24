@@ -29,16 +29,14 @@ module Paginateable
   def render_listing_total(records, page, page_size, reverse, locals)
     locals[:partial] = partial_for_type(locals[:table], locals[:is_admin])
     locals[:type] = "#{locals[:scope] ? locals[:scope].to_s + "/" : ""}#{locals[:table]}"
-    
+
     @crumb = {
       stack: [],
       title: locals[:label].pluralize
     }
-    
-    if params[:format] == 'json'
-      return render_pagination locals[:partial], records, page, page_size, reverse
-    end
-    
+
+    return render_pagination locals[:partial], records, page, page_size, reverse if params[:format] == 'json'
+
     render_listing_partial records, page, page_size, reverse, locals
   end
   
@@ -49,7 +47,8 @@ module Paginateable
   
   def render_listing_partial(records, page, page_size, reverse, locals)
     locals[:items] = Pagination.paginate(records, page, page_size, reverse)
-    render template: 'pagination/listing', locals: locals
+    template = locals[:template] ? locals[:template] : 'pagination/listing'
+    render template: template, locals: locals
   end
   
   def partial_for_type(type, is_admin = false)

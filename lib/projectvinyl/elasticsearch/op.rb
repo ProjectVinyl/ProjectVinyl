@@ -166,6 +166,7 @@ module ProjectVinyl
             slurp = slurp_quoted_text(i, slurp)
           else
             if i == ' '
+              # consume spaces around operators
               if prev == ',' || prev == '&' || prev == '|'
                 prev = i
                 next

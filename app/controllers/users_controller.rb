@@ -1,10 +1,7 @@
 class UsersController < Users::BaseUsersController
-
-  def index
-    render_listing_total User.all.order(:created_at), params[:page].to_i, 50, true, {
-      table: 'users', label: 'User'
-    }
-  end
+  include Searchable
+  
+  configure_ordering [:name, :created_at]
 
   def show
     check_details_then do |user, edits_allowed|
@@ -51,5 +48,20 @@ class UsersController < Users::BaseUsersController
       end
       redirect_to action: :show, controller: "admin/users"
     end
+  end
+  
+  def index
+    read_search_params params
+    
+    if filtered?
+      @results = ProjectVinyl::ElasticSearch::ElasticSelector.new(current_user, @query)
+      @records = @results.users.order_by(order_field).query(@page, 20).exec.records
+    else
+      @records = User.all.order(order_field)
+    end
+    
+    render_listing_total @records, params[:page].to_i, 50, !@ascending, {
+      template: 'pagination/search', table: 'users', label: 'User'
+    }
   end
 end

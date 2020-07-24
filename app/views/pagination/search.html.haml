@@ -1,0 +1,13 @@
+- title "#{label}s"
+%section.page.full-width
+	%h1
+		Found
+		- c = items.count
+		= number_with_delimiter c
+		= label.pluralize(c)
+	= render 'search/slug_search'
+	%hr
+	= render layout: 'pagination/paginated', locals: { type: type, paginated: items, id: :page } do
+		%section.search-result
+			%ul.horizontal{id: table, class: "#{label.underscore}-list"}
+				= render partial: partial, collection: items.records

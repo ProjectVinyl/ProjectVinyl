@@ -140,6 +140,9 @@ Rails.application.routes.draw do
 
   resources :notifications, only: [:show, :index, :destroy]
   resources :search, only: [:index]
+  namespace :search do
+    resource :syntax, only: [:show]
+  end
 
   # Lookup Actions #
   namespace :find do

@@ -23,12 +23,12 @@ module ValuesHelper
   
   # Gets the current search query
   def query
-    @query || params[:tagquery] || params[:q]
+    @query || params[:q] || params[:tq]
   end
   
   # Gets the current search type
   def search_type
-    params[:type].to_i
+    0
   end
   
   def load_time

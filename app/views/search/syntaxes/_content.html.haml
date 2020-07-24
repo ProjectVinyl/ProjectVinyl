@@ -1,0 +1,116 @@
+﻿%p
+	ProjectVinyl's search function is designed to work similarly to that of Derpibooru.
+	Searching for a single tag name returns all videos with that tag, a list of tags
+	returns all videos that have all of those tags.
+%h3 Boolean Logical Group
+%p
+	Multiple terms can be combined using logical operators to further refine the returned result set.
+	
+	%ul
+		%li
+			%b OR
+			= surround '(', ')' do
+				%code
+					|
+			combines the results that match the terms on either side.
+			%br
+			i.e.
+			%code pinkie pie | vinyl scratch
+			returns results matching
+			%code pinkie pie
+			OR
+			%code vinyl scratch
+		%li
+			%b AND
+			= surround '(', ')' do
+				%code &
+				or
+				%code ,
+			only returns results matching
+			%i both
+			terms on either side.
+			i.e.
+			The same example
+			%code pinkie pie & vinyl scratch
+			will only return results that have both of those tags. So only videos featuring pinkie pie AND vinyl scratch.
+		%li
+			%b Parentheses
+			= surround '(', ')' do
+				%code )
+				and
+				%code (
+			can also be used to group terms or provide emphasis. They can make it easier to read and
+			%code ( pinkie pie | vinyl scratch ) & rarity
+			will provide different results to
+			= succeed '.' do
+				%code pinkie pie | ( vinyl scratch & rarity )
+		%li
+			%b NOT
+			= surround '(', ')' do
+				%code -
+			Sometimes you just don't want to see something. The not parameter negates any query terms that come immediately after it. This can be any single tags
+			%code -pinkie pie
+			, or a group using parentheses.
+			%code - ( pinkie pie | rarity )
+		
+%h3 System tags
+%p
+	Videos additionally have support for searching them by many of their special attributes.
+	%ul
+		%li
+			%code title:&lt;title&gt;
+			returns any videos with a matching name
+		%li
+			%code source:&lt;source&gt;
+			returns any videos with a matching source
+		%li
+			%code uploader:&lt;username&gt;
+			returns any videos posted by the named user
+		%li
+			%code is:audio
+			returns videos only if they are an audio file
+		%li
+			%code is:upvoted
+			returns videos only videos that have been liked by the current user (has no affect for anonymous users)
+		%li
+			%code is:downvoted
+			equivalent to
+			%code is:upvoted
+			but for dislikes
+- if user_signed_in? && current_user.is_staff?
+	%h3 Moderation tags
+	%p
+		%ul
+			%li
+				%code upvoted_by:&lt;username&gt;
+			%li
+				%code downvoted_by:&lt;username&gt;
+			%li
+				%code is:hidden
+%h3 Ranged tags
+%p
+	All of the below tags may also be inverted by replacing the '&lt;' with a '&gt;'.
+	
+	%ul
+		%li
+			%code length&lt;X
+			returns any videos with a length less than X where X is in the format of hh:mm:ss
+		%li
+			%code score&lt;X
+			returns any videos with a score less than X
+		
+	
+%h3 Wildcards
+%p
+	%ul
+		%li
+			%b *
+			will match any terms. The query 
+			%code pinkie*
+			will also match 
+			%code pinkie pie
+			,
+			%code pinkie rose
+			, or really anything beginning with the word
+			= succeed '.' do
+				%code pinkie

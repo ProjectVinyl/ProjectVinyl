@@ -1,4 +1,8 @@
 class TagsController < ApplicationController
+  include Searchable
+
+  configure_ordering [:name]
+  
   def show
     name = params[:id].downcase
     if !(@tag = Tag.by_name_or_id(name).first)
@@ -31,9 +35,16 @@ class TagsController < ApplicationController
   end
 
   def index
-    @records = Tag.includes(:videos, :tag_type).where('alias_id IS NULL').order(:name)
-    render_listing_total @records, params[:page].to_i, 100, false, {
-      table: 'tags', label: 'Tag'
+    read_search_params params
+    
+    if filtered?
+      @records = Tag.includes(:videos, :tag_type).where('LOWER(name) LIKE ?', @query.downcase.gsub(/\*/, '%'))
+    else
+      @records = Tag.includes(:videos, :tag_type).where('alias_id IS NULL')
+    end
+
+    render_listing_total @records.order(order_field), params[:page].to_i, 100, !@ascending, {
+      template: 'pagination/search', table: 'tags', label: 'Tag'
     }
   end
 end

@@ -1,0 +1,14 @@
+﻿%form#slug-search(action="" method="get")
+	%input(name="#{@query_term}" type="search" placeholder="Search" value="#{@query}")
+	%label.options
+		%span Order
+		%div
+			%select(name="order")= sensible_option_for_select %w[ Ascending Descending ], @order
+	- if @orderings && @orderings.length > 1
+		%label.options
+			%span Order By
+			%div
+				%select(name="orderby")= sensible_option_for_select @orderings, @orderby
+	%button(type="submit")
+		= fa :search
+		Search

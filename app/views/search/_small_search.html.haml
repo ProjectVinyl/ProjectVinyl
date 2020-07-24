@@ -1,7 +1,5 @@
 #search
 	%form(action="#{search_index_path}" method="get")
-		%input#search_small(name="tagquery" type="search" placeholder="Tag Search" value="#{query}")
-		%label.select
-			%select#search_type_small(name="type")
-				= sensible_option_for_select %w[ Video Album User Tag ], search_type
-		%button(type="submit")= fa :search
+		%input#search_small(name="q" type="search" placeholder="Search" value="#{query}" title="Separate terms with ','")
+		%button(type="submit" title="Search")= fa :search
+		%a(type="button" title="Syntax Help"){href: search_syntax_path}= fa :question

@@ -1,4 +1,8 @@
 class AlbumsController < Albums::BaseAlbumsController
+  include Searchable
+  
+  configure_ordering [:title, :created_at]
+
   def show
     if !(@album = Album.where(id: params[:id].split(/-/)[0]).first)
       return render_error(
@@ -111,9 +115,15 @@ class AlbumsController < Albums::BaseAlbumsController
   end
   
   def index
-    @records = Album.listed.order(:created_at)
-    render_listing_total @records, params[:page].to_i, 50, true, {
-      table: 'albums', label: 'Album'
+    read_search_params params
+
+    @records = Album.listed
+    if filtered?
+      @records = @records.where('LOWER(title) LIKE ?', @query.downcase.gsub(/\*/, '%'))
+    end
+
+    render_listing_total @records.order(:created_at), params[:page].to_i, 50, !@ascending, {
+      template: 'pagination/search', table: 'albums', label: 'Album'
     }
   end
 end

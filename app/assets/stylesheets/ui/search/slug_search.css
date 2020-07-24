@@ -1,0 +1,17 @@
+#slug-search {
+  display: flex;
+  flex-direction: row;
+  padding-bottom: 10px;
+  align-items: baseline;
+  margin: -5px;
+}
+#slug-search > * {
+  margin: 5px;
+}
+#slug-search input[type="search"] {
+  flex-grow: 1;
+}
+#slug-search input,
+#slug-search button {
+  height: 40px;
+}
