@@ -1,7 +1,7 @@
 class UsersController < Users::BaseUsersController
   include Searchable
   
-  configure_ordering [:name, :created_at]
+  configure_ordering [:username, :created_at]
 
   def show
     check_details_then do |user, edits_allowed|
