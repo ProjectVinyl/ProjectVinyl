@@ -27,14 +27,14 @@ function requestPage(context, page, force) {
   
   ajax.get(`${context.dataset.type}.json?order=${context.dataset.order}&page=${page}${context.dataset.args ? `&${context.dataset.args}` : ''}`).json(json => {
     populatePage(context, json);
-    QueryParameters.current.setItem(context.dataset.id, json.page + 1);
+    QueryParameters.current.setItem(context.dataset.id, json.page);
   });
 }
 
 export function repaintPagination(context, json) {
   context.querySelector('.pagination .pages .button.selected').classList.remove('selected');
   populatePage(context, json);
-  QueryParameters.current.setItem(context.dataset.id, json.page + 1);
+  QueryParameters.current.setItem(context.dataset.id, json.page);
 }
 
 bindEvent(document, 'click', event => {

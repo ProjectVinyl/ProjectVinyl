@@ -1,7 +1,7 @@
 - query_hash = request.query_parameters.except(:page)
 - if page > 0
 	- if page > 1
-		- query_hash[id] = 1
+		- query_hash[id] = 0
 		%a.button(data-page-to="0" href="?#{query_hash.to_query}")
 			%i.fa.fa-ahalfx.fa-angle-double-left
 	- query_hash[id] = page - 1
@@ -9,10 +9,10 @@
 		%i.fa.fa-ahalfx.fa-angle-left
 %span.pages.mobile-touch-toggle
 	- ((page > 4 ? page - 4 : 0)..(page + 4 > pages ? pages : page + 4)).each do |i|
-		- query_hash[id] = i + 1
+		- query_hash[id] = i
 		%a.button{class: i == page && "selected", "data-page-to": i, href: "?#{query_hash.to_query}"}>
 			= i + 1
-	- query_hash[id] = page + 1
+	- query_hash[id] = page
 - if page < pages
 	%a.button(data-page-to="#{page + 1}" href="?#{query_hash.to_query}")
 		%i.fa.fa-ahalfx.fa-angle-right
