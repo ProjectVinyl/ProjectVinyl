@@ -79,13 +79,13 @@ module ProjectVinyl
           return Op::AUDIO_ONLY
         elsif slurp == 'is:hidden'
           return Op::HIDDEN
-        elsif slurp == 'is:upvoted'
+        elsif slurp == 'my:upvotes'
           @opset << 'nil'
           return Op::VOTE_U
         elsif slurp.index('upvoted_by:') == 0
           @opset << slurp.sub(/upvoted_by:/, '')
           return Op::VOTE_U
-        elsif slurp == 'is:downvoted'
+        elsif slurp == 'my:downvotes'
           @opset << 'nil'
           return Op::VOTE_D
         elsif slurp.index('downvoted_by:') == 0

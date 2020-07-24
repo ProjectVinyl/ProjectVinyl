@@ -1,5 +1,5 @@
 ﻿%form#slug-search(action="#{search_index_path}" method="get")
-	%input(name="q" type="search" placeholder="tag1, tag2, title:example, upvoted_by:user, ..." style="margin-top:10px" title="Search by one or more tags" value="#{@tag_query}")
+	%input(name="q" type="search" placeholder="tag1, tag2, title:example, upvoted_by:user, ..." style="margin-top:10px" title="Search by one or more tags" value="#{@query}")
 	%label.options
 		%span Order
 		%div
@@ -11,7 +11,4 @@
 	%button(type="submit")
 		= fa :search
 		Search
-%a.tiny-link.slider-toggle(href="#" data-target=".explanation") Syntax Help
-.slideout.explanation.properties
-	.group.active(style="padding:10px;white-space:normal")
-		= render 'search/syntaxes/content'
+= render 'search/syntaxes/toolbar'

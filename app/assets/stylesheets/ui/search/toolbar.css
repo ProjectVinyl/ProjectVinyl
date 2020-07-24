@@ -1,0 +1,54 @@
+.meta-toolbar {
+  display: flex;
+  background: var(--input-background);
+  color: var(--input-foreground-color);
+  border: solid 1px var(--input-border);
+  border-radius: var(--block-radius);
+  --toolbar-item-padding: 10px;
+}
+.meta-toolbar .spacer {
+  flex-grow: 1;
+}
+.meta-toolbar .action {
+  position: relative;
+  display: block;
+  padding: var(--toolbar-item-padding);
+  user-select: none;
+  cursor: pointer;
+  transition: background 0.1s ease;
+}
+.meta-toolbar > .action + .action::before {
+  position: absolute;
+  content: '';
+  top: var(--toolbar-item-padding);
+  bottom: var(--toolbar-item-padding);
+  left: 0;
+  border-left: solid 1px var(--input-border);
+}
+.meta-toolbar .action:hover {
+  background: var(--block-hover-color);
+}
+
+.meta-toolbar .action div {
+  min-width: 200px;
+  z-index: 1000;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background: var(--input-background);
+  display: none;
+  flex-direction: column;
+  padding: 10px 0;
+  box-shadow: 0px 1px #ffffff4d inset;
+  border: 1px solid #d6d6d6;
+  border-bottom-color: #cacaca;
+  border-top-color: #e2e2e2;
+}
+.meta-toolbar .action div .spacer {
+  border-top: solid 1px var(--input-border);
+  margin: 3px;
+  display: block;
+}
+.meta-toolbar .action:hover > div {
+  display: flex;
+}

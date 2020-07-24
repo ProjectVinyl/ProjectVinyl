@@ -24,8 +24,15 @@ html, body {
   
   --no-link-color: #aaa;
   
+  
+  
   --input-shadow: rgba(255, 255, 255, 0.8);
   --input-border: #ccc;
+  --input-foreground-color: #444;
   --input-background: rgb(255, 255, 250);
   --input-background-focus: rgba(200,200,200,0.1);
+}
+label.options {
+  --block-border-color: #ccc;
+  --label-focus-color: var(--input-background-focus);
 }

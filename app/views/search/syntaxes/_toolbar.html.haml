@@ -1,0 +1,32 @@
+﻿.meta-toolbar
+	%a.action NOT
+	%div.action
+		<a>Search fields</a>
+		= fa :caret_down
+		%div
+			%a.action(data-insert="score>") Score
+			%a.action(data-insert="title:") Title
+			%a.action(data-insert="source:") Source URL
+			%a.action(data-insert="uploader:") Uploader
+			%a.action(data-insert="uploaded>") Date Uploaded
+			%a.action(data-insert="length>") Video Duration (seconds)
+			%a.action(data-insert="width>") Video Width
+			%a.action(data-insert="hight>") Video Height
+			%a.action(data-insert="ratio:") Aspect Ratio
+			%a.action(data-insert="size>") Video File Size (bytes)
+	%div.action
+		<a>Belonging to...</a>
+		= fa :caret_down
+		%div
+			%a.action(data-insert="is:audio") Audio Files
+			%span.spacer
+			%a.action(data-insert="my:upvotes") My Upvotes
+			%a.action(data-insert="my:downvotes") My Downvotes
+			%a.action(data-insert="my:uploads") My Uploads
+	.spacer
+	%a.action.slider-toggle(data-target=".explanation")
+		Syntax Help
+		= fa :question_circle
+.slideout.explanation.properties
+	.group.active(style="padding:10px;white-space:normal")
+		= render 'search/syntaxes/content'

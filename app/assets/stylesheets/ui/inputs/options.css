@@ -1,15 +1,9 @@
-
-label.options {
-  --block-border-color: #ccc;
-  --label-focus-color: rgba(200,200,200,0.1);
-}
-
 label.options {
   display: inline-block;
   border: 1px solid var(--block-border-color);
   margin-top: 10px;
   margin-bottom: 10px;
-  color: #444;
+  color: var(--input-foreground-color);
   border-radius: 2px;
   width: 300px;
 }
