@@ -43,7 +43,7 @@ class TagsController < ApplicationController
       @records = Tag.includes(:videos, :tag_type).where('alias_id IS NULL')
     end
 
-    render_listing_total @records.order(order_field), params[:page].to_i, 100, !@ascending, {
+    render_listing_total @records.order(order_field), @page, 100, !@ascending, {
       template: 'pagination/search', table: 'tags', label: 'Tag'
     }
   end

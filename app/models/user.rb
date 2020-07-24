@@ -74,7 +74,7 @@ class User < ApplicationRecord
   document_type 'user'
   settings index: { number_of_shards: 1 } do
     mappings dynamic: 'false' do
-      indexes :username, analyzer: 'english', index_options: 'offsets'
+      indexes :username, type: 'keyword'
       indexes :created_at, type: 'date'
       indexes :updated_at, type: 'date'
       indexes :tags, type: 'keyword'
@@ -82,7 +82,8 @@ class User < ApplicationRecord
   end
 
   def as_indexed_json(_options = {})
-    json = as_json(only: %w[username created_at updated_at])
+    json = as_json(only: %w[created_at updated_at])
+    json["username"] = username.downcase
     json["tags"] = tags.pluck(:name)
     json
   end

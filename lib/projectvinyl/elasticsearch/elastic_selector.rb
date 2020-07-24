@@ -16,24 +16,24 @@ module ProjectVinyl
         @randomized = false
         @ordering = []
       end
-      
+
       def randomized(limit)
         query(0, limit)
         @randomized = true
         self
       end
-      
+
       def query(page, limit)
         @page = page
         @limit = limit
         self
       end
-      
+
       def offset(off)
         @offset = off
         self
       end
-      
+
       def videos
         @type = 'video'
         self
@@ -43,7 +43,7 @@ module ProjectVinyl
         @type = 'user'
         self
       end
-      
+
       def order_by(order)
         @ordering = [ { order => {order: 'asc' }} ]
         self
@@ -59,9 +59,7 @@ module ProjectVinyl
       end
 
       def add_required_params(query)
-        if @type != 'video'
-          return query
-        end
+        return query if @type != 'video'
 
         if !query.key?(:bool)
           query = { term: { hidden: false } }
@@ -73,7 +71,7 @@ module ProjectVinyl
           if !@elastic.uses(:hidden)
             query[:bool][:must] << { term: { hidden: false } }
           end
-          
+
           if !@search_after.nil?
             query[:bool][:must] << {
               range: {
@@ -98,21 +96,20 @@ module ProjectVinyl
 
         query
       end
-      
+
       def following(obj)
         @search_after = obj.created_at.to_i
-        
+
         self
       end
 
       def exec
         @page = 0 if @page.nil?
-        @elastic = ElasticBuilder.interpret_opset(@type, @opset, @user) if !@elastic
 
         params = {
           from: @offset + @limit * @page,
           size: @limit,
-          query: add_required_params(@elastic.to_hash)
+          query: add_required_params(__elastic.to_hash)
         }
 
         if !@ordering.empty? && !@randomized
@@ -149,13 +146,13 @@ module ProjectVinyl
         self
       rescue Faraday::ConnectionFailed => e
         @exception = e
-        
+
         self
       rescue => e
         @exception = e
         puts "Exception raised #{e}"
         puts "Backtrace:\n\t#{e.backtrace[0..8].join("\n\t")}"
-        
+
         self
       end
 
@@ -171,12 +168,12 @@ module ProjectVinyl
         if @type == 'user'
           return @search.records
         end
-        
+
         @search.records.includes(:tags).with_likes(@user)
       end
 
       attr_reader :page
-      
+
       def error
         @exception
       end
@@ -192,11 +189,11 @@ module ProjectVinyl
       def page_offset_start
         @page * page_size
       end
-      
+
       def page_offset_end
         [count, page_offset_start + page_size].min
       end
-      
+
       def page_size
         @limit
       end
@@ -217,12 +214,17 @@ module ProjectVinyl
         @type == 'user' ? User : Video
       end
 
-      def tags
-        if !@elastic
-          @elastic = ElasticBuilder.interpret_opset(@type, @opset, @user)
-        end
+      def __elastic!
+        ElasticBuilder.interpret_opset(@type, @opset, @user)
+      end
 
-        Tag.get_tags(@elastic.tags)
+      def __elastic
+        @elastic = __elastic! if !@elastic
+        @elastic
+      end
+
+      def tags
+        Tag.get_tags(__elastic.tags)
       end
     end
   end

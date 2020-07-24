@@ -1,3 +1,5 @@
+require 'projectvinyl/elasticsearch/elastic_selector'
+
 class UsersController < Users::BaseUsersController
   include Searchable
   
@@ -55,12 +57,12 @@ class UsersController < Users::BaseUsersController
     
     if filtered?
       @results = ProjectVinyl::ElasticSearch::ElasticSelector.new(current_user, @query)
-      @records = @results.users.order_by(order_field).query(@page, 20).exec.records
+      @records = @results.users.order_by(order_field).query(@page, 50).exec
     else
-      @records = User.all.order(order_field)
+      @records = Pagination.paginate(User.all.order(order_field), @page, 50, !@ascending)
     end
-    
-    render_listing_total @records, params[:page].to_i, 50, !@ascending, {
+
+    render_paginated @records, {
       template: 'pagination/search', table: 'users', label: 'User'
     }
   end

@@ -1,4 +1,5 @@
 require 'projectvinyl/elasticsearch/range_query'
+require 'projectvinyl/elasticsearch/text_query'
 require 'projectvinyl/elasticsearch/vote_query'
 require 'projectvinyl/elasticsearch/lexer_error'
 require 'projectvinyl/elasticsearch/input_error'
@@ -74,18 +75,21 @@ module ProjectVinyl
 
       def absorb_textual(dest, opset, key)
         if (data = opset.shift) && !data.empty?
-          dest << { match: { key.to_sym => ".*#{data.strip}.*" } }
-          @dirty = true
+          absorb_textual_unchecked(dest, key, data)
         else
           raise LexerError, key + " Operator requires a data parameter"
         end
       end
 
+      def absorb_textual_unchecked(dest, key, data)
+        dest << TextQuery.parse(key, data)
+        @dirty = true
+      end
+
       def absorb_textual_if(dest, opset, key, condition)
         if (data = opset.shift) && !data.empty?
           if condition
-            dest << { match: { key.to_sym => ".*#{data.strip}.*" } }
-            @dirty = true
+            absorb_textual_unchecked(dest, key, data)
           end
         else
           raise LexerError, key + " Operator requires a data parameter"
@@ -135,7 +139,7 @@ module ProjectVinyl
         dest << { term: pair }
         @dirty = true
       end
-      
+
       def make_term(tag)
         if tag.include?('*')
           return {wildcard: { tags: tag } }

@@ -46,12 +46,14 @@ class Video < ApplicationRecord
   document_type 'video'
   settings index: { number_of_shards: 1 } do
     mappings dynamic: 'false' do
-      indexes :title, analyzer: 'english', index_options: 'offsets'
-      indexes :source, analyzer: 'english', index_options: 'offsets'
-      indexes :description, analyzer: 'english', index_options: 'offsets'
+      indexes :title, type: 'keyword'
+      indexes :source, type: 'keyword'
+      indexes :description, type: 'keyword'
       indexes :audio_only, type: 'boolean'
       indexes :user_id, type: 'integer'
       indexes :length, type: 'integer'
+      indexes :width, type: 'integer'
+      indexes :height, type: 'integer'
       indexes :score, type: 'integer'
       indexes :heat, type: 'integer'
       indexes :created_at, type: 'date'
@@ -64,10 +66,16 @@ class Video < ApplicationRecord
   end
 
   def as_indexed_json(_options = {})
-    json = as_json(only: %w[title description user_id source audio_only length score created_at updated_at hidden])
+    read_media_attributes!
+
+    json = as_json(only: %w[user_id audio_only length heat score created_at updated_at hidden])
+    json["title"] = title.downcase
+    json["description"] = description.downcase
+    json["source"] = source.downcase
     json["tags"] = tags.pluck(:name)
     json["likes"] = votes.up.pluck(:user_id)
     json["dislikes"] = votes.down.pluck(:user_id)
+
     json
   end
 
@@ -363,7 +371,7 @@ class Video < ApplicationRecord
   end
 
   def read_media_attributes!
-    return if audio_only || !file || !has_file(video_path)
+    return if !file || !has_file(video_path)
 
     self.length = Ffmpeg.get_video_length(video_path)
     self.width = Ffmpeg.get_video_width(video_path)
