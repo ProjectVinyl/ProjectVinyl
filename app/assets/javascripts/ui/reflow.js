@@ -11,14 +11,13 @@ export function scrollContext(element) {
 }
 
 export function reflowElement(context) {
-  let top = context.scrollTop;
-  let left = context.sctollLeft;
-  
-  context.scrollTop = context.scrollLeft = 0;
-  
   requestAnimationFrame(() => {
-    context.scrollTop = Math.min(top, context.scrollHeight);
-    context.scrollLeft = Math.min(left, context.scrollWidth);
+    if (context.scrollTop > context.scrollHeight) {
+      context.scrollTop = Math.min(context.scrollTop, context.scrollHeight);
+    }
+    if (context.scrollLeft > context.scrollWidth) {
+      context.scrollLeft = Math.min(context.sctollLeft, context.scrollWidth);
+    }
   });
 }
 
