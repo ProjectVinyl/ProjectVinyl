@@ -56,7 +56,7 @@ module ProjectVinyl
       def user_id_for(username)
         id = username.to_i
         return id if id.to_s == username
-        return self.root.user_id_for(username) if !@parent.nil?
+        return root.user_id_for(username) if !@parent.nil?
         username = username.downcase
         if !@users.empty? && @user_ids_cache.nil?
           @user_ids_cache = {}
@@ -105,10 +105,13 @@ module ProjectVinyl
         end
       end
 
-      def absorb_param_if(dest, opset, key, condition)
+      def obsorb_user_id(dest, opset, key, sender, condition)
         if (data = opset.shift) && !data.empty?
           if condition
             data = data.strip
+            if sender && data == 'nil'
+              data = sender.id
+            end
             dest << { term: { key.to_sym => data } }
             @dirty = true
             return data
@@ -141,10 +144,12 @@ module ProjectVinyl
       end
 
       def make_term(tag)
-        if tag.include?('*')
-          return {wildcard: { tags: tag } }
-        end
-        { term: { tags: tag } }
+        return {wildcard: { tags: tag } } if tag.include?('*')
+        {
+          term: {
+            tags: tag
+          }
+        }
       end
 
       # reads all params and children into this group
@@ -197,31 +202,35 @@ module ProjectVinyl
       # reads all the data operators into a group
       def take_param(type, op, opset, sender)
         if op == Op::TITLE
-          self.absorb_textual(@must, opset, type == 'user' ? 'username' : 'title')
+          absorb_textual(@must, opset, type == 'user' ? 'username' : 'title')
         elsif op == Op::UPLOADER
-          if op = self.absorb_param_if(@must_owner, opset, 'user_id', type != 'user')
-            self.root.cache_user(op)
+          if op = obsorb_user_id(@must_owner, opset, 'user_id', sender, type != 'user')
+            root.cache_user(op)
           end
         elsif op == Op::SOURCE
-          self.absorb_textual_if(@must, opset, 'source', type != 'user')
+          absorb_textual_if(@must, opset, 'source', type != 'user')
         elsif Op.primitive?(op)
-          self.take_prim(type, op, true, sender)
+          take_prim(type, op, true, sender)
         elsif Op.ranged?(op)
           @ranges.record(op, opset, false)
+        elsif data == Op::ASPECT
+          absorb_param(@must, opset, 'aspect')
         elsif op == Op::NOT
-          self.absorb(opset, "not") do |data|
+          absorb(opset, "not") do |data|
             if data == Op::TITLE
-              self.absorb_textual(@must_not, opset, type == 'user' ? 'username' : 'title')
+              absorb_textual(@must_not, opset, type == 'user' ? 'username' : 'title')
             elsif data == Op::UPLOADER
-              if op = self.absorb_param_if(@must_not_owner, opset, 'user_id', type != 'user')
-                self.root.cache_user(op)
+              if op = obsorb_user_id(@must_not_owner, opset, 'user_id', sender, type != 'user')
+                root.cache_user(op)
               end
             elsif data == Op::SOURCE
-              self.absorb_textual_if(@must_not, opset, 'source', type != 'user')
+              absorb_textual_if(@must_not, opset, 'source', type != 'user')
             elsif Op.primitive?(data)
-              self.take_prim(type, data, false, sender)
+              take_prim(type, data, false, sender)
             elsif Op.ranged?(data)
               @ranges.record(data, opset, true)
+            elsif data == Op::ASPECT
+              self.absorb_param(@must_not, opset, 'aspect')
             elsif data == Op::VOTE_U || data == Op::VOTE_D
               @votes_not.record(data, opset, sender) if type != 'user'
             else
@@ -241,100 +250,71 @@ module ProjectVinyl
         opset
       end
 
-      def dirty
-        @dirty || @ranges.dirty || @votes.dirty || @votes_not.dirty
-      end
-
       def negate
         @neg = !@neg
       end
 
-      def self.__get(hash, key)
-        hash[key] = [] if !hash.key?(key)
-        hash[key]
+      def dirty
+        @dirty || __dirty?
       end
 
-      def baked_inclusions
-        m = @must
-        m << @ranges.to_hash if @ranges.dirty
-        m |= @votes.to_hash if @votes.dirty
-        @must_owner.each do |o|
-          if i = self.user_id_for(o[:term][:user_id])
-            o[:term][:user_id] = i
-            m << o
-          else
-            raise InputError, "User " + o[:term][:user_id] + " does not exist."
-          end
-        end
-        @anded_children.each do |ac|
-          m << ac.to_hash
-        end
-        m
+      def __dirty?
+        @ranges.dirty || @votes.dirty || @votes_not.dirty
       end
 
-      def baked_exclusions
-        m = @must_not
-        m |= @votes_not.to_hash if @votes_not.dirty
-        @must_not_owner.each do |o|
-          if i = self.user_id_for(o[:term][:user_id])
-            o[:term][:user_id] = i
-            m << o
-          else
-            raise InputError, "User " + o[:term][:user_id] + " does not exist."
-          end
-        end
-        m
-      end
-
-      def must(holder)
-        m = @neg ? baked_exclusions : baked_inclusions
-        holder[:must] = m if !m.empty?
-        holder
-      end
-
-      def must_not(holder)
-        m = @neg ? baked_inclusions : baked_exclusions
-        holder[:must_not] = m if !m.empty?
-        holder
-      end
-
-      def bools
-        { bool: must_not(must({})) }
-      end
-
-      def must_must_not(arr)
-        if !@must.empty? || !@must_not.empty? || !@must_owner.empty? || !@must_not_owner.empty? || @ranges.dirty || @votes.dirty || @votes_not.dirty
-          arr << bools
-        end
-        arr
-      end
-
-      def should(arr)
-        ElasticBuilder.as_should(must_must_not(arr), @children)
+      def empty?
+        @must.empty? && @must_not.empty? && @must_owner.empty? && @must_not_owner.empty? && !__dirty?
       end
 
       def to_hash
         if @children.empty?
-          if !@must.empty? || !@must_not.empty? || @ranges.dirty || @votes.dirty || @votes_not.dirty || !@anded_children.empty? || !@must_owner.empty? || !@must_not_owner.empty?
-            return bools
-          end
+          return bools if !empty? || !@anded_children.empty?
           return { match_all: {} }
         end
-        { bool: { should: should([]), minimum_should_match: 1 } }
+
+        {
+          bool: {
+            should: should([]),
+            minimum_should_match: 1
+          }
+        }
       end
 
-      def self.as_should(arr, groups)
-        if !groups.empty?
-          groups.each do |c|
-            c.should(arr)
-          end
-        end
+      def should(arr)
+        arr << bools if !empty?
+        @children.each {|c| c.should(arr) }
         arr
       end
 
-      def self.as_hash(groups)
-        return groups[0].to_hash if groups.length == 1
-        { bool: { should: ElasticBuilder.as_should([], groups), minimum_should_match: 1 } }
+      private
+      def compile_terms(m, ranges, votes, owners, anded)
+        m << ranges.to_hash if ranges && ranges.dirty
+        m |= votes.to_hash if votes.dirty
+
+        owners.each do |o|
+          if i = user_id_for(o[:term][:user_id])
+            o[:term][:user_id] = i
+            m << o
+          else
+            raise InputError, "User " + o[:term][:user_id] + " does not exist."
+          end
+        end
+
+        if anded
+          anded.each {|ac| m << ac.to_hash }
+        end
+
+        m
+      end
+
+      def append_terms(holder, exclude, key)
+        value = exclude ? compile_terms(@must_not, nil, @votes_not, @must_not_owner, nil) : compile_terms(@must, @ranges, @votes, @must_owner, @anded_children)
+        holder[key] = value if !value.empty?
+        holder
+      end
+
+      def bools
+        { bool: append_terms(append_terms({}, @neg, :must), !@neg, :must_not) }
       end
     end
   end

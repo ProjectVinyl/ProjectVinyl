@@ -8,6 +8,8 @@ module ProjectVinyl
         @dirty = false
       end
 
+      attr_reader :dirty
+
       def record(op, opset, invert)
         greater_than = is_gt(op)
         field = field_for(op)
@@ -30,27 +32,22 @@ module ProjectVinyl
       end
 
       def field_for(op)
-        if op == Op::LENGTH_GT || op == Op::LENGTH_LT
-          return :length
-        end
-        if op == Op::SCORE_GT || op == Op::SCORE_LT
-          return :score
-        end
-        if op == Op::CREATED_GT || op == Op::CREATED_LT
-          return :created_at
-        end
+        return :length if op == Op::LENGTH_GT || op == Op::LENGTH_LT
+        return :score if op == Op::SCORE_GT || op == Op::SCORE_LT
+        return :created_at if op == Op::CREATED_GT || op == Op::CREATED_LT
+        return :width if op == Op::WIDTH_GT || op == Op::WIDTH_LT
+        return :height if op == Op::HEIGHT_GT || op == Op::HEIGHT_LT
+        return :file_size if op == Op::SIZE_GT || op == Op::SIZE_LT
         raise "Bad OP: " + op
       end
 
       def is_gt(op)
-        op == Op::LENGTH_GT || op == Op::SCORE_GT || op == Op::CREATED_GT
+        Op.ranged_qt?(op)
       end
 
       def to_sql
         Tag.sanitize_sql([@field + (@greater_than ? ' > ?' : ' < ?'), @value])
       end
-
-      attr_reader :dirty
 
       def to_hash
         { range: @ranges }

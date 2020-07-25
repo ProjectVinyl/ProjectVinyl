@@ -10,6 +10,8 @@ module ProjectVinyl
         @dirty = false
       end
 
+      attr_reader :dirty
+
       def record(op, opset, sender)
         user = opset.shift
         if sender
@@ -30,8 +32,6 @@ module ProjectVinyl
           @dirty = true
         end
       end
-
-      attr_reader :dirty
 
       def to_hash
         result = []

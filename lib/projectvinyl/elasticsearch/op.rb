@@ -15,25 +15,65 @@ module ProjectVinyl
       HIDDEN = -10
       VOTE_U = -11
       VOTE_D = -12
+      ASPECT = -13
 
       LENGTH_GT = -113
       LENGTH_LT = -114
+
       SCORE_GT = -115
       SCORE_LT = -116
+
       CREATED_GT = -117
       CREATED_LT = -118
 
+      WIDTH_GT = -119
+      WIDTH_LT = -120
+
+      HEIGHT_GT = -121
+      HEIGHT_LT = -122
+
+      SIZE_GT = -123
+      SIZE_LT = -124
+
+      GT_TAGS = [ LENGTH_GT, WIDTH_GT, HEIGHT_GT, SCORE_GT, SIZE_GT ]
+      FIELD_TAGS = {
+        'title:': TITLE,
+        'name:': TITLE,
+        'uploader:': UPLOADER,
+        'source:': SOURCE,
+        'aspect:': ASPECT,
+        'length<': LENGTH_LT, 'length>': LENGTH_GT,
+        'width<': WIDTH_LT, 'width>': WIDTH_GT,
+        'height<': HEIGHT_LT, 'height>': HEIGHT_GT,
+        'score<': SCORE_LT, 'score>': SCORE_GT,
+        'size<': SIZE_LT, 'size>': SIZE_GT,
+        'upvoted_by:': VOTE_U,
+        'downvoted_by:': VOTE_D
+      }.freeze
+      CATEGORY_TAGS = {
+        'is:audio': AUDIO_ONLY,
+        'is:hidden': HIDDEN
+      }.freeze
+      USER_TAGS = {
+        'my:upvotes': VOTE_U,
+        'my:downvotes': VOTE_D,
+        'my:uploads': UPLOADER
+      }.freeze
 
       def self.is?(op)
-        1.is_a?(op.class) && op < 0 && (op >= Op::VOTE_D || (op <= Op::LENGTH_GT && op >= Op::CREATED_LT))
+        1.is_a?(op.class) && op < 0 && (op >= ASPECT || (op <= LENGTH_GT && op >= SIZE_LT))
       end
 
       def self.ranged?(op)
-        Op.is?(op) && op <= Op::LENGTH_GT
+        Op.is?(op) && op <= LENGTH_GT
       end
 
       def self.primitive?(op)
-        Op.is?(op) && (op == Op::AUDIO_ONLY || op == Op::HIDDEN)
+        Op.is?(op) && (op == AUDIO_ONLY || op == HIDDEN)
+      end
+
+      def self.ranged_gt?(op)
+        GT_TAGS.include?(op)
       end
 
       def self.name_of(op)
@@ -45,53 +85,19 @@ module ProjectVinyl
 
       def slurp_system_tags(slurp)
         slurp = slurp.strip
-        if slurp.index('title:') == 0
-          @opset << slurp.sub(/title\:/, '')
-          return Op::TITLE
-        elsif slurp.index('name:') == 0
-          @opset << slurp.sub(/name\:/, '')
-          return Op::TITLE
-        elsif slurp.index('uploader:') == 0
-          @opset << slurp.sub(/uploader\:/, '')
-          return Op::UPLOADER
-        elsif slurp.index('source:') == 0
-          @opset << slurp.sub(/source\:/, '')
-          return Op::SOURCE
-        elsif slurp.index('length<') == 0
-          @opset << slurp.sub(/length</, '')
-          return Op::LENGTH_LT
-        elsif slurp.index('length>') == 0
-          @opset << slurp.sub(/length>/, '')
-          return Op::LENGTH_GT
-        elsif slurp.index('score<') == 0
-          @opset << slurp.sub(/score</, '')
-          return Op::SCORE_LT
-        elsif slurp.index('score>') == 0
-          @opset << slurp.sub(/score>/, '')
-          return Op::SCORE_GT
-        elsif slurp.index('uploaded<') == 0
-          @opset << slurp.sub(/uploaded</, '')
-          return Op::CREATED_LT
-        elsif slurp.index('uploaded>') == 0
-          @opset << slurp.sub(/uploaded>/, '')
-          return Op::CREATED_GT
-        elsif slurp == 'is:audio'
-          return Op::AUDIO_ONLY
-        elsif slurp == 'is:hidden'
-          return Op::HIDDEN
-        elsif slurp == 'my:upvotes'
-          @opset << 'nil'
-          return Op::VOTE_U
-        elsif slurp.index('upvoted_by:') == 0
-          @opset << slurp.sub(/upvoted_by:/, '')
-          return Op::VOTE_U
-        elsif slurp == 'my:downvotes'
-          @opset << 'nil'
-          return Op::VOTE_D
-        elsif slurp.index('downvoted_by:') == 0
-          @opset << slurp.sub(/downvoted_by:/, '')
-          return Op::VOTE_D
+
+        if (tag = FIELD_TAGS.keys.find {|key| slurp.index(key.to_s) == 0})
+          @opset << slurp.sub(tag.to_s, '')
+          return FIELD_TAGS[tag]
         end
+        if (tag = CATEGORY_TAGS.keys.find {|key| slurp.index(key.to_s) == 0})
+          return CATEGORY_TAGS[tag]
+        end
+        if (tag = USER_TAGS.keys.find {|key| slurp.index(key.to_s) == 0})
+          @opset << 'nil'
+          return USER_TAGS[tag]
+        end
+
         slurp
       end
 
@@ -141,7 +147,6 @@ module ProjectVinyl
       end
 
       def slurp_quoted_text(quote_char, slurp)
-
         until @terms.empty?
           i = @terms.shift
 
