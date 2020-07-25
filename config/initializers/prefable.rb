@@ -89,10 +89,17 @@ module ActiveRecord
       serialize @@options_source.to_sym, Hash
 
       define_method :default_options do
-        return @@default_options
+        @@default_options
       end
       define_method :options_source do
-        return @@options_source
+        @@options_source
+      end
+
+      hash.each do |key,value|
+        meth_name = (key.to_s + '?').to_sym
+        define_method meth_name do
+          option key
+        end
       end
     end
   end

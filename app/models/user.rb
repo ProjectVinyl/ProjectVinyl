@@ -318,18 +318,6 @@ class User < ApplicationRecord
     @message_count || (@message_count = Pm.where('state = 0 AND unread = true AND user_id = ?', self.id).count)
   end
 
-  def subscribe_on_reply?
-    option :subscribe_on_reply
-  end
-
-  def subscribe_on_upload?
-    option :subscribe_on_upload
-  end
-
-  def subscribe_on_thread?
-    option :subscribe_on_thread
-  end
-
   protected
 
   def model_path
