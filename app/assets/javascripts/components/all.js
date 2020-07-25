@@ -7,3 +7,4 @@ import './labels';
 import './share';
 import './usercard';
 import './vote';
+import './meta_toolbar';
