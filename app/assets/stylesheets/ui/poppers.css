@@ -61,8 +61,16 @@
   background: #eee;
 }
 
-.pop-out-shown .pop-out, .pop-out.shown {
+.pop-out-shown .pop-out, .pop-out.shown,
+.popper input:active + .pop-out,
+.popper input:focus + .pop-out {
   visibility: visible !important;
+}
+.popper input + .pop-out {
+  left: -2px;
+}
+.popper input + .pop-out {
+  margin: 0 0 0 2px;
 }
 
 .pop-out li.divider {

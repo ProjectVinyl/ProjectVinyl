@@ -47,10 +47,7 @@
   opacity: 1;
 }
 
-.tag-editor .pop-out {
-  margin: 0 0 0 2px;
-}
-
-.tag-editor.pop-out-shown::before, .tag-editor.pop-out-shown::after {
+.tag-editor.pop-out-shown::before,
+.tag-editor.pop-out-shown::after {
   display: none;
 }

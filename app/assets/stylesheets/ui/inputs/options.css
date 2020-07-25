@@ -1,8 +1,7 @@
 label.options {
   display: flex;
   border: 1px solid var(--block-border-color);
-  margin-top: 10px;
-  margin-bottom: 10px;
+  margin: .625rem 0;
   color: var(--input-foreground-color);
   border-radius: 2px;
   min-width: 200px;
@@ -25,11 +24,13 @@ label.options span {
   border-bottom-left-radius: 2px;
 }
 
+label.options input,
 label.options select {
   flex-grow: 1;
 }
 
 .search-options input,
+label.options input,
 label.options select {
   border: none;
   background: none;
