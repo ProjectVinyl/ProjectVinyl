@@ -306,9 +306,13 @@ class Video < ApplicationRecord
 
   def aspect
     return 1 if audio_only
-    return 1 if get_height == 0
 
-    get_width.to_f / get_height.to_f
+    w = (width || 0).to_f
+    h = (height || 0).to_f
+
+    return 1 if h == 0
+
+    w / h
   end
 
   def get_title
@@ -325,19 +329,13 @@ class Video < ApplicationRecord
     end
   end
 
-  def get_duration
+  def duration
     return 0 if hidden
     length || 0
   end
 
-  def get_width
-    return 1 if audio_only
-    width || 1
-  end
-
-  def get_height
-    return 1 if audio_only
-    height || 1
+  def dimensions
+    "#{width || 0}x#{height || 0}"
   end
 
   def report(sender_id, params)
@@ -374,8 +372,8 @@ class Video < ApplicationRecord
     return if !file || !has_file(video_path)
 
     self.length = Ffmpeg.get_video_length(video_path)
-    self.width = Ffmpeg.get_video_width(video_path)
-    self.height = Ffmpeg.get_video_height(video_path)
+    self.width = audio_only ? 1 : Ffmpeg.get_video_width(video_path)
+    self.height = audio_only ? 1 : Ffmpeg.get_video_height(video_path)
     self.save
   end
 

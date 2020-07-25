@@ -12,10 +12,7 @@
 				%td.field= @video.mime
 			%tr
 				%td.label Duration
-				%td.field= duration @video.get_duration
+				%td.field= duration @video.duration
 			%tr
 				%td.label Dimensions
-				%td.field
-					= @video.get_width
-					x
-					= @video.get_height
+				%td.field= @video.dimensions

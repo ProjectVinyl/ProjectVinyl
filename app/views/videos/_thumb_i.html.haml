@@ -3,7 +3,7 @@
 		%span.tag-set.duration
 			- if thumb_i.is_liked
 				= fa "thumbs-#{thumb_i.is_downvoted ? 'down red' : 'up green'}"
-			= duration thumb_i.get_duration
+			= duration thumb_i.duration
 	- spoilered = thumb_i.is_spoilered_by(current_user)
 	.title{title: !spoilered && thumb_i.get_title}
 		= spoilered ? "Spoilered" : thumb_i.get_title

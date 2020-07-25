@@ -3,7 +3,7 @@
 	%li.generic.thumb.picture>
 		%a.thumb{class: thumb_h.hidden && "thumb-hidden", href: thumb_h.link}
 			.tile{style: format_bg(thumb_h.tiny_thumb(current_user))}
-				%span.tag-set.duration= duration thumb_h.get_duration
+				%span.tag-set.duration= duration thumb_h.duration
 			.title{title: !spoilered && thumb_h.get_title}
 				- if thumb_h.privated?
 					%span.icon(title="Private - Only you can see this item")= fa :lock

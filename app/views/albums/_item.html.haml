@@ -6,7 +6,7 @@
 		.title{title: item.get_tooltip}
 			%div= item.get_title
 		.duration
-			%div= duration item.video.get_duration
+			%div= duration item.video.duration
 		.author
 			%span= item.video.user.username
 		- if @modifications_allowed

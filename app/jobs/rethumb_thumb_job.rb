@@ -14,7 +14,7 @@ class RethumbThumbJob < ApplicationJob
       elsif video.has_file(video.video_path)
         video.del_file(video.tiny_cover_path)
 
-        time = video.get_duration.to_f / 2
+        time = video.duration.to_f / 2
         Ffmpeg.extract_thumbnail(video.video_path, video.cover_path, video.tiny_cover_path, time)
       end
     end

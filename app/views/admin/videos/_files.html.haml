@@ -11,7 +11,7 @@
 			%td
 		%tr
 			%td.label Dimensions
-			%td.field= "#{@video.get_width}x#{@video.get_height}"
+			%td.field= @video.dimensions
 		%tr
 			%td.label Size
 			%td.field= "%.2f MB" % @video.file_size
