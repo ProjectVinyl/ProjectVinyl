@@ -1,13 +1,11 @@
 ﻿%form#slug-search(action="#{search_index_path}" method="get")
 	%input(name="q" type="search" placeholder="tag1, tag2, title:example, upvoted_by:user, ..." style="margin-top:10px" title="Search by one or more tags" value="#{@query}")
 	%label.options
-		%span Order
-		%div
-			%select(name="order")= sensible_option_for_select %w[ Ascending Descending ], @ascending ? 0 : 1
+		%span Sort
+		%select(name="order")= sensible_option_for_select %w[ Ascending Descending ], @ascending ? 0 : 1
 	%label.options
 		%span Order By
-		%div
-			%select(name="orderby")= sensible_option_for_select @ordering_labels, @orderby
+		%select(name="orderby")= sensible_option_for_select @ordering_labels, @orderby
 	%button(type="submit")
 		= fa :search
 		Search

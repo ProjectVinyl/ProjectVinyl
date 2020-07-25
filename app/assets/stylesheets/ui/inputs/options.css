@@ -1,24 +1,11 @@
 label.options {
-  display: inline-block;
+  display: flex;
   border: 1px solid var(--block-border-color);
   margin-top: 10px;
   margin-bottom: 10px;
   color: var(--input-foreground-color);
   border-radius: 2px;
-  width: 300px;
-}
-
-label.options select {
-  width: 100%;
-}
-
-@media(max-width: 400px) {
-  label.options {
-    width: 100%;
-  }
-}
-
-label.options {
+  min-width: 200px;
   transition: background 0.125s ease;
 }
 
@@ -26,21 +13,20 @@ label.options.focus {
   background: var(--label-focus-color);
 }
 
-label.options span:first-child {
-  width: 90px;
-  display: table-cell;
+label.options span {
+  max-width: 90px;
   min-width: 90px;
-  padding: 10px;
+  padding: 10px !important;
   background: var(--label-focus-color);
+  color: var(--input-foreground-color) !important;
   border-right: 1px solid var(--block-border-color);
   font-size: 0.9em;
   border-top-left-radius: 2px;
   border-bottom-left-radius: 2px;
 }
 
-label.options div {
-  width: 100%;
-  display: table-cell;
+label.options select {
+  flex-grow: 1;
 }
 
 .search-options input,
@@ -50,5 +36,7 @@ label.options select {
   color: inherit;
   outline: none;
   padding: 11px;
+}
+.search-options input {
   width: 100%;
 }

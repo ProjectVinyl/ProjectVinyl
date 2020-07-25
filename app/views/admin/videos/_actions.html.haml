@@ -15,9 +15,7 @@
 				= form_for(@video, as: "video", url: admin_videos_listing_path(@video), html: { method: :put }) do |f|
 					%label.options
 						%span Visibility
-						%div
-							%select{name: "video[listing]"}
-								= sensible_option_for_select(["Public", "Unlisted", "Private"], @video.listing)
+						%select{name: "video[listing]"}= sensible_option_for_select(["Public", "Unlisted", "Private"], @video.listing)
 					= f.submit "Apply"
 		%tr.actions
 			%td.label Featured

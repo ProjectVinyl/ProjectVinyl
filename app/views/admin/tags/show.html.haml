@@ -13,7 +13,7 @@
 					%td.field
 						%label.options
 							%span Domain
-							%div= f.select :tag_type_id, TagType.all.pluck(:prefix, :id), include_blank: '[none]'
+							= f.select :tag_type_id, TagType.all.pluck(:prefix, :id), include_blank: '[none]'
 			%tr
 				%td.label= f.label :name
 				%td.field

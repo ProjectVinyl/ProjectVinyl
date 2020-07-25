@@ -58,13 +58,12 @@
 			%td.field
 				%label.options
 					%span Time Zone
-					%div= f.time_zone_select :time_zone
+					= f.time_zone_select :time_zone
 		%tr
 			%td.label= f.label :default_listing
 			%td.field
 				I would like any videos I upload to be made 
-				%select{name: "user[default_listing]"}
-					= sensible_option_for_select(["Public", "Unlisted", "Private"], user.default_listing)
+				%select{name: "user[default_listing]"}= sensible_option_for_select(%w[Public Unlisted Private], user.default_listing)
 		%tr
 			%td.label
 			%td.field
