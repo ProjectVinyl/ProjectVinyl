@@ -11,11 +11,11 @@
 		= render 'status'
 		= render 'options'
 		.artist-bio.bio
-			%a{class: !@report.user.is_dummy && "user-link", href: @report.user.link, data: {id: @report.user_id}}
+			%a{class: !@report.user.dummy? && "user-link", href: @report.user.link, data: {id: @report.user_id}}
 				= render 'users/avatar/medium', user: @report.user
 		.content
 			.name
-				%a{class: !@report.user.is_dummy && "user-link", href: @report.user.link, data: {id: @report.user.id}}
+				%a{class: !@report.user.dummy? && "user-link", href: @report.user.link, data: {id: @report.user.id}}
 					= @report.user.username
 			.date.right= since @report.created_at
 			%table(style="table-layout:auto" class="properties comment-content preview")

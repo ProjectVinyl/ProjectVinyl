@@ -8,7 +8,7 @@
 				= precede '#' do
 					= recent_comment_thumb.get_open_id
 			by 
-			- if recent_comment_thumb.user.is_dummy
+			- if recent_comment_thumb.user.dummy?
 				%b= recent_comment_thumb.user.username
 			- else
 				%a{class: recent_comment_thumb.user.banned? && "banned", href: recent_comment_thumb.user.link}

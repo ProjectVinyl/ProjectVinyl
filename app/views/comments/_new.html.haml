@@ -1,6 +1,6 @@
 - if @thread.locked
 	.notice Thread Locked
-- elsif !ApplicationHelper.bg_ponies && visitor.is_dummy
+- elsif !ApplicationHelper.bg_ponies && visitor.dummy?
 	.notice
 		Please 
 		%a(data-external-form="#{new_user_session_path}.json" data-icon="sign-in" data-title="Login" data-thin="true" href="#{new_user_session_path}")
@@ -11,12 +11,12 @@
 		%input{type: "hidden", name: "[thread_id]", value: @thread.id}
 		%input{type: "hidden", name: "order", value: @order}
 		.artist-bio.bio
-			%a{class: !visitor.is_dummy && "user-link", "data-id": visitor.id, href: visitor.link}
+			%a{class: !visitor.dummy? && "user-link", "data-id": visitor.id, href: visitor.link}
 				= render 'users/avatar/medium', user: visitor
 		%label
 			.content.editing.previewable
 				.name
-					%a{class: !visitor.is_dummy && "user-link", "data-id": visitor.id, href: visitor.link}= visitor.username
+					%a{class: !visitor.dummy? && "user-link", "data-id": visitor.id, href: visitor.link}= visitor.username
 					- if user_signed_in?
 						= render 'forum/badges/badges', user: current_user
 				= render "comments/edit_toolbar"
@@ -24,7 +24,7 @@
 				%textarea.comment-content(required="true" name="comment")
 				%hr/
 				.actions
-					- if visitor.is_dummy
+					- if visitor.dummy?
 						= recaptcha_tags
 						%hr/
 					%button.green.post-submitter(data-thread-id="#{@thread.id}")>

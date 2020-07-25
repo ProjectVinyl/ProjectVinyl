@@ -55,7 +55,7 @@ class UserDummy
     -1
   end
 
-  def is_dummy
+  def dummy?
     true
   end
 end

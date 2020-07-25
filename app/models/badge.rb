@@ -21,7 +21,7 @@ class BadgeInstance
   end
 
   def matches(user)
-    user && !user.is_dummy && @block.call(user)
+    user && !user.dummy? && @block.call(user)
   end
   
   def description
@@ -51,7 +51,7 @@ class Badge < ApplicationRecord
   end
 
   def self.all_badges(user)
-    return if user.nil? || user.is_dummy
+    return if user.nil? || user.dummy?
     Types.each do |o|
       yield(o) if o.matches(user)
     end

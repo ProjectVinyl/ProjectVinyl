@@ -121,7 +121,7 @@ class CommentThread < ApplicationRecord
       return self.owner.bump(sender, params, comment)
     end
 
-    if !sender.is_dummy && sender.subscribe_on_reply? && !self.subscribed?(sender)
+    if !sender.dummy? && sender.subscribe_on_reply? && !self.subscribed?(sender)
       self.subscribe(sender)
     end
 

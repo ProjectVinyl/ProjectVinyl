@@ -304,7 +304,7 @@ class User < ApplicationRecord
     "/profile/#{id}-#{safe_name || default_name}"
   end
 
-  def is_dummy
+  def dummy?
     false
   end
 
