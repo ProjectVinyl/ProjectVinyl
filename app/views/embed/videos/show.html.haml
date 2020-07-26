@@ -20,7 +20,7 @@
 		- else
 			= render layout: "videos/widget/full", locals: {embed: "true"} do
 				- if @album
-					.listing.compact.playlist
+					.listing.compact.collapse-padding.playlist
 						.controls
 							%a.slide-left#playlist_prev{title: "Previous", href: @prev_video && @prev_video.link}= fw :step_backward
 							%a.title.buff-right{href: @album.link}= @album.title

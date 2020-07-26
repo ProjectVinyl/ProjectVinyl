@@ -38,6 +38,15 @@ div.page .positioner {
   max-width: 100%;
 }
 
+.page.collapse-padding {
+   padding-left: 0;
+   padding-right: 0;
+}
+.page.collapse-padding h1 {
+  margin-left: 0;
+  margin-right: 0;
+}
+
 .wrapper > .wrapper > .page {
    margin-left: 0;
    margin-right: 0;

@@ -1,4 +1,4 @@
-%section.listing.compact.playlist.column-mobile-shown{class: @album.virtual? && "virtual"}
+%section.listing.compact.collapse-padding.playlist.column-mobile-shown{class: @album.virtual? && "virtual"}
 	.controls
 		- if @prev_video
 			%a.slide-left#playlist_prev{title: "Previous", href: @prev_video.link, "data-video-id": @prev_video.id}= fw :step_backward

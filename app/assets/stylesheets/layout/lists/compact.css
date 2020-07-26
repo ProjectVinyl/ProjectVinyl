@@ -1,7 +1,3 @@
-.listing.compact {
-  padding-left: 0;
-  padding-right: 0;
-}
 .listing.compact .items {
   display: table;
   margin: 0;
@@ -9,6 +5,13 @@
   width: 100%;
   table-layout: auto;
   border-bottom: solid 1px rgba(0,0,0,0.1);
+}
+
+.listing.compact .row.heads {
+  font-weight: bold;
+}
+.listing.compact .row {
+  font-weight: initial;
 }
 
 .listing.compact .items .row:target {
