@@ -5,5 +5,3 @@ import './fetch.polyfill';
 import './closest.polyfill';
 import './customevent.polyfill';
 import './opera';
-import './mozilla';
-import './ms';
