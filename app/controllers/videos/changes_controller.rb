@@ -25,7 +25,7 @@ module Videos
         if @history.count == 0
           return render_empty_pagination 'warden_derpy'
         end
-        render_pagination_json 'change', @history
+        render_pagination_json 'history/change', @history
       end
 
       @crumb = {
