@@ -1,12 +1,10 @@
 .context-3d .layer-background, .context-3d .layer-foreground {
   position: absolute;
-  transform-style: preserve-3d;
-	-webkit-transform-style: preserve-3d;
   width: 100%;
 }
-
 .context-3d .layer-background {
-  z-index: -1;
+  transform-style: preserve-3d;
+  -webkit-transform-style: preserve-3d;
 }
 
 .context-3d .layer-foreground {
@@ -21,9 +19,10 @@
 }
 
 .layer-foreground.body {
-  margin-top: 200px;
+  --banner-height: 200px;
+  margin-top: var(--banner-height);
   padding-top: 20px;
   background: inherit;
   z-index: 1;
-  min-height: calc(100% - 240px);
+  min-height: calc(100vh - var(--banner-height));
 }
