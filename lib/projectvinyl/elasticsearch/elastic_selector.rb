@@ -7,9 +7,9 @@ module ProjectVinyl
       attr_accessor :ordering
       attr_reader :table
 
-      def initialize(sender, search_terms)
+      def initialize(sender, search_terms, index_params)
         @user = sender
-        @opset = Opset.load_ops(search_terms.downcase)
+        @opset = Opset.new(search_terms.downcase, index_params)
         @elastic = nil
         @exception = nil
         @lexer_error = 0

@@ -1,3 +1,4 @@
+require 'projectvinyl/elasticsearch/index'
 require 'projectvinyl/elasticsearch/elastic_selector'
 
 class UsersController < Users::BaseUsersController
@@ -56,8 +57,8 @@ class UsersController < Users::BaseUsersController
     read_search_params params
     
     if filtered?
-      @results = ProjectVinyl::ElasticSearch::ElasticSelector.new(current_user, @query)
-      @records = @results.users.order_by(order_field).query(@page, 50).exec
+      @results = ProjectVinyl::ElasticSearch::ElasticSelector.new(current_user, @query, ProjectVinyl::ElasticSearch::Index::USER_INDEX_PARAMS).users
+      @records = @results.order_by(order_field).query(@page, 50).exec
     else
       @records = Pagination.paginate(User.all.order(order_field), @page, 50, !@ascending)
     end

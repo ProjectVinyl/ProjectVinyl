@@ -1,15 +1,9 @@
 require 'projectvinyl/elasticsearch/lexer_error'
 require 'projectvinyl/elasticsearch/op'
-require 'projectvinyl/elasticsearch/index'
 
 module ProjectVinyl
   module ElasticSearch
     class Opset
-
-      def self.load_ops(search_terms)
-        Opset.new(search_terms, Index::VIDEO_INDEX_PARAMS)
-      end
-
       def initialize(search_terms, index_params)
         @index_params = index_params
         @buffer = []

@@ -1,3 +1,4 @@
+require 'projectvinyl/elasticsearch/index'
 require 'projectvinyl/elasticsearch/elastic_selector'
 
 class VirtualAlbum < Album
@@ -86,10 +87,9 @@ class VirtualAlbum < Album
   end
 
   def fetch_items
-    ProjectVinyl::ElasticSearch::ElasticSelector.new(nil, @query)
+    ProjectVinyl::ElasticSearch::ElasticSelector.new(nil, @query, ProjectVinyl::ElasticSearch::Index::VIDEO_INDEX_PARAMS).videos
       .order_by(:created_at)
       .query(0, @index + 5)
-      .videos
       .following(current(nil))
       .offset(@offset)
       .exec

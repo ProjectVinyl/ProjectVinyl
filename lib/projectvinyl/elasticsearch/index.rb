@@ -33,7 +33,19 @@ module ProjectVinyl
           height: :height,
           score: :score,
           file_size: :size,
-          heat: :heat
+          heat: :heat,
+          uploaded: :created_at
+        }
+      })
+      USER_INDEX_PARAMS = Index.new({
+        my: {},
+        by: {},
+        is: {},
+        fields: {
+          name: :username
+        },
+        range_fields: {
+          created: :created_at
         }
       })
 
