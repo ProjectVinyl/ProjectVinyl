@@ -1,18 +1,21 @@
-require 'projectvinyl/elasticsearch/op'
+require 'projectvinyl/elasticsearch/opset'
 require 'projectvinyl/elasticsearch/elastic_builder'
-require 'projectvinyl/elasticsearch/order'
 
 module ProjectVinyl
   module ElasticSearch
     class ElasticSelector
+      attr_accessor :ordering
+      attr_reader :table
+
       def initialize(sender, search_terms)
         @user = sender
-        @opset = Op.load_ops(search_terms.downcase)
+        @opset = Opset.load_ops(search_terms.downcase)
         @elastic = nil
         @exception = nil
         @lexer_error = 0
         @offset = 0
-        @type = "unknown"
+        @type = :unknown
+        @table = Video
         @randomized = false
         @ordering = []
       end
@@ -35,12 +38,14 @@ module ProjectVinyl
       end
 
       def videos
-        @type = 'video'
+        @type = :video
+        @table = Video
         self
       end
 
       def users
-        @type = 'user'
+        @type = :user
+        @table = User
         self
       end
 
@@ -49,17 +54,8 @@ module ProjectVinyl
         self
       end
 
-      def ordering
-        @ordering
-      end
-
-      def order(session, ordering, ascending)
-        @ordering = Order.parse(@type, session, ordering, ascending)
-        self
-      end
-
       def add_required_params(query)
-        return query if @type != 'video'
+        return query if @type != :video
 
         if !query.key?(:bool)
           query = { term: { hidden: false } }
@@ -161,15 +157,9 @@ module ProjectVinyl
       end
 
       def records
-        if @exception
-          return table.none
-        end
-
-        if @type == 'user'
-          return @search.records
-        end
-
-        @search.records.includes(:tags).with_likes(@user)
+        return table.none if @exception
+        return @search.records.includes(:tags).with_likes(@user) if @type == :video
+        @search.records
       end
 
       attr_reader :page
@@ -210,12 +200,8 @@ module ProjectVinyl
         count
       end
 
-      def table
-        @type == 'user' ? User : Video
-      end
-
       def __elastic!
-        ElasticBuilder.interpret_opset(@type, @opset, @user)
+        ElasticBuilder.interpret_opset(@opset, @user)
       end
 
       def __elastic

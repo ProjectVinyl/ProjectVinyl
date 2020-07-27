@@ -4,48 +4,31 @@ module ProjectVinyl
   module ElasticSearch
     class VoteQuery
       def initialize(owner)
-        @owner = owner
-        @likes = []
-        @dislikes = []
+        @cache = owner.root.user_cache
         @dirty = false
+        @lookup = {}
       end
 
       attr_reader :dirty
 
       def record(op, opset, sender)
-        user = opset.shift
-        if sender
-          if user == 'nil'
-            user = sender.id
-          elsif Op.is?(user)
-            user = sender.id
-          else
-            return if !sender.is_staff?
-            @owner.root.cache_user(user)
-          end
+        field = opset.shift_data(op, 'field')
+        user = @cache.read_user_id(opset, op, 'user', sender)
 
-          if op == Op::VOTE_U
-            @likes << user
-          else
-            @dislikes << user
-          end
-          @dirty = true
-        end
+        @lookup[field] = [] if !@lookup.key?(field)
+        @lookup[field] << user
+        @dirty = true
       end
 
-      def to_hash
-        result = []
-        @likes.each do |like|
-          if s = @owner.user_id_for(like)
-            result << { term: { likes: s } }
-          end
+      def compile(dest)
+        @lookup.keys.each do |field|
+          dest |= @lookup[field].uniq
+            .map {|user| @cache.id_for(user)}
+            .filter {|id| id}
+            .map {|id| { term: { field => id } } }
         end
-        @dislikes.each do |dislike|
-          if s = @owner.user_id_for(dislike)
-            result << { term: { dislikes: s } }
-          end
-        end
-        result
+
+        dest
       end
     end
   end

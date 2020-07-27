@@ -1,4 +1,5 @@
 require 'projectvinyl/elasticsearch/elastic_selector'
+require 'projectvinyl/elasticsearch/order'
 
 class SearchController < ApplicationController
   include Searchable
@@ -13,7 +14,7 @@ class SearchController < ApplicationController
     @randomize = params[:format] != 'json' && params[:random] == 'y'
 
     @results = ProjectVinyl::ElasticSearch::ElasticSelector.new(current_user, @query).videos
-    @results.order(session, @orderby, @ascending)
+    @results.ordering = ProjectVinyl::ElasticSearch::Order.parse('video', session, @orderby, @ascending)
     
     if @randomize && @single = @results.randomized(1).exec.records.first
       return redirect_to action: :show, controller: :videos, id: @single.id
