@@ -27,7 +27,14 @@ module ProjectVinyl
       end
 
       def compile(dest)
-        dest << { range: @ranges } if @dirty
+        if @dirty
+          @ranges.keys.each do |field|
+            dest << {
+              range: { field => @ranges[field] }
+            }
+          end
+        end
+
         dest
       end
     end
