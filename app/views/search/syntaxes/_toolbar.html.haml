@@ -4,16 +4,17 @@
 		<a>Search fields</a>
 		= fa :caret_down
 		%div
-			%a.action(data-insert="score>" data-value="20") Score
 			%a.action(data-insert="title:" data-value="example*") Title
-			%a.action(data-insert="source:" data-value="*.youtube.com") Source URL
-			%a.action(data-insert="uploader:" data-value="username") Uploader
+			%a.action(data-insert="source:" data-value="*.youtube.*") Source URL
+			%a.action(data-insert="description:" data-value="example*") Description
+			%a.action(data-insert="score>" data-value="20") Score
 			%a.action(data-insert="uploaded>" data-value="1/1/1992") Date Uploaded
-			%a.action(data-insert="length>" data-value="1000") Video Duration (seconds)
+			%a.action(data-insert="length>" data-value="3:00") Video Duration
 			%a.action(data-insert="width>" data-value="1600") Video Width
 			%a.action(data-insert="hight>" data-value="900") Video Height
-			%a.action(data-insert="ratio:" data-value="1") Aspect Ratio
-			%a.action(data-insert="size>" data-value="900") Video File Size (bytes)
+			%a.action(data-insert="aspect_ratio>" data-value="1") Aspect Ratio
+			%a.action(data-insert="file_size>" data-value="900") Video File Size (bytes)
+			%a.action(data-insert="heat>" data-value="1") Heat
 	%div.action
 		<a>Belonging to...</a>
 		= fa :caret_down
@@ -22,6 +23,7 @@
 			%span.spacer
 			%a.action(data-insert="upvoted_by:" data-value="username") Upvoted by
 			%a.action(data-insert="downvoted_by:" data-value="username") Downvoted by
+			%a.action(data-insert="uploaded_by:" data-value="username") Uploaded by
 			%span.spacer
 			%a.action(data-insert="my:upvotes") My Upvotes
 			%a.action(data-insert="my:downvotes") My Downvotes

@@ -13,7 +13,7 @@ module ProjectVinyl
           uploads: :user_id
         },
         by: {
-          uploader: :user_id,
+          uploaded_by: :user_id,
           upvoted_by: :likes,
           downvoted_by: :dislikes
         },
@@ -24,14 +24,16 @@ module ProjectVinyl
         fields: {
           title: :title,
           source: :source,
-          aspect: :aspect
+          description: :description
         },
         range_fields: {
+          aspect_ratio: :aspect,
           length: :length,
           width: :width,
           height: :height,
           score: :score,
-          size: :size
+          file_size: :size,
+          heat: :heat
         }
       })
 

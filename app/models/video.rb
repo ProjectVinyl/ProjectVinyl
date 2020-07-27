@@ -55,6 +55,7 @@ class Video < ApplicationRecord
       indexes :width, type: 'integer'
       indexes :height, type: 'integer'
       indexes :score, type: 'integer'
+      indexes :size, type: 'integer'
       indexes :heat, type: 'integer'
       indexes :created_at, type: 'date'
       indexes :updated_at, type: 'date'
@@ -68,13 +69,14 @@ class Video < ApplicationRecord
   def as_indexed_json(_options = {})
     read_media_attributes!
 
-    json = as_json(only: %w[user_id audio_only length heat score created_at updated_at hidden])
+    json = as_json(only: %w[user_id audio_only length width height heat score created_at updated_at hidden])
     json["title"] = title.downcase
     json["description"] = description.downcase
     json["source"] = source.downcase
     json["tags"] = tags.pluck(:name)
     json["likes"] = votes.up.pluck(:user_id)
     json["dislikes"] = votes.down.pluck(:user_id)
+    json['size'] = file_size
 
     json
   end
