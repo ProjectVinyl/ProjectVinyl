@@ -6,6 +6,6 @@
 		%span.date{title: thumb_f.created_at.in_time_zone}= since thumb_f.created_at
 		%span.tag-set.right
 			- if thumb_f.is_liked
-				%i.fa{class: "fa-thumbs-#{thumb_f.is_downvoted ? 'down red' : 'up green'}"}
+				= fa "thumbs-#{thumb_h.is_downvoted ? 'down red' : 'up green'}"
 			= fuzzy_big_number_with_delimiter thumb_f.play_count
 			views
