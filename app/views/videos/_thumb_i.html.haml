@@ -4,6 +4,6 @@
 			- if thumb_i.liked?
 				= fa "thumbs-#{thumb_i.disliked? ? 'down red' : 'up green'}"
 			= duration thumb_i.duration
-	- spoilered = thumb_i.is_spoilered_by(current_user)
+	- spoilered = thumb_i.spoilered_by?(current_user)
 	.title{title: !spoilered && thumb_i.get_title}
 		= spoilered ? "Spoilered" : thumb_i.get_title

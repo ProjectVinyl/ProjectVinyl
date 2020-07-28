@@ -1,5 +1,5 @@
-- if !album_item.video.is_hidden_by(current_user)
-	%a.row{href: (!album_item.video.hidden && !album_item.video.is_spoilered_by(current_user)) && album_item.link,
+- if !album_item.video.hidden_by?(current_user)
+	%a.row{href: (!album_item.video.hidden && !album_item.video.spoilered_by?(current_user)) && album_item.link,
          class: [album_item.video.hidden && "hidden-item", @index == album_item.index && "selected scroll-focus"],
           data: {id: album_item.id, index: album_item.index, "video-id": album_item.video_id}}
 		.title(title="#{album_item.get_tooltip}")

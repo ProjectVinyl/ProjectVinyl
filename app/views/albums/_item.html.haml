@@ -1,5 +1,5 @@
-- if !item.video.is_hidden_by(current_user)
-	- @hidden = !item.video.hidden && !item.video.is_spoilered_by(current_user)
+- if !item.video.hidden_by?(current_user)
+	- @hidden = !item.video.hidden && !item.video.spoilered_by?(current_user)
 	%a.row.removeable{href: @hidden && item.link, class: !@hidden && "hidden-item", data: {target: "albums/items", "video-id": item.video_id, id: item.id, index: item.index}}
 		- if @modifications_allowed
 			.handle= fa :ellipsis_v

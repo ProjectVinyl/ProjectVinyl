@@ -212,7 +212,7 @@ class Video < ApplicationRecord
   end
 
   def tiny_thumb(user)
-    if (hidden && (!user || user_id != user.id)) || is_spoilered_by(user)
+    if (hidden && (!user || user_id != user.id)) || spoilered_by?(user)
       return '/images/default-cover-small.png'
     end
     cache_bust(public_url('thumb.png'))

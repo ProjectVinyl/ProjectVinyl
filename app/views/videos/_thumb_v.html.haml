@@ -1,9 +1,9 @@
-- if !thumb_v.is_hidden_by(current_user)
+- if !thumb_v.hidden_by?(current_user)
 	%li.generic>
 		%a.thumb{class: thumb_v.hidden && "thumb-hidden", href: thumb_v.link}
 			.tile{style: format_bg(thumb_v.tiny_thumb(current_user))}
 				.details
-					- spoilered = thumb_v.is_spoilered_by(current_user)
+					- spoilered = thumb_v.spoilered_by?(current_user)
 					.title{title: !spoilered && thumb_v.get_title}
 						- if thumb_v.hidden
 							%span.icon(title="Private - Only you can see this item")= fa :lock

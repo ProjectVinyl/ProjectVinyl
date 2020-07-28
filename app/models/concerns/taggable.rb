@@ -1,12 +1,16 @@
 module Taggable
   extend ActiveSupport::Concern
 
-  def is_hidden_by(user)
+  def hidden_by?(user)
     user && user.hides(@tag_ids || (@tag_ids = tags.map(&:id)))
   end
 
-  def is_spoilered_by(user)
+  def spoilered_by?(user)
     user && user.spoilers(@tag_ids || (@tag_ids = tags.map(&:id)))
+  end
+
+  def filtered_by?(user)
+    hidden_by?(user) || spoilered_by?(user)
   end
 
   def drop_tags(ids)

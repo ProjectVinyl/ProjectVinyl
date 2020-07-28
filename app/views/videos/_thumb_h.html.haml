@@ -1,5 +1,5 @@
-- if !thumb_h.is_hidden_by(current_user)
-	- spoilered = thumb_h.is_spoilered_by(current_user)
+- if !thumb_h.hidden_by?(current_user)
+	- spoilered = thumb_h.spoilered_by?(current_user)
 	%li.generic.thumb.picture>
 		%a.thumb{class: thumb_h.hidden && "thumb-hidden", href: thumb_h.link}
 			.tile{style: format_bg(thumb_h.tiny_thumb(current_user))}

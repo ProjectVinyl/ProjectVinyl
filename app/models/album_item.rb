@@ -5,7 +5,7 @@ class AlbumItem < ApplicationRecord
 
   scope :discriminate, ->(comparitor, current, user) {
     where('album_items.index ' + comparitor + ' ?', current).reject do |i|
-      (i.video.is_hidden_by(user) || i.video.hidden)
+      (i.video.hidden_by?(user) || i.video.hidden)
     end
   }
   
