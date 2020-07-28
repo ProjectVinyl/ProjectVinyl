@@ -9,11 +9,7 @@ module ProjectVinyl
         @buffer = []
         @open_count = 0
         @old = []
-        if !search_terms || (search_terms = search_terms.strip).empty?
-          @terms = []
-        else
-          @terms = search_terms.split('')
-        end
+        @terms = !search_terms || (search_terms = search_terms.strip).empty? ? [] : search_terms.split('')
       end
 
       def length
@@ -21,23 +17,24 @@ module ProjectVinyl
       end
 
       def peek(n)
-        while @buffer.length < n && !@terms.empty?
+
+        # If the buffer is too small, look ahead in the search query to initialise more terms
+        while (n < 0 || @buffer.length < n) && !@terms.empty?
           stack = @buffer
-          @buffer = []
-          stack << __shift
-          @buffer.each do |i|
-            stack << i
-          end
-          @buffer = stack
+          @buffer = []              # store the previous buffer state
+          stack << __shift          # shift a new operator onto the stack
+          @buffer = stack + @buffer # shift any new buffered terms into the end of the stack
         end
-        result = []
+
+        result = []           # pop off n results from the buffer
+
+        n = length if n < 0   # if called with a negative number output the entire parsed length.
+                              # Used for debugging
+
         for i in 0..(n - 1)
-          if i < @buffer.length
-            result << @buffer[i]
-          else
-            result << ""
-          end
+          result << (i < @buffer.length ? @buffer[i] : '')
         end
+
         result
       end
 
@@ -66,87 +63,63 @@ module ProjectVinyl
         __shift
       end
 
-      def slurp_quoted_text(quote_char, slurp)
+      private
+      def __slurp_quoted_text(quote_char, slurp)
         until @terms.empty?
           i = @terms.shift
-
-          if i == quote_char
-            return slurp
-          end
-
+          return slurp if i == quote_char
           slurp += i
         end
 
         slurp
       end
 
+      def __change_nesting(logical_op, step)
+        @open_count += step
+        logical_op
+      end
+
+      def __read_logical(slurp, logical_op)
+        return logical_op if slurp.empty?
+
+        o = @index_params.slurp_tags(self, slurp)
+        push logical_op
+        o
+      end
+
+      # Handles all the logical operatorations. (AND, OR, NOT, GROUP_START, GROUP_END)
       def __shift
-        slurp = ""
+        slurp = ''
         prev = !@old.empty? ? @old.last : ''
+        i = prev
+
         until @terms.empty?
+          prev = i
           i = @terms.shift
           @old << i
 
+          # consume quoted strings
           if i == '"' || i == '\''
-            slurp = slurp_quoted_text(i, slurp)
-          else
-            if i == ' '
-              # consume spaces around operators
-              if prev == ',' || prev == '&' || prev == '|'
-                prev = i
-                next
-              end
-            end
-
-            if !slurp.empty?
-              if i == ',' || (prev == ' ' && i == '&')
-                o = @index_params.slurp_tags(self, slurp)
-                push Op::AND
-                return o
-              elsif prev == ' ' && i == '|'
-                o = @index_params.slurp_tags(self, slurp)
-                push Op::OR
-                return o
-              elsif i == ')' && prev != '\\'
-                if @open_count > 0
-                  @open_count -= 1
-                  o = @index_params.slurp_tags(self, slurp)
-                  push Op::GROUP_END
-                  return o
-                else
-                  slurp << i
-                end
-              else
-                slurp << i
-              end
-            elsif i == '(' && prev != '\\'
-              @open_count += 1
-              return Op::GROUP_START
-            elsif i == ')' && prev != '\\'
-              if @open_count > 0
-                @open_count -= 1
-                return Op::GROUP_END
-              else
-                slurp << i
-              end
-            else
-              if i == '-'
-                return Op::NOT
-              else
-                slurp << i
-              end
-            end
+            slurp = __slurp_quoted_text(i, slurp)
+            next
           end
 
-          prev = i
+          if prev != '\\'
+            # consume spaces coming after operators
+            next if i == ' ' && (prev == ',' || prev == '&' || prev == '|' || prev == ')' || prev == '(')
+            return Op::NOT if i == '-' && slurp.empty?
+            return __change_nesting(Op::GROUP_START, 1) if i == '(' && slurp.empty?
+            return __read_logical(slurp, Op::AND) if i == ',' || (prev == ' ' && i == '&')
+            return __read_logical(slurp, Op::OR) if prev == ' ' && i == '|'
+            return __read_logical(slurp, __change_nesting(Op::GROUP_END, -1)) if i == ')' && @open_count > 0
+          end
+
+          slurp << i
         end
 
         return @index_params.slurp_tags(self, slurp) if !slurp.empty?
 
-        if @open_count != 0
-          raise LexerError, "Unmatched '(' for + '" + @old + "|" + @terms.join('') + "'!"
-        end
-
+        raise LexerError, "Unmatched '(' for + '" + @old + "|" + @terms.join('') + "'!" if @open_count != 0
         raise InputError, "Pointer overrun!"
       end
     end

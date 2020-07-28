@@ -18,12 +18,10 @@ module ProjectVinyl
         }
       end
 
-      def self.make_term(tag)
-        return { wildcard: { tags: tag } } if tag.include?('*')
+      def self.make_term(field, tag)
+        return { wildcard: { field => tag } } if tag.include?('*')
         {
-          term: {
-            tags: tag
-          }
+          term: { field => tag }
         }
       end
 

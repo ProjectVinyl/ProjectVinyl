@@ -79,11 +79,12 @@ module ProjectVinyl
         @dirty = true
       end
 
-      def obsorb_term(op, dest)
-        op = op.strip
-        return if op.empty?
-        @tags << op
-        dest << TextQuery.make_term(op)
+      def obsorb_term(op, opset, dest)
+        field = opset.shift_data(op, 'field')
+        value = opset.shift_data(op, 'value').strip
+        return if value.empty?
+        @tags << value
+        dest << TextQuery.make_term(field, value)
         @dirty = true
       end
 
@@ -145,6 +146,8 @@ module ProjectVinyl
           obsorb_prim(@must, op, opset, sender)
         elsif (op == Op::LESS_THAN || op == Op::GREATER_THAN)
           @ranges.record(op, opset, false)
+        elsif op == Op::HAS
+          obsorb_term(op, opset, @must)
         elsif op == Op::NOT
           @dirty = true
           opset.shift_data(op, 'term') do |data|
@@ -154,14 +157,12 @@ module ProjectVinyl
               obsorb_textual(@must_not, opset)
             elsif data == Op::EQUAL
               obsorb_prim(@must_not, data, opset, sender)
+            elsif data == Op::HAS
+              obsorb_term(data, opset, @must_not)
             elsif (data == Op::LESS_THAN || data == Op::GREATER_THAN)
               @ranges.record(data, opset, true)
-            else
-              obsorb_term(data, @must_not)
             end
           end
-        else
-          obsorb_term(op, @must)
         end
 
         opset

@@ -3,10 +3,14 @@ require 'projectvinyl/elasticsearch/op'
 module ProjectVinyl
   module ElasticSearch
     class Index
-      def initialize(params = {})
+      attr_reader :table
+
+      def initialize(table, params = {}, &block)
+        @table = table
         @params = params
+        @default_func = block
       end
-      VIDEO_INDEX_PARAMS = Index.new({
+      VIDEO_INDEX_PARAMS = Index.new(Video, {
         my: {
           upvotes: :likes,
           downvotes: :dislikes,
@@ -37,17 +41,40 @@ module ProjectVinyl
           uploaded: :created_at
         }
       })
-      USER_INDEX_PARAMS = Index.new({
-        my: {},
-        by: {},
-        is: {},
+      USER_INDEX_PARAMS = Index.new(User, {
         fields: {
-          name: :username
+          username: :username
         },
         range_fields: {
           created: :created_at
+        },
+        hash: :tags
+      }) do |sender, opset, slurp|
+        opset.push :username
+        opset.push slurp
+        Op::TEXT_EQUAL
+      end
+
+      TAG_INDEX_PARAMS = Index.new(Tag, {
+        fields: {
+          name: :name,
+          slug: :slug,
+          namespace: :namespace
+        },
+        has: {
+          :alias => :aliases,
+          implies: :implying_tags,
+          implied_by: :implicators
+        },
+        range_fields: {
+          videos: :video_count,
+          users: :user_count
         }
-      })
+      }) do |sender, opset, slurp|
+        opset.push :name
+        opset.push slurp
+        Op::TEXT_EQUAL
+      end
 
       CHAR_OP_LOOKUP = {
         ':': ProjectVinyl::ElasticSearch::Op::EQUAL,
@@ -57,13 +84,20 @@ module ProjectVinyl
 
       def slurp_tags(opset, slurp)
         slurp = slurp.strip
+
+        if @params.key?(:hash) && slurp[0] == '#'
+          opset.push @params[:hash]
+          opset.push slurp[1..slurp.length]
+          return Op::HAS
+        end
+
         slugs = slurp.split(/[<>:]/)
 
-        return slurp if slugs.length <= 0
+        return fallback(opset, slurp) if slugs.length < 2
 
         prefix = slugs[0]
         separator = slurp[prefix.length...(prefix.length + 1)].to_sym
-        suffex = slurp[(prefix.length + 1)...slurp.length].strip.downcase
+        suffex = slurp[(prefix.length + 1)...slurp.length].strip
 
         prefix = prefix.to_sym
 
@@ -75,15 +109,24 @@ module ProjectVinyl
         return Op::MY if check_post(opset, :by, prefix, suffex)
         # Greater than, less than, or equals
         return CHAR_OP_LOOKUP[separator] if check_post(opset, :range_fields, prefix, suffex)
+        # Tag-based queries
+        return Op::HAS if check_post(opset, :has, prefix, suffex)
         # Only equals
         return Op::TEXT_EQUAL if check_post(opset, :fields, prefix, suffex)
 
-        slurp
+        fallback(opset, slurp)
+      end
+
+      def fallback(opset, slugs)
+        return @default_func.call(self, opset, slugs) if @default_func
+        opset.push :tags
+        opset.push slugs
+        Op::HAS
       end
 
       def check_pre(opset, group, prefix, suffex, value)
         suffex = suffex.to_sym
-        if prefix == group && @params[group].key?(suffex)
+        if prefix == group && @params.key?(group) && @params[group].key?(suffex)
           opset.push @params[group][suffex] # the field to check
           opset.push value                  # the value
           true
@@ -91,7 +134,7 @@ module ProjectVinyl
       end
 
       def check_post(opset, group, prefix, suffex)
-        if @params[group].key?(prefix)
+        if @params.key?(group) && @params[group].key?(prefix)
           opset.push @params[group][prefix] # the field to check
           opset.push suffex                 # the value to check against
           true

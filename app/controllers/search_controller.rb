@@ -14,7 +14,7 @@ class SearchController < ApplicationController
     @partial = partial_for_type(:videos)
     @randomize = params[:format] != 'json' && params[:random] == 'y'
 
-    @results = ProjectVinyl::ElasticSearch::ElasticSelector.new(current_user, @query, ProjectVinyl::ElasticSearch::Index::VIDEO_INDEX_PARAMS).videos
+    @results = ProjectVinyl::ElasticSearch::ElasticSelector.new(current_user, @query, ProjectVinyl::ElasticSearch::Index::VIDEO_INDEX_PARAMS)
     @results.ordering = ProjectVinyl::ElasticSearch::Order.parse('video', session, @orderby, @ascending)
     
     if @randomize && @single = @results.randomized(1).exec.records.first

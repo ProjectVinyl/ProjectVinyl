@@ -14,8 +14,7 @@ module ProjectVinyl
         @exception = nil
         @lexer_error = 0
         @offset = 0
-        @type = :unknown
-        @table = Video
+        @table = index_params.table
         @randomized = false
         @ordering = []
       end
@@ -37,25 +36,13 @@ module ProjectVinyl
         self
       end
 
-      def videos
-        @type = :video
-        @table = Video
-        self
-      end
-
-      def users
-        @type = :user
-        @table = User
-        self
-      end
-
       def order_by(order)
         @ordering = [ { order => {order: 'asc' }} ]
         self
       end
 
       def add_required_params(query)
-        return query if @type != :video
+        return query if @table != Video
 
         if !query.key?(:bool)
           query = { term: { hidden: false } }
@@ -115,7 +102,7 @@ module ProjectVinyl
         if @page < 0
           @page = 0
           params[:from] = 0
-          @search = table.search(params)
+          @search = @table.search(params)
 
           return self if @search.results.total <= @limit
 
@@ -123,12 +110,12 @@ module ProjectVinyl
           params[:from] = @page * @limit
         end
 
-        @search = table.search(params)
+        @search = @table.search(params)
 
         if @search.count == 0 && @search.results.total > 0 && @page > 0
           @page = (@search.results.total / @limit).floor
           params[:from] = @page * @limit
-          @search = table.search(params)
+          @search = @table.search(params)
         end
 
         self
@@ -157,8 +144,9 @@ module ProjectVinyl
       end
 
       def records
-        return table.none if @exception
-        return @search.records.includes(:tags).with_likes(@user) if @type == :video
+        return @table.none if @exception
+        return @search.records.includes(:tags).with_likes(@user) if @table == Video
+        return @search.records.includes(:videos, :tag_type) if @table == Tag
         @search.records
       end
 
