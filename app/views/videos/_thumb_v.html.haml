@@ -13,6 +13,6 @@
 						= fuzzy_big_number_with_delimiter thumb_v.play_count
 						views
 				%span.tag-set.duration
-					- if thumb_v.is_liked
-						= fa "thumbs-#{thumb_v.is_downvoted ? 'down red' : 'up green'}"
+					- if thumb_v.liked?
+						= fa "thumbs-#{thumb_v.disliked? ? 'down red' : 'up green'}"
 					= duration thumb_v.duration

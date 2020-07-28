@@ -8,7 +8,7 @@
 			= thumb_h.title
 		%span.date{title: thumb_h.created_at}= since thumb_h.created_at
 		%span.tag-set.right
-			- if thumb_h.is_liked
-				= fa "thumbs-#{thumb_h.is_like_negative != 0 ? "down red" : "up green"}"
+			- if thumb_h.liked?
+				= fa "thumbs-#{thumb_h.disliked? ? "down red" : "up green"}"
 			= number_with_delimiter thumb_h.views
 			views

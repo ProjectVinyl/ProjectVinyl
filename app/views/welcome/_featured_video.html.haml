@@ -18,12 +18,12 @@
 				views
 		.description.post-content.content.fade-away= emotify @video.description
 	.scoring.actions
-		%span.button.action.green.like{class: @featured.is_upvoted && "liked", title: "Likes", data: {count: @featured.upvotes, action: "like", id: @featured.id}}<>
+		%span.button.action.green.like{class: @featured.upvoted? && "liked", title: "Likes", data: {count: @featured.upvotes, action: "like", id: @featured.id}}<>
 			%b.count= safe_to_display @featured.upvotes, 9999
 			= fw :thumbs_up
 		%span.button.score(title="Score")<>
 			%b= safe_to_display  @featured.score, 9999
-		%span.button.action.red.dislike{class: @featured.is_downvoted && "liked", title: "Dislikes", data: {count: @featured.downvotes, action: "dislike", id: @featured.id}}<>
+		%span.button.action.red.dislike{class: @featured.downvoted? && "liked", title: "Dislikes", data: {count: @featured.downvotes, action: "dislike", id: @featured.id}}<>
 			%b.count= safe_to_display  @featured.downvotes, 9999
 			= fw :thumbs_down
 		%a.button.blue.comments{href: @featured.comment_thread.link, title: "Comments"}<>

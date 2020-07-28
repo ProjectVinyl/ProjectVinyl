@@ -22,7 +22,7 @@
 .content{style: indirect && comment.comment_thread.owner_type == 'Video' && "margin-left:200px", "data-id": comment.id, "data-o-id": comment.get_open_id, "data-comment": comment.bbc_content}
 	.comment-actions
 		- if user_signed_in?
-			%button.action.like{title: "Like", class: comment.is_liked && "liked", data: {count: comment.score, action: "comments/#{comment.id}/like"}}
+			%button.action.like{title: "Like", class: comment.liked? && "liked", data: {count: comment.score, action: "comments/#{comment.id}/like"}}
 				%span
 					- if comment.score && comment.score > 0
 						%span.count= comment.score
@@ -47,7 +47,7 @@
 							%span.icon= fa :warning
 							%span.label Report
 		- else
-			%span.like{title: "Likes", class: comment.is_liked && "liked"}
+			%span.like{title: "Likes", class: comment.liked? && "liked"}
 				- if comment.score && comment.score > 0
 					= comment.score
 				= fa :thumbs_up

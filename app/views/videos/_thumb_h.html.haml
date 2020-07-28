@@ -16,7 +16,7 @@
 			%a.link.date{href: thumb_h.user.link, data: {id: thumb_h.user.id}}= thumb_h.user.username
 			%span.date{title: thumb_h.created_at.in_time_zone}= since thumb_h.created_at
 			%span.tag-set.right
-				- if thumb_h.is_liked
-					= fa "thumbs-#{thumb_h.is_downvoted ? 'down red' : 'up green'}"
+				- if thumb_h.liked?
+					= fa "thumbs-#{thumb_h.disliked? ? 'down red' : 'up green'}"
 				= fuzzy_big_number_with_delimiter thumb_h.play_count
 				views

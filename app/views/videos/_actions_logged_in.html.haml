@@ -1,15 +1,15 @@
-%button.action.like{class: @video.is_upvoted && "liked", data: {count: @video.upvotes, action: video_action_path(@video, id: :like), id: @video.id}}>
+%button.action.like{class: @video.upvoted? && "liked", data: {count: @video.upvotes, action: video_action_path(@video, id: :like), id: @video.id}}>
 	= fa :thumbs_up
 	%span
 		- if @video.upvotes && @video.upvotes > 0
 			%span.count= @video.upvotes
-%button.action.dislike{class: @video.is_downvoted && "liked", data: {count: @video.downvotes, action: video_action_path(@video, id: :dislike), id: @video.id}}>
+%button.action.dislike{class: @video.downvoted? && "liked", data: {count: @video.downvotes, action: video_action_path(@video, id: :dislike), id: @video.id}}>
 	= fa :thumbs_down
 	%span
 		- if @video.downvotes && @video.downvotes > 0
 			%span.count= @video.downvotes
 .split-button.popper>
-	%button.action.star.split-icon{class: @video.is_starred_by(current_user) && "starred", data: {action: video_action_path(@video, id: :star), id: @video.id}}
+	%button.action.star.split-icon{class: @video.faved?(current_user) && "starred", data: {action: video_action_path(@video, id: :star), id: @video.id}}
 		= fa :star
 	%a.button.action.addto.split-action.pop-out-toggle Add To
 	%ul.pop-out

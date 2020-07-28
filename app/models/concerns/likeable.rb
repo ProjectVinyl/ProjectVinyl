@@ -10,7 +10,7 @@ module Likeable
     }
   end
 
-  def is_starred_by(user)
+  def faved?(user)
     user && user.album_items.where(video_id: id).count > 0
   end
 
@@ -18,19 +18,19 @@ module Likeable
     user.stars.toggle(self)
   end
 
-  def is_liked
+  def liked?
     (respond_to? :is_liked_flag) && is_liked_flag
   end
 
-  def is_like_negative
+  def disliked?
     (respond_to? :is_like_negative_flag) && is_like_negative_flag
   end
 
-  def is_upvoted
-    is_liked && !is_like_negative
+  def upvoted?
+    liked? && !disliked?
   end
 
-  def is_downvoted
-    is_liked && is_like_negative
+  def downvoted?
+    liked? && disliked?
   end
 end

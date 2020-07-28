@@ -26,7 +26,7 @@ class Comment < ApplicationRecord
     visible.includes(:direct_user, :comment_thread).where("comment_threads.owner_type = ?", owner_type)
   }
   
-  def is_liked
+  def liked?
     (respond_to? :is_liked_flag) && is_liked_flag
   end
   
