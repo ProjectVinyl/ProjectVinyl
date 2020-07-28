@@ -12,8 +12,8 @@ module ProjectVinyl
 
       def read_user_id(opset, op, parameter, sender)
         data = opset.shift_data(op, parameter)
+        return sender.id if sender && data.nil?
         data = data.strip
-        return sender.id if sender && data == 'nil'
         cache(data) if data
         data
       end

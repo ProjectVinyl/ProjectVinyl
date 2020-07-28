@@ -46,13 +46,18 @@ module ProjectVinyl
       end
 
       def shift_data(op, parameter)
-        data = shift
-        if !data.nil? && (true.is_a?(data.class) || 1.is_a?(data.class) || !data.empty?)
+        begin
+          data = shift
+        rescue InputError => e
+          raise LexerError, "#{Op.name_of(op)} Operator requires parameter: #{parameter}"
+        end
+
+        if data.nil? || true.is_a?(data.class) || 1.is_a?(data.class) || !data.empty?
           yield(data) if block_given?
           return data
         end
 
-        raise LexerError, Op.name_of(op) + " Operator requires parameter: " + parameter
+        raise LexerError, "#{Op.name_of(op)} Operator requires parameter: #{parameter}"
       end
 
 
@@ -142,7 +147,7 @@ module ProjectVinyl
           raise LexerError, "Unmatched '(' for + '" + @old + "|" + @terms.join('') + "'!"
         end
 
-        raise "Pointer overrun!"
+        raise InputError, "Pointer overrun!"
       end
     end
   end
