@@ -4,7 +4,7 @@
 			Followed Videos
 			= surround '(', ')' do
 				= number_with_delimiter @feed.length
-			%a.right{href: feed_path}
+			%a.right{href: videos_feed_path}
 				View All
 				= fa :chevron_right
 		%ul.horizontal.latest
