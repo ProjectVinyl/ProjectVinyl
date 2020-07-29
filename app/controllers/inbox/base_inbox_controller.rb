@@ -3,13 +3,8 @@ module Inbox
 
     protected
     def check_requirements
-      if !user_signed_in?
-        return head :unauthorized
-      end
-
-      if !(@pm = Pm.find_for_user(params[:message_id], current_user))
-        return head :not_found
-      end
+      return head :unauthorized if !user_signed_in?
+      return head :not_found if !(@pm = Pm.find_for_user(params[:message_id], current_user))
     end
 
     def tab_changes(type = nil, results = nil)

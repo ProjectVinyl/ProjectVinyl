@@ -24,9 +24,7 @@ class SearchController < ApplicationController
     @results = @results.query(@page, 20).exec
     @tags = @results.tags
     
-    if params[:format] == 'json'
-      return render_pagination_json @partial, @results
-    end
+    return render_pagination_json @partial, @results if params[:format] == 'json'
 
     @data = URI.encode_www_form(
       order: @order,

@@ -1,10 +1,8 @@
 module Admin
   class AlbumsController < BaseAdminController
     def show
-      if !current_user.is_staff?
-        return render_access_denied
-      end
-      
+      return render_access_denied if !current_user.is_staff?
+
       if !(@album = Album.find(params[:id]))
         return render_error(
           title: 'Nothing to see here!',

@@ -10,10 +10,7 @@ module Api
         return fail :unauthorized, status: 401, message: "Unauthorized"
       end
 
-      if !@token.hit
-        return fail 429, status: 429, message: "Too Many Requests"
-      end
-
+      return fail 429, status: 429, message: "Too Many Requests" if !@token.hit
       @include = (params[:include] || '').split(',').map {|a| a.strip.to_sym}
     end
 
@@ -35,9 +32,7 @@ module Api
     def include_hash(asked)
       data = {}
       @include.each do |key|
-        if asked.include?(key)
-          data[key] = true
-        end
+        data[key] = true if asked.include?(key)
       end
 
       data

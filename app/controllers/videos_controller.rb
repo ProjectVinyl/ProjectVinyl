@@ -5,10 +5,7 @@ class VideosController < Videos::BaseVideosController
 
   def show
     if !(@video = Video.where(id: params[:id]).with_likes(current_user).first)
-      if params[:format] == 'json'
-        return head :not_found
-      end
-
+      return head :not_found if params[:format] == 'json'
       return render_error(
         title: 'Nothing to see here!',
         description: 'This is not the video you are looking for.'
@@ -99,9 +96,7 @@ class VideosController < Videos::BaseVideosController
   end
 
   def new
-    if !user_signed_in?
-      return render_access_denied
-    end
+    return render_access_denied if !user_signed_in?
 
     if ApplicationHelper.read_only && !current_user.is_contributor?
       return render_error(
@@ -116,13 +111,8 @@ class VideosController < Videos::BaseVideosController
   end
 
   def create
-    if !user_signed_in?
-      return error("Access Denied", "You can't do that right now.")
-    end
-
-    if ApplicationHelper.read_only && !current_user.is_contributor?
-      return error("Read Only", "That feature is currently disabled.")
-    end
+    return error("Access Denied", "You can't do that right now.") if !user_signed_in?
+    return error("Read Only", "That feature is currently disabled.") if ApplicationHelper.read_only && !current_user.is_contributor?
 
 		user = current_user
     video = params[:video]
@@ -130,9 +120,7 @@ class VideosController < Videos::BaseVideosController
     file = video[:file]
     cover = video[:cover]
 
-    if !file || file.size == 0
-      return error("Error", "File is empty")
-    end
+    return error("Error", "File is empty") if !file || file.size == 0
 
     if !file.content_type.include?('video/') && !file.content_type.include?('audio/')
       return error("Error", "Mismatched content type: '#{file.content_type}'" )
@@ -154,9 +142,7 @@ class VideosController < Videos::BaseVideosController
       end
     end
 
-    if video[:tag_string].blank?
-      return error("Error", "You need at least one tag.")
-    end
+    return error("Error", "You need at least one tag.") if video[:tag_string].blank?
 
     data = file.read
     if !(checksum = Verification::VideoVerification.ensure_uniq(data))[:valid]
@@ -164,9 +150,7 @@ class VideosController < Videos::BaseVideosController
     end
 
     ext = File.extname(file.original_filename)
-    if ext.blank?
-      ext = Mimes.ext(file.content_type)
-    end
+    ext = Mimes.ext(file.content_type) if ext.blank?
 
     title = StringsHelper.check_and_trunk(video[:title], "Untitled Video")
 
@@ -189,9 +173,7 @@ class VideosController < Videos::BaseVideosController
       @comments = @video.comment_thread = CommentThread.create(user_id: user, title: title)
       @comments.save
 
-      if current_user.subscribe_on_upload?
-        @comments.subscribe(current_user)
-      end
+      @comments.subscribe(current_user) if current_user.subscribe_on_upload?
 
       if @video.source && !@video.source.blank?
         TagHistory.record_source_changes(@video, current_user.id)
@@ -220,17 +202,9 @@ class VideosController < Videos::BaseVideosController
   end
 
   def update
-    if !user_signed_in?
-      return head 401
-    end
-
-    if !(video = Video.where(id: params[:id]).first)
-      return head :not_found
-    end
-
-    if !video.owned_by(current_user)
-			return head 401
-		end
+    return head 401 if !user_signed_in?
+    return head :not_found if !(video = Video.where(id: params[:id]).first)
+    return head 401 if !video.owned_by(current_user)
 
 		if params[:field] == 'description'
 			video.description = params[:value]
@@ -245,9 +219,7 @@ class VideosController < Videos::BaseVideosController
   end
 
   def edit
-    if !user_signed_in?
-      return render_access_denied
-    end
+    return render_access_denied if !user_signed_in?
 
     if !(@video = Video.where(id: params[:id]).first)
       return render_error(
@@ -255,10 +227,7 @@ class VideosController < Videos::BaseVideosController
         description: 'This is not the video you are looking for.'
       )
     end
-
-    if !@video.owned_by(current_user)
-      return render_access_denied
-    end
+    return render_access_denied if !@video.owned_by(current_user)
 
     @upload_path = '//' + Rails.application.config.gateway + video_cover_path(@video)
     @user = @video.user

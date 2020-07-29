@@ -11,13 +11,8 @@ class AlbumsController < Albums::BaseAlbumsController
       )
     end
 
-    if (user_signed_in? && @album.id == current_user.star_id)
-      return redirect_to action: :starred
-    end
-    
-    if @album.hidden
-      return render_access_denied
-    end
+    return redirect_to action: :starred if (user_signed_in? && @album.id == current_user.star_id)
+    return render_access_denied if @album.hidden
 
     if !@album.visible_to?(current_user)
       return render_error(
@@ -105,10 +100,7 @@ class AlbumsController < Albums::BaseAlbumsController
 
   def destroy
     check_then :id do |album|
-      if album.hidden
-        return head :unauthorized
-      end
-      
+      return head :unauthorized if album.hidden
       album.destroy
       redirect_to action: :show, controller: :users, id: album.user_id
     end
@@ -118,9 +110,7 @@ class AlbumsController < Albums::BaseAlbumsController
     read_search_params params
 
     @records = Album.listed
-    if filtered?
-      @records = @records.where('LOWER(title) LIKE ?', @query.downcase.gsub(/\*/, '%'))
-    end
+    @records = @records.where('LOWER(title) LIKE ?', @query.downcase.gsub(/\*/, '%')) if filtered?
 
     render_listing_total @records.order(:created_at), params[:page].to_i, 50, !@ascending, {
       template: 'pagination/search', table: 'albums', label: 'Album'

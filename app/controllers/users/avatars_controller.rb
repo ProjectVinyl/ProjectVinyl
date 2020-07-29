@@ -5,13 +5,10 @@ module Users
         user.avatar = params[:erase] ? false : params[:user][:avatar]
         user.save
         
-        if params[:format] == 'json'
-          return render json: {
-            result: "success"
-          }
-        end
-        
-        redirect_to action: :edit, controller: "registrations"
+        return redirect_to action: :edit, controller: "registrations" if params[:format] != 'json'
+        render json: {
+          result: "success"
+        }
       end
     end
   end

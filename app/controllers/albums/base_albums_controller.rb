@@ -11,35 +11,17 @@ module Albums
     end
 
     def check_then_with(table)
-      if !user_signed_in?
-        return head :unauthorized
-      end
-
-      if !(item = table.where(id: params[:id]).first)
-        return head :not_found
-      end
-
-      if !item.owned_by(current_user)
-        return head :unauthorized
-      end
-
+      return head :unauthorized if !user_signed_in?
+      return head :not_found if !(item = table.where(id: params[:id]).first)
+      return head :unauthorized if !item.owned_by(current_user)
       yield(item)
       head :ok
     end
 
     def check_then(id)
-      if !user_signed_in?
-        return head :unauthorized
-      end
-
-      if !(album = Album.where(id: params[id]).first)
-        return head :not_found
-      end
-
-      if !album.owned_by(current_user)
-        return head :unauthorized
-      end
-
+      return head :unauthorized if !user_signed_in?
+      return head :not_found if !(album = Album.where(id: params[id]).first)
+      return head :unauthorized if !album.owned_by(current_user)
       yield(album)
     end
   end

@@ -16,9 +16,7 @@ module Admin
     
     private
     def check_permissions
-      if !current_user.is_contributor?
-        head :unauthorized
-      end
+      head :unauthorized if !current_user.is_contributor?
     end
   end
 end

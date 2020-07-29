@@ -14,13 +14,8 @@ module Admin
       end
 
       def move
-        if !(@thread = CommentThread.where(id: params[:thread_id], owner_type: 'Board').first)
-          return head :not_found
-        end
-
-        if !(@board = Board.where(id: params[:item]).first)
-          return head :not_found
-        end
+        return head :not_found if !(@thread = CommentThread.where(id: params[:thread_id], owner_type: 'Board').first)
+        return head :not_found if !(@board = Board.where(id: params[:item]).first)
 
         @thread.owner_id = @board.id
         @thread.save
@@ -30,9 +25,7 @@ module Admin
       end
 
       def destroy
-        if !(@thread = CommentThread.where(id: params[:id], owner_type: 'Board').first)
-          return head :not_found
-        end
+        return head :not_found if !(@thread = CommentThread.where(id: params[:id], owner_type: 'Board').first)
 
         @thread.destroy
 

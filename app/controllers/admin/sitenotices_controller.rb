@@ -2,10 +2,8 @@ module Admin
   class SitenoticesController < BaseAdminController
     
     def index
-      if !current_user.is_contributor?
-        return render_access_denied
-      end
-      
+      return render_access_denied if !current_user.is_contributor?
+
       @crumb = {
         stack: [
           { link: '/admin', title: 'Admin' }
@@ -22,10 +20,7 @@ module Admin
     end
     
     def create
-      if !current_user.is_contributor?
-        return render_access_denied
-      end
-      
+      return render_access_denied if !current_user.is_contributor?
       redirect_to action: :index
       
       if !params[:notice][:message]
@@ -37,10 +32,7 @@ module Admin
     end
     
     def update
-      if !current_user.is_contributor?
-        return render_access_denied
-      end
-      
+      return render_access_denied if !current_user.is_contributor?
       redirect_to action: :index
       
       if !(@notice = SiteNotice.where(id: params[:notice][:id]).first)
@@ -55,15 +47,9 @@ module Admin
     
     def destroy
       redirect_to action: :index
-      
-      if !current_user.is_contributor?
-        return flash[:error] = "Error: Login required."
-      end
-      
-      if !(@notice = SiteNotice.where(id: params[:id]).first)
-        return flash[:error] = "Error: Record not found."
-      end
-      
+      return flash[:error] = "Error: Login required." if !current_user.is_contributor?
+      return flash[:error] = "Error: Record not found." if !(@notice = SiteNotice.where(id: params[:id]).first)
+
       @notice.destroy
       flash[:notice] = "Record deleted.";
     end

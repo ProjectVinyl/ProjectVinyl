@@ -17,19 +17,12 @@ module Tags
       end
 
       @history = @tag.tag_histories.includes(:tag, :user).order(:created_at)
-
-      if params[:added]
-        @history = @history.where(added: params[:added].to_i == 1)
-      else
-        @history = @history.where.not(added: nil)
-      end
+      @history = params[:added] ? @history.where(added: params[:added].to_i == 1) : @history.where.not(added: nil)
 
       @history = Pagination.paginate(@history, params[:page].to_i, 20, true)
 
       if params[:format] == 'json'
-        if @history.count == 0
-          return render_empty_pagination 'warden_derpy'
-        end
+        return render_empty_pagination 'warden_derpy' if @history.count == 0
         render_pagination_json 'change', @history
       end
 

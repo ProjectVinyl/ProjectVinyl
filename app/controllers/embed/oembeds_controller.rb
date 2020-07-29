@@ -2,9 +2,7 @@ module Embed
   class OembedsController < Embed::EmbedController
 
     def show
-      if !(url = params[:url])
-        return head :not_found
-      end
+      return head :not_found if !(url = params[:url])
 
       url = url.split('?')
       url[0] = url[0].split('/')
@@ -12,11 +10,7 @@ module Embed
 
       url[0] = url[0].last.split('-')[0].to_i
 
-      if url.length > 1
-        extra = '?' + url[1]
-      else
-        extra = ''
-      end
+      extra = url.length > 1 ? '?' + url[1] : ''
 
       if is_album
         @album = Album.where(id: url[0]).first
@@ -27,27 +21,16 @@ module Embed
         @video = Video.where(id: url[0]).first
       end
 
-      if @video && @video.duplicate_id > 0
-        @video = Video.where(id: @video.duplicate_id).first
-      end
+      @video = Video.where(id: @video.duplicate_id).first if @video && @video.duplicate_id > 0
 
-      if !@video
-        return head :not_found
-      end
-
-      if @video.hidden
-        return head 401
-      end
+      return head :not_found if !@video
+      return head 401 if @video.hidden
 
       width = 560
-      if params[:maxwidth] && width > (mw = params[:maxwidth].to_i)
-        width = mw
-      end
+      width = mw if params[:maxwidth] && width > (mw = params[:maxwidth].to_i)
 
       height = 315
-      if params[:maxheight] && height > (mw = params[:maxheight].to_i)
-        height = mw
-      end
+      height = mw if params[:maxheight] && height > (mw = params[:maxheight].to_i)
 
       @result = {
         provider_url: root_url,
@@ -66,9 +49,7 @@ module Embed
         tags: Tag.actualise(@video.tags.includes(:alias)).map {|a| a.get_as_string}
       }
 
-      if params[:format] == 'xml'
-        return render xml: @result, root: 'oembed'
-      end
+      return render xml: @result, root: 'oembed' if params[:format] == 'xml'
 
       render json: @result
     end

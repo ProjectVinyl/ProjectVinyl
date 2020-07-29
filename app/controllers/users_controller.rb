@@ -29,9 +29,7 @@ class UsersController < Users::BaseUsersController
     check_then do |user|
       input = params[:user]
 
-      if current_user.is_contributor?
-        user.tag = Tag.by_name_or_id(input[:tag]).first
-      end
+      user.tag = Tag.by_name_or_id(input[:tag]).first if current_user.is_contributor?
       user.set_name(input[:username])
       user.description = input[:description]
       user.bio = input[:bio]
@@ -44,9 +42,7 @@ class UsersController < Users::BaseUsersController
         Video.where(user_id: user).update_all(listing: user.default_listing)
       end
 
-      if user.id == current_user.id
-        return redirect_to action: :edit, controller: "users/registrations"
-      end
+      return redirect_to action: :edit, controller: "users/registrations" if user.id == current_user.id
       redirect_to action: :show, controller: "admin/users"
     end
   end

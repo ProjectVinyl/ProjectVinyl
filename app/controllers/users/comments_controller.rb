@@ -10,9 +10,7 @@ module Users
         @table = 'Comment'
         @partial = partial_for_type(@label)
 
-        if params[:format] == 'json'
-          return render_pagination_json @partial, @records
-        end
+        return render_pagination_json @partial, @records if params[:format] == 'json'
 
         @crumb = {
           stack: [

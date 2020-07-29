@@ -10,15 +10,11 @@ module Admin
     def index
       json = params[:format] == 'json'
 
-      if !user_signed_in? || !current_user.is_contributor?
-        return render_error_file 403, json
-      end
+      return render_error_file 403, json if !user_signed_in? || !current_user.is_contributor?
 
       load_location
 
-      if !ALLOW_ROOTS.include?(@location[0]) && @location.length > 1 && !ALLOW_DIRS.include?(@location[1])
-        return render_error_file 403, json
-      end
+      return render_error_file 403, json if !ALLOW_ROOTS.include?(@location[0]) && @location.length > 1 && !ALLOW_DIRS.include?(@location[1])
 
       begin
         @public = ProjectVinyl::Storage::VideoDirectory.entries(@path).limit(50)

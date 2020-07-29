@@ -1,19 +1,12 @@
 class CommentsController < Comments::BaseCommentsController
   def create
-    if !(@thread = CommentThread.where(id: params[:thread_id]).first) || @thread.locked
-      return head :not_found
-    end
-    
+    return head :not_found if !(@thread = CommentThread.where(id: params[:thread_id]).first) || @thread.locked
+
     user = user_signed_in? ? current_user : UserAnon.new(session)
     
     if !user_signed_in?
-      if !ApplicationHelper.bg_ponies
-        return render json: { error: "BG Ponies are disabled" }
-      end
-
-      if !verify_recaptcha(model: user)
-        return render json: { error: user.error }
-      end
+      return render json: { error: "BG Ponies are disabled" } if !ApplicationHelper.bg_ponies
+      return render json: { error: user.error } if !verify_recaptcha(model: user)
     end
     
     comment = @thread.comments.create(
@@ -24,10 +17,7 @@ class CommentsController < Comments::BaseCommentsController
     @thread.save
     comment.update_comment(params[:comment])
     
-    if @thread.owner_type == 'Video'
-      @thread.owner.compute_hotness.save
-    end
-    
+    @thread.owner.compute_hotness.save if @thread.owner_type == 'Video'
     @thread.bump(user, params, comment)
     
     @reverse = params[:order] == '1'
@@ -52,10 +42,8 @@ class CommentsController < Comments::BaseCommentsController
 
   def destroy
     check_then do |comment|
-      if !current_user.is_contributor? && current_user.id != comment.user_id
-        return head 401
-      end
-      
+      return head 401 if !current_user.is_contributor? && current_user.id != comment.user_id
+
       CommentThread.where(id: comment.comment_thread_id).update_all("total_comments = total_comments #{comment.hidden ? '+' : '-'} 1")
       comment.hidden = !comment.hidden
       comment.save

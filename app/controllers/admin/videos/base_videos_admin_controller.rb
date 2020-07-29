@@ -10,24 +10,15 @@ module Admin
       def check_then
         @id = params[:video_id] || params[:id]
 
-        if !current_user.is_staff?
-          return head :unauthorized
-        end
-
-        if !(video = Video.where(id: @id).first)
-          return head :not_found
-        end
-
+        return head :unauthorized if !current_user.is_staff?
+        return head :not_found if !(video = Video.where(id: @id).first)
         yield(video)
       end
 
       def check_access_then
         redirect_to action: :index, controller: 'admin/admin'
 
-        if !current_user.is_contributor?
-          return flash[:error] = "Error: Login required."
-        end
-
+        return flash[:error] = "Error: Login required." if !current_user.is_contributor?
         yield
       end
 
@@ -35,14 +26,8 @@ module Admin
         @id = params[:video_id] || params[:id]
         redirect_to action: :show, controller: '/admin/videos', id: @id
 
-        if !current_user.is_contributor?
-          return flash[:error] = "Error: Login required."
-        end
-
-        if !(video = Video.where(id: @id).first)
-          return flash[:error] = "Error: Video not found."
-        end
-
+        return flash[:error] = "Error: Login required." if !current_user.is_contributor?
+        return flash[:error] = "Error: Video not found." if !(video = Video.where(id: @id).first)
         yield(video)
       end
     end

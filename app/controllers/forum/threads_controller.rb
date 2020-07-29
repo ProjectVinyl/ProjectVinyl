@@ -11,11 +11,8 @@ module Forum
       end
       
       if params[:format] != 'json'
-        if @thread.private_message?
-          return redirect_to action: :show, controller: "inbox/pm", id: @thread.owner_id
-        elsif @thread.video?
-          return redirect_to action: :show, controller: "/videos", id: @thread.owner_id
-        end
+        return redirect_to action: :show, controller: "inbox/pm", id: @thread.owner_id if @thread.private_message?
+        return redirect_to action: :show, controller: "/videos", id: @thread.owner_id if @thread.video?
       end
       
       if params[:comment] && (@comment = Comment.where(comment_thread_id: @thread.id, id: Comment.decode_open_id(params[:comment])).first)
@@ -65,18 +62,10 @@ module Forum
     end
 
     def update
-      if !user_signed_in?
-        return head 401
-      end
-      
-      if !(thread = CommentThread.where(id: params[:id]).first)
-        return head :not_found
-      end
-      
-      if !(thread.user_id == current_user.id || current_user.is_contributor?)
-        return head 401
-      end
-      
+      return head 401 if !user_signed_in?
+      return head :not_found if !(thread = CommentThread.where(id: params[:id]).first)
+      return head 401 if !(thread.user_id == current_user.id || current_user.is_contributor?)
+
       if params[:field] == 'title'
         thread.set_title(params[:value])
         thread.save

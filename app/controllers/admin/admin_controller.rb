@@ -1,9 +1,7 @@
 module Admin
   class AdminController < BaseAdminController
     def index
-      if !current_user.is_contributor?
-        return render_access_denied
-      end
+      return render_access_denied if !current_user.is_contributor?
 
       @crumb = {
         stack: [

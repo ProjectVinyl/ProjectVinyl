@@ -14,17 +14,11 @@ module Videos
       end
 
       @history = @video.tag_histories.includes(:tag, :user).order(:created_at)
-
-      if params[:added]
-        @history = @history.where(added: params[:added].to_i == 1)
-      end
-
+      @history = @history.where(added: params[:added].to_i == 1) if params[:added]
       @history = Pagination.paginate(@history, params[:page].to_i, 20, true)
 
       if params[:format] == 'json'
-        if @history.count == 0
-          return render_empty_pagination 'warden_derpy'
-        end
+        return render_empty_pagination 'warden_derpy' if @history.count == 0
         render_pagination_json 'history/change', @history
       end
 

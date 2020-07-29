@@ -3,20 +3,15 @@ module Users
     def index
       check_details_then do |user, edits_allowed|
         @records = user.albums.order(:created_at).where(hidden: false)
-        if !edits_allowed
-          @records = @records.where(listing: 0)
-        end
-        
+        @records = @records.where(listing: 0) if !edits_allowed
         @records = Pagination.paginate(@records, params[:page].to_i, 50, true)
         
         @label = 'Albums'
         @table = 'Album'
         @partial = partial_for_type(:albums)
         
-        if params[:format] == 'json'
-          return render_pagination_json @partial, @records
-        end
-        
+        return render_pagination_json @partial, @records if params[:format] == 'json'
+
         @crumb = {
           stack: [
             { link: '/users', title: 'Users' },

@@ -3,10 +3,7 @@ module Albums
 
     def create
       check_then_with(Album) do |album|
-        if !(video = Video.where(id: params[:videoId]).first)
-          return head :not_found
-        end
-
+        return head :not_found if !(video = Video.where(id: params[:videoId]).first)
         album.add_item(video)
       end
     end
@@ -24,10 +21,7 @@ module Albums
     end
 
     def index
-      if !(@album = Album.where(id: params[:id]).first)
-        return head :not_found
-      end
-
+      return head :not_found if !(@album = Album.where(id: params[:id]).first)
       @items = @album.ordered(@album.album_items.includes(:direct_user))
       @modifications_allowed = user_signed_in? && @album.owned_by(current_user)
 

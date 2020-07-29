@@ -14,13 +14,10 @@ module Users
           user.save
         end
         
-        if params[:format] == 'json'
-          return render json: {
-            result: "success"
-          }
-        end
-        
-        redirect_to action: :view, id: user.id
+        return redirect_to action: :view, id: user.id if params[:format] != 'json'
+        render json: {
+          result: "success"
+        }
       end
     end
   end

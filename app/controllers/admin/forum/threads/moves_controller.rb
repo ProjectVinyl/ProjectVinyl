@@ -3,14 +3,8 @@ module Admin
     module Threads
       class MovesController < BaseThreadsController
         def update
-          if !(@thread = CommentThread.where(id: params[:thread_id], owner_type: 'Board').first)
-            return head :not_found
-          end
-
-          if !(@board = Board.where(id: params[:item]).first)
-            return head :not_found
-          end
-
+          return head :not_found if !(@thread = CommentThread.where(id: params[:thread_id], owner_type: 'Board').first)
+          return head :not_found if !(@board = Board.where(id: params[:item]).first)
           @thread.owner_id = @board.id
           @thread.save
           render json: {

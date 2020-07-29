@@ -13,24 +13,13 @@ module Users
     end
     
     def check_then
-      if !user_signed_in?
-        return render_access_denied
-      end
-      
+      return render_access_denied if !user_signed_in?
+
       id = (params[:id] || params[:user_id]).to_i
       
-      if id == current_user.id
-        return yield(current_user)
-      end
-      
-      if !current_user.is_staff?
-        return render_access_denied
-      end
-      
-      if !(user = User.where(id: id).first)
-        return head :not_found
-      end
-      
+      return yield(current_user) if id == current_user.id
+      return render_access_denied if !current_user.is_staff?
+      return head :not_found if !(user = User.where(id: id).first)
       yield(user)
     end
   end

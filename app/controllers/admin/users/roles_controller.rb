@@ -2,9 +2,7 @@ module Admin
   module Users
     class RolesController < BaseAdminController
       def update
-        if !current_user.is_staff? || params[:user_id].to_i == current_user.id
-          return head :unauthorized
-        end
+        return head :unauthorized if !current_user.is_staff? || params[:user_id].to_i == current_user.id
 
         user = User.where(id: params[:user_id]).first
         role = Roleable.role_for(params[:id])

@@ -1,10 +1,8 @@
 module Admin
   class VideosController < Admin::Videos::BaseVideosAdminController
     def show
-      if !current_user.is_contributor?
-        return render_access_denied
-      end
-      
+      return render_access_denied if !current_user.is_contributor?
+
       if !(@video = Video.where(id: params[:id]).with_likes(current_user).first)
         return render_error(
           title: 'Nothing to see here!',
@@ -27,10 +25,7 @@ module Admin
 
     def destroy
       check_access_then do
-        if !(video = Video.where(id: params[:id]).first)
-          return flash[:error] = "Video not be found"
-        end
-
+        return flash[:error] = "Video not be found" if !(video = Video.where(id: params[:id]).first)
         video.destroy
         flash[:notice] = "1 Item(s) deleted successfully"
       end

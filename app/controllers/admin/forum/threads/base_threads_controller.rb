@@ -4,10 +4,7 @@ module Admin
       class BaseThreadsController < BaseAdminController
         protected
         def toggle_action
-          if !(thread = CommentThread.where(id: params[:thread_id]).first)
-            return head :not_found
-          end
-
+          return head :not_found if !(thread = CommentThread.where(id: params[:thread_id]).first)
           render json: {
             added: yield(thread)
           }
@@ -15,9 +12,7 @@ module Admin
         end
 
         def check_permission
-          if !user_signed_in? || !current_user.is_contributor?
-            head 401
-          end
+          head 401 if !user_signed_in? || !current_user.is_contributor?
         end
       end
     end

@@ -1,16 +1,12 @@
 module Forum
   class BoardsController < ApplicationController
     def show
-      if !(@board = Board.find_board(params[:id]))
-        return render_error_file 404, params[:format] == 'json'
-      end
-      
+      return render_error_file 404, params[:format] == 'json' if !(@board = Board.find_board(params[:id]))
+
       @threads = Pagination.paginate(@board.threads, params[:page].to_i, 50, false)
       @modifications_allowed = user_signed_in? && current_user.is_contributor?
       
-      if params[:format] == 'json'
-        render_pagination_json 'threads/thumb', @threads
-      end
+      render_pagination_json 'threads/thumb', @threads if params[:format] == 'json'
     end
     
     def index
@@ -19,9 +15,7 @@ module Forum
         title: "Forum"
       }
       @boards = Pagination.paginate(Board.sorted, params[:page].to_i, 10, false)
-      if params[:format] == 'json'
-        render_pagination_json 'thumb', @boards
-      end
+      render_pagination_json 'thumb', @boards if params[:format] == 'json'
     end
     
     def new
@@ -30,31 +24,21 @@ module Forum
     end
 
     def create
-      if !user_signed_in? && !current_user.is_contributor?
-        return redirect_to action: :index, controller: :welcome
-      end
+      return redirect_to action: :index, controller: :welcome if !user_signed_in? && !current_user.is_contributor?
       board = Board.create(params[:board].permit(:title, :short_name, :description))
 
       redirect_to action: :show, id: board.short_name
     end
     
     def edit
-      if !(@board = Board.where(id: params[:id]).first)
-        return head :not_found
-      end
-      
+      return head :not_found if !(@board = Board.where(id: params[:id]).first)
       render partial: 'new', locals: {url: forum_path(@board), method: :patch}
     end
     
     def update
-      if !user_signed_in? || !current_user.is_contributor?
-        return head :unauthorized
-      end
-      
-      if !(board = Board.where(id: params[:id]).first)
-        return head :not_found
-      end
-      
+      return head :unauthorized if !user_signed_in? || !current_user.is_contributor?
+      return head :not_found if !(board = Board.where(id: params[:id]).first)
+
       if params[:board]
         board.short_name = params[:board][:short_name]
         board.title = params[:board][:title]
@@ -79,9 +63,7 @@ module Forum
         return redirect_to action: :index, controller: :welcome
       end
       
-      if board = Board.where(id: params[:id]).first
-        board.destroy
-      end
+      board.destroy if board = Board.where(id: params[:id]).first
       
       redirect_to action: :index
     end

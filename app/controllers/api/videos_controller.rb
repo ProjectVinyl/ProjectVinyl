@@ -34,14 +34,9 @@ module Api
 
     def show
       video = Video.includes(:duplicate).where(id: params[:id]).first
+      video = video.duplicate if video && video.duplicate
 
-      if video && video.duplicate
-        video = video.duplicate
-      end
-
-      if !video || video.hidden
-        return fail :not_found, status: :not_found, message: "Not Found"
-      end
+      return fail :not_found, status: :not_found, message: "Not Found" if !video || video.hidden
 
       json = {
         success: true,

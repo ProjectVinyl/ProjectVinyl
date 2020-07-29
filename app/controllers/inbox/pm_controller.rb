@@ -27,23 +27,17 @@ module Inbox
     
     def new
       @thread = CommentThread.new
-      if params[:user]
-        @user = User.where(id: params[:user]).first
-      end
+      @user = User.where(id: params[:user]).first if params[:user]
       render partial: 'new'
     end
     
     def create
-      if !user_signed_in?
-        return redirect_to action: :index, controller: :welcome
-      end
-      
+      return redirect_to action: :index, controller: :welcome if !user_signed_in?
+
       recipients = User.get_as_recipients(params[:thread][:recipient])
-      
-      if recipients.length == 0
-        return redirect_to action: :index, controller: :welcome
-      end
-      
+
+      return redirect_to action: :index, controller: :welcome if recipients.length == 0
+
       redirect_to action: :show, id: Pm.send_pm(current_user, recipients, params[:thread][:title], params[:thread][:description]).id
     end
 

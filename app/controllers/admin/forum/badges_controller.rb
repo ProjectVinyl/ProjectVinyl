@@ -2,10 +2,8 @@ module Admin
   module Forum
     class BadgesController < BaseAdminController
       def index
-        if !current_user.is_contributor?
-          return render_access_denied
-        end
-        
+        return render_access_denied if !current_user.is_contributor?
+
         @crumb = {
           stack: [
             { link: '/admin', title: 'Admin' }
@@ -16,10 +14,8 @@ module Admin
       end
       
       def new
-        if !current_user.is_contributor?
-          return render_access_denied
-        end
-        
+        return render_access_denied if !current_user.is_contributor?
+
         @badge = Badge.new
         render partial: 'new'
       end
@@ -47,19 +43,13 @@ module Admin
       def check_first
         redirect_to action: :index
         
-        if !current_user.is_contributor?
-          return flash[:error] = "Error: Login required."
-        end
-        
+        return flash[:error] = "Error: Login required." if !current_user.is_contributor?
         yield
       end
       
       def check_then
         check_first do
-          if !(@badge = Badge.where(id: params[:id]).first)
-            return flash[:error] = "Error: Record not found."
-          end
-          
+          return flash[:error] = "Error: Record not found." if !(@badge = Badge.where(id: params[:id]).first)
           yield
         end
       end

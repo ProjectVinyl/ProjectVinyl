@@ -1,9 +1,7 @@
 module Admin
   class UsersController < BaseAdminController
     def show
-      if !current_user.is_contributor?
-        return render_access_denied
-      end
+      return render_access_denied if !current_user.is_contributor?
       @user = User.find(params[:id])
       @crumb = {
         stack: [

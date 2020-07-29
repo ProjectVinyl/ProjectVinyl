@@ -2,22 +2,16 @@ module Tags
   class ActionsController < ApplicationController
     def update
       toggle_action do |subscription|
-        if params[:id] == 'hide'
-          subscription.toggle_hidden
-        elsif params[:id] == 'spoiler'
-          subscription.toggle_spoilered
-        elsif params[:id] == 'watch'
-          subscription.toggle_watched
-        end
+        subscription.toggle_hidden if params[:id] == 'hide'
+        subscription.toggle_spoilered if params[:id] == 'spoiler'
+        subscription.toggle_watched if params[:id] == 'watch'
       end
     end
 
     private
     def toggle_action
-      if !user_signed_in?
-        return head 401
-      end
-      
+      return head 401 if !user_signed_in?
+
       if params[:tag_id].to_i.to_s != params[:tag_id]
         params[:tag_id] = Tag.where(name: params[:tag_id]).first.id
       end

@@ -10,10 +10,8 @@ module Admin
         )
       end
       
-      if !current_user.is_contributor? && current_user.id != @report.user_id
-        return render_access_denied
-      end
-      
+      return render_access_denied if !current_user.is_contributor? && current_user.id != @report.user_id
+
       @crumb = {
         stack: [
           { link: "/admin", title: "Admin" }
@@ -32,10 +30,7 @@ module Admin
     
     def index
       if !user_signed_in?
-        if params[:format] == 'json'
-          return head :unauthorized
-        end
-        
+        return head :unauthorized if params[:format] == 'json'
         return render_access_denied
       end
       
@@ -44,35 +39,25 @@ module Admin
       end
       
       @records = Report.includes(:reportable).open
-      
-      if @reportable
-        @records = @records.where(reportable: @reportable)
-      end
-      
+      @records = @records.where(reportable: @reportable) if @reportable
+
       render_listing_total @records, params[:page].to_i, 0, true, {
         is_admin: true, table: :reports, label: 'Report', scope: :admin
       }
     end
     
     def update
-      if !current_user.is_contributor?
-        return render_access_denied
-      end
-      
-      if !(@report = Report.where(id: params[:report_id]).first)
-        return head :not_found
-      end
-      
+      return render_access_denied if !current_user.is_contributor?
+      return head :not_found if !(@report = Report.where(id: params[:report_id]).first)
+
       render json: {
         status: @report.change_status(current_user, params[:state].to_sym)
       }
     end
     
     def destroy
-      if !current_user.is_contributor?
-        return render_access_denied
-      end
-      
+      return render_access_denied if !current_user.is_contributor?
+
       total = Report.open.count
       Report.open.change_status(:close)
       
@@ -82,10 +67,8 @@ module Admin
     end
     
     def new
-      if !(@reportable = Reportable.find(params))
-        return head :not_found
-      end
-      
+      return head :not_found if !(@reportable = Reportable.find(params))
+
       @report = {
         reportable: @reportable,
         report: Report.new
@@ -99,10 +82,7 @@ module Admin
     end
     
     def create
-      if !(reportable = Reportable.find(params))
-        return head :not_found
-      end
-      
+      return head :not_found if !(reportable = Reportable.find(params))
       reportable.report(anonymous_user_id, params)
       
       head :ok
