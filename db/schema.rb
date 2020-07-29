@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20200703135825) do
+ActiveRecord::Schema.define(version: 20200729130602) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -204,6 +204,17 @@ ActiveRecord::Schema.define(version: 20200703135825) do
     t.string "reportable_type"
   end
 
+  create_table "site_filters", force: :cascade do |t|
+    t.text "name"
+    t.text "description"
+    t.integer "user_id"
+    t.text "hide_filter"
+    t.text "spoiler_filter"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.boolean "preferred"
+  end
+
   create_table "site_notices", force: :cascade do |t|
     t.boolean "active", default: true
     t.string "message"
@@ -303,6 +314,7 @@ ActiveRecord::Schema.define(version: 20200703135825) do
     t.datetime "last_active_at"
     t.integer "default_listing", default: 0
     t.string "time_zone"
+    t.integer "site_filter_id", default: 0
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true

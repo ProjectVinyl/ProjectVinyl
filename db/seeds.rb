@@ -871,6 +871,14 @@ Badge.create([
   { id: 5, title: 'Tom', colour: 'grey', icon: 'tom', badge_type: 0 },
   { id: 6, title: 'Gem', colour: 'white', icon: 'gem', badge_type: 0 }
 ])
+#Default filters
+SiteFilter.create({
+  id: 1,
+  name: 'Everything',
+  description: 'The Default Everything',
+  hide_filter: '',
+  spoiler_filter: ''
+})
 
 # init Elasic-Search
 Video.__elasticsearch__.create_index!

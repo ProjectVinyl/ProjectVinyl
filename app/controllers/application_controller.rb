@@ -15,6 +15,10 @@ class ApplicationController < ActionController::Base
     devise_parameter_sanitizer.permit(:account_update) { |u| u.permit(:username, :email, :password, :password_confirmation, :current_password) }
   end
 
+  def current_filter
+    helpers.current_filter
+  end
+
   def anonymous_user_id
     user_signed_in? ? current_user.id : UserAnon.anon_id(session)
   end

@@ -35,6 +35,8 @@ class User < ApplicationRecord
         .order('watched_at')
   end
 
+  has_one :site_filter
+
   has_many :notification_receivers, dependent: :destroy
   has_many :notifications, dependent: :destroy
   has_many :thread_subscriptions, dependent: :destroy

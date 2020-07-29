@@ -1,3 +1,5 @@
+require 'projectvinyl/elasticsearch/activerecord/selector'
+
 class TagSubscription < ApplicationRecord
   belongs_to :user
   belongs_to :tag
@@ -14,11 +16,17 @@ class TagSubscription < ApplicationRecord
     update_users(false, dropped, preserved_recievers)
   end
 
-  def self.get_feed_items(user)
-    video_ids = VideoGenre.joins('INNER JOIN tag_subscriptions ON video_genres.tag_id = tag_subscriptions.tag_id')
-                          .where('tag_subscriptions.user_id = ? AND tag_subscriptions.watch = true AND tag_subscriptions.hide = false', user.id)
-                          .uniq.pluck(:video_id)
-    Video.unprivated.listable.with_tags.where('id IN (?)', video_ids).order(:updated_at, :created_at)
+  def self.get_feed_items(user, current_filter)
+    tag_ids = Tag.expand_implications(user.tag_subscriptions.where(watch: true, hide: false).pluck(:tag_id))
+    tags = Tag.actualise(Tag.where('id IN (?)', tag_ids).includes(:alias)).map(&:name).uniq
+
+    return current_filter.videos
+        .filter({ terms: { tags: tags } })
+        .filter({ terms: { listing: [0, 1] } })
+        .where(hidden: false, duplicate_id: 0)
+        .order(:updated_at, :created_at)
+        .records
+        .with_tags.with_likes(user)
   end
 
   def toggle_hidden

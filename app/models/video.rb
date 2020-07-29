@@ -48,6 +48,7 @@ class Video < ApplicationRecord
       indexes :source, type: 'keyword'
       indexes :description, type: 'keyword'
       indexes :audio_only, type: 'boolean'
+      indexes :featured, type: 'boolean'
       indexes :user_id, type: 'integer'
       indexes :length, type: 'integer'
       indexes :width, type: 'integer'
@@ -58,6 +59,8 @@ class Video < ApplicationRecord
       indexes :created_at, type: 'date'
       indexes :updated_at, type: 'date'
       indexes :hidden, type: 'boolean'
+      indexes :listing, type: 'integer'
+      indexes :duplicate_id, type: 'integer'
       indexes :tags, type: 'keyword'
       indexes :likes, type: 'keyword'
       indexes :dislikes, type: 'keyword'
@@ -67,7 +70,7 @@ class Video < ApplicationRecord
   def as_indexed_json(_options = {})
     read_media_attributes!
 
-    json = as_json(only: %w[user_id audio_only length width height heat score created_at updated_at hidden])
+    json = as_json(only: %w[user_id audio_only heat length width height score created_at updated_at hidden listing featured duplicate_id])
     json["title"] = title.downcase
     json["description"] = description.downcase
     json["source"] = source.downcase
@@ -75,6 +78,7 @@ class Video < ApplicationRecord
     json["likes"] = votes.up.pluck(:user_id)
     json["dislikes"] = votes.down.pluck(:user_id)
     json['size'] = file_size
+    json['heat'] = heat
 
     json
   end

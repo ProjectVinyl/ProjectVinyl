@@ -11,13 +11,13 @@ module ProjectVinyl
     class ElasticBuilder
       attr_reader :user_cache
 
-      def self.interpret_opset(opset, sender)
-        result = ElasticBuilder.new(nil)
+      def self.interpret_opset(opset, sender = nil)
+        result = ElasticBuilder.new
         result.take_all(opset, sender)
         result
       end
 
-      def initialize(parent)
+      def initialize(parent = nil)
         @parent = parent
         @siblings = []
         @groups = []

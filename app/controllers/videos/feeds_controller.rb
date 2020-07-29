@@ -6,7 +6,7 @@ module Videos
       current_user.feed_count = 0
       current_user.save
 
-      @records = TagSubscription.get_feed_items(current_user)
+      @records = TagSubscription.get_feed_items(current_user, current_filter)
 
       return render_pagination 'videos/thumb_h', @results, params[:page].to_i, 30, false if params[:format] == 'json'
 
