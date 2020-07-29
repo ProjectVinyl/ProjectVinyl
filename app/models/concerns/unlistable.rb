@@ -5,7 +5,7 @@ module Unlistable
     scope :privated, -> { where(listing: 2) }
     scope :unlisted, -> { where(listing: 1) }
     scope :listed, -> { where(hidden: false, listing: 0) }
-    
+
     scope :unprivated, -> { where('listing < 2') }
   end
 

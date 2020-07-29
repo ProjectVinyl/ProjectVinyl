@@ -27,10 +27,8 @@ class Video < ApplicationRecord
 
   after_save :dispatch_mentions, if: :will_save_change_to_description?
 
-  scope :listable, -> { where(hidden: false, duplicate_id: 0) }
-  scope :finder, -> { listable.includes(:tags) }
-  scope :popular, -> { listed.finder.order(:heat).reverse_order.limit(4) }
-
+  scope :unmerged, -> { where(duplicate_id: 0) }
+  scope :listable, -> { where(hidden: false).unmerged }
   scope :random, ->(limit) {
     selection = pluck(:id)
     return { ids: [], videos: Video.none } if selection.blank?
@@ -39,7 +37,7 @@ class Video < ApplicationRecord
 
     {
       ids: selected,
-      videos: listed.finder.where("#{self.table_name}.id IN (?)", selected)
+      videos: listable.listed.with_tags.where("#{self.table_name}.id IN (?)", selected)
     }
   }
 

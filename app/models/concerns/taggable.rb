@@ -1,6 +1,10 @@
 module Taggable
   extend ActiveSupport::Concern
 
+  included do
+    scope :with_tags, -> { includes(:tags) }
+  end
+
   def hidden_by?(user)
     user && user.hides(@tag_ids || (@tag_ids = tags.map(&:id)))
   end

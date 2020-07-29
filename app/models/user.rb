@@ -27,7 +27,13 @@ class User < ApplicationRecord
   has_many :tag_histories
 
   has_many :watch_histories
-  has_many :watched_videos, through: :watch_histories, source: 'video'
+
+  def watched_videos
+    Video
+      .joins("INNER JOIN watch_histories ON videos.id = watch_histories.video_id AND watch_histories.user_id = #{id}")
+        .select('videos.*, watch_histories.updated_at AS watched_at')
+        .order('watched_at')
+  end
 
   has_many :notification_receivers, dependent: :destroy
   has_many :notifications, dependent: :destroy

@@ -27,7 +27,7 @@ module Videos
         end
       end
 
-      yield(false, Video.listed.finder)
+      yield(false, Video.listed.listable.with_tags)
     end
 
     def load_album

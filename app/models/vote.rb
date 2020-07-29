@@ -6,16 +6,12 @@ class Vote < ApplicationRecord
   
   scope :up, -> { where(negative: false) }
   scope :down, -> { where(negative: true) }
-  
-  def self.posi(one)
-    one > 0 ? one : 0
-  end
-  
+
   def self.set_count(sender, negative, value)
     if negative
-      sender.downvotes = Vote.posi(sender.downvotes.to_i + value)
+      sender.downvotes = [0, sender.downvotes.to_i + value].max
     else
-      sender.upvotes = Vote.posi(sender.upvotes.to_i + value)
+      sender.upvotes = [0, sender.upvotes.to_i + value].max
     end
   end
   
@@ -28,7 +24,6 @@ class Vote < ApplicationRecord
       Vote.set_count(sender, negative, 1)
     elsif incr.to_i < 0
       vote.destroy
-      
       Vote.set_count(sender, negative, -1)
     elsif vote.negative != negative
       vote.negative = negative
