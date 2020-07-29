@@ -2,7 +2,7 @@ module Taggable
   extend ActiveSupport::Concern
 
   included do
-    scope :with_tags, -> { includes(:tags) }
+    scope :with_tags, -> { includes(:tags) } if respond_to? :scope
   end
 
   def hidden_by?(user)
