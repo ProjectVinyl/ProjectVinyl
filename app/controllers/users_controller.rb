@@ -12,13 +12,16 @@ class UsersController < Users::BaseUsersController
 
       @art = Pagination.paginate(@user.tag.videos.listable.with_likes(current_user), 0, 8, true) if @user.tag_id
 
-      @videos = edits_allowed ? @user.videos.unmerged : @user.videos.listable
-      @videos = Pagination.paginate(@videos.order(:created_at).with_tags.with_likes(current_user), 0, 8, true)
+      @videos = current_filter.videos.where(user_id: @user.id).where(duplicate_id: 0)
+      @videos = @videos.where(hidden: false) if edits_allowed
+      @videos = Pagination.paginate(@videos.records.with_tags.with_likes(current_user), 0, 8, true)
 
-      @watched = edits_allowed ? @user.watched_videos.unmerged : @user.watched_videos.listable
+      @watched = @user.watched_videos.unmerged
+      @watched = @watched.listable if edits_allowed
       @watched = Pagination.paginate(@watched.with_tags.with_likes(current_user), 0, 8, true)
 
-      @albums = edits_allowed ? @user.albums : @user.albums.where(hidden: false, listing: 0)
+      @albums = @user.albums
+      @albums = @albums.where(hidden: false, listing: 0) if edits_allowed
       @albums = Pagination.paginate(@albums.order(:created_at), 0, 8, true)
       @comments = Pagination.paginate(@user.comments.visible.decorated.with_likes(current_user).order(:created_at), 0, 3, true)
     end

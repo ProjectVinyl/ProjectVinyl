@@ -75,17 +75,51 @@ module ProjectVinyl
         @records ||= __execute.records
       end
 
+      def paginate(page_number, page_size, &block)
+        offset [0, page_number].max * page_size
+        limit page_size
+
+        if page_number < 0
+          page_number = 0
+          @search = @table.search(@initial)
+
+          return __paginate! page_size, page_number, block if @search.results.total <= page_size
+
+          page_number = (@search.results.total / page_size).floor
+          offset page_number * page_size
+        end
+
+        @search = @table.search(@initial)
+
+        if @search.count == 0 && @search.results.total > 0 && page_number > 0
+          page_number = (@search.results.total / page_size).floor
+          offset page_number * page_size
+          @search = @table.search(@initial, page_size)
+        end
+
+        __paginate! page_size, page_number, block
+      end
+
       private
+      def __paginate!(page_size, page_number, block)
+        recs = block ? block.call(records) : records
+        Pagination.new(recs, page_size, (@search.results.total / page_size).floor, page_number, false, @search.results.total)
+      end
+
       def __clear!
         @results = nil
         @records = nil
       end
 
+      def __ready!(result)
+        @execute_callback.call(self) if @execute_callback
+        result
+      end
+
       def __execute
         return @results if @results
         @results = @table.search(@initial)
-        @execute_callback.call(self) if @execute_callback
-        @results
+        __ready! @results
       end
 
       def __query

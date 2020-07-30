@@ -21,10 +21,16 @@ class TagsController < ApplicationController
 
     @modifications_allowed = user_signed_in? && current_user.is_contributor?
 
-    @total_videos = @tag.videos.length
-    @total_users = @tag.users.length
+    @total_videos = @tag.videos.count
+    @total_users = @tag.users.count
 
-    @videos = Pagination.paginate(current_filter.videos.must({ term: {tags: @tag.name } }).where(hidden: false).order(:created_at).records, 0, 8, true)
+    @videos = current_filter.videos
+        .must({ term: {tags: @tag.name } })
+        .where(hidden: false)
+        .order(:created_at)
+        .reverse_order
+        .paginate(0, 8) {|recs| recs.with_tags.with_likes(current_user) }
+
     @users = Pagination.paginate(@tag.users.order(:updated_at), 0, 8, true)
 
     @user = User.where(tag_id: @tag.id).first if @tag.tag_type_id == 1
