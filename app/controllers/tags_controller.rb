@@ -24,7 +24,7 @@ class TagsController < ApplicationController
     @total_videos = @tag.videos.length
     @total_users = @tag.users.length
 
-    @videos = Pagination.paginate(@tag.videos.where(hidden: false).order(:created_at), 0, 8, true)
+    @videos = Pagination.paginate(current_filter.videos.must({ term: {tags: @tag.name } }).where(hidden: false).order(:created_at).records, 0, 8, true)
     @users = Pagination.paginate(@tag.users.order(:updated_at), 0, 8, true)
 
     @user = User.where(tag_id: @tag.id).first if @tag.tag_type_id == 1
