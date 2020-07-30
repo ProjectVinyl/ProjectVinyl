@@ -1,5 +1,3 @@
-require 'projectvinyl/elasticsearch/activerecord/selector'
-
 class TagSubscription < ApplicationRecord
   belongs_to :user
   belongs_to :tag
@@ -62,7 +60,8 @@ class TagSubscription < ApplicationRecord
     if !tags.empty?
       User.joins('INNER JOIN tag_subscriptions ON user_id = users.id')
           .where("tag_subscriptions.tag_id IN (?) AND users.id NOT IN (?)#{op ? '' : ' AND feed_count > 0'}", tags, preserved_receivers)
-          .group('users.id').update_all("feed_count = feed_count #{op ? "+" : "-"} 1")
+          .group('users.id')
+          .update_all("feed_count = feed_count #{op ? "+" : "-"} 1")
     end
   end
   

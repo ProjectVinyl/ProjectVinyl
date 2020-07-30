@@ -1,13 +1,11 @@
-require 'projectvinyl/elasticsearch/opset'
-require 'projectvinyl/elasticsearch/index'
-require 'projectvinyl/elasticsearch/elastic_builder'
-require 'projectvinyl/elasticsearch/activerecord/selector'
+require 'projectvinyl/search/search'
+require 'projectvinyl/search/active_record'
 
 class SiteFilter < ApplicationRecord
   belongs_to :user
 
   def videos
-    selector = ProjectVinyl::ElasticSearch::ActiveRecord::Selector.new(Video) {|results| load_model_data results.ids}
+    selector = ProjectVinyl::Search::ActiveRecord.new(Video) {|results| load_model_data results.ids}
     selector.must_not(__elastic_hide_params) if __filter_present? hide_filter
     selector
   end
@@ -22,7 +20,7 @@ class SiteFilter < ApplicationRecord
   def video_spoilered?(video)
     if @pending_ids && @pending_ids.length > 0
       @spoilered_id_cache = [] if !@spoilered_id_cache
-      @spoilered_id_cache |= ProjectVinyl::ElasticSearch::ActiveRecord::Selector.new(Video)
+      @spoilered_id_cache |= ProjectVinyl::Search::ActiveRecord.new(Video)
         .filter(__elastic_spoiler_params)
         .filter({ terms: { id: @pending_ids } })
         .ids
@@ -45,9 +43,6 @@ class SiteFilter < ApplicationRecord
   end
 
   def __build_params(search_terms)
-    ProjectVinyl::ElasticSearch::ElasticBuilder.interpret_opset(
-      ProjectVinyl::ElasticSearch::Opset.new(search_terms, ProjectVinyl::ElasticSearch::Index::VIDEO_INDEX_PARAMS),
-      user
-    ).to_hash
+    ProjectVinyl::Search.interpret(search_terms, ProjectVinyl::Search::VIDEO_INDEX_PARAMS, user).to_hash
   end
 end

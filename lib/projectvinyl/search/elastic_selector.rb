@@ -1,15 +1,17 @@
-require 'projectvinyl/elasticsearch/opset'
-require 'projectvinyl/elasticsearch/elastic_builder'
+require 'projectvinyl/search/search'
+require 'projectvinyl/search/parser/lexer_error'
+require 'projectvinyl/search/parser/input_error'
 
 module ProjectVinyl
-  module ElasticSearch
+  module Search
     class ElasticSelector
       attr_accessor :ordering
       attr_reader :table
 
       def initialize(sender, search_terms, index_params)
         @user = sender
-        @opset = Opset.new(search_terms.downcase, index_params)
+        @index_params = index_params
+        @search_terms = search_terms.downcase
         @elastic = nil
         @exception = nil
         @lexer_error = 0
@@ -39,45 +41,6 @@ module ProjectVinyl
       def order_by(order)
         @ordering = [ { order => {order: 'asc' }} ]
         self
-      end
-
-      def add_required_params(query)
-        return query if @table != Video
-
-        if !query.key?(:bool)
-          query = { term: { hidden: false } }
-        else
-          if !query[:bool].key?(:must)
-            query[:bool][:must] = []
-          end
-
-          if !@elastic.uses(:hidden)
-            query[:bool][:must] << { term: { hidden: false } }
-          end
-
-          if !@search_after.nil?
-            query[:bool][:must] << {
-              range: {
-                created_at: {
-                  gte: @search_after
-                }
-              }
-            }
-          end
-        end
-
-        if @randomized
-          query = {
-            function_score: {
-              query: query,
-              functions: [
-                random_score: {}
-              ]
-            }
-          }
-        end
-
-        query
       end
 
       def following(obj)
@@ -119,11 +82,11 @@ module ProjectVinyl
         end
 
         self
-      rescue InputError => e
+      rescue Parser::InputError => e
         @exception = e
         @lexer_error = 1
         self
-      rescue LexerError => e
+      rescue Parser::LexerError => e
         @exception = e
         @lexer_error = 2
         self
@@ -137,10 +100,6 @@ module ProjectVinyl
         puts "Backtrace:\n\t#{e.backtrace[0..8].join("\n\t")}"
 
         self
-      end
-
-      def sanitize(arguments)
-        Tag.sanitize_sql(arguments)
       end
 
       def records
@@ -189,7 +148,7 @@ module ProjectVinyl
       end
 
       def __elastic!
-        ElasticBuilder.interpret_opset(@opset, @user)
+        Search.interpret(@search_terms, @index_params, @user)
       end
 
       def __elastic
@@ -199,6 +158,46 @@ module ProjectVinyl
 
       def tags
         Tag.get_tags(__elastic.tags)
+      end
+      
+      private
+      def add_required_params(query)
+        return query if @table != Video
+
+        if !query.key?(:bool)
+          query = { term: { hidden: false } }
+        else
+          if !query[:bool].key?(:must)
+            query[:bool][:must] = []
+          end
+
+          if !@elastic.uses(:hidden)
+            query[:bool][:must] << { term: { hidden: false } }
+          end
+
+          if !@search_after.nil?
+            query[:bool][:must] << {
+              range: {
+                created_at: {
+                  gte: @search_after
+                }
+              }
+            }
+          end
+        end
+
+        if @randomized
+          query = {
+            function_score: {
+              query: query,
+              functions: [
+                random_score: {}
+              ]
+            }
+          }
+        end
+
+        query
       end
     end
   end

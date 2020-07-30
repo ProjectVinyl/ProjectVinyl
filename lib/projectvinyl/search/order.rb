@@ -1,5 +1,5 @@
 module ProjectVinyl
-  module ElasticSearch
+  module Search
     class Order
       DATE = 0
       RATING = 1

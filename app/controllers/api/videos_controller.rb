@@ -1,5 +1,4 @@
-require 'projectvinyl/elasticsearch/index'
-require 'projectvinyl/elasticsearch/elastic_selector'
+require 'projectvinyl/search/search'
 
 module Api
   class VideosController < BaseApiController
@@ -10,8 +9,7 @@ module Api
       @limit = @limit > 100 ? 100 : @limit < 1 ? 1 : @limit
 
       if params[:q]
-        @videos = ProjectVinyl::ElasticSearch::ElasticSelector.new(current_user, params[:q], ProjectVinyl::ElasticSearch::Index::VIDEO_INDEX_PARAMS)
-        @videos.query(@page, @limit).exec
+        @videos = ProjectVinyl::Search.paginate(current_user, params[:q], ProjectVinyl::Search::VIDEO_INDEX_PARAMS).query(@page, @limit).exec
       else
         @videos = Pagination.paginate(Video.all.order(:id), @page, @limit, false)
       end
