@@ -5,7 +5,7 @@ module Indexable
 	
   included do
     include Elasticsearch::Model
-		
+
     after_commit(on: :create) do
 			distrust do
 				__elasticsearch__.index_document
@@ -21,7 +21,7 @@ module Indexable
 	
   def update_index(defer: true)
     distrust do
-      return IndexUpdateJob.perform_later(self.class.to_s, id) if defer
+      return UpdateIndexJob.perform_later(self.class.to_s, id) if defer
       __elasticsearch__.index_document
     end
   end
