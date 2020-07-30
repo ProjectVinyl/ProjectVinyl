@@ -7,23 +7,6 @@ module Videos
       yield(video)
     end
 
-    def by_type
-      if user_signed_in? && current_user.is_contributor?
-        if params[:merged]
-          @data = 'merged=1'
-          return yield(true, Video.where.not(duplicate_id: 0))
-        elsif params[:unlisted]
-          @data = 'unlisted=1'
-          return yield(true, Video.where(hidden: true))
-        elsif params[:unprocessed]
-          @data = 'unprocessed=1'
-          return yield(true, Video.where(processed: nil))
-        end
-      end
-
-      yield(false, Video.listed.listable.with_tags)
-    end
-
     def load_album
       if params[:list] || params[:q]
         if params[:q]

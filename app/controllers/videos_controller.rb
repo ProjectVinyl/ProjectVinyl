@@ -133,7 +133,7 @@ class VideosController < Videos::BaseVideosController
     end
 
     premier_time = nil
-    
+
     if params[:premier][:premier] == '1'
       begin
         premier_time = DateTime.parse(params[:premier][:date] + ' ' + params[:premier][:time])
@@ -187,7 +187,7 @@ class VideosController < Videos::BaseVideosController
     @video.video = data
     @video.set_thumbnail(cover, video[:time])
     @video.save
-    
+
     if @video.premiered_at != nil
       PremierVideoJob.set(wait_until: @video.premiered_at.in_time_zone).perform_later(@video.id)
     end
@@ -237,10 +237,28 @@ class VideosController < Videos::BaseVideosController
     read_search_params params
 
     by_type do |is_admin, results|
-      render_listing_total results.with_likes(current_user).order(:created_at), params[:page].to_i, 50, true, {
+      render_listing_total results.with_tags.with_likes(current_user), params[:page].to_i, 50, true, {
         is_admin: is_admin, table: 'videos', label: 'Video',
         template: 'pagination/omni_search'
       }
     end
+  end
+
+  private
+  def by_type
+    if user_signed_in? && current_user.is_contributor?
+      if params[:merged]
+        @data = 'merged=1'
+        return yield(true, current_filter.videos.where_not(duplicate_id: 0).order(:created_at).records)
+      elsif params[:unlisted]
+        @data = 'unlisted=1'
+        return yield(true, current_filter.videos.where(hidden: true).order(:created_at).records)
+      elsif params[:unprocessed]
+        @data = 'unprocessed=1'
+        return yield(true, Video.where(processed: nil).order(:created_at))
+      end
+    end
+
+    yield(false, current_filter.videos.where(hidden: false, listing: 0, duplicate_id: 0).order(:created_at).records)
   end
 end
