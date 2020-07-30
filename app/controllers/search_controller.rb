@@ -15,7 +15,7 @@ class SearchController < ApplicationController
     @results = current_filter.videos.sort(ProjectVinyl::Search.ordering('video', session, @orderby, @ascending))
 
     if !@query.strip.empty?
-      parsed_query = ProjectVinyl::Search.interpret(@query, ProjectVinyl::Search::VIDEO_INDEX_PARAMS, current_user)
+      parsed_query = current_filter.build_params(@query, current_user)
       @results = @results.must(parsed_query.to_hash).excepted(parsed_query)
       @tags = Tag.get_tags(parsed_query.tags)
     end

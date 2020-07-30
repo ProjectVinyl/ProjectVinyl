@@ -28,6 +28,10 @@ class SiteFilter < ApplicationRecord
     end
     video && @spoilered_id_cache && @spoilered_id_cache.include?(video.id)
   end
+  
+  def build_params(search_terms, current_user = nil)
+    ProjectVinyl::Search.interpret(search_terms, ProjectVinyl::Search::VIDEO_INDEX_PARAMS, current_user || user)
+  end
 
   private
   def __filter_present?(filter)
@@ -35,14 +39,10 @@ class SiteFilter < ApplicationRecord
   end
 
   def __elastic_hide_params
-    @hide_params || (@hide_params = __build_params(hide_filter))
+    @hide_params || (@hide_params = build_params(hide_filter).to_hash)
   end
 
   def __elastic_spoiler_params
-    @spoiler_params || (@spoiler_params = __build_params(spoiler_filter))
-  end
-
-  def __build_params(search_terms)
-    ProjectVinyl::Search.interpret(search_terms, ProjectVinyl::Search::VIDEO_INDEX_PARAMS, user).to_hash
+    @spoiler_params || (@spoiler_params = build_params(spoiler_filter).to_hash)
   end
 end

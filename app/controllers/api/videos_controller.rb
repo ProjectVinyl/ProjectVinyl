@@ -1,4 +1,5 @@
 require 'projectvinyl/search/search'
+require 'projectvinyl/search/active_record'
 
 module Api
   class VideosController < BaseApiController
@@ -9,7 +10,9 @@ module Api
       @limit = @limit > 100 ? 100 : @limit < 1 ? 1 : @limit
 
       if params[:q]
-        @videos = ProjectVinyl::Search.paginate(current_user, params[:q], ProjectVinyl::Search::VIDEO_INDEX_PARAMS).query(@page, @limit).exec
+        @videos = ProjectVinyl::Search::ActiveRecord.new(Video)
+          .must(ProjectVinyl::Search.interpret(params[:q], ProjectVinyl::Search::VIDEO_INDEX_PARAMS, current_user).to_hash)
+          .paginate(@page, @limit)
       else
         @videos = Pagination.paginate(Video.all.order(:id), @page, @limit, false)
       end

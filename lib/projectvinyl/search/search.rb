@@ -81,10 +81,6 @@ module ProjectVinyl
       Order.parse(type, session, order_by, ascending)
     end
 
-    def self.paginate(current_user, query, index_params)
-      ElasticSelector.new(current_user, query, index_params)
-    end
-
     def self.interpret(search_terms, index_params, sender = nil)
       Parser::ParsedQuery.new(search_terms, index_params, sender)
     end

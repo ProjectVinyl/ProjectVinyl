@@ -1,6 +1,7 @@
 require 'projectvinyl/search/search'
 
 module ProjectVinyl
+  # TODO: Pending removal.
   module Search
     class ElasticSelector
       attr_accessor :ordering

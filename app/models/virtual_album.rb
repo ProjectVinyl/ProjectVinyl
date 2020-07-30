@@ -1,10 +1,9 @@
-require 'projectvinyl/search/search'
-
 class VirtualAlbum < Album
-  def initialize(query, current, index)
+  def initialize(query, current, index, current_filter)
     @current = current
-    @index = index < 0 ? 0 : index
-    @offset = @index < 20 ? 0 : @index - 20
+    @filter = current_filter
+    @index = [0, index].max
+    @offset = [0, @index - 20].max
     @query = query.strip
 
     @items = []
@@ -86,12 +85,15 @@ class VirtualAlbum < Album
   end
 
   def fetch_items
-    ProjectVinyl::Search.paginate(nil, @query, ProjectVinyl::Search::VIDEO_INDEX_PARAMS).videos
-      .order_by(:created_at)
-      .query(0, @index + 5)
-      .following(current(nil))
+    @filter.videos
+      .must(@filter.build_params(@query).to_hash)
+      .must({
+        range: { created_at: { gte: current(nil) } }
+      })
+      .where(hidden: false, duplicate_id: 0, listing: 0)
+      .order(:created_at)
       .offset(@offset)
-      .exec
+      .limit(25)
       .records
   end
 

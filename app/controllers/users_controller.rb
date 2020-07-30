@@ -62,10 +62,12 @@ class UsersController < Users::BaseUsersController
 
   def index
     read_search_params params
-
     if filtered?
-      @results = ProjectVinyl::Search.paginate(current_user, @query, ProjectVinyl::Search::USER_INDEX_PARAMS)
-      @records = @results.order_by(order_field).query(@page, 50).exec
+      @records = ProjectVinyl::Search::ActiveRecord.new(User)
+        .must(ProjectVinyl::Search.interpret(@query, ProjectVinyl::Search::USER_INDEX_PARAMS, current_user).to_hash)
+        .order(order_field)
+      @records = @records.reverse_order if !@ascending
+      @records = @records.paginate(@page, 50)
     else
       @records = Pagination.paginate(User.all.order(order_field), @page, 50, !@ascending)
     end
