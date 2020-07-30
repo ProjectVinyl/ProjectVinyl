@@ -2,7 +2,7 @@
 	%h1.title.resize-target
 		Recently Watched
 		= surround '(', ')' do
-			= number_with_delimiter @watched.count
+			= number_with_delimiter @watched_count
 	%ul.horizontal.video-list#uploads
 		- if @watched.count > 0
 			= render partial: 'videos/thumb_h', collection: @watched.records

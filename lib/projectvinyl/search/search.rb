@@ -22,10 +22,14 @@ module ProjectVinyl
         audio: :audio_only,
         hidden: :hidden
       },
+      has: {
+        album: :albums
+      },
       fields: {
         title: :title,
         source: :source,
-        description: :description
+        description: :description,
+        mime_type: :mime
       },
       range_fields: {
         aspect_ratio: :aspect,
