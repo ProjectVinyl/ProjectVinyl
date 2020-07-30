@@ -52,6 +52,9 @@
 			%a.button.red{href: admin_reindex_path(id: :videos), data: {confirm: "", method: :put, title: "Reindex Videos"}}
 				= fw :refresh
 				Recreate Video Index
+			%a.button.red{href: admin_reindex_path(id: :tags), data: {confirm: "", method: :put, title: "Reindex Tags"}}
+				= fw :refresh
+				Recreate Tag Index
 			%a.button.green{href: admin_reindex_path(id: :users), data: {confirm: "", method: :put, title: "Reindex Users"}}
 				= fw :refresh
 				Recreate User Index

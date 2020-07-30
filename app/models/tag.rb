@@ -1,4 +1,9 @@
+require 'elasticsearch/model'
+
 class Tag < ApplicationRecord
+  include Elasticsearch::Model
+  include Indexable
+
   belongs_to :tag_type
   belongs_to :alias, class_name: "Tag", foreign_key: "alias_id"
 
@@ -17,6 +22,30 @@ class Tag < ApplicationRecord
   has_many :implying_tags, class_name: "TagImplication", foreign_key: "implied_id"
   has_many :implicators, through: :implying_tags, foreign_key: "tag_id"
   has_many :aliases, class_name: "Tag", foreign_key: "alias_id"
+
+  document_type 'tag'
+  settings index: { number_of_shards: 1 } do
+    mappings dynamic: 'false' do
+      indexes :name, type: 'keyword'
+      indexes :slug, type: 'keyword'
+      indexes :namespace, type: 'keyword'
+      indexes :aliases, type: 'keyword'
+      indexes :implying_tags, type: 'keyword'
+      indexes :implicators, type: 'keyword'
+      indexes :video_count, type: 'integer'
+      indexes :user_count, type: 'integer'
+      indexes :created_at, type: 'date'
+      indexes :updated_at, type: 'date'
+    end
+  end
+
+  def as_indexed_json(_options = {})
+    json = as_json(only: %w[name slug namespace video_count user_count created_at updated_at])
+    json["aliases"] = aliases.pluck(:name)
+    json["implying_tags"] = implying_tags.pluck(:name)
+    json["implicators"] = implicators.pluck(:name)
+    json
+  end
 
   def self.sanitize_sql(arguments)
     Tag.send :sanitize_sql_for_conditions, arguments

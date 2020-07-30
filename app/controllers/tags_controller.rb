@@ -2,7 +2,7 @@ class TagsController < ApplicationController
   include Searchable
 
   configure_ordering [:name]
-  
+
   def show
     name = params[:id].downcase
     if !(@tag = Tag.by_name_or_id(name).first)
@@ -42,14 +42,18 @@ class TagsController < ApplicationController
 
   def index
     read_search_params params
-    
+
     if filtered?
-      @records = Tag.includes(:videos, :tag_type).where('LOWER(name) LIKE ?', @query.downcase.gsub(/\*/, '%'))
+      @records = ProjectVinyl::Search::ActiveRecord.new(Tag)
+        .must(ProjectVinyl::Search.interpret(@query, ProjectVinyl::Search::TAG_INDEX_PARAMS, current_user).to_hash)
+        .order(order_field)
+      @records = @records.reverse_order if !@ascending
+      @records = @records.paginate(@page, 50){|recs| recs.includes(:videos, :tag_type)}
     else
-      @records = Tag.includes(:videos, :tag_type).where('alias_id IS NULL')
+      @records = Pagination.paginate(Tag.includes(:videos, :tag_type).where('alias_id IS NULL'), @page, 50, !@ascending)
     end
 
-    render_listing_total @records.order(order_field), @page, 100, !@ascending, {
+    render_paginated @records, {
       template: 'pagination/search', table: 'tags', label: 'Tag'
     }
   end
