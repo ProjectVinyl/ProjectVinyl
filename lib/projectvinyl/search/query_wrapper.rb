@@ -20,6 +20,8 @@ module ProjectVinyl
       def ids
         return [] if @exception
         @search.map(&:id).map(&:to_i)
+      rescue Elasticsearch::Transport::Transport::Errors::BadRequest => e
+        excepted! e, []
       rescue Faraday::ConnectionFailed => e
         excepted! e, []
       end
@@ -27,6 +29,8 @@ module ProjectVinyl
       def total
         return 0 if @exception
         @search.results.total
+      rescue Elasticsearch::Transport::Transport::Errors::BadRequest => e
+        excepted! e, 0
       rescue Faraday::ConnectionFailed => e
         excepted! e, 0
       end
@@ -34,6 +38,8 @@ module ProjectVinyl
       def count
         return 0 if @exception
         @search.count
+      rescue Elasticsearch::Transport::Transport::Errors::BadRequest => e
+        excepted! e, 0
       rescue Faraday::ConnectionFailed => e
         excepted! e, 0
       end

@@ -160,13 +160,8 @@ module ProjectVinyl
         if !query.key?(:bool)
           query = { term: { hidden: false } }
         else
-          if !query[:bool].key?(:must)
-            query[:bool][:must] = []
-          end
-
-          if !@elastic.uses(:hidden)
-            query[:bool][:must] << { term: { hidden: false } }
-          end
+          query[:bool][:must] = [] if !query[:bool].key?(:must)
+          query[:bool][:must] << { term: { hidden: false } } if !@elastic.uses(:hidden)
 
           if !@search_after.nil?
             query[:bool][:must] << {

@@ -62,18 +62,12 @@ module ProjectVinyl
       end
 
       def where(params)
-        params.keys.each do |key|
-          filter({ term: { key => params[key] } })
-        end
-
+        __parse_terms(params).each {|term| filter term }
         self
       end
 
       def where_not(params)
-        params.keys.each do |key|
-          must_not({ term: { key => params[key] } })
-        end
-
+        __parse_terms(params).each {|term| must_not term }
         self
       end
 
@@ -101,10 +95,10 @@ module ProjectVinyl
           size: @initial[:size],
           query: {
             function_score: {
-              query: @initial[:query],
-              functions: [
-                random_score: {}
-              ]
+              query: __query,
+              boost: 5,
+              random_score: {},
+              boost_mode: :replace
             }
           }
         })
@@ -140,6 +134,21 @@ module ProjectVinyl
       end
 
       private
+      def __parse_terms(params)
+        params.keys.map do |key|
+          value = params[key]
+          is_arr = [].is_a?(value.class)
+
+          if key == :id
+            value = [value] if !is_arr
+            { ids: { values: value} }
+          else
+            id = is_arr ? :terms : :term
+            { id => { key => value } }
+          end
+        end
+      end
+
       def __paginate!(page_size, page_number, block)
         recs = block ? block.call(records) : records
         __ready! Pagination.new(recs, page_size, (total / page_size).floor, page_number, total).excepted(self)
