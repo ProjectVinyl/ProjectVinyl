@@ -31,7 +31,7 @@ module Searchable
   end
 
   def order_field
-    configured_orderings[@order]
+    configured_orderings[@orderby]
   end
 
   def filtered?
