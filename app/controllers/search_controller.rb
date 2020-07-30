@@ -12,15 +12,19 @@ class SearchController < ApplicationController
     @partial = partial_for_type(:videos)
     @randomize = params[:format] != 'json' && params[:random] == 'y'
 
-    @results = ProjectVinyl::Search.paginate(current_user, @query, ProjectVinyl::Search::VIDEO_INDEX_PARAMS)
-    @results.ordering = ProjectVinyl::Search.ordering('video', session, @orderby, @ascending)
+    @results = current_filter.videos.sort(ProjectVinyl::Search.ordering('video', session, @orderby, @ascending))
 
-    if @randomize && @single = @results.randomized(1).exec.records.first
+    if !@query.strip.empty?
+      parsed_query = ProjectVinyl::Search.interpret(@query, ProjectVinyl::Search::VIDEO_INDEX_PARAMS, current_user)
+      @results = @results.must(parsed_query.to_hash).excepted(parsed_query)
+      @tags = Tag.get_tags(parsed_query.tags)
+    end
+
+    if @randomize && @single = @results.limit(1).random.first
       return redirect_to action: :show, controller: :videos, id: @single.id
     end
 
-    @results = @results.query(@page, 20).exec
-    @tags = @results.tags
+    @results = @results.paginate(@page, 20)
 
     return render_pagination_json @partial, @results if params[:format] == 'json'
 

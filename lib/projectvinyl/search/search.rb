@@ -1,4 +1,4 @@
-require 'projectvinyl/search/parser/query_parser'
+require 'projectvinyl/search/parser/parsed_query'
 require 'projectvinyl/search/parser/opset'
 require 'projectvinyl/search/parser/op'
 require 'projectvinyl/search/parser/index'
@@ -82,9 +82,7 @@ module ProjectVinyl
     end
 
     def self.interpret(search_terms, index_params, sender = nil)
-      result = Parser::QueryParser.new
-      result.take_all(Parser::Opset.new(search_terms, index_params), sender)
-      result
+      Parser::ParsedQuery.new(search_terms, index_params, sender)
     end
   end
 end

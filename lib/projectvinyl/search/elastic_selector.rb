@@ -1,6 +1,4 @@
 require 'projectvinyl/search/search'
-require 'projectvinyl/search/parser/lexer_error'
-require 'projectvinyl/search/parser/input_error'
 
 module ProjectVinyl
   module Search
@@ -14,7 +12,6 @@ module ProjectVinyl
         @search_terms = search_terms.downcase
         @elastic = nil
         @exception = nil
-        @lexer_error = 0
         @offset = 0
         @table = index_params.table
         @randomized = false
@@ -82,14 +79,6 @@ module ProjectVinyl
         end
 
         self
-      rescue Parser::InputError => e
-        @exception = e
-        @lexer_error = 1
-        self
-      rescue Parser::LexerError => e
-        @exception = e
-        @lexer_error = 2
-        self
       rescue Faraday::ConnectionFailed => e
         @exception = e
 
@@ -103,7 +92,7 @@ module ProjectVinyl
       end
 
       def records
-        return @table.none if @exception
+        return @table.none if exception
         return @search.records.includes(:tags).with_likes(@user) if @table == Video
         return @search.records.includes(:videos, :tag_type) if @table == Tag
         @search.records
@@ -111,16 +100,20 @@ module ProjectVinyl
 
       attr_reader :page
 
-      def error
-        @exception
+      def exception
+        @exception || __elastic.exception
+      end
+      
+      def exception_type
+        __elastic.exception_type
       end
 
       def lexer_error?
-        @lexer_error == 2
+        __elastic.lexer_error?
       end
 
       def input_error?
-        @lexer_error == 1
+        __elastic.input_error?
       end
 
       def page_offset_start

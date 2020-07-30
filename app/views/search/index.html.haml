@@ -1,4 +1,4 @@
 ﻿- title @query.length > 0 ? "Searching for #{@query}" : "Search"
 .page.full-width
-	= render @results.error ? 'warden_derpy' : 'results' do
+	= render @results.exception ? 'warden_derpy' : 'results' do
 		= render 'big_search'

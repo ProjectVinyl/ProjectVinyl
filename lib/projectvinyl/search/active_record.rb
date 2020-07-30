@@ -1,6 +1,11 @@
+require 'projectvinyl/search/exceptable'
+require 'projectvinyl/search/query_wrapper'
+
 module ProjectVinyl
   module Search
     class ActiveRecord
+      include Exceptable
+
       def initialize(table, &block)
         @execute_callback = block
         @table = table
@@ -12,10 +17,15 @@ module ProjectVinyl
       def order(*params)
         __clear!
         @sort_fields = params
-        @initial[:sort] = params.map do |field|
+        params = params.map do |field|
           { field => { order: @direction } }
         end
 
+        sort params
+      end
+
+      def sort(orderings)
+        @initial[:sort] = orderings
         self
       end
 
@@ -68,33 +78,62 @@ module ProjectVinyl
       end
 
       def ids
-        __execute.map(&:id).map(&:to_i)
+        __execute.ids
+      end
+
+      def total
+        __execute.total
+      end
+
+      def count
+        __execute.count
       end
 
       def records
+        @table.none if @exception
         @records ||= __execute.records
       end
 
+      def random
+        __clear!
+
+        @search = __execute!({
+          size: @initial[:size],
+          query: {
+            function_score: {
+              query: @initial[:query],
+              functions: [
+                random_score: {}
+              ]
+            }
+          }
+        })
+
+        records
+      end
+
       def paginate(page_number, page_size, &block)
+        __clear!
+
         offset [0, page_number].max * page_size
         limit page_size
 
         if page_number < 0
           page_number = 0
-          @search = @table.search(@initial)
+          @search = __execute! @initial
 
-          return __paginate! page_size, page_number, block if @search.results.total <= page_size
+          return __paginate! page_size, page_number, block if total <= page_size
 
-          page_number = (@search.results.total / page_size).floor
+          page_number = (total / page_size).floor
           offset page_number * page_size
         end
 
-        @search = @table.search(@initial)
+        @search = __execute! @initial
 
-        if @search.count == 0 && @search.results.total > 0 && page_number > 0
-          page_number = (@search.results.total / page_size).floor
+        if count == 0 && total > 0 && page_number > 0
+          page_number = (total / page_size).floor
           offset page_number * page_size
-          @search = @table.search(@initial, page_size)
+          @search = __execute! @initial
         end
 
         __paginate! page_size, page_number, block
@@ -103,11 +142,11 @@ module ProjectVinyl
       private
       def __paginate!(page_size, page_number, block)
         recs = block ? block.call(records) : records
-        Pagination.new(recs, page_size, (@search.results.total / page_size).floor, page_number, false, @search.results.total)
+        __ready! Pagination.new(recs, page_size, (total / page_size).floor, page_number, total).excepted(self)
       end
 
       def __clear!
-        @results = nil
+        @search = nil
         @records = nil
       end
 
@@ -116,10 +155,14 @@ module ProjectVinyl
         result
       end
 
+      def __execute!(params)
+        QueryWrapper.new(self, @table, params)
+      end
+
       def __execute
-        return @results if @results
-        @results = @table.search(@initial)
-        __ready! @results
+        return @search if @search
+        @search = __execute! @initial
+        __ready! @search
       end
 
       def __query
