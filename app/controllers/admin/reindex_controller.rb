@@ -8,7 +8,7 @@ module Admin
       key = params[:id]
       table_sym = (key || '').downcase.to_sym
 
-      return fail_fast "Error: Operation not supported." if !INDEXABLE_TABLES.includes?(table_sym)
+      return fail_fast "Error: Operation not supported." if !INDEXABLE_TABLES.include?(table_sym)
       return fail_fast "Error: Table #{table_sym} was not found or does not support that action." if !(table = table_sym.to_s.titlecase.constantize)
 
       if (record = params[key])
