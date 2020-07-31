@@ -64,7 +64,7 @@ module ProjectVinyl
       },
       has: {
         :alias => :aliases,
-        implies: :implying_tags,
+        implies: :implications,
         implied_by: :implicators
       },
       range_fields: {

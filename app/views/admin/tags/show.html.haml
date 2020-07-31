@@ -42,6 +42,9 @@
 				%td.field
 					= render layout: 'tags/editor', locals: { tags: @tag.implications } do
 						= f.text_area :tag_string
+			%tr
+				%td.label= f.label :index
+				%td.field= @tag.as_indexed_json
 			%tr.actions
 				%td.label
 				%td.field= f.submit "Save Changes", class: "green"

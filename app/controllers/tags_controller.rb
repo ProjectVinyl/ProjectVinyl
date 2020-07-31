@@ -1,3 +1,6 @@
+require 'projectvinyl/search/search'
+require 'projectvinyl/search/active_record'
+
 class TagsController < ApplicationController
   include Searchable
 

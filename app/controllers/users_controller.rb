@@ -1,4 +1,5 @@
 require 'projectvinyl/search/search'
+require 'projectvinyl/search/active_record'
 
 class UsersController < Users::BaseUsersController
   include Searchable

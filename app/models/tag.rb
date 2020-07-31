@@ -30,8 +30,8 @@ class Tag < ApplicationRecord
       indexes :slug, type: 'keyword'
       indexes :namespace, type: 'keyword'
       indexes :aliases, type: 'keyword'
-      indexes :implying_tags, type: 'keyword'
       indexes :implicators, type: 'keyword'
+      indexes :implications, type: 'keyword'
       indexes :video_count, type: 'integer'
       indexes :user_count, type: 'integer'
       indexes :created_at, type: 'date'
@@ -40,10 +40,12 @@ class Tag < ApplicationRecord
   end
 
   def as_indexed_json(_options = {})
-    json = as_json(only: %w[name slug namespace video_count user_count created_at updated_at])
-    json["aliases"] = aliases.pluck(:name)
-    json["implying_tags"] = implying_tags.pluck(:name)
-    json["implicators"] = implicators.pluck(:name)
+    json = as_json(only: %w[name slug namespace video_count user_count])
+    json['slug'] = slug
+    json['namespace'] = namespace
+    json['aliases'] = aliases.pluck(:name)
+    json['implicators'] = implicators.pluck(:name)
+    json['implications'] = implications.pluck(:name)
     json
   end
 
@@ -65,16 +67,8 @@ class Tag < ApplicationRecord
     Tag.actualise(tags).map {|tag| tag.to_json(sender)}
   end
 
-  def actual
-    alias_id ? (self.alias || self) : self
-  end
-
-  def actual_id
-    alias_id || id
-  end
-
   def self.tag_string(tags)
-    tags.map(&:get_as_string).join(',')
+    tags.map(&:name).join(',')
   end
 
   def self.by_name_or_id(name)
@@ -111,9 +105,7 @@ class Tag < ApplicationRecord
   end
 
   def self.get_tags(names)
-    if names.nil? || (names = names.uniq).empty?
-      return []
-    end
+    return [] if names.nil? || (names = names.uniq).empty?
     Tag.actualise(Tag.includes(:alias).where('name IN (?) OR short_name IN (?)', names, names))
   end
 
@@ -252,23 +244,16 @@ class Tag < ApplicationRecord
     [added, removed]
   end
 
+  def actual
+    alias_id ? (self.alias || self) : self
+  end
+
+  def actual_id
+    alias_id || id
+  end
+
   def members
     video_count
-  end
-
-  def get_as_string
-    name
-  end
-
-  def suffex
-    if has_type
-      prefix = tag_type.prefix
-      if name.index(prefix) == 0
-        return name.sub("#{prefix}:", '')
-      end
-    end
-
-    name
   end
 
   def tag_string
@@ -279,44 +264,46 @@ class Tag < ApplicationRecord
     tag_type_id && tag_type_id > 0
   end
 
+  # Namespace inherited from the tag's type if present
   def namespace
-    return has_type ? tag_type.prefix : ''
+    has_type ? tag_type.prefix : ''
   end
 
+  # Name without namespace
   def slug
-    return name.sub(namespace + ':', '')
+    name.sub(namespace + ':', '')
   end
 
+  # Same as the slug
+  def suffex
+    slug
+  end
+
+  # Last part of the name without the prefix
   def identifier
-    return name.split(':')[1] if name.index(':')
-    name
+    name.index(':') ? name.split(':')[1] : name
   end
 
   def link
-    if StringsHelper.valid_string?(short_name)
-      return "/tags/#{short_name}"
-    end
-    if StringsHelper.valid_string?(name)
-      set_name(name)
-      return "/tags/#{name}"
-    end
+    return "/tags/#{short_name}" if StringsHelper.valid_string?(short_name)
+    return "/tags/#{id}" if !StringsHelper.valid_string?(name)
 
-    "/tags/#{id}"
+    set_name(name)
+    "/tags/#{name}"    
   end
 
   def set_name(name)
     name = Tag.sanitize_name(name)
+
     if has_type
       name = name.sub(tag_type.prefix + ':', '').delete(':')
-      if !tag_type.hidden
-        name = tag_type.prefix + ":" + name
-      end
+      name = tag_type.prefix + ":" + name if !tag_type.hidden
     else
       name = name.delete(':')
     end
-    if Tag.where('name = ? AND NOT id = ?', name, id).count > 0
-      return false
-    end
+
+    return false if Tag.where('name = ? AND NOT id = ?', name, id).count > 0
+
     self.short_name = PathHelper.url_safe_for_tags(name)
     self.name = name
     save
@@ -371,7 +358,7 @@ class Tag < ApplicationRecord
 
   def to_json(sender=nil)
     {
-      name: get_as_string,
+      name: name,
       namespace: namespace,
       members: members,
       link: short_name,
@@ -381,18 +368,11 @@ class Tag < ApplicationRecord
   end
 
   def flags(sender=nil)
-    if sender.nil?
-      return ''
-    end
+    return '' if sender.nil?
 
     answer = [sender.watches(self) ? '-' : '+']
-    if sender.hides([id])
-      answer << 'H'
-    end
-    if sender.spoilers([id])
-      answer << 'S'
-    end
-
+    answer << 'H' if sender.hides([id])
+    answer << 'S' if sender.spoilers([id])
     answer.join(' ')
   end
 end
