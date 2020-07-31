@@ -1,0 +1,37 @@
+.banner-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  flex-direction: row-reverse;
+
+  --overlay-color: rgba(255,255,255,0.8);
+  --overlay-height: 54px;
+  --overlay-rows: 1;
+  --overlay-gap: 10px;
+  --overlay-rounding: 10px;
+}
+.banner-overlay > * {
+  z-index: 10;
+  background: var(--overlay-color);
+  padding: 10px;
+  height: calc(var(--overlay-height) / var(--overlay-rows));
+  border-radius: 0 0 var(--overlay-rounding) var(--overlay-rounding);
+}
+.banner-overlay > * + * {
+  margin-right: var(--overlay-gap);
+}
+.banner-overlay > .sharp-right {
+  border-radius: 0 0 0 var(--overlay-rounding);
+}
+.banner-overlay > .sharp-left {
+  border-radius: 0 0 var(--overlay-rounding) 0;
+}
+
+.banner-overlay > :hover,
+.banner-overlay > :focus,
+.banner-overlay > .hover,
+.banner-overlay > .focus {
+  --overlay-color: var(--header-overlay-fill) !important;
+}

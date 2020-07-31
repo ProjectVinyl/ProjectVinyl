@@ -1,7 +1,8 @@
 @media(max-width: 700px) {
   nav {
     position: fixed !important;
-    top: 60px;
+    z-index: 9 !important;
+    top: 0;
     left: -400px;
     bottom: 0;
     width: 400px !important;
@@ -47,11 +48,5 @@
   
   nav .sparkline {
     display: none !important;
-  }
-}
-
-@media(max-width: 360px) {
-  nav {
-    top: 120px;
   }
 }

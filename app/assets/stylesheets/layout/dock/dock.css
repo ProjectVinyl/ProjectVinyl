@@ -14,24 +14,17 @@
     left: 0;
   }
 
-  .dock-holder #dock-toggle {
-    display: block !important;
-  }
-  
   .dock-holder .no-dock {
     display: none !important;
   }
-  
-  .dock-holder.open #dock-toggle i {
-    transform: rotate(180deg);
-  }
-  
+
   .dock-holder .dock-shadow {
     z-index: 2;
     display: block;
     visibility: hidden;
     position: fixed;
-    top: 60px;
+    z-index: 8;
+    top: 0;
     left: 0;
     right: 0;
     bottom: 0;

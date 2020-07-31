@@ -1,13 +1,6 @@
 #dock-toggle {
-  float: left;
-  border-radius: 0 0 10px 0;
   cursor: pointer;
   display: none;
-  line-height: 33px;
-}
-
-#dock-toggle:hover {
-  background: #fff;
 }
 
 #dock-toggle i {
@@ -15,8 +8,12 @@
   transition: transform 0.25s linear
 }
 
-@media(max-width: 570px) {
-  #dock-toggle {
-    border-radius: 0;
+@media(max-width: 700px) {
+  .dock-holder #dock-toggle {
+    display: block !important;
+  }
+
+  .dock-holder.open #dock-toggle i {
+    transform: rotate(180deg);
   }
 }

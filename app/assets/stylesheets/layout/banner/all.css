@@ -1,7 +1,7 @@
 /*
- *= require ./banners
- *= require ./overlays
- *= require ./login
- *= require ./search
+ *= require ./banner
+ *= require ./banner_overlay
+ *= require ./banner_overlay_mobile
+ *= require ./overlay_pieces/all
  */
  

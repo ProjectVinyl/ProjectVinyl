@@ -1,0 +1,21 @@
+#login .username {
+  text-decoration: none;
+  line-height: 33px;
+  float: left;
+  margin-right: 20px;
+  font-size: 1.25em;
+  max-width: 300px;
+  max-height: 33px;
+  overflow: hidden;
+}
+
+#login .drop-down::before {
+  content: '';
+  border: solid 10px var(--content-background);
+  border-bottom: none;
+  display: block;
+  width: 0;
+  height: 0;
+  border-radius: 15px;
+  margin-top: -10px;
+}

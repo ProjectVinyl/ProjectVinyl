@@ -19,7 +19,6 @@
 }
 
 .layer-foreground.body {
-  --banner-height: 200px;
   margin-top: var(--banner-height);
   padding-top: 20px;
   background: inherit;

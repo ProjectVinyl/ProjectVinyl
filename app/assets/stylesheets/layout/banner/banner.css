@@ -1,6 +1,10 @@
+body {
+  --banner-height: 200px;
+}
+
 #banner.layer-background {
   display: block;
-  height: 200px;
+  height: var(--banner-height);
 }
 
 #banner .home-link {

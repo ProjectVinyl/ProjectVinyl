@@ -1,0 +1,26 @@
+@media(max-width:800px) {
+  .banner-overlay {
+    --overlay-rounding: 0;
+    --overlay-gap: 0;
+  }
+  .banner-overlay #search {
+    flex-grow: 1;
+  }
+}
+@media(max-width: 646px) {
+  body {
+    --banner-height: 120px !important;
+  }
+
+  .banner-overlay #filters {
+    flex-grow: 1;
+  }
+  .banner-overlay #search {
+    top: 100%;
+    position: absolute;
+    width: 100%;
+  }
+  .banner-overlay > div:not(#search) {
+    background: #fff;
+  }
+}
