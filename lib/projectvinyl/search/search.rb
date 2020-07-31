@@ -2,7 +2,6 @@ require 'projectvinyl/search/parser/parsed_query'
 require 'projectvinyl/search/parser/opset'
 require 'projectvinyl/search/parser/op'
 require 'projectvinyl/search/parser/index'
-require 'projectvinyl/search/elastic_selector'
 require 'projectvinyl/search/order'
 
 module ProjectVinyl
