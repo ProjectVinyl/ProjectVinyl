@@ -65,8 +65,8 @@ class User < ApplicationRecord
   belongs_to :tag
 
   scope :by_name_or_id, ->(id) { where('id::text = ? OR username = ?', id, id).first }
-
   scope :with_badges, -> { includes(user_badges: [:badge]) }
+  scope :find_matching_users, ->(term) { where('username LIKE ?', "#{term}%").order(:username).limit(10).map(&:to_json) }
 
   validates :username, presence: true, uniqueness: {
     case_sensitive: false
@@ -96,19 +96,10 @@ class User < ApplicationRecord
     json
   end
 
-  def self.find_matching_users(term)
-    User.jsons(User.where('username LIKE ?', "#{term}%")
-        .order(:username).limit(10))
-  end
-
   def self.get_as_recipients(users_string)
     users_string = users_string.split(',').map {|a| a.strip}
 
     User.where('username IN (?)', users_string.uniq)
-  end
-
-  def self.jsons(users)
-    users.map(&:to_json)
   end
 
   def to_json
@@ -236,10 +227,6 @@ class User < ApplicationRecord
   def watches(tag)
     @watched_tag_ids ||= watched_tags_actual.pluck_actual_ids
     !([tag.id] & @watched_tag_ids).empty?
-  end
-
-  def set_tags(tags)
-    Tag.load_tags(tags, self) if tags
   end
 
   def default_name

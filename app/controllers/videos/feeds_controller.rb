@@ -25,9 +25,9 @@ module Videos
     def update
       return redirect_to action: "edit" if !user_signed_in?
 
-      watched = Tag.get_tag_ids(Tag.split_tag_string(params[:user][:watched_tag_string]))
-      hidden = Tag.get_tag_ids(Tag.split_tag_string(params[:user][:hidden_tag_string])) - watched
-      spoilered = Tag.get_tag_ids(Tag.split_tag_string(params[:user][:spoilered_tag_string])) - hidden
+      watched = Tag.split_to_ids(params[:user][:watched_tag_string])
+      hidden = Tag.split_to_ids(params[:user][:hidden_tag_string]) - watched
+      spoilered = Tag.split_to_ids(params[:user][:spoilered_tag_string]) - hidden
 
       entries = make_entries(hidden, true, false, false)\
               | make_entries(spoilered, false, false, true)\

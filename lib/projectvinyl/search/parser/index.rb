@@ -12,6 +12,27 @@ module ProjectVinyl
           @default_func = block
         end
 
+        def recognises?(slurp)
+          return true if @params.key?(:hash) && slurp[0] == '#'
+
+          slugs = slurp.split(/[<>:]/)
+          return false if slugs.length < 2
+
+          prefix = slugs[0]
+          separator = slurp[prefix.length...(prefix.length + 1)].to_sym
+          suffex = slurp[(prefix.length + 1)...slurp.length].strip.to_sym
+
+          prefix = prefix.to_sym
+
+          return true if pre_recognises_prefix?(:my, prefix, suffex)
+          return true if pre_recognises_prefix?(:is, prefix, suffex)
+          return true if post_recognises_prefix?(:by, prefix)
+          return true if Op::CHAR_OP_LOOKUP.key?(separator) && post_recognises_prefix?(:range_fields, prefix)
+          return true if post_recognises_prefix?(:has, prefix)
+          return true if post_recognises_prefix?(:fields, prefix)
+          false
+        end
+
         def slurp_tags(opset, slurp)
           slurp = slurp.strip
 
@@ -54,9 +75,17 @@ module ProjectVinyl
           Op::HAS
         end
 
+        def pre_recognises_prefix?(group, prefix, suffex)
+          prefix == group && @params.key?(group) && @params[group].key?(suffex)
+        end
+
+        def post_recognises_prefix?(group, prefix)
+          @params.key?(group) && @params[group].key?(prefix)
+        end
+
         def check_pre(opset, group, prefix, suffex, value)
           suffex = suffex.to_sym
-          if prefix == group && @params.key?(group) && @params[group].key?(suffex)
+          if pre_recognises_prefix?(group, prefix, suffex)
             opset.push @params[group][suffex] # the field to check
             opset.push value                  # the value
             true
@@ -64,7 +93,7 @@ module ProjectVinyl
         end
 
         def check_post(opset, group, prefix, suffex)
-          if @params.key?(group) && @params[group].key?(prefix)
+          if post_recognises_prefix?(group, prefix)
             opset.push @params[group][prefix] # the field to check
             opset.push suffex                 # the value to check against
             true

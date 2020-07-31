@@ -1,2 +1,8 @@
-= render 'view/multi_input', display: true, placeholder: "Tag list...", path: find_tags_path, type: 'tags', tags: tags ? tags.includes(:tag_type) : [], data: Tag.jsons(tags || [], current_user) do
+= render 'view/multi_input',
+	display: true,
+	placeholder: "Tag list...",
+	path: find_tags_path,
+	type: 'tags',
+	tags: (tags ? tags.includes(:tag_type) : []),
+	data: (tags ? tags.jsons(current_user) : []) do
 		= yield

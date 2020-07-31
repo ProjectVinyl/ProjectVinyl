@@ -178,10 +178,10 @@ class VideosController < Videos::BaseVideosController
       if @video.source && !@video.source.blank?
         TagHistory.record_source_changes(@video, current_user.id)
       else
-        video[:tag_string] = Tag.append_tag_strings(video[:tag_string], 'source needed')
+        video[:tag_string] = (video[:tag_string].split(',') + 'source needed').uniq.join(',')
       end
 
-      Tag.load_tags(video[:tag_string], @video)
+      @video.tag_string = video[:tag_string]
     end
 
     @video.video = data

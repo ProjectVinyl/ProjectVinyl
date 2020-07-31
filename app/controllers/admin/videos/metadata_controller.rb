@@ -21,7 +21,7 @@ module Admin
 
           if meta[:artist]
             if (artist_tag = Tag.sanitize_name(meta[:artist][:name])) && !artist_tag.empty?
-              artist_tag = Tag.add_tag('artist:' + artist_tag, video)
+              artist_tag = video.add_tag('artist:' + artist_tag)
 
               if !artist_tag.nil?
                 TagHistory.record_tag_changes(artist_tag[0], artist_tag[1], video.id)

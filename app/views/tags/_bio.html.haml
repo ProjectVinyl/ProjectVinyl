@@ -18,7 +18,7 @@
 					Associated User:
 					%span.user-link{"data-id": @user.id}
 						%a{href: @user.link}= @user.username
-		%span.content.bio= @tag.get_description
+		%span.content.bio= @tag.description || 'No description Provided'
 	- if @implies.length > 0
 		%div
 			%h2 Implies

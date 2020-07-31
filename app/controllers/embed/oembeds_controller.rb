@@ -46,7 +46,7 @@ module Embed
         width: width,
         height: height,
         title: @video.title,
-        tags: Tag.actualise(@video.tags.includes(:alias)).map(&:name)
+        tags: @video.tags.actual_names
       }
 
       return render xml: @result, root: 'oembed' if params[:format] == 'xml'

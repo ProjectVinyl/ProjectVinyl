@@ -151,7 +151,7 @@ module ProjectVinyl
       end
 
       def tags
-        Tag.get_tags(__elastic.tags)
+        Tag.by_names(__elastic.tags)
       end
       
       private

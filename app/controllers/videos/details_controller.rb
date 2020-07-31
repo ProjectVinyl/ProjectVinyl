@@ -2,7 +2,7 @@ module Videos
   class DetailsController < BaseVideosController
     def update
       check_then do |video|
-        if changes = Tag.load_tags(params[:tags], video)
+        if (changes = video.set_tag_string(params[:tags]))
           TagHistory.record_tag_changes(changes[0], changes[1], video.id, current_user.id)
         end
 

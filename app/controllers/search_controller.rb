@@ -17,7 +17,7 @@ class SearchController < ApplicationController
     if !@query.strip.empty?
       parsed_query = current_filter.build_params(@query, current_user)
       @results = @results.must(parsed_query.to_hash).excepted(parsed_query)
-      @tags = Tag.get_tags(parsed_query.tags)
+      @tags = Tag.by_names(parsed_query.tags)
     end
 
     if @randomize && @single = @results.limit(1).random.first

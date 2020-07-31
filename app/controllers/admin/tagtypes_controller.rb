@@ -30,7 +30,7 @@ module Admin
       if error = tagtype.set_metadata(params[:tag_type][:prefix], params[:tag_type][:hidden] == '1')
         flash[:error] = error
       end
-      Tag.load_tags(params[:tag_type][:tag_string], tagtype)
+      tagtype.tag_string = params[:tag_type][:tag_string]
     end
 
     def new
@@ -60,7 +60,7 @@ module Admin
       end
       
       tagtype = TagType.create(prefix: prefix, hidden: params[:tag_type][:hidden] == '1')
-      Tag.load_tags(params[:tag_type][:tag_string], tagtype)
+      tagtype.tag_string = params[:tag_type][:tag_string]
       tagtype.find_and_assign
     end
 

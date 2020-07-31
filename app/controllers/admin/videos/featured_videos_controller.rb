@@ -10,7 +10,7 @@ module Admin
 
           if video.featured
             video.save
-            Tag.add_tag('featured video', video)
+            video.add_tag('featured video')
           end
         end
       end

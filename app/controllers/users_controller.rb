@@ -48,7 +48,7 @@ class UsersController < Users::BaseUsersController
       user.description = input[:description]
       user.bio = input[:bio]
       user.default_listing = (input[:default_listing] || 0).to_i
-      user.set_tags(input[:tag_string])
+      user.tag_string = input[:tag_string] if input[:tag_string]
       user.time_zone = input[:time_zone]
       user.save
 

@@ -1,6 +1,6 @@
 class TagType < ApplicationRecord
   include Taggable
-  
+
   has_many :tag_type_implications, dependent: :destroy
   has_many :tags, through: :tag_type_implications, source: :implied
   has_many :referrers, class_name: "Tag"
@@ -37,10 +37,25 @@ class TagType < ApplicationRecord
 
   def pick_up_tags(ids)
     Tag.where('id IN (?)', ids).update_all('video_count = video_count + 1')
-    ids = ids.map do |o|
-      { implied_id: o, tag_type_id: self.id }
-    end
-    TagTypeImplication.create(ids)
+    TagTypeImplication.create(__ids_to_type_imps ids)
     nil
+  end
+
+  def create_implications!(tag)
+    TagImplication.create(__ids_to_imps(tag.id, imps)) if (imps = unique_implication_ids).length
+    imps
+  end
+
+  def unique_implication_ids
+    tag_type_implications.unique_tag_ids
+  end
+
+  private
+  def __ids_to_type_imps(imps)
+    imps.map{|implied_id| { implied_id: implied_id, tag_type_id: id } }
+  end
+
+  def __ids_to_imps(tag_id, imps)
+    imps.map{|implied_id| { tag_id: tag_id, implied_id: implied_id } }
   end
 end

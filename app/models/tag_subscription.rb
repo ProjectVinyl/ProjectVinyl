@@ -2,6 +2,8 @@ class TagSubscription < ApplicationRecord
   belongs_to :user
   belongs_to :tag
 
+  scope :expanded_tags, -> { TagImplication.expand(pluck(:tag_id)) }
+
   def self.notify_subscribers(gained, dropped, preserved)
     return if gained.empty? && dropped.empty?
     if !preserved.empty?
@@ -15,8 +17,8 @@ class TagSubscription < ApplicationRecord
   end
 
   def self.get_feed_items(user, current_filter)
-    tag_ids = Tag.expand_implications(user.tag_subscriptions.where(watch: true, hide: false).pluck(:tag_id))
-    tags = Tag.actualise(Tag.where('id IN (?)', tag_ids).includes(:alias)).map(&:name).uniq
+    tag_ids = user.tag_subscriptions.where(watch: true, hide: false).expanded_tags
+    tags = Tag.where('id IN (?)', tag_ids).actual_names
 
     return current_filter.videos
         .filter({ terms: { tags: tags } })
@@ -54,7 +56,7 @@ class TagSubscription < ApplicationRecord
     self.toggled
     self.watch
   end
-  
+
   protected
   def self.update_users(op, tags, preserved_receivers)
     if !tags.empty?
@@ -64,7 +66,7 @@ class TagSubscription < ApplicationRecord
           .update_all("feed_count = feed_count #{op ? "+" : "-"} 1")
     end
   end
-  
+
   def toggled
     if self.watch == self.spoiler && self.spoiler == self.hide && self.hide == false
       return self.destroy

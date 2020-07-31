@@ -49,209 +49,41 @@ class Tag < ApplicationRecord
     json
   end
 
-  def self.sanitize_sql(arguments)
-    Tag.send :sanitize_sql_for_conditions, arguments
-  end
-
-  def self.sanitize_name(name)
-    StringsHelper.check_and_trunk(name, "").downcase.strip.gsub(/[;,]/, '')
-  end
-
   scope :pluck_actual_ids, -> { (pluck(:id, :alias_id).map {|t| t[1] || t[0] }).uniq }
-
-  def self.actualise(tags)
-    tags.map(&:actual).uniq
-  end
-
-  def self.jsons(tags, sender=nil)
-    Tag.actualise(tags).map {|tag| tag.to_json(sender)}
-  end
-
-  def self.tag_string(tags)
-    tags.map(&:name).join(',')
-  end
-
-  def self.by_name_or_id(name)
-    name.blank? ? Tag.none : Tag.order(:video_count, :user_count).reverse_order.where('name = ? OR id::text = ? OR short_name = ?', name, name, name)
-  end
-
-  def self.find_matching_tags(name, sender=nil)
-    name = name.downcase
-    Tag.jsons(
-      Tag.includes(:tag_type, :alias)
-          .where('name LIKE ? OR short_name LIKE ?', "#{name}%", "#{PathHelper.url_safe_for_tags(name)}%")
-          .order(:video_count, :user_count)
-          .limit(10),
-      sender)
-  end
-
-  def self.split_tag_string(tag_string)
-    return [] if tag_string.blank?
-    tag_string = tag_string.downcase.split(/,|;/).uniq
-    tag_string.select do |i|
-      i.index('uploader:') != 0 && i.index('title:') != 0
-    end
-  end
-
-  def self.append_tag_strings(left, right)
-    left = left.split(',')
-    left << right
-    left.uniq.join(',')
-  end
-
-  def self.get_tag_ids(names)
+  scope :jsons, ->(sender=nil) { actualise.uniq.map {|t| t.to_json(sender)} }
+  scope :split_to_ids, ->(tag_string) {
+    names = Tag.split_tag_string(tag_string)
     return [] if names.blank?
-    Tag.where('name IN (?)', names.uniq).pluck_actual_ids
-  end
+    where('name IN (?)', names.uniq).pluck_actual_ids
+  }
 
-  def self.get_tags(names)
+  scope :actualise, -> { includes(:alias).map(&:actual).uniq }
+  scope :actual_names, -> { actualise.map(&:name).uniq }
+  scope :by_names, ->(names) {
     return [] if names.nil? || (names = names.uniq).empty?
-    Tag.actualise(Tag.includes(:alias).where('name IN (?) OR short_name IN (?)', names, names))
-  end
-
-  def self.get_name_mappings(names)
-    return {} if names.blank?
-    result = {}
-    Tag.where('name IN (?)', names.uniq).pluck(:name, :id, :alias_id).each do |t|
-      result[t[0]] = t[2] || t[1]
-    end
-    result
-  end
-
-  def self.get_tag_ids_with_create(names)
-    return [] if names.blank?
-    result = []
-    existing_names = []
-    Tag.where('name IN (?)', names).find_each do |tag|
-      result << (tag.alias_id || tag.id)
-      existing_names << tag.name
-    end
-    new_tags = names - existing_names
-    new_tags.each do |name|
-      name = name.strip
-      next unless name.present? && name.index('uploader:') != 0 && name.index('title:') != 0
-      if !name.index(':').nil?
-        type = TagType.where(prefix: name.split(':')[0]).first
-      end
-      tag = Tag.make(name: name, description: '', tag_type_id: type ? type.id : 0, video_count: 0, user_count: 0)
-      if tag.short_name.nil?
-        if type
-          name = name.sub(name.split(':')[0], '').strip
-          result |= Tag.load_implications_from_type(tag.id, type)
-        end
-        tag.set_name(name)
-      end
-      result << tag.id
-    end
-    result.uniq
-  end
-
-  # We don't use Tag.create any more because that can create duplicates
-  def self.make(hash)
-    values = Tag.hash_to_values(hash)
-    sql = 'INSERT INTO tags (' + values[:keys].join(',') + ') VALUES (?) ON CONFLICT (name) DO UPDATE SET name = excluded.name;'
-    sql = Tag.sanitize_sql([sql, values[:values]])
-    ApplicationRecord.connection.execute(sql)
-    Tag.where(name: hash[:name]).first
-  end
-
-  def self.hash_to_values(hash)
-    values = []
-    keys = hash.map do |key, value|
-      values << value
-      key
-    end
-    { values: values, keys: keys }
-  end
-
-  def self.load_implications_from_type(id, type)
-    implications = type.tag_type_implications.pluck(:implied_id).uniq
-    if implications.length
-      items = implications.map do |implied_id|
-        { tag_id: id, implied_id: implied_id }
-      end
-      TagImplication.create(items)
-    end
-    implications
-  end
-
-  def self.expand_implications(tag_ids)
-    tag_ids | TagImplication.where('tag_id IN (?)', tag_ids).pluck(:implied_id)
-  end
-
-  def self.relation_to_ids(tags)
-    tags.pluck_actual_ids
-  end
-
-  def self.send_pickup_event(receiver, tags)
-    tags = tags.uniq
-    receiver = receiver.pick_up_tags(tags)
-    if !receiver.nil?
-      map = tags.map do |o|
-        { tag_id: o, o_tag_id: o }
-      end
-      receiver.create(map)
-    end
-  end
-
-  def self.add_tag(tag_name, sender)
-    existing = get_updated_tag_set(sender)
-    loaded = Tag.get_tag_ids_with_create([tag_name]) - existing
-    return Tag.load_dif(loaded, [], existing, sender) if !loaded.empty?
-    nil
-  end
-
-  def self.load_tags(tag_string, sender)
-    existing = get_updated_tag_set(sender)
-    loaded = Tag.get_tag_ids_with_create(Tag.split_tag_string(tag_string))
-    common = existing & loaded
-    if existing.length != loaded.length || existing.length != common.length
-      return Tag.load_dif(loaded - common, existing - common, existing, sender)
-    end
-    nil
-  end
-
-  def self.get_updated_tag_set(sender)
-    aliased_from = []
-    aliased_to = []
-    existing = sender.tags.pluck(:id, :alias_id).map do |t|
-      if t[1]
-        aliased_from << t[0]
-        aliased_to << t[1]
-      end
-      (t[1] || t[0])
-    end
-    if !aliased_from.empty?
-      sender.drop_tags(aliased_from)
-      aliased_to -= existing
-      Tag.send_pickup_event(sender, aliased_to)
-    end
-    existing
-  end
-
-  def self.load_dif(added, removed, existing, sender)
-    added = Tag.expand_implications(added) if !added.empty?
-    removed -= added if !added.empty? && !removed.empty?
-    sender.drop_tags(removed) if !removed.empty?
-    if !added.empty?
-      added -= existing
-      Tag.send_pickup_event(sender, added)
-    end
-    sender.tags_changed
-    TagSubscription.notify_subscribers(added, removed, existing - removed)
-    sender.save
-
-    [added, removed]
-  end
+    where('name IN (?) OR short_name IN (?)', names, names).actualise
+  }
+  scope :by_name_or_id, ->(name) {
+    return none if name.blank?
+    order(:video_count, :user_count)
+        .reverse_order
+        .where('name = ? OR id::text = ? OR short_name = ?', name, name, name)
+  }
+  scope :find_matching_tags, ->(name, sender=nil) {
+    name = name.downcase
+    includes(:tag_type, :alias)
+        .where('name LIKE ? OR short_name LIKE ?', "#{name}%", "#{PathHelper.url_safe_for_tags(name)}%")
+        .order(:video_count, :user_count)
+        .limit(10)
+        .jsons(sender)
+  }
 
   def actual
     alias_id ? (self.alias || self) : self
   end
 
-  def actual_id
-    alias_id || id
-  end
-
+  # The total number of entities carrying this tag.
+  # Only videos for now.
   def members
     video_count
   end
@@ -284,12 +116,17 @@ class Tag < ApplicationRecord
     name.index(':') ? name.split(':')[1] : name
   end
 
+  # The alias tag name. Required for the forms
+  def alias_tag
+    self.alias_id && self.alias ? self.alias.name : ""
+  end
+
   def link
     return "/tags/#{short_name}" if StringsHelper.valid_string?(short_name)
     return "/tags/#{id}" if !StringsHelper.valid_string?(name)
 
     set_name(name)
-    "/tags/#{name}"    
+    "/tags/#{name}"
   end
 
   def set_name(name)
@@ -306,23 +143,12 @@ class Tag < ApplicationRecord
 
     self.short_name = PathHelper.url_safe_for_tags(name)
     self.name = name
-    save
-    Tag.reindex_for(videos, users)
-    self
-  end
-
-  def get_description
-    description || "No description Provided"
-  end
-
-  def self.reindex_for(videos, users)
-    videos.each {|v| v.update_index(defer: false) }
-    users.each {|u| u.update_index(defer: false) }
+    __reindex!
   end
 
   def set_alias(tag)
     tag_o = tag.actual
-    tag = tag.actual_id
+    tag = tag_o.id
 
     if tag && tag != id
       self.alias_id = tag
@@ -331,29 +157,20 @@ class Tag < ApplicationRecord
       User.where(tag_id: id).update_all(tag_id: tag)
       ArtistGenre.where(o_tag_id: id).update_all(tag_id: tag)
       VideoGenre.where(o_tag_id: id).update_all(tag_id: tag)
-      Tag.reindex_for(Video.joins(:video_genres).where('video_genres.o_tag_id = ?', id), User.joins(:artist_genres).where('artist_genres.o_tag_id = ?', id))
 
       self.video_count = self.user_count = 0
-      tag_o.recount
+      tag_o.__reindex!
+      __reindex!
     end
   end
 
   def unset_alias
-    if alias_id
-      ArtistGenre.where(o_tag_id: id).update_all('tag_id = o_tag_id')
-      VideoGenre.where(o_tag_id: id).update_all('tag_id = o_tag_id')
-      self.alias_id = nil
-      self.recount
-    end
-  end
+    return if !alias_id
 
-  def alias_tag
-    self.alias_id && self.alias ? self.alias.name : ""
-  end
-
-  def recount
-    self.video_count = VideoGenre.where(tag_id: id).count
-    self.user_count = ArtistGenre.where(tag_id: id).count
+    ArtistGenre.where(o_tag_id: id).update_all('tag_id = o_tag_id')
+    VideoGenre.where(o_tag_id: id).update_all('tag_id = o_tag_id')
+    self.alias_id = nil
+    __reindex!
   end
 
   def to_json(sender=nil)
@@ -374,5 +191,79 @@ class Tag < ApplicationRecord
     answer << 'H' if sender.hides([id])
     answer << 'S' if sender.spoilers([id])
     answer.join(' ')
+  end
+
+  def self.create_from_names(names)
+    return [] if names.blank?
+    result = []
+    existing_names = []
+
+    Tag.where('name IN (?)', names).find_each do |tag|
+      result << (tag.alias_id || tag.id)
+      existing_names << tag.name
+    end
+
+    new_tags = names - existing_names
+    new_tags.each do |name|
+      name = name.strip
+      next unless name.present? && name.index('uploader:') != 0 && name.index('title:') != 0
+
+      type = TagType.where(prefix: name.split(':')[0]).first if !name.index(':').nil?
+      tag = __make(name: name, description: '', tag_type_id: type ? type.id : 0, video_count: 0, user_count: 0)
+
+      if tag.short_name.nil?
+        if type
+          name = name.sub(name.split(':')[0], '').strip
+          result |= type.create_implications! tag
+        end
+
+        tag.set_name(name)
+      end
+      result << tag.id
+    end
+
+    result.uniq
+  end
+
+  def self.sanitize_name(name)
+    StringsHelper.check_and_trunk(name, "").downcase.strip.gsub(/[;,]/, '')
+  end
+
+  def self.tag_string(tags)
+    tags.map(&:name).join(',')
+  end
+
+  def self.split_tag_string(tag_string)
+    return [] if tag_string.blank?
+    tag_string.downcase.split(/,|;/).uniq.select{|i| !Tag.name_illegal?(i) }
+  end
+
+  def self.name_illegal?(tag_name)
+    ProjectVinyl::Search::USER_INDEX_PARAMS.recognises?(tag_name) || ProjectVinyl::Search::VIDEO_INDEX_PARAMS.recognises?(tag_name)
+  end
+
+  # protected
+  # We don't use Tag.create any more because that can create duplicates
+  def self.__make(hash)
+    sql = 'INSERT INTO tags (' + hash.keys.join(',') + ') VALUES (?) ON CONFLICT (name) DO UPDATE SET name = excluded.name;'
+    sql = Tag.send :sanitize_sql_for_conditions, [sql, hash.values]
+    ApplicationRecord.connection.execute(sql)
+    where(name: hash[:name]).first
+  end
+
+  private
+  def __recount!
+    self.video_count = video_genres.count
+    self.user_count = artist_genres.count
+  end
+
+  def __reindex!
+    __recount!
+
+    save
+    videos.each {|v| v.update_index(defer: false) }
+    users.each {|u| u.update_index(defer: false) }
+    update_index
+    self
   end
 end
