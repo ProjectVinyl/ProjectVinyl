@@ -1,6 +1,6 @@
 module Admin
   class ReindexController < BaseAdminController
-    INDEXABLE_TABLES = [:videos, :tags, :users].freeze
+    INDEXABLE_TABLES = [:video, :tag, :user].freeze
 
     def update
       return fail_fast "Access Denied: You do not have the required permissions." if !current_user.is_contributor?
