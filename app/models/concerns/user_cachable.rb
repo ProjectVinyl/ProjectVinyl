@@ -11,14 +11,11 @@ module UserCachable
   end
 
   def user_role_suffex(user)
-    if user != true && user
-      return '/user_role_' + user.role.to_s
-    end
-
+    return '/user_role_' + user.role.to_s if user != true && user
     ''
   end
 
-  def cache_key_with_user(user)
-    cache_key_with_version + user_role_suffex(user)
+  def cache_key_with_user(user, *rest)
+    "#{cache_key_with_version}_#{user_role_suffex(user)}_#{rest.join('_')}"
   end
 end
