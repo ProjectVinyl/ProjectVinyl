@@ -47,7 +47,7 @@
 							%span.icon= fa :warning
 							%span.label Report
 		- else
-			%span.like{title: "Likes", class: comment.liked? && "liked"}
+			%span.button.like{title: "Likes", class: comment.liked? && "liked"}
 				- if comment.score && comment.score > 0
 					= comment.score
 				= fa :thumbs_up
