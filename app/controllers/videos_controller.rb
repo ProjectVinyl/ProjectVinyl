@@ -1,3 +1,5 @@
+require 'projectvinyl/search/search'
+
 class VideosController < Videos::BaseVideosController
   include Searchable
 
@@ -234,31 +236,38 @@ class VideosController < Videos::BaseVideosController
   end
 
   def index
-    read_search_params params
-
-    by_type do |is_admin, results|
-      render_listing_total results.with_tags.with_likes(current_user), params[:page].to_i, 50, true, {
-        is_admin: is_admin, table: 'videos', label: 'Video',
-        template: 'pagination/omni_search'
-      }
-    end
+    return render_pagination_json partial_for_type(:videos), find_records if params[:format] == 'json'
+    render_paginated find_records, {
+      is_admin: @is_admin,
+      table: 'videos',
+      label: 'Video',
+      template: 'pagination/omni_search'
+    }
   end
 
   private
-  def by_type
-    if user_signed_in? && current_user.is_contributor?
-      if params[:merged]
-        @data = 'merged=1'
-        return yield(true, current_filter.videos.where_not(duplicate_id: 0).order(:created_at).records)
-      elsif params[:unlisted]
-        @data = 'unlisted=1'
-        return yield(true, current_filter.videos.where(hidden: true).order(:created_at).records)
-      elsif params[:unprocessed]
-        @data = 'unprocessed=1'
-        return yield(true, Video.where(processed: nil).order(:created_at))
-      end
-    end
+  def find_records
+    read_search_params params
+    return aha!(current_filter.videos.where_not(duplicate_id: 0), :merged) if params[:merged]
+    return aha!(current_filter.videos.where(hidden: true), :unlisted) if params[:unlisted]
+    return aha!(current_filter.videos.where(hidden: false, listing: 0, duplicate_id: 0), nil) if !params[:unprocessed]
 
-    yield(false, current_filter.videos.where(hidden: false, listing: 0, duplicate_id: 0).order(:created_at).records)
+    configure_pars :unprocessed
+    ordering = ProjectVinyl::Search::Order.fields('video', session, @orderby)
+    Pagination.paginate(Video.where(processed: nil)
+      .order(ordering)
+      .with_tags
+      .with_likes(current_user), @page, 20, !@ascending)
+  end
+
+  def aha!(records, key)
+    configure_pars key
+    records.sort(ProjectVinyl::Search.ordering('video', session, @orderby, @ascending))
+           .paginate(@page, 20){|recs| recs.with_tags.with_likes(current_user)}
+  end
+
+  def configure_pars(key)
+    @is_admin = !key.nil?
+    @data = "#{key}=1" if @is_admin
   end
 end

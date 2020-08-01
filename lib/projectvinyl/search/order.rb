@@ -32,12 +32,10 @@ module ProjectVinyl
 
       def self.parse(type, session, ordering, ascending)
         direction = ascending ? 'asc' : 'desc'
-        __parse(type, session, ordering).map do |i|
-          { i => { order: direction } }
-        end
+        fields(type, session, ordering).map{|i| { i => { order: direction } } }
       end
 
-      def self.__parse(type, session, ordering)
+      def self.fields(type, session, ordering)
         if (lookup = ORDER_LOOKUP[type.to_sym])
           return random_order(session, lookup[ordering]) if ordering == RANDOM
           return lookup[ordering]
