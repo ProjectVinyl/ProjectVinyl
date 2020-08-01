@@ -67,8 +67,6 @@ Rails.application.routes.draw do
   # Users #
   resources :users, only: [:index, :update, :show] do
     scope module: :users do
-      resources :uploads, only: [:index]
-      resources :videos, only: [:index]
       resources :albums, only: [:index]
       resources :comments, only: [:index]
 
