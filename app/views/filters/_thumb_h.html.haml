@@ -1,0 +1,25 @@
+%li.generic.thumb.bio>
+	%a.thumb{href: filter_path(thumb_h)}
+		.title
+			= thumb_h.name
+			- if thumb_h.id == default_filter.id
+				= surround '(', ')' do
+					default
+	- if thumb_h.id == current_filter.id
+		.notice This is your current filter
+	.details
+		Maintained by
+		- if thumb_h.user
+			%a.user-link{href: thumb_h.user.link}=thumb_h.user.username
+		- else
+			Staff
+	.details
+		No description provided
+	.actions
+		- if thumb_h.id != current_filter.id
+			%a.button.green Use
+		- if user_signed_in?
+			%a.button.green(title="Modify"){href: edit_filter_path(thumb_h)}= fa :pencil
+			%a.button.blue(title="Duplicate"){href: new_filter_path(copy: thumb_h)}= fa :copy
+			- if thumb_h.can_modify?(current_user)
+				%a.button.red.right(title="Delete" data-method="delete" data-confirm="Are you sure?" data-title="Delete Filter"){href: filter_path(thumb_h)}= fa :trash_o

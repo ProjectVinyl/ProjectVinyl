@@ -4,6 +4,10 @@ require 'projectvinyl/search/active_record'
 class SiteFilter < ApplicationRecord
   belongs_to :user
 
+  def can_modify?(user)
+    user && !preferred && (user.id == user_id || user.is_staff?)
+  end
+
   def videos
     selector = ProjectVinyl::Search::ActiveRecord.new(Video) {|results| load_model_data results.ids}
     selector.must_not(__elastic_hide_params) if __filter_present? hide_filter
@@ -28,7 +32,7 @@ class SiteFilter < ApplicationRecord
     end
     video && @spoilered_id_cache && @spoilered_id_cache.include?(video.id)
   end
-  
+
   def build_params(search_terms, current_user = nil)
     ProjectVinyl::Search.interpret(search_terms, ProjectVinyl::Search::VIDEO_INDEX_PARAMS, current_user || user)
   end

@@ -106,6 +106,9 @@ Rails.application.routes.draw do
 
     get ':id', action: :show, controller: :tags, id: /.*/ #*/
   end
+  
+  # Filters #
+  resources :filters
 
   # Forums #
   resources :forum, only: [:index, :new, :create, :edit, :update, :destroy], controller: :boards, module: :forum

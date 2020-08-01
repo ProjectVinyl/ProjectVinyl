@@ -1,0 +1,30 @@
+- title "Filters"
+- if user_signed_in?
+	.actions.space-fix
+		%a.button.action.mobile-frindly.green{href: new_filter_path}
+			= fa :plus
+			%span Create Filter
+	%hr
+	%section.page.full-width
+		%h1
+			Your Filters
+			= surround '(', ')' do
+				= number_with_delimiter @user_filters.count
+		.notice These filters are only visible to you.
+		= render layout: 'pagination/paginated', locals: { type: :filter, paginated: @user_filters, id: :user_filters } do
+			%section
+				%ul.horizontal.filter-list#user-filters
+					= render partial: 'filters/thumb_h', collection: @user_filters.records
+
+%section.page.full-width
+	%h1
+		Public Filters
+		= surround '(', ')' do
+			= number_with_delimiter @global_filters.count
+	.notice
+		These filters are maintained by Project Vinyl.
+		They're available for anyone to use.
+	= render layout: 'pagination/paginated', locals: { type: :filter, paginated: @global_filters, id: :global_filters } do
+		%section
+			%ul.horizontal.filter-list#global-filters
+				= render partial: 'filters/thumb_h', collection: @global_filters.records

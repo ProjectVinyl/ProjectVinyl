@@ -13,4 +13,4 @@
 			%optgroup(label="Global Filter")
 				- @global_filters.each do |i|
 					%option{value: i.id}=i.name
-	%a(title="Site Filters")= fa :filter
+	%a(title="Site Filters"){href: filters_path }= fa :filter

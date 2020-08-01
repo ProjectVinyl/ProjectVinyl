@@ -26,8 +26,6 @@ class User < ApplicationRecord
   has_many :videos
   has_many :tag_histories
 
-  has_many :watch_histories
-
   def watched_videos
     Video
       .joins("INNER JOIN watch_histories ON videos.id = watch_histories.video_id AND watch_histories.user_id = #{id}")
@@ -37,9 +35,11 @@ class User < ApplicationRecord
 
   has_one :site_filter
 
+  has_many :watch_histories, dependent: :destroy
   has_many :notification_receivers, dependent: :destroy
   has_many :notifications, dependent: :destroy
   has_many :thread_subscriptions, dependent: :destroy
+  has_many :site_filters, dependent: :destroy
 
   has_many :all_albums, class_name: "Album", foreign_key: "user_id", dependent: :destroy
 

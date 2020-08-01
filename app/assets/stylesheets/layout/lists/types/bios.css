@@ -21,7 +21,8 @@ li.bio, li.genre {
 }
 
 li.bio.virtual {
-  opacity: 0;
+  border: none;
+  box-shadow: none;
 }
 
 .bio a, .genre a {
