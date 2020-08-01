@@ -3,7 +3,7 @@
 		Uploads
 		= surround '(', ')' do
 			= number_with_delimiter @videos.count
-		%a.right{href: user_uploads_path(@user)}
+		%a.right{href: search_index_path(q: "uploaded_by:#{@user.id}")}
 			View All
 			= fa :chevron_right
 	%ul.horizontal.video-list#uploads
