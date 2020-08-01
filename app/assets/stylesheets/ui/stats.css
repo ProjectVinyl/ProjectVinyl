@@ -1,8 +1,5 @@
 .stats {
 	padding: 5px;
-  --highlight-color: rgba(120,120,260,0.2);
-  --bar-fill: #aa0;
-  --bar-fill-hover: #066;
 }
 .stats + .stats {
 	border-top: solid 1px #eee;
@@ -13,9 +10,9 @@
 .stat-bar {
 	position: relative;
   height: 30px;
-  border: solid 1px #aaa;
-  border-right: solid 1px #ccc;
-  border-top: solid 1px #ccc;
+  border: solid 1px var(--bar-border-base-color);
+  border-right: solid 1px var(--bar-border-color);
+  border-top: solid 1px var(--bar-border-color);
   overflow: hidden;
   border-radius: 3px;
   box-shadow: inset 0 0 2px rgba(0, 0, 0, 0.2);

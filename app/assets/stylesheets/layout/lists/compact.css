@@ -196,7 +196,7 @@
   position: absolute;
   width: calc(100%);
   height: 100%;
-  background: #fff;
+  background: var(--content-background);
   max-width: 100%;
   padding: 0 !important;
 }
@@ -208,7 +208,7 @@
 .playlist .controls a:hover,
 .listing.compact .row.selected,
 .listing.compact .row:hover {
-  background: rgb(250,250,250);
+  background: var(--header-overlay-element-focus-fill);
 }
 
 .listing.compact a, .thread-list .items .thread a {

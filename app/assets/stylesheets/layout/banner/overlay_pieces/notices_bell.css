@@ -11,7 +11,7 @@
   top: -3px;
   left: 60%;
   display: block;
-  background: #f00;
+  background: var(--notification-bobber-fill);
   box-shadow: 2px 2px 3px rgba(0, 0, 0, 0.1);
   color: var(--content-background);
   border-radius: 4px;

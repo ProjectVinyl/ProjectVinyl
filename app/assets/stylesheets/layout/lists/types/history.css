@@ -1,10 +1,4 @@
 
-.item.history {
-  --positive-tint: rgba(0,255,0,0.3);
-  --negative-tint: rgba(255,0,0,0.3);
-  --neutral-tint: rgba(0,0,255,0.3);
-}
-
 .items.history .added, .items.history .removed, .items.history .altered {
   border-left: solid 1px var(--block-border-color);
   border-right: solid 1px var(--block-border-color);

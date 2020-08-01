@@ -6,13 +6,6 @@ ul.tab-set li {
   display: inline-block;
 }
 
-.tab-set {
-  --tabbar-background: rgba(100,100,120,0.1);
-  --tab-background-inactive: #f8f8f8;
-  --tab-background-inactive-hover: #fcfcfc;
-  --tab-background-active: var(--content-background);
-}
-
 .tab-set > .tab-set.tabs {
   overflow-y: hidden;
   background: var(--tabbar-background);

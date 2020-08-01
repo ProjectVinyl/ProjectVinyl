@@ -22,9 +22,6 @@
 }
 
 .bubble-link {
-  --bubble-color: #fafafa;
-  --bubble-hover-color: #efefef;
-
   display: inline-block;
   padding: 5px;
   border-radius: 15px;

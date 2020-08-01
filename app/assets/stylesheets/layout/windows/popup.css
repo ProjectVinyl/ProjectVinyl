@@ -21,18 +21,18 @@
   font-size: 50px;
   line-height: 200px;
   height: 200px;
-  color: #ddd;
+  color: var(--heading-border-color);
 }
 .popup-container .popup {
   transition: box-shadow 0.35s linear;
   border-radius: 5px;
-  background: #fff;
+  background: var(--content-background);
 }
 .popup-container.focus .popup {
   box-shadow: 0 0 10px 0 rgba(0,0,0,0.3);
 }
 .popup-container .popup .content {
-  background: #fff;
+  background: var(--content-background);
   min-height: 100px;
   border-radius: 0 0 5px 5px;
 }

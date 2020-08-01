@@ -1,7 +1,7 @@
 
 .header ul {
-  background: rgba(255,255,255,0.9);
-  color: #aaa;
+  background: var(--header-nav-background);
+  color: var(--header-nav-foreground);
   font-weight: bold;
   padding: 0px;
   padding-left: 10px;

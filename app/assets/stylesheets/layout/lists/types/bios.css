@@ -12,8 +12,6 @@ li.bio > *, li.genre {
   vertical-align: middle;
 }
 li.bio, li.genre {
-  --tile-border-color: #ccc;
-
   background: var(--content-background);
   border: solid 1px var(--tile-border-color);
   box-shadow: 1px 1px 1px 0 var(--tile-border-color);

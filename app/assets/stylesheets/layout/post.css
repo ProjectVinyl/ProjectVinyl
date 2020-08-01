@@ -17,8 +17,6 @@ div.group {
   -moz-hyphens: auto;
   -webkit-hyphens: auto;
   hyphens: auto;
-  
-  --block-border-color: rgba(0,0,150, 0.3);
 }
 
 .post > * {

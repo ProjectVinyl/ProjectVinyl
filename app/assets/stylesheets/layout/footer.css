@@ -28,7 +28,7 @@ footer a:not(:hover) {
 footer .logo {
   display: block;
   font-weight: bold;
-  background: #ddd;
+  background: var(--heading-border-color);
   color: var(--content-background);
   text-shadow: 0px 1px 3px #000;
   vertical-align: top;
@@ -49,7 +49,7 @@ footer .block {
   font-size: 0.8em;
   line-height: 2.2em;
   height: 172px;
-  color: #aaa;
+  color: var(--no-link-color);
   background: var(--content-background);
   transition: background 0.5s ease;
   padding: 20px;
@@ -61,7 +61,7 @@ footer .block:hover {
 
 
 footer .block + .block {
-  border-left: solid 1px #eee;
+  border-left: solid 1px var(--block-border-color);
 }
 
 footer .block ol {

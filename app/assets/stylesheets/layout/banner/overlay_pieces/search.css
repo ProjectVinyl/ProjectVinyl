@@ -13,7 +13,7 @@
 #search > form > * {
   display: inline-block;
   padding: 5px 15px;
-  color: #337287;
+  color: var(--header-overlay-element-color);
   transition: background 0.5s ease;
   background: none;
   border: none;
@@ -24,7 +24,7 @@
 
 #filters select {
   background: none;
-  color: #337287;
+  color: var(--header-overlay-element-color);
   padding: 5px 15px;
   -moz-appearance: none;
   -webkit-appearance: none;
@@ -43,9 +43,9 @@
   margin-right: 10px;
   margin-left: 10px;
   padding: 0;
-  color: #337287 !important;
+  color: var(--header-overlay-element-color) !important;
   text-shadow: none;
 }
 #search > :focus, #search > .focus {
-  background: rgb(250,250,250);
+  background: var(--header-overlay-element-focus-fill);
 }

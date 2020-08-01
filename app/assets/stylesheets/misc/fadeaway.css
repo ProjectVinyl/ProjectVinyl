@@ -1,7 +1,4 @@
 .fade-away {
-  --fade-start: rgba(255,255,255,1);
-  --fade-end: rgba(255,255,255,0);
-
   position: relative;
 }
 .fade-away::after {

@@ -4,35 +4,83 @@ html, body {
 
   --site-background: #f1f1f1;
 
+  --no-link-color: #aaa;
+  
   --content-background: #fff;
   --content-highlight: #fef;
+  --content-unread: rgba(200,250,200,0.6);
 
+  --dock-shadow-color: #333;
+  
   --block-shadow-color: #ccc;
   --block-hover-color: #eee;
   --block-border-color: #eee;
   --block-radius: 3px;
   
+  --seamless-button-hover-tint: rgba(0,0,0,0.1);
+  
   --thumb-hover-color: #fcfcfc;
 
   --form-background: #f8f8f8;
-  
-  --heading-background: #f0f0f0;
-  --heading-border-color: #ddd;
-
-  --header-color: rgb(102,102,184);
-  --header-overlay-fill: var(--content-background);
-  
-  --no-link-color: #aaa;
-  
-  
+  --notification-bobber-fill: #f00;
   
   --input-shadow: rgba(255, 255, 255, 0.8);
   --input-border: #ccc;
   --input-foreground-color: #444;
   --input-background: rgb(255, 255, 250);
   --input-background-focus: rgba(200,200,200,0.1);
+  
+  --heading-background: #f0f0f0;
+  --heading-border-color: #ddd;
+
+  --header-nav-background: rgba(255,255,255,0.9);
+  --header-nav-foreground: #aaa;
+  
+  --header-color: rgb(102,102,184);
+  --header-overlay-element-color: #337287;
+  --header-overlay-fill: var(--content-background);
+  --header-overlay-element-fill: var(--input-shadow);
+  --header-overlay-element-focus-fill: rgb(250,250,250);
+
+  --modal-footer-background: #efefef;
+  
+  --bubble-color: #fafafa;
+  --bubble-hover-color: #efefef;
 }
 label.options {
   --block-border-color: #ccc;
   --label-focus-color: var(--input-background-focus);
+}
+li.bio, li.genre {
+  --tile-border-color: #ccc;
+}
+.item.history {
+  --positive-tint: rgba(0,255,0,0.3);
+  --negative-tint: rgba(255,0,0,0.3);
+  --neutral-tint: rgba(0,0,255,0.3);
+}
+.properties {
+  --label-background: rgba(180,180,180,0.1);
+  --rib-color: rgba(240,240,255,0.1);
+}
+.post {
+  --block-border-color: rgba(0,0,150, 0.3);
+}
+.tab-set {
+  --tabbar-background: rgba(100,100,120,0.1);
+  --tab-background-inactive: #f8f8f8;
+  --tab-background-inactive-hover: #fcfcfc;
+  --tab-background-active: var(--content-background);
+}
+.fade-away {
+  --fade-start: rgba(255,255,255,1);
+  --fade-end: rgba(255,255,255,0);
+}
+.stats {
+  --highlight-color: rgba(120,120,260,0.2);
+  --stats-background-color: rgba(100,100,100,0.03);
+  --bar-fill: #aa0;
+  --bar-fill-hover: #066;
+  --bar-border-base-color: var(--no-link-color);
+  --bar-border-color: var(--block-shadow-color);
 }
