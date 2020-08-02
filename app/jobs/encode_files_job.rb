@@ -1,5 +1,17 @@
-class ProcessVideoJob < ApplicationJob
+class EncodeFilesJob < ApplicationJob
   queue_as :default
+
+  def self.queue_video(video, queue = :default)
+    video.set_status(nil)
+
+    begin
+      EncodeFilesJob.set(queue: queue).perform_later(video.id)
+    rescue Exception => e
+      return "Error: Could not schedule action."
+    end
+
+    "Processing Scheduled"
+  end
 
   def perform(video_id)
     video = Video.find(video_id)

@@ -1,9 +1,18 @@
-class RethumbThumbJob < ApplicationJob
+class CheckThumbnailJob < ApplicationJob
   queue_as :default
+
+  def self.queue_videos(videos, queue = :default)
+    begin
+      videos.pluck(:id).find_each(batch_size: 500){|id| CheckThumbnailJob.set(queue: queue).perform_later(id) }
+    rescue Exception => e
+      return "Error: Could not schedule action."
+    end
+
+    "All thumbnails have been queue for a refresh"
+  end
 
   def perform(video_id)
     video = Video.find(video_id)
-
     video.uncache
 
     if !video.audio_only

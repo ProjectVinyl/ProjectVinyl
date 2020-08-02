@@ -2,7 +2,9 @@ Eye.config do
   logger '/home/ubuntu/ProjectVinyl/log/eye.log'
 end
 
-resque_count = 2
+resque_per_queue = 2
+resque_queues = ['*', 'manual', 'high_priority']
+resque_count = resque_per_queue * resque_queues.length
 
 Eye.application 'ProjectVinyl' do
   working_dir '/home/ubuntu/ProjectVinyl'
@@ -16,7 +18,7 @@ Eye.application 'ProjectVinyl' do
     chain grace: 2.seconds
     (1..resque_count).each do |i|
       process "resque-#{i}" do
-        env 'QUEUE' => '*'
+        env 'QUEUE' => resque_queues[i/2]
         pid_file "tmp/pids/resque-#{i}.pid"
         daemonize true
         start_command "rake environment resque:work"

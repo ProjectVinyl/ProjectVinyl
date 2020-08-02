@@ -1,5 +1,19 @@
-class ThumbVideoJob < ApplicationJob
+class ExtracThumbnailJob < ApplicationJob
   queue_as :default
+
+  def self.queue_video(video, cover, time, queue = :default)
+    video.uncache
+    video.remove_cover_files
+
+    begin
+      ExtracThumbnailJob.set(queue: queue).perform_later(video.id, cover, time)
+    rescue Exception => e
+      return "Error: Could not schedule action."
+    end
+
+    return "Thumbnail Reset." if (cover.nil? && time.nil?)
+    "Processing Scheduled"
+  end
 
   def perform(video_id, cover, time)
     video = Video.find(video_id)

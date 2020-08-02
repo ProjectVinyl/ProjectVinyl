@@ -3,28 +3,18 @@ module Admin
     class ThumbnailsController < BaseVideosAdminController
 
       def update
-
         redirect_to action: :index, controller: '/admin/admin'
 
         if !current_user.is_contributor?
-          flash[:notice] = "Access Denied: You do not have the required permissions."
-          return
+          return flash[:notice] = "Access Denied: You do not have the required permissions."
         end
 
-        begin
-          Video.all.pluck(:id).find_each(batch_size: 500) do |id|
-            RethumbThumbJob.perform_later(id)
-          end
-          flash[:notice] = "All thumbnails have been queue for a refresh"
-        rescue Exception => e
-          flash[:error] = "Error: Could not schedule action."
-        end
+        flash[:notice] = CheckThumbnailJob.queue_videos(Video.all, :manual)
       end
 
       def destroy
         try_to do |video|
-          video.set_thumbnail
-          flash[:notice] = "Thumbnail Reset."
+          flash[:notice] = ExtracThumbnailJob.queue_video(video, nil, nil, :manual)
         end
       end
     end

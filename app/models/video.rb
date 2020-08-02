@@ -128,26 +128,19 @@ class Video < ApplicationRecord
     file_path('thumb.png', root)
   end
 
-  def set_file(media)
-    if file
-      self.remove_media
-    end
-
-    ext = File.extname(media.original_filename)
-    if ext == ''
-      ext = Mimes.ext(media.content_type)
-    end
-
-    self.file = ext
+  def media=(media)
+    self.remove_media if file
+    self.file = Mimes.media_ext(media)
     self.mime = media.content_type
+    self.video = media.read
 
-    data = media.read
-    hash = Ffmpeg.compute_checksum(data)
+    EncodeFilesJob.queue_video(self)
+  end
 
-    if hash != checksum
-      self.checksum = hash
-    end
-    self.video = data
+  def video=(data)
+    self.checksum = nil
+    store_file(video_path, data)
+    self.realise_checksum
   end
 
   def realise_checksum
@@ -159,26 +152,9 @@ class Video < ApplicationRecord
     return checksum
   end
 
-  def video=(data)
-    store_file(video_path, data)
-    generate_webm
-  end
-
   def file_size
     return 0 if !File.exist?(video_path)
     File.size(video_path).to_f / 2**20
-  end
-
-  def generate_webm
-    set_status(nil)
-
-    begin
-      ProcessVideoJob.perform_later(id)
-    rescue Exception => e
-      return "Error: Could not schedule action."
-    end
-
-    "Processing Scheduled"
   end
 
   def set_status(status)
@@ -189,19 +165,6 @@ class Video < ApplicationRecord
 
   def processing
     Ffmpeg.locked?(video_path)
-  end
-
-  def set_thumbnail(cover = nil, time = nil)
-    self.uncache
-    self.remove_cover_files
-
-    begin
-      ThumbVideoJob.perform_later(id, cover, time)
-    rescue Exception => e
-      return "Error: Could not schedule action."
-    end
-
-    "Processing Scheduled"
   end
 
   def self.thumb_for(video, user)
