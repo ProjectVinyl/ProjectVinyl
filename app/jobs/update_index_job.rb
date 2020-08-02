@@ -5,7 +5,7 @@ class UpdateIndexJob < ApplicationJob
     table = table.constantize
 
     if (model = table.where(id: id).first)
-      model.update_index(false)
+      model.update_index(defer: false)
     end
   end
 end
