@@ -51,9 +51,9 @@ class TagsController < ApplicationController
         .must(ProjectVinyl::Search.interpret(@query, ProjectVinyl::Search::TAG_INDEX_PARAMS, current_user).to_hash)
         .order(order_field)
       @records = @records.reverse_order if !@ascending
-      @records = @records.paginate(@page, 50){|recs| recs.includes(:videos, :tag_type)}
+      @records = @records.paginate(@page, 100){|recs| recs.includes(:videos, :tag_type)}
     else
-      @records = Pagination.paginate(Tag.includes(:videos, :tag_type).where('alias_id IS NULL'), @page, 50, !@ascending)
+      @records = Pagination.paginate(Tag.includes(:videos, :tag_type).where('alias_id IS NULL'), @page, 100, !@ascending)
     end
 
     return render_pagination_json partial_for_type(:tags), @records if params[:format] == 'json'
