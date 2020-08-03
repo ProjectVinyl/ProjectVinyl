@@ -13,12 +13,12 @@ class UsersController < Users::BaseUsersController
 
       if @user.tag_id
         @art = current_filter.videos.where(hidden: false, duplicate_id: 0, tags: [ @user.tag.name ])
-        @art = @art.paginate(0, 8){|recs| recs.with_tags.with_likes(current_user) }
+        @art = @art.paginate(0, 8){|t| t.for_thumbnails(current_user) }
       end
 
       @videos = current_filter.videos.where(hidden: false, duplicate_id: 0, user_id: @user.id)
       @videos = @videos.where(listing: 0) if !edits_allowed
-      @videos = @videos.reverse_order.paginate(0, 8)
+      @videos = @videos.reverse_order.paginate(0, 8) {|t| t.for_thumbnails(current_user) }
 
       @watched = @user.watched_videos.unmerged
       @watched = @watched.listable if !edits_allowed
@@ -26,11 +26,11 @@ class UsersController < Users::BaseUsersController
       @watched_count = @watched.count(:all)
 
       @watched = current_filter.videos.where(id: @watched.limit(8).map(&:id))
-      @watched = @watched.reverse_order.paginate(0, 8) {|t| t.with_tags.with_likes(current_user)}
+      @watched = @watched.reverse_order.paginate(0, 8) {|t| t.for_thumbnails(current_user)}
 
       @favourites = current_filter.videos.where(hidden: false, duplicate_id: 0, albums: [ @user.stars.id ])
       @favourites = @favourites.where(listing: 0) if !edits_allowed
-      @favourites = @favourites.reverse_order.paginate(0, 8){|t| t.with_tags.with_likes(current_user)}
+      @favourites = @favourites.reverse_order.paginate(0, 8){|t| t.for_thumbnails(current_user)}
 
       @albums = @user.albums.where(hidden: false)
       @albums = @albums.where(listing: 0) if !edits_allowed

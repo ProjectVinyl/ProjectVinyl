@@ -18,6 +18,8 @@ class Video < ApplicationRecord
 
   has_one :comment_thread, as: :owner, dependent: :destroy
 
+  belongs_to :user
+
   has_many :album_items, dependent: :destroy
   has_many :albums, through: :album_items
   has_many :video_genres, dependent: :destroy
@@ -29,17 +31,7 @@ class Video < ApplicationRecord
 
   scope :unmerged, -> { where(duplicate_id: 0) }
   scope :listable, -> { where(hidden: false).unmerged }
-  scope :random, ->(limit) {
-    selection = pluck(:id)
-    return { ids: [], videos: Video.none } if selection.blank?
-
-    selected = selection.length < limit ? selection : selection.sample(limit)
-
-    {
-      ids: selected,
-      videos: listable.listed.with_tags.where("#{self.table_name}.id IN (?)", selected)
-    }
-  }
+  scope :for_thumbnails, ->(current_user) { includes(:user).with_tags.with_likes(current_user) }
 
   document_type 'video'
   settings index: { number_of_shards: 1 } do

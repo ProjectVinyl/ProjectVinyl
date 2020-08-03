@@ -251,16 +251,13 @@ class VideosController < Videos::BaseVideosController
 
     configure_pars :unprocessed
     ordering = ProjectVinyl::Search::Order.fields('video', session, @orderby)
-    Pagination.paginate(Video.where(processed: nil)
-      .order(ordering)
-      .with_tags
-      .with_likes(current_user), @page, 20, !@ascending)
+    Pagination.paginate(Video.where(processed: nil).order(ordering).for_thumbnails(current_user), @page, 20, !@ascending)
   end
 
   def aha!(records, key)
     configure_pars key
     records.sort(ProjectVinyl::Search.ordering('video', session, @orderby, @ascending))
-           .paginate(@page, 20){|recs| recs.with_tags.with_likes(current_user)}
+           .paginate(@page, 20){|recs| recs.for_thumbnails(current_user)}
   end
 
   def configure_pars(key)

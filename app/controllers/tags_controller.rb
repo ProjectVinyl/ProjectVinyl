@@ -32,7 +32,7 @@ class TagsController < ApplicationController
         .where(hidden: false)
         .order(:created_at)
         .reverse_order
-        .paginate(0, 8) {|recs| recs.with_tags.with_likes(current_user) }
+        .paginate(0, 8) {|recs| recs.for_thumbnails(current_user) }
 
     @users = Pagination.paginate(@tag.users.order(:updated_at), 0, 8, true)
 

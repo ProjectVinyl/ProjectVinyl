@@ -26,7 +26,7 @@ class TagSubscription < ApplicationRecord
         .where(hidden: false, duplicate_id: 0)
         .order(:updated_at, :created_at)
         .records
-        .with_tags.with_likes(user)
+        .for_thumbnails(user)
   end
 
   def toggle_hidden

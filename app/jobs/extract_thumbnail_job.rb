@@ -6,7 +6,7 @@ class ExtractThumbnailJob < ApplicationJob
     video.remove_cover_files
 
     begin
-      ExtractThumbnailJob.set(queue: queue).perform_later(video.id, cover, time)
+      ExtractThumbnailJob.new.perform(video.id, cover, time)
     rescue Exception => e
       return "Error: Could not schedule action."
     end

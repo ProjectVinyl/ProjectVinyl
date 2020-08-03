@@ -9,18 +9,18 @@ class WelcomeController < ApplicationController
               .reverse_order
               .limit(90)
               .records
-              .with_tags.with_likes(current_user)
+              .for_thumbnails(current_user)
     @popular = current_filter.videos.where(hidden: false, listing: 0, duplicate_id: 0)
               .order(:heat, :updated_at, :created_at)
               .reverse_order
               .limit(4)
               .records
-              .with_tags.with_likes(current_user)
+              .for_thumbnails(current_user)
     @featured = current_filter.videos.where(hidden: false, listing: 0, duplicate_id: 0)
               .where(featured: true)
               .limit(1)
               .records
-              .with_tags.with_likes(current_user)
+              .for_thumbnails(current_user)
               .first
     @feed = TagSubscription.get_feed_items(current_user, current_filter).limit(15) if user_signed_in?
   end
