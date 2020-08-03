@@ -7,6 +7,6 @@ main {
   display: inline-block;
   position: relative;
   text-align: left;
-  width: var(--site-width);
+  max-width: var(--site-width);
   min-height: 100%;
 }
