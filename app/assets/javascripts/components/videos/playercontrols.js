@@ -46,12 +46,13 @@ function drawPreview(controls, progress) {
   }
 
   const time = (parseInt(controls.player.video.duration) || 0) * progress;
+  const preview = controls.getPreview(controls.player);
 
   controls.track.preview.style.left = (progress * 100) + '%';
   controls.track.preview.dataset.time = toHMS(time);
 
   if (!controls.player.audioOnly) {
-    controls.preview.draw(time);
+    preview.draw(time);
   }
 }
 
@@ -80,14 +81,7 @@ export function PlayerControls(player, dom) {
   this.volume.indicator = dom.querySelector('.volume .indicator i');
   this.volume.slider = dom.querySelector('.volume .slider');
   
-  if (player.audioOnly) {
-    this.preview = document.createElement('img');
-    this.preview.src = `/stream/${player.params.path}/${player.params.id}/thumb.png`;
-    this.track.preview.appendChild(this.preview);
-  } else {
-    this.preview = createMiniTile(player);
-    this.track.preview.appendChild(this.preview.dom);
-  }
+  this.getPreview(player);
 
   Slider(this.track, ev => {
     if (!player.contextmenu.hide(ev)) {
@@ -166,6 +160,27 @@ export function PlayerControls(player, dom) {
   bindEvent(dom, 'click', halt);
 }
 PlayerControls.prototype = {
+  getPreview(player) {
+    if (this.preview && player.audioOnly == this.audioOnly) {
+      return this.preview;
+    }
+
+    if (this.preview) {
+      this.track.preview.removeChild(this.preview.dom || this.preview);
+    }
+
+    if (player.audioOnly) {
+      this.preview = document.createElement('img');
+      this.preview.src = `/stream/${player.params.path}/${player.params.id}/thumb.png`;
+      this.track.preview.appendChild(this.preview);
+    } else {
+      this.preview = createMiniTile(player);
+      this.track.preview.appendChild(this.preview.dom);
+    }
+
+    this.audioOnly = player.audioOnly;
+    return this.preview;
+  },
   hide() {
     this.player.dom.dataset.hideControls = '1';
   },

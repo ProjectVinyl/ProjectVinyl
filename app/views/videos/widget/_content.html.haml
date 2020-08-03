@@ -21,4 +21,5 @@
 = render 'videos/widget/controls'
 %span.control-ref.hidden
 %ul.contextmenu.transitional.hidden
-= yield
+- if embed
+	= render 'videos/widget/embed_content'

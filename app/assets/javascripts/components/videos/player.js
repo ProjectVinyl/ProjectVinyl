@@ -44,7 +44,7 @@ function playerHeader(sender) {
   const heading = sender.dom.querySelector('h1 .title');
   if (heading) heading.addEventListener('mouseover', () => {
     if (sender.video && sender.video.currentTime) {
-      heading.href = `/videos/${this.params.id}-${this.params.title}?resume=${this.video.currentTime}`;
+      heading.href = `/videos/${sender.params.id}-${sender.params.title}?resume=${sender.video.currentTime}`;
     }
   });
   
@@ -123,7 +123,7 @@ Player.prototype = {
     return this;
   },
   navTo(sender) {
-    ajax.get(`videos/${sender.dataset.videoId}.json`).json(json => {
+    ajax.get(`videos/${sender.dataset.videoId}.json?list=${sender.dataset.albumId}`).json(json => {
       onPlaylistNavigate(this, sender, json);
     });
   },

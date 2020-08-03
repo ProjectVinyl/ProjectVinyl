@@ -1,7 +1,7 @@
 - if !album_item.video.hidden_by?(current_user)
 	%a.row{href: (!album_item.video.hidden && !album_item.video.spoilered_by?(current_user)) && album_item.link,
          class: [album_item.video.hidden && "hidden-item", @index == album_item.index && "selected scroll-focus"],
-          data: {id: album_item.id, index: album_item.index, "video-id": album_item.video_id}}
+          data: {id: album_item.id, index: album_item.index, "video-id": album_item.video_id, "album-id": album_item.album_id}}
 		.title(title="#{album_item.get_tooltip}")
 			%div>=album_item.get_title
 			- if !album_item.video.hidden

@@ -1,0 +1,14 @@
+- if @album
+	.listing.compact.collapse-padding.playlist
+		.controls
+			%a.slide-left#playlist_prev{title: "Previous", href: @prev_video && @prev_video.link}= fw :step_backward
+			%a.title.buff-right{href: @album.link}= @album.title
+			%a.slide-right#playlist_next{title: "Next", href: @next_video && @next_video.link}= fw :step_forward
+		.scroll-container
+			.items= render partial: "albums/album_item", collection: @items
+%ul.horizontal.embed-actions
+	- if @album
+		%li.playlist-toggle= fa :list
+	- if user_signed_in?
+		%li.action.toggle{title: "Star Video", data: {target: video_add_path(@video.id), "checked-icon": "star", "unchecked-idon": "star-o"}}
+			%span.icon= fa "star#{!@video.faved?(current_user) ? '-o' : ''}"

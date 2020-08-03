@@ -2,8 +2,10 @@ module Embed
   class VideosController < Embed::EmbedController
     def show
       if params[:list] && (@album = Album.where(id: params[:list]).first)
-        @items = @album.all_items
+        @items = @album.album_items
         @index = params[:index].to_i || (@items.first ? @items.first.index : 0)
+        @index = @album.current_index(@index)
+
         @video = @items.where(index: @index).first.video
 
         @prev_video = @album.get_prev(current_user, @index) if @index > 0

@@ -10,7 +10,7 @@ export function onPlaylistNavigate(player, sender, json) {
   if (selected) {
     selected.classList.remove('selected');
   }
-  selected = document.querySelector(`.playlist a[data-id="${json.id}"]`);
+  selected = document.querySelector(`.playlist a[data-video-id="${json.current.id}"]`);
   selected.classList.add('selected');
 
   scrollTo(selected, document.querySelector('.playlist .scroll-container'));
