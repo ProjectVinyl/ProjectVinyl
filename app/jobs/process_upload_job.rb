@@ -18,7 +18,7 @@ class ProcessUploadJob < ApplicationJob
   end
 
   def perform(video_id, cover, time)
-    ExtracThumbnailJob.new.perform(video_id, cover, time)
+    ExtractThumbnailJob.new.perform(video_id, cover, time)
     EncodeFilesJob.new.perform(video_id)
   end
 end

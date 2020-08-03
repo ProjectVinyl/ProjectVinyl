@@ -1,4 +1,4 @@
-class ExtracThumbnailJob < ApplicationJob
+class ExtractThumbnailJob < ApplicationJob
   queue_as :default
 
   def self.queue_video(video, cover, time, queue = :default)
@@ -6,7 +6,7 @@ class ExtracThumbnailJob < ApplicationJob
     video.remove_cover_files
 
     begin
-      ExtracThumbnailJob.set(queue: queue).perform_later(video.id, cover, time)
+      ExtractThumbnailJob.set(queue: queue).perform_later(video.id, cover, time)
     rescue Exception => e
       return "Error: Could not schedule action."
     end
