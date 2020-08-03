@@ -45,5 +45,6 @@ echo "Restarting webserver"
 systemctl --user restart unicorn.service
 
 # Restart background workers
-bundle exec eye quit --stop_all
-bundle exec eye load /home/ubuntu/ProjectVinyl/config/projectvinyl.eye
+# Don't call eye. Workers are managed via systemd~ --> ~/.config/systemd/user
+# bundle exec eye quit --stop_all
+# bundle exec eye load /home/ubuntu/ProjectVinyl/config/projectvinyl.eye
