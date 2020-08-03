@@ -115,7 +115,17 @@ class Ffmpeg
     yield(h, m, s) if block_given?
     format("%02d:%02d:%02d", h, m, s)
   end
-  
+
+  def self.to_h_m_s_accurate(length)
+    length = length.to_f
+
+    h = length / 3600
+    m = (length / 60) % 60
+    s = length % 60
+    yield(h, m, s) if block_given?
+    format("%02d:%02d:%02f", h, m, s)
+  end
+
   def self.from_h_m_s(hms)
     hms = hms.split(':').map(&:to_f)
     hms.unshift 0 while hms.length < 3
@@ -136,7 +146,7 @@ class Ffmpeg
   end
   
   def self.extract_thumbnail(src, dst_full, dst_sml, time)
-    time = to_h_m_s(time)
+    time = to_h_m_s_accurate(time)
     run_command('-i', src, '-ss', time, '-vframes', 1, dst_full, '-ss', time, '-vframes', 1, '-vf', SCALE_ONE_THIRTY, dst_sml)
   end
   
