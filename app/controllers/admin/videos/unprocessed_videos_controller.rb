@@ -7,7 +7,7 @@ module Admin
 
       def update
         try_to do |video|
-          flash[:notice] = "Processing Video: #{video.generate_webm}"
+          flash[:notice] = EncodeFilesJob.queue_video(video, :manual)
         end
       end
     end
