@@ -11,6 +11,7 @@
 					Total workers: 
 					= Resque.info[:workers]
 				%div
+				%div
 			- Resque.workers.each_with_index do |worker, i|
 				- payload = worker.job.dig("payload", "args")
 				- payload = "#{payload[0]["job_class"]}: #{payload[0]["arguments"]}" if payload
@@ -19,6 +20,9 @@
 						%span.active-icon{class: worker.working? && "active"}
 						= precede '#' do
 							= i+1
+						= precede ':' do
+							= worker.pid
+					%div= worker.queues.join(', ')
 					%div= payload || "No Task"
 - rescue
 	%p Oops! Could not connect to Resque.
