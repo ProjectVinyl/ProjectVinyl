@@ -85,8 +85,11 @@ Rails.application.routes.draw do
 
     get ':id', action: :show, controller: :tags, id: /.*/ #*/
   end
-  
+
   # Filters #
+  scope :filters, module: :filters do
+    resource :current_filter, only: [:update]
+  end
   resources :filters
 
   # Forums #

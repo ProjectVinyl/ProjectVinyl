@@ -25,7 +25,7 @@
 	.details= thumb_h.description || 'No description provided'
 	.actions
 		- if thumb_h.id != current_filter.id
-			%a.button.green Use
+			%a.button.green(title="Use" data-method="post"){href: current_filter_path(filter_id: thumb_h.id)} Use
 		- if user_signed_in?
 			%a.button.green(title="Modify"){href: edit_filter_path(thumb_h)}= fa :pencil
 			%a.button.blue(title="Duplicate"){href: new_filter_path(copy: thumb_h)}= fa :copy

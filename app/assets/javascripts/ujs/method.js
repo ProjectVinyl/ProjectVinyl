@@ -1,35 +1,43 @@
 /*
  * Dirty hack
  */
+document.addEventListener('click', event => submitAction(event, 'a[data-method], button[data-method]'));
+document.addEventListener('change', event => submitAction(event, 'select[data-method]', true));
 
-document.addEventListener('click', event => {
-  const a = event.target.closest('a[data-method], button[data-method]');
-  
+function submitAction(event, selector, ignoreMouse) {
+  const a = event.target.closest(selector);
+
   // Only left click allowed
-  if (!a || event.button !== 0) return;
-  
+  if (!a || (!ignoreMouse && event.button !== 0)) return;
+
   const url = a.href || a.dataset.url;
   const method = a.dataset.method;
-  
+
   const form = document.createElement('form');
-  const input = document.createElement('input');
-  
+
   form.action = url;
   form.method = 'POST';
   form.dataset.method = method;
   form.style.display = 'none';
-  
-  input.type = 'hidden';
-  input.name = '_method';
-  input.value = method;
-  
-  form.appendChild(input);
-  
+  form.appendChild(makeInput('_method', method));
+
+  if (a.value && a.name) {
+    form.appendChild(makeInput(a.name, a.value));
+  }
+
   document.body.appendChild(form);
   event.preventDefault();
-  
+
   // Dispatch an event so the auth token can be appended
   form.dispatchEvent(new Event('submit', event));
   // Submit the form
   form.submit();
-});
+}
+
+function makeInput(name, value) {
+  const input = document.createElement('input');
+  input.type = 'hidden';
+  input.name = name;
+  input.value = value;
+  return input;
+}
