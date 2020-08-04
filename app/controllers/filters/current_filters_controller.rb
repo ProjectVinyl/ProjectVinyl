@@ -16,8 +16,7 @@ module Filters
         end
       end
 
-      return redirect_to root_url if request.referrer == request.url
-      redirect_to request.referrer
+      bounce_back
     end
   end
 end

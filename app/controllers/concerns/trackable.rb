@@ -6,6 +6,11 @@ module Trackable
     after_action :poke_user, if: :user_signed_in?
   end
 
+  def bounce_back
+    return redirect_to root_url if request.referrer == request.url
+    redirect_to request.referrer
+  end
+
   protected
   def set_start_time
     @start_time = Time.now
