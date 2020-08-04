@@ -3,7 +3,7 @@ ul.horizontal.filter-list, .filter-list li {
   overflow: visible;
 }
 .filter-list li.generic.thumb.bio {
-  --thumb-width: 300px;
+  --thumb-width: 100%;
   --thumb-height: calc(var(--thumb-width) * 2);
   display: flex;
   flex-direction: column;

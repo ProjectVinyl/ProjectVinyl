@@ -16,7 +16,7 @@ class CreateSiteFilters < ActiveRecord::Migration[5.1]
       id: 1,
       preferred: true,
       name: 'Everything',
-      description: 'The Default Everything',
+      description: 'The Default filter that hides nothing. Use this if you\'re brave.',
       hide_filter: '',
       spoiler_filter: ''
     })

@@ -875,7 +875,7 @@ Badge.create([
 SiteFilter.create({
   id: 1,
   name: 'Everything',
-  description: 'The Default Everything',
+  description: 'The Default filter that hides nothing. Use this if you\'re brave.',
   hide_filter: '',
   spoiler_filter: ''
 })
