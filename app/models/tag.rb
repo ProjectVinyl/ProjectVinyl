@@ -234,12 +234,12 @@ class Tag < ApplicationRecord
   end
 
   def self.tag_string(tags)
-    tags.map(&:name).join(',')
+    tags.map(&:name).uniq.join(',')
   end
 
   def self.split_tag_string(tag_string)
     return [] if tag_string.blank?
-    tag_string.downcase.split(/,|;/).uniq.select{|i| !Tag.name_illegal?(i) }
+    tag_string.downcase.split(/,|;/).uniq.filter{|i| !Tag.name_illegal?(i) }
   end
 
   def self.name_illegal?(tag_name)
