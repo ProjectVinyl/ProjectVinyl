@@ -14,7 +14,7 @@ module Admin
       if (record = params[key])
         id = record[:id]
 
-        return fail_fast "Error: Record #{table_sym}.#{id} was not found." if !(model = model.where(id: id).first)
+        return fail_fast "Error: Record #{table_sym}.#{id} was not found." if !(model = table.where(id: id).first)
 
         redirect_to action: :show, controller: "admin/#{table_sym}", id: id
         model.update_index(defer: true)
