@@ -1,0 +1,52 @@
+= form_for(filter, as: :filter, url: path, html: {method: method}) do |f|
+	%table
+		%tr.section
+			%td(colspan="2") Miscellanious
+		%tr
+			%td.label= f.label :name
+			%td.field= f.text_field :name, autofocus: true, placeholder: 'Describe your filter in three words or less'
+		%tr
+			%td.label Description
+			%td.field
+				= render layout: 'comments/description_box' do
+					= f.text_area :description, placeholder: 'Does your filter do anything special?'
+		%tr.section
+			%td(colspan="2") Spoilered Content
+		%tr
+			%td.label Spoilered Tags
+			%td.field
+				= render 'tags/editor', tags: Tag.by_tag_string(filter.spoiler_tags) do
+					= f.text_area :spoiler_tags
+		%tr
+			%td.label Complex Spoiler Query
+			%td.field= f.text_area :spoiler_filter, placeholder: 'tag1, tag2, title:example, upvoted_by:user, ...'
+		%tr.section
+			%td(colspan="2") Hidden Content
+		%tr
+			%td.label Hidden Tags
+			%td.field
+				= render 'tags/editor', tags: Tag.by_tag_string(filter.hide_tags) do
+					= f.text_area :hide_tags
+		%tr
+			%td.label Complex Hide Query
+			%td.field= f.text_area :hide_filter, placeholder: 'tag1, tag2, title:example, upvoted_by:user, ...'
+		- if current_user.is_staff?
+			%tr.section
+				%td(colspan="2") Advanced / Admin
+			%tr
+				%td.label
+				%td.field
+					.notice As you are staff, you hereby have god powers. Congrats.
+					%label.button.blue
+						= f.check_box :preferred
+						= fa :check
+						Default Filter
+					%label.button.blue
+						= check_box 'filter', :global, { checked: @global }
+						= fa :check
+						Global Filter
+		%tr.section
+			%td(colspan="2") Finish
+		%tr.actions
+			%td.label
+			%td.field= f.submit "Save Changes", class: "green"

@@ -7,14 +7,22 @@
 					default
 	- if thumb_h.id == current_filter.id
 		.notice This is your current filter
-	.details
+	%span
+		%br
 		Maintained by
 		- if thumb_h.user
 			%a.user-link{href: thumb_h.user.link}=thumb_h.user.username
 		- else
 			Staff
-	.details
-		No description provided
+	%b
+		Hides
+		= number_with_delimiter Tag.split_tag_string(thumb_h.hide_tags).length
+		tags
+		Spoilers
+		= number_with_delimiter Tag.split_tag_string(thumb_h.spoiler_tags).length
+		tags
+	%hr
+	.details= thumb_h.description || 'No description provided'
 	.actions
 		- if thumb_h.id != current_filter.id
 			%a.button.green Use

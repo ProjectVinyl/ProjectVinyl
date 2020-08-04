@@ -1,0 +1,5 @@
+- title "Update Filter"
+- lim "900px"
+%section.page.full-width.properties 
+	%h1 Update Filter
+	= render partial: '/filters/edit', locals: {filter: @filter, path: filter_path(@filter), method: :patch }
