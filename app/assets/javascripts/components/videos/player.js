@@ -15,7 +15,6 @@ import { fullscreenPlayer, setFullscreen } from './fullscreen';
 import { PlayerControls } from './playercontrols';
 import { setupNoise } from './noise';
 import { attachMessageListener } from './itc';
-import { resize } from './resize';
 import { createVideoElement, addSource } from './video_element';
 import { onPlaylistNavigate } from './playlist';
 import { attachFloater } from './floatingplayer';
@@ -112,8 +111,6 @@ Player.prototype = {
       scrollTo(selected, document.querySelector('.playlist .scroll-container'));
     }
 
-    resize(el);
-    
     if (!this.params.embedded) {
       if (this.params.resume || this.__autostart || this.__autoplay) {
         this.play();
@@ -158,14 +155,6 @@ Player.prototype = {
 
     holder.classList.toggle('column-left', !state);
     holder.classList.toggle('full-width', state);
-
-    if (state) {
-      this.dom.dataset.height = this.dom.style.height;
-    } else {
-      this.dom.style.height = this.dom.dataset.height;
-    }
-
-    setTimeout(_ => resize(this.dom), 250);
   },
   changeSpeed(speed) {
     this.__speed = speed % speeds.length;

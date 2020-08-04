@@ -1,2 +1,2 @@
-.video#video{style: format_bg(@video.thumb), data: @video.widget_header(@time, @resume, embed, @album)}
+.video#video{style: format_bg(@video.thumb, {"--aspect-ratio": @video.aspect }), data: @video.widget_header(@time, @resume, embed, @album)}
 	= render 'videos/widget/content', embed: embed

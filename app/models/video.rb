@@ -16,6 +16,8 @@ class Video < ApplicationRecord
   include Likeable
   include Unlistable
 
+  DEFAULT_ASPECT = 16.to_f/9.to_f
+
   has_one :comment_thread, as: :owner, dependent: :destroy
 
   belongs_to :user
@@ -261,18 +263,15 @@ class Video < ApplicationRecord
 
   def widget_header(time, resume, embed, album)
     {
-      aspect: aspect,
       source: CGI::escape(widget_parameters(time, resume, embed, album).to_json)
     }
   end
 
   def aspect
-    return 1 if audio_only
-
     w = (width || 0).to_f
     h = (height || 0).to_f
 
-    return 1 if h == 0
+    return DEFAULT_ASPECT if w == 0 || h == 0
 
     w / h
   end
@@ -331,15 +330,18 @@ class Video < ApplicationRecord
   end
 
   def read_media_attributes!
-    return if !file || !has_file(video_path)
 
-    self.length = Ffmpeg.get_video_length(video_path)
-    self.width = audio_only ? 1 : Ffmpeg.get_video_width(video_path)
-    self.height = audio_only ? 1 : Ffmpeg.get_video_height(video_path)
+    path = audio_only && has_file(cover_path) ? cover_path : video_path
+
+    self.length = Ffmpeg.get_video_length(video_path) if has_file(video_path)
+
+    self.width, self.height = [1,1]
+    self.width, self.height = Ffmpeg.get_dimensions(path) if has_file(path)
     self.save
   end
 
   protected
+
   def remove_assets
     self.remove_media
     self.remove_cover_files
