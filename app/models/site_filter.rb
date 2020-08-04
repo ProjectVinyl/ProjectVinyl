@@ -11,6 +11,7 @@ class SiteFilter < ApplicationRecord
   def videos
     selector = ProjectVinyl::Search::ActiveRecord.new(Video) {|results| load_model_data results.ids}
     selector.must_not(__elastic_hide_params) if __filter_present? hide_filter
+    selector.must_not(__elastic_hide_tag_params) if __filter_present? hide_tags
     selector
   end
 
@@ -25,7 +26,12 @@ class SiteFilter < ApplicationRecord
     if @pending_ids && @pending_ids.length > 0
       @spoilered_id_cache = [] if !@spoilered_id_cache
       @spoilered_id_cache |= ProjectVinyl::Search::ActiveRecord.new(Video)
-        .filter(__elastic_spoiler_params)
+        .filter({
+          bool: {
+            should: [ __elastic_spoiler_params, __elastic_spoiler_tag_params ],
+            minimum_should_match: 1
+          }
+        })
         .filter({ terms: { id: @pending_ids } })
         .ids
       @pending_ids = []
@@ -40,6 +46,18 @@ class SiteFilter < ApplicationRecord
   private
   def __filter_present?(filter)
     filter && !filter.strip.empty?
+  end
+
+  def __build_tag_params(tag_string)
+    { terms: { tags: Tag.by_tag_string(tag_string).actual_names } }
+  end
+
+  def __elastic_hide_tag_params
+    @hide_tag_params || (@hide_tag_params = __build_tag_params(hide_tags))
+  end
+
+  def __elastic_spoiler_tag_params
+    @spoiler_tag_params || (@spoiler_tag_params = __build_tag_params(spoiler_tags))
   end
 
   def __elastic_hide_params
