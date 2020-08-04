@@ -17,34 +17,21 @@ Rails.application.routes.draw do
   }
 
   scope controller: :staff do
-    scope action: :policy do
-      get 'copyright'
-      get 'fairuse'
-      get 'policy'
-      get 'terms'
-    end
-
-    get 'donate'
-    get 'staff'
+    get 'copyright', 'fairuse', 'policy', 'terms', action: :policy
+    get 'donate', 'staff'
   end
 
   resource :services do
-    post 'register'
-    post 'deregister'
+    post 'register', 'deregister'
   end
 
   # Asset Fallbacks #
   scope module: :assets, constraints: { id: /[0-9]+/ } do #*/
     scope 'avatar/:year/:month/:day/:id/', module: :users do
-      resource :avatar, only: [:show]
-      resource :thumb, only: [:show]
-      resource :banner, only: [:show]
+      resource :avatar, :thumb, :banner, only: [:show]
     end
     scope 'stream/:year/:month/:day/:id', module: :videos do
-      resource :cover, only: [:show]
-      resource :thumb, only: [:show]
-      resource :source, only: [:show]
-      resource :video, only: [:show]
+      resource :cover, :thumb, :source, :video, only: [:show]
     end
     resource :serviceworker, only: [:show]
   end
@@ -56,10 +43,9 @@ Rails.application.routes.draw do
   resources :videos, except: [:destroy, :create] do
     scope module: :videos do
       resources :actions, only: [:update]
-      resource :details, only: [:update]
-      resource :play_count, only: [:update]
-      resource :download, only: [:show]
       resources :changes, only: [:index]
+      resource :details, :play_count, only: [:update]
+      resource :download, only: [:show]
       resource :add, only: [:update]
     end
   end
@@ -67,13 +53,11 @@ Rails.application.routes.draw do
   # Users #
   resources :users, only: [:index, :update, :show] do
     scope module: :users do
-      resources :albums, only: [:index]
-      resources :comments, only: [:index]
+      resources :albums, :comments, only: [:index]
 
       resource :hovercard, only: [:show]
       resource :banner, only: [:show, :update]
-      resource :avatar, only: [:update]
-      resource :prefs, only: [:update]
+      resource :avatar, :prefs, only: [:update]
     end
   end
 
@@ -93,16 +77,11 @@ Rails.application.routes.draw do
   resources :tags, only: [:index], id: /([0-9]+).*/ do #*/
     scope module: :tags do
       resources :actions, only: [:update], id: /([a-zA-Z]+).*/ #*/
-      resources :videos, only: [:index]
-      resources :users, only: [:index]
-      resources :changes, only: [:index]
+      resources :videos, :users, :changes, only: [:index]
     end
   end
   scope :tags do
-    scope module: :tags do
-      resources :aliases, only: [:index]
-      resources :implied, only: [:index]
-    end
+    resources :aliases, :implied, only: [:index], module: :tags
 
     get ':id', action: :show, controller: :tags, id: /.*/ #*/
   end
@@ -147,9 +126,7 @@ Rails.application.routes.draw do
 
   # Lookup Actions #
   namespace :find do
-    resources :users, only: [:index]
-    resources :comments, only: [:index]
-    resources :tags, only: [:index]
+    resources :users, :comments, :tags, only: [:index]
   end
 
   # Admin Actions #
@@ -163,8 +140,7 @@ Rails.application.routes.draw do
     resources :reindex, only: [:update]
 
     namespace :verify do
-      resource :users, only: [:update]
-      resource :videos, only: [:update]
+      resource :users, :videos, only: [:update]
     end
 
     resource :settings, only: [] do
@@ -180,8 +156,7 @@ Rails.application.routes.draw do
       resources :unprocessed, only: [:index], controller: :unprocessed_videos
       resources :hidden, only: [:index, :destroy], controller: :hidden_videos
       resource :requeue, only: [:update], controller: :requeue_videos
-      resource :thumbnail, only: [:update]
-      resource :listing, only: [:update]
+      resource :thumbnail, :listing, only: [:update]
     end
     resources :videos, only: [:show, :destroy] do
       scope module: :videos do
@@ -190,16 +165,12 @@ Rails.application.routes.draw do
         resource :reprocess, only: [:update], controller: :unprocessed_videos
         resource :merge, only: [:update], controller: :merged_videos
         resource :thumbnail, only: [:destroy]
-        resource :metadata, only: [:update]
-        resource :moderation, only: [:update]
+        resource :metadata, :moderation, only: [:update]
       end
     end
 
     resources :users, only: [:show,:destroy] do
-      scope module: :users do
-        resources :badges, only: [:update]
-        resources :roles, only: [:update]
-      end
+      resources :badges, :roles, only: [:update], module: :users
     end
 
     # Reporting #
@@ -211,11 +182,7 @@ Rails.application.routes.draw do
     scope module: :forum do
       resources :badges, except: [:show, :edit]
       resources :threads, only: [:destroy] do
-        scope module: :threads do
-          resource :pin, only: [:update]
-          resource :lock, only: [:update]
-          resource :move, only: [:update]
-        end
+        resource :pin, :lock, :move, only: [:update], module: :threads
       end
     end
 
@@ -235,9 +202,7 @@ Rails.application.routes.draw do
 
   # API #
   namespace :api do
-    resource :bbcode, only: [:show]
-    resource :html, only: [:show]
-    resource :youtube, only: [:show]
+    resource :bbcode, :html, :youtube, only: [:show]
     resources :videos, only: [:index, :show]
   end
 
