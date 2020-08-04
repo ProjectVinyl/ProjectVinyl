@@ -30,7 +30,7 @@ module Admin
     private
     def fail_fast(msg)
       flash[:error] = msg
-      redirect_to action: "view"
+      redirect_to action: :show, controller: 'admin/videos'
     end
   end
 end

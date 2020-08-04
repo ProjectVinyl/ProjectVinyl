@@ -30,7 +30,7 @@
 		%tr.actions
 			%td.label Reindex User
 			%td.field
-				= form_for(@user, as: "user", url: admin_reindex_path(id: :users), html: { method: :put }) do |f|
+				= form_for(@user, as: "user", url: admin_reindex_path(id: :user), html: { method: :put }) do |f|
 					= f.text_field :id, hidden: true
 					= f.submit "Reindex"
 		- if current_user.is_admin?
