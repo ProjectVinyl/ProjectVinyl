@@ -59,6 +59,10 @@ class Tag < ApplicationRecord
 
   scope :actualise, -> { includes(:alias).map(&:actual).uniq }
   scope :actual_names, -> { actualise.map(&:name).uniq }
+  scope :by_tag_string, ->(tag_string) {
+    names = Tag.split_tag_string(tag_string)
+    where('name IN (?) OR short_name IN (?)', names, names)
+  }
   scope :by_names, ->(names) {
     return [] if names.nil? || (names = names.uniq).empty?
     where('name IN (?) OR short_name IN (?)', names, names).actualise
@@ -72,7 +76,7 @@ class Tag < ApplicationRecord
   scope :find_matching_tags, ->(name, sender=nil) {
     name = name.downcase
     includes(:tag_type, :alias)
-        .where('name LIKE ? OR short_name LIKE ?', "#{name}%", "#{PathHelper.url_safe_for_tags(name)}%")
+        .where('"tags"."name" LIKE ? OR "tags"."short_name" LIKE ?', "#{name}%", "#{PathHelper.url_safe_for_tags(name)}%")
         .order(:video_count, :user_count)
         .limit(10)
         .jsons(sender)
