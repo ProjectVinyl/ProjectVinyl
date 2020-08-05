@@ -1,19 +1,20 @@
 %section.page.full-width.genre-bio= render 'bio'
 - if @users.count > 0
 	%section.page.full-width
-		%h1 Recent Users
+		%h1 Related Users
 		%ul.horizontal.artist-list#artists
 			= render partial: 'users/thumb_h', collection: @users.records
-			- if @users.pages > 0
-				.load-more
-					%button(data-page="0" data-url="#{tag_users_path @tag}" data-target="artists") Load More
+		- if @users.pages > 0
+			.load-more
+				%button(data-page="0" data-url="#{tag_users_path @tag}" data-target="artists") Load More
 %section.page.full-width
-	%h1 Recent Songs
+	%h1 Related Videos
+	= render partial: 'search/big_search'
 	%ul.horizontal.video-list#songs
 		- if @videos.length > 0
 			= render partial: 'videos/thumb_h', collection: @videos.records
-			- if @videos.pages > 0
-				.load-more
-					%button(data-page="0" data-url="#{tag_videos_path @tag}" data-target="songs") Load More
 		-	else
 			%li.generic.virtual.keep
+	- if @videos.pages > 0
+		.load-more
+			%button(data-page="0" data-url="#{tag_videos_path @tag}" data-target="songs") Load More

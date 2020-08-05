@@ -16,6 +16,7 @@ addDelegatedEvent(document, 'click', '.load-more button', (e, button) => {
     } else {
       button.parentNode.removeChild(button);
     }
+    button.dispatchEvent(new CustomEvent('resize', {bubbles: true}));
   });
 });
 

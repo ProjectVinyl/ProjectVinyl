@@ -22,6 +22,9 @@ class TagsController < ApplicationController
       end
     end
 
+    params[query_term] = @tag.name
+    read_search_params params
+
     @modifications_allowed = user_signed_in? && current_user.is_contributor?
 
     @total_videos = @tag.videos.count
@@ -53,7 +56,7 @@ class TagsController < ApplicationController
       @records = @records.reverse_order if !@ascending
       @records = @records.paginate(@page, 100){|recs| recs.includes(:videos, :tag_type)}
     else
-      @records = Pagination.paginate(Tag.includes(:videos, :tag_type).where('alias_id IS NULL'), @page, 100, !@ascending)
+      @records = Pagination.paginate(Tag.includes(:videos, :tag_type).where(alias_id: nil), @page, 100, !@ascending)
     end
 
     return render_pagination_json partial_for_type(:tags), @records if params[:format] == 'json'
