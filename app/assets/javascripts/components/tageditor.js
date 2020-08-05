@@ -49,7 +49,7 @@ function inputHandler(sender) {
       if (handledBack) return false;
       handledBack = true;
       if (!input.value.length && sender.list.lastChild) {
-        removeTag(sender, sender.list.lastChild);
+        removeTag(sender, sender.list.lastElementChild);
       }
     },
     [Key.ENTER]: sender => {
@@ -139,9 +139,9 @@ function popHistory(sender, direction) {
   const item = source.pop();
   dest.push(item);
   if (item.type === direction) {
-    editor.tags.push(item.tag);
+    sender.tags.push(item.tag);
   } else {
-    editor.tags.remove(item.tag);
+    sender.tags.remove(item.tag);
   }
   save(sender);
 }
@@ -165,13 +165,9 @@ function removeTag(editor, item) {
 
 function save(editor) {
   editor.textarea.value = editor.tags.join(',');
-  editor.list.innerHTML = editor.tags.map(tag => {
-    return fillTemplate(tag, editor.tagTemplate);
-  }).join('');
+  editor.list.innerHTML = editor.tags.map(tag => fillTemplate(tag, editor.tagTemplate)).join('');
   if (editor.norm) {
-    editor.norm.innerHTML = editor.tags.map(tag => {
-      return fillTemplate(tag, editor.displayTemplate);
-    }).join('');
+    editor.norm.innerHTML = editor.tags.map(tag => fillTemplate(tag, editor.displayTemplate)).join('');
   }
   editor.dom.dispatchEvent(new CustomEvent('tagschange', { bubbles: true }));
 }
