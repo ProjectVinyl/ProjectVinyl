@@ -1,10 +1,7 @@
-require 'projectvinyl/search/search'
-require 'projectvinyl/search/active_record'
-
 class UsersController < Users::BaseUsersController
   include Searchable
 
-  configure_ordering [:username, :created_at]
+  configure_ordering [:username, :created_at], only: [:index]
 
   def show
     check_details_then do |user, edits_allowed|
@@ -74,7 +71,7 @@ class UsersController < Users::BaseUsersController
     end
 
     render_paginated @records, {
-      template: 'pagination/search', table: 'users', label: 'User'
+      template: 'pagination/omni_search', table: 'users', label: 'User'
     }
   end
 end

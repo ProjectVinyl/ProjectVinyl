@@ -9,7 +9,7 @@
 				%button(data-page="0" data-url="#{tag_users_path @tag}" data-target="artists") Load More
 %section.page.full-width
 	%h1 Related Videos
-	= render partial: 'search/big_search'
+	= render partial: 'search/big_search', locals: { table: :videos }
 	%ul.horizontal.video-list#songs
 		- if @videos.length > 0
 			= render partial: 'videos/thumb_h', collection: @videos.records

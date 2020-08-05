@@ -1,10 +1,8 @@
-require 'projectvinyl/search/search'
-require 'projectvinyl/search/active_record'
-
 class TagsController < ApplicationController
   include Searchable
 
-  configure_ordering [:name]
+  configure_ordering [ :name ], query_term: 'qt', only: [:index]
+  configure_ordering [ :date, :rating, :heat, :length, :random, :relevance ], query_term: 'q', only: [:show]
 
   def show
     name = params[:id].downcase
@@ -61,7 +59,7 @@ class TagsController < ApplicationController
 
     return render_pagination_json partial_for_type(:tags), @records if params[:format] == 'json'
     render_paginated @records, {
-      template: 'pagination/search', table: 'tags', label: 'Tag'
+      template: 'pagination/omni_search', table: 'tags', label: 'Tag'
     }
   end
 end

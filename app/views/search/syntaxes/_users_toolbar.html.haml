@@ -1,0 +1,15 @@
+﻿.meta-toolbar{ data: {target: amp_id} }
+	%a.action(data-insert="-" data-insert-position="before") NOT
+	%div.action
+		<a>Search fields</a>
+		= fa :caret_down
+		%div
+			%a.action(data-insert="username:" data-value="example*") Username
+			%a.action(data-insert="created>" data-value="1/1/1992") Date Created
+	.spacer
+	%a.action.slider-toggle(data-target=".explanation")
+		Syntax Help
+		= fa :question_circle
+.slideout.explanation.properties
+	.group.active(style="padding:10px;white-space:normal")
+		= render 'search/syntaxes/content'

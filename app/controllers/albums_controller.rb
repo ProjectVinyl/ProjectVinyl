@@ -1,7 +1,7 @@
 class AlbumsController < Albums::BaseAlbumsController
   include Searchable
   
-  configure_ordering [:title, :created_at]
+  configure_ordering [:title, :created_at], only: [ :index ]
 
   def show
     if !(@album = Album.where(id: params[:id].split(/-/)[0]).first)

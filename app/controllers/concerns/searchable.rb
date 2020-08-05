@@ -1,3 +1,5 @@
+require 'projectvinyl/search/search'
+require 'projectvinyl/search/active_record'
 
 module Searchable
   extend ActiveSupport::Concern
@@ -5,11 +7,18 @@ module Searchable
   included do
     def self.configure_ordering(orders = [], params = {})
       qt = 'qt'
-      define_method :configured_orderings do
-        return orders
+      if params.key?(:only)
+        before_action only: params[:only] do
+          @orderings = orders
+        end
+      else
+        before_action do
+          @orderings = orders
+        end
       end
+
       define_method :query_term do
-        return qt
+        qt
       end
       qt = params[:query_term] if params[:query_term]
     end
@@ -26,12 +35,11 @@ module Searchable
       @query_term => @query,
       :orderby => @orderby
     })
-    @orderings = configured_orderings
     @ordering_labels = @orderings.map {|a| a.to_s.titlecase}
   end
 
   def order_field
-    configured_orderings[@orderby]
+    @orderings[@orderby]
   end
 
   def filtered?

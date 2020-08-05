@@ -1,0 +1,25 @@
+﻿.meta-toolbar{ data: {target: amp_id} }
+	%a.action(data-insert="-" data-insert-position="before") NOT
+	%div.action
+		<a>Search fields</a>
+		= fa :caret_down
+		%div
+			%a.action(data-insert="name:" data-value="example*") Name
+			%a.action(data-insert="slug:" data-value="example") Slug
+			%a.action(data-insert="namespace:" data-value="example") Namespace
+			%a.action(data-insert="implies:" data-value="example") Implies
+			%a.action(data-insert="implied_by:" data-value="example") Implied_by
+			%a.action(data-insert="alias:" data-value="example") Alias
+	%div.action
+		<a>Has...</a>
+		= fa :caret_down
+		%div
+			%a.action(data-insert="videos>" data-value="1") Video Count
+			%a.action(data-insert="users>" data-value="1") User Count
+	.spacer
+	%a.action.slider-toggle(data-target=".explanation")
+		Syntax Help
+		= fa :question_circle
+.slideout.explanation.properties
+	.group.active(style="padding:10px;white-space:normal")
+		= render 'search/syntaxes/content'

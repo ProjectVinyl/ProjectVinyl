@@ -9,7 +9,7 @@
 		- c = items.count
 		= number_with_delimiter c
 		= label.pluralize(c)
-	= render 'search/big_search'
+	= render partial: 'search/big_search', locals: { table: table }
 	%hr
 	- if items.count > 0
 		= render layout: 'pagination/paginated', locals: { type: type, paginated: items, id: :page } do

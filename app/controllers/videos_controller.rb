@@ -1,9 +1,7 @@
-require 'projectvinyl/search/search'
-
 class VideosController < Videos::BaseVideosController
   include Searchable
 
-  configure_ordering [ :date, :rating, :heat, :length, :random, :relevance ]
+  configure_ordering [ :date, :rating, :heat, :length, :random, :relevance ], only: [ :index ]
 
   def show
     if !(@video = Video.where(id: params[:id]).with_likes(current_user).first)
