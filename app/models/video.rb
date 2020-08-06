@@ -161,8 +161,8 @@ class Video < ApplicationRecord
     Ffmpeg.locked?(video_path)
   end
 
-  def self.thumb_for(video, user)
-    video ? video.tiny_thumb(user) : '/images/default-cover-g.png'
+  def self.thumb_for(video, user, filter)
+    video ? video.tiny_thumb(user, filter) : '/images/default-cover-g.png'
   end
 
   def thumb
@@ -173,8 +173,8 @@ class Video < ApplicationRecord
     cache_bust(public_url('cover.png'))
   end
 
-  def tiny_thumb(user)
-    if (hidden && (!user || user_id != user.id)) || spoilered_by?(user)
+  def tiny_thumb(user, filter)
+    if (hidden && (!user || user_id != user.id)) || filter.video_spoilered?(self)
       return '/images/default-cover-small.png'
     end
     cache_bust(public_url('thumb.png'))

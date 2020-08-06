@@ -43,7 +43,7 @@ class AlbumsController < Albums::BaseAlbumsController
         index: 0,
         only_path: false
       }),
-      cover: Video.thumb_for(@items.records.first, current_user),
+      cover: Video.thumb_for(@items.records.first, current_user, current_filter),
       oembed: {
         list: @album.id,
         index: 0

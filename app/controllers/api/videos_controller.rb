@@ -67,7 +67,7 @@ module Api
           title: video.title,
           cover: {
             full: PathHelper.absolute_url(video.thumb, root),
-            thumbnail: PathHelper.absolute_url(video.tiny_thumb(current_user), root)
+            thumbnail: PathHelper.absolute_url(video.tiny_thumb(current_user, current_filter), root)
           },
           description: video.description,
           source: video.source,

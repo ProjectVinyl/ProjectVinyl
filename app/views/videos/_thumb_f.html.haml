@@ -1,8 +1,8 @@
 %li.generic.thumb
 	%a.thumb{href: thumb_f.link}
-		.tile(style="background-image:url('#{thumb_f.hidden_by?(current_user) ? 'images/default-cover' : thumb_f.tiny_thumb(current_user)}');")
+		.tile{style: format_bg(thumb_f.tiny_thumb(current_user, current_filter))}
 			%span.tag-set.duration= duration thumb_f.duration
-		.title= thumb_f.filtered_by?(current_user) ? "Spoilered" : thumb_f.get_title
+		.title= current_filter.video_spoilered?(thumb_f) ? "Spoilered" : thumb_f.get_title
 		%span.date{title: thumb_f.created_at.in_time_zone}= since thumb_f.created_at
 		%span.tag-set.right
 			- if thumb_f.liked?

@@ -9,7 +9,7 @@
 				- if (@mix_string = @video.mix_string(current_user)).length > 0
 					%li.generic.mix>
 						%a.thumb(href="#{@video.link}?q=#{@mix_string}&index=0" data-href="#{@video.link}?q=#{@mix_string}&index=0")
-							.tile(style="background-image:none,url('#{@video.tiny_thumb(current_user)}')")
+							.tile(style="background-image:none,url('#{@video.tiny_thumb(current_user, current_filter)}')")
 								.details
 									.title
 										MIX - 

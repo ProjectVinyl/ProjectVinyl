@@ -4,17 +4,9 @@ module Taggable
   included do
     scope :with_tags, -> { includes(:tags) } if respond_to? :scope
   end
-
-  def hidden_by?(user)
-    user && user.hides(@tag_ids || (@tag_ids = tags.map(&:id)))
-  end
-
-  def spoilered_by?(user)
-    user && user.spoilers(@tag_ids || (@tag_ids = tags.map(&:id)))
-  end
-
-  def filtered_by?(user)
-    hidden_by?(user) || spoilered_by?(user)
+  
+  def tag_ids
+    @tag_ids || (@tag_ids = tags.map(&:id))
   end
 
   def drop_tags(ids)

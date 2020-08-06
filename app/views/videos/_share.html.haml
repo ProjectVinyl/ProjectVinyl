@@ -34,4 +34,4 @@
 			%td.field
 				BBCode
 				%p
-					%textarea(rows="2")= "[url=http://www.projectvinyl.net/#{@video.id}][img]http://www.projectvinyl.net#{@video.tiny_thumb(current_user)}[/img]#{@video.title.strip}[/url]"
+					%textarea(rows="2")= "[url=http://www.projectvinyl.net/#{@video.id}][img]http://www.projectvinyl.net#{@video.tiny_thumb(current_user, current_filter)}[/img]#{@video.title.strip}[/url]"

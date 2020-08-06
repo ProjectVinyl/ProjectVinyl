@@ -2,18 +2,11 @@
 = form_for(current_user, as: "user", url: videos_feed_path) do |f|
 	%table
 		%tr
-			%td.label Hidden Tags
+			%td.label Filters
 			%td.field
-				Any tags you'd like to keep hidden. Videos with these tags will not show up on the site.
-				= render 'tags/editor', tags: current_user.hidden_tags_actual do
-					= f.text_area :hidden_tag_string, autocomplete: "off"
-		%tr
-			%td.label Spoilered Tags
-			%td.field
-				Spoilered tags. Any videos with these will be displayed with the option to view them,
-				but have their thumbnail and title hidden.
-				= render 'tags/editor', tags: current_user.spoilered_tags_actual do
-					= f.text_area :spoilered_tag_string, autocomplete: "off"
+				Are you looking for your filters?
+				They're 
+				%a{href: filters_path} over here.
 		%tr
 			%td.label Watched Tags
 			%td.field

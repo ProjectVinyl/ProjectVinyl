@@ -5,14 +5,14 @@ class AlbumItem < ApplicationRecord
 
   scope :discriminate, ->(comparitor, current, user) {
     where('album_items.index ' + comparitor + ' ?', current).reject do |i|
-      (i.video.hidden_by?(user) || i.video.hidden)
+      (video.hidden_by?(user) || i.video.hidden)
     end
   }
   
   before_destroy :shift_indices
   
-  def tiny_thumb(user)
-    self.video.tiny_thumb(user)
+  def tiny_thumb(user, filter)
+    self.video.tiny_thumb(user, filter)
   end
   
   def owned_by(user)

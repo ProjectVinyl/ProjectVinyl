@@ -43,6 +43,16 @@ class SiteFilter < ApplicationRecord
     ProjectVinyl::Search.interpret(search_terms, ProjectVinyl::Search::VIDEO_INDEX_PARAMS, current_user || user)
   end
 
+  def hides?(*tag_ids)
+    @hidden_tag_ids ||= (@hidden_tag_ids = Tag.split_to_ids(spoiler_tags))
+    !(tag_ids & @hidden_tag_ids).empty?
+  end
+
+  def spoilers?(*tag_ids)
+    @spoilered_tag_ids ||= (@spoilered_tag_ids = Tag.split_to_ids(hide_tags))
+    !(tag_ids & @spoilered_tag_ids).empty?
+  end
+
   private
   def __filter_present?(filter)
     filter && !filter.strip.empty?

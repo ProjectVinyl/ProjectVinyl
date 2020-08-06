@@ -16,6 +16,7 @@ class User < ApplicationRecord
   include Taggable
   include WithFiles
   include Tinted
+  include TagSubscribeable
 
   prefs :preferences, subscribe_on_reply: true, subscribe_on_thread: true, subscribe_on_upload: true
 
@@ -52,12 +53,7 @@ class User < ApplicationRecord
   has_many :api_tokens, dependent: :destroy
   has_many :tag_subscriptions, dependent: :destroy
 
-  has_many :hidden_tags, -> { where(hide: true) }, class_name: "TagSubscription"
-  has_many :spoilered_tags, -> { where(spoiler: true) }, class_name: "TagSubscription"
   has_many :watched_tags, -> { where(watch: true, hide: false) }, class_name: "TagSubscription"
-
-  has_many :hidden_tags_actual, through: :hidden_tags, class_name: "Tag", source: "tag"
-  has_many :spoilered_tags_actual, through: :spoilered_tags, class_name: "Tag", source: "tag"
   has_many :watched_tags_actual, through: :watched_tags, class_name: "Tag", source: "tag"
 
   belongs_to :album, foreign_key: "star_id"
@@ -183,18 +179,6 @@ class User < ApplicationRecord
   end
   # ####################
 
-  def hidden_tag_string
-    Tag.tag_string(hidden_tags_actual)
-  end
-
-  def spoilered_tag_string
-    Tag.tag_string(spoilered_tags_actual)
-  end
-
-  def watched_tag_string
-    Tag.tag_string(watched_tags_actual)
-  end
-
   def stars
     if album.nil?
       self.album = create_album(
@@ -212,21 +196,6 @@ class User < ApplicationRecord
 
   def taglist
     self.is_admin ? "Admin" : "User"
-  end
-
-  def hides(tags)
-    @hidden_tag_ids ||= hidden_tags_actual.pluck_actual_ids
-    !(tags & @hidden_tag_ids).empty?
-  end
-
-  def spoilers(tags)
-    @spoilered_tag_ids ||= spoilered_tags_actual.pluck_actual_ids
-    !(tags & @spoilered_tag_ids).empty?
-  end
-
-  def watches(tag)
-    @watched_tag_ids ||= watched_tags_actual.pluck_actual_ids
-    !([tag.id] & @watched_tag_ids).empty?
   end
 
   def default_name

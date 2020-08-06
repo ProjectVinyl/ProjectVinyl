@@ -25,22 +25,16 @@ module Videos
     def update
       return redirect_to action: "edit" if !user_signed_in?
 
-      watched = Tag.split_to_ids(params[:user][:watched_tag_string])
-      hidden = Tag.split_to_ids(params[:user][:hidden_tag_string]) - watched
-      spoilered = Tag.split_to_ids(params[:user][:spoilered_tag_string]) - hidden
-
-      entries = make_entries(hidden, true, false, false)\
-              | make_entries(spoilered, false, false, true)\
-              | make_entries(watched, false, true, false)
+      entries = make_entries(Tag.split_to_ids(params[:user][:watched_tag_string]))
 
       current_user.tag_subscriptions.destroy_all
       current_user.tag_subscriptions.create entries
     end
 
     private
-    def make_entries(entries, hide, watch, spoiler)
+    def make_entries(entries)
       entries.map do |i|
-        { tag_id: i, hide: hide, spoiler: spoiler, watch: watch }
+        { tag_id: i, hide: false, spoiler: false, watch: true }
       end
     end
   end
