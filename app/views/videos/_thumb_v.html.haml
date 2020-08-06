@@ -6,7 +6,7 @@
 				.title{title: !spoilered && thumb_v.get_title}
 					- if thumb_v.hidden
 						%span.icon(title="Private - Only you can see this item")= fa :lock
-					= spoilered ? "Spoilered" : thumb_v.get_title
+					= spoilered ? "[Spoilered]" : thumb_v.get_title
 				.published.detail= since thumb_v.created_at
 				.views.detail
 					= fuzzy_big_number_with_delimiter thumb_v.play_count

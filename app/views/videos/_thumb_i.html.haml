@@ -6,4 +6,4 @@
 			= duration thumb_i.duration
 	- spoilered = current_filter.video_spoilered?(thumb_i)
 	.title{title: !spoilered && thumb_i.get_title}
-		= spoilered ? "Spoilered" : thumb_i.get_title
+		= spoilered ? "[Spoilered]" : thumb_i.get_title

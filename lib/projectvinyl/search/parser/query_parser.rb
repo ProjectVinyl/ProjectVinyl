@@ -78,9 +78,16 @@ module ProjectVinyl
           field = opset.shift_data(op, 'field')
           value = opset.shift_data(op, 'value').strip
           return if value.empty?
+
+          @dirty = true
+
+          if value == '*'
+            dest << { match_all: {} }
+            return
+          end
+
           @tags << value
           dest << TextQuery.make_term(field, value)
-          @dirty = true
         end
 
         # reads all params and children into this group

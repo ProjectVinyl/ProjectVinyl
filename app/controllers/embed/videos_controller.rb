@@ -8,8 +8,8 @@ module Embed
 
         @video = @items.where(index: @index).first.video
 
-        @prev_video = @album.get_prev(current_user, @index) if @index > 0
-        @next_video = @album.get_next(current_user, @index)
+        @prev_video = @album.get_prev(current_filter, @index) if @index > 0
+        @next_video = @album.get_next(current_filter, @index)
       end
 
       @video = Video.where(id: params[:id]).first if !@video

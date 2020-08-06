@@ -80,7 +80,7 @@ class VirtualAlbum < Album
     false
   end
 
-  def all_items
+  def all_items(filter)
     @items
   end
 
@@ -102,13 +102,13 @@ class VirtualAlbum < Album
     @videos << item
   end
 
-  def get_next(_user, current)
+  def get_next(filter, current)
     current -= @offset
     return nil if @items.empty? || current >= @items.length - 1
     @items[current + 1]
   end
 
-  def get_prev(_user, current)
+  def get_prev(filter, current)
     current -= @offset
     return nil if @items.empty? || current < 1
     @items[(current - 1) % @items.length]

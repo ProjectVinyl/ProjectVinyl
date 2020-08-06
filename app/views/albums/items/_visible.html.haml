@@ -1,0 +1,13 @@
+%a.row.removeable{href: item.link,
+									data: {target: "albums/items", "video-id": item.video_id, id: item.id, index: item.index}}
+	- if @modifications_allowed
+		.handle= fa :ellipsis_v
+	.title
+		%div= item.get_title
+	.duration
+		%div= duration item.video.duration
+	.author
+		%span= item.video.user.username
+	- if @modifications_allowed
+		.remove(title="Remove")
+			%span= fa :times

@@ -191,9 +191,9 @@ class Tag < ApplicationRecord
   def flags(sender=nil)
     return '' if sender.nil?
 
-    answer = [sender.watches(self) ? '-' : '+']
-    answer << 'H' if sender.hides([id])
-    answer << 'S' if sender.spoilers([id])
+    answer = [sender.watches?(self.id) ? '-' : '+']
+    answer << 'H' if sender.hides?(id)
+    answer << 'S' if sender.spoilers?(id)
     answer.join(' ')
   end
 

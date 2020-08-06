@@ -8,10 +8,7 @@
 				%span.icon(title="Private - Only you can see this item")= fa :lock
 			- if thumb_h.unlisted?
 				%span.icon(title="Unlisted - Only you and people with a direct link can see this item")= fa :unlock
-			- if spoilered
-				Spoilered
-			- else 
-				= thumb_h.get_title
+			= spoilered ? '[Spoilered]' : thumb_h.get_title
 		%a.link.date{href: thumb_h.user.link, data: {id: thumb_h.user.id}}= thumb_h.user.username
 		%span.date{title: thumb_h.created_at.in_time_zone}= since thumb_h.created_at
 		%span.tag-set.right

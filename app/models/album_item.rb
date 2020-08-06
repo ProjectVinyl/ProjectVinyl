@@ -3,11 +3,9 @@ class AlbumItem < ApplicationRecord
   belongs_to :video
   has_one :direct_user, through: :video
 
-  scope :discriminate, ->(comparitor, current, user) {
-    where('album_items.index ' + comparitor + ' ?', current).reject do |i|
-      (video.hidden_by?(user) || i.video.hidden)
-    end
-  }
+  scope :following, ->(current) { discriminate('>', current) }
+  scope :leading, ->(current) { discriminate('<', current) }
+  scope :discriminate, ->(comparitor, current) { where('album_items.index ' + comparitor + ' ?', current) }
   
   before_destroy :shift_indices
   

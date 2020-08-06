@@ -9,16 +9,16 @@
 		%ul.drop-down.pop-out
 			%li.action.toggle(data-family="tag-flags" data-descriminator="hide" data-target="tags" data-id="#{thumb_h.id}" data-action="actions/hide")
 				%span.icon
-					- if current_user.hides([thumb_h.id])
+					- if current_user.hides?(thumb_h.id)
 						= fa :check
 				%span.label Hide
 			%li.action.toggle(data-family="tag-flags" data-descriminator="spoiler" data-target="tags" data-id="#{thumb_h.id}" data-action="actions/spoiler")
 				%span.icon
-					- if current_user.spoilers([thumb_h.id])
+					- if current_user.spoilers?(thumb_h.id)
 						= fa :check
 				%span.label Spoiler
 			%li.action.toggle(data-family="tag-flags" data-descriminator="watch" data-target="tags" data-id="#{thumb_h.id}" data-action="actions/watch")
 				%span.icon
-					- if current_user.watches(thumb_h)
+					- if current_user.watches?(thumb_h.id)
 						= fa :check
 				%span.label Watch

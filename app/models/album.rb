@@ -9,8 +9,8 @@ class Album < ApplicationRecord
   ADDED = 2
   SCORE = 3
 
-  def sample_videos
-    self.ordered(self.videos.where(hidden: false).limit(4))
+  def sample_videos(filter)
+    self.ordered(self.videos.where(id: ids_from_filter(filter)).limit(4))
   end
 
   def set_title(title)
@@ -43,8 +43,12 @@ class Album < ApplicationRecord
     true
   end
 
-  def all_items
-    @items ||= self.ordered(self.album_items.includes(:direct_user, video: :tags))
+  def all_items(filter)
+    @items ||= self.ordered(self.album_items.where(video_id: ids_from_filter(filter)).includes(:direct_user, video: :tags))
+  end
+  
+  def ids_from_filter(filter)
+    filter.videos.where(hidden: false, duplicate_id: 0, albums: [ id ]).ids
   end
 
   def link
@@ -105,12 +109,12 @@ class Album < ApplicationRecord
     defau
   end
   
-  def get_next(user, current)
-    self.all_items.discriminate('>', current, user).first
+  def get_next(filter, current)
+    self.all_items(filter).following(current).first
   end
 
-  def get_prev(user, current)
-    self.all_items.discriminate('<', current, user).last
+  def get_prev(filter, current)
+    self.all_items(filter).leading(current).last
   end
 
   def virtual?

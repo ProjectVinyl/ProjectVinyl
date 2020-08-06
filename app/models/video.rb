@@ -166,7 +166,7 @@ class Video < ApplicationRecord
   end
 
   def thumb
-    hidden ? '/images/default-cover.png' : direct_thumb
+    hidden ? '/images/default-cover-g.png' : direct_thumb
   end
 
   def direct_thumb
@@ -175,7 +175,7 @@ class Video < ApplicationRecord
 
   def tiny_thumb(user, filter)
     if (hidden && (!user || user_id != user.id)) || filter.video_spoilered?(self)
-      return '/images/default-cover-small.png'
+      return '/images/default-cover-small-g.png'
     end
     cache_bust(public_url('thumb.png'))
   end
@@ -217,7 +217,7 @@ class Video < ApplicationRecord
 
   def mix_string(user)
     result = tags.select do |t|
-      !(user && (user.hides([t.id]) || user.spoilers([t.id]))) && t.video_count > 1
+      !(user && (user.hides?(t.id) || user.spoilers?(t.id))) && t.video_count > 1
     end
     result.map(&:name).sort.join(' | ')
   end

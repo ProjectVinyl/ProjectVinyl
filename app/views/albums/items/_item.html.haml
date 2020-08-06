@@ -1,0 +1,2 @@
+- spoilered = item.video.hidden || current_filter.video_spoilered?(item.video)
+= render partial: 'albums/items/' + (spoilered ? 'spoilered' : 'visible'), locals: {item: item}

@@ -21,8 +21,8 @@ module Videos
           @index = params[:index].to_i || (@items.first ? @items.first.index : 0)
           @index = @album.current_index(@index)
 
-          @prev_video = @album.get_prev(current_user, @index) if @index > 0
-          @next_video = @album.get_next(current_user, @index)
+          @prev_video = @album.get_prev(current_filter, @index) if @index > 0
+          @next_video = @album.get_next(current_filter, @index)
 
           @album_editable = user_signed_in? && @album.owned_by(current_user)
         end

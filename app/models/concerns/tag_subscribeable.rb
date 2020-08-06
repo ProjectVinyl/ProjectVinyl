@@ -5,16 +5,16 @@ module TagSubscribeable
     Tag.tag_string(watched_tags_actual)
   end
 
-  def hides?(*tags)
-    site_filter && site_filter.hides?(*tags)
+  def hides?(*tag_ids)
+    site_filter && site_filter.hides?(*tag_ids)
   end
 
-  def spoilers?(*tags)
-    site_filter && site_filter.spoilers?(*tags)
+  def spoilers?(*tag_ids)
+    site_filter && site_filter.spoilers?(*tag_ids)
   end
 
-  def watches(tag)
+  def watches?(*tag_ids)
     @watched_tag_ids ||= watched_tags_actual.pluck_actual_ids
-    !([tag.id] & @watched_tag_ids).empty?
+    !(tag_ids & @watched_tag_ids).empty?
   end
 end
