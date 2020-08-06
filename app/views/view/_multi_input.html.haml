@@ -3,10 +3,10 @@
 		= yield
 	%ul.tags>
 		- if tags
-			= render partial: "#{type}/thumb_i", collection: tags
+			= render partial: "#{type}/thumb/tag", collection: tags
 	%input.tag.input.js-auto-resize{type: "text", placeholder: placeholder}<
 		%ul.search-results.pop-out
 	.js-data-store(style="display:none")= raw data.to_json
-	.js-tag-template(style="display:none")= render "#{type}/editor/thumb_i"
+	.js-tag-template(style="display:none")= render "#{type}/editor/tag"
 	- if display
-		.js-display-template(style="display:none")= render "#{type}/editor/thumb_h"
+		.js-display-template(style="display:none")= render "#{type}/editor/preview"

@@ -15,4 +15,4 @@
 		%hr/
 	= render layout: 'pagination/paginated', locals: {type: admin_videos_hidden_index_path, paginated: @hiddenvideos, id: "hidden"} do
 		%ul.horizontal.video-list#videos
-			= render partial: 'admin/videos/thumb_h', collection: @hiddenvideos.records
+			= render partial: 'videos/thumb/admin', collection: @hiddenvideos.records

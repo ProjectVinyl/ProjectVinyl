@@ -9,4 +9,4 @@
 - if @unprocessed.count > 0
 	= render layout: 'pagination/paginated', locals: {type: admin_videos_unprocessed_index_path, paginated: @unprocessed, id: "unprocessed"} do
 		%ul.horizontal.video-list#videos
-			= render partial: 'admin/videos/thumb_h', collection: @unprocessed.records
+			= render partial: 'videos/thumb/admin', collection: @unprocessed.records

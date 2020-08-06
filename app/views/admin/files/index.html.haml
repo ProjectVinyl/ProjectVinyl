@@ -10,9 +10,9 @@
 			- else 
 				%a{href: admin_files_path(p: part[:path].join('/'))}= part[:name]
 		- if @video
-			%ul.horizontal= render partial: 'videos/thumb_h', locals: {thumb_h: @video}
+			%ul.horizontal= render partial: 'videos/thumb/normal', locals: {normal: @video}
 		- if @user
-			%ul.horizontal= render partial: 'users/thumb_h', locals: {thumb_h: @user}
+			%ul.horizontal= render partial: 'users/thumb/normal', locals: {normal: @user}
 	.infinite-page.items#files{data: {url: admin_files_path, path: @public.full_path, start: @public.start_ref, end: @public.end_ref}}
 		.row.header
 			%div Name

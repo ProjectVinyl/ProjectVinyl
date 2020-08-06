@@ -66,6 +66,6 @@ module Paginateable
   end
 
   def partial_for_type(type, is_admin = false)
-    "#{is_admin ? 'admin/' : '' }#{type.to_s.underscore}/thumb_h"
+    "#{type.to_s.underscore}/thumb/#{is_admin ? 'admin' : 'normal' }"
   end
 end

@@ -3,7 +3,7 @@
 	%section.page.full-width
 		%h1 Related Users
 		%ul.horizontal.artist-list#artists
-			= render partial: 'users/thumb_h', collection: @users.records
+			= render partial: 'users/thumb/normal', collection: @users.records
 		- if @users.pages > 0
 			.load-more
 				%button(data-page="0" data-url="#{tag_users_path @tag}" data-target="artists") Load More
@@ -12,7 +12,7 @@
 	= render partial: 'search/big_search', locals: { table: :videos }
 	%ul.horizontal.video-list#songs
 		- if @videos.length > 0
-			= render partial: 'videos/thumb_h', collection: @videos.records
+			= render partial: 'videos/thumb/normal', collection: @videos.records
 		-	else
 			%li.generic.virtual.keep
 	- if @videos.pages > 0

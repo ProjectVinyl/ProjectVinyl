@@ -1,0 +1,18 @@
+- spoilered = current_filter.video_spoilered?(normal)
+%li.generic.thumb.picture>
+	%a.thumb{class: normal.hidden && "thumb-hidden", href: normal.link}
+		.tile{style: format_bg(normal.tiny_thumb(current_user, current_filter))}
+			%span.tag-set.duration= duration normal.duration
+		.title{title: !spoilered && normal.get_title}
+			- if normal.privated?
+				%span.icon(title="Private - Only you can see this item")= fa :lock
+			- if normal.unlisted?
+				%span.icon(title="Unlisted - Only you and people with a direct link can see this item")= fa :unlock
+			= spoilered ? '[Spoilered]' : normal.get_title
+		%a.link.date{href: normal.user.link, data: {id: normal.user.id}}= normal.user.username
+		%span.date{title: normal.created_at.in_time_zone}= since normal.created_at
+		%span.tag-set.right
+			- if normal.liked?
+				= fa "thumbs-#{normal.disliked? ? 'down red' : 'up green'}"
+			= fuzzy_big_number_with_delimiter normal.play_count
+			views

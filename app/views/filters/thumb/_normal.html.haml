@@ -1,0 +1,33 @@
+%li.generic.thumb.bio>
+	%a.thumb{href: filter_path(normal)}
+		.title
+			= normal.name
+			- if normal.id == default_filter.id
+				= surround '(', ')' do
+					default
+	- if normal.id == current_filter.id
+		.notice This is your current filter
+	%span
+		%br
+		Maintained by
+		- if normal.user
+			%a.user-link{href: normal.user.link}=normal.user.username
+		- else
+			Staff
+	%b
+		Hides
+		= number_with_delimiter Tag.split_tag_string(normal.hide_tags).length
+		tags
+		Spoilers
+		= number_with_delimiter Tag.split_tag_string(normal.spoiler_tags).length
+		tags
+	%hr
+	.details= normal.description || 'No description provided'
+	.actions
+		- if normal.id != current_filter.id
+			%a.button.green(title="Use" data-method="post"){href: current_filter_path(filter_id: normal.id)} Use
+		- if user_signed_in?
+			%a.button.green(title="Modify"){href: edit_filter_path(normal)}= fa :pencil
+			%a.button.blue(title="Duplicate"){href: new_filter_path(copy: normal)}= fa :copy
+			- if normal.can_modify?(current_user)
+				%a.button.red.right(title="Delete" data-method="delete" data-confirm="Are you sure?" data-title="Delete Filter"){href: filter_path(normal)}= fa :trash_o

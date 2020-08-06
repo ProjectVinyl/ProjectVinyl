@@ -8,6 +8,6 @@
 			= fa :chevron_right
 	%ul.horizontal.video-list#uploads
 		- if @videos.count > 0
-			= render partial: 'videos/thumb_h', collection: @videos.records
+			= render partial: 'videos/thumb/normal', collection: @videos.records
 		- else
 			%li.generic.virtual.keep

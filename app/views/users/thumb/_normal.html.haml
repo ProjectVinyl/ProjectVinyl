@@ -1,0 +1,17 @@
+%li.bio
+	%a{href: normal.link}
+		= render 'users/avatar/avatar', user: normal
+		%h2{class: normal.banned? && "banned"}= normal.username
+		%span.tag-set= render 'forum/badges/badges', user: normal
+	.tag-set
+		- c = normal.videos.count
+		= number_with_delimiter c
+		= "video".pluralize(c)
+		| 
+		- c = normal.albums.count
+		= number_with_delimiter c
+		= "album".pluralize(c)
+	%br/
+	.bio= emotify normal.bio
+	%br/
+	= render 'tags/taglist', collection: normal.tags.limit(3)

@@ -177,6 +177,10 @@ class Video < ApplicationRecord
     if (hidden && (!user || user_id != user.id)) || filter.video_spoilered?(self)
       return '/images/default-cover-small-g.png'
     end
+    direct_tiny_thumb
+  end
+  
+  def direct_tiny_thumb
     cache_bust(public_url('thumb.png'))
   end
   

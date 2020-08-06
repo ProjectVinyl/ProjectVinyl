@@ -1,0 +1,9 @@
+%a.thumb{class: comment.hidden && "thumb-hidden", href: "#{comment.link}#comment_#{comment}"}
+	.tile(style="#{format_bg comment.tiny_thumb(current_user, current_filter)}")
+		%span.tag-set.duration
+			- if comment.liked?
+				= fa "thumbs-#{comment.disliked? ? 'down red' : 'up green'}"
+			= duration comment.duration
+	- spoilered = current_filter.video_spoilered?(comment)
+	.title{title: !spoilered && comment.get_title}
+		= spoilered ? "[Spoilered]" : comment.get_title

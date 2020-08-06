@@ -23,16 +23,16 @@
 		%div
 			%h2 Implies
 			%hr
-			%ul.tags= render partial: "tags/thumb_h", collection: @implies
+			%ul.tags= render partial: "tags/thumb/normal", collection: @implies
 	- if @implied.length > 0
 		%div
 			%h2 Implied by
 			%hr
-			%ul.tags= render partial: "tags/thumb_h", collection: @implied
+			%ul.tags= render partial: "tags/thumb/normal", collection: @implied
 	- if @aliases.length > 0
 		%div
 			%h2 Aliases
 			%hr
-			%ul.tags= render partial: "tags/thumb_h", collection: @aliases
+			%ul.tags= render partial: "tags/thumb/normal", collection: @aliases
 	- if user_signed_in?
 		= render 'tags/actions'

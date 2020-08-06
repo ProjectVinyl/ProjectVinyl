@@ -21,7 +21,7 @@
 			%table(style="table-layout:auto" class="properties comment-content preview")
 				- if @reportable
 					- if @reportable.class == Video
-						= render 'videos/thumb_h', thumb_h: @reportable
+						= render 'videos/thumb/normal', normal: @reportable
 					- elsif @reportable.class == Comment
 						= render 'comments/comment', comment: @reportable, level: 1, indirect: true
 				%tr

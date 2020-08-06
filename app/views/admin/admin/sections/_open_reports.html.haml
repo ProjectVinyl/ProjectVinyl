@@ -14,5 +14,4 @@
 	%hr/
 	= render layout: 'pagination/paginated', locals: {type: admin_reports_path, paginated: @reports, id: "reports"} do
 		.listing.compact
-			.report-list.items#reports
-				= render partial: 'admin/reports/thumb_h', collection: @reports.records
+			.report-list.items#reports= render @reports.records

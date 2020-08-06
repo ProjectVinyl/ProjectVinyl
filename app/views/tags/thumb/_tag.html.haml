@@ -1,0 +1,6 @@
+%li.tag{class: "tag-#{tag.namespace}", "data-namespace": tag.namespace, "data-slug": tag.slug}>
+	%i.fa.fa-times-circle.remove{title: "Remove Tag", "data-name": tag.name}
+	%a{href: tag.link}= tag.name
+	%span<
+		- if user_signed_in?
+			= render partial: "tags/flags", locals: {tag: tag}

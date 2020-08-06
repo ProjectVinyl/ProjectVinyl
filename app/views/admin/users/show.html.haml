@@ -5,7 +5,7 @@
 	%section.page.full-width.properties
 		%h1 Thumbnail Preview
 		%ul.horizontal.user-list.center(data-aligned="false")
-			= render partial: 'users/thumb_h', locals: {thumb_h: @user}
+			= render partial: 'users/thumb/normal', locals: {normal: @user}
 	= render 'info'
 	= render 'roles'
 	= render 'badges'

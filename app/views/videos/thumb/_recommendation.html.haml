@@ -1,0 +1,17 @@
+%li.generic>
+	%a.thumb{class: recommendation.hidden && "thumb-hidden", href: recommendation.link}
+		.tile{style: format_bg(recommendation.tiny_thumb(current_user, current_filter))}
+			.details
+				- spoilered = current_filter.video_spoilered?(recommendation)
+				.title{title: !spoilered && recommendation.get_title}
+					- if recommendation.hidden
+						%span.icon(title="Private - Only you can see this item")= fa :lock
+					= spoilered ? "[Spoilered]" : recommendation.get_title
+				.published.detail= since recommendation.created_at
+				.views.detail
+					= fuzzy_big_number_with_delimiter recommendation.play_count
+					views
+			%span.tag-set.duration
+				- if recommendation.liked?
+					= fa "thumbs-#{recommendation.disliked? ? 'down red' : 'up green'}"
+				= duration recommendation.duration

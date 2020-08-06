@@ -10,7 +10,7 @@
 		.center
 			%i.fa{title: item.hidden, class: "fa-#{item.hidden ? "check" : "times"}"}
 		%div
-			%ul.tags= render partial: "tags/thumb_h", collection: item.tags
+			%ul.tags= render partial: "tags/thumb/normal", collection: item.tags
 	.editing.row.row-spanned
 		.content.properties
 			%table

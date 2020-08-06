@@ -7,7 +7,7 @@
 				\—
 				%a.bubble-link{href: comment.comment_thread.owner.link}= comment.comment_thread.owner.title
 	.artist-bio.bio
-		= render 'videos/thumb_i', thumb_i: Video.where(id: comment.comment_thread.owner_id).with_likes(current_user).first, comment: comment.get_open_id
+		= render 'videos/thumb/comment', comment: Video.where(id: comment.comment_thread.owner_id).with_likes(current_user).first, comment: comment.get_open_id
 - else
 	- if indirect
 		%div

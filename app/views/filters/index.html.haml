@@ -15,7 +15,7 @@
 		= render layout: 'pagination/paginated', locals: { type: :filter, paginated: @user_filters, id: :user_filters } do
 			%section
 				%ul.horizontal.filter-list#user-filters
-					= render partial: 'filters/thumb_h', collection: @user_filters.records
+					= render partial: 'filters/thumb/normal', collection: @user_filters.records
 
 %section.page.full-width
 	%h1
@@ -28,4 +28,4 @@
 	= render layout: 'pagination/paginated', locals: { type: :filter, paginated: @global_filters, id: :global_filters } do
 		%section
 			%ul.horizontal.filter-list#global-filters
-				= render partial: 'filters/thumb_h', collection: @global_filters.records
+				= render partial: 'filters/thumb/normal', collection: @global_filters.records

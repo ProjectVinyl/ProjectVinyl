@@ -9,15 +9,15 @@
 				- if (@mix_string = @video.mix_string(current_user)).length > 0
 					%li.generic.mix>
 						%a.thumb(href="#{@video.link}?q=#{@mix_string}&index=0" data-href="#{@video.link}?q=#{@mix_string}&index=0")
-							.tile(style="background-image:none,url('#{@video.tiny_thumb(current_user, current_filter)}')")
+							.tile{style:format_bg(@video.direct_tiny_thumb)}
 								.details
 									.title
 										MIX - 
 										= @video.title
-				= render partial: 'videos/thumb_v', collection: @queue[:user]
+				= render partial: 'videos/thumb/recommendation', collection: @queue[:user]
 		.group(data-stage="global")
 			%h2.resize-target.slide-nav
 				%a.goto.slide-left(data-to="user" title="Uploader")= fa :chevron_left
 				%a Anyone
 			%ul.vertical
-				= render partial: 'videos/thumb_v', collection: @queue[:global]
+				= render partial: 'videos/thumb/recommendation', collection: @queue[:global]

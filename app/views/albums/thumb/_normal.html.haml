@@ -1,0 +1,10 @@
+%li.generic
+	%a.album{href: normal.link}
+		%span.tile.stack= render 'albums/tile_stack', items: normal.album_items.order(:index)
+		.title
+			= render 'albums/visibility', album: normal
+			= normal.title
+		%span.date{title: normal.created_at.in_time_zone}= since normal.created_at
+		%span.tag-set.right
+			=normal.album_items.count
+			Videos

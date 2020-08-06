@@ -9,6 +9,6 @@
 			= fa :chevron_right
 	%ul.horizontal.video-list#uploads
 		- if @favourites.count > 0
-			= render partial: 'videos/thumb_h', collection: @favourites.records
+			= render partial: 'videos/thumb/normal', collection: @favourites.records
 		- else
 			%li.generic.virtual.keep

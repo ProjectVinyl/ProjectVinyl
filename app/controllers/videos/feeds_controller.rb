@@ -8,10 +8,9 @@ module Videos
 
       @records = TagSubscription.get_feed_items(current_user, current_filter)
 
-      return render_pagination 'videos/thumb_h', @results, params[:page].to_i, 30, false if params[:format] == 'json'
-
+      return render_pagination partial_for_type(:videos), @results, params[:page].to_i, 30, false if params[:format] == 'json'
       render_listing_partial @records, params[:page].to_i, 30, false, {
-        partial: 'videos/thumb_h',
+        partial: partial_for_type(:videos),
         type: :videos,
         table: :feed,
         label: 'Feed'
