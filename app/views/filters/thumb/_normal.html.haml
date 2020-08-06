@@ -25,7 +25,7 @@
 	.details= normal.description || 'No description provided'
 	.actions
 		- if normal.id != current_filter.id
-			%a.button.green(title="Use" data-method="post"){href: current_filter_path(filter_id: normal.id)} Use
+			%a.button.green(title="Use" data-method="put"){href: current_filter_path(filter_id: normal.id)} Use
 		- if user_signed_in?
 			%a.button.green(title="Modify"){href: edit_filter_path(normal)}= fa :pencil
 			%a.button.blue(title="Duplicate"){href: new_filter_path(copy: normal)}= fa :copy
