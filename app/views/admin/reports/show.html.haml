@@ -1,15 +1,12 @@
 = title "Report ##{@report.id}"
 = lim "1100px"
 %section.page.full-width.resize-holder.report(data-state="#{@report.status.downcase}")
-	%h1.title.resize-target
-		Report
-		= precede '#' do
-			= @report.id
-		\-
-		= @report.comment_thread.title
+	%h1.title.resize-target Details & Status
+	= render 'status'
+	%hr
+	= render 'options'
+	%hr
 	.comment
-		= render 'status'
-		= render 'options'
 		.artist-bio.bio
 			%a{class: !@report.user.dummy? && "user-link", href: @report.user.link, data: {id: @report.user_id}}
 				= render 'users/avatar/medium', user: @report.user
@@ -63,5 +60,6 @@
 							= @report.name
 							Email:
 							= (@report.contact || "").gsub(/a-zA-z/,"*")
-		= render 'options'
+	%hr
+	= render 'options'
 %section.page.full-width.resize-holder= render 'forum/threads/view_reverse'

@@ -1,0 +1,15 @@
+- title "Reports"
+%section.page.full-width
+	%h1
+		Showing
+		= @records.page_offset_start
+		to
+		= @records.page_offset_end
+		of
+		- c = @records.count
+		= number_with_delimiter c
+		= "Report".pluralize(c)
+	= render layout: 'pagination/paginated', locals: { type: :report, paginated: @records, id: :page } do
+		%section.listing.compact
+			%ul#reports.report-list.items
+				= render @records.records

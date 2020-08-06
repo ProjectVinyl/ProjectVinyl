@@ -27,7 +27,7 @@ module Paginateable
   end
 
   def render_listing_total(records, page, page_size, reverse, locals)
-    locals[:partial] = partial_for_type(locals[:table], locals[:is_admin])
+    locals[:partial] = partial_for_type(locals[:table], locals[:is_admin]) if !locals.key?(:partial)
     locals[:type] = "#{locals[:scope] ? locals[:scope].to_s + "/" : ""}#{locals[:table]}"
 
     @crumb = {
@@ -41,7 +41,7 @@ module Paginateable
   end
 
   def render_paginated(pagination, locals = {})
-    locals[:partial] = partial_for_type(locals[:table], locals[:is_admin])
+    locals[:partial] = partial_for_type(locals[:table], locals[:is_admin]) if !locals.key?(:partial)
     locals[:type] = "#{locals[:scope] ? locals[:scope].to_s + "/" : ""}#{locals[:table]}"
     locals[:items] = pagination
 

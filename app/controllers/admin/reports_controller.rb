@@ -12,12 +12,6 @@ module Admin
       
       return render_access_denied if !current_user.is_contributor? && current_user.id != @report.user_id
 
-      @crumb = {
-        stack: [
-          { link: "/admin", title: "Admin" }
-        ],
-        title: "Reports"
-      }
       
       @thread = @report.comment_thread
       @order = '0'
@@ -25,7 +19,14 @@ module Admin
       @comments = Pagination.paginate(@thread.get_comments(true), (params[:page] || -1).to_i, 10, false)
       @reportable = @report.reportable
       @user = @report.user
-      
+      @crumb = {
+        stack: [
+          { link: "/admin", title: "Admin" },
+          { link: "/admin/reports", title: "Reports" },
+          { title: @report.id },
+        ],
+        title: @thread.title
+      }
     end
     
     def index
@@ -38,11 +39,15 @@ module Admin
         @reportable = Reportable.find(params)
       end
       
-      @records = Report.includes(:reportable).open
+      @records = Report.includes(:reportable)
       @records = @records.where(reportable: @reportable) if @reportable
+      @records = Pagination.paginate(@records, params[:page].to_i, 50, true)
 
-      render_listing_total @records, params[:page].to_i, 0, true, {
-        is_admin: true, table: :reports, label: 'Report', scope: :admin
+      @crumb = {
+        stack: [
+          { link: "/admin", title: "Admin" }
+        ],
+        title: "Reports"
       }
     end
     
