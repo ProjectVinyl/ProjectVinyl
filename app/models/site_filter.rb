@@ -60,12 +60,12 @@ class SiteFilter < ApplicationRecord
   end
 
   def hides?(*tag_ids)
-    @hidden_tag_ids || (@hidden_tag_ids = Tag.split_to_ids(hide_tags))
+    @hidden_tag_ids = Tag.unscoped.split_to_ids(hide_tags) if !@hidden_tag_ids
     !(tag_ids & @hidden_tag_ids).empty?
   end
 
   def spoilers?(*tag_ids)
-    @spoilered_tag_ids || (@spoilered_tag_ids = Tag.split_to_ids(spoiler_tags))
+    @spoilered_tag_ids = Tag.unscoped.split_to_ids(spoiler_tags)  if !@spoilered_tag_ids
     !(tag_ids & @spoilered_tag_ids).empty?
   end
 
@@ -75,7 +75,7 @@ class SiteFilter < ApplicationRecord
   end
 
   def __build_tag_params(tag_string)
-    { terms: { tags: Tag.by_tag_string(tag_string).actual_names } }
+    { terms: { tags: Tag.unscoped.by_tag_string(tag_string).actual_names } }
   end
 
   def __elastic_hide_tag_params

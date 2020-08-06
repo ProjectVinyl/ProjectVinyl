@@ -49,29 +49,30 @@ class Tag < ApplicationRecord
     json
   end
 
-  scope :pluck_actual_ids, -> { (pluck(:id, :alias_id).map {|t| t[1] || t[0] }).uniq }
+  scope :pluck_actual_ids, -> { ( pluck(:id, :alias_id).map {|t| t[1] || t[0] }).uniq }
   scope :jsons, ->(sender=nil) { actualise.uniq.map {|t| t.to_json(sender)} }
   scope :split_to_ids, ->(tag_string) {
     names = Tag.split_tag_string(tag_string)
     return [] if names.blank?
-    where('name IN (?)', names.uniq).pluck_actual_ids
+    where('"tags"."name" IN (?)', names.uniq).pluck_actual_ids
+  }
+  scope :by_tag_string, ->(tag_string) {
+    names = Tag.split_tag_string(tag_string)
+    where('"tags"."name" IN (?) OR "tags"."short_name" IN (?)', names, names)
   }
 
   scope :actualise, -> { includes(:alias).map(&:actual).uniq }
   scope :actual_names, -> { actualise.map(&:name).uniq }
-  scope :by_tag_string, ->(tag_string) {
-    names = Tag.split_tag_string(tag_string)
-    where('name IN (?) OR short_name IN (?)', names, names)
-  }
+
   scope :by_names, ->(names) {
     return [] if names.nil? || (names = names.uniq).empty?
-    where('name IN (?) OR short_name IN (?)', names, names).actualise
+    where('"tags"."name" IN (?) OR "tags"."short_name" IN (?)', names, names).actualise
   }
   scope :by_name_or_id, ->(name) {
     return none if name.blank?
     order(:video_count, :user_count)
         .reverse_order
-        .where('name = ? OR id::text = ? OR short_name = ?', name, name, name)
+        .where('"tags"."name" = ? OR "tags"."id"::text = ? OR "tags"."short_name" = ?', name, name, name)
   }
   scope :find_matching_tags, ->(name, sender=nil) {
     name = name.downcase
@@ -191,9 +192,9 @@ class Tag < ApplicationRecord
   def flags(sender=nil)
     return '' if sender.nil?
 
-    answer = [sender.watches?(self.id) ? '-' : '+']
-    answer << 'H' if sender.hides?(id)
-    answer << 'S' if sender.spoilers?(id)
+    answer = [sender.watches?(actual.id) ? '-' : '+']
+    answer << 'H' if sender.hides?(actual.id)
+    answer << 'S' if sender.spoilers?(actual.id)
     answer.join(' ')
   end
 
