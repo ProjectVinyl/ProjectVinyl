@@ -14,6 +14,11 @@
 
   .banner-overlay #filters {
     flex-grow: 1;
+    width: 0;
+  }
+  #filters select {
+    width: 0;
+    flex-grow: 1;
   }
   .banner-overlay #search {
     top: 100%;

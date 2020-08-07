@@ -4,6 +4,7 @@
   left: 0;
   right: 0;
   display: flex;
+  white-space: nowrap;
   flex-direction: row-reverse;
 
   --overlay-color: var(--header-overlay-element-fill);

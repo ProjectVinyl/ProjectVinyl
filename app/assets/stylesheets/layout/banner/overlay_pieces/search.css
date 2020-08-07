@@ -22,6 +22,9 @@
   margin: 0;
 }
 
+#filters {
+  display: flex;
+}
 #filters select {
   background: none;
   color: var(--header-overlay-element-color);
