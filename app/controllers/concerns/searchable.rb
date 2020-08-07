@@ -6,24 +6,28 @@ module Searchable
 
   included do
     def self.configure_ordering(orders = [], params = {})
-      qt = 'qt'
+      sa = params[:search_action] || ''
+      qt = params[:query_term] || 'qt'
+
       if params.key?(:only)
         before_action only: params[:only] do
-          @orderings = orders
+          before_search(orders, params)
         end
       else
         before_action do
-          @orderings = orders
+          before_search(orders, params)
         end
       end
-
-      define_method :query_term do
-        qt
-      end
-      qt = params[:query_term] if params[:query_term]
     end
   end
-  
+
+  def before_search(orders, params)
+    @orderings = orders
+    @sa = params[:search_action] || ''
+    @qt = params[:query_term] || 'qt'
+    @sa = self.send(@sa) if !''.is_a?(@sa.class)
+  end
+
   def read_search_params(params)
     @query_term = query_term
     @page = (params[:page] || 0).to_i
@@ -45,5 +49,8 @@ module Searchable
   def filtered?
     @query.length > 0
   end
-  
+
+  def query_term
+    @qt
+  end
 end

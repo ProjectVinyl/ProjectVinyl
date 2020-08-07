@@ -1,4 +1,4 @@
-﻿%form#slug-search(action="#{search_index_path}" method="get")
+﻿%form#slug-search(action="#{@sa}" method="get")
 	%input(name="q" type="search" placeholder="tag1, tag2, title:example, upvoted_by:user, ..." style="margin-top:10px" title="Search by one or more tags" value="#{@query}")
 	%label.options
 		%span Sort
