@@ -29,34 +29,6 @@ class TagSubscription < ApplicationRecord
         .for_thumbnails(user)
   end
 
-  def toggle_hidden
-    self.hide = !self.hide
-    if self.hide
-      self.watch = false
-      self.spoiler = false
-    end
-    self.toggled
-    self.hide
-  end
-
-  def toggle_spoilered
-    self.spoiler = !self.spoiler
-    if self.spoiler
-      self.hide = false
-    end
-    self.toggled
-    self.spoiler
-  end
-
-  def toggle_watched
-    self.watch = !self.watch
-    if self.watch
-      self.hide = false
-    end
-    self.toggled
-    self.watch
-  end
-
   protected
   def self.update_users(op, tags, preserved_receivers)
     if !tags.empty?
@@ -65,12 +37,5 @@ class TagSubscription < ApplicationRecord
           .group('users.id')
           .update_all("feed_count = feed_count #{op ? "+" : "-"} 1")
     end
-  end
-
-  def toggled
-    if self.watch == self.spoiler && self.spoiler == self.hide && self.hide == false
-      return self.destroy
-    end
-    self.save
   end
 end

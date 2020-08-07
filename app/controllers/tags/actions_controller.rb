@@ -1,35 +1,30 @@
 module Tags
   class ActionsController < ApplicationController
+    ALLOWED_ACTIONS = [:hide, :spoiler, :watch]
+
     def update
-      toggle_action do |subscription|
-        subscription.toggle_hidden if params[:id] == 'hide'
-        subscription.toggle_spoilered if params[:id] == 'spoiler'
-        subscription.toggle_watched if params[:id] == 'watch'
-      end
-    end
-
-    private
-    def toggle_action
       return head 401 if !user_signed_in?
+      return head 401 if !ALLOWED_ACTIONS.include?(perform = params[:id].to_sym)
+      return head 401 if perform != :watch && current_filter.user_id != current_user.id
+      return head 404 if !(tag = Tag.by_name_or_id(params[:tag_id]).first)
 
-      if params[:tag_id].to_i.to_s != params[:tag_id]
-        params[:tag_id] = Tag.where(name: params[:tag_id]).first.id
-      end
-      if !(subscription = TagSubscription.where(user_id: current_user.id, tag_id: params[:tag_id]).first)
-        subscription = TagSubscription.new(
-          user_id: current_user.id,
-          tag_id: params[:tag_id],
-          hide: false,
-          spoiler: false,
-          watch: false
-        )
-      end
-      yield(subscription)
-      render json: {
-        hide: subscription.hide,
-        spoiler: subscription.spoiler,
-        watch: subscription.watch
-      }
+      hide = current_filter.hides?(tag.id)
+      spoiler = current_filter.spoilers?(tag.id)
+      watch = current_user.tag_subscriptions.where(tag: tag, watch: true).any?
+
+      watch = !watch if perform == :watch
+      spoiler = !spoiler if perform == :spoiler
+      hide = !hide if perform == :hide
+
+      hide = false if (perform == :watch && watch) || (perform == :spoiler && spoiler)
+      spoiler, watch = [false,false] if hide
+
+      current_filter.toggle_tag_flags!(tag, hide, spoiler)
+
+      current_user.tag_subscriptions.where(tag: tag).destroy_all
+      current_user.tag_subscriptions.create(tag: tag, watch: true) if watch
+
+      render json: { hide: hide, spoiler: spoiler, watch: watch }
     end
   end
 end
