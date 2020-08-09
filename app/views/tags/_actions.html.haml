@@ -11,6 +11,10 @@
 							%i.fa.fa-gavel
 						%span.label
 							Admin
+		%a.button.action{href: tag_changes_path(@tag)}>
+			%span.icon= fa :history
+			%span.label
+				Tag Changes
 	- if can_modify_filter?
 		%button.action.toggle.blue(data-family="tag-flags" data-descriminator="hide" data-target="tags" data-id="#{@tag.id}" data-action="actions/hide")>
 			%span.icon

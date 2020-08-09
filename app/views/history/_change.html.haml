@@ -1,13 +1,14 @@
 .row.change
+	.author
+		%a.thumb.tiny.left{href: change.video.link}
+			.tile{style: format_bg(change.video.tiny_thumb(current_user, current_filter))}
 	- if change.added.nil?
 		%div= change.value
 	- else
 		%div
 			%div
 				- if !change.tag.nil?
-					%a{href: change.tag.link}
-						= precede '#' do
-							= change.tag.name
+					= render partial: 'tags/thumb/normal', locals: {normal: change.tag}
 	.duration.action{class: change.action_class}= change.action
 	.duration= since change.created_at
 	.author
@@ -18,7 +19,7 @@
 				%a.user-link(data-id="#{change.user_id}" href="#{change.user.link}")
 					= change.user.username
 					%sup
-						- if change.user_id == @video.user_id
+						- if change.user_id == change.video.user_id
 							%i.fa.fa-user(title="Uploader")
 						- if change.user.is_staff?
 							%i.fa.fa-gavel(title="Staff")
