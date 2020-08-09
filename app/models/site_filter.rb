@@ -24,7 +24,7 @@ class SiteFilter < ApplicationRecord
   end
 
   def video_spoilered?(video)
-    return false if @unspoilered_id_cache && @unspoilered_id_cache.include?(video.id)
+    return false if !__filter_present?(spoiler_filter) || (@unspoilered_id_cache && @unspoilered_id_cache.include?(video.id))
 
     if video && !(@spoilered_id_cache && @spoilered_id_cache.include?(video.id)) && !(@pending_ids && @pending_ids.include?(video.id))
       puts "[Filter] Force Loading video spoilerage metadata for #{video.id}"
