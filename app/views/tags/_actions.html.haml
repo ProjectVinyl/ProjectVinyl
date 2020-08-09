@@ -11,18 +11,24 @@
 							%i.fa.fa-gavel
 						%span.label
 							Admin
-	%button.action.toggle.blue(data-family="tag-flags" data-descriminator="hide" data-target="tags" data-id="#{@tag.id}" data-action="actions/hide")>
-		%span.icon
-			- if current_user.hides?(@tag.id)
-				= fa :check
-		%span.label
-			Hide Tag
-	%button.action.toggle.blue(data-family="tag-flags" data-descriminator="spoiler" data-target="tags" data-id="#{@tag.id}" data-action="actions/spoiler")>
-		%span.icon
-			- if current_user.spoilers?(@tag.id)
-				= fa :check
-		%span.label
-			Spoiler Tag
+	- if can_modify_filter?
+		%button.action.toggle.blue(data-family="tag-flags" data-descriminator="hide" data-target="tags" data-id="#{@tag.id}" data-action="actions/hide")>
+			%span.icon
+				- if current_user.hides?(@tag.id)
+					= fa :check
+			%span.label
+				Hide Tag
+		%button.action.toggle.blue(data-family="tag-flags" data-descriminator="spoiler" data-target="tags" data-id="#{@tag.id}" data-action="actions/spoiler")>
+			%span.icon
+				- if current_user.spoilers?(@tag.id)
+					= fa :check
+			%span.label
+				Spoiler Tag
+	- else
+		%a.button.action.blue{href: filters_path}>
+			%span.icon
+			%span.label
+				Filter Tag
 	%button.action.toggle.blue(data-family="tag-flags" data-descriminator="watch" data-target="tags" data-id="#{@tag.id}" data-action="actions/watch")>
 		%span.icon
 			- if current_user.watches?(@tag.id)

@@ -7,16 +7,22 @@
 		= render 'tags/flags', tag: normal
 	- if user_signed_in?
 		%ul.drop-down.pop-out
-			%li.action.toggle(data-family="tag-flags" data-descriminator="hide" data-target="tags" data-id="#{normal.id}" data-action="actions/hide")
-				%span.icon
-					- if current_user.hides?(normal.id)
-						= fa :check
-				%span.label Hide
-			%li.action.toggle(data-family="tag-flags" data-descriminator="spoiler" data-target="tags" data-id="#{normal.id}" data-action="actions/spoiler")
-				%span.icon
-					- if current_user.spoilers?(normal.id)
-						= fa :check
-				%span.label Spoiler
+			- if can_modify_filter?
+				%li.action.toggle(data-family="tag-flags" data-descriminator="hide" data-target="tags" data-id="#{normal.id}" data-action="actions/hide")
+					%span.icon
+						- if current_user.hides?(normal.id)
+							= fa :check
+					%span.label Hide
+				%li.action.toggle(data-family="tag-flags" data-descriminator="spoiler" data-target="tags" data-id="#{normal.id}" data-action="actions/spoiler")
+					%span.icon
+						- if current_user.spoilers?(normal.id)
+							= fa :check
+					%span.label Spoiler
+			- else
+				%li.action
+					%a{href: filters_path}
+						%span.icon
+						%span.label Filter
 			%li.action.toggle(data-family="tag-flags" data-descriminator="watch" data-target="tags" data-id="#{normal.id}" data-action="actions/watch")
 				%span.icon
 					- if current_user.watches?(normal.id)
