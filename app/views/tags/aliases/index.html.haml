@@ -9,9 +9,5 @@
 	= render layout: 'pagination/paginated', locals: { type: "tags/aliases", paginated: @aliases, id: "page" } do
 		%section.listing.compact
 			.items
-				.row.heads
-					%div Source
-					%div(style="width:30px")
-					%div
-						%span Target
+				= render 'column_headers'
 				= render partial: 'tags/tag_alias', collection: @aliases.records

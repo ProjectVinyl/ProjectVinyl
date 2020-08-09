@@ -1,0 +1,7 @@
+.listing.compact
+	%ul.items.history{id: "history-#{id}"}
+		= render 'history/column_headers'
+		- if @history.count > 0
+			= render partial: 'history/change', collection: items
+		- else
+			= render partial: 'history/warden_derpy'

@@ -25,11 +25,14 @@ module Paginateable
   end
 
   def pagination_json_for_render(pagination, locals = {})
+    c = render_to_string(partial: locals[:partial], collection: pagination.records, formats: [:html], locals: locals)
+    c = render_to_string(partial: locals[:headers], formats: [:html]) + c  if locals.key?(:headers)
+
     {
       paginate: render_to_string(partial: 'pagination/numbering', formats: [:html], locals: {
         page: pagination.page, pages: pagination.pages, id: '{page}'
       }),
-      content: render_to_string(partial: locals[:partial], collection: pagination.records, locals: locals),
+      content: c,
       pages: pagination.pages,
       page: pagination.page
     }

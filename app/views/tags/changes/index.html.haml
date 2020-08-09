@@ -1,9 +1,4 @@
 - title @tag.name
 %section.page.full-width
 	= render layout: 'pagination/paginated', locals: {type: tag_changes_path(@tag), paginated: @history, id: "page"} do
-		.listing.compact
-			%ul.items.history{id: "history-#{@tag.id}"}
-				- if @history.count > 0
-					= render partial: 'history/change', collection: @history.records
-				- else
-					= render partial: 'history/warden_derpy'
+		= render partial: 'history/list', locals: {id: @tag.id, items: @history.records}

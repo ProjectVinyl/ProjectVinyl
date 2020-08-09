@@ -23,7 +23,7 @@ module Tags
 
       if params[:format] == 'json'
         return render_empty_pagination 'history/warden_derpy' if @history.count == 0
-        render_paginated @history, as: :json, partial: 'change'
+        render_paginated @history, as: :json, partial: 'history/change', headers: 'history/column_headers'
       end
 
       @crumb = {

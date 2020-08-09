@@ -1,9 +1,4 @@
 - title @video.title
 %section.page.full-width
 	= render layout: 'pagination/paginated', locals: {type: video_changes_path(@video), paginated: @history, id: "page"} do
-		.listing.compact
-			%ul.items.history{id: "history-#{@video.id}"}
-				- if @history.count > 0
-					= render partial: 'history/change', collection: @history.records
-				- else
-					= render partial: 'history/warden_derpy'
+		= render partial: 'history/list', locals: {id: @video.id, items: @history.records}
