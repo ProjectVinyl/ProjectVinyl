@@ -231,7 +231,6 @@ class VideosController < Videos::BaseVideosController
   end
 
   def index
-    return render_pagination_json partial_for_type(:videos), find_records if params[:format] == 'json'
     render_paginated find_records, {
       is_admin: @is_admin,
       table: 'videos',

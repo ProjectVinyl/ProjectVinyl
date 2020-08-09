@@ -25,7 +25,7 @@ module Albums
       @items = @album.ordered(@album.album_items.includes(:direct_user))
       @modifications_allowed = user_signed_in? && @album.owned_by(current_user)
 
-      render_pagination 'album/item', @items, params[:page].to_i, 50, false
+      render_pagination @items, params[:page].to_i, 50, false, partial: 'album/item', as: :json
     end
   end
 end

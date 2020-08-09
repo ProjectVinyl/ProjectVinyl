@@ -9,7 +9,7 @@ module Tags
         .reverse_order
         .paginate(params[:page].to_i, 8) {|recs| recs.for_thumbnails(current_user) }
 
-      render_pagination_json partial_for_type(:videos), @records
+      render_paginated @records, partial: partial_for_type(:videos), as: :json
     end
   end
 end

@@ -22,8 +22,8 @@ module Tags
       @history = Pagination.paginate(@history, params[:page].to_i, 20, true)
 
       if params[:format] == 'json'
-        return render_empty_pagination 'warden_derpy' if @history.count == 0
-        render_pagination_json 'change', @history
+        return render_empty_pagination 'history/warden_derpy' if @history.count == 0
+        render_paginated @history, as: :json, partial: 'change'
       end
 
       @crumb = {

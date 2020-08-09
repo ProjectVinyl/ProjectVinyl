@@ -22,7 +22,7 @@ class SearchController < ApplicationController
 
     @results = @results.paginate(@page, 20)
 
-    return render_pagination_json @partial, @results if params[:format] == 'json'
+    return render_paginated @results, partial: @partial, as: :json if params[:format] == 'json'
 
     @data = URI.encode_www_form(
       order: @order,

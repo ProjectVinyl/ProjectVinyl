@@ -13,7 +13,7 @@
 		Categories
 		= surround '(', ')' do
 			= number_with_delimiter @boards.count
-	= render layout: 'pagination/paginated', locals: {type: 'boards', paginated: @boards, id: "page"} do
+	= render layout: 'pagination/paginated', locals: {type: 'forum', paginated: @boards, id: "page"} do
 		%section.search-result
 			.listing.thread-list
 				%ul.items= render partial: 'thumb', collection: @boards.records

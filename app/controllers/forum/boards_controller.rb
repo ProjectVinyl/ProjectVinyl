@@ -5,19 +5,19 @@ module Forum
 
       @threads = Pagination.paginate(@board.threads, params[:page].to_i, 50, false)
       @modifications_allowed = user_signed_in? && current_user.is_contributor?
-      
-      render_pagination_json 'threads/thumb', @threads if params[:format] == 'json'
+
+      render_paginated @threads, partial: 'forum/threads/thumb', as: :json if params[:format] == 'json'
     end
-    
+
     def index
       @crumb = {
         stack: [],
         title: "Forum"
       }
       @boards = Pagination.paginate(Board.sorted, params[:page].to_i, 10, false)
-      render_pagination_json 'thumb', @boards if params[:format] == 'json'
+      render_paginated @boards, partial: 'thumb', as: :json  if params[:format] == 'json'
     end
-    
+
     def new
       @board = Board.new
       render partial: 'new', locals: {url: forum_index_path, method: :post}
@@ -29,12 +29,12 @@ module Forum
 
       redirect_to action: :show, id: board.short_name
     end
-    
+
     def edit
       return head :not_found if !(@board = Board.where(id: params[:id]).first)
       render partial: 'new', locals: {url: forum_path(@board), method: :patch}
     end
-    
+
     def update
       return head :unauthorized if !user_signed_in? || !current_user.is_contributor?
       return head :not_found if !(board = Board.where(id: params[:id]).first)
@@ -44,27 +44,27 @@ module Forum
         board.title = params[:board][:title]
         board.description = params[:board][:description]
         board.save
-        
+
         return redirect_to action: :show, id: board.short_name
       end
-      
+
       if params[:field] == 'title'
         board.title = params[:value]
         board.save
         return render json: { content: board.title }
       end
-      
+
       head :ok
     end
-    
+
     def destroy
       if !user_signed_in? || !current_user.is_contributor?
         flash[:error] = 'Access Denied'
         return redirect_to action: :index, controller: :welcome
       end
-      
+
       board.destroy if board = Board.where(id: params[:id]).first
-      
+
       redirect_to action: :index
     end
   end

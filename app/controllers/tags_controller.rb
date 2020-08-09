@@ -57,7 +57,6 @@ class TagsController < ApplicationController
       @records = Pagination.paginate(Tag.includes(:videos, :tag_type).where(alias_id: nil), @page, 100, !@ascending)
     end
 
-    return render_pagination_json partial_for_type(:tags), @records if params[:format] == 'json'
     render_paginated @records, {
       template: 'pagination/omni_search', table: 'tags', label: 'Tag'
     }

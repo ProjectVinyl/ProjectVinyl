@@ -32,7 +32,7 @@ class UsersController < Users::BaseUsersController
       @albums = @user.albums.where(hidden: false)
       @albums = @albums.where(listing: 0) if !edits_allowed
       @albums = Pagination.paginate(@albums.order(:created_at), 0, 8, true)
-      @comments = Pagination.paginate(@user.comments.visible.decorated.with_likes(current_user).order(:created_at), 0, 3, true)
+      @comments = Pagination.paginate(@user.comments.visible.decorated.with_owner.with_likes(current_user).order(:created_at), 0, 3, true)
     end
   end
 

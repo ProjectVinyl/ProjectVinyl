@@ -28,11 +28,7 @@ module Forum
                .with_likes(current_user),
         @page, 10, @order)
       
-      if params[:format] == 'json'
-        render_pagination_json 'comments/comment', @comments, {
-          indirect: false
-        }
-      end
+      render_paginated @comments, partial: 'comments/comment', as: :json, indirect: false if params[:format] == 'json'
     end
     
     def new

@@ -10,7 +10,7 @@ module Users
         @table = 'Album'
         @partial = partial_for_type(:albums)
         
-        return render_pagination_json @partial, @records if params[:format] == 'json'
+        return render_paginated @records, partial: @partial, as: :json if params[:format] == 'json'
 
         @crumb = {
           stack: [

@@ -47,7 +47,7 @@ module Inbox
       @type = params[:type]
       @results = paginate_for_type(@type)
       
-      @json = pagination_json_for_render 'inbox/pm/thumb', @results
+      @json = pagination_json_for_render @results, partial: 'inbox/pm/thumb'
       @json[:tabs] = tab_changes
       render json: @json
     end

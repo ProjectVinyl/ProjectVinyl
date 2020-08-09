@@ -4,7 +4,10 @@ module Admin
 
       protected
       def page(records, reverse)
-        render_pagination partial_for_type(:videos, true), records.with_likes(current_user), params[:page].to_i, 40, reverse
+        render_pagination records.with_likes(current_user), params[:page].to_i, 40, reverse, {
+          partial: partial_for_type(:videos, true),
+          as: :json
+        }
       end
 
       def check_then

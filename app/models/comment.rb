@@ -10,9 +10,8 @@ class Comment < ApplicationRecord
   has_many :mentions, class_name: "CommentReply", foreign_key: "comment_id"
   has_many :likes, class_name: "CommentVote", foreign_key: "comment_id"
   
-  scope :decorated, -> {
-    includes(:likes, :direct_user, :mentions)
-  }
+  scope :decorated, -> { includes(:likes, :direct_user, :mentions) }
+  scope :with_owner, -> { includes(comment_thread: [:owner]) }
   scope :visible, -> {
     joins(:comment_thread).where("comments.hidden = false AND comment_threads.owner_type != 'Report' AND comment_threads.owner_type != 'Pm'")
   }

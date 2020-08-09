@@ -18,7 +18,7 @@ class InboxController < Inbox::BaseInboxController
 
       return render_empty_pagination 'inbox/pm/mailderpy' if @result.count == 0
 
-      @json = pagination_json_for_render 'inbox/pm/thumb', @result
+      @json = pagination_json_for_render @result, partial: 'inbox/pm/thumb'
       @json[:tabs] = @counts
 
       return render json: @json
