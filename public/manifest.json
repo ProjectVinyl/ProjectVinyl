@@ -1,12 +1,12 @@
 {
   "name": "Project Vinyl",
-    "short_name": "project-vinyl",
-    "start_url": "/",
-    "icons": [
-      {
-        "src": "/images/favicon.png",
-        "sizes": "160x160",
-        "type": "image/png"
-      }
-    ]
+  "short_name": "project-vinyl",
+  "start_url": "/",
+  "icons": [
+    {
+      "src": "/images/favicon.png",
+      "sizes": "160x160",
+      "type": "image/png"
+    }
+  ]
 }
