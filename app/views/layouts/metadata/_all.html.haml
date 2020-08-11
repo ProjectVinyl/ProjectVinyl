@@ -1,0 +1,16 @@
+%meta(http-equiv="Content-type" content="text/html; charset=utf-8")
+%title#document_title
+	- if content_for(:title)
+		!= content_for(:title)
+		\-
+	Project Vinyl - My Little Pony: FiM Songs & Animation
+%link(rel="icon" sizes="160x160" href="/images/favicon.png")
+%link(rel="icon" href="/favicon.ico")
+%link(rel="manifest" href="/manifest.json")
+%meta(name="theme-color" content="#a66ebe")
+%meta(name="viewport" content="width=device-width, initial-scale=1")
+%meta(name="generator" content="muffins_on_rails")
+- if @metadata
+	= render partial: 'layouts/metadata/media', locals: @metadata
+- else
+	%meta(name="description" content="Project Vinyl is a video, music, and animation platform build to archive and share videos relating to My Little Pony: Friendship is Magic")

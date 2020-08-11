@@ -2,24 +2,13 @@
 !!!
 %html(lang="en")
 	%head
-		%meta(http-equiv="Content-type" content="text/html; charset=utf-8")
-		%title#document_title
-			- if content_for(:title)
-				!= content_for(:title)
-				\-
-			Project Vinyl - My Little Pony: FiM Songs & Animation
+		= render 'layouts/metadata/all'
+		%link(rel="search" type="application/opensearchdescription+xml" title="Project Vinyl" href="/search/videos.xml")
 		- if user_signed_in?
 			%meta(name="current_user" content="#{({ id: current_user.id }).to_json}")
 		%meta(name="vapid_public_key" content="#{Base64.urlsafe_decode64(Rails.application.secrets.vapid_public_key).bytes}")
 		%meta(name="emoticons_array" content="#{raw BbcodeHelper.emoticons}")
 		= csrf_meta_tags
-		%meta(name="theme-color" content="#a66ebe")
-		%meta(name="viewport" content="width=device-width, initial-scale=1")
-		%link(rel="search" type="application/opensearchdescription+xml" title="Project Vinyl" href="/search/videos.xml")
-		%link(rel="icon" sizes="160x160" href="/images/favicon.png")
-		%link(rel="manifest" href="/manifest.json")
-		%link(rel="icon" href="/favicon.ico")
-		= content_for(:metadata)
 		= stylesheet_link_tag "application"
 		= javascript_include_tag "application"
 		- if content_for?(:width)

@@ -6,7 +6,7 @@
   <Image width="160" height="160" type="image/png">https://www.projectvinyl.net/images/favicon.png</Image>
   <Image width="16" height="16" type="image/x-icon">https://www.projectvinyl.net/favicon.ico</Image>
   <Url type="text/html" method="get" template="https://www.projectvinyl.net/search">
-    <Param name="tagquery" value="{searchTerms}"/>
+    <Param name="q" value="{searchTerms}"/>
   </Url>
   <Url type="application/opensearchdescription+xml" rel="self" template="https://www.projectvinyl.net/search/videos.xml" />
 </OpenSearchDescription>
