@@ -10,12 +10,32 @@ class WelcomeController < ApplicationController
               .limit(90)
               .records
               .for_thumbnails(current_user)
-    @popular = current_filter.videos.where(hidden: false, listing: 0, duplicate_id: 0)
-              .order(:heat, :updated_at, :created_at)
-              .reverse_order
+    popular_ids = cache("welcome_popular", expires_in: 1.minute) do
+      current_filter.videos.where(hidden: false, listing: 0, duplicate_id: 0)
+              .sort({
+                _script: {
+                  type: :number,
+                  script: {
+                    lang: :painless,
+                    source: "doc['heat'].value / (1 + params.now - doc['boosted'].value)",
+                    params: {
+                      now: DateTime.now.to_f / 1.day
+                    }
+                  },
+                  order: :desc
+                }
+              })
               .limit(4)
-              .records
-              .for_thumbnails(current_user)
+              .ids
+    end
+    #@popular = current_filter.videos.where(hidden: false, listing: 0, duplicate_id: 0)
+    #          .order(:wilson_lower_bound)
+    #          .reverse_order
+    #          .limit(4)
+    #          .records
+    #          .for_thumbnails(current_user)
+    @popular = Video.where('videos.id IN (?)', popular_ids).for_thumbnails(current_user)
+
     @featured = current_filter.videos.where(hidden: false, listing: 0, duplicate_id: 0)
               .where(featured: true)
               .limit(1)

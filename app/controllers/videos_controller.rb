@@ -1,7 +1,7 @@
 class VideosController < Videos::BaseVideosController
   include Searchable
 
-  configure_ordering [ :date, :rating, :heat, :length, :random, :relevance ], search_action: :search_index_path, only: [ :index ]
+  configure_ordering [ :date, :rating, [:wilson_score, :wilson_lower_bound], :heat, :length, :random, :relevance ], search_action: :search_index_path, only: [ :index ]
 
   def show
     if !(@video = Video.where(id: params[:id]).with_likes(current_user).first)

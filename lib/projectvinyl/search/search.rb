@@ -36,6 +36,7 @@ module ProjectVinyl
         width: :width,
         height: :height,
         score: :score,
+        wilson_score: :wilson_lower_bound,
         file_size: :size,
         heat: :heat,
         uploaded: :created_at

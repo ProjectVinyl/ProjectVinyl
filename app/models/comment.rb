@@ -27,7 +27,7 @@ class Comment < ApplicationRecord
   scope :with_threads, ->(owner_type) {
     visible.includes(:direct_user, :comment_thread).of_type(owner_type)
   }
-  
+
   def liked?
     (respond_to? :is_liked_flag) && is_liked_flag
   end

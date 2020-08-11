@@ -8,25 +8,22 @@ module ProjectVinyl
       RANDOM = 4
       RELEVANCE = 5
 
-      BY_AUTO = [].freeze
       BY_DATE = %i[created_at updated_at].freeze
 
       ORDER_LOOKUP = {
         video: [
           BY_DATE,
-                      %i[score created_at updated_at],
-                 %i[heat score created_at updated_at],
-                     %i[length created_at updated_at],
-          %i[heat score length created_at updated_at],
-          BY_AUTO
-        ],
-        user: [ BY_DATE, BY_DATE, BY_DATE, BY_DATE, BY_DATE, BY_AUTO ]
+                                   %i[score created_at updated_at],
+                      %i[wilson_lower_bound created_at updated_at],
+                              %i[heat score created_at updated_at],
+                                  %i[length created_at updated_at],
+          %i[wilson_score heat score length created_at updated_at],
+          []
+        ]
       }.freeze
 
       def self.random_order(session, possibles)
-        if @page == 0
-          session[:random_ordering] = possibles[rand(0..possibles.length)].to_s + ';' + possibles[rand(0..possibles.length)].to_s
-        end
+        session[:random_ordering] = possibles[rand(0..possibles.length)].to_s + ';' + possibles[rand(0..possibles.length)].to_s if @page == 0
         session[:random_ordering].split(';')
       end
 

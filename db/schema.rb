@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20200806191207) do
+ActiveRecord::Schema.define(version: 20200809225809) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -151,6 +151,7 @@ ActiveRecord::Schema.define(version: 20200806191207) do
     t.integer "o_comment_thread_id", default: 0
     t.integer "score"
     t.string "moderation_note"
+    t.integer "likes_count"
   end
 
   create_table "notification_receivers", force: :cascade do |t|
@@ -352,7 +353,7 @@ ActiveRecord::Schema.define(version: 20200806191207) do
     t.integer "comment_thread_id"
     t.boolean "featured", default: false
     t.string "checksum", limit: 32
-    t.integer "heat"
+    t.float "heat"
     t.integer "duplicate_id", default: 0
     t.datetime "cached_at"
     t.string "moderation_note"
@@ -361,6 +362,9 @@ ActiveRecord::Schema.define(version: 20200806191207) do
     t.integer "play_count", default: 0
     t.integer "listing", default: 0
     t.datetime "premiered_at"
+    t.float "wilson_lower_bound"
+    t.float "wilson_upper_bound"
+    t.datetime "boosted_at"
     t.index ["checksum"], name: "index_videos_on_checksum"
     t.index ["created_at"], name: "index_videos_on_created_at"
     t.index ["user_id"], name: "index_videos_on_user_id"

@@ -1,5 +1,6 @@
 module Heated
   extend ActiveSupport::Concern
+  include Wilson
 
   def upvote(user, incr)
     Vote.vote(user, self, incr, false)
@@ -18,29 +19,35 @@ module Heated
     score
   end
 
-  def compute_hotness
-    x = play_count || 0
-    x += 2 * (upvotes || 0)
-    x += 2 * (downvotes || 0)
-    x += 3 * comment_thread.comments.count
-    basescore = Math.log([x, 1].max)
-
-    n = DateTime.now
-    c = created_at.to_datetime
-    if c < (n - 3.weeks)
-      x = ((n - c).to_f / 7) - 1
-      basescore *= Math.exp(-8 * x * x)
-    end
-
-    self.heat = basescore * 1000
+  def compute_hotness(defer = true)
+    touch(:boosted_at)
+    self.heat = __boost_multiplier
+    save
+    update_index(defer: defer)
     self
   end
 
-  protected
-
-  def compute_score
+  def compute_score(defer = true)
     self.score = upvotes - downvotes
-    self.update_index(defer: false)
-    self.compute_hotness.save
+    self.wilson_lower_bound, self.wilson_upper_bound = ci_bounds(upvotes, upvotes + downvotes)
+    compute_hotness(defer)
+  end
+
+  private
+  def __play_boots
+    (play_count || 0).to_f
+  end
+
+  def __view_boosts
+    [(views || 0), 1].max.to_f
+  end
+
+  def __comment_boosts
+    comment_thread.comments.map{|comment| 1 + comment.likes_count }.sum
+  end
+
+  def __boost_multiplier
+    x = (__play_boots / __view_boosts) + (2 * __comment_boosts) + (3 * wilson_lower_bound)
+    x * 1000
   end
 end

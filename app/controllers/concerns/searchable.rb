@@ -9,6 +9,13 @@ module Searchable
       sa = params[:search_action] || ''
       qt = params[:query_term] || 'qt'
 
+      labels_syms = orders.map {|a| [].is_a?(a.class) ? a[0] : a}
+      orders = {
+        fields: orders.map {|a| [].is_a?(a.class) ? a[1] : a},
+        labels_syms: labels_syms,
+        labels: labels_syms.map {|a| a.to_s.titlecase}
+      }
+
       if params.key?(:only)
         before_action only: params[:only] do
           before_search(orders, params)
@@ -22,7 +29,8 @@ module Searchable
   end
 
   def before_search(orders, params)
-    @orderings = orders
+    @ordering = orders
+    @ordering_labels = @ordering[:labels]
     @sa = params[:search_action] || ''
     @qt = params[:query_term] || 'qt'
     @sa = self.send(@sa) if !''.is_a?(@sa.class)
@@ -39,11 +47,14 @@ module Searchable
       @query_term => @query,
       :orderby => @orderby
     })
-    @ordering_labels = @orderings.map {|a| a.to_s.titlecase}
+  end
+
+  def order_sym
+    @ordering[:labels_syms][@orderby]
   end
 
   def order_field
-    @orderings[@orderby]
+    @ordering[:fields][@orderby]
   end
 
   def filtered?

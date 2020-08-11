@@ -50,7 +50,9 @@ class Video < ApplicationRecord
       indexes :height, type: 'integer'
       indexes :score, type: 'integer'
       indexes :size, type: 'integer'
-      indexes :heat, type: 'integer'
+      indexes :heat, type: 'float'
+      indexes :boosted, type: 'float'
+      indexes :wilson_lower_bound, type: 'float'
       indexes :created_at, type: 'date'
       indexes :updated_at, type: 'date'
       indexes :hidden, type: 'boolean'
@@ -74,7 +76,9 @@ class Video < ApplicationRecord
     json['likes'] = votes.up.pluck(:user_id)
     json['albums'] = album_items.pluck(:album_id)
     json['dislikes'] = votes.down.pluck(:user_id)
+    json['wilson_lower_bound'] = wilson_lower_bound
     json['size'] = file_size
+    json['boosted'] =  boosted_at.to_f / 1.day
     json['heat'] = heat
 
     json

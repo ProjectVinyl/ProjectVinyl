@@ -1,7 +1,7 @@
 class SearchController < ApplicationController
   include Searchable
 
-  configure_ordering [ :date, :rating, :heat, :length, :random, :relevance ], query_term: 'q', only: [ :index ]
+  configure_ordering [ :date, :rating, [:wilson_score, :wilson_lower_bound], :heat, :length, :random, :relevance ], query_term: 'q', only: [ :index ]
 
   def index
     read_search_params(params)
