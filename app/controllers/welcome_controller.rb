@@ -12,25 +12,36 @@ class WelcomeController < ApplicationController
               .for_thumbnails(current_user)
 
     begin
-      popular_ids = cache("welcome_popular", expires_in: 1.minute) do
-        current_filter.videos.where(hidden: false, listing: 0, duplicate_id: 0)
-                .sort({
-                  _script: {
-                    type: :number,
-                    script: {
-                      lang: :painless,
-                      source: "doc['heat'].value / (1 + params.now - doc['boosted'].value)",
-                      params: {
-                        now: DateTime.now.to_f / 1.day
-                      }
-                    },
-                    order: :desc
-                  }
-                })
-                .limit(4)
-                .ids
+      mode = :wilson
+
+      if mode == :wilson
+        @popular = current_filter.videos.where(hidden: false, listing: 0, duplicate_id: 0)
+            .order(:wilson_lower_bound)
+            .reverse_order
+            .limit(4)
+            .records
+            .for_thumbnails(current_user)
+      else
+        popular_ids = cache("welcome_popular", expires_in: 1.minute) do
+          current_filter.videos.where(hidden: false, listing: 0, duplicate_id: 0)
+                  .sort({
+                    _script: {
+                      type: :number,
+                      script: {
+                        lang: :painless,
+                        source: "doc['heat'].value / (1 + params.now - doc['boosted'].value)",
+                        params: {
+                          now: DateTime.now.to_f / 1.day
+                        }
+                      },
+                      order: :desc
+                    }
+                  })
+                  .limit(4)
+                  .ids
+        end
+        @popular = Video.where('videos.id IN (?)', popular_ids).for_thumbnails(current_user)
       end
-      @popular = Video.where('videos.id IN (?)', popular_ids).for_thumbnails(current_user)
     rescue Elasticsearch::Transport::Transport::Errors::InternalServerError => e
       @exception_flag = true
       @popular = current_filter.videos.where(hidden: false, listing: 0, duplicate_id: 0)
@@ -40,12 +51,6 @@ class WelcomeController < ApplicationController
                 .records
                 .for_thumbnails(current_user)
     end
-    #@popular = current_filter.videos.where(hidden: false, listing: 0, duplicate_id: 0)
-    #          .order(:wilson_lower_bound)
-    #          .reverse_order
-    #          .limit(4)
-    #          .records
-    #          .for_thumbnails(current_user)
 
     @featured = current_filter.videos.where(hidden: false, listing: 0, duplicate_id: 0)
               .where(featured: true)
