@@ -27,6 +27,8 @@
 .wrapper.column-left.auto-wrap.resize-holder.grid-root
 	%section.page
 		= render 'section', collection: @popular, type: 'popular', label: 'Popular', filter: '', order: 2
+		- if @exception_flag
+			.right= fa :star_o
 	- if @featured_album
 		%section.page= render 'featured_album', featured_album: @featured_album
 	- @all.group_by(&:period).each do |week, n|

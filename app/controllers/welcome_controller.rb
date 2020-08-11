@@ -32,6 +32,7 @@ class WelcomeController < ApplicationController
       end
       @popular = Video.where('videos.id IN (?)', popular_ids).for_thumbnails(current_user)
     rescue Elasticsearch::Transport::Transport::Errors::InternalServerError => e
+      @exception_flag = true
       @popular = current_filter.videos.where(hidden: false, listing: 0, duplicate_id: 0)
                 .order(:heat, :updated_at, :created_at)
                 .reverse_order
