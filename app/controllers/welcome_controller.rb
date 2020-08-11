@@ -12,7 +12,7 @@ class WelcomeController < ApplicationController
               .for_thumbnails(current_user)
 
     begin
-      mode = :wilson
+      mode = :painless
 
       if mode == :wilson
         @popular = current_filter.videos.where(hidden: false, listing: 0, duplicate_id: 0)
