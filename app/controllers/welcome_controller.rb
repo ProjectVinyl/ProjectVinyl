@@ -52,8 +52,7 @@ class WelcomeController < ApplicationController
                 .for_thumbnails(current_user)
     end
 
-    @featured = current_filter.videos.where(hidden: false, listing: 0, duplicate_id: 0)
-              .where(featured: true)
+    @featured = current_filter.videos.where(hidden: false, duplicate_id: 0, featured: true)
               .limit(1)
               .records
               .for_thumbnails(current_user)
