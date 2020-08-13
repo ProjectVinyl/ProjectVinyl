@@ -4,40 +4,6 @@ import { all } from '../jslim/dom';
 // +1 to prevent jittering
 const EXTRA_SPACE = 1;
 
-function calculateNewWidth(grid, beside) {
-  const docW = document.clientWidth;
-
-  const gridStyle = window.getComputedStyle(grid);
-  const colStyle = window.getComputedStyle(beside);
-
-  const margin = parseFloat(gridStyle.getPropertyValue('--grid-spacing'));
-  const colWidth = parseFloat(gridStyle.getPropertyValue('--grid-column-width')) + EXTRA_SPACE;
-
-  const sideMargin = parseFloat(colStyle.getPropertyValue('--grid-spacing'));
-  const sideWidth = parseFloat(colStyle.getPropertyValue('--grid-column-width'));
-
-  const maxWidth = grid.parentNode.clientWidth - sideWidth;
-
-  let calculatedWidth = maxWidth + EXTRA_SPACE;
-  let n = 10;
-
-  do {
-    calculatedWidth = (margin * 2) + (colWidth * n--);
-  } while (calculatedWidth > maxWidth);
-
-  let besideWidth = beside.parentNode.clientWidth - (calculatedWidth + sideMargin);
-  if (besideWidth > 700) {
-    besideWidth = 700;
-  }
-  if (besideWidth < sideWidth) {
-    calculatedWidth == besideWidth - sideWidth;
-    besideWidth = sideWidth;
-  }
-
-  grid.style.width = `${calculatedWidth}px`;
-  beside.style.width = `${besideWidth}px`;
-}
-
 function getTargetPage(grid, b) {
   for (const page of grid.querySelectorAll('.page')) {
     const t = page.getBoundingClientRect();
@@ -91,12 +57,6 @@ function resizeGrid(grid, beside) {
   all(grid, '.page.full-width', page => {
     page.classList.remove('full-width');
   });
-  
-  grid.style.width = '';
-  if (beside.offsetWidth) {
-    calculateNewWidth(grid, beside);
-  }
-  
   calculatePageSplit(grid, beside.getBoundingClientRect().bottom);
 }
 

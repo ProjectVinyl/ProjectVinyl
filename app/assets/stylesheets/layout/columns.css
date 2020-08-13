@@ -46,6 +46,12 @@
   z-index: 10 !important;
   position: relative;
   margin-left: 15px !important;
+
+  width: calc(100vw / 4 - 10px) !important;
+  margin-right: 0px;
+  margin-left: 0px;
+  min-width: 400px;
+  max-width: 500px;
 }
 
 .full-width {
@@ -73,5 +79,8 @@
   }
   .wrapper .page.column-left {
     margin-left: 0;
+  }
+  .column-right.wrap-around-fixed {
+    min-width: 100%;
   }
 }
