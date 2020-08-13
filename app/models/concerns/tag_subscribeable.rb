@@ -2,7 +2,7 @@ module TagSubscribeable
 	extend ActiveSupport::Concern
 
   def watched_tag_string
-    Tag.tag_string(watched_tags_actual)
+    Tag.tag_string(watched_tags)
   end
 
   def hides?(*tag_ids)
@@ -14,7 +14,7 @@ module TagSubscribeable
   end
 
   def watches?(*tag_ids)
-    @watched_tag_ids ||= watched_tags_actual.pluck_actual_ids
+    @watched_tag_ids ||= watched_tags.pluck_actual_ids
     !(tag_ids & @watched_tag_ids).empty?
   end
 end

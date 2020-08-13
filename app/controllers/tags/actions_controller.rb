@@ -10,7 +10,7 @@ module Tags
 
       hide = current_filter.hides?(tag.id)
       spoiler = current_filter.spoilers?(tag.id)
-      watch = current_user.tag_subscriptions.where(tag: tag, watch: true).any?
+      watch = current_user.tag_subscriptions.where(tag: tag).any?
 
       watch = !watch if perform == :watch
       spoiler = !spoiler if perform == :spoiler
@@ -22,7 +22,7 @@ module Tags
       current_filter.toggle_tag_flags!(tag, hide, spoiler)
 
       current_user.tag_subscriptions.where(tag: tag).destroy_all
-      current_user.tag_subscriptions.create(tag: tag, watch: true) if watch
+      current_user.tag_subscriptions.create(tag: tag) if watch
 
       render json: { hide: hide, spoiler: spoiler, watch: watch }
     end

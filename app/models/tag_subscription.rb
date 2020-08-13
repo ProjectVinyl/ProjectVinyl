@@ -17,7 +17,7 @@ class TagSubscription < ApplicationRecord
   end
 
   def self.get_feed_items(user, current_filter)
-    tag_ids = user.tag_subscriptions.where(watch: true, hide: false).expanded_tags
+    tag_ids = user.tag_subscriptions.expanded_tags
     tags = Tag.where('id IN (?)', tag_ids).actual_names
 
     return current_filter.videos

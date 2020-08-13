@@ -12,7 +12,7 @@
 			%td.field
 				Any tags you're specifically interested in.
 				You will be notified when these tags are added to any videos and they may appear in your feed.
-				= render 'tags/editor', tags: current_user.watched_tags_actual do
+				= render 'tags/editor', tags: current_user.watched_tags do
 					= f.text_area :watched_tag_string, autocomplete: "off"
 		%tr.actions
 			%td.label

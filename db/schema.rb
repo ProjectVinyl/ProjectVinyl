@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20200813143345) do
+ActiveRecord::Schema.define(version: 20200813143346) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -244,9 +244,6 @@ ActiveRecord::Schema.define(version: 20200813143345) do
     t.integer "tag_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.boolean "watch", default: false
-    t.boolean "spoiler", default: false
-    t.boolean "hide", default: false
   end
 
   create_table "tag_type_implications", id: :serial, force: :cascade do |t|
