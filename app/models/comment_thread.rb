@@ -61,34 +61,20 @@ class CommentThread < ApplicationRecord
   end
 
   def location
-    if self.private_message?
-      return owner.location
-    end
-
-    if self.video?
-      return owner.link
-    end
-
-    if !self.owner
-      return link
-    end
+    return owner.location if self.private_message?
+    return owner.link if self.video?
+    return link if !self.owner
 
     "#{owner.link}/#{self.id}-#{self.safe_title}"
   end
 
   def icon
-    if self.video?
-      return self.owner.thumb
-    end
-
+    return self.owner.thumb if self.video?
     user.avatar
   end
 
   def preview
-    if self.video?
-      return self.owner.title
-    end
-
+    return self.owner.title if self.video?
     last_comment.preview
   end
 
@@ -105,9 +91,8 @@ class CommentThread < ApplicationRecord
   end
 
   def toggle_subscribe(user)
-    if !user
-      return false
-    end
+    return false if !user
+
     if self.subscribed?(user)
       self.unsubscribe(user)
       return false
