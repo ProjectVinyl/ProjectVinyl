@@ -1,0 +1,8 @@
+
+@media(min-width: 600px) {
+  ul.horizontal.latest {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    justify-content: space-between;
+  }
+}

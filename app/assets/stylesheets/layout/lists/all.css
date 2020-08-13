@@ -1,5 +1,6 @@
 /*
  *= require ./horizontal
+ *= require ./latest
  *= require ./vertical
  *= require ./compact
  *= require ./waiting

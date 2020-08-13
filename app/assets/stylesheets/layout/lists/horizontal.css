@@ -4,7 +4,6 @@ ul.horizontal {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-around;
-  align-items: left;
 }
 ul.horizontal, .controls ul {
   list-style: none;
