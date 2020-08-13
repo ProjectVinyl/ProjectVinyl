@@ -1,24 +1,25 @@
 class Pm < ApplicationRecord
+  include Counterable
+
+  belongs_to :user
+
   belongs_to :receiver, class_name: 'User'
   belongs_to :sender, class_name: 'User'
 
   belongs_to :comment_thread, dependent: :destroy
   belongs_to :new_comment, class_name: 'Comment'
+
+  conditional_counter_cache :user, :unread_pms, :is_unread, :message_count
   
   STATE_NORMAL = 0
   STATE_DELETED = 1
   
-  scope :find_for_user, ->(id, user) { includes(:comment_thread, :new_comment).where('pms.id = ? AND pms.user_id = ?', id, user.id).first }
-  
+  scope :find_for_user, ->(id, user) { includes(:comment_thread, :new_comment).where(id: id, user_id: user.id).first }
   scope :find_for_tab_counter, ->(type, user) {
     listing_selector = where(user_id: user.id, state: type == 'deleted' ? STATE_DELETED : STATE_NORMAL)
-    if type == 'received'
-      return listing_selector.where(receiver: user)
-    elsif type == 'sent'
-      return listing_selector.where(sender: user)
-    elsif type == 'new'
-      return listing_selector.where(unread: true)
-    end
+    return listing_selector.where(receiver: user) if type == 'received'
+    return listing_selector.where(sender: user) if type == 'sent'
+    return listing_selector.where(unread: true) if type == 'new'
     listing_selector
   }
   
@@ -28,6 +29,10 @@ class Pm < ApplicationRecord
       .find_for_tab_counter(type, user)
       .order('comment_threads.created_at DESC')
   }
+
+  def is_unread
+    state == STATE_NORMAL && unread
+  end
 
   def self.send_pm(sender, receivers, subject, message)
     Pm.transaction do

@@ -1,14 +1,11 @@
 %li.removeable.notification{class: [notification.sender, notification.unread && "unread"],
-														data: { target: "notifications",
-																		id: notification.id,
-																		countable: "notifs"}}
+														data: { target: :notifications, id: notification.id, countable: :notifs}}
 	%a.remove.right(href="#" title="Remove")
 		= fa :times
-	- if notification.sender.index('comment_threads_') == 0
-		- if notification.comment_thread && notification.comment_thread.subscribed?(current_user)
-			%a.action.right.toggle.subscription{title: "Unsubscribe", href: "#",
-				data: {target: forum_thread_subscribe_path(notification.comment_thread),
-					"unchecked-icon": "bell", "checked-icon": "bell-slash"}}
-				%span.icon= fa :bell_slash
-	%a{href: notification_path(notification)}
-		= raw notification.message
+	- if notification.subscribeable? && notification.owner.subscribed?(current_user)
+		%a.action.right.toggle.subscription{title: "Unsubscribe", href: "#",
+			data: { target: forum_thread_subscribe_path(notification.owner),
+						"unchecked-icon": "bell",
+						"checked-icon": "bell-slash" }}
+			%span.icon= fa :bell_slash
+	%a{href: notification_path(notification)}= raw notification.message

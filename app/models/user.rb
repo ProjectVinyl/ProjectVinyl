@@ -43,6 +43,9 @@ class User < ApplicationRecord
   has_many :site_filters, dependent: :destroy
   has_many :pms, dependent: :destroy
 
+  has_many :unread_notifications, ->{ where(unread: true) }, class_name: "Notification"
+  has_many :unread_pms, ->{ where(state: 0, unread: true) }, class_name: "Pm"
+
   has_many :all_albums, class_name: "Album", foreign_key: "user_id", dependent: :destroy
 
   has_many :user_badges
@@ -261,10 +264,6 @@ class User < ApplicationRecord
 
   def dummy?
     false
-  end
-
-  def message_count
-    @message_count || (@message_count = pms.where(state: 0, unread: true).count)
   end
 
   protected

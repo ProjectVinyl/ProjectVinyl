@@ -2,8 +2,9 @@ class NotificationsController < ApplicationController
   def index
     return redirect_to action: :index, controller: :welcome if !user_signed_in?
 
-    @all = current_user.notifications.order(:created_at).reverse_order.preload_comment_threads
+    @all = current_user.notifications.includes(:owner).order(:created_at).reverse_order
     @notifications = current_user.notification_count
+
     current_user.notifications.where('created_at < ?', 1.week.ago).delete_all
     current_user.notification_count = current_user.notifications.where(unread: true).count
     current_user.save
@@ -17,12 +18,11 @@ class NotificationsController < ApplicationController
     end
 
     if notification.unread
-      current_user.notifications.where(id: params[:id]).update_all(unread: false)
-      current_user.notification_count = current_user.notifications.where(unread: true).count
-      current_user.save
+      notification.unread = false
+      notification.save
     end
 
-    redirect_to notification.source
+    redirect_to notification.owner.link
   end
 
   def destroy

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20200809225809) do
+ActiveRecord::Schema.define(version: 20200813143345) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -167,10 +167,11 @@ ActiveRecord::Schema.define(version: 20200809225809) do
     t.string "message", limit: 340
     t.string "source"
     t.integer "user_id"
-    t.string "sender"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.boolean "unread", default: true
+    t.integer "owner_id"
+    t.text "owner_type"
   end
 
   create_table "pms", id: :serial, force: :cascade do |t|
@@ -318,6 +319,7 @@ ActiveRecord::Schema.define(version: 20200809225809) do
     t.integer "default_listing", default: 0
     t.string "time_zone"
     t.integer "site_filter_id", default: 0
+    t.integer "message_count"
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true

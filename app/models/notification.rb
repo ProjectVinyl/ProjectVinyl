@@ -1,61 +1,18 @@
 class Notification < ApplicationRecord
   include Periodic
-  
-  scope :preload_comment_threads, -> {
-    mapping = {}
-    ids = []
-    all.find_each do |i|
-      if i.comment_thread_id > 0
-        ids << i.comment_thread_id
-        mapping[i.comment_thread_id] = [] if !mapping.key?(i.comment_thread_id)
-        mapping[i.comment_thread_id] << i
-      end
-      CommentThread.where('id IN (?)', ids.uniq).find_each do |t|
-        mapping[t.id].each do |c|
-          c.comment_thread = t
-        end
-      end
-    end
-  }
+  include Counterable
 
-  def comment_thread
-    @comment_thread || (comment_thread = CommentThread.where(id: self.comment_thread_id).first)
+  belongs_to :user
+  belongs_to :owner, polymorphic: true
+
+  conditional_counter_cache :user, :unread_notifications, :unread, :notification_count
+
+  def subscribeable?
+    owner_type == 'CommentThread'
   end
 
-  attr_writer :comment_thread
-
-  def comment_thread_id
-    @comment_thread_id || (@comment_thread_id = self.sender.index('comment_threads_') == 0 ? sender.sub('comment_threads_', '').to_i : 0)
-  end
-
-  def comment_thread_id=(i)
-    self.sender = "comment_thread_#{i}"
-  end
-  
-  def self.notify_receivers(receivers, sender, message, source, del = true)
-    sender_ob = sender
-    sender = "#{sender.class.table_name}_#{sender.id}"
-    if del
-      Notification.where('user_id IN (?) AND sender = ?', receivers, sender).delete_all
-    end
-    Notification.create(receivers.uniq.map do |receiver|
-      {
-        user_id: receiver,
-        message: message,
-        source: source,
-        sender: sender,
-        unread: true
-      }
-    end)
-    User.where('id IN (?)', receivers).update_all('notification_count = (SELECT COUNT(*) FROM notifications WHERE user_id = users.id AND unread = true)')
-    NotificationReceiver.push_notifications(receivers, {
-      title: message,
-      params: {
-        badge: '/favicon.ico',
-        icon: sender_ob.icon,
-        body: sender_ob.preview
-      }
-    })
+  def sender
+    "#{owner_type}_#{owner_id}"
   end
 
   def self.notify_admins(sender, message, source)
@@ -64,5 +21,32 @@ class Notification < ApplicationRecord
 
   def self.notify_receivers_without_delete(receivers, sender, message, source)
     Notification.notify_receivers(receivers, sender, message, source, false)
+  end
+
+  def self.notify_receivers(receivers, sender, message, source, del = true)
+    Notification.where(owner: sender).where('user_id IN (?)', receivers).delete_all if del
+    Notification.create(receivers.uniq.map{ |receiver| __create_params(receiver, message, source, sender) })
+
+    User.where('id IN (?)', receivers).update_all('notification_count = (SELECT COUNT(*) FROM notifications WHERE user_id = users.id AND unread = true)')
+
+    NotificationReceiver.push_notifications(receivers, {
+      title: message,
+      params: {
+        badge: '/favicon.ico',
+        icon: sender.icon,
+        body: sender.preview
+      }
+    })
+  end
+
+  private
+  def self.__create_params(receiver, message, source, owner)
+    {
+      user_id: receiver,
+      message: message,
+      source: source,
+      owner: owner,
+      unread: true
+    }
   end
 end
