@@ -48,9 +48,11 @@ class UsersController < Users::BaseUsersController
       user.tag_string = input[:tag_string] if input[:tag_string]
       user.time_zone = input[:time_zone]
       user.save
+      user.update_index(defer: true)
 
       if (params[:video][:apply_to_all] == '1')
         Video.where(user_id: user).update_all(listing: user.default_listing)
+        Video.where(user_id: user).update_index
       end
 
       return redirect_to action: :edit, controller: "users/registrations" if user.id == current_user.id

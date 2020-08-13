@@ -17,11 +17,19 @@ module Indexable
         __elasticsearch__.delete_document
       end
     end
+
+    clazz = self.to_s
+    scope :update_index, ->(defer: true){
+      distrust do
+        return UpdateIndexJob.perform_later(clazz, pluck(:id)) if defer
+        each{|i| i.__elasticsearch__.index_document }
+      end
+    }
   end
 	
   def update_index(defer: true)
     distrust do
-      return UpdateIndexJob.perform_later(self.class.to_s, id) if defer
+      return UpdateIndexJob.perform_later(self.class.to_s, [id]) if defer
       __elasticsearch__.index_document
     end
   end
