@@ -26,12 +26,12 @@
 		%iframe.twitter(src="/embed/twitter")
 .wrapper.column-left.auto-wrap.resize-holder.grid-root
 	%section.page
-		= render 'section', collection: @popular, type: 'popular', label: 'Popular', filter: '', order: 2
+		= render 'section', collection: @popular, type: 'popular', label: 'Popular Videos', filter: '', order: 2
 		- if @exception_flag
 			.right= fa :star_o
 	- if @active.length > 0
 		%section.page
-			= render 'section', collection: @active, type: 'active', label: 'Recently Active', filter: '', order: 2
+			= render 'section', collection: @active, type: 'active', label: 'Trending Videos', filter: '', order: 2
 	- if @featured_album
 		%section.page= render 'featured_album', featured_album: @featured_album
 	- @all.group_by(&:period).each do |week, n|

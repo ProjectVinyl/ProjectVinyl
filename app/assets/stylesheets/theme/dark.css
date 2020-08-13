@@ -1,0 +1,18 @@
+/*
+ *= require ./default
+ */
+html, body {
+ --site-background: #1c1313;
+
+ --content-background: #2f2222;
+ 
+ --content-highlight: #463046;
+
+ --thumb-hover-color: #282727;
+ --input-shadow: rgba(10, 10, 10, 0.8);
+
+ --heading-background: #393131;
+ --heading-border-color: #403d3d;
+
+ --header-nav-background: rgba(0, 0, 0, 0.9);
+}
