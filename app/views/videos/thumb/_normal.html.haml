@@ -9,7 +9,8 @@
 			- if normal.unlisted?
 				%span.icon(title="Unlisted - Only you and people with a direct link can see this item")= fa :unlock
 			= spoilered ? '[Spoilered]' : normal.get_title
-		%a.link.date{href: normal.user.link, data: {id: normal.user.id}}= normal.user.username
+		- uploader = normal.user
+		%a.link.date{href: uploader.link, data: {id: uploader.id}}= uploader.username
 		%span.date{title: normal.created_at.in_time_zone}= since normal.created_at
 		%span.tag-set.right
 			- if normal.liked?
