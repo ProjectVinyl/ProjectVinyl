@@ -3,16 +3,24 @@ module Taggable
 
   included do
     scope :with_tags, -> { includes(:tags) } if respond_to? :scope
+
+    def self.tag_relation(sym)
+      define_method :__tag_relation do
+        send(sym)
+      end
+    end
   end
-  
+
   def tag_ids
     @tag_ids || (@tag_ids = tags.map(&:id))
   end
 
   def drop_tags(ids)
+    __tag_relation.where('tag_id IN (?)', ids).deleted_all
   end
 
   def pick_up_tags(ids)
+    __tag_relation
   end
 
   def tags_changed

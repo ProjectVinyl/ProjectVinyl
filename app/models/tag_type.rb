@@ -32,11 +32,10 @@ class TagType < ApplicationRecord
   end
 
   def drop_tags(ids)
-    TagTypeImplication.where('tag_type_id = ? AND implied_id IN (?)', self.id, ids).delete_all
+    tag_type_implications.where('implied_id IN (?)', ids).delete_all
   end
 
   def pick_up_tags(ids)
-    Tag.where('id IN (?)', ids).update_all('video_count = video_count + 1')
     TagTypeImplication.create(__ids_to_type_imps ids)
     nil
   end

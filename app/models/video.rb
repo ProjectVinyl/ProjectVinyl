@@ -29,6 +29,7 @@ class Video < ApplicationRecord
   has_many :votes, dependent: :destroy
   has_many :tag_histories, dependent: :destroy
 
+  tag_relation :video_genres
   after_save :dispatch_mentions, if: :will_save_change_to_description?
 
   scope :unmerged, -> { where(duplicate_id: 0) }
@@ -114,7 +115,7 @@ class Video < ApplicationRecord
     if hidden != val
       self.hidden = val
       update_file_locations
-      update_index(defer: false)
+      update_index(defer: true)
     end
   end
 
@@ -191,18 +192,6 @@ class Video < ApplicationRecord
   def model_path
     'stream'
   end
-
-  # Overrides Taggable
-  def drop_tags(ids)
-    Tag.where('id IN (?) AND video_count > 0', ids).update_all('video_count = video_count - 1')
-    VideoGenre.where('video_id = ? AND tag_id IN (?)', id, ids).delete_all
-  end
-
-  def pick_up_tags(ids)
-    Tag.where('id IN (?)', ids).update_all('video_count = video_count + 1')
-    self.video_genres
-  end
-  # #################
 
   def link
     "/#{id}"
@@ -353,7 +342,6 @@ class Video < ApplicationRecord
   def remove_assets
     self.remove_media
     self.remove_cover_files
-    Tag.where('id IN (?) AND video_count > 0', tags.pluck(:id)).update_all('video_count = video_count - 1')
   end
 
   def move_assets(from, to)

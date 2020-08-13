@@ -41,6 +41,7 @@ class User < ApplicationRecord
   has_many :notifications, dependent: :destroy
   has_many :thread_subscriptions, dependent: :destroy
   has_many :site_filters, dependent: :destroy
+  has_many :pms, dependent: :destroy
 
   has_many :all_albums, class_name: "Album", foreign_key: "user_id", dependent: :destroy
 
@@ -59,6 +60,8 @@ class User < ApplicationRecord
   belongs_to :album, foreign_key: "star_id"
   has_many :album_items, through: :album
   belongs_to :tag
+
+  tag_relation :artist_genres
 
   scope :by_name_or_id, ->(id) { where('id::text = ? OR username = ?', id, id).first }
   scope :with_badges, -> { includes(user_badges: [:badge]) }
@@ -167,18 +170,6 @@ class User < ApplicationRecord
     all_albums.where(hidden: false)
   end
 
-  # Overrides Taggable
-  def drop_tags(ids)
-    Tag.where('id IN (?) AND user_count > 0', ids).update_all('user_count = user_count - 1')
-    ArtistGenre.where('user_id = ? AND tag_id IN (?)', id, ids).delete_all
-  end
-
-  def pick_up_tags(ids)
-    Tag.where('id IN (?)', ids).update_all('user_count = user_count + 1')
-    self.artist_genres
-  end
-  # ####################
-
   def stars
     if album.nil?
       self.album = create_album(
@@ -272,14 +263,8 @@ class User < ApplicationRecord
     false
   end
 
-  def send_notification(message, source)
-    self.notifications.create(message: message, source: source)
-    self.notification_count += 1
-    self.save
-  end
-
   def message_count
-    @message_count || (@message_count = Pm.where('state = 0 AND unread = true AND user_id = ?', self.id).count)
+    @message_count || (@message_count = pms.where(state: 0, unread: true).count)
   end
 
   protected

@@ -9,9 +9,9 @@ class Tag < ApplicationRecord
 
   has_one :user
 
-  has_many :video_genres, counter_cache: "video_count"
+  has_many :video_genres
   has_many :videos, through: :video_genres
-  has_many :artist_genres, counter_cache: "user_count"
+  has_many :artist_genres
   has_many :users, through: :artist_genres
 
   has_many :tag_implications, dependent: :destroy
@@ -257,14 +257,7 @@ class Tag < ApplicationRecord
   end
 
   private
-  def __recount!
-    self.video_count = video_genres.count
-    self.user_count = artist_genres.count
-  end
-
   def __reindex!
-    __recount!
-
     save
     videos.each {|v| v.update_index(defer: false) }
     users.each {|u| u.update_index(defer: false) }
