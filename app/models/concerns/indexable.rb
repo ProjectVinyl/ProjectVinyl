@@ -38,7 +38,9 @@ module Indexable
     yield
   rescue Elasticsearch::Transport::Transport::Errors::Forbidden => e
     logger.warn e
-  rescue Faraday::Error::ConnectionFailed => e
+  rescue IO::EINPROGRESSWaitWritable => e
+    logger.fatal e
+  rescue Faraday::ConnectionFailed => e
     logger.fatal e
   end
 end
