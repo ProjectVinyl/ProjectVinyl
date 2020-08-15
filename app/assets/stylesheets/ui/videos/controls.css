@@ -79,6 +79,9 @@
   cursor: pointer;
   border-radius: 4px;
   flex-grow: 1;
+  
+  --track-progress: 0;
+  --track-cursor: 0;
 }
 
 .playback-controls .track:hover {
@@ -100,44 +103,57 @@
   height: 20px;
 }
 
-.playback-controls .load,
-.playback-controls .load span,
-.playback-controls .fill {
-  position: absolute;
-  background: grey;
-  bottom: 0;
-  left: 0;
-  opacity: 0.5;
+.playback-controls .track .bars {
+  width: 100%;
+  border-radius: 4px;
   overflow: hidden;
 }
-.playback-controls .load,
-.playback-controls .fill {
-  border-radius: 4px;
-}
-.playback-controls .load,
-.playback-controls .load span {
+.playback-controls .track .bars,
+.playback-controls .track .bars > * {
+  position: absolute;
   top: 0;
-  width: 100%;
+  bottom: 0;
+  left: 0;
 }
-.playback-controls .load span {
+
+.playback-controls .track .bars.load,
+.playback-controls .track .bars > * {
+  background: grey;
+  opacity: 0.5;
+}
+
+.playback-controls .track .bars.load span {
   background: rgba(255,255,255,0.3);
   box-shadow: -15px 0 15px -15px #ffe inset;
 }
-.playback-controls .fill {
-    background: var(--progress-fill-color);
-    opacity: 1;
+
+.playback-controls .track .bars .fill {
+  background: var(--progress-fill-color);
+  width: calc(100% * (var(--track-progress) / 100));
+  transition: width 0.25s linear;
+  opacity: 1;
+}
+.playback-controls .track .bars .cursor-fill {
+  width: calc(100% * var(--track-cursor));
+  transition: width 0.25s linear;
+  background: orange;
+  transition: none;
+  opacity: 0;
+}
+.playback-controls .track:not(.interacting):hover .bars .cursor-fill {
+  opacity: 0.3;
 }
 
 .playback-controls .track .bob {
   top: 0;
-  left: 0;
+  left: calc(100% * (var(--track-progress) / 100));
   margin: -5px 0 0 -10px;
-  transition: left 0.25s linear;
+  transition: left 0.25s linear, transform 0.25s ease;
+  transform: scale(0);
 }
-.playback-controls .track .fill {
-  top: 0;
-  right: 100%;
-  transition: right 0.25s linear;
+.playback-controls .track.interacting .bob,
+.playback-controls .track:hover .bob {
+  transform: scale(1);
 }
 
 .playback-controls .icon {

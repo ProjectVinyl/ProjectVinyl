@@ -130,6 +130,7 @@ export function PlayerControls(player, dom) {
 
   addDelegatedEvent(dom, 'mousemove', '.track', ev => {
     drawPreview(this, evToProgress(this.track, ev));
+    this.track.style.setProperty('--track-cursor', evToProgress(this.track, ev));
   });
   addDelegatedEvent(dom, 'click', '.volume', ev => {
     if (ev.button !== 0) return;
@@ -194,8 +195,7 @@ PlayerControls.prototype = {
     this.volume.slider.fill.style.top = (100 - volume) + '%';
   },
   repaintTrackBar(percentFill) {
-    this.track.bob.style.left = percentFill + '%';
-    this.track.fill.style.right = (100 - percentFill) + '%';
+    this.track.style.setProperty('--track-progress', percentFill);
 
     if (didBufferChange(this.buffer, this.player.video.buffered)) {
       this.repaintProgress(this.player.video);
