@@ -1,8 +1,9 @@
 .video, #upload .cover-block {
   display: block;
   width: 100%;
+  --max-player-height: 100vh;
   --aspect-ratio: calc(16 / 9);
-  padding-bottom: calc(min(70vh, 100% / var(--aspect-ratio)));
+  padding-bottom: calc(min(var(--max-player-height), 100% / var(--aspect-ratio)));
   height: 0 !important;
   position: relative;
 }
@@ -13,9 +14,6 @@
 .video {
   background: #000 center/contain no-repeat;
   touch-action: pan-x pan-y;
-}
-.page.slim.full-width .video {
-  max-height: 100vh;
 }
 
 .video .player, .video .player h1 a {
