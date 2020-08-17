@@ -37,17 +37,17 @@
   opacity: 0.99;
 }
 
-.video .player[data-state=error]::after,
-.video .player[data-state=error] .suspend,
-.video:not(.unplayable) .player[data-state=paused]::after {
+.video[data-state=error] .player::after,
+.video[data-state=error] .player .suspend,
+.video[data-state=paused]:not(.unplayable) .player::after {
   display: none;
 }
-.video:not(.unplayable) .player[data-state=stopped]::after {
+.video[data-state=stopped]:not(.unplayable) .player::after {
   content: "\f01e";
   text-indent: 0;
 }
 
-.video:not(.unplayable) .player[data-state=playing]::after {
+.video[data-state=playing]:not(.unplayable) .player::after {
   cursor: default;
   transform: scale(0.25);
   top: 50px;

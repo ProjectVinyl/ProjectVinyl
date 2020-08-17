@@ -47,7 +47,7 @@ export function createVideoElement(sender) {
     abort: e => sender.error(e), error: e => sender.error(e),
     pause: () => sender.pause(),
     play: () => {
-      sender.player.dataset.state = 'playing';
+      sender.dom.dataset.state = 'playing';
       video.loop = !!sender.__loop;
       sendMessage(sender);
       sender.volume(video.volume, video.muted);
@@ -60,7 +60,7 @@ export function createVideoElement(sender) {
           sender.navTo(next);
         }
       } else if (sender.pause()) {
-        sender.player.dataset.state = 'stopped';
+        sender.dom.dataset.state = 'stopped';
       }
     },
     suspend: suspended,

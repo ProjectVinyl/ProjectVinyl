@@ -32,7 +32,7 @@ export function registerEvents(player, el) {
           return;
         }
 
-        if (player.player.dataset.state != 'playing' || player.dom.toggler.interactable()) {
+        if (player.dom.dataset.state != 'playing' || player.dom.toggler.interactable()) {
           if (player.playlist && player.playlist.classList.contains('visible')) {
             return player.playlist.classList.remove('visible');
           }

@@ -6,23 +6,19 @@
   margin-left: 2px;
   margin-right: 2px;
 }
-
 .playback-controls .icon .indicator {
   color: var(--controls-foreground);
   font-size: 1.5em;
 }
 
-i.fa.fa-restore {
+i.fa.fa-restore, i.fa.fa-volume-mid {
   display: inline-block;
-  background: transparent url("../fonts/restore-icon.svg") no-repeat scroll center center / 100% auto;
   width: 18px;
   height: 18px;
   margin-bottom: -2px;
+  background: transparent url("../fonts/restore-icon.svg") no-repeat scroll center center / 100% auto;
 }
 i.fa.fa-volume-mid {
-  display: inline-block;
-  background: transparent url("../fonts/vol-mid-icon.svg") no-repeat scroll center center / 100% auto;
+  background-image: url("../fonts/vol-mid-icon.svg");
   width: 16px;
-  height: 18px;
-  margin-bottom: -2px;
 }

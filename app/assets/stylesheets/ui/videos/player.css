@@ -38,7 +38,7 @@
   overflow-x: hidden;
 }
 
-.video .player[data-state=playing] span.pause {
+.video[data-state=playing] .player span.pause {
   opacity: 0;
 }
 .video .player span.playing {
@@ -48,11 +48,11 @@
   width: 100%;
   height: 100%;
 }
-.video .player[data-state=playing] span.playing, .video.audio-only .player span.pause {
+.video[data-state=playing] .player span.playing, .video.audio-only .player span.pause {
   opacity: 1;
 }
 
-.video .player[data-state=stopped] span.playing {
+.video[data-state=stopped] .player span.playing {
   display: none;
 }
 

@@ -27,16 +27,17 @@
   bottom: 0;
   left: 0;
   right: 0;
-  height: 50px;
+  height: 70px;
+  opacity: 0.7;
   pointer-events: none;
 }
 
-.video .player[data-state=playing] + .playback-controls,
-.video .player[data-state=paused] + .playback-controls {
+.video[data-state=playing] .playback-controls,
+.video[data-state=paused] .playback-controls {
   visibility: visible;
 }
 
-.video .player[data-state=paused] + .playback-controls {
+.video[data-state=paused] .playback-controls {
   opacity: 1;
 }
 
@@ -48,14 +49,14 @@
   visibility: visible;
 }
 
-.video .player[data-state=ready] + .playback-controls,
-.video .player[data-state=stopped] + .playback-controls,
-.video[data-hide-controls="1"] .playback-controls {
+.video[data-state=ready] .playback-controls,
+.video[data-state=stopped] .playback-controls,
+.video[data-state=playing][data-hide-controls="1"] .playback-controls {
   opacity: 0;
   visibility: hidden;
 }
 
-.video[data-hide-controls="1"] .playing {
+.video[data-state=playing][data-hide-controls="1"] .playing {
   cursor: none;
 }
 

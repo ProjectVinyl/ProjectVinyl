@@ -18,14 +18,14 @@
   opacity: 1;
 }
 
-.video .player[data-state=playing] ~ .embed-actions > li {
+.video[data-state=playing] .embed-actions > li {
   opacity: 0;
 }
 
-.video:hover .player[data-state=playing] ~ .embed-actions > li {
+.video[data-state=playing]:hover .embed-actions > li {
   opacity: 0.4;
 }
 
-.video .player[data-state=playing] ~ .embed-actions > li:hover {
+.video[data-state=playing] .embed-actions > li:hover {
   opacity: 1;
 }

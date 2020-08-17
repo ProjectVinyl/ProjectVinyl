@@ -15,9 +15,6 @@
   color: #fff;
   opacity: 0.8;
 }
-.video .player[data-state=error] .error {
-  display: inline;
-}
 .video .player .error .error-message {
   position: absolute;
   top: 50%;
@@ -32,3 +29,6 @@
   background: #777;
 }
 
+.video[data-state=error] .player .error {
+  display: inline;
+}

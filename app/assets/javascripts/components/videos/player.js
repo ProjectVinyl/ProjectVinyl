@@ -8,10 +8,9 @@ import { clamp } from '../../utils/math';
 import { errorMessage, errorPresent } from '../../utils/videos';
 import { all } from '../../jslim/dom';
 import { ready, bindAll, bindEvent } from '../../jslim/events';
-import { isFullscreen } from '../../utils/fullscreen';
 import { cookies } from '../../utils/cookies';
 import { TapToggler } from '../taptoggle';
-import { fullscreenPlayer, setFullscreen } from './fullscreen';
+import { setFullscreen } from './fullscreen';
 import { PlayerControls } from './playercontrols';
 import { setupNoise } from './noise';
 import { attachMessageListener } from './itc';
@@ -124,28 +123,15 @@ Player.prototype = {
       onPlaylistNavigate(this, sender, json);
     });
   },
-  fullscreen(on) {
-    this.controls.fullscreen.innerHTML = `<i class="fa fa-${on ? 'restore' : 'arrows-alt'}"></i>`;
-
-    if (fullscreenPlayer && fullscreenPlayer !== this) {
-      fullscreenPlayer.fullscreen(false);
-    }
-
-    if (fullscreenPlayer && !on) {
-      document.exitFullscreen();
-      this.controls.dom.style.opacity = '';
-      if (this.redirect) {
-        if (this.video) {
-          this.redirect += `${this.redirect.indexOf('?') >= 0 ? '&' : '?'}t=${this.video.currentTime}`;
-        }
-        document.location.replace(this.redirect);
+  fullscreenChanged(inFullscreen) {
+    if (!inFullscreen && this.redirect) {
+      if (this.video) {
+        this.redirect += `${this.redirect.indexOf('?') >= 0 ? '&' : '?'}t=${this.video.currentTime}`;
       }
+      document.location.replace(this.redirect);
     }
-    
-    if (on) {
-      this.dom.requestFullscreen();
-    }
-
+  },
+  fullscreen(on) {
     setFullscreen(on ? this : null);
     return on;
   },
@@ -257,7 +243,7 @@ Player.prototype = {
     }
     this.video.play();
 
-    if (this.player.dataset.state !== 'paused') {
+    if (this.dom.dataset.state !== 'paused') {
       ajax.put(`videos/${this.params.id}/play_count`).json(json => {
         all('.js-play-counter', counter => {
           counter.innerText = `${json.count} views`;
@@ -272,7 +258,7 @@ Player.prototype = {
       this.video.pause();
     }
 
-    this.player.dataset.state = 'paused';
+    this.dom.dataset.state = 'paused';
     this.suspend.classList.add('hidden');
     return true;
   },
@@ -283,7 +269,7 @@ Player.prototype = {
       const message = errorMessage(this.video);
       console.warn(message);
 
-      this.player.dataset.state = 'error';
+      this.dom.dataset.state = 'error';
       this.player.error.message.innerText = message;
       this.suspend.classList.add('hidden');
 
@@ -295,7 +281,7 @@ Player.prototype = {
     }
   },
   togglePlayback() {
-    if (this.player.dataset.state == 'playing') {
+    if (this.dom.dataset.state == 'playing') {
       return this.pause();
     }
     this.play();
