@@ -1,0 +1,73 @@
+.playback-controls {
+  --controls-foreground: #fff;
+  --controls-background: #000;
+  --bob-tint: #f00;
+  --bob-highlight: #f00;
+  --bob-outline: transparent;
+  --progress-fill-color: red;
+
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 0;
+  color: var(--controls-foreground);
+}
+.video .playback-controls {
+  visibility: hidden;
+  position: absolute;
+  opacity: 0;
+  transition: opacity 0.5s linear, visibility 0.5s linear;
+}
+.video .playback-controls::before {
+  display: block;
+  content: '';
+  box-shadow: 0 -50px 40px -40px var(--controls-background) inset;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 50px;
+  pointer-events: none;
+}
+
+.video .player[data-state=playing] + .playback-controls,
+.video .player[data-state=paused] + .playback-controls {
+  visibility: visible;
+}
+
+.video .player[data-state=paused] + .playback-controls {
+  opacity: 1;
+}
+
+.video:hover .playback-controls, 
+.video.hover .playback-controls,
+.video.audio-only .playback-controls,
+.video .playback-controls:hover {
+  opacity: 1;
+  visibility: visible;
+}
+
+.video .player[data-state=ready] + .playback-controls,
+.video .player[data-state=stopped] + .playback-controls,
+.video[data-hide-controls="1"] .playback-controls {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.video[data-hide-controls="1"] .playing {
+  cursor: none;
+}
+
+.playback-controls ul {
+  display: flex;
+  align-items: center;
+}
+
+.video .playback-controls ul {
+  margin: 0 15px 15px 15px;
+}
+
+.playback-controls li {
+  display: inline-block;
+}

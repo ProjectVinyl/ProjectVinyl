@@ -1,0 +1,26 @@
+.playback-controls .bars {
+  width: 100%;
+  border-radius: 4px;
+  overflow: hidden;
+}
+.playback-controls .bars,
+.playback-controls .bars > * {
+  position: absolute;
+  opacity: 0.6;
+  top: 0;
+  bottom: 0;
+  left: 0;
+}
+
+.playback-controls .bars.load,
+.playback-controls .bars > * {
+  background: grey;
+  opacity: 0.5;
+}
+
+.playback-controls .bars .fill {
+  background: var(--progress-fill-color);
+  width: calc(100% * (var(--track-progress) / 100));
+  transition: width 0.25s linear;
+  opacity: 1;
+}

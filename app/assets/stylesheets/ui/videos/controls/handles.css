@@ -1,0 +1,25 @@
+.playback-controls .bob {
+  position: absolute;
+  background: var(--bob-tint);
+  box-shadow: 0 0 3px 5px var(--bob-highlight) inset;
+  border: 1px solid var(--bob-outline);
+  border-radius: 100%;
+  margin: -5px 0 0 -10px;
+  width: 20px;
+  height: 20px;
+}
+
+.playback-controls .bob {
+  transition: bottom 0.25s linear, left 0.25s linear, transform 0.25s ease;
+  transform: scale(0);
+}
+
+.playback-controls .interacting .bob,
+.playback-controls :hover > .bob {
+  transform: scale(1);
+}
+.playback-controls .interacting,
+.playback-controls .interacting .fill,
+.playback-controls .interacting .bob {
+  transition: none !important;
+}

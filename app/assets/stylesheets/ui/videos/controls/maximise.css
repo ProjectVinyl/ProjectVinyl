@@ -1,0 +1,8 @@
+.playback-controls .maximise {
+  display: none;
+}
+
+.slim .playback-controls .maximise {
+  display: inline-block;
+}
+

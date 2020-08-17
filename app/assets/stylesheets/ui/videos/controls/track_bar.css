@@ -1,0 +1,39 @@
+.playback-controls .track {
+  transition: background 0.5s ease;
+  position: relative;
+  margin-left: 15px;
+  margin-right: 15px;
+  height: 10px;
+  cursor: pointer;
+  border-radius: 4px;
+  flex-grow: 1;
+  --track-progress: 0;
+  --track-cursor: 0;
+}
+
+.playback-controls .track:hover {
+  background: rgba(0,0,0,0.1);
+}
+.video.audio-only .playback-controls .track {
+  background: rgba(8, 8, 8, 0.125);
+  border-radius: 4px;
+}
+.playback-controls .track .bars.load span {
+  background: rgba(255,255,255,0.3);
+  box-shadow: -15px 0 15px -15px #ffe inset;
+}
+
+.playback-controls .track .cursor-fill {
+  width: calc(100% * var(--track-cursor));
+  background: orange;
+  transition: none;
+  opacity: 0;
+}
+.playback-controls .track:not(.interacting):hover .bars .cursor-fill {
+  opacity: 0.3;
+}
+
+.playback-controls .track .bob {
+  top: 0;
+  left: calc(100% * (var(--track-progress) / 100));
+}

@@ -190,9 +190,7 @@ PlayerControls.prototype = {
   },
   repaintVolumeSlider(volume) {
     this.volume.indicator.setAttribute('class', 'fa fa-volume-' + getVolumeIcon(volume));
-    volume *= 100;
-    this.volume.slider.bob.style.bottom = volume + '%';
-    this.volume.slider.fill.style.top = (100 - volume) + '%';
+    this.volume.style.setProperty('--volume-level', volume);
   },
   repaintTrackBar(percentFill) {
     this.track.style.setProperty('--track-progress', percentFill);

@@ -1,0 +1,48 @@
+.playback-controls .volume {
+  --volume-level: 0;
+  --bar-bob-scale: 0;
+  --bar-transition-delay: 0.5s;
+}
+
+.playback-controls .volume .slider {
+  position: absolute;
+  bottom: 20px;
+  right: 50%;
+  height: 0;
+  opacity: 0;
+  width: 10px;
+  margin-bottom: 10px;
+  margin-right: -5px;
+  background: rgba(0,0,0,0.2);
+  transition:
+    height 0.25s linear var(--bar-transition-delay),
+    opacity 0.5s linear var(--bar-transition-delay);
+  border-radius: 4px;
+}
+
+.playback-controls .volume:hover .slider,
+.video .controls .volume.hover .slider,
+.video.voluming .playback-controls .volume .slider {
+  opacity: 1;
+  height: 100px;
+  --bar-bob-scale: 1;
+  --bar-transition-delay: 0s;
+}
+
+.playback-controls .volume .bars {
+  background: grey;
+}
+
+.playback-controls .volume .fill {
+  top: calc(100% * (1 - var(--volume-level)));
+  right: 0;
+  transition: top 0.25s linear;
+}
+
+.playback-controls .volume .bob {
+  bottom: calc(100% * var(--volume-level));
+  left: 0;
+  margin: 0 0 -10px -5px;
+  transform: scale(var(--bar-bob-scale));
+  transition-delay: var(--bar-transition-delay);
+}

@@ -1,0 +1,28 @@
+.playback-controls .icon {
+  position: relative;
+  width: 20px;
+  height: 100%;
+  cursor: pointer;
+  margin-left: 2px;
+  margin-right: 2px;
+}
+
+.playback-controls .icon .indicator {
+  color: var(--controls-foreground);
+  font-size: 1.5em;
+}
+
+i.fa.fa-restore {
+  display: inline-block;
+  background: transparent url("../fonts/restore-icon.svg") no-repeat scroll center center / 100% auto;
+  width: 18px;
+  height: 18px;
+  margin-bottom: -2px;
+}
+i.fa.fa-volume-mid {
+  display: inline-block;
+  background: transparent url("../fonts/vol-mid-icon.svg") no-repeat scroll center center / 100% auto;
+  width: 16px;
+  height: 18px;
+  margin-bottom: -2px;
+}
