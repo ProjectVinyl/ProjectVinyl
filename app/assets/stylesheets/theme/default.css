@@ -5,6 +5,7 @@ html, body {
   --site-background: #f1f1f1;
 
   --no-link-color: #aaa;
+  --focus-outline: rgba(81, 125, 227, 0.7);
   
   --content-background: #fff;
   --content-highlight: #fef;

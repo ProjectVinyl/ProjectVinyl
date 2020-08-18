@@ -1,35 +1,35 @@
 ﻿.meta-toolbar{ data: {target: amp_id} }
-	%a.action(data-insert="-" data-insert-position="before") NOT
-	%div.action
+	%a.action(tabindex="0" data-insert="-" data-insert-position="before") NOT
+	.action
 		<a>Search fields</a>
 		= fa :caret_down
 		%div
-			%a.action(data-insert="title:" data-value="example*") Title
-			%a.action(data-insert="source:" data-value="*.youtube.*") Source URL
-			%a.action(data-insert="description:" data-value="example*") Description
-			%a.action(data-insert="score>" data-value="20") Score
-			%a.action(data-insert="uploaded>" data-value="1/1/1992") Date Uploaded
-			%a.action(data-insert="length>" data-value="3:00") Video Duration
-			%a.action(data-insert="width>" data-value="1600") Video Width
-			%a.action(data-insert="hight>" data-value="900") Video Height
-			%a.action(data-insert="aspect_ratio>" data-value="1") Aspect Ratio
-			%a.action(data-insert="file_size>" data-value="900") Video File Size (bytes)
-			%a.action(data-insert="heat>" data-value="1") Heat
-	%div.action
+			%a.action(tabindex="0" data-insert="title:" data-value="example*") Title
+			%a.action(tabindex="0" data-insert="source:" data-value="*.youtube.*") Source URL
+			%a.action(tabindex="0" data-insert="description:" data-value="example*") Description
+			%a.action(tabindex="0" data-insert="score>" data-value="20") Score
+			%a.action(tabindex="0" data-insert="uploaded>" data-value="1/1/1992") Date Uploaded
+			%a.action(tabindex="0" data-insert="length>" data-value="3:00") Video Duration
+			%a.action(tabindex="0" data-insert="width>" data-value="1600") Video Width
+			%a.action(tabindex="0" data-insert="hight>" data-value="900") Video Height
+			%a.action(tabindex="0" data-insert="aspect_ratio>" data-value="1") Aspect Ratio
+			%a.action(tabindex="0" data-insert="file_size>" data-value="900") Video File Size (bytes)
+			%a.action(tabindex="0" data-insert="heat>" data-value="1") Heat
+	.action
 		<a>Belonging to...</a>
 		= fa :caret_down
 		%div
-			%a.action(data-insert="is:audio") Audio Files
+			%a.action(tabindex="0" data-insert="is:audio") Audio Files
 			%span.spacer
-			%a.action(data-insert="upvoted_by:" data-value="username") Upvoted by
-			%a.action(data-insert="downvoted_by:" data-value="username") Downvoted by
-			%a.action(data-insert="uploaded_by:" data-value="username") Uploaded by
+			%a.action(tabindex="0" data-insert="upvoted_by:" data-value="username") Upvoted by
+			%a.action(tabindex="0" data-insert="downvoted_by:" data-value="username") Downvoted by
+			%a.action(tabindex="0" data-insert="uploaded_by:" data-value="username") Uploaded by
 			%span.spacer
-			%a.action(data-insert="my:upvotes") My Upvotes
-			%a.action(data-insert="my:downvotes") My Downvotes
-			%a.action(data-insert="my:uploads") My Uploads
+			%a.action(tabindex="0" data-insert="my:upvotes") My Upvotes
+			%a.action(tabindex="0" data-insert="my:downvotes") My Downvotes
+			%a.action(tabindex="0" data-insert="my:uploads") My Uploads
 	.spacer
-	%a.action.slider-toggle(data-target=".explanation")
+	%a.action.slider-toggle(tabindex="0" data-target=".explanation")
 		Syntax Help
 		= fa :question_circle
 .slideout.explanation.properties

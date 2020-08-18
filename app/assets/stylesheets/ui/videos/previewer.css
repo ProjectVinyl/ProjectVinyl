@@ -56,6 +56,8 @@
   height: 100%;
   border-radius: 3px;
 }
+
+.video .track:focus .previewer,
 .video .track:hover .previewer {
   opacity: 1;
   visibility: visible;

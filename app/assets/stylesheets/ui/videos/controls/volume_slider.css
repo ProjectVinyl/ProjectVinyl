@@ -20,7 +20,9 @@
   border-radius: 4px;
 }
 
+.playback-controls .volume:focus .slider,
 .playback-controls .volume:hover .slider,
+.video .controls .volume:focus .slider,
 .video .controls .volume.hover .slider,
 .video.voluming .playback-controls .volume .slider {
   opacity: 1;

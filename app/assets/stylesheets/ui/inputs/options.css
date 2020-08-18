@@ -27,6 +27,7 @@ label.options span {
 label.options input,
 label.options select {
   flex-grow: 1;
+  min-width: 0;
 }
 
 .search-options input,
@@ -35,7 +36,6 @@ label.options select {
   border: none;
   background: none;
   color: inherit;
-  outline: none;
   padding: 11px;
 }
 .search-options input {

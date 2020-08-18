@@ -44,7 +44,8 @@
 .video:hover .playback-controls, 
 .video.hover .playback-controls,
 .video.audio-only .playback-controls,
-.video .playback-controls:hover {
+.video .playback-controls:hover,
+.video .playback-controls:focus-within {
   opacity: 1;
   visibility: visible;
 }

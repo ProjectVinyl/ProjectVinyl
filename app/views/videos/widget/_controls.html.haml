@@ -1,22 +1,22 @@
 .controls.playback-controls
 	%ul
-		%li.icon.play
-			%span.indicator= fa :play
-		%li.track
-			.bars.load
-			.bars
+		%li.icon.play(tabindex="0")
+			%span.indicator(tabindex="-1")= fa :play
+		%li.track(tabindex="0")
+			.bars.load(tabindex="-1")
+			.bars(tabindex="-1")
 				%span.fill
 				%span.cursor-fill
-			.previewer
-			%span.bob
-		%li.icon.volume
-			%span.indicator= fa :volume_up
-			.slider
+			.previewer(tabindex="-1")
+			%span.bob(tabindex="-1")
+		%li.icon.volume(tabindex="0")
+			%span.indicator(tabindex="-1")= fa :volume_up
+			.slider(tabindex="-1")
 				.bars.load
 					%span.fill
 				%span.bob
-		%li.icon.maximise
-			%span.indicator= fa :square_o
-		%li.icon.fullscreen
-			%span.indicator= fa :arrows_alt
-			%span.indicator= fa :restore
+		%li.icon.maximise(tabindex="0")
+			%span.indicator(tabindex="-1")= fa :square_o
+		%li.icon.fullscreen(tabindex="0")
+			%span.indicator(tabindex="-1")= fa :arrows_alt
+			%span.indicator(tabindex="-1")= fa :restore

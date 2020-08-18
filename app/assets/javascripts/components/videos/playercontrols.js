@@ -129,11 +129,15 @@ export function PlayerControls(player, dom) {
   SliderSensitive(player.dom);
 
   addDelegatedEvent(dom, 'mousemove', '.track', ev => {
-    drawPreview(this, evToProgress(this.track, ev));
-    this.track.style.setProperty('--track-cursor', evToProgress(this.track, ev));
+    const progress = evToProgress(this.track, ev);
+    drawPreview(this, progress);
+    this.track.style.setProperty('--track-cursor', progress);
+  });
+  addDelegatedEvent(dom, 'focusin', '.track', ev => {
+    drawPreview(this, player.getProgress());
   });
   addDelegatedEvent(dom, 'click', '.volume', ev => {
-    if (ev.button !== 0) return;
+    if (ev.button !== 0) return console.log('click blocked');
     if (!player.contextmenu.hide(ev)) {
       if (this.volume.toggler.interactable()) {
         if (!player.video) player.play();
@@ -157,6 +161,11 @@ export function PlayerControls(player, dom) {
   addDelegatedEvent(dom, 'click', '.play', ev => {
     if (ev.button !== 0) return;
     player.togglePlayback();
+  });
+  addDelegatedEvent(dom, 'keyup', 'li', ev => {
+    if (ev.keyCode == 13 && !ev.target.closest('.track')) {
+      ev.target.click();
+    }
   });
   bindEvent(dom, 'click', halt);
 }

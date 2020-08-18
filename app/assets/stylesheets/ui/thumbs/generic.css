@@ -15,7 +15,8 @@ li.generic {
 }
 
 li.generic.virtual,
-li.generic:hover {
+li.generic:hover,
+li.generic:focus-within {
   background: var(--thumb-hover-color);
 }
 

@@ -286,6 +286,9 @@ Player.prototype = {
     }
     this.play();
   },
+  getProgress() {
+    return this.video.currentTime / this.getDuration();
+  },
   getDuration() {
     return parseFloat(this.video.duration) || 0;
   },

@@ -5,14 +5,34 @@
   align-items: baseline;
   flex-wrap: wrap;
   margin: -5px;
+  white-space: nowrap;
 }
+#slug-search > span > *,
 #slug-search > * {
+  flex-grow: 1;
   margin: 5px;
 }
+#slug-search > span {
+  max-width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  margin: 0;
+}
 #slug-search input[type="search"] {
-  flex-grow: 1;
+  flex-grow: 3;
+  min-width: 50%;
 }
 #slug-search input,
 #slug-search button {
   height: 40px;
+}
+#slug-search label {
+  flex-grow: 2;
+  min-width: 0;
+}
+
+@media(max-width: 250px) {
+  #slug-search label.options span {
+    display: none;
+  }
 }

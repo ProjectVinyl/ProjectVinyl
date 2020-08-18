@@ -11,6 +11,7 @@
 }
 .meta-toolbar .action {
   position: relative;
+  text-decoration: none;
   display: block;
   padding: var(--toolbar-item-padding);
   user-select: none;
@@ -25,30 +26,54 @@
   left: 0;
   border-left: solid 1px var(--input-border);
 }
-.meta-toolbar .action:hover {
+.meta-toolbar .action:hover,
+.meta-toolbar .action:focus-within {
   background: var(--block-hover-color);
 }
 
 .meta-toolbar .action div {
+  display: flex;
   min-width: 200px;
   z-index: 1000;
   position: absolute;
   top: 100%;
   left: 0;
   background: var(--input-background);
-  display: none;
   flex-direction: column;
   padding: 10px 0;
   box-shadow: 0px 1px #ffffff4d inset;
   border: 1px solid #d6d6d6;
   border-bottom-color: #cacaca;
   border-top-color: #e2e2e2;
+  opacity: 0;
+  pointer-events: none;
 }
 .meta-toolbar .action div .spacer {
   border-top: solid 1px var(--input-border);
   margin: 3px;
   display: block;
 }
-.meta-toolbar .action:hover > div {
-  display: flex;
+
+.meta-toolbar .action:hover > div,
+.meta-toolbar .action:focus-within > div {
+  opacity: 1;
+  pointer-events: all;
+}
+
+@media(max-width: 370px) {
+  .meta-toolbar {
+    flex-wrap: wrap;
+  }
+  .meta-toolbar .action {
+    width: 100%;
+  }
+  .meta-toolbar > .spacer {
+    display: none;
+  }
+  .action::before {
+    display: none;
+  }
+  .meta-toolbar .action i {
+    float: right;
+  }
 }

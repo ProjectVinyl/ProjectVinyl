@@ -53,7 +53,8 @@ button.right, .foobar.right, .button.right, input[type=submit].right {
   margin-left: 5px;
 }
 
-button:hover, .button:hover, input[type=submit]:hover {
+button:hover, .button:hover, input[type=submit]:hover,
+button:focus, .button:focus, input[type=submit]:focus {
   background: var(--button-background-hover);
   color: var(--button-foreground-hover) !important;
 }
