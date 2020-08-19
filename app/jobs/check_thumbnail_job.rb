@@ -16,11 +16,11 @@ class CheckThumbnailJob < ApplicationJob
     video.uncache
 
     if !video.audio_only
-      if video.has_file(video.cover_path)
-        if !video.has_file(video.tiny_cover_path)
+      if video.has_cover?
+        if !video.has_tiny_cover?
           Ffmpeg.extract_tiny_thumb_from_existing(video.cover_path, video.tiny_cover_path)
         end
-      elsif video.has_file(video.video_path)
+      elsif video.has_video?
         video.del_file(video.tiny_cover_path)
 
         time = video.duration.to_f / 2

@@ -22,7 +22,7 @@
 					= @video.file
 			%td.field= bool File.exist?(@video.video_path)
 			%td
-				%a.button{href: @video.file_link("#{@video.storage_root}/stream/#{@video.storage_path}", "source#{@video.file}")} View
+				%a.button{href: @video.video_file_link} View
 		%tr
 			%td.label MP3
 			%td.field
@@ -31,7 +31,7 @@
 				- else
 					= bool File.exist?(@video.audio_path)
 			%td
-				%a.button{href: @video.file_link("#{@video.storage_root}/stream/#{@video.storage_path}", "audio.mp3")} View
+				%a.button{href: @video.audio_file_link} View
 		- if !@video.audio_only
 			%tr
 				%td.label MP4
@@ -41,7 +41,7 @@
 					- else
 						= bool File.exist?(@video.mpeg_path)
 				%td
-					%a.button{href: @video.file_link("#{@video.storage_root}/stream/#{@video.storage_path}", "video.mp4")} View
+					%a.button{href: @video.mpeg_file_link} View
 			%tr
 				%td.label WEBM
 				%td.field
@@ -50,14 +50,14 @@
 					- else
 						= bool File.exist?(@video.webm_path)
 				%td
-					%a.button{href: @video.file_link("#{@video.storage_root}/stream/#{@video.storage_path}", "video.webm")} View
+					%a.button{href: @video.webm_file_link} View
 		%tr
 			%td.label Cover
 			%td.field= bool File.exist?(@video.cover_path)
 			%td
-				%a.button{href: @video.file_link("#{@video.storage_root}/stream/#{@video.storage_path}", "cover.png")} View
+				%a.button{href: @video.cover_file_link} View
 		%tr
 			%td.label Thumbnail
 			%td.field= bool File.exist?(@video.tiny_cover_path)
 			%td
-				%a.button{href: @video.file_link("#{@video.storage_root}/stream/#{@video.storage_path}", "thumb.png")} View
+				%a.button{href: @video.tiny_cover_file_link} View

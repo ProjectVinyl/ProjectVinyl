@@ -29,6 +29,15 @@ class Video < ApplicationRecord
   has_many :votes, dependent: :destroy
   has_many :tag_histories, dependent: :destroy
 
+  asset_root :stream
+  has_asset :video, :video_file_name, group: :media
+  has_asset :audio, 'audio.mp3', group: :media
+  has_asset :webm, 'video.webm', group: :media
+  has_asset :mpeg, 'video.mp4', group: :media
+  has_asset :frames, 'frames', group: :media
+  has_asset :cover, 'cover.png', cache_bust: true, group: :cover_files
+  has_asset :tiny_cover, 'thumb.png', cache_bust: true, group: :cover_files
+
   tag_relation :video_genres
   after_save :dispatch_mentions, if: :will_save_change_to_description?
 
@@ -91,40 +100,12 @@ class Video < ApplicationRecord
     self.update_index(defer: false)
   end
 
-  def audio_path(root = nil)
-    file_path('audio.mp3', root)
-  end
-  
-  def video_path(root = nil)
-    file_path("source#{file || '.mp4'}", root)
-  end
-
-  def webm_path(root = nil)
-    file_path('video.webm', root)
-  end
-
-  def mpeg_path(root = nil)
-    file_path('video.mp4', root)
-  end
-
-  def webm_url
-    public_url('video.webm')
-  end
-
   def set_hidden(val)
     if hidden != val
       self.hidden = val
       update_file_locations
       update_index(defer: true)
     end
-  end
-
-  def cover_path(root = nil)
-    file_path('cover.png', root)
-  end
-
-  def tiny_cover_path(root = nil)
-    file_path('thumb.png', root)
   end
 
   def media=(media)
@@ -143,7 +124,7 @@ class Video < ApplicationRecord
   end
 
   def realise_checksum
-    if (checksum.nil? || checksum.blank?) && has_file(video_path)
+    if (checksum.nil? || checksum.blank?) && has_video?
       self.checksum = Ffmpeg.compute_checksum(File.read(video_path))
       self.save
     end
@@ -171,26 +152,14 @@ class Video < ApplicationRecord
   end
 
   def thumb
-    hidden ? '/images/default-cover-g.png' : direct_thumb
-  end
-
-  def direct_thumb
-    cache_bust(public_url('cover.png'))
+    hidden ? '/images/default-cover-g.png' : cover
   end
 
   def tiny_thumb(user, filter)
     if (hidden && (!user || user_id != user.id)) || filter.video_spoilered?(self)
       return '/images/default-cover-small-g.png'
     end
-    direct_tiny_thumb
-  end
-  
-  def direct_tiny_thumb
-    cache_bust(public_url('thumb.png'))
-  end
-  
-  def model_path
-    'stream'
+    tiny_cover
   end
 
   def link
@@ -314,46 +283,21 @@ class Video < ApplicationRecord
     )
   end
 
-  def remove_cover_files
-    del_file(cover_path)
-    del_file(tiny_cover_path)
-  end
-
-  def remove_media
-    del_file(video_path)
-    del_file(mpeg_path)
-    del_file(webm_path)
-    del_file(audio_path)
-  end
-
   def read_media_attributes!
-
-    path = audio_only && has_file(cover_path) ? cover_path : video_path
-
-    self.length = Ffmpeg.get_video_length(video_path) if has_file(video_path)
+    self.length = Ffmpeg.get_video_length(video_path) if has_video?
 
     self.width, self.height = [1,1]
-    self.width, self.height = Ffmpeg.get_dimensions(path) if has_file(path)
+
+    path = audio_only && has_cover? ? cover_path : video_path
+    self.width, self.height = Ffmpeg.get_dimensions(path) if File.exist?(path)
     self.save
   end
 
-  protected
-
-  def remove_assets
-    self.remove_media
-    self.remove_cover_files
-  end
-
-  def move_assets(from, to)
-    rename_file(video_path(from), video_path(to))
-    rename_file(webm_path(from), webm_path(to))
-    rename_file(mpeg_path(from), mpeg_path(to))
-    rename_file(audio_path(from), audio_path(to))
-    rename_file(cover_path(from), cover_path(to))
-    rename_file(tiny_cover_path(from), tiny_cover_path(to))
-  end
-
   private
+  def video_file_name(key)
+    "source#{file || '.mp4'}"
+  end
+
   def dispatch_mentions
     if !(sender = comment_thread)
       sender = CommentThread.new({
