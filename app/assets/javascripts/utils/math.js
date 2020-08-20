@@ -19,3 +19,10 @@ export function clamp(x, min, max) {
 export function clampPercentage(p, max) {
   return clamp(p, 0, max) / max;
 }
+
+export function moDiv(number, div) {
+  return [
+    Math.floor(number % div),
+    Math.floor(number / div)
+  ]
+}

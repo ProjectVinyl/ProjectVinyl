@@ -10,11 +10,6 @@ class Ffmpeg
   SQUARE_CROP_COM = escape_filter_par('crop=min(iw,ih):min(iw,ih)').freeze
   SQUARE_TWO_FORTY = escape_filter_par('scale=min(min(iw,ih),240):min(min(iw,ih),240)').freeze
   SCALE_ONE_THIRTY = 'scale=-1:130'.freeze
-  ARGS_BY_FORMAT = {
-    webm: '-c:v libvpx -crf 10 -b:v 1M -c:a libvorbis',
-    mp4: '-vcodec libx264 -strict -2',
-    mp3: ''
-  }.freeze
 
   def self.compute_checksum(data)
     Digest::MD5.hexdigest(data)
@@ -30,6 +25,10 @@ class Ffmpeg
 
   def self.get_video_height(file)
     get_attribute(file, "height")
+  end
+
+  def self.get_video_framerate(file)
+    get_attribute(file, "avg_frame_rate")
   end
 
   def self.get_dimensions(file)
@@ -66,50 +65,6 @@ class Ffmpeg
     cycle_lock(file, true) do
       yield if block_given?
     end
-  end
-
-  def self.encode_file(record, input, output, ext)
-    FileUtils.mkdir_p(File.dirname(output))
-
-    temp = Rails.root.join('encoding', "#{record.id}.#{ext}").to_s
-
-    if File.exist?(output)
-      yield
-      return "Completed"
-    end
-
-    return "File Not Found" if !File.exist?(input)
-
-    if File.exist?(temp)
-      if File.mtime(temp) < Time.now.ago(1800)
-        File.rename(temp, output)
-        yield
-        puts "Existing file found (#{temp})"
-        return "Conversion Complete (Unlocked Index)"
-      end
-    end
-
-    begin
-      IO.popen([Rails.root.join('encode').to_s, input.to_s, temp.to_s, output.to_s, ARGS_BY_FORMAT[ext.to_sym]]) do |io|
-        begin
-          while line = io.gets
-            line.chomp!
-          end
-          io.close
-          yield
-          puts "Conversion complete (#{output})"
-        rescue Exception => e
-          puts e
-          puts e.backtrace
-        ensure
-          ActiveRecord::Base.connection.close
-        end
-      end
-    rescue Exception => e
-      puts e
-      puts e.backtrace
-    end
-    "Started"
   end
 
   def self.to_h_m_s(length)
@@ -158,15 +113,48 @@ class Ffmpeg
     run_command('-i', src, '-vf', SCALE_ONE_THIRTY, dst)
   end
 
-  private
-  def self.probe(variant, file, field)
-    stdout, error_str, status = Open3.capture3('ffprobe', '-v', 'error', '-show_entries', "#{variant}=#{field}", '-of', 'default=noprint_wrappers=1:nokey=1', file.to_s)
-    stdout.to_i
-  end
-
   def self.run_command(*com)
     com = HEADER + com.map{|i| i.to_s}
     puts "FFMPEG RUN: #{com}"
+    if block_given?
+      return wait_on(*com) do
+        yield
+      end
+    end
     system *com
+  end
+
+  def self.wait_on(*com)
+    begin
+      IO.popen(com) do |io|
+        begin
+          while line = io.gets
+            line.chomp!
+          end
+          io.close
+          yield
+        rescue Exception => e
+          puts e
+          puts e.backtrace
+        ensure
+          ActiveRecord::Base.connection.close
+        end
+      end
+    rescue Exception => e
+      puts e
+      puts e.backtrace
+    end
+  end
+
+  private
+  def self.probe(variant, file, field)
+    stdout, error_str, status = Open3.capture3('ffprobe', '-v', 'error', '-show_entries', "#{variant}=#{field}", '-of', 'default=noprint_wrappers=1:nokey=1', file.to_s)
+    stdout = stdout.split("\n")[0] || ''
+
+    return stdout.to_i if !stdout.include?('/')
+    stdout = stdout.split('/').map{|i| i.to_i }
+
+    return stdout[0] if stdout[1] <= 0
+    stdout[0] / stdout[1]
   end
 end

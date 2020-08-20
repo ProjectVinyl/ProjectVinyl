@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20200813143346) do
+ActiveRecord::Schema.define(version: 20200820145959) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -364,6 +364,7 @@ ActiveRecord::Schema.define(version: 20200813143346) do
     t.float "wilson_lower_bound"
     t.float "wilson_upper_bound"
     t.datetime "boosted_at"
+    t.integer "framerate"
     t.index ["checksum"], name: "index_videos_on_checksum"
     t.index ["created_at"], name: "index_videos_on_created_at"
     t.index ["user_id"], name: "index_videos_on_user_id"

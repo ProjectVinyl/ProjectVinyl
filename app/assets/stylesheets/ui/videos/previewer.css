@@ -1,7 +1,7 @@
 .video {
   --video-background-color: rgba(28,28,28,0.9);
-  --video-preview-width: 70px;
   --video-preview-height: 50px;
+  --video-preview-width: calc(var(--aspect-ratio) * var(--video-preview-height));
 }
 
 .video .previewer {
@@ -14,13 +14,25 @@
   position: absolute;
   width: var(--video-preview-width);
   height: var(--video-preview-height);
-  background: var(--video-background-color);
   bottom: 40px;
   margin-left: calc(var(--video-preview-width) / -2);
   border-radius: 3px;
   opacity: 0;
   transform: scale(0);
   transform-origin: calc(var(--video-preview-width) / 2) 70px;
+  background-color: var(--video-background-color);
+
+  --frame-x: 0;
+  --frame-y: 0;
+  --static-frame: url(/images/default-cover-smaller-g.png);
+  --tiled-frame: url('');
+  background-size: auto,contain;
+  background-image: var(--tiled-frame), var(--static-frame);
+  background-position:
+    calc(var(--frame-x) * var(--video-preview-width) * -1)
+    calc(var(--frame-y) * var(--video-preview-height) * -1),
+    top
+    left;
 }
 
 .video .previewer:before {
@@ -35,26 +47,17 @@
   font-weight: bold;
   text-shadow: 0 0 3px #000;
   opacity: 0.6;
-  background: inherit;
+  background-color: inherit;
   border-radius: inherit;
 }
 .video .previewer::after {
   content: '';
   position: absolute;
   bottom: -45px;
-  left: 25px;
+  left: calc(50% - 10px);
   border: solid 10px transparent;
   border-top-color: var(--video-background-color);
   opacity: 0.6;
-}
-.video .previewer canvas,
-.video .previewer img {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  border-radius: 3px;
 }
 
 .video .track:focus .previewer,

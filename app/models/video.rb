@@ -209,6 +209,7 @@ class Video < ApplicationRecord
     {
         title: get_title,
         time: time,
+        framerate: framerate,
         resume: resume,
         path: WithFiles.storage_path(created_at),
         type: audio_only ? 'audio' : 'video',
@@ -284,11 +285,13 @@ class Video < ApplicationRecord
   end
 
   def read_media_attributes!
-    self.length = Ffmpeg.get_video_length(video_path) if has_video?
+    self.framerate, self.width, self.height = [1,1,1]
 
-    self.width, self.height = [1,1]
+    self.length = Ffmpeg.get_video_length(video_path) if has_video?
+    self.framerate = Ffmpeg.get_video_framerate(video_path) if !audio_only && has_video?
 
     path = audio_only && has_cover? ? cover_path : video_path
+
     self.width, self.height = Ffmpeg.get_dimensions(path) if File.exist?(path)
     self.save
   end

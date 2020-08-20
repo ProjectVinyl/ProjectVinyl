@@ -83,7 +83,7 @@ module WithFiles
     (respond_to?(:hidden) && hidden) ? 'private' : 'public'
   end
 
-  def del_file(path, force = false)
+  def del_file(path)
     FileUtils.remove_entry(path) if File.exist?(path)
   end
 
@@ -113,6 +113,6 @@ module WithFiles
   end
 
   def remove_assets
-    each_asset(:all) {|f| del_file(send(f), true) }
+    each_asset(:all) {|f| del_file(send(f)) }
   end
 end
