@@ -11,6 +11,7 @@ module Verification
       { valid: false }
     end
 
+    # broken since the directory format changed
     def self.rebuild_queue
       webms = []
       location = Rails.root.join('public', 'stream')
