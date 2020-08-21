@@ -35,7 +35,7 @@ class FileEncoder
       return "Completed"
     end
 
-    create_temp_path(filename, input, output, block)
+    create_temp_path(filename, input, output, &block)
   end
 
   def self.encode_file(record, input, output, ext)
