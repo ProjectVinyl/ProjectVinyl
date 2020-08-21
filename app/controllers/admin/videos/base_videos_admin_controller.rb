@@ -19,7 +19,7 @@ module Admin
       end
 
       def check_access_then
-        redirect_to action: :index, controller: 'admin/admin'
+        bounce_back
 
         return flash[:error] = "Error: Login required." if !current_user.is_contributor?
         yield
