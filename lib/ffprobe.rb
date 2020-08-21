@@ -3,7 +3,7 @@ require 'open3'
 
 class Ffprobe
 
-  SQUARE_CROP_COM = escape_filter_par('crop=min(iw,ih):min(iw,ih)').freeze
+  SQUARE_CROP_COM = Ffmpeg.escape_filter_par('crop=min(iw,ih):min(iw,ih)').freeze
 
   def self.length(file)
     attribute(file, "duration")
@@ -25,6 +25,12 @@ class Ffprobe
     [ width(file), height(file) ]
   end
 
+  def self.frames(file)
+    out = run_command('ffmpeg', '-hide_banner', '-i', file, '-map', '0:v:0', '-c', 'copy', '-f', 'null', '-', '2>&1 | grep \'frame=\'')
+    return 0 if !out.include?('frame= ')
+    out.split('frame= ')[1].to_i
+  end
+
   def self.attribute(file, attr)
     output = probe("stream", file, attr)
     if output == 0
@@ -44,5 +50,12 @@ class Ffprobe
 
     return stdout[0] if stdout[1] <= 0
     stdout[0] / stdout[1]
+  end
+
+  def self.run_command(*com)
+    com = com.map{|i| i.to_s}
+    puts "FFPROBE RUN: #{com}"
+    stdout, error_str, status = Open3.capture3(com.join(' '))
+    stdout
   end
 end

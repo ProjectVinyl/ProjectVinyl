@@ -1,4 +1,6 @@
 class FileEncoder
+  SHEET_MAX_SIDE = 20
+  SHEET_SIZE = SHEET_MAX_SIDE * SHEET_MAX_SIDE
   ARGS_BY_FORMAT = {
     webm: '-c:v libvpx -crf 10 -b:v 1M -c:a libvorbis',
     mp4: '-vcodec libx264 -strict -2',
@@ -52,7 +54,14 @@ class FileEncoder
     create_temp_path("frames_#{record.id}", input, output) do |temp|
       return yield if temp.nil?
       FileUtils.mkdir_p(temp)
-      Ffmpeg.run_command('-i', input.to_s, '-q:v', 1, '-vf', "select=not(mod(n\\,20)),scale=-1:50,tile=20x20", temp.to_s + "/sheet_%03d.jpg") do
+
+      frame_count = Ffprobe.frames(input) / 20
+      rows = SHEET_MAX_SIDE
+      if (frame_count > 0 && frame_count <= SHEET_SIZE)
+        rows = (frame_count.to_f / SHEET_MAX_SIDE).ceil
+      end
+
+      Ffmpeg.run_command('-vsync', 'vfr', '-i', input.to_s, '-q:v', 1, '-vf', "select=not(mod(n\\,20)),scale=-1:50,tile=#{SHEET_MAX_SIDE}x#{rows}", temp.to_s + "/sheet_%03d.jpg") do
         FileUtils.mv(temp, output)
         puts "Sprite Sheet complete (#{output})"
         yield
