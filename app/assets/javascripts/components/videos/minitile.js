@@ -1,4 +1,4 @@
-import { moDiv } from '../../utils/math';
+import { divmod } from '../../utils/math';
 /*
  * Creates a tiny preview of a player's video.
  */
@@ -21,11 +21,11 @@ export function createMiniTile(player) {
 
       lastFrameNumber = frameNumber;
 
-      let [frameIndex, pageNumber] = moDiv(frameNumber, FRAMES_PER_SHEET)
+      let [pageNumber, frameIndex] = divmod(frameNumber, FRAMES_PER_SHEET)
 
       pageNumber = ('' + (pageNumber + 1)).padStart(3, '0')
 
-      const [frameX, frameY] = moDiv(frameIndex, FRAMES_PER_SIDE);
+      const [frameY, frameX] = divmod(frameIndex, FRAMES_PER_SIDE);
 
       dom.style.setProperty('--static-frame', `url(/stream/${player.params.path}/${player.params.id}/thumb.png)`);
       dom.style.setProperty('--tiled-frame', player.audioOnly ? '' : `url(/stream/${player.params.path}/${player.params.id}/frames/sheet_${pageNumber}.jpg)`);
