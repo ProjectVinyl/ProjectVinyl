@@ -1,5 +1,6 @@
 .tile {
-  --thumb-height: calc(var(--thumb-width) * 0.48);
+  --aspect-ratio: 0.49;
+  --thumb-height: calc(var(--thumb-width) * var(--aspect-ratio));
 
   position: relative;
   display: inline-block;
@@ -15,4 +16,10 @@
   text-decoration: none;
   background: #000 center/cover no-repeat;
   color: #fff;
+}
+.tile img {
+  position: absolute;
+  object-fit: cover;
+  width: 100%;
+  height: 100%;
 }

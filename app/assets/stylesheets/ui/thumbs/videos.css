@@ -1,6 +1,7 @@
 .thumb, li.generic.thumb {
   --thumb-width: 250px;
-  --thumb-height: calc(var(--thumb-width) * 0.92);
+  --aspect-ratio: 0.92;
+  --thumb-height: calc(var(--thumb-width) * var(--aspect-ratio));
 
   text-decoration: none;
 }
@@ -8,6 +9,9 @@
   --thumb-width: 85px;
   width: var(--thumb-width);
   height: 100%;
+}
+.thumb.tiny .tile {
+  --aspect-ratio: 0.59;
 }
 
 .thumb-hidden {

@@ -1,6 +1,6 @@
 .video {
   --video-background-color: rgba(28,28,28,0.9);
-  --video-preview-height: 50px;
+  --video-preview-height: 70px;
   --video-preview-width: calc(var(--aspect-ratio) * var(--video-preview-height));
 }
 
@@ -26,7 +26,7 @@
   --frame-y: 0;
   --static-frame: url(/images/default-cover-smaller-g.png);
   --tiled-frame: url('');
-  background-size: auto,contain;
+  background-size: 2000%,contain;
   background-image: var(--tiled-frame), var(--static-frame);
   background-position:
     calc(var(--frame-x) * var(--video-preview-width) * -1)
