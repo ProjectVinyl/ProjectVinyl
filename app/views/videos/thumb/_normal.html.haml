@@ -1,7 +1,8 @@
 - spoilered = current_filter.video_spoilered?(normal)
 %li.generic.thumb.picture>
 	%a.thumb{class: normal.hidden && "thumb-hidden", href: normal.link}
-		.tile{style: format_bg(normal.tiny_thumb(current_user, current_filter))}
+		.tile
+			%img(loading="lazy"){src: normal.tiny_thumb(current_user, current_filter)}
 			%span.tag-set.duration= duration normal.duration
 		.title{title: !spoilered && normal.get_title}
 			- if normal.privated?

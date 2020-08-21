@@ -1,6 +1,7 @@
 %li.generic>
 	%a.thumb{class: recommendation.hidden && "thumb-hidden", href: recommendation.link}
-		.tile{style: format_bg(recommendation.tiny_thumb(current_user, current_filter))}
+		.tile
+			%img(loading="lazy"){src: recommendation.tiny_thumb(current_user, current_filter)}
 			.details
 				- spoilered = current_filter.video_spoilered?(recommendation)
 				.title{title: !spoilered && recommendation.get_title}

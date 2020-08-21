@@ -1,6 +1,7 @@
 %li.generic.thumb{class: admin.processed == false && "working"}
 	%a.thumb{href: admin_video_path(admin), title: admin.moderation_note}
-		.tile{style: format_bg(admin.tiny_thumb(current_user, current_filter))}
+		.tile
+			%img(loading="lazy"){src: admin.tiny_thumb(current_user, current_filter)}
 			%span.tag-set.duration= duration admin.duration
 		.title
 			- if admin.hidden
