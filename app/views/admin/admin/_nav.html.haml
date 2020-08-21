@@ -46,18 +46,3 @@
 		%a.button(href="/admin/files?p=private")
 			= fw :file_video_o
 			Private Storage Folder
-	- if current_user.is_admin?
-		%h2 Indexing
-		.actions
-			%a.button.red{href: admin_reindex_path(id: :video), data: {confirm: "", method: :put, title: "Reindex Videos"}}
-				= fw :refresh
-				Recreate Video Index
-			%a.button.red{href: admin_reindex_path(id: :tag), data: {confirm: "", method: :put, title: "Reindex Tags"}}
-				= fw :refresh
-				Recreate Tag Index
-			%a.button.green{href: admin_reindex_path(id: :user), data: {confirm: "", method: :put, title: "Reindex Users"}}
-				= fw :refresh
-				Recreate User Index
-			%a.button.blue{href: admin_videos_thumbnail_path, data: {confirm: "", method: :put, title: "Rethumb Videos"}}
-				= fw :refresh
-				Recreate Video Thumbs

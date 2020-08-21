@@ -28,5 +28,9 @@
 	%p Oops! Could not connect to Resque.
 %hr/
 %button.action.blue{type: "button", data: {method: "put", confirm: "", url: admin_videos_requeue_path, title: "Rebuild Processing Queue"}}
-	= fa :wrench
+	= fw :refresh
 	Reprocess Videos
+- if current_user.is_admin?
+	%a.button.blue{href: admin_videos_thumbnail_path, data: {confirm: "", method: :put, title: "Rethumb Videos"}}
+		= fw :refresh
+		Recreate Video Thumbs

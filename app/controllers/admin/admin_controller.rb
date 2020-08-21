@@ -10,6 +10,8 @@ module Admin
         title: "Control Panel"
       }
 
+      @tables = [:video, :user, :tag]
+
       @hiddenvideos = Pagination.paginate(Video.where(hidden: true).with_likes(current_user), params[:hidden].to_i, 40, true)
       @unprocessed = Pagination.paginate(Video.where("(processed IS NULL or processed = ?) AND hidden = false", false).with_likes(current_user), params[:unprocessed].to_i, 40, false)
       @reports = Pagination.paginate(Report.includes(:reportable).open, params[:reports].to_i, 40, false)
