@@ -67,7 +67,6 @@ class User < ApplicationRecord
   scope :with_badges, -> { includes(user_badges: [:badge]) }
   scope :find_matching_users, ->(term) { where('username LIKE ?', "#{term}%").order(:username).limit(10).map(&:to_json) }
   scope :get_as_recipients, ->(users_string) { where('username IN (?)', users_string.split(',').map {|a| a.strip}.uniq) }
-  scope :find_for_mention, ->(match) { where('LOWER(username) = ? OR LOWER(safe_name) IN (?)', match, [match, match.underscore].map{|a| PathHelper.url_safe(a) }).first }
 
   validates :username, presence: true, uniqueness: {
     case_sensitive: false
@@ -104,6 +103,10 @@ class User < ApplicationRecord
       link: link,
       slug: username
     }
+  end
+
+  def self.find_for_mention(match)
+    User.where('LOWER(username) = ? OR LOWER(safe_name) IN (?)', match, [match, match.underscore].map{|a| PathHelper.url_safe(a) }).first
   end
 
   def self.find_for_database_authentication(warden_conditions)
