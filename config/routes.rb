@@ -142,10 +142,6 @@ Rails.application.routes.draw do
     resources :api, except: [:show], controller: :api_tokens
     resources :reindex, only: [:update]
 
-    namespace :verify do
-      resource :users, :videos, only: [:update]
-    end
-
     resource :settings, only: [] do
       put 'set/:key', action: :set
       put 'toggle/:key', action: :toggle
