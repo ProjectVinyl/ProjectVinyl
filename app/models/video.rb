@@ -287,12 +287,12 @@ class Video < ApplicationRecord
   def read_media_attributes!
     self.framerate, self.width, self.height = [1,1,1]
 
-    self.length = Ffmpeg.get_video_length(video_path) if has_video?
-    self.framerate = Ffmpeg.get_video_framerate(video_path) if !audio_only && has_video?
+    self.length = Ffprobe.length(video_path) if has_video?
+    self.framerate = Ffprobe.framerate(video_path) if !audio_only && has_video?
 
     path = audio_only && has_cover? ? cover_path : video_path
 
-    self.width, self.height = Ffmpeg.get_dimensions(path) if File.exist?(path)
+    self.width, self.height = Ffprobe.dimensions(path) if File.exist?(path)
     self.save
   end
 

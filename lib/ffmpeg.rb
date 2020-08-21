@@ -15,35 +15,6 @@ class Ffmpeg
     Digest::MD5.hexdigest(data)
   end
 
-  def self.get_video_length(file)
-    get_attribute(file, "duration")
-  end
-
-  def self.get_video_width(file)
-    get_attribute(file, "width")
-  end
-
-  def self.get_video_height(file)
-    get_attribute(file, "height")
-  end
-
-  def self.get_video_framerate(file)
-    get_attribute(file, "avg_frame_rate")
-  end
-
-  def self.get_dimensions(file)
-    [ get_video_width(file), get_video_height(file) ]
-  end
-
-  def self.get_attribute(file, attribute)
-    output = probe("stream", file, attribute)
-    if output == 0
-      output = probe("format", file, attribute)
-    end
-
-    output.floor
-  end
-
   def self.cycle_lock(file, unlock)
     webm = file.to_s.split('.')[0] + '.webm'
     temp = Rails.root.join('encoding', File.basename(webm).to_s).to_s
@@ -144,17 +115,5 @@ class Ffmpeg
       puts e
       puts e.backtrace
     end
-  end
-
-  private
-  def self.probe(variant, file, field)
-    stdout, error_str, status = Open3.capture3('ffprobe', '-v', 'error', '-show_entries', "#{variant}=#{field}", '-of', 'default=noprint_wrappers=1:nokey=1', file.to_s)
-    stdout = stdout.split("\n")[0] || ''
-
-    return stdout.to_i if !stdout.include?('/')
-    stdout = stdout.split('/').map{|i| i.to_i }
-
-    return stdout[0] if stdout[1] <= 0
-    stdout[0] / stdout[1]
   end
 end
