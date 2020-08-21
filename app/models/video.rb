@@ -210,6 +210,7 @@ class Video < ApplicationRecord
         title: get_title,
         time: time,
         framerate: framerate,
+        duration: duration,
         resume: resume,
         path: WithFiles.storage_path(created_at),
         type: audio_only ? 'audio' : 'video',

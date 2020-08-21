@@ -50,7 +50,6 @@
   visibility: visible;
 }
 
-.video[data-state=ready] .playback-controls,
 .video[data-state=stopped] .playback-controls,
 .video[data-state=playing][data-hide-controls="1"] .playback-controls {
   opacity: 0;

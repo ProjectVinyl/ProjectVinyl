@@ -229,19 +229,23 @@ Player.prototype = {
     
     return media;
   },
-  play() {
-    this.controls.play.innerHTML = `<i class="fa fa-pause"></i>`;
-    
+  getOrCreateVideo() {
     if (!this.video) {
       this.video = createVideoElement(this);
       this.volume(this.video.volume, this.video.muted);
       this.video.load();
     }
+    return this.video;
+  },
+  play() {
+    this.controls.play.innerHTML = `<i class="fa fa-pause"></i>`;
     
-    if (this.video.networkState === HTMLMediaElement.NETWORK_NO_SOURCE) {
-      this.video.load();
+    const video = this.getOrCreateVideo();
+
+    if (video.networkState === HTMLMediaElement.NETWORK_NO_SOURCE) {
+      video.load();
     }
-    this.video.play();
+    video.play();
 
     if (this.dom.dataset.state !== 'paused') {
       ajax.put(`videos/${this.params.id}/play_count`).json(json => {
@@ -287,10 +291,10 @@ Player.prototype = {
     this.play();
   },
   getProgress() {
-    return this.video.currentTime / this.getDuration();
+    return this.video ? this.video.currentTime / this.getDuration() : 0;
   },
   getDuration() {
-    return parseFloat(this.video.duration) || 0;
+    return this.video ? (parseFloat(this.video.duration) || 0) : this.params.duration;
   },
   getVolume() {
     return this.video.muted ? 0 : this.video.volume;

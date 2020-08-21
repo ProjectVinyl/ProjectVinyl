@@ -41,15 +41,11 @@ function didBufferChange(old, neu) {
 }
 
 function drawPreview(controls, progress) {
-  if (!controls.player.video) {
-    return;
-  }
-
-  const time = (parseInt(controls.player.video.duration) || 0) * progress;
+  console.log(controls.player.params);
+  const time = controls.player.getDuration() * progress;
 
   controls.track.preview.style.left = (progress * 100) + '%';
   controls.track.preview.dataset.time = toHMS(time);
-
   controls.preview.draw(time);
 }
 
@@ -79,6 +75,7 @@ export function PlayerControls(player, dom) {
   this.volume.slider = dom.querySelector('.volume .slider');
   
   this.preview = createMiniTile(player);
+  this.preview.draw(0);
 
   Slider(this.track, ev => {
     if (!player.contextmenu.hide(ev)) {
