@@ -20,9 +20,6 @@
   color: #fff;
   text-decoration: none;
 }
-.video .player video {
-  pointer-events: none;
-}
 
 .video .player h1 {
   white-space: nowrap;
