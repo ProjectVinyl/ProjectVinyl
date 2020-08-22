@@ -1,12 +1,21 @@
+.wrapper {
+  --columns-gap: 20px;
+  --right-column-width: calc(100% / 3);
+}
+.fixed-right-column {
+  --right-column-width: calc(min(450px, 33vw));
+}
+
 .wrapper .wrapper.column-left,
 .wrapper .page.column-left {
-  width: calc(200% / 3 - 10px);
+  --left-column-width: calc(var(--site-width) - var(--right-column-width));
+  width: calc(var(--left-column-width) - var(--columns-gap) / 2);
   margin-left: 0px;
   margin-right: 0px;
 }
 .wrapper .wrapper.column-right,
 .wrapper .page.column-right {
-  width: calc(100% / 3 - 10px);
+  width: calc(var(--right-column-width) - var(--columns-gap) / 2);
   margin-right: 0px;
   margin-left: 0px;
 }

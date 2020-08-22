@@ -2,5 +2,6 @@
  *= require ./generic
  *= require ./tiles
  *= require ./videos
+ *= require ./recommended_videos
  *= require ./stacks
  */

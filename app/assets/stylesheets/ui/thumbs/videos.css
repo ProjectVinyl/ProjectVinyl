@@ -2,6 +2,8 @@
   --thumb-width: 250px;
   --aspect-ratio: 0.92;
   --thumb-height: calc(var(--thumb-width) * var(--aspect-ratio));
+  --tile-overlay-background: rgba(0,0,0,0.3);
+  --tile-overlay-color: #fff;
 
   text-decoration: none;
 }
@@ -24,7 +26,11 @@
 }
 
 li.generic.mix {
-  background: rgba(0,0,200,0.01);
+  background: var(--thumb-hover-color);
+  padding: 10px;
+  border-top: solid 3px var(--block-border-color);
+  border-bottom: solid 3px var(--block-border-color);
+  border-radius: 3px;
 }
 
 li.generic.mix .tile::after {
@@ -37,7 +43,8 @@ li.generic.mix .tile::after {
   font-size: 2em;
   opacity: 0.6;
   text-align: center;
-  text-shadow: 0 0 3px #000;
+  background: var(--tile-overlay-background);
+  border-radius: 0 0 0 5px;
 }
 
 .thumb .tile .detail {
@@ -49,10 +56,22 @@ li.generic.mix .tile::after {
   padding: 1px 6px;
   right: 0;
   bottom: 0;
-  color: #fff;
-  background: rgba(0,0,0,0.3);
+  color: var(--tile-overlay-color);
+  background: var(--tile-overlay-background);
   border-radius: 5px 0 0 0;
+  font-weight: 280;
+  font-style: normal;
+  font-stretch: expanded;
 }
+.thumb .tile .duration .green {
+  color: #8bfb12;
+  text-shadow: 0 0 1px #fff;
+}
+.thumb .tile .duration .red {
+  color: #fb1616;
+  text-shadow: 0 0 1px #fff;
+}
+
 .thumb .tile:hover:before,
 .thumb .tile:focus:before {
   position: absolute;
@@ -92,49 +111,6 @@ li.generic.mix .tile::after {
   overflow: hidden;
   text-overflow: ellipsis;
   -o-text-overflow: ellipsis;
-}
-
-ul.vertical .thumb .tile .details {
-  vertical-align: top;
-  margin-bottom: 0 !important;
-  color: #000;
-  padding: 5px;
-  position: absolute;
-  text-align: left;
-  bottom: -3.5em;
-}
-
-@media(min-width: 900px) {
-  ul.vertical .thumb .tile {
-    width: 50%;
-    max-width: 50%;
-    min-width: 50%;
-    min-height: 110px;
-    float: left;
-  }
-  ul.vertical .thumb .tile .details {
-    width: 100%;
-    left: 100%;
-    bottom: auto;
-  }
-  ul.vertical .details .detail {
-    display: block;
-    color: #aaa;
-    font-weight: normal;
-  }
-}
-
-@media(max-width: 900px) {
-  ul.vertical .thumb .tile {
-    margin-bottom: 3.1em;
-  }
-  ul.vertical .thumb .tile {
-    min-width: 0 !important;
-  }
-  ul.vertical .thumb .tile {
-    --thumb-width: 100%;
-    padding: 0 0 45% 0 !important;
-  }
 }
 
 @media(max-width: 700px) {

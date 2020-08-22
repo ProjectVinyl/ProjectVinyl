@@ -1,0 +1,10 @@
+- if (mix_string = mix.mix_string(current_user)).length > 0
+	%li.generic.mix>
+		%a.thumb(href="#{mix.link}?q=#{mix_string}&index=0" data-href="#{mix.link}?q=#{mix_string}&index=0")
+			.tile
+				%img(loading="lazy"){src: mix.tiny_thumb(current_user, current_filter)}
+			.details
+				.title
+					MIX -
+					= mix.title
+				.detail Project Vinyl

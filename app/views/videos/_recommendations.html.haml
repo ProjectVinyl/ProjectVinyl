@@ -6,18 +6,12 @@
 				%a Uploader
 				%a.slide-right.goto(data-to="global" title="Anyone")= fw :chevron_right
 			%ul.vertical
-				- if (@mix_string = @video.mix_string(current_user)).length > 0
-					%li.generic.mix>
-						%a.thumb(href="#{@video.link}?q=#{@mix_string}&index=0" data-href="#{@video.link}?q=#{@mix_string}&index=0")
-							.tile{style:format_bg(@video.tiny_cover)}
-								.details
-									.title
-										MIX - 
-										= @video.title
+				= render partial: 'videos/thumb/mix', locals: {mix: @video}
 				= render partial: 'videos/thumb/recommendation', collection: @queue[:user]
 		.group(data-stage="global")
 			%h2.resize-target.slide-nav
 				%a.goto.slide-left(data-to="user" title="Uploader")= fa :chevron_left
 				%a Anyone
 			%ul.vertical
+				= render partial: 'videos/thumb/mix', locals: {mix: @video}
 				= render partial: 'videos/thumb/recommendation', collection: @queue[:global]

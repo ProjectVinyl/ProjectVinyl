@@ -2,17 +2,20 @@
 	%a.thumb{class: recommendation.hidden && "thumb-hidden", href: recommendation.link}
 		.tile
 			%img(loading="lazy"){src: recommendation.tiny_thumb(current_user, current_filter)}
-			.details
-				- spoilered = current_filter.video_spoilered?(recommendation)
-				.title{title: !spoilered && recommendation.get_title}
-					- if recommendation.hidden
-						%span.icon(title="Private - Only you can see this item")= fa :lock
-					= spoilered ? "[Spoilered]" : recommendation.get_title
-				.published.detail= since recommendation.created_at
-				.views.detail
-					= fuzzy_big_number_with_delimiter recommendation.play_count
-					views
 			%span.tag-set.duration
 				- if recommendation.liked?
 					= fa "thumbs-#{recommendation.disliked? ? 'down red' : 'up green'}"
 				= duration recommendation.duration
+		.details
+			- spoilered = current_filter.video_spoilered?(recommendation)
+			%span.title{title: !spoilered && recommendation.get_title}
+				- if recommendation.hidden
+					%span.icon(title="Private - Only you can see this item")= fa :lock
+				= spoilered ? "[Spoilered]" : recommendation.get_title
+			- uploader = recommendation.user
+			.detail= uploader.username
+			.detail
+				= fuzzy_big_number_with_delimiter recommendation.play_count
+				views
+				\-
+				= since recommendation.created_at
