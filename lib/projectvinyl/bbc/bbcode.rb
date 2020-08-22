@@ -64,7 +64,7 @@ module ProjectVinyl
         ":#{tag.inner_text}:"
       end
       TagGenerator.register(:bbc, [:iframe]) do |tag|
-        if tag.attributes[:scr] && tag.attributes[:class] == 'embed'
+        if tag.attributes[:src] && tag.attributes[:class] == 'embed'
           if Youtube.is_video_link(tag.attributes[:src])
             next "[yt#{Youtube.video_id(tag.attributes[:src])}]#{tag.inner_bbc}"
           end
