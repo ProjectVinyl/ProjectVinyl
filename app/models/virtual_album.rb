@@ -3,7 +3,7 @@ class VirtualAlbum < Album
     @current = current
     @filter = current_filter
     @index = [0, index].max
-    @offset = [0, @index - 20].max
+    @offset = 0 #[0, @index - 20].max
     @query = query.strip
 
     @items = []
@@ -88,9 +88,6 @@ class VirtualAlbum < Album
   def fetch_items
     @filter.videos
       .must(@filter.build_params(@query).to_hash)
-      .must({
-        range: { created_at: { gte: current(nil) } }
-      })
       .where(hidden: false, duplicate_id: 0, listing: 0)
       .order(:created_at)
       .offset(@offset)

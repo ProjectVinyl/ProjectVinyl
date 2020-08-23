@@ -38,6 +38,7 @@ module ProjectVinyl
       def offset(offset)
         __clear!
         @initial[:from] = offset
+        self
       end
 
       def limit(limit)
