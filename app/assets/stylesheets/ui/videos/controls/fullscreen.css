@@ -1,9 +1,4 @@
-.video            .fullscreen .fa-restore,
-.video:fullscreen .fullscreen .fa-arrows-alt {
+.video:not(:fullscreen) .fullscreen [title="Exit Full Screen"],
+.video:fullscreen       .fullscreen [title="Full Screen"] {
   display: none;
-}
-
-.video            .fullscreen .fa-arrows-alt,
-.video:fullscreen .fullscreen .fa-restore {
-  display: inline-block;
 }

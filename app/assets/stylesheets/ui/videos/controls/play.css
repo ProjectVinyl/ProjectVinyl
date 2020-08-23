@@ -1,0 +1,4 @@
+.video:not([data-state=paused]) .play [title="Pause"],
+.video[data-state=paused]       .play [title="Play"] {
+  display: none;
+}
