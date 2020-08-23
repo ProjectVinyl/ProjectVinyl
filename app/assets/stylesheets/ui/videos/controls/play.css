@@ -1,4 +1,7 @@
-.video:not([data-state=paused]) .play [title="Pause"],
-.video[data-state=paused]       .play [title="Play"] {
+.floating-player[data-state=playing]       .play [title="Pause"],
+.floating-player:not([data-state=playing]) .play [title="Play"],
+
+.video[data-state=playing]       .play [title="Pause"],
+.video:not([data-state=playing]) .play [title="Play"] {
   display: none;
 }

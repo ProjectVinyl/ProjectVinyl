@@ -99,7 +99,7 @@ Player.prototype = {
     attachMessageListener(this, !standalone);
     
     if (!el.dataset.pending && !this.params.embedded) {
-      attachFloater(this);
+      this.floater = attachFloater(this);
     }
 
     new TapToggler(this.dom);
@@ -259,7 +259,7 @@ Player.prototype = {
       this.video.pause();
     }
 
-    this.dom.dataset.state = 'paused';
+    this.setState('paused');
     this.suspend.classList.add('hidden');
     return true;
   },
@@ -270,7 +270,7 @@ Player.prototype = {
       const message = errorMessage(this.video);
       console.warn(message);
 
-      this.dom.dataset.state = 'error';
+      this.setState('error');
       this.player.error.message.innerText = message;
       this.suspend.classList.add('hidden');
 
@@ -280,6 +280,12 @@ Player.prototype = {
     } else {
       this.pause();
     }
+  },
+  setState(newState) {
+    if (this.floater) {
+      this.floater.dataset.state = newState;
+    }
+    this.dom.dataset.state = newState;
   },
   togglePlayback() {
     if (this.dom.dataset.state == 'playing') {

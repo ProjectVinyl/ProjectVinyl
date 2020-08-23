@@ -9,7 +9,7 @@ export function attachFloater(player) {
   const floater = document.querySelector('.floating-player');
   let animating;
   let top = 0;
-  
+
   if (!floater) {
     return;
   }
@@ -24,20 +24,20 @@ export function attachFloater(player) {
   }), 10);
 
   let floating;
-  
+
   function onScroll() {
     const scrolledDown = top > player.dom.getBoundingClientRect().bottom;
 
     if (scrolledDown != floating) {
       floating = scrolledDown;
-      
+
       animating = true;
-      
+
       if (floating) {
         floater.appendChild(player.controls.dom);
         setTimeout(() => {
           floater.classList.remove('hiding');
-        
+
           setTimeout(() => {
             animating = false;
           }, 700);
@@ -52,4 +52,6 @@ export function attachFloater(player) {
       }
     }
   }
+
+  return floater;
 }
