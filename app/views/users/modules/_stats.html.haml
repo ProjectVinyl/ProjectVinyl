@@ -1,4 +1,4 @@
-%section.page.full-width.resize-holder
+%section.page.full-width
 	%h1 Statistics
 	- cache(@user, expires_in: 30.minutes) do
 		= render 'users/modules/stat_bar', records: @user.videos, title: 'Uploads'
