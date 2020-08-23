@@ -1,19 +1,37 @@
-.donate div {
+.donate {
+  text-align: left;
+  border-radius: 5px;
+  --message-padding: 10px;
+}
+.donate [data-message] {
   position: relative;
   background: url('../images/index.gif') center / 100%;
   padding-bottom: 100%;
   image-rendering: crisp-edges;
 }
-.donate div::after {
-  transition: opacity 0.5s ease;
+.donate [data-message]::after {
+  transition: opacity 0.5s ease, right 0.5s ease;
   opacity: 0;
   position: absolute;
+  bottom: var(--message-padding);
+  left: var(--message-padding);
+  right: var(--message-padding);
+  border-radius: inherit;
   padding: 5px;
-  font-size: 50%;
   background: rgba(255,255,255,0.3);
-  content: 'Pssst, hey. Hey you. If you like what you see, maybe you should consider donating to keep this site running? kthanks.';
+  color: #555;
+  content: 'Pssst, hey. Hey you. ' attr(data-message);
   text-decoration: none;
 }
-.donate div:hover::after {
+.donate [data-message]:hover::after {
   opacity: 1;
+}
+.donate.thin-donate {
+  padding: 3px;
+}
+.donate.thin-donate [data-message] {
+  padding-bottom: 50%;
+}
+.donate.wide-donate [data-message] {
+  padding-bottom: 15%;
 }

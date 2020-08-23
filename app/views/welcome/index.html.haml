@@ -13,17 +13,12 @@
 				= fw :comments
 				Comments
 			%table(style="table-layout: auto")= render partial: 'recent_comment_thumb', collection: @comments
-	%section.page.full-width.donate
-		%h1
-			%a{href: donate_path} Donate
-		%a(href="#{donate_path}" data-external-form="#{donate_path}.json" data-title="Donate to Project Vinyl" data-icon="paypal" data-max-width="500px")
-			%div
-		%a.source(href="//derpibooru.org/549114") source
+	= render partial: 'sellout/aj_donate_plz_narrow'
 	%section.page.full-width.twitter
 		%h1
 			= fw :newspaper_o
 			Twitter Feed
-		%iframe.twitter(src="/embed/twitter")
+		%iframe.twitter(loading="lazy" src="/embed/twitter")
 .wrapper.column-left.auto-wrap.resize-holder.grid-root
 	%section.page
 		= render 'section', collection: @popular, type: 'popular', label: 'Popular Videos', filter: '', order: 2
