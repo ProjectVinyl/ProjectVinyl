@@ -23,6 +23,9 @@ class Tag < ApplicationRecord
   has_many :implicators, through: :implying_tags, foreign_key: "tag_id"
   has_many :aliases, class_name: "Tag", foreign_key: "alias_id"
 
+  validates :name, uniqueness: true, presence: true
+  before_validation :validate_name, if: :will_save_change_to_name?
+
   document_type 'tag'
   settings index: { number_of_shards: 1 } do
     mappings dynamic: 'false' do
@@ -129,53 +132,7 @@ class Tag < ApplicationRecord
   def link
     return "/tags/#{short_name}" if StringsHelper.valid_string?(short_name)
     return "/tags/#{id}" if !StringsHelper.valid_string?(name)
-
-    set_name(name)
     "/tags/#{name}"
-  end
-
-  def set_name(name)
-    name = Tag.sanitize_name(name)
-
-    if has_type
-      name = name.sub(tag_type.prefix + ':', '').delete(':')
-      name = tag_type.prefix + ":" + name if !tag_type.hidden
-    else
-      name = name.delete(':')
-    end
-
-    return false if Tag.where('name = ? AND NOT id = ?', name, id).count > 0
-
-    self.short_name = PathHelper.url_safe_for_tags(name)
-    self.name = name
-    __reindex!
-  end
-
-  def set_alias(tag)
-    tag_o = tag.actual
-    tag = tag_o.id
-
-    if tag && tag != id
-      self.alias_id = tag
-
-      Tag.where(alias_id: id).update_all(alias_id: tag)
-      User.where(tag_id: id).update_all(tag_id: tag)
-      ArtistGenre.where(o_tag_id: id).update_all(tag_id: tag)
-      VideoGenre.where(o_tag_id: id).update_all(tag_id: tag)
-
-      self.video_count = self.user_count = 0
-      tag_o.__reindex!
-      __reindex!
-    end
-  end
-
-  def unset_alias
-    return if !alias_id
-
-    ArtistGenre.where(o_tag_id: id).update_all('tag_id = o_tag_id')
-    VideoGenre.where(o_tag_id: id).update_all('tag_id = o_tag_id')
-    self.alias_id = nil
-    __reindex!
   end
 
   def to_json(sender=nil)
@@ -222,7 +179,8 @@ class Tag < ApplicationRecord
           result |= type.create_implications! tag
         end
 
-        tag.set_name(name)
+        tag.name = name
+        tag.save
       end
       result << tag.id
     end
@@ -247,6 +205,24 @@ class Tag < ApplicationRecord
     ProjectVinyl::Search::USER_INDEX_PARAMS.recognises?(tag_name) || ProjectVinyl::Search::VIDEO_INDEX_PARAMS.recognises?(tag_name)
   end
 
+  def validate_name_and_reindex
+    validate_name
+    reindex!
+  end
+
+  def validate_name
+    self.name = Tag.sanitize_name(name)
+
+    if has_type
+      self.name = name.sub(tag_type.prefix + ':', '').delete(':')
+      self.name = tag_type.prefix + ":" + name if !tag_type.hidden
+    else
+      self.name = name.delete(':')
+    end
+
+    self.short_name = PathHelper.url_safe_for_tags(name)
+  end
+
   # protected
   # We don't use Tag.create any more because that can create duplicates
   def self.__make(hash)
@@ -256,11 +232,10 @@ class Tag < ApplicationRecord
     where(name: hash[:name]).first
   end
 
-  private
-  def __reindex!
+  def reindex!
     save
-    videos.each {|v| v.update_index(defer: false) }
-    users.each {|u| u.update_index(defer: false) }
+    videos.each &:update_index
+    users.each &:update_index
     update_index
     self
   end

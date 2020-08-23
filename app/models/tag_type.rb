@@ -25,9 +25,7 @@ class TagType < ApplicationRecord
   def find_and_assign
     Tag.transaction do
       Tag.where('name LIKE ?', self.prefix + ':%').update_all(tag_type_id: self.id)
-      Tag.where(tag_type_id: self.id).find_each do |tag|
-        tag.set_name(tag.name)
-      end
+      Tag.where(tag_type_id: self.id).find_each(&:validate_name_and_reindex)
     end
   end
 
