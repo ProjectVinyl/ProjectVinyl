@@ -3,7 +3,7 @@
 		= render 'users/avatar/medium_a', user: thumb.sender
 	.info
 		.title
-			%a{href: thumb.location}= thumb.comment_thread.get_title
+			%a{href: thumb.location}= thumb.comment_thread.title
 		%div
 			sent 
 			%span{title: thumb.comment_thread.created_at.in_time_zone}= since thumb.comment_thread.created_at

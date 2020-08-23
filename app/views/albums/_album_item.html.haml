@@ -2,12 +2,12 @@
 %a.row{href: !spoilered && album_item.link,
 			 class: [spoilered && "hidden-item", @index == album_item.index && "selected scroll-focus"],
 				data: {id: album_item.id, index: album_item.index, "video-id": album_item.video_id, "album-id": album_item.album_id}}
-	.title(title="#{album_item.get_tooltip}")
+	.title(title="#{album_item.tooltip}")
 		%div>
 			- if spoilered
 				\----------
 			- else
-				=album_item.get_title
+				=album_item.title
 		- if !album_item.video.hidden
 			.author
 				%span= album_item.video.user.username

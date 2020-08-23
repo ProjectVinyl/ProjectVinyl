@@ -1,9 +1,10 @@
 class Album < ApplicationRecord
+  include Unlistable
+  include Titled
+
   belongs_to :user
   has_many :album_items
   has_many :videos, through: :album_items
-
-  include Unlistable
 
   CREATED = 1
   ADDED = 2
@@ -11,13 +12,6 @@ class Album < ApplicationRecord
 
   def sample_videos(filter)
     self.ordered(self.videos.where(id: ids_from_filter(filter)).limit(4))
-  end
-
-  def set_title(title)
-    title = StringsHelper.check_and_trunk(title, self.title || "Untitled Album")
-    self.title = title
-    self.safe_title = PathHelper.url_safe(title)
-    self.save
   end
 
   def transfer_to(user)

@@ -3,18 +3,9 @@ require 'projectvinyl/web/youtube'
 
 class Video < ApplicationRecord
   include Elasticsearch::Model
-  include Indexable
-  include Uncachable
-  include WithFiles
-  include Taggable
-  include Periodic
-  include Reportable
-  include Indirected
-  include Statable
-  include Heated
-  include Duplicateable
-  include Likeable
-  include Unlistable
+  include Indexable, Uncachable, Reportable, Taggable, Statable,
+          Periodic, WithFiles, Duplicateable, Unlistable, Likeable,
+          Indirected, Heated, Titled
 
   DEFAULT_ASPECT = 16.to_f/9.to_f
 
@@ -207,7 +198,7 @@ class Video < ApplicationRecord
 
   def widget_parameters(time, resume, embed, album)
     {
-        title: get_title,
+        title: title,
         time: time,
         framerate: framerate,
         duration: duration,
@@ -242,20 +233,6 @@ class Video < ApplicationRecord
     return DEFAULT_ASPECT if w == 0 || h == 0
 
     w / h
-  end
-
-  def get_title
-    title || "Untitled Video"
-  end
-
-  def set_title(title)
-    title = StringsHelper.check_and_trunk(title, get_title)
-    self.title = title
-    self.safe_title = PathHelper.url_safe(title)
-    if comment_thread_id
-      comment_thread.title = title
-      comment_thread.save
-    end
   end
 
   def duration
@@ -307,10 +284,10 @@ class Video < ApplicationRecord
       sender = CommentThread.new({
         user_id: user_id,
         owner: self,
-        title: get_title
+        title: title
       })
     end
     text = Comment.parse_bbc_with_replies_and_mentions(description, sender)
-    Comment.send_mentions(text[:mentions], sender, get_title, ref)
+    Comment.send_mentions(text[:mentions], sender, title, ref)
   end
 end

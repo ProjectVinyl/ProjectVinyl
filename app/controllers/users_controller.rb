@@ -41,14 +41,14 @@ class UsersController < Users::BaseUsersController
       input = params[:user]
 
       user.tag = Tag.by_name_or_id(input[:tag]).first if current_user.is_contributor?
-      user.set_name(input[:username])
+      user.username = input[:username]
       user.description = input[:description]
       user.bio = input[:bio]
       user.default_listing = (input[:default_listing] || 0).to_i
       user.tag_string = input[:tag_string] if input[:tag_string]
       user.time_zone = input[:time_zone]
       user.save
-      user.update_index(defer: true)
+      user.update_index
 
       if (params[:video][:apply_to_all] == '1')
         Video.where(user_id: user).update_all(listing: user.default_listing)

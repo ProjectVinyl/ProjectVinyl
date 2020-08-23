@@ -16,7 +16,7 @@ module Admin
           fields[:artist] = fields[:tags]
           meta = ProjectVinyl::Web::Youtube.get(src, fields)
 
-          video.set_title(meta[:title]) if meta[:title]
+          video.title = meta[:title] if meta[:title]
           video.description = meta[:description][:bbc] if meta[:description]
 
           if meta[:artist]

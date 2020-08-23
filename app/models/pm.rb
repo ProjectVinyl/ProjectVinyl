@@ -37,11 +37,14 @@ class Pm < ApplicationRecord
   def self.send_pm(sender, receivers, subject, message)
     Pm.transaction do
       pm = Pm.create(user: sender, sender: sender, receiver: receivers.first, unread: false)
-      thread = CommentThread.create(user: sender, owner: pm, total_comments: 1)
-      thread.set_title(subject.present? ? subject : '[No Subject]')
+      thread = pm.comment_thread.create(
+        title: subject.present? ? subject : '[No Subject]'
+        user: sender,
+        owner: pm,
+        total_comments: 1
+      )
       comment = thread.comments.create(user_id: sender.id)
       comment.update_comment(message)
-      pm.comment_thread_id = thread.id
       pm.new_comment_id = comment.id
       pm.save
       

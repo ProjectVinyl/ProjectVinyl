@@ -21,7 +21,7 @@ class CreateTags < ActiveRecord::Migration
     ArtistGenre.reset_column_information
     connection = ActiveRecord::Base.connection
     Genre.all.each do |item|
-      genre_tag = Tag.create(description: item.description, tag_type_id: 2).set_name(item.name)
+      genre_tag = Tag.create(name: item.name, description: item.description, tag_type_id: 2)
       connection.execute('UPDATE `artist_genres` SET `artist_genres`.`tag_id` = ' + genre_tag.id.to_s + ' WHERE `artist_genres`.`genre_id` = ' + item.id.to_s);
       connection.execute('UPDATE `video_genres` SET `video_genres`.`tag_id` = ' + genre_tag.id.to_s + ' WHERE `video_genres`.`genre_id` = ' + item.id.to_s);
     end

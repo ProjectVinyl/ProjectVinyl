@@ -6,7 +6,7 @@
 				%i.fa.fa-lock(title="Thread Locked")
 			- if thumb.pinned
 				= fa :thumb_tack
-			%a{href: thumb.link}= thumb.get_title
+			%a{href: thumb.link}= thumb.title
 		%div
 			posted 
 			%span{title: thumb.created_at.in_time_zone}= since thumb.created_at

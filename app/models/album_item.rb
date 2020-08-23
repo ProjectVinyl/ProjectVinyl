@@ -51,12 +51,12 @@ class AlbumItem < ApplicationRecord
     self.album.virtual?
   end
 
-  def get_tooltip
-    video.hidden ? "hidden" : "#{video.get_title} - #{video.user.username}"
+  def tooltip
+    video.hidden ? "hidden" : "#{video.title} - #{video.user.username}"
   end
 
-  def get_title
-    video.hidden ? "hidden" : video.get_title
+  def title
+    video.hidden ? "hidden" : video.title
   end
 
   protected

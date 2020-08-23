@@ -207,7 +207,7 @@ class VideosController < Videos::BaseVideosController
 			video.description = params[:value]
 			render json: { content: BbcodeHelper.emotify(video.description) }
 		elsif params[:field] == 'title'
-			video.set_title(params[:value])
+			video.title = params[:value]
 			render json: { content: video.title }
 		end
 

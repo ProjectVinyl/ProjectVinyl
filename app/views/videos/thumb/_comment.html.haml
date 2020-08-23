@@ -6,5 +6,5 @@
 				= fa "thumbs-#{comment.disliked? ? 'down red' : 'up green'}"
 			= duration comment.duration
 	- spoilered = current_filter.video_spoilered?(comment)
-	.title{title: !spoilered && comment.get_title}
-		= spoilered ? "[Spoilered]" : comment.get_title
+	.title{title: !spoilered && comment.title}
+		= spoilered ? "[Spoilered]" : comment.title

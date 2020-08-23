@@ -1,6 +1,7 @@
 class CommentThread < ApplicationRecord
   include Indirected
   include UserCachable
+  include Titled
 
   has_many :comments, dependent: :destroy, counter_cache: "total_comments"
   has_many :thread_subscriptions, dependent: :destroy
@@ -22,17 +23,6 @@ class CommentThread < ApplicationRecord
 
   def contributing?(user)
     !private_message? || (Pm.where('comment_thread_id = ? AND (sender_id = ? OR receiver_id = ?)', self.id, user.id, user.id).count > 0)
-  end
-
-  def get_title
-    self.title || "Untitled"
-  end
-
-  def set_title(name)
-    name = StringsHelper.check_and_trunk(name, self.title)
-    self.title = name
-    self.safe_title = PathHelper.url_safe(name)
-    self.save
   end
 
   def last_comment

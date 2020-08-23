@@ -40,18 +40,16 @@ module Forum
     def create
       if user_signed_in?
         thread = CommentThread.create(
+          title: params[:thread][:title],
           user_id: current_user.id,
           total_comments: 1,
           owner_type: 'Board',
           owner_id: params[:thread][:owner_id]
         )
-        thread.set_title(params[:thread][:title])
-        thread.save
         comment = thread.comments.create(user_id: current_user.id)
         comment.update_comment(params[:thread][:description])
-        if current_user.subscribe_on_thread?
-          thread.subscribe(current_user)
-        end
+        thread.subscribe(current_user) if current_user.subscribe_on_thread?
+
         return redirect_to action: :show, id: thread.id
       end
       redirect_to action: :index, controller: :welcome
@@ -63,7 +61,7 @@ module Forum
       return head 401 if !(thread.user_id == current_user.id || current_user.is_contributor?)
 
       if params[:field] == 'title'
-        thread.set_title(params[:value])
+        thread.title = params[:value]
         thread.save
         render json: { content: thread.title }
       end

@@ -17,7 +17,7 @@ module Inbox
         stack: [
           { link: "/inbox", title: "Messages" }
         ],
-        title: @thread.get_title
+        title: @thread.title
       }
       if @pm.unread
         @pm.unread = false

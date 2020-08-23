@@ -1,5 +1,5 @@
 - lim '900px'
-- title "#{@thread.get_title} - Forum"
+- title "#{@thread.title} - Forum"
 = render layout: 'view/advanced_breadcrumb',
 					locals: {stack: [{link: forum_index_path, title: 'Forum'},
 													{link: @thread.owner.link, title: @thread.owner.title}]} do
@@ -9,10 +9,10 @@
 		%i.fa.fa-thumb-tack(title="Thread Pinned")
 	- if @modifications_allowed
 		%span.editable.short.inline.title{data: {target: :threads, member: :title, id: @thread.id}}
-			%span.content= @thread.get_title
+			%span.content= @thread.title
 			%span.edit= fa :pencil
 	- else
-		= @thread.get_title
+		= @thread.title
 	= render 'watch_options'
 - if user_signed_in? && current_user.is_contributor?
 	= render 'actions'

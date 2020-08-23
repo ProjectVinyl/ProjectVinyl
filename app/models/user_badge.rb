@@ -2,10 +2,10 @@ class UserBadge < ApplicationRecord
   belongs_to :badge
   belongs_to :user
 
-  def get_title(user)
+  def title_for(user)
     title(user)
   end
-  
+
   def title(_user=nil)
     type = badge.badge_type
     if type == 1 && self.custom_title
@@ -13,11 +13,11 @@ class UserBadge < ApplicationRecord
     end
     self.badge.title
   end
-  
+
   def icon
     self.badge.icon
   end
-  
+
   def colour
     self.badge.colour
   end

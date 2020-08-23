@@ -59,9 +59,8 @@ class AlbumsController < Albums::BaseAlbumsController
 
   def create
     check_and do
-      album = current_user.albums.create
-      album.description = params[:album][:description]
-      album.set_title(params[:album][:title])
+      album = params[:album].permit(:description, :title)
+      album = current_user.albums.create(album)
 
       if params[:include_initial]
         initial = params[:album][:initial]
@@ -91,7 +90,7 @@ class AlbumsController < Albums::BaseAlbumsController
         album.description = params[:value]
 				render json: { content: BbcodeHelper.emotify(album.description) }
       elsif params[:field] == 'title'
-        album.set_title(params[:value])
+        album.title = params[:value]
 				render json: { content: album.title }
       end
 			album.save
@@ -109,8 +108,7 @@ class AlbumsController < Albums::BaseAlbumsController
   def index
     read_search_params params
 
-    @records = Album.listed
-    @records = @records.where('LOWER(title) LIKE ?', @query.downcase.gsub(/\*/, '%')) if filtered?
+    @records = Album.listed.where('LOWER(title) LIKE ?', @query.downcase.gsub(/\*/, '%')) if filtered?
 
     render_pagination @records.order(:created_at), params[:page].to_i, 50, !@ascending, {
       template: 'pagination/search', table: 'albums', label: 'Album'

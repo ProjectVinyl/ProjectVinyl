@@ -8,10 +8,10 @@
 				= duration recommendation.duration
 		.details
 			- spoilered = current_filter.video_spoilered?(recommendation)
-			%span.title{title: !spoilered && recommendation.get_title}
+			%span.title{title: !spoilered && recommendation.title}
 				- if recommendation.hidden
 					%span.icon(title="Private - Only you can see this item")= fa :lock
-				= spoilered ? "[Spoilered]" : recommendation.get_title
+				= spoilered ? "[Spoilered]" : recommendation.title
 			- uploader = recommendation.user
 			.detail= uploader.username
 			.detail

@@ -41,7 +41,7 @@ class Comment < ApplicationRecord
 
     self.save
     self.send_reply_tos(bbc[:replies])
-    Comment.send_mentions(bbc[:mentions], self.comment_thread, self.comment_thread.get_title, self.comment_thread.location)
+    Comment.send_mentions(bbc[:mentions], self.comment_thread, self.comment_thread.title, self.comment_thread.location)
     
     bbc[:html]
   end
@@ -86,7 +86,7 @@ class Comment < ApplicationRecord
       receivers = receivers.uniq - [self.user_id]
       if !replied_to.empty?
         Notification.notify_receivers(receivers, self,
-          "#{self.user.username} has <b>replied</b> to your comment on <b>#{self.comment_thread.get_title}</b>",
+          "#{self.user.username} has <b>replied</b> to your comment on <b>#{self.comment_thread.title}</b>",
           self.comment_thread.location)
         ApplicationRecord.connection.execute("INSERT INTO comment_replies (comment_id, parent_id) VALUES #{replied_to}")
       end

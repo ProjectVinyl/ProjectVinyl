@@ -15,7 +15,7 @@
 				In
 				%a.bubble-link{href: comment.comment_thread.owner.link}= comment.comment_thread.owner.title
 				\—
-				%a.bubble-link{href: comment.comment_thread.link}= comment.comment_thread.get_title
+				%a.bubble-link{href: comment.comment_thread.link}= comment.comment_thread.title
 	.artist-bio.bio
 		%a{class: !comment.user.dummy? && "user-link", "data-id": comment.user_id, href: comment.user.link}
 			= render 'users/avatar/medium', user: comment.user

@@ -48,7 +48,8 @@ class VirtualAlbum < Album
     ""
   end
 
-  def set_title(title)
+  def title=(title)
+    ""
   end
 
   def save

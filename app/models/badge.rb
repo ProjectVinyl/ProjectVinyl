@@ -7,7 +7,7 @@ class BadgeInstance
     @adv_title = false
   end
 
-  def get_title(user)
+  def title_for(user)
     @adv_title ? @adv_title.call(user) : title
   end
 
@@ -20,10 +20,10 @@ class BadgeInstance
     self
   end
 
-  def matches(user)
+  def matches?(user)
     user && !user.dummy? && @block.call(user)
   end
-  
+
   def description
     'Automatically Assigned'
   end
@@ -31,7 +31,7 @@ end
 
 class Badge < ApplicationRecord
   has_many :user_badges, dependent: :destroy
-  
+
   Types = [
     BadgeInstance.new('Admin', 'star', 'orange', &:admin?),
     BadgeInstance.new('Moderator', 'gavel', 'orange', &:contributor?),
@@ -46,14 +46,14 @@ class Badge < ApplicationRecord
     false
   end
 
-  def get_title(_user)
+  def title_for(_user)
     title
   end
 
   def self.all_badges(user)
     return if user.nil? || user.dummy?
     Types.each do |o|
-      yield(o) if o.matches(user)
+      yield(o) if o.matches?(user)
     end
     user.user_badges.each do |o|
       yield(o)

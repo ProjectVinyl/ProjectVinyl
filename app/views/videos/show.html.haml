@@ -6,4 +6,4 @@
 	= render partial: 'recommendations'
 = render partial: 'description'
 %section.page.column-left.fixed-right-column
-	= render partial: 'forum/threads/view', locals: {identifier: @video.id, title: "#{@video.get_title} by #{@user.username}" }
+	= render partial: 'forum/threads/view', locals: {identifier: @video.id, title: "#{@video.title} by #{@user.username}" }

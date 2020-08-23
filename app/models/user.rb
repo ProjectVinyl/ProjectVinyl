@@ -1,26 +1,19 @@
 require 'elasticsearch/model'
 
 class User < ApplicationRecord
+  include Elasticsearch::Model
+  include Roleable, Queues, Activitied, Indexable, Uncachable,
+          Taggable, WithFiles, Tinted, TagSubscribeable
+
   # Include default devise modules. Others available are:
   # :omniauth_providers, :omniauthable, :lockable and :timeoutable
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :trackable, :validatable, :confirmable,
          authentication_keys: [:login]
-  include Roleable
-  include Queues
-  include Activitied
-
-  include Elasticsearch::Model
-  include Indexable
-  include Uncachable
-  include Taggable
-  include WithFiles
-  include Tinted
-  include TagSubscribeable
-
   prefs :preferences, subscribe_on_reply: true, subscribe_on_thread: true, subscribe_on_upload: true
 
-  after_create :init_name
+  before_validation :init_name
+  after_save :update_index, if: :will_save_change_to_username?
 
   has_many :comments
   has_many :votes
@@ -148,7 +141,7 @@ class User < ApplicationRecord
   def self.tag_for(user)
     return user.tag if user.tag_id
     if !(tag = Tag.where(short_name: user.username, tag_type_id: 1).first)
-      tag = Tag.create(tag_type_id: 1).set_name(user.username)
+      tag = Tag.create(tag_type_id: 1, name: user.username)
     end
     tag
   end
@@ -181,15 +174,6 @@ class User < ApplicationRecord
 
   def taglist
     self.is_admin ? "Admin" : "User"
-  end
-
-  def set_name(name)
-    name = default_name if !validate_name(name)
-    name = StringsHelper.check_and_trunk(name, username)
-    self.username = name
-    self.safe_name = PathHelper.url_safe(name)
-    self.save
-    update_index(defer: false)
   end
 
   def avatar=(avatar)
@@ -234,7 +218,9 @@ class User < ApplicationRecord
   end
 
   def init_name
-    set_name(username)
+    self.username = StringsHelper.check_and_trunk(username, username_was)
+    self.username = username_was if !validate_name(username)
+    self.safe_name = PathHelper.url_safe(self.username)
   end
 
   def avatar_file_name(key)
