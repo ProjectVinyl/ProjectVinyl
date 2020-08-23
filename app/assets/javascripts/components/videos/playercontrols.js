@@ -131,11 +131,10 @@ export function PlayerControls(player, dom) {
     drawPreview(this, player.getProgress());
   });
   addDelegatedEvent(dom, 'click', '.volume', ev => {
-    if (ev.button !== 0) return console.log('click blocked');
+    if (ev.button !== 0) return;
     if (!player.contextmenu.hide(ev)) {
       if (this.volume.toggler.interactable()) {
-        if (!player.video) player.play();
-        player.volume(player.video.volume, player.video.muted = !player.video.muted);
+        player.volume(player.volumeLevel, player.isMuted = !player.isMuted);
       }
     }
   });

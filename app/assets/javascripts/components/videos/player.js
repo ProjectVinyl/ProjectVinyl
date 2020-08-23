@@ -68,6 +68,7 @@ Player.prototype = {
     this.dom = el;
     this.video = null;
     this.audioOnly = this.params.type === 'audio';
+    this.volumeLevel = 1;
     
     this.suspend = el.querySelector('.suspend');
     this.waterdrop = el.querySelector('.water-drop');
@@ -232,14 +233,12 @@ Player.prototype = {
   getOrCreateVideo() {
     if (!this.video) {
       this.video = createVideoElement(this);
-      this.volume(this.video.volume, this.video.muted);
+      this.volume(this.volumeLevel, !!this.isMuted);
       this.video.load();
     }
     return this.video;
   },
   play() {
-    this.controls.play.innerHTML = `<i class="fa fa-pause"></i>`;
-    
     const video = this.getOrCreateVideo();
 
     if (video.networkState === HTMLMediaElement.NETWORK_NO_SOURCE) {
@@ -256,8 +255,6 @@ Player.prototype = {
     }
   },
   pause() {
-    this.controls.play.innerHTML = `<i class="fa fa-play"></i>`;
-    
     if (this.video) {
       this.video.pause();
     }
@@ -332,7 +329,10 @@ Player.prototype = {
     volume = clamp(volume, 0, 1)
     if (this.video) {
       this.video.volume = volume;
+      this.video.muted = muted;
     }
+    this.volumeLevel = volume;
+    this.isMuted = muted;
     this.controls.repaintVolumeSlider(muted ? 0 : volume);
   }
 };
