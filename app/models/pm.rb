@@ -38,7 +38,7 @@ class Pm < ApplicationRecord
     Pm.transaction do
       pm = Pm.create(user: sender, sender: sender, receiver: receivers.first, unread: false)
       thread = pm.comment_thread.create(
-        title: subject.present? ? subject : '[No Subject]'
+        title: subject.present? ? subject : '[No Subject]',
         user: sender,
         owner: pm,
         total_comments: 1
