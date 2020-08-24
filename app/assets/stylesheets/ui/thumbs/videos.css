@@ -106,7 +106,7 @@ li.generic.mix .tile::after {
   width: 100%;
 }
 
-.thumb .tile .detail, .thumb .tile .title, .thumb .tile + .title {
+.thumb .tile .detail, .thumb .title, .thumb + .title {
   max-height: 3.1em;
   overflow: hidden;
   text-overflow: ellipsis;
