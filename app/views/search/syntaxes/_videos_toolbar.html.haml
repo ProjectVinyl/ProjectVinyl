@@ -1,7 +1,7 @@
 ﻿.meta-toolbar{ data: {target: amp_id} }
 	%a.action(tabindex="0" data-insert="-" data-insert-position="before") NOT
 	.action
-		<a>Search fields</a>
+		%a Search fields
 		= fa :caret_down
 		%div
 			%a.action(tabindex="0" data-insert="title:" data-value="example*") Title
@@ -16,7 +16,7 @@
 			%a.action(tabindex="0" data-insert="file_size>" data-value="900") Video File Size (bytes)
 			%a.action(tabindex="0" data-insert="heat>" data-value="1") Heat
 	.action
-		<a>Belonging to...</a>
+		%a Belonging to...
 		= fa :caret_down
 		%div
 			%a.action(tabindex="0" data-insert="is:audio") Audio Files

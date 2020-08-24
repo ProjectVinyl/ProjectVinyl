@@ -1,7 +1,7 @@
 ﻿.meta-toolbar{ data: {target: amp_id} }
 	%a.action(tabindex="0" data-insert="-" data-insert-position="before") NOT
 	.action
-		Search fields
+		%a Search fields
 		= fa :caret_down
 		%div
 			%a.action(tabindex="0" data-insert="name:" data-value="example*") Name
@@ -11,7 +11,7 @@
 			%a.action(tabindex="0" data-insert="implied_by:" data-value="example") Implied_by
 			%a.action(tabindex="0" data-insert="alias:" data-value="example") Alias
 	.action(tabindex="0")
-		Has...
+		%a Has...
 		= fa :caret_down
 		%div
 			%a.action(tabindex="0" data-insert="videos>" data-value="1") Video Count
