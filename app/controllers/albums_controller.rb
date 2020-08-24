@@ -108,7 +108,8 @@ class AlbumsController < Albums::BaseAlbumsController
   def index
     read_search_params params
 
-    @records = Album.listed.where('LOWER(title) LIKE ?', @query.downcase.gsub(/\*/, '%')) if filtered?
+    @records = Album.listed
+    @records = @records.where('LOWER(title) LIKE ?', @query.downcase.gsub(/\*/, '%')) if filtered?
 
     render_pagination @records.order(:created_at), params[:page].to_i, 50, !@ascending, {
       template: 'pagination/search', table: 'albums', label: 'Album'
