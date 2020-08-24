@@ -1,11 +1,10 @@
 - title @video.title
 = render partial: 'video'
 .wrapper.resize-holder.column-right.right.center.fixed-right-column{class: @album && "column-mobile-fragmented"}
-	.page
+	.page.column-right
 		- if @album
 			= render partial: 'albums/inline'
 		= render partial: 'recommendations'
-	= render partial: 'sellout/aj_donate_plz_thin'
 = render partial: 'description'
 %section.page.column-left.fixed-right-column
 	= render partial: 'forum/threads/view', locals: {identifier: @video.id, title: "#{@video.title} by #{@user.username}" }

@@ -8,16 +8,28 @@
   --button-shadow-color: rgba(255,255,255,0.3);
   --button-foreground: #000;
 
+  display: inline-flex;
+  align-items: center;
+  white-space: nowrap;
   margin: 2px;
   padding: 5px;
   border-radius: 5px;
   
   border-color: var(--button-border-color);
 }
+
 .tag a, .tag span {
   text-decoration: none;
   color: var(--button-foreground);
   font-weight: initial;
+  letter-spacing: 0.06em;
+}
+.tag .counter {
+  background: rgba(0, 0, 0, 0.09);
+  display: inline-block;
+  padding: 5px 10px;
+  margin: -5px;
+  margin-left: 5px;
 }
 
 .tags.artist-tags {

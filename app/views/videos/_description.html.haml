@@ -49,7 +49,7 @@
 			Source: 
 			%a{href: @video.source}= @video.source
 		%hr/
-		.normal.tags= render partial: 'tags/thumb/normal', collection: @tags
+		%ul.normal.tags= render partial: 'tags/thumb/normal', collection: @tags
 		- if user_signed_in?
 			= form_for(@video, as: "video", url: video_details_path(@video), html: {class: "editing async form-state-toggle js-edit-video", method: :patch}, data: {state: "editing"}) do |f|
 				= render layout: 'tags/editor', locals: {tags: @video.tags} do

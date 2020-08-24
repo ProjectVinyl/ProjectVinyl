@@ -1,10 +1,9 @@
 %li.tag.drop-down-holder.popper{class: "tag-#{normal.namespace}", "data-slug": normal.name}>
 	%a{href: normal.link}
 		%span= normal.name
-	= surround '(', ')' do
-		= number_with_delimiter normal.members
 	- if user_signed_in?
 		= render 'tags/flags', tag: normal
+	%span.counter= number_with_delimiter normal.members
 	- if user_signed_in?
 		%ul.drop-down.pop-out
 			- if can_modify_filter?

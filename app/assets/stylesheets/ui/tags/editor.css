@@ -31,19 +31,14 @@
 .tag-editor .tags .tag i.remove {
   vertical-align: middle;
   display: inline-block;
-  height: 1.5em;
   width: 1.5em;
-  margin: -6px;
   border-radius: 100%;
-  text-align: center;
-  line-height: 1.35em;
   font-size: 1.5em;
-  color: #f88;
   text-shadow: none;
   cursor: pointer;
   opacity: 0.8;
 }
-.tag-editor .tag .remove:hover {
+.tag-editor .tags .tag i.remove:hover {
   opacity: 1;
 }
 
