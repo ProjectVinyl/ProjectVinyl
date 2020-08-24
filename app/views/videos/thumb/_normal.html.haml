@@ -4,17 +4,21 @@
 		.tile
 			%img(loading="lazy"){src: normal.tiny_thumb(current_user, current_filter)}
 			%span.tag-set.duration= duration normal.duration
-		.title{title: !spoilered && normal.title}
-			- if normal.privated?
-				%span.icon(title="Private - Only you can see this item")= fa :lock
-			- if normal.unlisted?
-				%span.icon(title="Unlisted - Only you and people with a direct link can see this item")= fa :unlock
-			= spoilered ? '[Spoilered]' : normal.title
-		- uploader = normal.user
-		%a.link.date{href: uploader.link, data: {id: uploader.id}}= uploader.username
-		%span.date{title: normal.created_at.in_time_zone}= since normal.created_at
-		%span.tag-set.right
-			- if normal.liked?
-				= fa "thumbs-#{normal.disliked? ? 'down red' : 'up green'}"
-			= fuzzy_big_number_with_delimiter normal.play_count
-			views
+		.details
+			.title{title: !spoilered && normal.title}
+				- if normal.privated?
+					%span.icon(title="Private - Only you can see this item")= fa :lock
+				- if normal.unlisted?
+					%span.icon(title="Unlisted - Only you and people with a direct link can see this item")= fa :unlock
+				= spoilered ? '[Spoilered]' : normal.title
+			- uploader = normal.user
+			.detail
+				%span.grow= uploader.username
+				= render partial: 'tags/list/with_overflow', locals: {tags: normal.artist_tags, cutoff: 4}
+			.detail
+				%span.timestamp.grow{title: normal.created_at.in_time_zone}= since normal.created_at
+				%span
+					- if normal.liked?
+						= fa "thumbs-#{normal.disliked? ? 'down red' : 'up green'}"
+					= fuzzy_big_number_with_delimiter normal.play_count
+					views

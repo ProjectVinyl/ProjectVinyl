@@ -14,7 +14,7 @@ module Videos
 
       response.headers['Content-Length'] = File.size(file).to_s
       send_file(file,
-        filename: "#{@video.id}_#{@video.title}_by_#{@video.artists_string}#{File.extname(file)}",
+        filename: "#{@video.id}_#{@video.title}_by_#{@video.artist_tags.to_tag_string}#{File.extname(file)}",
         type: @video.mime
       )
     end

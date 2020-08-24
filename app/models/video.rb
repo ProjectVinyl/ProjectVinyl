@@ -17,6 +17,8 @@ class Video < ApplicationRecord
   has_many :albums, through: :album_items
   has_many :video_genres, dependent: :destroy
   has_many :tags, through: :video_genres
+  has_many :artist_tags, ->{ where(tag_type_id: 1) }, through: :video_genres, source: :tag, class_name: 'Tag'
+
   has_many :votes, dependent: :destroy
   has_many :tag_histories, dependent: :destroy
 
@@ -160,17 +162,6 @@ class Video < ApplicationRecord
 
   def ref
     "/videos/#{id}"
-  end
-
-  def artists_string
-    Tag.tag_string(tags.where(tag_type_id: 1))
-  end
-
-  def artists
-    self.tags.where(tag_type_id: 1).order(:video_count).reverse_order.limit(3).each do |tag|
-      tag = tag.alias if tag.alias_id
-      yield(tag.user ? tag.user.username : tag.identifier)
-    end
   end
 
   def mix_string(user)

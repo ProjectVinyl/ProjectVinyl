@@ -13,7 +13,9 @@
 					%span.icon(title="Private - Only you can see this item")= fa :lock
 				= spoilered ? "[Spoilered]" : recommendation.title
 			- uploader = recommendation.user
-			.detail= uploader.username
+			.detail
+				%span= uploader.username
+				= render partial: 'tags/list/with_overflow', locals: {tags: recommendation.artist_tags, cutoff: 4}
 			.detail
 				= fuzzy_big_number_with_delimiter recommendation.play_count
 				views

@@ -1,42 +1,35 @@
-ul.vertical .thumb .tile .details {
-  vertical-align: top;
-  margin-bottom: 0 !important;
-  color: #000;
-  padding: 5px;
-  position: absolute;
-  text-align: left;
-  bottom: -3.5em;
-}
-
 ul.vertical .thumb {
   display: flex;
 }
-ul.vertical .thumb .details {
-  padding-left: 10px;
-  text-align: left;
-  white-space: normal;
-  width: 0;
-  flex-grow: 1;
-}
-ul.vertical .thumb .tile .duration {
-  opacity: 1;
-}
-
-
 ul.vertical .thumb .tile {
   --thumb-width: 10vw;
   --aspect-ratio: 0.59;
   width: var(--thumb-width);
   height: var(--thumb-height);
 }
+ul.vertical .thumb .tile .duration {
+  opacity: 1;
+}
 
+ul.vertical .thumb .details {
+  padding: 0 5px;
+  text-align: left;
+  white-space: normal;
+  width: 0;
+  flex-grow: 1;
+}
+ul.vertical .details .detail {
+  color: #aaa;
+}
+
+ul.vertical .thumb .title {
+  overflow: hidden;
+  display: inline-block;
+  height: auto;
+  max-height: 3.1em;
+}
 ul.vertical .thumb .tile .details {
   width: 100%;
   left: 100%;
   bottom: auto;
-}
-ul.vertical .details .detail {
-  display: block;
-  color: #aaa;
-  font-weight: normal;
 }

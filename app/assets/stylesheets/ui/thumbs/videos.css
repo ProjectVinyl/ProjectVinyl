@@ -89,7 +89,7 @@ li.generic.mix .tile::after {
 }
 
 .thumb .title {
-  height: 3.1em;
+  max-height: 3.1em;
 }
 
 .thumb .tile.link {
@@ -111,6 +111,37 @@ li.generic.mix .tile::after {
   overflow: hidden;
   text-overflow: ellipsis;
   -o-text-overflow: ellipsis;
+}
+
+.thumb .details {
+  display: flex;
+  flex-direction: column;
+}
+
+.thumb .details .detail,
+.thumb .details .detail .taglist {
+  font-weight: normal;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.thumb .details .detail .taglist {
+  padding: 0 5px;
+}
+.details .detail {
+  display: flex;
+  overflow: hidden;
+}
+.details .detail .grow {
+  flex-grow: 1;
+}
+
+ul.horizontal .thumb .detail {
+  color: #aaa;
+  font-size: 0.8em;
+}
+ul.horizontal .thumb .detail + .detail {
+  font-style: italic;
 }
 
 @media(max-width: 700px) {

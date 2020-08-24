@@ -63,6 +63,7 @@ class Tag < ApplicationRecord
     names = Tag.split_tag_string(tag_string)
     where('"tags"."name" IN (?) OR "tags"."short_name" IN (?)', names, names)
   }
+  scope :to_tag_string, -> { pluck(:name).uniq.join(',') }
 
   scope :actualise, -> { includes(:alias).map(&:actual).uniq }
   scope :actual_names, -> { actualise.map(&:name).uniq }

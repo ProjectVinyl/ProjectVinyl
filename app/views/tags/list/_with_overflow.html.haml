@@ -1,0 +1,7 @@
+%span.taglist= tags.order(:name).limit(cutoff).to_tag_string
+- total = tags.count
+- if total > cutoff
+	%span.over-count{title: truncate(tags.order(:name).offset(cutoff).limit(10).to_tag_string, length: 200)}
+		= precede '+' do
+			= total - cutoff
+			more
