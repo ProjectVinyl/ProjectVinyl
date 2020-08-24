@@ -1,18 +1,65 @@
-/*
- *= require ./default
- */
 html, body {
- --site-background: #1c1313;
+  color: #c4c4c4;
 
- --content-background: #2f2222;
+  --default-link-color: #46a4c4;
+
+  --site-background: #1c1313;
+
+  --content-background: #2f2222;
  
- --content-highlight: #463046;
+  --content-highlight: #463046;
 
- --thumb-hover-color: #282727;
- --input-shadow: rgba(10, 10, 10, 0.8);
+  --thumb-hover-color: #282727;
+  --input-shadow: rgba(10, 10, 10, 0.8);
 
- --heading-background: #393131;
- --heading-border-color: #403d3d;
+  --heading-background: #393131;
+  --heading-border-color: #403d3d;
 
- --header-nav-background: rgba(0, 0, 0, 0.9);
+  --header-nav-background: rgba(0, 0, 0, 0.9);
+
+  --block-shadow-color: #333;
+  --block-border-color: #555;
+}
+.notice {
+  color: #acacac;
+}
+.header ul li {
+  color: #bebee3;
+}
+.comment {
+  --comment-border-color: #333;
+  --comment-background: rgba(0, 0, 0, 0);
+}
+.fade-away {
+  --fade-start: rgba(47, 34, 34,1);
+  --fade-end: rgba(47, 34, 34,0);
+}
+.hovercard {
+  --gradient-dark: #242424;
+  --gradient-middle: #2f2f2f;
+}
+.thread-list .items .thread {
+  color: #bbb;
+}
+.thread-list .items .thread > div {
+  border-color: rgba(255, 255, 255, 0.1);
+}
+.thread-list .items .thread:hover {
+  background: rgba(30, 30, 30);
+}
+
+footer .logo {
+  text-shadow-color: #fff;
+}
+
+.thumb .tile.link {
+  border-color: #353535;
+}
+
+h1, .subheading {
+  border-color: rgb(78, 78, 83);
+}
+
+hr {
+  border-color: #333;
 }

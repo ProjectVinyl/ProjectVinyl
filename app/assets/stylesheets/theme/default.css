@@ -1,5 +1,8 @@
 
 html, body {
+  --default-header-color: rgb(102,102,184);
+  --default-link-color: #337287;
+
   --site-banner: url(/images/new-banner.jpg) no-repeat top center / cover var(--content-background);
 
   --site-background: #f1f1f1;
@@ -16,8 +19,8 @@ html, body {
   --dock-shadow-color: #333;
   
   --block-shadow-color: #ccc;
-  --block-hover-color: #eee;
   --block-border-color: #eee;
+  --block-hover-color: var(--block-border-color);
   --block-radius: 3px;
   
   --seamless-button-hover-tint: rgba(0,0,0,0.1);

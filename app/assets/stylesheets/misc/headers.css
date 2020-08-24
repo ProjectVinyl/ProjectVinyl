@@ -16,3 +16,7 @@ h1 > i.fa {
   margin-bottom: 10px;
   
 }
+
+.breadcrumb {
+  background: none;
+}

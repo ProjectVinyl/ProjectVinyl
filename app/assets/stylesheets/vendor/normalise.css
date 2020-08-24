@@ -42,7 +42,7 @@ h1 {
   padding-bottom: 15px;
 }
 h1, h1 a, h2, h2 a {
-  color: rgb(102,102,184);
+  color: var(--default-header-color);
 }
 h3 {
  margin: 10px;
@@ -155,7 +155,7 @@ template {
 }
 
 a {
-  color: #337287;
+  color: var(--default-link-color);
   font-weight: bold;
   outline: none;
 }
