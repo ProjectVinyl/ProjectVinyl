@@ -1,0 +1,33 @@
+.editable .edit {
+  position: relative;
+  cursor: pointer;
+  border-radius: 100%;
+  padding: 3px 5px 3px 5px;
+}
+.editable .edit:hover {
+  background: var(--block-hover-color);
+}
+
+.editable.editing .edit {
+  display: none;
+}
+
+.editable .edit::before {
+  position: absolute;
+  content: 'Click to Edit';
+  background: var(--tooltip-background-color);
+  color: var(--tooltip-color);
+  font-size: 13pt;
+  padding: .25em .65em;
+  border-radius: 4px;
+  bottom: 100%;
+  left: 50%;
+  transform: translate(-50%);
+  opacity: 0;
+  white-space: nowrap;
+  pointer-events: none;
+  transition: opacity 0.3s ease 0.1s;
+}
+.editable .edit:hover::before {
+  opacity: 0.8;
+}

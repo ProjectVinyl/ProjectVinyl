@@ -6,6 +6,8 @@ html, body {
 
   --no-link-color: #aaa;
   --focus-outline: rgba(81, 125, 227, 0.7);
+  --tooltip-background-color: rgba(28,28,28,0.9);
+  --tooltip-color: #fff;
   
   --content-background: #fff;
   --content-highlight: #fef;

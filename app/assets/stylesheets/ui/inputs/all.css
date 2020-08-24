@@ -1,6 +1,6 @@
 /*
  *= require ./textinputs
- *= require ./editables
+ *= require ./editable/all
  *= require ./fileselects
  *= require ./imageselects
  *= require ./dropicons

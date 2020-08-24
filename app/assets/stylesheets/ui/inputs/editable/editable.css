@@ -1,0 +1,13 @@
+.editable {
+  --editable-outline: var(--no-link-color);
+  --editable-border: #ccc;
+  --editable-text-color: #444;
+}
+
+.editable.editing {
+  display: block;
+  position: relative;
+}
+.editable.editing.inline {
+  display: inline-block;
+}

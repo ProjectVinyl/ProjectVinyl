@@ -1,16 +1,3 @@
-.editable {
-  --editable-outline: var(--no-link-color);
-  --editable-border: #ccc;
-  --editable-text-color: #444;
-}
-
-.editable.editing {
-  display: block;
-  position: relative;
-}
-.editable.editing.inline {
-  display: inline-block;
-}
 .editable .input,
 .editable input.input, .editable textarea.input {
   display: none;
@@ -36,20 +23,12 @@
   margin-top: -7px;
   margin-bottom: -1px;
 }
+
 .editable.editing .input {
   display: inline;
 }
 .editable.editing .content {
   display: none;
-}
-.editable .edit {
-  cursor: pointer;
-  padding: 3px 5px 3px 5px;
-}
-.editable.editing .edit {
-  position: absolute;
-  right: -20px;
-  top: 0;
 }
 
 .content.editing textarea {
