@@ -10,12 +10,12 @@ module Admin
       private
       def pull_meta(video, src, fields)
         if src.present?
-          src = "https://www.youtube.com/watch?v=#{ProjectVinyl::Web::Youtube.video_id(src)}"
-          video.set_source(src)
-
           fields[:artist] = fields[:tags]
+
+          src = "https://www.youtube.com/watch?v=#{ProjectVinyl::Web::Youtube.video_id(src)}"
           meta = ProjectVinyl::Web::Youtube.get(src, fields)
 
+          video.source = src
           video.title = meta[:title] if meta[:title]
           video.description = meta[:description][:bbc] if meta[:description]
 

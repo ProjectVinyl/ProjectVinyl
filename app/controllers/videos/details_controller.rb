@@ -7,7 +7,7 @@ module Videos
         end
 
         if video.source != params[:source]
-          video.set_source(params[:source])
+          video.source = params[:source]
           TagHistory.record_source_changes(video, current_user.id)
         end
 

@@ -31,6 +31,7 @@ class Video < ApplicationRecord
 
   tag_relation :video_genres
   after_save :dispatch_mentions, if: :will_save_change_to_description?
+  after_save :validate_source, if: :will_save_change_to_source?
 
   scope :unmerged, -> { where(duplicate_id: 0) }
   scope :listable, -> { where(hidden: false).unmerged }
@@ -179,10 +180,6 @@ class Video < ApplicationRecord
     result.map(&:name).sort.join(' | ')
   end
 
-  def set_source(s)
-    self.source = PathHelper.clean_url(s)
-  end
-
   def json
     {
       id: id,
@@ -277,6 +274,10 @@ class Video < ApplicationRecord
   private
   def video_file_name(key)
     "source#{file || '.mp4'}"
+  end
+
+  def validate_source
+    self.source = PathHelper.clean_url(source)
   end
 
   def dispatch_mentions
