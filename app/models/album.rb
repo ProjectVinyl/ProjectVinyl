@@ -103,12 +103,12 @@ class Album < ApplicationRecord
     defau
   end
   
-  def get_next(filter, current)
-    self.all_items(filter).following(current).first
+  def next_video(filter, current)
+    all_items(filter).following(current).first
   end
 
-  def get_prev(filter, current)
-    self.all_items(filter).leading(current).last
+  def previous_video(filter, current)
+    all_items(filter).leading(current).last
   end
 
   def virtual?

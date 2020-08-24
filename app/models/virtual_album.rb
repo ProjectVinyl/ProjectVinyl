@@ -100,13 +100,13 @@ class VirtualAlbum < Album
     @videos << item
   end
 
-  def get_next(filter, current)
+  def next_video(filter, current)
     current -= @offset
     return nil if @items.empty? || current >= @items.length - 1
     @items[current + 1]
   end
 
-  def get_prev(filter, current)
+  def previous_video(filter, current)
     current -= @offset
     return nil if @items.empty? || current < 1
     @items[(current - 1) % @items.length]
