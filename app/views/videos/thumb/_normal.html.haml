@@ -13,8 +13,8 @@
 				= spoilered ? '[Spoilered]' : normal.title
 			- uploader = normal.user
 			.detail
-				%span.grow= uploader.username
-				= render partial: 'tags/list/with_overflow', locals: {tags: normal.artist_tags, cutoff: 4}
+				%span.uploader.grow= uploader.username
+				= render partial: 'tags/list/with_overflow', locals: {tags: normal.artist_tags, cutoff: 2}
 			.detail
 				%span.timestamp.grow{title: normal.created_at.in_time_zone}= since normal.created_at
 				%span

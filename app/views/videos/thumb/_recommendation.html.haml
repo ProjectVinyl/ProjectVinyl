@@ -14,8 +14,8 @@
 				= spoilered ? "[Spoilered]" : recommendation.title
 			- uploader = recommendation.user
 			.detail
-				%span= uploader.username
-				= render partial: 'tags/list/with_overflow', locals: {tags: recommendation.artist_tags, cutoff: 4}
+				%span.uploader= uploader.username
+				= render partial: 'tags/list/with_overflow', locals: {tags: recommendation.artist_tags, cutoff: 2}
 			.detail
 				= fuzzy_big_number_with_delimiter recommendation.play_count
 				views

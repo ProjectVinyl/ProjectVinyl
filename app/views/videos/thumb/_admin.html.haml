@@ -16,8 +16,8 @@
 				= admin.title
 			- uploader = admin.user
 			.detail
-				%span.grow= uploader.username
-				= render partial: 'tags/list/with_overflow', locals: {tags: admin.artist_tags, cutoff: 4}
+				%span.uploader.grow= uploader.username
+				= render partial: 'tags/list/with_overflow', locals: {tags: admin.artist_tags, cutoff: 2}
 			.detail
 				%span.timestamp.grow{title: admin.created_at.in_time_zone}= since admin.created_at
 				%span

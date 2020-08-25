@@ -4,6 +4,8 @@
   --thumb-height: calc(var(--thumb-width) * var(--aspect-ratio));
   --tile-overlay-background: rgba(0,0,0,0.3);
   --tile-overlay-color: #fff;
+  --thumb-tags-color: #8db936;
+  --thumb-uploader-color: #9667f4;
 
   text-decoration: none;
 }
@@ -127,6 +129,10 @@ li.generic.mix .tile::after {
 }
 .thumb .details .detail .taglist {
   padding: 0 5px;
+  color: var(--thumb-tags-color);
+}
+.thumb .details .detail .uploader {
+  color: var(--thumb-uploader-color);
 }
 .details .detail {
   display: flex;
