@@ -1,43 +1,41 @@
 nav {
   margin-top: 160px;
   min-height: 40px;
-  
-  --tint-album: #e6b91f;
-  --tint-artist: #e97135;
-  --tint-user: #e61f8f;
-  --tint-genre: #a66ebe;
-  --tint-forum: #6aaadd;
+}
+nav .albums {
+  --nav-item-tint: #e6b91f;
+}
+nav .videos {
+  --nav-item-tint: #e97135;
+}
+nav .users {
+  --nav-item-tint: #e61f8f;
+}
+nav .genres {
+  --nav-item-tint: #a66ebe;
+}
+nav .forum {
+  --nav-item-tint: #6aaadd;
 }
 
 nav > ul > li {
   opacity: 0.6;
 }
+nav > ul > li:focus,
 nav > ul > li:hover, nav > ul > li.selected {
   opacity: 1;
 }
 
-nav .albums:hover:after, nav .albums:hover,
-nav .albums.selected, nav .albums.selected ~ .sparkline {
-  background: var(--tint-album);
-}
-nav .videos:hover:after, nav .videos:hover,
-nav .videos.selected, nav .videos.selected ~ .sparkline {
-  background: var(--tint-artist);
-}
-nav .users:hover::after, nav .users:hover,
-nav .users.selected, nav .users.selected ~ .sparkline {
-    background: var(--tint-user);
-}
-nav .genres:hover:after, nav .genres:hover,
-nav .genres.selected, nav .genres.selected ~ .sparkline {
-  background: var(--tint-genre);
-}
-nav .forum:hover:after, nav .forum:hover,
-nav .forum.selected, nav .forum.selected ~ .sparkline {
-  background: var(--tint-forum);
-}
-nav ul li:hover, nav ul li.selected {
-  color: var(--content-background);
+@media(min-width: 700px) {
+  nav .tinted-nav-item:focus:after, nav .tinted-nav-item:focus,
+  nav .tinted-nav-item:hover:after, nav .tinted-nav-item:hover,
+  nav .tinted-nav-item.selected {
+    background: var(--nav-item-tint);
+  }
+
+  nav ul li:hover, nav ul li.selected {
+    color: var(--content-background);
+  }
 }
 
 @media(max-width: 700px) {

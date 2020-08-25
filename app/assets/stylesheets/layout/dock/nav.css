@@ -12,6 +12,7 @@
     background: var(--content-background);
     box-shadow: 0 0 3px 3px rgba(0, 0, 0, 0.1);
     transition: left 0.25s ease-in;
+    color: #337287;
   }
 
   .dock-holder.open nav {
@@ -20,9 +21,10 @@
 
   .header ul, .header ul li {
     padding: 0;
+    color: inherit;
   }
-  .header ul li > a {
-    padding-left: 10px;
+  nav ul li:hover, nav ul li.selected {
+    color: inherit;
   }
 
   nav > ul {
@@ -35,10 +37,6 @@
     opacity: 1;
   }
 
-  nav > ul > li {
-    box-shadow: 0 0 3px 0 var(--block-border-color) inset;
-  }
-
   nav .drop-down {
     position: initial;
     visibility: visible;
@@ -48,5 +46,26 @@
   
   nav .sparkline {
     display: none !important;
+  }
+  
+  .header .drop-down::after {
+    display: none;
+  }
+  
+  .header ul li a {
+    display: flex;
+    align-items: center;
+  }
+  .header ul li a:hover {
+    background: var(--block-hover-color);
+  }
+  .header ul li a > span {
+    flex-grow: 1;
+    padding: 12px;
+  }
+  .header ul li a > i,
+  .header ul li a > .icon {
+    padding: 12px;
+    flex-grow: 0;
   }
 }

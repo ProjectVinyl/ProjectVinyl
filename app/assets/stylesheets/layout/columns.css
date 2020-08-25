@@ -71,7 +71,7 @@
   max-width: 340px !important;
 }
 
-@media(max-width: 600px) {
+@media(max-width: 790px) {
   .column-mobile-fragmented, .column-right.column-mobile-shown {
     display: block !important;
     float: none;
