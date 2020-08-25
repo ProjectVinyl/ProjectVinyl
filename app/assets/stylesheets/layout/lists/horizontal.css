@@ -15,9 +15,3 @@ ul.horizontal.center > li:not(.bio, .genre) {
   float: none;
   display: inline-block;
 }
-
-@media(max-width: 650px) {
-  ul.horizontal {
-    text-align: center;
-  }
-}
