@@ -75,20 +75,16 @@
   .column-mobile-fragmented, .column-right.column-mobile-shown {
     display: block !important;
     float: none;
-    margin-right: 0 !important;
-    margin-left: -5px !important;
   }
   .column-mobile-fragmented > section:not(.column-mobile-shown) {
     display: none;
   }
+  .wrapper .page.column-left,
   .wrapper .wrapper.right.column-mobile-fragmented.wrap-around-fixed,
   .wrapper .wrapper.right.column-mobile-fragmented > section.column-mobile-shown {
     margin-left: 0 !important;
-    margin-right: 0 !important;
   }
-  .wrapper .page.column-left {
-    margin-left: 0;
-  }
+
   .column-right.wrap-around-fixed {
     min-width: 100%;
   }
