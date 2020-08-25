@@ -68,8 +68,8 @@ Player.prototype = {
     this.dom = el;
     this.video = null;
     this.audioOnly = this.params.type === 'audio';
-    this.volumeLevel = 1;
-    
+    this.volumeLevel = cookies.get('player_volume', 1);
+
     this.suspend = el.querySelector('.suspend');
     this.waterdrop = el.querySelector('.water-drop');
     this.player = playerElement(this);
@@ -117,6 +117,8 @@ Player.prototype = {
       }
     }
     
+    this.volume(this.volumeLevel, false);
+
     return this;
   },
   navTo(sender) {
@@ -339,6 +341,7 @@ Player.prototype = {
     }
     this.volumeLevel = volume;
     this.isMuted = muted;
+    cookies.set('player_volume', this.volumeLevel);
     this.controls.repaintVolumeSlider(muted ? 0 : volume);
   }
 };

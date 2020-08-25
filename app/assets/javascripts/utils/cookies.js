@@ -14,9 +14,10 @@ function extractCookieValue(key) {
 }
 
 export const cookies = {
-  get: key => {
+  get: (key, def) => {
     key = extractCookieValue(key);
-    if (key) return tryUnmarshal(decodeURIComponent(key));
+    if (key) return tryUnmarshal(decodeURIComponent(key), def);
+    return def;
   },
   set: (key, value) => {
     if (value == null || value === undefined || isNaN(value)) {

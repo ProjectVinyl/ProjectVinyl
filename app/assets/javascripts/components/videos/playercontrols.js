@@ -41,7 +41,6 @@ function didBufferChange(old, neu) {
 }
 
 function drawPreview(controls, progress) {
-  console.log(controls.player.params);
   const time = controls.player.getDuration() * progress;
 
   controls.track.preview.style.left = (progress * 100) + '%';
