@@ -11,6 +11,5 @@
 			- if recent_comment_thumb.user.dummy?
 				%b= recent_comment_thumb.user.username
 			- else
-				%a{class: recent_comment_thumb.user.banned? && "banned", href: recent_comment_thumb.user.link}
-					= recent_comment_thumb.user.username
+				= render partial: 'users/link', locals: {user: recent_comment_thumb.user}
 		%div= since recent_comment_thumb.updated_at

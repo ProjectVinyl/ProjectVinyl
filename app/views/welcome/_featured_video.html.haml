@@ -12,7 +12,7 @@
 				Uploaded on
 				= @featured.created_at.in_time_zone.to_time.strftime('%e %B %Y')
 				by
-				%a.user-link.link{href: @video.user.link, data: {id: @video.user.id}}= @video.user.username
+				= render partial: 'users/link', locals: {user: @video.user}
 			%span.views.right.js-play-counter
 				= number_with_delimiter @featured.play_count
 				views

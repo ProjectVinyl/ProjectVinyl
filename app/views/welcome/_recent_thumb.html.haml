@@ -5,7 +5,7 @@
 				%span{style: format_bg(recent_thumb.comment_thread.user.avatar)}
 	%td
 		%div
-			%a{class: recent_thumb.user.banned? && "banned", href: recent_thumb.user.link}= recent_thumb.user.username
+			= render partial: 'users/link', locals: {user: recent_thumb.user}
 			replied to
 			%a{class: recent_thumb.comment_thread.locked && "banned", href: recent_thumb.link}= recent_thumb.comment_thread.title
 		%div
