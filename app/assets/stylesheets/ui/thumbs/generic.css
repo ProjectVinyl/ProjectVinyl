@@ -7,8 +7,8 @@ li.generic {
   padding: 10px;
   margin: 4px;
 
-  max-width: var(--thumb-width);
-  min-width: var(--thumb-width-min);
+  max-width: calc(min(var(--thumb-width), 100%));
+  min-width: calc(min(var(--thumb-width-min), 100%));
 
   max-height: var(--thumb-height);
   min-height: calc(var(--thumb-height) - 110px);
