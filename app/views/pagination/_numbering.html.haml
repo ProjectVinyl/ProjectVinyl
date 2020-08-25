@@ -3,10 +3,10 @@
 	- if page > 0
 		- if page > 1
 			- query_hash[id] = 0
-			%a.button(data-page-to="0" href="?#{query_hash.to_query}")
+			%a.button(data-page-to="0" href="?#{query_hash.to_query}")>
 				%i.fa.fa-ahalfx.fa-angle-double-left
 		- query_hash[id] = page - 1
-		%a.button(data-page-to="#{page - 1}" href="?#{query_hash.to_query}")
+		%a.button(data-page-to="#{page - 1}" href="?#{query_hash.to_query}")>
 			%i.fa.fa-ahalfx.fa-angle-left
 	- ((page > 4 ? page - 4 : 0)..(page + 4 > pages ? pages : page + 4)).each do |i|
 		- query_hash[id] = i
@@ -14,11 +14,11 @@
 			= i + 1
 	- query_hash[id] = page
 	- if page < pages
-		%a.button(data-page-to="#{page + 1}" href="?#{query_hash.to_query}")
+		%a.button(data-page-to="#{page + 1}" href="?#{query_hash.to_query}")>
 			%i.fa.fa-ahalfx.fa-angle-right
 		- if page < pages - 1
 			- query_hash[id] = -1
-			%a.button(data-page-to="-1" href="?#{query_hash.to_query}")
+			%a.button(data-page-to="-1" href="?#{query_hash.to_query}")>
 				%i.fa.fa-ahalfx.fa-angle-double-right
 %button.button.button-bub.right.refresh(title="Reload")
 	%i.fa.fa-refresh.fa-fw.progress-throbber
