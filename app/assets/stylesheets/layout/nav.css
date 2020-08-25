@@ -20,8 +20,8 @@ nav .albums:hover:after, nav .albums:hover,
 nav .albums.selected, nav .albums.selected ~ .sparkline {
   background: var(--tint-album);
 }
-nav .artists:hover:after, nav .artists:hover,
-nav .artists.selected, nav .artists.selected ~ .sparkline {
+nav .videos:hover:after, nav .videos:hover,
+nav .videos.selected, nav .videos.selected ~ .sparkline {
   background: var(--tint-artist);
 }
 nav .users:hover::after, nav .users:hover,
