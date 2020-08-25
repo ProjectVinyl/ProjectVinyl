@@ -116,38 +116,6 @@ label.focus .content {
   display: none !important;
 }
 
-.comment .comment-actions {
-  float: right;
-}
-
-.comment .reply-comment {
-  cursor: pointer;
-  margin-left: 5px;
-}
-
-.comment .content .like {
-  border: none;
-  background: none;
-  padding: 0;
-  margin: 0;
-  margin-right: 10px;
-
-  --button-foreground: #337287;
-  --button-foreground-hover: #72c733;
-  --button-foreground-active: #2362ef;
-}
-.comment .content .like.liked,
-.comment .content .like.liked:hover,
-.comment .content .like.liked:active {
-  border: none;
-  background: none;
-  text-shadow: none;
-  box-shadow: none;
-}
-.comment .content .like.liked {
-  --button-foreground: var(--button-foreground-active);
-}
-
 .comment .content .posting-spinner {
   display: none;
 }
