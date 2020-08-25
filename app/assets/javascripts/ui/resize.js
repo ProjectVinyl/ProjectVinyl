@@ -1,11 +1,15 @@
 import { ready, bindEvent } from '../jslim/events';
 import { all } from '../jslim/dom';
-import { linearInterpolate } from '../utils/math';
+import { linearInterpolate, clamp } from '../utils/math';
 
 function sizeFont(el, targetWidth) {
-  const div = document.createElement('div');
+  // Remove the previously calculated size to prevent it from spoiling the results
+  el.style.fontSize = '';
+
   let computed = getComputedStyle(el);
+  const currentFontSize = parseFloat(computed.fontSize);
   
+  const div = document.createElement('div');
   div.setAttribute('style', 'position:fixed;top:0;left:0;white-space:nowrap');
   div.style.fontFamily = computed.fontFamily;
   div.style.fontWeight = computed.fontWeight;
@@ -30,9 +34,8 @@ function sizeFont(el, targetWidth) {
   let newSize = linearInterpolate({x1, y1}, {x2, y2}, targetWidth);
   
   // clamped minimum/maximum font sizes
-  if (newSize < 5) newSize = 5;
-  if (newSize > 16.25) newSize = 16.25;
-  
+  newSize = clamp(newSize, 5, currentFontSize);
+
   el.style.fontSize = `${newSize}px`;
   document.body.removeChild(div);
 }
@@ -40,7 +43,7 @@ function sizeFont(el, targetWidth) {
 export function resizeFont(el) {
   const holder = el.closest('.resize-holder');
   const computed = getComputedStyle(holder);
-  const targetWidth = parseFloat(computed.width) - (parseFloat(computed.paddingLeft) + parseFloat(computed.paddingRight));
+  const targetWidth = holder.offsetWidth - (parseFloat(computed.paddingLeft) + parseFloat(computed.paddingRight));
   
   sizeFont(el, targetWidth);
 }
