@@ -43,7 +43,7 @@ module Heated
   end
 
   def __comment_boosts
-    comment_thread.comments.map{|comment| 1 + comment.likes_count }.sum
+    comment_thread.comments.map{|comment| 1 + (comment.likes_count || 0) }.sum
   end
 
   def __boost_multiplier
