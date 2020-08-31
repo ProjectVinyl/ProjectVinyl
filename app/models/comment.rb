@@ -103,21 +103,22 @@ class Comment < ApplicationRecord
   end
 
   def page(order = :id, per_page = 30, reverse = false)
-    position = Comment.where("comment_thread_id = ? AND #{rder} #{reverse ? '>' : '<'}= ?", self.comment_thread_id, self.send(order)).count
+    position = Comment.where("comment_thread_id = ? AND #{order} #{reverse ? '>' : '<'}= ?", self.comment_thread_id, self.send(order)).count
     (position.to_f / per_page).ceil
   end
   
   def upvote(user, incr)
     incr = incr.to_i
-    vote = self.likes.where(user_id: user.id).first
+    vote = likes.where(user_id: user.id).first
+
     if vote.nil? && incr > 0
-      vote = self.likes.create(user_id: user.id)
+      vote = likes.create(user_id: user.id)
     elsif incr < 0 && !vote.nil?
       vote.destroy
     end
-    self.score = self.likes.count
+
     self.save
-    self.score
+    self.likes_count
   end
   
   def link

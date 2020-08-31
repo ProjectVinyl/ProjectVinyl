@@ -22,10 +22,10 @@
 .content{style: indirect && comment.comment_thread.owner_type == 'Video' && "margin-left:200px", "data-id": comment.id, "data-o-id": comment.get_open_id, "data-comment": comment.bbc_content}
 	.comment-actions
 		- if user_signed_in?
-			%button.action.like{title: "Like", class: comment.liked? && "liked", data: {count: comment.score, action: "comments/#{comment.id}/like"}}
+			%button.action.like{title: "Like", class: comment.liked? && "liked", data: {count: comment.likes_count, action: "comments/#{comment.id}/like"}}
 				%span
-					- if comment.score && comment.score > 0
-						%span.count= comment.score
+					- if comment.likes_count && comment.likes_count > 0
+						%span.count= comment.likes_count
 				= fa :thumbs_up
 			- if !indirect
 				%a.reply-comment(title="Reply")= fa :reply
@@ -48,8 +48,8 @@
 							%span.label Report
 		- else
 			%span.button.like{title: "Likes", class: comment.liked? && "liked"}
-				- if comment.score && comment.score > 0
-					= comment.score
+				- if comment.likes_count && comment.likes_count > 0
+					= comment.likes_count
 				= fa :thumbs_up
 			%a.report-comment(title="Report" href="#{new_admin_report_path comment.reportable_hash}" data-id="#{comment.get_open_id}" data-title="Report Comment")= fa :warning
 		
