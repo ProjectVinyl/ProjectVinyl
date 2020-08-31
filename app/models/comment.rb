@@ -118,6 +118,9 @@ class Comment < ApplicationRecord
     end
 
     self.save
+
+    comment_thread.owner.compute_hotness if comment_thread.video?
+
     self.likes_count
   end
   
