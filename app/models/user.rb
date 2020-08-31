@@ -54,7 +54,7 @@ class User < ApplicationRecord
   asset_root :avatar
   has_asset :avatar, :avatar_file_name, group: :avatar do grab_avatar(avatar_url, 240) end
   has_asset :small_avatar, :avatar_file_name, group: :avatar do grab_avatar(small_avatar_url, 30) end
-  has_asset :banner, 'banner.png', uncached_getter: :banner
+  has_asset :banner, 'banner.png', cache_bust: true
 
   scope :by_name_or_id, ->(id) { where('id::text = ? OR username = ?', id, id).first }
   scope :with_badges, -> { includes(user_badges: [:badge]) }
