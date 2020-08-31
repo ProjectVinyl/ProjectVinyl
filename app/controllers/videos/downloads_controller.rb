@@ -1,16 +1,15 @@
 module Videos
   class DownloadsController < BaseVideosController
     def show
-      return not_found if !(@video = Video.where(id: params[:video_id]).first)
+      return head :bad_request if params[:format].nil?
+      return head :not_found if !(@video = Video.where(id: params[:video_id]).first)
 
-      if @video.duplicate_id > 0
-        @video = Video.where(id: @video.duplicate_id).first
-      end
+      @video = Video.where(id: @video.duplicate_id).first if @video.duplicate_id > 0
 
-      return forbidden if @video.hidden && !(user_signed_in? && @video.owned_by(current_user))
+      return head :forbidden if @video.hidden && !(user_signed_in? && @video.owned_by(current_user))
 
       file = get_file(@video, params[:format]).to_s
-      return not_found if !File.exist?(file)
+      return head :not_found if !File.exist?(file)
 
       response.headers['Content-Length'] = File.size(file).to_s
       send_file(file,
