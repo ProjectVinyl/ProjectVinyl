@@ -6,13 +6,10 @@
   right: 0;
   overflow-x: hidden;
   overflow-y: auto;
-  height: 100%;
-  background: inherit;
-}
-
-.context-3d::not(.no-3d) {
   perspective: 300px;
 	-webkit-perspective: 300px;
   perspective-origin: 0 100px;
 	-webkit-perspective-origin: 0 100px;
+  height: 100%;
+  background: inherit;
 }
