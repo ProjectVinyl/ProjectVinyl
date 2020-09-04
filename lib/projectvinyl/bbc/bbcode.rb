@@ -1,4 +1,4 @@
-require 'projectvinyl/bbc/node_parser'
+require 'projectvinyl/bbc/parser/node_document_parser'
 require 'projectvinyl/bbc/emoticons'
 
 module ProjectVinyl
@@ -115,11 +115,11 @@ module ProjectVinyl
       end
       
       def self.from_html(html)
-        NodeParser.parse(html, '<', '>')
+        Parser::NodeDocumentParser.parse(html, '<', '>')
       end
       
       def self.from_bbc(bbc)
-        NodeParser.parse(bbc, '[', ']')
+        Parser::NodeDocumentParser.parse(bbc, '[', ']')
       end
     end
   end

@@ -35,9 +35,7 @@ module ProjectVinyl
           results += c.getElementsByTagName(name)
         end
 
-        if @tag_name == name
-          results << self
-        end
+        results << self if @tag_name == name
 
         results
       end
@@ -45,20 +43,17 @@ module ProjectVinyl
       def append_node(name = '')
         tag = Node.new(self, name)
         @children << tag
-        return tag
+        tag
       end
 
       def append_text(text)
-        if text.length > 0
-          @children << TextNode.new(text)
-        end
+        @children << TextNode.new(text) if text.length > 0
+        self
       end
 
       def tag_name=(tag)
         @tag_name = tag.split('=')[0].strip
-        if @tag_name.gsub(/[^a-zA-Z0-9]/, '') != @tag_name
-          @tag_name = ''
-        end
+        @tag_name = '' if @tag_name.gsub(/[^a-zA-Z0-9]/, '') != @tag_name
       end
 
       def equals_par=(par)
@@ -68,25 +63,19 @@ module ProjectVinyl
       def set_attribute(name, value)
         name = name.strip.underscore.to_sym
         @attributes[name] = value
-        if name == :class
-          @classes = value.split(/\s/)
-        end
+        @classes = value.split(/\s/) if name == :class
 
         self
       end
 
       def inner(type)
         ans = (@children.map {|child|child.outer(type)}).join
-        if type != :html
-          return ans
-        end
+        return ans if type != :html
         ans.strip.gsub(/\n/, '<br>')
       end
 
       def outer(type)
-        if type == :text
-          return inner_text
-        end
+        return inner_text if type == :text
         TagGenerator.generate(self, type)
       end
 
@@ -95,16 +84,11 @@ module ProjectVinyl
       end
 
       def resolver(trace, fallback)
-        if !trace.include?(tag_name.to_sym)
-          trace << tag_name.to_sym
-        end
-        if !@resolver.nil?
-          return @resolver
-        end
+        trace << tag_name.to_sym if !trace.include?(tag_name.to_sym)
 
-        if @parent.nil?
-          return fallback
-        end
+        return @resolver if !@resolver.nil?
+
+        return fallback if @parent.nil?
 
         @parent.resolver(trace, fallback)
       end
