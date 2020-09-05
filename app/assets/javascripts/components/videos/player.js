@@ -305,11 +305,11 @@ Player.prototype = {
     return this.video.muted ? 0 : this.video.volume;
   },
   jump(progress) {
-    const duration = this.getDuration();
-    const time = duration * progress;
-
+    this.skipTo(this.getDuration() * progress);
+  },
+  skipTo(time) {
     this.video.currentTime = time;
-    this.track(time, duration);
+    this.track(time, this.getDuration());
   },
   skip(time, volume) {
     if (this.video) {

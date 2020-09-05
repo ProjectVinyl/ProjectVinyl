@@ -72,6 +72,9 @@ module ProjectVinyl
         end
         tag.inner_bbc
       end
+      TagGenerator.register(:bbc, [:timestamp]) do |tag|
+        tag.inner_bbc
+      end
       
       TagGenerator.register(:html, [:b,:i,:u,:s,:sup,:sub,:hr]) do |tag|
         "<#{tag.tag_name}>#{tag.inner_html}</#{tag.tag_name}>"
@@ -113,7 +116,10 @@ module ProjectVinyl
       TagGenerator.register(:html, [:size]) do |tag|
         "<span data-size=\"#{tag.equals_par}\">#{tag.inner_html}</span>"
       end
-      
+      TagGenerator.register(:html, [:timestamp]) do |tag|
+        "<a data-time=\"#{tag.attributes[:time]}\">#{tag.inner_html}</a>"
+      end
+
       def self.from_html(html)
         Parser::NodeDocumentParser.parse(html, '<', '>')
       end

@@ -1,4 +1,4 @@
-import { bindAll, halt, bindEvent } from '../../jslim/events';
+import { addDelegatedEvent, bindAll, halt, bindEvent } from '../../jslim/events';
 import { Key, isNumberKey, getNumberKeyValue } from '../../utils/key';
 import { triggerDrop } from './waterdrop';
 import { fullscreenPlayer } from './fullscreen';
@@ -68,6 +68,10 @@ export function registerEvents(player, el) {
 }
 
 function bindGestures(player) {
+  addDelegatedEvent(document, 'click', 'a[data-time]', (ev, target) => {
+    if (ev.button !== 0) return;
+    player.skipTo(parseFloat(target.dataset.time));
+  });
   bindEvent(document, 'keydown', ev => {
     if (player.video && !document.querySelector('input:focus, textarea:focus')) {
       const oldVolume = player.getVolume();

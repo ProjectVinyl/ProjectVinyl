@@ -19,7 +19,16 @@ module ProjectVinyl
 
           return ['', parse_mention(node, content[(index + 1)..content.length], text)] if has_space_before && content[index] == '@'
 
-          return ['', emote_handled] if has_space_before && content[index] == ':' && (emote_handled = try_parse_emoticon(node, content[index..content.length], text)) != false
+          if has_space_before
+            if content[index] == ':'
+              emote_handled = try_parse_emoticon(node, content[index..content.length], text)
+              return ['', emote_handled] if emote_handled != false
+            end
+
+            timestamp_handled = try_parse_timestamp(node, content[index..content.length], text)
+
+            return ['', timestamp_handled] if timestamp_handled != false
+          end
 
           return ['', NodeDocumentParser.parse_document(node.append_text(text).append_node, content[index..content.length], open, close)] if content[index] == open
 
@@ -48,6 +57,14 @@ module ProjectVinyl
           url = content.split(open)[0].split(close)[0].split(' ')[0].split('\n')[0].split('\r')[0]
           node.append_text(text).append_node('a').set_attribute('href', url).append_text(TextNode.truncate_link(url))
           content.sub(url, '')
+        end
+
+        def self.try_parse_timestamp(node, content, text)
+          timestamp = content.split(/[^0-9:]/)[0]
+          return false if !timestamp || content.index(timestamp) != 0 || timestamp.index(':') != 2
+
+          node.append_text(text).append_node('timestamp').set_attribute('time', Ffmpeg.from_h_m_s(timestamp)).append_text(timestamp)
+          content.sub(timestamp, '')
         end
 
         def self.try_parse_emoticon(node, content, text)
