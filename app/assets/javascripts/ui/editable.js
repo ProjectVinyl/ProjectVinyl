@@ -117,7 +117,9 @@ addDelegatedEvent(document, 'keydown', 'textarea.comment-content, .editable text
     ev.preventDefault();
     return insertTags(target, `[${tag}]`, `[/${tag}]`);
   }
-  if (key == 13) deactivate();
+  if (ev.keyCode == 13) {
+    deactivate();
+  }
 });
 addDelegatedEvent(document, 'mouseup', '.edit-action', (e, target) => {
   const type = specialActions[target.dataset.action];
