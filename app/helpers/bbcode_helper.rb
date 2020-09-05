@@ -15,7 +15,7 @@ module BbcodeHelper
       return ''
     end
 
-    Rails.cache.fetch(text, expires_in: 24.hour) do
+    Rails.cache.fetch(Ffmpeg.compute_checksum(text), expires_in: 24.hour) do
       Rails.logger.info('Rendering bbcode content')
       nodes = ProjectVinyl::Bbc::Bbcode.from_bbc(text)
 
