@@ -1,17 +1,16 @@
 require 'projectvinyl/bbc/tag_generator'
 require 'projectvinyl/bbc/text_node'
+require 'projectvinyl/bbc/attributes'
 
 module ProjectVinyl
   module Bbc
     class Node
-      URL_HANDLING_TAGS = %w[a url img].freeze
+      URL_HANDLING_TAGS = %w[a url img embed].freeze
 
       def initialize(parent, name = '')
         @tag_name = name
         @children = []
-        @attributes = Hash.new do
-          ""
-        end
+        @attributes = Attributes.new
         @classes = []
         @parent = parent
       end

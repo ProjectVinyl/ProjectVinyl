@@ -1,3 +1,5 @@
+require 'projectvinyl/bbc/embed_generator'
+
 module ProjectVinyl
   module Bbc
     class TagGenerator
@@ -23,13 +25,10 @@ module ProjectVinyl
       end
 
       def self.generate_default_html(tag)
-        if tag.tag_name.index('yt') == 0 && !tag.tag_name.sub('yt', '').match(/[^a-zA-z0-9\-_]/)
-          return "<iframe allowfullscreen class=\"embed\" src=\"https://www.youtube.com/embed/#{tag.tag_name.sub('yt', '')}\"></iframe>#{tag.inner_html}";
-        end
         if tag.tag_name.length > 0 && !tag.tag_name.match(/[^0-9]/)
-          return "<iframe allowfullscreen class=\"embed\" src=\"/embed/#{tag.tag_name}\"></iframe>#{tag.inner_html}"
+          return EmbedGenerator.to_iframe("/embed/#{tag.tag_name}") + tag.inner_html
         end
-        return tag.inner_html;
+        tag.inner_html
       end
 
       def self.register(type, matcher, &block)

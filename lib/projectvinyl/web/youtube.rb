@@ -178,7 +178,11 @@ module ProjectVinyl
         if url.nil? || (url = url.strip).empty?
           return false
         end
-        !(url =~ /http?(s):\/\/(www\.|m\.)(youtube\.[^\/]+\/watch\?.*v=|youtu\.be\/)([^&]+)/).nil?
+        !(url =~ /http?(s):\/\/(www\.|m\.)(youtube\.[^\/]+\/(watch\?.*v=|embed\/)|youtu\.be\/)([^&]+)/).nil?
+      end
+
+      def self.embed_url(url)
+        "https://www.youtube.com/embed/#{video_id(url)}"
       end
 
       def self.video_id(url)
