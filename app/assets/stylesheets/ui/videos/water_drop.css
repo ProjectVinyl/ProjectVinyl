@@ -1,4 +1,5 @@
 
+.floating-player .water-drop,
 .video .water-drop {
   position: absolute;
   top: 50%;
@@ -16,6 +17,7 @@
   transform: scale(0.5);
   pointer-events: none;
 }
+.floating-player .water-drop.hidden,
 .video .water-drop.hidden {
   display: block !important;
   visibility: hidden;

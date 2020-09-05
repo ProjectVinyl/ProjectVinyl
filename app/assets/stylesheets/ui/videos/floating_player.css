@@ -8,11 +8,36 @@
   
   --controls-foreground: #444;
 }
-.floating-player .playback-controls .fullscreen,
-.floating-player .playback-controls .previewer {
+.floating-player .playback-controls .fullscreen {
   display: none;
 }
 
 .floating-player.hiding .playback-controls {
   bottom: -100%;
+}
+
+.floating-player .player {
+  position: fixed;
+  top: 20px;
+  right: 40px;
+  transform: scale(1);
+  transform-origin: top right;
+  transition: transform 0.5s ease;
+}
+
+.floating-player .player > * {
+  width: 12vw;
+  max-width: 90vw;
+  min-width: 150px;
+  box-shadow: 0 0 5px 0 rgba(0,0,0,0.3);
+}
+
+.floating-player.hiding .player {
+  transform: scale(0);
+}
+
+@media(max-width: 500px) {
+  .floating-player .player {
+    transform: scale(0);
+  }
 }

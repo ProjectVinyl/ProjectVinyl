@@ -1,10 +1,9 @@
-.video {
-  --video-background-color: rgba(28,28,28,0.9);
+.playback-controls {
   --video-preview-height: 70px;
   --video-preview-width: calc(var(--aspect-ratio) * var(--video-preview-height));
 }
 
-.video .previewer {
+.playback-controls .previewer {
   pointer-events: none;
   transition:
     opacity 0.1s linear,
@@ -35,7 +34,7 @@
     left;
 }
 
-.video .previewer:before {
+.playback-controls .previewer:before {
   position: absolute;
   bottom: -25px;
   left: 0;
@@ -50,7 +49,7 @@
   background-color: inherit;
   border-radius: inherit;
 }
-.video .previewer::after {
+.playback-controls .previewer::after {
   content: '';
   position: absolute;
   bottom: -45px;
@@ -60,8 +59,8 @@
   opacity: 0.6;
 }
 
-.video .track:focus .previewer,
-.video .track:hover .previewer {
+.playback-controls .track:focus .previewer,
+.playback-controls .track:hover .previewer {
   opacity: 1;
   visibility: visible;
   transform: scale(1);

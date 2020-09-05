@@ -26,7 +26,9 @@ export function attachFloater(player) {
   let floating;
 
   function onScroll() {
-    const scrolledDown = top > player.dom.getBoundingClientRect().bottom;
+    if (!player.video) return;
+
+    const scrolledDown = player.dom.getBoundingClientRect().bottom < 20;
 
     if (scrolledDown != floating) {
       floating = scrolledDown;
@@ -35,6 +37,8 @@ export function attachFloater(player) {
 
       if (floating) {
         floater.appendChild(player.controls.dom);
+        floater.querySelector('.player').appendChild(player.video);
+        floater.style.setProperty('--aspect-ratio', player.dom.style.getPropertyValue('--aspect-ratio'));
         setTimeout(() => {
           floater.classList.remove('hiding');
 
@@ -47,6 +51,7 @@ export function attachFloater(player) {
 
         setTimeout(() => {
           player.dom.querySelector('.control-ref').insertAdjacentElement('beforebegin', player.controls.dom);
+          player.player.media.appendChild(player.video);
           animating = false;
         }, 700);
       }

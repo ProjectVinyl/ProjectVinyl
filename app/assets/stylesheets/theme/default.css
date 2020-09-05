@@ -7,6 +7,8 @@ html, body {
 
   --site-background: #f1f1f1;
 
+  --video-background-color: rgba(28,28,28,0.9);
+
   --no-link-color: #aaa;
   --focus-outline: rgba(81, 125, 227, 0.7);
   --tooltip-background-color: rgba(28,28,28,0.9);
