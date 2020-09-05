@@ -37,7 +37,7 @@ module Indexable
   def distrust
     yield
   rescue Elasticsearch::Transport::Transport::Errors::Forbidden => e
-    logger.warn e
+    logger.warn e.message
   rescue IO::EINPROGRESSWaitWritable => e
     logger.fatal e
   rescue Faraday::ConnectionFailed => e
