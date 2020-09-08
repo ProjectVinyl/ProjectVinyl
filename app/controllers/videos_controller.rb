@@ -91,7 +91,7 @@ class VideosController < Videos::BaseVideosController
 
     if !(@modifications_allowed = user_signed_in? && current_user.id == @user.id)
       @video.views += 1
-      @video.compute_hotness.save
+      @video.save
     end
   end
 
