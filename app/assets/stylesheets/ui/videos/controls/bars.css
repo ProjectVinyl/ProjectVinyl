@@ -18,6 +18,13 @@
   opacity: 0.5;
 }
 
+.playback-controls .bars.chapters > * {
+  border-left: solid;
+}
+.playback-controls .bars.chapters > *:hover {
+  background: rgba(255,255,0,0.4);
+}
+
 .playback-controls .bars .fill {
   background: var(--progress-fill-color);
   width: calc(100% * (var(--track-progress) / 100));

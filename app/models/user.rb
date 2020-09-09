@@ -13,7 +13,7 @@ class User < ApplicationRecord
   prefs :preferences, subscribe_on_reply: true, subscribe_on_thread: true, subscribe_on_upload: true
 
   before_validation :init_name
-  after_save :update_index, if: :will_save_change_to_username?
+  after_save :update_index, if: :saved_change_to_username?
 
   has_many :comments
   has_many :votes

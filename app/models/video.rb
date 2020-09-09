@@ -33,8 +33,8 @@ class Video < ApplicationRecord
   has_asset :tiny_cover, 'thumb.png', cache_bust: true, group: :cover_files
 
   tag_relation :video_genres
-  after_save :dispatch_mentions, if: :will_save_change_to_description?
-  after_save :validate_source, if: :will_save_change_to_source?
+  after_save :dispatch_mentions, if: :saved_change_to_description?
+  after_save :validate_source, if: :saved_change_to_source?
 
   scope :unmerged, -> { where(duplicate_id: 0) }
   scope :listable, -> { where(hidden: false).unmerged }
@@ -198,7 +198,7 @@ class Video < ApplicationRecord
         mime: [file, mime],
         embedded: embed,
         autoplay: !album.nil?,
-        chapters: video_chapters.order(:timestamp).to_json
+        chapters: video_chapters.order(:timestamp).to_jsons
       }
   end
 
@@ -264,15 +264,6 @@ class Video < ApplicationRecord
     self.save
   end
 
-  private
-  def video_file_name(key)
-    "source#{file || '.mp4'}"
-  end
-
-  def validate_source
-    self.source = PathHelper.clean_url(source)
-  end
-
   def dispatch_mentions
     if !(sender = comment_thread)
       sender = CommentThread.new({
@@ -287,4 +278,14 @@ class Video < ApplicationRecord
     video_chapters.destroy_all
     video_chapters.create(text[:chapters])
   end
+
+  private
+  def video_file_name(key)
+    "source#{file || '.mp4'}"
+  end
+
+  def validate_source
+    self.source = PathHelper.clean_url(source)
+  end
+
 end

@@ -65,14 +65,13 @@ class Comment < ApplicationRecord
       if tag_name == :reply && !trace.include?(:q)
         replies << Comment.decode_open_id(tag.inner_text)
       end
-      
-      if tag_name == :timestamp && !tag.next.nil? && tag.next.text_node?
-        chapters[tag.attributes[:time]] = {
-          title: tag.next.inner_text,
-          timestamp: tag.attributes[:time]
-        }
+
+      if tag_name == :timestamp
+        VideoChapter.read_from_node(tag) do |chapter|
+          chapters[chapter[:timestamp]] = chapter
+        end
       end
-      
+
       fallback.call
     end
     

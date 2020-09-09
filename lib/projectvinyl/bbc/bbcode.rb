@@ -110,7 +110,9 @@ module ProjectVinyl
         "<span data-size=\"#{tag.equals_par}\">#{tag.inner_html}</span>"
       end
       TagGenerator.register(:html, [:timestamp]) do |tag|
-        "<a data-time=\"#{tag.attributes[:time]}\">#{tag.inner_html}</a>"
+        tag.resolve_dynamically do
+          "<a data-time=\"#{tag.attributes[:time]}\">#{tag.inner_html}</a>"
+        end
       end
 
       def self.from_html(html)

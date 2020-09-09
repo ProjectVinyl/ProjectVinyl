@@ -1,6 +1,7 @@
 module ProjectVinyl
   module Bbc
     class TextNode
+      attr_accessor :next
 
       def self.truncate_link(url)
         url = url.gsub(/^(http[s]*:)*[\/]+/, '')
@@ -14,9 +15,17 @@ module ProjectVinyl
       def initialize(text)
         @inner_text = text
       end
+      
+      def append_text(text)
+        @inner_text += text
+      end
 
       def getElementsByTagName(name)
         []
+      end
+
+      def text_node?
+        true
       end
 
       def inner_text

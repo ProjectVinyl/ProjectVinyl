@@ -18,6 +18,7 @@ module ProjectVinyl
       attr_reader :equals_par
       attr_reader :tag_name
       attr_reader :parent
+      attr_accessor :next
       attr_reader :classes
       attr_reader :attributes
       attr_reader :children
@@ -40,13 +41,18 @@ module ProjectVinyl
       end
 
       def append_node(name = '')
-        tag = Node.new(self, name)
-        @children << tag
-        tag
+        __append_child(Node.new(self, name))
       end
 
       def append_text(text)
-        @children << TextNode.new(text) if text.length > 0
+        if text.length > 0
+          if @children.length > 0 && @children.last.text_node?
+            @children.last.append_text(text)
+          else
+            __append_child(TextNode.new(text))
+          end
+        end
+
         self
       end
 
@@ -128,6 +134,10 @@ module ProjectVinyl
       def even
         depth % 2 == 0
       end
+      
+      def text_node?
+        false
+      end
 
       def self_closed?
         tag_name == 'br'
@@ -139,6 +149,14 @@ module ProjectVinyl
 
       def to_json
         { html: outer_html, bbc: outer_bbc }
+      end
+      
+      private
+      def __append_child(node)
+        @children.last.next = node if @children.length > 0
+        @children << node
+        
+        node
       end
     end
   end

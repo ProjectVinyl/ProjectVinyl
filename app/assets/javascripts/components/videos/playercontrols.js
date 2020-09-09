@@ -40,11 +40,24 @@ function didBufferChange(old, neu) {
     || (neu.length && old.start != neu.start(0) || old.end != neu.end(neu.length - 1));
 }
 
+function findChapter(chapters, time) {
+  return chapters.filter(chapter => chapter.time < time).reverse()[0] || {
+    title: '',
+    time: 0
+  };
+}
+
 function drawPreview(controls, progress) {
   const time = controls.player.getDuration() * progress;
+  const chapter = findChapter(controls.player.params.chapters, time);
 
+  console.log({
+    chapter, time, 
+    chapters: controls.player.params.chapters
+  });
+  
   controls.track.preview.style.left = (progress * 100) + '%';
-  controls.track.preview.dataset.time = toHMS(time);
+  controls.track.preview.dataset.time = `${toHMS(time)}\n${chapter.title}`;
   controls.preview.draw(time);
 }
 
@@ -66,6 +79,7 @@ export function PlayerControls(player, dom) {
   this.track = dom.querySelector('.track');
   this.track.bob = dom.querySelector('.track .bob');
   this.track.load = dom.querySelector('.track .load');
+  this.track.chapters = dom.querySelector('.track .chapters');
   this.track.fill = dom.querySelector('.track .fill');
   this.track.preview = dom.querySelector('.track .previewer');
   
@@ -177,6 +191,19 @@ PlayerControls.prototype = {
 
     if (didBufferChange(this.buffer, this.player.video.buffered)) {
       this.repaintProgress(this.player.video);
+    }
+    
+    if (this.player.params.chapters != this.chapters) {
+      const duration = this.player.getDuration();
+
+      this.chapters = this.player.params.chapters;
+
+      this.track.chapters.innerHTML = this.chapters.map((chapter, index) => {
+        const start = chapter.time * 100 / duration;
+        const end = index < (this.chapters.length - 1) ? (this.chapters[index + 1].time * 100 / duration) : 100;
+
+        return `<span style="left:${start}%;width:${end - start}%"></span>`;
+      }).join('');
     }
   },
   repaintProgress(video) {
