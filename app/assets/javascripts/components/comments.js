@@ -4,7 +4,7 @@ import { popupConfirm, popupError } from './popup';
 import { scrollTo } from '../ui/scroll';
 import { ready, bindEvent } from '../jslim/events';
 import { all, decodeEntities } from '../jslim/dom';
-import { insertTags } from '../ui/editable';
+import { insertTags } from '../ui/editable/bbcode';
 import { sendForm } from '../utils/xhr';
 
 function postComment(sender) {

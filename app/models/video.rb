@@ -16,6 +16,7 @@ class Video < ApplicationRecord
   has_many :album_items, dependent: :destroy
   has_many :albums, through: :album_items
   has_many :video_genres, dependent: :destroy
+  has_many :video_chapters, dependent: :destroy
   has_many :tags, through: :video_genres
   has_many :artist_tags, ->{ where(tag_type_id: 1) }, through: :video_genres, source: :tag, class_name: 'Tag'
 
@@ -196,7 +197,8 @@ class Video < ApplicationRecord
         id: id,
         mime: [file, mime],
         embedded: embed,
-        autoplay: !album.nil?
+        autoplay: !album.nil?,
+        chapters: video_chapters.order(:timestamp).to_json
       }
   end
 
@@ -281,5 +283,8 @@ class Video < ApplicationRecord
     end
     text = Comment.parse_bbc_with_replies_and_mentions(description, sender)
     Comment.send_mentions(text[:mentions], sender, title, ref)
+
+    video_chapters.destroy_all
+    video_chapters.create(text[:chapters])
   end
 end

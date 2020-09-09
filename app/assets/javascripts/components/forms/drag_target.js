@@ -1,7 +1,7 @@
 /**
  * Drag targets.
  */
-import { delegateAll } from '../jslim/events';
+import { delegateAll } from '../../jslim/events';
 
 function enterDrag() {
   this.classList.add('drag');

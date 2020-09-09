@@ -1,4 +1,4 @@
-import { addDelegatedEvent } from '../jslim/events';
+import { addDelegatedEvent } from '../../jslim/events';
 
 addDelegatedEvent(document, 'change', '.file-select-options input', (e, target) => {
   const fileInput = target.closest('.file-select-container').querySelector('input[type="file"]');

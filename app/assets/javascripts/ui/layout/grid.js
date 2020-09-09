@@ -1,5 +1,5 @@
-import { ready, bindEvent } from '../jslim/events';
-import { all } from '../jslim/dom';
+import { ready, bindEvent } from '../../jslim/events';
+import { all } from '../../jslim/dom';
 
 // +1 to prevent jittering
 const EXTRA_SPACE = 1;

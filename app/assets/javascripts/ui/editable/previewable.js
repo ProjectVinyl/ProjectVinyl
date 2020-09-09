@@ -1,5 +1,5 @@
-import { ajax } from '../utils/ajax';
-import { addDelegatedEvent } from '../jslim/events';
+import { ajax } from '../../utils/ajax';
+import { addDelegatedEvent } from '../../jslim/events';
 
 addDelegatedEvent(document, 'toggle', '.previewable', (e, target) => {
   if (!e.detail.active) return; // only update when previewing enable (state off)

@@ -1,4 +1,4 @@
-import { addDelegatedEvent } from '../jslim/events';
+import { addDelegatedEvent } from '../../jslim/events';
 
 // Hover events for labels in the search forms (and other places, maybe, eventually)
 addDelegatedEvent(document, 'focusin', 'label input, label select, label textarea', (e) => {

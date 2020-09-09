@@ -1,5 +1,5 @@
 import { addDelegatedEvent } from '../jslim/events';
-import { insertTags } from '../ui/editable';
+import { insertTags } from '../ui/editable/bbcode';
 
 function getFocusedTagSlug(input) {
   const start = input.selectionStart;

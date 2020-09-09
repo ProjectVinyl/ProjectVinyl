@@ -1,7 +1,7 @@
 /**
  * Automatically-resizing <input>s.
  */
-import { addDelegatedEvent } from '../jslim/events';
+import { addDelegatedEvent } from '../../jslim/events';
 
 addDelegatedEvent(document, 'keyup', 'textarea.js-auto-resize', function() {
   const height = this.clientHeight;

@@ -1,9 +1,7 @@
 import './comments';
-import './fileinput';
 import './forms/all';
 import './videos/all';
 import './uploader/all';
-import './labels';
 import './share';
 import './usercard';
 import './vote';

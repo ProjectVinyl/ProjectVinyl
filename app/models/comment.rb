@@ -49,6 +49,8 @@ class Comment < ApplicationRecord
   def self.parse_bbc_with_replies_and_mentions(bbc, sender)
     mentions = []
     replies = []
+    chapters = {}
+
     nodes = ProjectVinyl::Bbc::Bbcode.from_bbc(bbc)
     nodes.set_resolver do |trace, tag_name, tag, fallback|
       if tag_name == :at
@@ -64,13 +66,21 @@ class Comment < ApplicationRecord
         replies << Comment.decode_open_id(tag.inner_text)
       end
       
+      if tag_name == :timestamp && !tag.next.nil? && tag.next.text_node?
+        chapters[tag.attributes[:time]] = {
+          title: tag.next.inner_text,
+          timestamp: tag.attributes[:time]
+        }
+      end
+      
       fallback.call
     end
     
     return {
       html: nodes.outer_html,
       mentions: mentions,
-      replies: replies
+      replies: replies,
+      chapters: chapters.values
     }
   end
   
