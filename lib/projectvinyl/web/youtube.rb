@@ -54,16 +54,20 @@ module ProjectVinyl
             Youtube.flag_set(wanted_data, :description) ||
             Youtube.flag_set(wanted_data, :source) ||
             Youtube.flag_set(wanted_data, :coppa) ||
-            Youtube.flag_set(wanted_data, :tags)
+            Youtube.flag_set(wanted_data, :tags) ||
+            Youtube.flag_set(wanted_data, :views) ||
+            Youtube.flag_set(wanted_data, :rating) ||
+            Youtube.flag_set(wanted_data, :duration)
           Ajax.get(url) do |body|
             body = body.force_encoding('utf-8')
+            json = player_response(body)
 
             if @all || Youtube.flag_set(wanted_data, :coppa)
               output_data[:coppa] = !!body.index('isFamilySafe\\":true')
             end
 
             if @all || Youtube.flag_set(wanted_data, :description)
-              if desk = Youtube.description_from_html(body)
+              if desk = Youtube.description_from_html(body, json)
                 desc_node = ProjectVinyl::Bbc::Bbcode.from_html(desk)
 
                 desc_node.getElementsByTagName('a').each do |a|
@@ -84,16 +88,28 @@ module ProjectVinyl
             end
 
             if @all || Youtube.flag_set(wanted_data, :tags)
-              if (tgs = Youtube.header_from_html(body))
-                output_data[:tags] = ProjectVinyl::Bbc::Parser::NodeFinder.parse(tgs, '<', '>', 'meta')
-                    .filter{ |meta| meta.attributes[:property] == "og:video:tag" }
-                    .map{ |meta| meta.attributes[:content] }
-              end
+              output_data[:tags] = tags_from_html(body, json)
             end
 
             if @all || Youtube.flag_set(wanted_data, :source)
-              if src = Youtube.source_from_html(body)
+              if src = Youtube.source_from_html(body, json)
                 output_data[:source] = src
+              end
+            end
+
+            if @all || Youtube.flag_set(wanted_data, :views)
+              if json && json['videoDetails']
+                output_data[:views] = json['videoDetails']['viewCount'].to_i
+              end
+            end
+
+            if @all || Youtube.flag_set(wanted_data, :rating)
+              output_data[:rating] = video_sentiment(body, json)
+            end
+
+            if @all || Youtube.flag_set(wanted_data, :duration)
+              if json && json['videoDetails']
+                output_data[:duration] = json['videoDetails']['lengthSeconds'].to_i
               end
             end
           end
@@ -102,9 +118,25 @@ module ProjectVinyl
         output_data
       end
 
-      def self.source_from_html(html)
+      def self.tags_from_html(html, json)
+        if json && json['videoDetails'] && json['videoDetails']['keywords']
+          return json['videoDetails']['keywords']
+        end
+
+        if (tgs = Youtube.header_from_html(body))
+          return ProjectVinyl::Bbc::Parser::NodeFinder.parse(tgs, '<', '>', 'meta')
+              .filter{ |meta| meta.attributes[:property] == "og:video:tag" }
+              .map{ |meta| meta.attributes[:content] }
+        end
+
+        return []
+      end
+
+      def self.source_from_html(html, json)
+        return json['streamingData'] if json && json.key?('streamingData')
+
         map_index = html.index('url_encoded_fmt_stream_map')
-        return Youtube.source_from_html_two(html) if !map_index
+
 
         html = html[map_index..html.length]
         html = html.split('<')[0]
@@ -125,8 +157,25 @@ module ProjectVinyl
         end
       end
 
-      def self.source_from_html_two(html)
-        player_response(html)['streamingData']
+      def self.video_sentiment(html, json)
+        rating = {}
+
+        if json && json['videoDetails']
+          rating[:average] = json['videoDetails']['averageRating']
+        end
+
+        if html.index('sentimentBarRenderer":{')
+          html = html.split('sentimentBarRenderer":{')[1].split('}')[0]
+          sentiment = JSON.parse("{#{html}}")
+
+          if sentiment && sentiment['tooltip'] && sentiment['tooltip'].index('/')
+            sentiment = sentiment['tooltip'].split('/')
+            rating[:likes] = sentiment[0].gsub(/[^0-9]/, '').to_i
+            rating[:dislikes] = sentiment[1].gsub(/[^0-9]/, '').to_i
+          end
+        end
+
+        return rating
       end
 
       def self.player_response(html)
@@ -143,7 +192,7 @@ module ProjectVinyl
         JSON.parse(html['player_response'])
       end
 
-      def self.description_from_html(html)
+      def self.description_from_html(html, player_resp)
         close = '</p>'
         description_index = html.index('id="eow-description"')
         if !description_index
@@ -152,8 +201,6 @@ module ProjectVinyl
         end
 
         if !description_index
-          player_resp = player_response(html)
-
           if player_resp
             player_resp = player_resp["videoDetails"]
             if player_resp

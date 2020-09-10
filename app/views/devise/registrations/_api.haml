@@ -95,13 +95,41 @@
 		%td.label
 			%b Optional Include Parameters
 			%ul
-				%li title
-				%li description
-				%li artist
-				%li thumbnail
-				%li iframe
-				%li tags
-				%li coppa
+				%li
+					title -
+					%span The video's title as displayed on the front-end
+				%li
+					description -
+					%span The video's description, presented as both html and bbcode versions
+				%li
+					artist -
+					%span
+						Appends information pertaining to the youtube channel owning the video.
+						Will include the channel's name, id, and url
+				%li
+					thumbnail -
+					%span Links to the video' thumnbail
+				%li
+					iframe -
+					%span Appends html for the equivalent iframe for embedding the video.
+				%li
+					tags
+					%span Appends all of the tabs (topic names) applied to the video
+				%li
+					coppa -
+					%span A boolean indicating whether the video is child-safe
+				%li
+					views -
+					%span The number of views the video ha obtained
+				%li
+					rating -
+					%span
+						An object describing the video's rating.
+						Will include the average (5-star) rating, number of likes, and number of dislikes.
+				%li
+					duration -
+					%span
+						The video's length in seconds.
 .notice
 	OEmbed is also supported!
 %table

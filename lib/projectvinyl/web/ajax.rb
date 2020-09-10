@@ -20,9 +20,11 @@ module ProjectVinyl
       def initialize(url)
         @url = URI.parse(url)
         @params = {}
-        @url.query.split('&').each do |i|
-          i = i.split('=')
-          @params[i[0]] = i[1]
+        if @url.query
+          @url.query.split('&').each do |i|
+            i = i.split('=')
+            @params[i[0]] = i[1]
+          end
         end
       end
 

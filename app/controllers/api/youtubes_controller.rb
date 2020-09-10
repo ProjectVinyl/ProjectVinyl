@@ -12,7 +12,7 @@ module Api
       return fail :unauthorised, status: 302, message: "Invalid Request" if !tube.is_video_link(@url)
 
       succeed id: tube.video_id(@url),
-        attributes: tube.get(@url, include_hash([:title, :description, :artist, :thumbnail, :iframe, :source, :coppa, :tags])),
+        attributes: tube.get(@url, include_hash([:title, :description, :artist, :thumbnail, :iframe, :source, :coppa, :tags, :views, :rating, :duration])),
         meta: {
           url: @url
       }
