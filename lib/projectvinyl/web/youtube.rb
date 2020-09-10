@@ -1,6 +1,8 @@
 require 'projectvinyl/web/ajax'
 require 'projectvinyl/bbc/bbcode'
+require 'projectvinyl/bbc/parser/node_finder'
 require 'uri'
+require 'net/http'
 
 module ProjectVinyl
   module Web
@@ -83,8 +85,7 @@ module ProjectVinyl
 
             if @all || Youtube.flag_set(wanted_data, :tags)
               if (tgs = Youtube.header_from_html(body))
-                output_data[:tags] = ProjectVinyl::Bbc::Bbcode.from_html(tgs)
-                    .getElementsByTagName('meta')
+                output_data[:tags] = ProjectVinyl::Bbc::Parser::NodeFinder.parse(tgs, '<', '>', 'meta')
                     .filter{ |meta| meta.attributes[:property] == "og:video:tag" }
                     .map{ |meta| meta.attributes[:content] }
               end
@@ -168,6 +169,18 @@ module ProjectVinyl
         html = html.split(close)[0].split('>')
         html.shift
         html.join('>')
+      end
+
+      def self.shorten_direct_link(url)
+        params = Ajax.new(url).params
+
+        required_params = URI.unescape(params['sparams'] || '').split(',')
+        required_params += ['sparams', 'sig']
+        params = params.select {|k,_| required_params.include? k }
+
+        args = params.entries.map {|entry| "#{entry[0]}=#{entry[1]}"}
+
+        "#{url.split('?')[0]}?#{args.join('&')}"
       end
 
       def self.header_from_html(html)

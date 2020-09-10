@@ -3,6 +3,8 @@ require 'net/http'
 module ProjectVinyl
   module Web
     class Ajax
+      attr_accessor :params, :url
+
       def self.get(url, params = {})
         Ajax.new(url).get(params) do |body|
           yield(body)
@@ -18,11 +20,9 @@ module ProjectVinyl
       def initialize(url)
         @url = URI.parse(url)
         @params = {}
-        if url.index('?')
-          url = url.split('?')[1].split('&').each do |i|
-            i = i.split('=')
-            @params[i[0]] = i[1]
-          end
+        @url.query.split('&').each do |i|
+          i = i.split('=')
+          @params[i[0]] = i[1]
         end
       end
 
