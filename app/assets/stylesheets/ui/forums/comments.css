@@ -148,7 +148,7 @@ label.focus .content {
 .comment .name a.mention,
 .comment a.mention {
   color: var(--mention-color);
-  font-size: 8px;
+  font-size: 10px;
   display: inline-block;
   width: auto;
   padding-right: 3px;
