@@ -19,8 +19,6 @@
 				%span.content= @video.title
 		.tag-set.subheading
 			%span.uploaded
-		.tag-set.subheading
-			%span.uploaded
 				Uploaded
 				%span{title: @video.created_at.in_time_zone.to_time.strftime('%e %B %Y at %H:%m:%S')}
 					= since @video.created_at
@@ -34,6 +32,7 @@
 			%span.views.right.js-play-counter{title: number_with_delimiter(@video.play_count) + ' views'}
 				= fuzzy_big_number_with_delimiter @video.play_count
 				views
+		= render partial: 'videos/actions'
 		- if @modifications_allowed
 			%span.post-content.editable(data-target="#{video_path @video}" data-member="description")
 				%span.content= emotify @video.description
@@ -42,7 +41,6 @@
 		- else
 			%span.post-content
 				%span.content= emotify @video.description
-	%br/
 	%br/
 	.post-tags
 		.normal.tiny-link
@@ -72,4 +70,3 @@
 						.fill
 			%hr.normal
 			%button.normal.state-toggle(data-state="editing") Edit Tags Or Source
-		= render partial: 'videos/actions'

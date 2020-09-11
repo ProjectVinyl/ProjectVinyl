@@ -1,4 +1,4 @@
-%button.action.like{class: @video.upvoted? && "liked",
+%button.action.like(title="I like this"){class: @video.upvoted? && "liked",
 										data: {count: @video.upvotes,
 													action: video_action_path(@video, id: :like),
 													id: @video.id}}>
@@ -6,7 +6,7 @@
 	%span
 		- if @video.upvotes && @video.upvotes > 0
 			%span.count= @video.upvotes
-%button.action.dislike{class: @video.downvoted? && "liked",
+%button.action.dislike(title="I dislike this"){class: @video.downvoted? && "liked",
 											data: {count: @video.downvotes,
 														action: video_action_path(@video, id: :dislike),
 														id: @video.id}}>
@@ -15,7 +15,7 @@
 		- if @video.downvotes && @video.downvotes > 0
 			%span.count= @video.downvotes
 .split-button.popper>
-	%button.action.star.split-icon{class: @video.faved?(current_user) && "starred",
+	%button.action.star.split-icon(title="Add to Favourites"){class: @video.faved?(current_user) && "starred",
 																data: {action: video_action_path(@video, id: :star),
 																			id: @video.id}}
 		= fa :star

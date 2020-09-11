@@ -1,14 +1,14 @@
-%a.button.action.like(target="_blank" href="#{new_user_session_path}")>
+%a.button.action.like(title="Sign in to like this video" target="_blank" href="#{new_user_session_path}")>
 	= fa :thumbs_up
 	%span
 		- if @video.upvotes && @video.upvotes > 0
 			%span.count= @video.upvotes
-%a.button.action.dislike(target="_blank" href="#{new_user_session_path}")>
+%a.button.action.dislike(title="Sign in to dislike this video" target="_blank" href="#{new_user_session_path}")>
 	= fa :thumbs_down
 	%span
 		- if @video.downvotes && @video.downvotes > 0
 			%span.count= @video.downvotes
 .split-button<>
-	%a.button.action.star.split-icon(target="_blank" href="#{new_user_session_path}")
+	%a.button.action.star.split-icon(title="Sign in to add this video to your favourites" target="_blank" href="#{new_user_session_path}")
 		= fa :star
 	%a.button.action.split-action(target="_blank" href="#{new_user_session_path}") Add To

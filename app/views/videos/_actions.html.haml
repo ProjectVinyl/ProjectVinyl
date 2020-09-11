@@ -1,15 +1,12 @@
-%hr/
-.actions
+.actions.actions-above-content
 	= render partial: user_signed_in? ? 'videos/actions_logged_in' : 'videos/actions_logged_out'
 	%span.divider>
-	%button.action.share.mobile-friendly.slider-toggle(data-target=".slideout.share")>
+	%button.action.share.mobile-friendly.slider-toggle(title="Share Video" data-target=".slideout.share")>
 		= fa :share
 		%span Share
 	= render partial: 'videos/downloads'
 	.split-button.popper>
-		%button.action.options.mobile-friendly.pop-out-toggle
-			= fa :gear
-			%span Options
+		%button.action.options.mobile-friendly.pop-out-toggle(title="Options")= fa :gear
 		%ul.pop-out
 			- if user_signed_in? && current_user.is_contributor?
 				%li.action
