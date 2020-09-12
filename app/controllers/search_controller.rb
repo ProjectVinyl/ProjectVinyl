@@ -24,11 +24,6 @@ class SearchController < ApplicationController
 
     return render_paginated @results, partial: @partial, as: :json if params[:format] == 'json'
 
-    @data = URI.encode_www_form(
-      order: @order,
-      orderby: @orderby,
-      query: @query
-    )
     @crumb = {
       stack: [
         { title: 'Videos', link: '/videos' }
