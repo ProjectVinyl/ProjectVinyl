@@ -94,9 +94,12 @@ button.disable, .button.disable, button.working, .button.working {
 	animation: fa-spin 2s infinite linear;
 }
 
+
+.split-button {
+  display: flex;
+}
 .split-button > .action {
   display: block;
-  float: left;
   line-height: inherit;
   padding-bottom: 6px;
 }
@@ -119,10 +122,14 @@ button.disable, .button.disable, button.working, .button.working {
     pointer-events: none;
 }
 
-.actions > .button, .actions > button, .actions > .split-button {
+.actions > .button,
+.actions > button,
+.actions > .split-button {
   margin-right: 4px;
   margin-top: 4px;
+  white-space: nowrap;
 }
+
 .actions > .button:last-child, .actions > button:last-child, .actions > .split-button:last-child {
   margin-right: 0px;
 }
@@ -133,7 +140,7 @@ button.disable, .button.disable, button.working, .button.working {
   margin: 0 10px;
 }
 
-@media(max-width:430px) {
+@media(max-width:970px) {
   button.mobile-friendly span,
   .button.mobile-friendly span {
     display: none;

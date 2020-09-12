@@ -53,6 +53,7 @@
 
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   margin-bottom: 10px;
   padding-bottom: 10px;
   border-bottom: 1px solid var(--block-border-color);
