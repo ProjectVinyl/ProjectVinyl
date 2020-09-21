@@ -14,6 +14,10 @@
 			= surround '(', ')' do
 				= @token.total_hits
 				total
+	- if @token.hits >= @token.max_hits && !@token.reset_at.nil?
+		%tr
+			%td.label Reset At
+			%td.field= @token.reset_at + @token.reset_interval
 .notice
 	There are a number of routes you can use this token for:
 %hr

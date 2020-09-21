@@ -4,10 +4,7 @@ class ApiToken < ApplicationRecord
   has_secure_token
   
   def self.create_new_token(user)
-    if ApiToken.get_token(user)
-      return false
-    end
-    
+    return false if ApiToken.get_token(user)
     return ApiToken.create(user: user)
   end
   
@@ -29,7 +26,7 @@ class ApiToken < ApplicationRecord
   end
   
   def reset
-    self.reset_at = Time.zone.now
+    self.touch(:reset_at)
     self.hits = 0
     self.save
   end
@@ -39,14 +36,11 @@ class ApiToken < ApplicationRecord
   end
   
   def on_cooldown?
-    self.reset_at.nil? || self.reset_at >= Time.zone.now - self.reset_interval
+    self.reset_at.nil? || self.reset_at <= Time.zone.now - self.reset_interval
   end
   
   def hit
-    if self.on_cooldown?
-      self.reset
-    end
-    
+    self.reset if self.on_cooldown?
     self.hits = self.hits + 1
     self.total_hits = self.total_hits + 1
     self.save
