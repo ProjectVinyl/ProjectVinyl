@@ -123,7 +123,7 @@ module ProjectVinyl
           return json['videoDetails']['keywords']
         end
 
-        if (tgs = Youtube.header_from_html(body))
+        if (tgs = Youtube.header_from_html(html))
           return ProjectVinyl::Bbc::Parser::NodeFinder.parse(tgs, '<', '>', 'meta')
               .filter{ |meta| meta.attributes[:property] == "og:video:tag" }
               .map{ |meta| meta.attributes[:content] }
