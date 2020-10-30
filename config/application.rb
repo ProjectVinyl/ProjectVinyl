@@ -14,7 +14,7 @@ module Projectvinyl
 
     config.middleware.use Rack::Cors do
       allow do
-        origins ['localhost:8080','lvh.me:8080','upload.lvh.me:8080','projectvinyl.net','upload.projectvinyl.net','www.projectvinyl.net']
+        origins ['localhost:8080','lvh.me:8080','upload.lvh.me:8080','http://upload.lvh.me:8080','projectvinyl.net','upload.projectvinyl.net','www.projectvinyl.net']
         resource '*',
           :headers => :any,
           :credentials  => true,

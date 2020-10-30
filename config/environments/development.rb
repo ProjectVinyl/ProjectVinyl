@@ -3,7 +3,7 @@ Rails.application.configure do
   config.eager_load = false
   config.consider_all_requests_local = true
 
-  config.gateway = 'upload.lvh.me:3000'
+  config.gateway = 'upload.lvh.me:8080'
 
   # Enable/disable caching. By default caching is disabled.
   if Rails.root.join('tmp/caching-dev.txt').exist?

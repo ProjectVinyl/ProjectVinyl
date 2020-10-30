@@ -13,8 +13,8 @@ module ProjectVinyl
     
     HEADERS = {
       default: Csp.parse({
-        default_src: [ 'self', 'http://upload.lvh.me:3000', 'http://upload.projectvinyl.net', 'https://upload.projectvinyl.net' ],
-        form_action: [ 'self', 'http://upload.lvh.me:3000', 'http://upload.projectvinyl.net', 'https://upload.projectvinyl.net' ],
+        default_src: [ 'self', 'http://upload.lvh.me:8080', 'http://upload.projectvinyl.net', 'https://upload.projectvinyl.net' ],
+        form_action: [ 'self', 'http://upload.lvh.me:8080', 'http://upload.projectvinyl.net', 'https://upload.projectvinyl.net' ],
         worker_src: [ 'self' ],
         child_src: [ 'self', 'https://www.youtube.com', 'https://www.dailymotion.com', 'https://vault.mle.party', 'https://www.google.com/recaptcha/' ],
         frame_src: [ 'self', 'https://www.youtube.com', 'https://www.dailymotion.com', 'https://vault.mle.party', 'https://www.google.com/recaptcha/' ],

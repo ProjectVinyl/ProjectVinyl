@@ -71,7 +71,7 @@ class Video < ApplicationRecord
   end
 
   def as_indexed_json(_options = {})
-    read_media_attributes!
+    read_media_attributes
 
     json = as_json(only: %w[user_id audio_only heat mime length width height score created_at updated_at hidden listing featured duplicate_id])
     json['title'] = title.downcase
@@ -252,7 +252,7 @@ class Video < ApplicationRecord
     )
   end
 
-  def read_media_attributes!
+  def read_media_attributes
     self.framerate, self.width, self.height = [1,1,1]
 
     self.length = Ffprobe.length(video_path) if has_video?
@@ -261,7 +261,6 @@ class Video < ApplicationRecord
     path = audio_only && has_cover? ? cover_path : video_path
 
     self.width, self.height = Ffprobe.dimensions(path) if File.exist?(path)
-    self.save
   end
 
   def dispatch_mentions
