@@ -9,7 +9,10 @@ module Videos
 
       error(params[:format] == 'json', "Access Denied", "You can't do that right now.") if !video.owned_by(current_user)
 
-      video.media = media if current_user.is_staff? && (media = params[:video][:file])
+      if current_user.is_staff? && (media = params[:video][:file])
+        video.video = media
+      end
+
       ExtractThumbnailJob.queue_video(video, params[:video][:cover] || !params[:erase], params[:video][:time], :manual)
 
       video.save
