@@ -47,7 +47,7 @@ module Heated
   end
 
   def __boost_multiplier
-    x = (__play_boots / __view_boosts) + (2 * __comment_boosts) + (3 * wilson_lower_bound)
+    x = (__play_boots / __view_boosts) + (2 * __comment_boosts) + (3 * (wilson_lower_bound || 0))
     x * 1000
   end
 end
