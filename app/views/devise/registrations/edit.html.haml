@@ -28,3 +28,9 @@
 						%input#give_me_notifications(name="give_me_notifications" type="checkbox")
 						= fa :check
 						Enable
+			%tr
+				%td.label Theme
+				%td.field
+					%label.options
+						%span Theme
+						%select#theme(name="theme")= sensible_option_for_select(themes, current_theme)

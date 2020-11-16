@@ -8,8 +8,8 @@
   text-align: center;
   
   --button-background: none;
-  --button-background-hover: var(--block-hover-color);
-  --button-background-active: #efefef;
+  --button-background-hover: var(--bubble-background-hover);
+  --button-background-active: var(--bubble-background-active);
 }
 
 .button.button-bub.bub {

@@ -44,38 +44,6 @@
   display: inline-block;
 }
 
-.tag-artist {
-  --button-background: #f2fdab;
-  --button-border-color: #82ad2b;
-  --button-foreground: #82ad2b;
-}
-.tag-genre {
-  --button-background: #a2a6d4;
-  --button-border-color: #363b74;
-  --button-foreground: #363b74;
-}
-.tag-oc {
-  --button-background: #b1cee2;
-  --button-border-color: #4c90bd;
-  --button-foreground: #4c90bd;
-}
-.tag-spoiler {
-  --button-background: #f8d2c0;
-  --button-border-color: #e97136;
-  --button-foreground: #e97136;
-}
-.tag-character {
-  --button-background: #e6eeef;
-  --button-border-color: #46a0b4;
-  --button-foreground: #46a0b4;
-}
-
-.tag[data-slug="artist needed"], .tag[data-slug="source needed"] {
-  --button-background: #f99;
-  --button-border-color: #f80808;
-  --button-foreground: #d00;
-}
-
 .tag .pop-out {
   margin-top: 0;
   left: 0;

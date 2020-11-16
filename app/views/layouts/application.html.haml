@@ -9,7 +9,7 @@
 		%meta(name="vapid_public_key" content="#{Base64.urlsafe_decode64(Rails.application.secrets.vapid_public_key).bytes}")
 		%meta(name="emoticons_array" content="#{raw BbcodeHelper.emoticons}")
 		= csrf_meta_tags
-		= stylesheet_link_tag "application"
+		= stylesheet_link_tag "application_" + current_theme_name
 		= javascript_include_tag "application"
 		- if content_for?(:width)
 			:css

@@ -1,4 +1,6 @@
-
+/*
+ *= require ./default_tag_colors
+ */
 html, body {
   --default-header-color: rgb(102,102,184);
   --default-link-color: #337287;
@@ -52,6 +54,8 @@ html, body {
 
   --modal-footer-background: #efefef;
   
+  --bubble-background-hover: #e0e0e0;
+  --bubble-background-active: #d0d0d0;
   --bubble-color: #fafafa;
   --bubble-hover-color: #efefef;
 }

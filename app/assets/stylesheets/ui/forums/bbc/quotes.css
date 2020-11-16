@@ -7,11 +7,7 @@ blockquote {
   box-shadow: 0px 0px 12px rgba(100,130,255, 0.1) inset;
 }
 
-/*TODO: Could replace this with a class (and a smarted bbcode parser)*/
-.comment-content > blockquote > blockquote > blockquote,
-.comment-content > blockquote > blockquote > blockquote > blockquote > blockquote,
-.comment-content > blockquote > blockquote > blockquote > blockquote > blockquote > blockquote > blockquote,
-.comment-content > blockquote > blockquote > blockquote > blockquote > blockquote > blockquote > blockquote > blockquote > blockquote {
+.comment-content blockquote.even {
   background: rgba(255,255,255, 0.5);
 }
 

@@ -6,6 +6,7 @@ module ApplicationHelper
   include FormatsHelper
   include StringsHelper
   include FiltersHelper
+  include ThemesHelper
   
   def self.read_only
     ApplicationSettings.get(:read_only)

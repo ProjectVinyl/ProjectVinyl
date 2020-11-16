@@ -6,3 +6,4 @@ import './share';
 import './usercard';
 import './vote';
 import './meta_toolbar';
+import './theme_selector';
