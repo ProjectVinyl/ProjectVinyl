@@ -74,7 +74,7 @@ label.focus .content {
   border-color: rgba(255, 255, 255, 0.1);
 }
 .thread-list .items .thread:hover {
-  background: rgba(30, 30, 30);
+  background: rgb(30, 30, 30);
 }
 button, .button, input[type="submit"], .tag, .foobar {
   --button-background: #0f0f0f;
