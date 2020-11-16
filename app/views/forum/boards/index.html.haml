@@ -1,10 +1,11 @@
 - title "Forums"
-.actions.space-fix
+.actions
 	- if user_signed_in? && current_user.is_contributor?
 		%button.action.mobile-friendly.green(data-external-form="#{new_forum_path}" data-title="Create Category" type="button")
 			= fa :plus
 			%span New Category
-	%a.button.mobile-friendly.blue.right{href: forum_search_index_path}
+	.spacer
+	%a.button.mobile-friendly.blue{href: forum_search_index_path}
 		= fa :search
 		%span Find Posts
 %hr/

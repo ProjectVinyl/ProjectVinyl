@@ -10,7 +10,7 @@
 			%span.edit= fa :pencil
 	- else
 		= @board.title
-.actions.space-fix
+.actions
 	- if user_signed_in?
 		- if @modifications_allowed
 			%a.button.mobile-friendly.red{href: forum_path(@board), data: {confirm: "Any topics inside this category will be lost.", title: "Delete Category", method: :delete}}>
@@ -22,7 +22,8 @@
 		%button.action.mobile-friendly.green(data-external-form="#{new_forum_thread_path(board: @board.id)}" data-title="New Topic" type="button")>
 			= fa :plus
 			%span New Topic
-	%a.button.blue.mobile-friendly.right{href: forum_search_index_path(board: @board.id)}>
+	.spacer
+	%a.button.blue.mobile-friendly{href: forum_search_index_path(board: @board.id)}>
 		= fa :search
 		%span Find Posts
 %hr/

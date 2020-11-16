@@ -113,6 +113,7 @@ button.disable, .button.disable, button.working, .button.working {
 }
 
 .actions {
+  display: flex;
 	line-height: 19px;
   --divider-color: rgba(0,0,255,0.1);
 }
@@ -138,6 +139,9 @@ button.disable, .button.disable, button.working, .button.working {
   height: 30px;
   border-left: 1px solid var(--divider-color);
   margin: 0 10px;
+}
+.actions .spacer {
+  flex-grow: 1;
 }
 
 @media(max-width:970px) {
