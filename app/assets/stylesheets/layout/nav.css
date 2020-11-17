@@ -34,7 +34,7 @@ nav > ul > li:hover, nav > ul > li.selected {
   }
 
   nav ul li:hover, nav ul li.selected {
-    color: var(--content-background);
+    color: var(--header-nav-foreground-active);
   }
 }
 

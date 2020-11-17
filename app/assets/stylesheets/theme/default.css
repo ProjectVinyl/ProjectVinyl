@@ -45,7 +45,8 @@ html, body {
 
   --header-nav-background: rgba(255,255,255,0.9);
   --header-nav-foreground: #aaa;
-  
+  --header-nav-foreground-active: var(--content-background);
+
   --header-color: rgb(102,102,184);
   --header-overlay-element-color: #337287;
   --header-overlay-fill: var(--content-background);

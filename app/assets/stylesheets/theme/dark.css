@@ -10,7 +10,7 @@ html, body {
  
   --content-highlight: #2b252b;
 
-  --thumb-hover-color: #282727;
+  --thumb-hover-color: #1e1d1d;
   --input-border: #575757;
   --input-foreground-color: #c4c4c4;
   --input-background: #151515;
@@ -21,6 +21,7 @@ html, body {
   --heading-border-color: #403d3d;
 
   --header-nav-background: rgba(0, 0, 0, 0.62);
+  --header-nav-foreground-active: #fff;
   --header-overlay-element-fill: rgba(0,0,0,0.6);
   --header-overlay-element-focus-fill: #131313;
   --header-overlay-fill: rgba(0,0,0,0.7);
@@ -140,6 +141,10 @@ button, .button, input[type="submit"], .tag, .foobar {
   --tabbar-background: rgba(72, 72, 72, 0.7);
   --tab-background-inactive: #0f0f0f;
   --tab-background-inactive-hover: #1c1c1c;
+}
+
+.post .actions.actions-above-content {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.3);
 }
 
 .checkerboard {
