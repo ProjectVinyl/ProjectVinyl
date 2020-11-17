@@ -1,5 +1,5 @@
 module Forum
-  class SubscribeController < ApplicationController
+  class SubscribesController < ApplicationController
     def update
       return head 401 if !user_signed_in? || !(thread = CommentThread.where(id: params[:thread_id]).first)
       render json: {
