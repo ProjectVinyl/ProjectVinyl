@@ -102,7 +102,11 @@ button, .button, input[type="submit"], .tag, .foobar {
   --button-foreground-active: #ccc;
   --button-shadow-color: #313131;
 }
- 
+
+.floating-player .playback-controls {
+  --controls-foreground: #9b9b9b;
+}
+
 .toolbar {
   border-bottom: solid 1px #313030;
 }
@@ -141,6 +145,10 @@ button, .button, input[type="submit"], .tag, .foobar {
   --tabbar-background: rgba(72, 72, 72, 0.7);
   --tab-background-inactive: #0f0f0f;
   --tab-background-inactive-hover: #1c1c1c;
+}
+
+.button.button-bub.subscribe {
+  --on-color: #5c5cf2;
 }
 
 .post .actions.actions-above-content {
