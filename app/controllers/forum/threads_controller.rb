@@ -1,6 +1,7 @@
 module Forum
   class ThreadsController < ApplicationController
     def show
+      @path_type = 'forum'
       @thread = CommentThread.where(id: params[:thread_id] || params[:id]).first
       
       if !@thread || !@thread.contributing?(current_user)

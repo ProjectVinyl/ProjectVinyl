@@ -26,6 +26,7 @@ class VideosController < Videos::BaseVideosController
 
     load_album
 
+    @path_type = 'videos'
     @time = (params[:t] || params[:resume]).to_i
     @resume = !params[:resume].nil?
 

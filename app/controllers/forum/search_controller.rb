@@ -1,6 +1,7 @@
 module Forum
   class SearchController < ApplicationController
     def index
+      @path_type = 'forum'
       @title_query = params[:title_query]
       @poster_query = params[:poster_query]
       @text_query = params[:text_query]

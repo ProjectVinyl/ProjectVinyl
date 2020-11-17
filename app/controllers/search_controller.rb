@@ -4,6 +4,7 @@ class SearchController < ApplicationController
   configure_ordering [ :date, :rating, [:wilson_score, :wilson_lower_bound], :heat, :length, :random, :relevance ], query_term: 'q', only: [ :index ]
 
   def index
+    @path_type = 'videos'
     read_search_params(params)
     @partial = partial_for_type(:videos)
     @randomize = params[:format] != 'json' && params[:random] == 'y'

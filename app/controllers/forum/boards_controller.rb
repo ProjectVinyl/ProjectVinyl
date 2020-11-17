@@ -3,6 +3,7 @@ module Forum
     def show
       return render_error_file 404, params[:format] == 'json' if !(@board = Board.find_board(params[:id]))
 
+      @path_type = 'forum'
       @threads = Pagination.paginate(@board.threads, params[:page].to_i, 50, false)
       @modifications_allowed = user_signed_in? && current_user.is_contributor?
 
@@ -10,6 +11,7 @@ module Forum
     end
 
     def index
+      @path_type = 'forum'
       @crumb = {
         stack: [],
         title: "Forum"
