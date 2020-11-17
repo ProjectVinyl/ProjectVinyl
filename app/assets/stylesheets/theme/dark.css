@@ -11,6 +11,10 @@ html, body {
   --content-highlight: #2b252b;
 
   --thumb-hover-color: #282727;
+  --input-border: #575757;
+  --input-foreground-color: #c4c4c4;
+  --input-background: #151515;
+  --input-background-focus: rgb(28, 28, 28);
   --input-shadow: rgba(10, 10, 10, 0.8);
 
   --heading-background: #393131;
@@ -23,6 +27,8 @@ html, body {
   --header-color: rgb(129, 129, 230);
   --header-overlay-element-color: #09c1ff;
 
+  --form-background: #281d1d;
+
   --block-shadow-color: #333;
   --block-border-color: #555;
   --block-hover-color: #111;
@@ -33,7 +39,9 @@ html, body {
   --bubble-color: #171616;
   --bubble-hover-color: #2d2727;
 }
+
 .notice {
+  background: #003f5e;
   color: #c6c1c1;
 }
 .header ul li {
@@ -50,6 +58,9 @@ html, body {
   --comment-text-shadow-color: rgba(0, 0, 0, 0.8);
   --mention-color: #b7b7b7;
   --user-link-color: #3fb7df;
+}
+label.options {
+  --block-border-color: #555;
 }
 label.focus .content {
   --comment-background: rgb(28, 28, 28);
@@ -97,6 +108,10 @@ button, .button, input[type="submit"], .tag, .foobar {
 .popper .pop-out {
   background: #111;
   box-shadow: 0px 1px rgba(0, 0, 0, 0.3) inset;
+}
+
+.popper .pop-out,
+.meta-toolbar .action div {
   border: 1px solid #464444;
   border-bottom-color: #4a4949;
   border-top-color: #4a4949;
@@ -119,6 +134,12 @@ button, .button, input[type="submit"], .tag, .foobar {
 .editable {
   --editable-border: #000;
   --editable-text-color: #bdbdbd;
+}
+
+.tab-set {
+  --tabbar-background: rgba(72, 72, 72, 0.7);
+  --tab-background-inactive: #0f0f0f;
+  --tab-background-inactive-hover: #1c1c1c;
 }
 
 .checkerboard {

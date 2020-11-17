@@ -11,6 +11,7 @@ label.text-input {
   border-radius: 5px;
   box-shadow: 0px 0px 12px rgba(0, 0, 0, 0.07) inset;
   background: var(--input-background);
+  color: var(--input-foreground-color);
   text-shadow: 1px 1px var(--input-shadow);
   vertical-align: middle;
   font-family: MS Shell Dlg \32, monospace;

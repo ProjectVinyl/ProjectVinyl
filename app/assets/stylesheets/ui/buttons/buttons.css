@@ -113,9 +113,11 @@ button.disable, .button.disable, button.working, .button.working {
 }
 
 .actions {
-  display: flex;
 	line-height: 19px;
   --divider-color: rgba(0,0,255,0.1);
+}
+span.actions, div.actions {
+  display: flex;
 }
 
 .action[disabled] {
