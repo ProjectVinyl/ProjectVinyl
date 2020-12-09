@@ -8,6 +8,9 @@
   --thumb-uploader-color: #9667f4;
 
   text-decoration: none;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
 }
 .thumb.tiny {
   --thumb-width: 85px;
@@ -113,11 +116,18 @@ li.generic.mix .tile::after {
   overflow: hidden;
   text-overflow: ellipsis;
   -o-text-overflow: ellipsis;
+  flex-grow: 1;
+  
+  /* Allows text overflow elipses to display correctly*/
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
 }
 
 .thumb .details {
   display: flex;
   flex-direction: column;
+  flex-grow: 1;
 }
 
 .thumb .details .detail,
