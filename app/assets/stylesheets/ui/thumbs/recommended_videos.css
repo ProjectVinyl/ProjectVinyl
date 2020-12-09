@@ -1,5 +1,5 @@
 ul.vertical .thumb {
-  display: flex;
+  flex-direction: row;
 }
 ul.vertical .thumb .tile {
   --thumb-width: 10vw;
