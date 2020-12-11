@@ -1,3 +1,8 @@
-%p "Welcome #{@email}!"
-%p You can confirm your account email through the link below:
-%p= link_to 'Confirm my account', confirmation_url(@resource, confirmation_token: @token)
+= render 'email_wrapper', title: 'Welcome to Project Vinyl' do
+	%p
+		An account was recently created using the email address at #{@email}.
+		If this was you, you can confirm your email and sign in through the link below.
+	%br
+	%p(style="text-align: center;")
+		= render 'green_button', url: confirmation_url(@resource, confirmation_token: @token) do
+			CONFIRM MY ACCOUNT

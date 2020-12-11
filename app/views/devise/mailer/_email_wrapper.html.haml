@@ -1,0 +1,47 @@
+!!! XHTML 5
+%html(style="height: 100%;padding: 0;margin: 0;")
+	%meta(name="viewport" content="width=device-width, initial-scale=1")
+	%body(style=" |
+				background: url('https://projectvinyl.net/images/new-banner.jpg') 0 0/cover; |
+				padding: 10px; |
+				font-family: Roboto, Arial, sans-serif" |
+	)
+		:css
+			a { |
+				transition: background 0.5s ease, border 0.5s ease, color 0.5s ease, text-shadow 0.5s ease; |
+			} |
+			a:hover { |
+				background: #8bc052 !important; |
+			} |
+			a:active { |
+				background: #cbb042 !important; |
+				box-shadow: 0 0 5px 0 rgba(0,0,0,0.1) inset !important; |
+			} |
+		%div(style=" |
+						width: 100%; |
+						display: block; |
+						max-width: 700px; |
+						margin: 0px auto; |
+						margin-bottom:130px; |
+						margin-top:30px;" |
+		)
+			%div(style=" |
+						background: #fff; |
+						display: block; |
+						padding: 0px; |
+						border-radius: 3px; |
+						box-shadow: 0 0 5px 0 rgba(0,0,0,0.3)" |
+			)
+				%h1(style=" |
+									color: rgb(102,102,184); |
+									padding: 20px; |
+									border-bottom: solid 1px #ddd; |
+									margin-bottom: 0px; |
+									background:#f0f0f0; |
+									font-weight: normal; |
+									font-size: 1.75em; |
+									line-height: 1; |
+									border-radius: 3px 3px 0px 0px; |
+									text-shadow: 0 0.05em 0.03em rgba(0,0,0,0.3);" |
+				)= title
+				%div(style="padding:20px;")= yield
