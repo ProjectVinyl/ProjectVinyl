@@ -66,7 +66,7 @@ class AlbumsController < Albums::BaseAlbumsController
         initial = params[:album][:initial]
         if initial && (initial = Video.where(id: initial).first)
           album.add_item(initial)
-          return redirect_to action: :show, controller: :video, id: initial.id
+          return redirect_to action: :show, controller: :videos, id: initial.id
         end
       end
       redirect_to action: :show, id: album.id
