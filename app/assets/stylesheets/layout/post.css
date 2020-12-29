@@ -56,7 +56,7 @@
   flex-wrap: wrap;
   margin-bottom: 10px;
   padding-bottom: 10px;
-  border-bottom: 1px solid var(--block-border-color);
+  border-bottom: 1px solid var(--table-inner-border);
 }
 
 .post .actions-above-content .divider {

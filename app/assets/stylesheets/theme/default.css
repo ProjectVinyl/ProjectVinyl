@@ -59,6 +59,8 @@ html, body {
   --bubble-background-active: #d0d0d0;
   --bubble-color: #fafafa;
   --bubble-hover-color: #efefef;
+
+  --table-inner-border: rgba(0,0,0,0.1);
 }
 label.options {
   --block-border-color: #ccc;

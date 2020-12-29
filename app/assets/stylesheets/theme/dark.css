@@ -29,6 +29,7 @@ html, body {
   --header-overlay-element-color: #09c1ff;
 
   --form-background: #281d1d;
+  --modal-footer-background: #373737;
 
   --block-shadow-color: #333;
   --block-border-color: #555;
@@ -39,6 +40,8 @@ html, body {
   
   --bubble-color: #171616;
   --bubble-hover-color: #2d2727;
+  
+  --table-inner-border: rgba(255, 255, 255, 0.3);
 }
 
 .notice {
@@ -134,6 +137,14 @@ button, .button, input[type="submit"], .tag, .foobar {
 }
 .listing.compact .items.reorderable .handle {
   text-shadow: 0 0 3px #1a1a1a;
+}
+
+label.check-box {
+  border-color: #4f4f4f;
+  color: #d7d7d7;
+}
+label.check-box:hover {
+  color: rgba(180, 180, 249, 0.6);
 }
 
 .editable {
