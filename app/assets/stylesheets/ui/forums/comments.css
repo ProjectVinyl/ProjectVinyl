@@ -106,14 +106,11 @@ label.focus .content {
 }
 
 .comment .content.editing .preview,
-.comment .content textarea {
+.comment .content textarea.comment-content {
   display: none !important;
 }
-.comment .content.editing textarea {
+.comment .content.editing textarea.comment-content {
   display: block !important;
-}
-.comment .content.editing .actions textarea {
-  display: none !important;
 }
 
 .comment .content .posting-spinner {

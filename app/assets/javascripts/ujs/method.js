@@ -13,12 +13,8 @@ function submitAction(event, selector, ignoreMouse) {
   const url = a.href || a.dataset.url;
   const method = a.dataset.method;
 
-  const form = document.createElement('form');
+  const form = makeForm(url, method);
 
-  form.action = url;
-  form.method = 'POST';
-  form.dataset.method = method;
-  form.style.display = 'none';
   form.appendChild(makeInput('_method', method));
 
   if (a.value && a.name) {
@@ -34,7 +30,17 @@ function submitAction(event, selector, ignoreMouse) {
   form.submit();
 }
 
-function makeInput(name, value) {
+export function makeForm(url, method) {
+  const form = document.createElement('form');
+
+  form.action = url;
+  form.method = 'POST';
+  form.dataset.method = method;
+  form.style.display = 'none';
+  return form;
+}
+
+export function makeInput(name, value) {
   const input = document.createElement('input');
   input.type = 'hidden';
   input.name = name;

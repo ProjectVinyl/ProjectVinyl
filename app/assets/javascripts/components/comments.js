@@ -5,18 +5,31 @@ import { scrollTo } from '../ui/scroll';
 import { ready, bindEvent } from '../jslim/events';
 import { all, decodeEntities } from '../jslim/dom';
 import { insertTags } from '../ui/editable/bbcode';
+import { makeForm, makeInput } from '../ujs/method';
 import { sendForm } from '../utils/xhr';
 
 function postComment(sender) {
   const content = sender.closest('.content');
-  
+
   const input = content.querySelector('textarea, input.comment-content');
   if (!input.value.trim()) return popupError('You have to type something to post!');
-  
+
   content.classList.add('posting');
-  sendForm(input.form, {
+  const form = makeForm(sender.dataset.url, 'POST');
+  form.appendChild(makeInput('[thread_id]', sender.dataset.threadId));
+  form.appendChild(makeInput('order', sender.dataset.order));
+  form.appendChild(makeInput('comment', input.value));
+
+  const captcha = content.querySelector('textarea.g-recaptcha-response');
+  if (captcha) {
+    form.appendChild(makeInput('g-recaptcha-response', captcha.value));
+  }
+  document.body.appendChild(form);
+
+  sendForm(form, {
     success: json => {
       content.classList.remove('posting');
+      form.parentNode.removeChild(form);
       if (json.error) return popupError(json.error);
       input.value = '';
       repaintPagination(document.getElementById(`thread-${sender.dataset.threadId}`).closest('.paginator'), json);
@@ -166,4 +179,5 @@ ready(() => {
   if (document.location.hash.indexOf('#comment_') == 0) {
     lookupComment(document.location.hash.split('_')[1]);
   }
+  all('.post-submitter').forEach(i => i.classList.remove('disable'));
 });

@@ -78,6 +78,7 @@ button.disable, .button.disable, button.working, .button.working {
 
 .button-fw {
   min-width: 80px;
+  text-align: center;
 }
 
 .split-button {

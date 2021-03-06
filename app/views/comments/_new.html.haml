@@ -7,9 +7,7 @@
 			sign in
 		to comment.
 - else
-	= form_for(Comment.new, url: comments_path, html: {method: :post, class: "comment post-box"}) do |f|
-		%input{type: "hidden", name: "[thread_id]", value: @thread.id}
-		%input{type: "hidden", name: "order", value: @order}
+	%form.comment.post-box
 		.artist-bio.bio
 			%a{class: !visitor.dummy? && "user-link", "data-id": visitor.id, href: visitor.link}
 				= render 'users/avatar/medium', user: visitor
@@ -23,14 +21,14 @@
 				.comment-content.preview
 				%textarea.comment-content(required="true" name="comment")
 				%hr/
+				- if visitor.dummy?
+					= recaptcha_tags
+					%hr/
 				.actions
-					- if visitor.dummy?
-						= recaptcha_tags
-						%hr/
-					%button.green.post-submitter(data-thread-id="#{@thread.id}")>
+					%button.green.post-submitter.disabled(type="button" data-thread-id="#{@thread.id}" data-order="#{@order}" data-url="#{comments_path}")>
 						%span Post Comment
 						%i.posting-spinner.fa.fw.fa-spinner.fa-spin
-					%button.blue.state-toggle.button-fw(type="button" data-state="editing" data-parent=".previewable")>
+					.button.blue.state-toggle.button-fw(type="button" data-state="editing" data-parent=".previewable")>
 						%span.on Preview
 						%span.off Edit
 					= flash[:recaptcha_error]
