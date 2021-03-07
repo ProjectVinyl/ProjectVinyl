@@ -25,7 +25,7 @@
 					= recaptcha_tags
 					%hr/
 				.actions
-					%button.green.post-submitter.disabled(type="button" data-thread-id="#{@thread.id}" data-order="#{@order}" data-url="#{comments_path}")>
+					%button.green.post-submitter.disable(type="button" data-thread-id="#{@thread.id}" data-order="#{@order}" data-url="#{comments_path}")>
 						%span Post Comment
 						%i.posting-spinner.fa.fw.fa-spinner.fa-spin
 					.button.blue.state-toggle.button-fw(type="button" data-state="editing" data-parent=".previewable")>
