@@ -179,5 +179,5 @@ ready(() => {
   if (document.location.hash.indexOf('#comment_') == 0) {
     lookupComment(document.location.hash.split('_')[1]);
   }
-  all('.post-submitter').forEach(i => i.classList.remove('disable'));
+  all('.post-submitter', i => i.classList.remove('disable'));
 });
