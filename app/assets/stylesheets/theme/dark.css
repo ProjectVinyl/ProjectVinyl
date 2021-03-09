@@ -198,3 +198,7 @@ hr {
 .comment-content blockquote.even {
     background: rgba(0, 0, 0, 0.5);
 }
+
+#search_small::placeholder {
+  opacity: 1;
+}
