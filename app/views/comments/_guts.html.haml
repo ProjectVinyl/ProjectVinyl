@@ -17,7 +17,7 @@
 				\—
 				%a.bubble-link{href: comment.comment_thread.link}= comment.comment_thread.title
 	.artist-bio.bio
-		%a{class: !comment.user.dummy? && "user-link", "data-id": comment.user_id, href: comment.user.link}
+		%a{class: !comment.anonymous? && "user-link", "data-id": comment.user_id, href: comment.user.link}
 			= render 'users/avatar/medium', user: comment.user
 .content{style: indirect && comment.comment_thread.owner_type == 'Video' && "margin-left:200px", "data-id": comment.id, "data-o-id": comment.get_open_id, "data-comment": comment.bbc_content}
 	.comment-actions
@@ -54,10 +54,10 @@
 			%a.report-comment(title="Report" href="#{new_admin_report_path comment.reportable_hash}" data-id="#{comment.get_open_id}" data-title="Report Comment")= fa :warning
 		
 	.name{class: comment.user.banned? && "banned"}
-		- if comment.user.dummy?
+		- if comment.anonymous?
 			%b= comment.user.username
 		- else
-			%a{class: !comment.user.dummy? && "user-link", "data-id": comment.user_id, href: comment.user.link}
+			%a{class: !comment.anonymous? && "user-link", "data-id": comment.user_id, href: comment.user.link}
 				= comment.user.username
 		= render 'forum/badges/badges', user: comment.user
 		

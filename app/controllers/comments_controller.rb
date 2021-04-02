@@ -11,8 +11,10 @@ class CommentsController < Comments::BaseCommentsController
     
     comment = @thread.comments.create(
       user_id: anonymous_user_id,
-      o_comment_thread_id: @thread.id
+      o_comment_thread_id: @thread.id,
+      anonymous_id: params[:anonymous] == '1' ? UserAnon.anon_id(session) : 0
     )
+
     @thread.total_comments = @thread.comments.count
     @thread.save
     comment.update_comment(params[:comment])

@@ -1,5 +1,7 @@
 /*
  *= require ./buttons
+ *= require ./actions
+ *= require ./split_buttons
  *= require ./colours
  *= require ./bubbles
  *= require ./toggles

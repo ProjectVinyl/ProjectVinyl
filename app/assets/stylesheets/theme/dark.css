@@ -110,8 +110,10 @@ button, .button, input[type="submit"], .tag, .foobar {
   --controls-foreground: #9b9b9b;
 }
 
+.comment .name,
 .toolbar {
-  border-bottom: solid 1px #313030;
+  --toolbar-border-color: #313030;
+  --divider-color: var(--toolbar-border-color);
 }
 .popper .pop-out {
   background: #111;

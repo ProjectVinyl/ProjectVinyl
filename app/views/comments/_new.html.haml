@@ -25,9 +25,17 @@
 					= recaptcha_tags
 					%hr/
 				.actions
-					%button.green.post-submitter.disable(type="button" data-thread-id="#{@thread.id}" data-order="#{@order}" data-url="#{comments_path}")>
-						%span Post Comment
-						%i.posting-spinner.fa.fw.fa-spinner.fa-spin
+					.button.green.split-button.popper
+						%button.post-submitter.disable(type="button" data-thread-id="#{@thread.id}" data-order="#{@order}" data-url="#{comments_path}" data-anonymous="0")>
+							%span Post Comment
+							%i.posting-spinner.fa.fw.fa-spinner.fa-spin
+						.divider
+						%ul.pop-out
+							%li.action.post-submitter.disable(data-thread-id="#{@thread.id}" data-order="#{@order}" data-url="#{comments_path}" data-anonymous="1")>
+								%span.icon= fa :blind
+								%span.label Post Anonymously
+						.split-action.pop-out-toggle
+							= fa :chevron_down
 					.button.blue.state-toggle.button-fw(type="button" data-state="editing" data-parent=".previewable")>
 						%span.on Preview
 						%span.off Edit

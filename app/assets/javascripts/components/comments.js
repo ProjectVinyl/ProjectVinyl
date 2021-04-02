@@ -18,6 +18,7 @@ function postComment(sender) {
   const form = makeForm(sender.dataset.url, 'POST');
   form.appendChild(makeInput('[thread_id]', sender.dataset.threadId));
   form.appendChild(makeInput('order', sender.dataset.order));
+  form.appendChild(makeInput('anonymous', sender.dataset.anonymous));
   form.appendChild(makeInput('comment', input.value));
 
   const captcha = content.querySelector('textarea.g-recaptcha-response');
@@ -154,7 +155,7 @@ function revealSpoiler(target) {
 }
 
 const targets = {
-  'button.post-submitter': postComment,
+  '.post-submitter': postComment,
   '.comment .mention, .comment .comment-content a[data-link="2"]': findComment,
   '.comment .remove-comment': removeComment,
   '.reply-comment': replyTo,

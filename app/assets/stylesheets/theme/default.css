@@ -53,6 +53,8 @@ html, body {
   --header-overlay-element-fill: var(--input-shadow);
   --header-overlay-element-focus-fill: rgb(250,250,250);
 
+  --divider-color: rgba(0,0,255,0.1);
+
   --modal-footer-background: #efefef;
   
   --bubble-background-hover: #e0e0e0;

@@ -8,7 +8,7 @@
 				= precede '#' do
 					= recent_comment_thumb.get_open_id
 			by 
-			- if recent_comment_thumb.user.dummy?
+			- if recent_comment_thumb.anonymous?
 				%b= recent_comment_thumb.user.username
 			- else
 				= render partial: 'users/link', locals: {user: recent_comment_thumb.user}

@@ -14,9 +14,12 @@ button, .button, input[type=submit], .tag, .foobar {
   --button-foreground-active: #222;
   --button-foreground-selected: var(--button-foreground-active);
   
+  --button-vertical-padding: 5px;
+  --button-horizontal-padding: 15px;
+  
   display: inline-block;
   background: var(--button-background);
-  padding: 5px 15px;
+  padding: var(--button-vertical-padding) var(--button-horizontal-padding);
   border: solid 1px var(--button-border-color);
   border-bottom-color: var(--button-bottom-color);
   border-top-color: var(--button-top-color);
@@ -81,11 +84,6 @@ button.disable, .button.disable, button.working, .button.working {
   text-align: center;
 }
 
-.split-button {
-  display: inline-block;
-  vertical-align: top;
-}
-
 .waiting .refresh, .button.working {
 	opacity: 1;
 }
@@ -93,58 +91,6 @@ button.disable, .button.disable, button.working, .button.working {
 .button.working .progress-throbber {
 	-webkit-animation: fa-spin 2s infinite linear;
 	animation: fa-spin 2s infinite linear;
-}
-
-
-.split-button {
-  display: flex;
-}
-.split-button > .action {
-  display: block;
-  line-height: inherit;
-  padding-bottom: 6px;
-}
-.split-button .split-icon {
-  border-radius: 2px 0 0 2px;
-  border-right: none !important;
-}
-.split-action {
-  border-radius: 0 2px 2px 0;
-  padding-left: 6px;
-}
-
-.actions {
-	line-height: 19px;
-  --divider-color: rgba(0,0,255,0.1);
-}
-span.actions, div.actions {
-  display: flex;
-}
-
-.action[disabled] {
-    opacity: 0.3;
-    pointer-events: none;
-}
-
-.actions > .button,
-.actions > button,
-.actions > .split-button {
-  margin-right: 4px;
-  margin-top: 4px;
-  white-space: nowrap;
-}
-
-.actions > .button:last-child, .actions > button:last-child, .actions > .split-button:last-child {
-  margin-right: 0px;
-}
-
-.actions .divider {
-  height: 30px;
-  border-left: 1px solid var(--divider-color);
-  margin: 0 10px;
-}
-.actions .spacer {
-  flex-grow: 1;
 }
 
 @media(max-width:970px) {

@@ -1,0 +1,35 @@
+.actions {
+	line-height: 19px;
+}
+span.actions, div.actions {
+  display: flex;
+}
+
+.action[disabled] {
+    opacity: 0.3;
+    pointer-events: none;
+}
+
+.actions > .button,
+.actions > button,
+.actions > .split-button {
+  margin-right: 4px;
+  margin-top: 4px;
+  white-space: nowrap;
+}
+
+.actions > .button:last-child,
+.actions > button:last-child,
+.actions > .split-button:last-child {
+  margin-right: 0px;
+}
+
+.actions .divider {
+  max-height: 30px;
+  height: 100%;
+  border-left: 1px solid var(--divider-color);
+  margin: 0 10px;
+}
+.actions .spacer {
+  flex-grow: 1;
+}
