@@ -1,26 +1,26 @@
 .tag-artist {
   --button-background: #f2fdab !important;
-  --button-border-color: #82ad2b !important;
+  --button-border-color: var(--button-foreground) !important;
   --button-foreground: #82ad2b !important;
 }
 .tag-genre {
   --button-background: #a2a6d4 !important;
-  --button-border-color: #363b74 !important;
+  --button-border-color: var(--button-foreground) !important;
   --button-foreground: #363b74 !important;
 }
 .tag-oc {
   --button-background: #b1cee2 !important;
-  --button-border-color: #4c90bd !important;
+  --button-border-color: var(--button-foreground) !important;
   --button-foreground: #4c90bd !important;
 }
 .tag-spoiler {
   --button-background: #f8d2c0 !important;
-  --button-border-color: #e97136 !important;
+  --button-border-color: var(--button-foreground) !important;
   --button-foreground: #e97136 !important;
 }
 .tag-character {
   --button-background: #e6eeef !important;
-  --button-border-color: #46a0b4 !important;
+  --button-border-color: var(--button-foreground) !important;
   --button-foreground: #46a0b4 !important;
 }
 

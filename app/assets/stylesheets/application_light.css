@@ -5,5 +5,4 @@
  *= require ./layout/all
  *= require ./ui/all
  *= require ./compat/all
- * require ./theme/dark
  */

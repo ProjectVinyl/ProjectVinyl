@@ -1,3 +1,6 @@
+/*
+ *= require ./dark_tag_colors
+ */
 html, body {
   color: #c4c4c4;
 
@@ -92,11 +95,10 @@ label.focus .content {
   background: rgb(30, 30, 30);
 }
 button, .button, input[type="submit"], .tag, .foobar {
-  --button-background: #0f0f0f;
-  --button-background-hover: #1c1c1c;
+  --button-background: #3b4142;
+  --button-background-hover: #4f4c4c;
   --button-background-selected: #242424;
-  --button-background-active: #191919;
-  --button-shine-color: transparent;
+  --button-background-active: #3c3939;
   --button-border-color: #282828;
   --button-bottom-color: #3c3b3b;
   --button-top-color: #1a1919;
@@ -104,6 +106,18 @@ button, .button, input[type="submit"], .tag, .foobar {
   --button-foreground-hover: #eee;
   --button-foreground-active: #ccc;
   --button-shadow-color: #313131;
+}
+.actions .star.starred, button.yellow, .button.yellow, input.yellow[type="submit"] {
+  --button-border-color: #8c8c15;
+  --button-bottom-color: #8c8c15;
+  --button-top-color: #313106;
+  --button-shadow-color: #c7c739;
+  --button-background: #6a6a1e;
+  --button-background-hover: #848426;
+  --button-background-active: #575718;
+}
+.toolbar .button {
+  --button-shine-color: transparent;
 }
 
 .floating-player .playback-controls {

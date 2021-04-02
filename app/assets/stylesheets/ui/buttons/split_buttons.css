@@ -1,5 +1,6 @@
 .split-button {
   display: flex;
+  align-items: center;
 }
 
 .split-button > .action {
