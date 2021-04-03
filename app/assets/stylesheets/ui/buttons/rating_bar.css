@@ -1,0 +1,46 @@
+.rating-bar {
+  --bar-padding: 0;
+  --bar-fill-color: #00ff00;
+  --bar-negative-fill-color: #ff0000;
+  --bar-percentage: 0.5;
+  --bar-height: 11px;
+  --bar-width: 60px;
+  
+  display: flex;
+  flex-grow: 1;
+  height: var(--bar-height);
+  background: var(--bar-negative-fill-color);
+  position: relative;
+  width: var(--bar-width);
+  overflow: hidden;
+  border-radius: 4px;
+}
+.rating-bar[data-total-votes="0"] {
+  --bar-negative-fill-color: #0f0f0f;
+}
+
+.rating-bar::before {
+  content: '';
+  position: absolute;
+  top: var(--bar-padding);
+  bottom: var(--bar-padding);
+  left: var(--bar-padding);
+  width: calc(100% * var(--bar-percentage));
+  transition: width 0.5s ease;
+  background: var(--bar-fill-color);
+  border-right: solid 1px var(--button-border-color, transparent);
+}
+.rating-bar::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  box-shadow: inset 0 var(--bar-height) calc(var(--bar-height) / 2) calc(var(--bar-height) / -3) #fff;
+  opacity: 0.3;
+}
+
+.split-button .rating-bar {
+  margin: 0 15px;
+}

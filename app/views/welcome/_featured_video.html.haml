@@ -18,19 +18,22 @@
 				views
 		.description.post-content.content.fade-away= emotify @video.description
 	.scoring.actions
-		%span.button.action.green.like{class: @featured.upvoted? && "liked",
-																	title: "Likes", data: {count: @featured.upvotes,
-																												action: video_action_path(@featured, id: :like),
-																												id: @featured.id}}<>
-			%b.count= safe_to_display @featured.upvotes, 9999
-			= fw :thumbs_up
-		%span.button.score(title="Score")<>
-			%b= safe_to_display  @featured.score, 9999
-		%span.button.action.red.dislike{class: @featured.downvoted? && "liked",
-																		title: "Dislikes", data: {count: @featured.downvotes,
-																															action: "dislike", id: @featured.id}}<>
-			%b.count= safe_to_display  @featured.downvotes, 9999
-			= fw :thumbs_down
-		%a.button.blue.comments{href: @featured.comment_thread.link, title: "Comments"}<>
-			%b= safe_to_display  @featured.comment_thread.total_comments, 9999
-			= fw :comments
+		.split-button.button.like-dislike
+			%span.button.action.split-icon.like{class: @featured.upvoted? && "liked",
+																		title: "Likes", data: {count: @featured.upvotes,
+																													action: video_action_path(@featured, id: :like),
+																													id: @featured.id}}<>
+				%b.count= safe_to_display @featured.upvotes, 9999
+				= fw :thumbs_up
+			.rating-bar(style="--bar-percentage:#{@video.rating_percentage}"
+								title="#{@video.rating_percentage * 100}%"
+								data-total-votes="#{@video.total_votes}")
+			%span.button.action.split-icon.dislike{class: @featured.downvoted? && "liked",
+																			title: "Dislikes", data: {count: @featured.downvotes,
+																																action: video_action_path(@featured, id: :dislike),
+																																id: @featured.id}}<>
+				%b.count= safe_to_display  @featured.downvotes, 9999
+				= fw :thumbs_down
+			%a.button.blue.split-icon.comments{href: @featured.comment_thread.link, title: "Comments"}<>
+				%b= safe_to_display  @featured.comment_thread.total_comments, 9999
+				= fw :comments

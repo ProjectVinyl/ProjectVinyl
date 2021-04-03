@@ -8,36 +8,37 @@
   line-height: inherit;
   padding-bottom: 6px;
 }
-.split-button .split-icon {
-  border-radius: 2px 0 0 2px;
-  border-right: none !important;
-}
+
 .split-action {
   border-radius: 0 2px 2px 0;
   padding-left: 6px;
+}
+.split-button.button > button,
+.split-button.button > .button {
+  border-radius: 0;
+  border-width: 0px;
+  border-right-width: 1px;
 }
 
 .split-button.button {
   padding: 0;
 }
-.split-button.button > * {
+.split-button.button > *:not(.split-icon) {
   padding: var(--button-vertical-padding) 0;
 }
 .split-button.button > *:first-child {
   padding-left: var(--button-horizontal-padding);
+  
 }
 .split-button.button > *:last-child {
   padding-right: var(--button-horizontal-padding);
+  border-right-width: 0;
+}
+.split-button.button > *:not(button, .button, .pop-out) + button,
+.split-button.button > *:not(button, .button, .pop-out) + .button {
+  border-left-width: 1px;
 }
 
-.split-button.button > button,
-.split-button.button > .button {
-  border: none !important;;
-  background: none !important;;
-  margin: 0;
-  color: inherit !important;
-  text-shadow: inherit !important;
-}
 .split-button.button > .pop-out {
   text-shadow: none;
   color: #c4c4c4 !important;

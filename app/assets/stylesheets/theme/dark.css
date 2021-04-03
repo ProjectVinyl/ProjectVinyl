@@ -107,14 +107,14 @@ button, .button, input[type="submit"], .tag, .foobar {
   --button-foreground-active: #ccc;
   --button-shadow-color: #313131;
 }
-.actions .star.starred, button.yellow, .button.yellow, input.yellow[type="submit"] {
+.actions .star.liked, button.yellow, .button.yellow, input.yellow[type="submit"] {
   --button-border-color: #8c8c15;
   --button-bottom-color: #8c8c15;
   --button-top-color: #313106;
   --button-shadow-color: #c7c739;
-  --button-background: #6a6a1e;
-  --button-background-hover: #848426;
-  --button-background-active: #575718;
+  --button-background: #9f9f05;
+  --button-background-hover: #b3b306;
+  --button-background-active: #a8a804;
 }
 .toolbar .button {
   --button-shine-color: transparent;

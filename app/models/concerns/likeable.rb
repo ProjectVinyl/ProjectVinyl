@@ -16,6 +16,9 @@ module Likeable
 
   def star(user)
     user.stars.toggle(self)
+    self.favourites = self.favouriters.count
+    save
+    self.favourites
   end
 
   def liked?

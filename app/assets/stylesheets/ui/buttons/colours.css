@@ -1,11 +1,10 @@
 .actions .dislike.liked, button.red, .button.red, input[type=submit].red,
 .actions .like.liked, button.green, .button.green, input[type=submit].green,
-.actions .star.starred, button.yellow, .button.yellow, input.yellow[type="submit"],
+.actions .star.liked, button.yellow, .button.yellow, input.yellow[type="submit"],
 button.blue, .button.blue, input.blue[type="submit"] {
   --button-foreground: #fff;
   --button-foreground-hover: var(--button-foreground);
   --button-foreground-active: var(--button-foreground);
-  --button-shine-color: rgba(0,0,0,0.2);
 }
 
 
@@ -41,7 +40,7 @@ button.blue, .button.blue, input.blue[type="submit"] {
   --button-background-active: #2d85c3;
 }
 
-.actions .star.starred,
+.actions .star.liked,
 button.yellow, .button.yellow, input.yellow[type="submit"] {
   --button-border-color: #c7c739;
   --button-bottom-color: #b7b736;

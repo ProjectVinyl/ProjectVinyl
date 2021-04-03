@@ -15,6 +15,7 @@ class Video < ApplicationRecord
 
   has_many :album_items, dependent: :destroy
   has_many :albums, through: :album_items
+  has_many :favouriters, through: :albums, class_name: 'User', source: :users, foreign_key: "star_id"
   has_many :video_genres, dependent: :destroy
   has_many :video_chapters, dependent: :destroy
   has_many :tags, through: :video_genres

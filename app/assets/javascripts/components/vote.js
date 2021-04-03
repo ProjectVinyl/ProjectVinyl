@@ -1,5 +1,6 @@
 import { addDelegatedEvent } from '../jslim/events';
 import { ajax } from '../utils/ajax';
+import { formatNumber, MAX_DISPLAYED_VALUE } from '../utils/numbers';
 
 function count(me, offset, save) {
   me.classList.toggle('liked', offset > 0);
@@ -14,14 +15,26 @@ function count(me, offset, save) {
 
   const updateUI = state => {
     me.dataset.count = state.count;
-    count.classList.toggle('hidden', state.count < 1);
-    count.innerText = state.count;
+    count.innerText = formatNumber(state.count, MAX_DISPLAYED_VALUE);
 
     const score = me.parentNode.querySelector('.score');
+
     if (score) {
       const likes = parseInt(me.parentNode.querySelector('.like').dataset.count);
       const dislikes = parseInt(me.parentNode.querySelector('.dislike').dataset.count);
-      score.innerHTML = `<b>${likes - dislikes}</b>`;
+      score.innerHTML = `<b>${formatNumber(likes - dislikes, MAX_DISPLAYED_VALUE)}</b>`;
+    }
+    
+    const bar = me.parentNode.querySelector('.rating-bar');
+    if (bar) {
+      const likes = parseInt(me.parentNode.querySelector('.like').dataset.count);
+      const dislikes = parseInt(me.parentNode.querySelector('.dislike').dataset.count);
+      const total = likes + dislikes;
+      const percentage = total <= 0 ? 0 : likes / total;
+      
+      bar.style.setProperty('--bar-percentage', percentage);
+      bar.dataset.totalVotes = total;
+      bar.title = `${formatNumber(percentage * 100, MAX_DISPLAYED_VALUE)}%`;
     }
   };
   
@@ -34,7 +47,7 @@ function save(sender, data) {
   return ajax.put(sender.dataset.action, data);
 }
 
-addDelegatedEvent(document, 'click', '.action.like, .action.dislike', (e, target) => {
+addDelegatedEvent(document, 'click', '.action.like, .action.dislike, .action.star', (e, target) => {
   if (e.button) {
     return;
   }
@@ -50,12 +63,4 @@ addDelegatedEvent(document, 'click', '.action.like, .action.dislike', (e, target
   save(target, {
     incr: offset
   }).json(count(target, offset));
-});
-
-addDelegatedEvent(document, 'click', '.action.star', (e, target) => {
-  if (e.button) return;
-  target.classList.toggle('starred');
-  save(target).json(json => {
-    target.classList.toggle('starred', json.count);
-  });
 });

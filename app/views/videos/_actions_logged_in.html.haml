@@ -1,25 +1,29 @@
-%button.action.like(title="I like this"){class: @video.upvoted? && "liked",
-										data: {count: @video.upvotes,
-													action: video_action_path(@video, id: :like),
-													id: @video.id}}>
-	= fa :thumbs_up
-	%span
-		- if @video.upvotes && @video.upvotes > 0
-			%span.count= @video.upvotes
-%button.action.dislike(title="I dislike this"){class: @video.downvoted? && "liked",
-											data: {count: @video.downvotes,
-														action: video_action_path(@video, id: :dislike),
+.split-button.button.like-dislike
+	%button.action.split-icon.like(title="I like this"){class: @video.upvoted? && "liked",
+											data: {count: @video.upvotes,
+														action: video_action_path(@video, id: :like),
 														id: @video.id}}>
-	= fa :thumbs_down
-	%span
-		- if @video.downvotes && @video.downvotes > 0
-			%span.count= @video.downvotes
-.split-button.popper>
-	%button.action.star.split-icon(title="Add to Favourites"){class: @video.faved?(current_user) && "starred",
-																data: {action: video_action_path(@video, id: :star),
+		= fa :thumbs_up
+		%span
+			%span.count= safe_to_display  @video.upvotes, 9999
+	.rating-bar(style="--bar-percentage:#{@video.rating_percentage}"
+						title="#{@video.rating_percentage * 100}%"
+						data-total-votes="#{@video.total_votes}")
+	%button.action.split-icon.dislike(title="I dislike this"){class: @video.downvoted? && "liked",
+												data: {count: @video.downvotes,
+															action: video_action_path(@video, id: :dislike),
+															id: @video.id}}>
+		= fa :thumbs_down
+		%span
+			%span.count= safe_to_display  @video.downvotes, 9999
+.split-button.button.popper>
+	%button.action.star.split-icon(title="Add to Favourites"){class: @video.faved?(current_user) && "liked",
+																data: {count: @video.favourites,
+																			action: video_action_path(@video, id: :star),
 																			id: @video.id}}
 		= fa :star
-	%a.button.action.addto.split-action.pop-out-toggle Add To
+		%span
+			%span.count= safe_to_display @video.favourites, 9999
 	%ul.pop-out
 		%li.action(data-external-form="#{new_album_path initial: @video.id}" data-title="New Album")
 			%span.icon= fa :pencil
@@ -30,3 +34,4 @@
 					- if album.album_items.where(video_id: @video.id).first
 						= fa :check
 				%span.label= album.title
+	%a.button.action.split-icon.addto.pop-out-toggle Add To

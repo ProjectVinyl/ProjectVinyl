@@ -6,6 +6,7 @@ import { scrollTo } from '../../ui/scroll';
 import { ContextMenu } from '../../ui/contextmenu';
 import { clamp } from '../../utils/math';
 import { errorMessage, errorPresent } from '../../utils/videos';
+import { formatFuzzyBigNumber } from '../../utils/numbers';
 import { all } from '../../jslim/dom';
 import { ready, bindAll, bindEvent } from '../../jslim/events';
 import { cookies } from '../../utils/cookies';
@@ -251,7 +252,7 @@ Player.prototype = {
     if (this.dom.dataset.state !== 'paused') {
       ajax.put(`videos/${this.params.id}/play_count`).json(json => {
         all('.js-play-counter', counter => {
-          counter.innerText = `${json.count} views`;
+          counter.innerText = `${formatFuzzyBigNumber(json.count)} views`;
         });
       });
     }
