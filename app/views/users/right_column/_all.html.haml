@@ -1,0 +1,5 @@
+= render 'users/right_column/bio'
+- if @user.tag_id || @tags.length > 0
+	= render 'users/left_column/modules/tags'
+= render 'users/left_column/modules/stats'
+= render 'users/right_column/modules/comments'

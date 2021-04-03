@@ -1,0 +1,11 @@
+%section.page.full-width.artist-bio.center
+	= render 'users/avatar/large', user: @user
+	%h1.title
+		%br
+		%a.name{class: @user.banned? && "banned", href: @user.link}
+			= @user.username
+	%h1.title
+		= render 'forum/badges/badges', user: @user
+	%span.registered.right
+		Joined 
+		%span{title: @user.created_at.in_time_zone}= since @user.created_at

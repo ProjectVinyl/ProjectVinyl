@@ -1,5 +1,17 @@
 .actions
 	- if @modifications_allowed
+		%button.action(data-external-form="#{new_album_path}" data-title="New Album")>
+			= fa :plus
+			New Album
+		%a.button.action{href: new_video_path}
+			= fa :upload
+			Upload Video
+	- if user_signed_in?
+		%button(data-external-form="#{new_message_path user: @user}" data-title="New Message")>
+			= fa :envelope
+			Send Message
+	- if @modifications_allowed
+		.spacer
 		.split-button.popper>
 			%button.action.options.pop-out-toggle
 				= fa :gear
@@ -13,13 +25,3 @@
 				%li.action.js-banner-select(data-external-form="#{user_banner_path @user}" data-title="Select Banner Image")
 					%span.icon= fa :pencil
 					%span.label Change Banner Image
-		%button.action(data-external-form="#{new_album_path}" data-title="New Album")>
-			= fa :plus
-			New Album
-		%a.button.action{href: new_video_path}
-			= fa :upload
-			Upload Video
-	- if user_signed_in?
-		%button(data-external-form="#{new_message_path user: @user}" data-title="New Message")>
-			= fa :envelope
-			Send Message

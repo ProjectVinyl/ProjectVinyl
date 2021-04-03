@@ -12,7 +12,7 @@
 			%h1
 				= fw :comments
 				Comments
-			%table(style="table-layout: auto")= render partial: 'recent_comment_thumb', collection: @comments
+			= render partial: 'comments/recent_set', locals: {comments: @comments}
 	= render partial: 'sellout/aj_donate_plz_narrow'
 	%section.page.full-width.twitter
 		%h1

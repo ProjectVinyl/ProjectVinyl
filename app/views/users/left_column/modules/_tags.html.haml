@@ -1,5 +1,5 @@
-.details
-	%h2 Associated Tags
+%section.page.full-width
+	%h1.title Associated Tags
 	- if @user.tag_id
 		%ul.tags.artist-tags= render 'tags/thumb/normal', normal: @user.tag
 	- elsif @modifications_allowed

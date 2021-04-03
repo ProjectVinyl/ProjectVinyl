@@ -4,4 +4,5 @@
 			= render 'users/avatar/avatar_bg_pony', user: user
 		- else
 			%span{style: format_bg(user.avatar)}
-	.online-indicator{class: user.online? && "online"}
+	.online-indicator{class: user.online? && "online",
+					title: user.online? ? "Online" : "Last Seen: #{since user.last_active_at}" }

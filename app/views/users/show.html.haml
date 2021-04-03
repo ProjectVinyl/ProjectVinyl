@@ -1,14 +1,8 @@
 - title @user.username
 - if @user.banner_set
 	- banner("url('#{@user.banner}') center center/cover #000")
-= render 'users/bio'
-= render 'users/modules/stats'
-- if @art
-	= render 'users/modules/art'
-- if @modifications_allowed
-	= render 'users/modules/favourites'
-- if @watched
-	= render 'users/modules/recently_watched'
-= render 'users/modules/uploads'
-= render 'users/modules/albums'
-= render 'users/modules/comments'
+%hr
+= render 'users/actions'
+%hr
+.wrapper.column-left.left= render 'users/left_column/all'
+.wrapper.column-right.right= render 'users/right_column/all'
