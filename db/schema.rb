@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20210403132308) do
+ActiveRecord::Schema.define(version: 20210403194940) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -86,6 +86,7 @@ ActiveRecord::Schema.define(version: 20210403132308) do
     t.datetime "updated_at", null: false
     t.integer "total_hits", default: 0
     t.index ["token"], name: "index_api_tokens_on_token", unique: true
+    t.index ["user_id"], name: "index_api_tokens_on_user_id"
   end
 
   create_table "artist_genres", id: :serial, force: :cascade do |t|
@@ -118,6 +119,8 @@ ActiveRecord::Schema.define(version: 20210403132308) do
   create_table "comment_replies", id: :serial, force: :cascade do |t|
     t.integer "parent_id"
     t.integer "comment_id"
+    t.index ["comment_id"], name: "index_comment_replies_on_comment_id"
+    t.index ["parent_id"], name: "index_comment_replies_on_parent_id"
   end
 
   create_table "comment_threads", id: :serial, force: :cascade do |t|
@@ -139,6 +142,7 @@ ActiveRecord::Schema.define(version: 20210403132308) do
     t.integer "comment_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["comment_id"], name: "index_comment_votes_on_comment_id"
   end
 
   create_table "comments", id: :serial, force: :cascade do |t|
@@ -152,6 +156,7 @@ ActiveRecord::Schema.define(version: 20210403132308) do
     t.string "moderation_note"
     t.integer "likes_count"
     t.integer "anonymous_id"
+    t.index ["comment_thread_id"], name: "index_comments_on_comment_thread_id"
   end
 
   create_table "notification_receivers", force: :cascade do |t|
@@ -161,6 +166,7 @@ ActiveRecord::Schema.define(version: 20210403132308) do
     t.string "pauth"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_notification_receivers_on_user_id"
   end
 
   create_table "notifications", id: :serial, force: :cascade do |t|
@@ -172,6 +178,7 @@ ActiveRecord::Schema.define(version: 20210403132308) do
     t.boolean "unread", default: true
     t.integer "owner_id"
     t.text "owner_type"
+    t.index ["user_id"], name: "index_notifications_on_user_id"
   end
 
   create_table "pms", id: :serial, force: :cascade do |t|
@@ -182,6 +189,11 @@ ActiveRecord::Schema.define(version: 20210403132308) do
     t.integer "comment_thread_id"
     t.integer "new_comment_id"
     t.integer "user_id"
+    t.index ["receiver_id"], name: "index_pms_on_receiver_id"
+    t.index ["sender_id"], name: "index_pms_on_sender_id"
+    t.index ["state"], name: "index_pms_on_state"
+    t.index ["unread"], name: "index_pms_on_unread"
+    t.index ["user_id"], name: "index_pms_on_user_id"
   end
 
   create_table "reports", id: :serial, force: :cascade do |t|
@@ -204,6 +216,8 @@ ActiveRecord::Schema.define(version: 20210403132308) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "reportable_type"
+    t.index ["reportable_id", "reportable_type"], name: "index_reports_on_reportable_id_and_reportable_type"
+    t.index ["user_id"], name: "index_reports_on_user_id"
   end
 
   create_table "site_filters", force: :cascade do |t|
@@ -217,11 +231,13 @@ ActiveRecord::Schema.define(version: 20210403132308) do
     t.boolean "preferred"
     t.text "spoiler_tags"
     t.text "hide_tags"
+    t.index ["user_id"], name: "index_site_filters_on_user_id"
   end
 
   create_table "site_notices", force: :cascade do |t|
     t.boolean "active", default: true
     t.string "message"
+    t.index ["active"], name: "index_site_notices_on_active"
   end
 
   create_table "tag_histories", id: :serial, force: :cascade do |t|
@@ -232,11 +248,16 @@ ActiveRecord::Schema.define(version: 20210403132308) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "value"
+    t.index ["tag_id"], name: "index_tag_histories_on_tag_id"
+    t.index ["user_id"], name: "index_tag_histories_on_user_id"
+    t.index ["video_id"], name: "index_tag_histories_on_video_id"
   end
 
   create_table "tag_implications", id: :serial, force: :cascade do |t|
     t.integer "tag_id"
     t.integer "implied_id"
+    t.index ["implied_id"], name: "index_tag_implications_on_implied_id"
+    t.index ["tag_id"], name: "index_tag_implications_on_tag_id"
   end
 
   create_table "tag_subscriptions", id: :serial, force: :cascade do |t|
@@ -244,6 +265,8 @@ ActiveRecord::Schema.define(version: 20210403132308) do
     t.integer "tag_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["tag_id"], name: "index_tag_subscriptions_on_tag_id"
+    t.index ["user_id"], name: "index_tag_subscriptions_on_user_id"
   end
 
   create_table "tag_type_implications", id: :serial, force: :cascade do |t|
@@ -272,6 +295,8 @@ ActiveRecord::Schema.define(version: 20210403132308) do
     t.integer "comment_thread_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["comment_thread_id"], name: "index_thread_subscriptions_on_comment_thread_id"
+    t.index ["user_id"], name: "index_thread_subscriptions_on_user_id"
   end
 
   create_table "user_badges", id: :serial, force: :cascade do |t|
@@ -280,6 +305,8 @@ ActiveRecord::Schema.define(version: 20210403132308) do
     t.string "custom_title"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["badge_id"], name: "index_user_badges_on_badge_id"
+    t.index ["user_id"], name: "index_user_badges_on_user_id"
   end
 
   create_table "users", id: :serial, force: :cascade do |t|
@@ -328,13 +355,22 @@ ActiveRecord::Schema.define(version: 20210403132308) do
     t.integer "video_id"
     t.text "title"
     t.float "timestamp"
+    t.index ["video_id"], name: "index_video_chapters_on_video_id"
   end
 
   create_table "video_genres", id: :serial, force: :cascade do |t|
     t.integer "video_id"
     t.integer "tag_id"
     t.integer "o_tag_id"
+    t.index ["tag_id"], name: "index_video_genres_on_tag_id"
     t.index ["video_id"], name: "index_video_genres_on_video_id"
+  end
+
+  create_table "video_visits", force: :cascade do |t|
+    t.integer "video_id"
+    t.integer "ahoy_visit_id"
+    t.index ["ahoy_visit_id"], name: "index_video_visits_on_ahoy_visit_id"
+    t.index ["video_id"], name: "index_video_visits_on_video_id"
   end
 
   create_table "videos", id: :serial, force: :cascade do |t|
@@ -383,6 +419,8 @@ ActiveRecord::Schema.define(version: 20210403132308) do
     t.boolean "negative"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_votes_on_user_id"
+    t.index ["video_id"], name: "index_votes_on_video_id"
   end
 
   create_table "watch_histories", force: :cascade do |t|
@@ -391,6 +429,8 @@ ActiveRecord::Schema.define(version: 20210403132308) do
     t.integer "watch_time"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_watch_histories_on_user_id"
+    t.index ["video_id"], name: "index_watch_histories_on_video_id"
   end
 
 end
