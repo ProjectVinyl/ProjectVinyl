@@ -5,7 +5,7 @@
 			- if comment.liked?
 				= fa "thumbs-#{comment.disliked? ? 'down red' : 'up green'}"
 			= duration comment.duration
-		.rating-bar(data-video-id="#{recommendation.id}")
+		= render partial: 'videos/thumb/_watch_time_bar', locals: { id: comment.id }
 	- spoilered = current_filter.video_spoilered?(comment)
 	.title{title: !spoilered && comment.title}
 		= spoilered ? "[Spoilered]" : comment.title
