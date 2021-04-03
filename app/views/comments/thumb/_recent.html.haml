@@ -1,7 +1,10 @@
 ﻿%tr.activity
 	%td
 		%a.thumb.tiny.left{href: recent.comment_thread.owner.link}
-			.tile{style: format_bg(recent.comment_thread.owner.tiny_thumb(current_user, current_filter))}
+			- if recent.comment_thread.video?
+				.tile{style: format_bg(recent.comment_thread.owner.tiny_thumb(current_user, current_filter))}
+			- else
+				.tile{style: format_bg(recent.comment_thread.icon)}
 	%td
 		%div
 			%a{href: recent.link}
