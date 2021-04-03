@@ -4,6 +4,7 @@
 		.tile
 			%img(loading="lazy"){src: normal.tiny_thumb(current_user, current_filter)}
 			%span.tag-set.duration= duration normal.duration
+			= render partial: 'videos/thumb/_watch_time_bar', locals: { id: normal.id }
 		.details
 			.title{title: !spoilered && normal.title}
 				- if normal.privated?

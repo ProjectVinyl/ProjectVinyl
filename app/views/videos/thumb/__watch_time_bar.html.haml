@@ -1,0 +1,5 @@
+- time = (cookies["watch_time_#{id}"] || 0).to_f
+- if time >= 1
+	- time = 0
+	- cookies.delete("watch_time_#{id}")
+.rating-bar{class: time == 0 && 'hidden' }(style="--bar-percentage:#{time}")

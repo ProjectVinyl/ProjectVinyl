@@ -4,7 +4,7 @@
 import { bindAll } from '../../jslim/events';
 import { fullscreenPlayer } from './fullscreen';
 import { sendMessage } from './itc';
-
+import { setWatchTime } from './watch_time';
 
 // Have to do this the long way to avoid caching errors in firefox
 export function addSource(video, src, type) {
@@ -17,7 +17,7 @@ export function addSource(video, src, type) {
 export function createVideoElement(sender) {
   const video = sender.createMediaElement();
   sender.player.media.appendChild(video);
-  
+
   if (sender.params.time) {
     if (sender.isReady()) {
       video.currentTime = sender.params.time;
@@ -78,6 +78,7 @@ export function createVideoElement(sender) {
         suspendTimer = null;
       }
       sender.track(video.currentTime, sender.getDuration());
+      setWatchTime(sender.params.id, video.currentTime / sender.getDuration());
     },
     progress: () => {
       sender.controls.repaintProgress(video);

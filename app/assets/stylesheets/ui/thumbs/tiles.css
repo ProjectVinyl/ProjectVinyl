@@ -23,3 +23,20 @@
   width: 100%;
   height: 100%;
 }
+
+.tile .rating-bar {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 4px;
+  border-radius: 0;
+  --bar-fill-color: #ff0000;
+  --bar-negative-fill-color: transparent;
+  pointer-events: none;
+}
+.tile .rating-bar::before {
+  transition: none;
+}
+.tile .rating-bar::after {
+  display: none;
+}
