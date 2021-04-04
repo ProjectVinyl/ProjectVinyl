@@ -16,11 +16,11 @@
 					= user.username
 					= surround '(', ')' do
 						= user.id
-				%div{title: user.created_at.in_time_zone}= since user.created_at
-				%div{title: user.updated_at.in_time_zone}= since user.updated_at
+				%div{title: localise(user.created_at)}= since user.created_at
+				%div{title: localise(user.updated_at)}= since user.updated_at
 				- if user.last_active_at.nil?
 					%div null
 				- else
-					%div{title: user.last_active_at.in_time_zone}= since user.last_active_at
+					%div{title: localise(user.last_active_at)}= since user.last_active_at
 				%div= user.votes.count
 				%div= user.sign_in_count

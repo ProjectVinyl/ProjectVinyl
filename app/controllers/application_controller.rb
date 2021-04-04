@@ -5,7 +5,6 @@ class ApplicationController < ActionController::Base
 
   protect_from_forgery with: :exception
 
-  before_action :set_time_zone
   before_action :configure_permitted_parameters, if: :devise_controller?
 
   protected
@@ -25,9 +24,5 @@ class ApplicationController < ActionController::Base
 
   def anonymous_user_id
     user_signed_in? ? current_user.id : UserAnon.anon_id(session)
-  end
-
-  def set_time_zone
-    Time.zone = current_user.time_zone if current_user
   end
 end

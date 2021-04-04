@@ -1,14 +1,4 @@
 module FormatsHelper
-
-  def since(date)
-    "#{time_ago_in_words date} ago"
-  end
-  
-  def in_time_zone(date)
-    return date if date.nil?
-    date.in_time_zone
-  end
-  
   def fuzzy_big_number_with_delimiter(number)
     number_to_human(number, {
       precision: 2,

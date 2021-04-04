@@ -20,12 +20,12 @@
 		.tag-set.subheading
 			%span.uploaded
 				Uploaded
-				%span{title: @video.created_at.in_time_zone.to_time.strftime('%e %B %Y at %H:%m:%S')}
+				%span{title: localise(@video.created_at).to_time.strftime('%e %B %Y at %H:%m:%S')}
 					= since @video.created_at
 				\-
 				- if @video.premiered_at
 					Premiered
-					%span{title: @video.premiered_at.in_time_zone.to_time.strftime('%e %B %Y at %H:%m:%S')}
+					%span{title: localise(@video.premiered_at).to_time.strftime('%e %B %Y at %H:%m:%S')}
 						= since @video.premiered_at
 					\-
 				%a.user-link.link{href: @user.link, data: {id: @user.id}}= @user.username

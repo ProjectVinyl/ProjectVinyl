@@ -8,4 +8,4 @@
 		= render 'forum/badges/badges', user: @user
 	%span.registered.right
 		Joined 
-		%span{title: @user.created_at.in_time_zone}= since @user.created_at
+		%span{title: localise(@user.created_at)}= since @user.created_at

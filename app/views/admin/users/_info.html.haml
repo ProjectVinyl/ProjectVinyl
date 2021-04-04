@@ -13,10 +13,10 @@
 			%td.field= bool @user.confirmed_at
 		%tr
 			%td.label Created
-			%td.field= in_time_zone @user.created_at
+			%td.field= localise @user.created_at
 		%tr
 			%td.label Last Signed In
-			%td.field= in_time_zone @user.last_sign_in_at
+			%td.field= localise @user.last_sign_in_at
 		%tr
 			%td.label Preferences
 			%td.field= @user.preferences

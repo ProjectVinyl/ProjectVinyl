@@ -9,7 +9,7 @@
 			%a{href: thumb.link}= thumb.title
 		%div
 			posted 
-			%span{title: thumb.created_at.in_time_zone}= since thumb.created_at
+			%span{title: localise(thumb.created_at)}= since thumb.created_at
 			by 
 			%a.user-link{"data-id": thumb.user.id, href: thumb.user.link}= thumb.user.username
 	.replies

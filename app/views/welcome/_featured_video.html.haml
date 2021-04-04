@@ -10,7 +10,7 @@
 		.tag-set.subheading
 			%span.uploaded
 				Uploaded on
-				= @featured.created_at.in_time_zone.to_time.strftime('%e %B %Y')
+				= localise(@featured.created_at).to_time.strftime('%e %B %Y')
 				by
 				= render partial: 'users/link', locals: {user: @video.user}
 			%span.views.right.js-play-counter

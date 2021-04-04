@@ -17,7 +17,7 @@
 				%span.uploader.grow= uploader.username
 				= render partial: 'tags/list/with_overflow', locals: {tags: normal.artist_tags, cutoff: 2}
 			.detail
-				%span.timestamp.grow{title: normal.created_at.in_time_zone}= since normal.created_at
+				%span.timestamp.grow{title: localise(normal.created_at)}= since normal.created_at
 				%span
 					- if normal.liked?
 						= fa "thumbs-#{normal.disliked? ? 'down red' : 'up green'}"

@@ -13,8 +13,7 @@
 						= number_with_delimiter featured_album.album_items.length
 						videos
 				.title= featured_album.title
-				%span.date{title: featured_album.created_at.in_time_zone}
-					= since featured_album.created_at
+				%span.date{title: localise(featured_album.created_at)}= since featured_album.created_at
 				%span.date.right
 					= number_with_delimiter featured_album.album_items.length
 					videos

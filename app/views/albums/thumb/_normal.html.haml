@@ -4,7 +4,7 @@
 		.title
 			= render 'albums/visibility', album: normal
 			= normal.title
-		%span.date{title: normal.created_at.in_time_zone}= since normal.created_at
+		%span.date{title: localise(normal.created_at)}= since normal.created_at
 		%span.tag-set.right
 			=normal.album_items.count
 			Videos

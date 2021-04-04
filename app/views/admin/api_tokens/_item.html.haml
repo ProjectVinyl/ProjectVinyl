@@ -11,8 +11,8 @@
 			%a.user-link{class: item.user.banned? && 'banned', href: item.user.link}= item.user.username
 		%div= item.hits
 		%div= item.total_hits
-		%div= item.created_at.in_time_zone
-		%div= item.updated_at.in_time_zone
+		%div= localise item.created_at
+		%div= localise item.updated_at
 	.editing.row.row-spanned
 		.content.properties
 			%table
