@@ -14,6 +14,11 @@ module ProjectVinyl
         @sort_fields = []
       end
 
+      def fixed_order(ids)
+        @fixed_ordering_ids = ids
+        self
+      end
+
       def order(*params)
         __clear!
         @sort_fields = params
@@ -166,7 +171,7 @@ module ProjectVinyl
       end
 
       def __execute!(params)
-        QueryWrapper.new(self, @table, params)
+        QueryWrapper.new(self, @table, @fixed_ordering_ids, params)
       end
 
       def __execute

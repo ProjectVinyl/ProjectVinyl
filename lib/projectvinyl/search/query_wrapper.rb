@@ -3,9 +3,10 @@ require 'projectvinyl/search/exceptable'
 module ProjectVinyl
   module Search
     class QueryWrapper
-      def initialize(exceptable, table, params)
+      def initialize(exceptable, table, ids, params)
         @exceptable = exceptable
         @table = table
+        @ids = ids
         @search = table.search params
       rescue Faraday::ConnectionFailed => e
         excepted! e
@@ -46,9 +47,10 @@ module ProjectVinyl
 
       def records
         return @table.none if total == 0
-        @search.records
+        return @search.records if @ids.nil?
+        @search.records.order("position(videos.id::text in '#{@ids.join(',')}')")
       end
-      
+
       private
       def excepted!(e, v = nil)
         @exception = e

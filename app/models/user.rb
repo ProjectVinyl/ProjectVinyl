@@ -22,7 +22,9 @@ class User < ApplicationRecord
 
   belongs_to :site_filter
 
-  has_many :watch_histories, dependent: :destroy
+  has_many :watch_histories, -> { order(:updated_at, :created_at) }, dependent: :destroy
+  has_many :watched_videos, through: :watch_histories, source: :video, class_name: "Video"
+
   has_many :notification_receivers, dependent: :destroy
   has_many :notifications, dependent: :destroy
   has_many :thread_subscriptions, dependent: :destroy
@@ -144,13 +146,6 @@ class User < ApplicationRecord
       tag = Tag.create(tag_type_id: 1, name: user.username)
     end
     tag
-  end
-
-  def watched_videos
-    Video
-      .joins("INNER JOIN watch_histories ON videos.id = watch_histories.video_id AND watch_histories.user_id = #{id}")
-        .select('videos.*, watch_histories.updated_at AS watched_at')
-        .order('watched_at')
   end
 
   def albums
