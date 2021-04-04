@@ -9,43 +9,39 @@ module Statable
 	
 	included do
 		def self.stats(origin = nil)
-			records = select("COUNT(*) AS total, date(#{table_name}.created_at) as created_on").group("created_on").order("created_on").reverse_order
-			
-			if !origin.nil?
-				last = Time.zone.now.beginning_of_day + 1.day
-				records = records.where("created_at > ?", last - origin.days)
-			else
-				last = records.first.created_at.beginning_of_day + 1.day
-			end
-			
-			return records if !block_given?
-			return records if !records.length
-			
-			max = select("COUNT(*) AS total, date(#{table_name}.created_at) AS created_on").group("created_on").order('total').reverse_order.limit(1).first
-			max = max.nil? ? 9 : max.total.to_f
-			
-			index = -1
+			records = select("COUNT(*) AS total, date(#{table_name}.created_at) as created_on")
+        .group("created_on")
+        .order("created_on")
+        .reverse_order
+
+      last = Time.zone.now.end_of_day
+
+      records = records.where("created_at >= ?", last - origin.days) if !origin.nil?
+
+			return records if !block_given? || !records.length
+
+			max = select("COUNT(*) AS total, date(#{table_name}.created_at) AS created_on")
+        .group("created_on")
+        .order('total')
+        .reverse_order
+        .limit(1)
+      max = max.where("created_at >= ?", last - origin.days) if !origin.nil?
+      max = max.first
+
+      return records if max.nil?
+      
+      max = max.total.to_f
+
+      last = last.to_date.mjd
+      len = origin.nil? ? 1 : (1 / origin.to_f)
 			records.each do |current|
-				day = current.created_on
-				while day <= last - 1.day
-					last = last - 1.day
-					index = index + 1
-					yield({
-						total: last == day ? (current.total / max) * 100 : 0,
-						count: last == day ? current.total : 0,
-						created_at: last
-					}, index)
-				end
-			end
-			
-			return if origin.nil?
-			
-			while index < origin
-				last = last - 1.day
-				index = index + 1
-				yield({
-					total: 0, count: 0, created_at: last
-				}, index)
+        yield({
+          spacing: len,
+          x: last  - current.created_on.mjd,
+          y: current.total / max,
+          value: current.total,
+          created_at: current.created_on
+        })
 			end
 		end
 	end

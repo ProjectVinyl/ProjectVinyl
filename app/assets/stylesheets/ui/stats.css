@@ -17,21 +17,28 @@
   border-radius: 3px;
   box-shadow: inset 0 0 2px rgba(0, 0, 0, 0.2);
 }
-.stat {
+.stat-bar .stat {
+  --hor: 10px;
+  --x: 0;
+  --y: 0;
+
 	position: absolute;
 	transition: background 1s linear;
 	background: transparent;
 	bottom: 0;
-  width: 10px;
+  right: calc(var(--x) * var(--hor) * 100%);
+  width: calc(var(--hor) * 100%);
   height: 100%;
 }
-.stat:hover {
+.stat-bar .stat:hover {
 	transition: background 0.125s ease;
 	background: var(--highlight-color);
 }
-.stat .bar {
+.stat-bar .stat::before {
+  content: '';
 	position: absolute;
 	bottom: 0;
+  height: calc(var(--y) * 100%);
 	width: 100%;
 	background: var(--bar-fill);
 }

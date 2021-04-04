@@ -4,6 +4,8 @@
 		= surround '(', ')' do
 			= number_with_delimiter records.count
 	.stat-bar.checkerboard
-		- records.stats(240) do |item, index|
-			.stat{title: "#{item[:count]} - #{since item[:created_at]}", style: "right:#{index * 10}px"}
-				.bar{style: "height: #{item[:total]}%;"}
+		- records.stats(200) do |item|
+			.stat{title: "#{item[:value]} - #{since item[:created_at]}",
+					style: "--hor:#{item[:spacing]}; |
+						--x:#{item[:x]}; |
+						--y:#{item[:y]}"} |
