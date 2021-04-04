@@ -1,10 +1,11 @@
-%section.page.full-width.recent-uploads
-	%h1.title
-		Recently Watched
-		= surround '(', ')' do
-			= number_with_delimiter @watched_count
-	%ul.horizontal.video-list#uploads
-		- if @watched.count > 0
-			= render partial: 'videos/thumb/normal', collection: @watched.records
-		- else
-			%li.generic.virtual.keep
+- if @watched
+	%section.page.full-width.recent-uploads
+		%h1.title
+			Recently Watched
+			= surround '(', ')' do
+				= number_with_delimiter @watched_count
+		%ul.horizontal.video-list#uploads
+			- if @watched.count > 0
+				= render partial: 'videos/thumb/normal', collection: @watched.records
+			- else
+				%li.generic.virtual.keep

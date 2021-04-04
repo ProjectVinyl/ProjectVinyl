@@ -1,0 +1,49 @@
+
+.wrapper.auto-wrap,
+.page.column-left.auto-wrap {
+  position: relative;
+  display: inline;
+  background: none;
+  box-shadow: none;
+  margin: 0;
+}
+
+.column-left.auto-wrap > .page {
+  display: block;
+  overflow: hidden;
+  margin-bottom: 15px;
+  margin-top: 0;
+}
+.column-left.auto-wrap > .page.split {
+  z-index: 1;
+  position: relative;
+  margin-bottom: -10px;
+  box-shadow: -5px -5px 10px -5px rgba(0,0,0,0.3),
+              10px -4px 10px -10px rgba(0,0,0,0.3),
+              10px -10px 10px -10px rgba(0,0,0,0.01);
+}
+.column-left.auto-wrap > .page.split ul {
+  margin-bottom: 0;
+}
+.column-left.auto-wrap > .page.split + .page {
+  z-index: 0;
+  overflow: visible;
+  padding-top: 0;
+}
+.column-right.wrap-around-fixed {
+  z-index: 10 !important;
+  position: relative;
+  margin-left: 15px !important;
+
+  width: calc(100vw / 4 - 10px) !important;
+  margin-right: 0px;
+  margin-left: 0px;
+  min-width: 400px;
+  max-width: 500px;
+}
+
+@media(max-width: 790px) {
+  .column-right.wrap-around-fixed {
+    min-width: 100%;
+  }
+}

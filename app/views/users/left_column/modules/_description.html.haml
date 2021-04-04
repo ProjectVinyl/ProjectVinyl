@@ -1,4 +1,4 @@
-- if @user.description
+- if !@user.description.nil? && !@user.description.blank?
 	%section.page.full-width.artist-bio
 		%h1 Bio
 		.post

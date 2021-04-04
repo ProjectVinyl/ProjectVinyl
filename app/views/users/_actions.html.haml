@@ -1,21 +1,22 @@
 .actions
-	- if @modifications_allowed
-		%button.action(data-external-form="#{new_album_path}" data-title="New Album")>
-			= fa :plus
-			New Album
-		%a.button.action{href: new_video_path}
-			= fa :upload
-			Upload Video
 	- if user_signed_in?
-		%button(data-external-form="#{new_message_path user: @user}" data-title="New Message")>
+		%button.blue.mobile-friendly(data-external-form="#{new_message_path user: @user}" data-title="New Message")>
 			= fa :envelope
-			Send Message
+			%span Send Message
+	- if @modifications_allowed
+		.divider
+		%button.green.action(data-external-form="#{new_album_path}" data-title="New Album")>
+			= fa :plus
+			%span New Album
+		%a.button.green.action{href: new_video_path}
+			= fa :upload
+			%span Upload Video
 	- if @modifications_allowed
 		.spacer
 		.split-button.popper>
-			%button.action.options.pop-out-toggle
+			%button.action.options.pop-out-toggle.mobile-friendly
 				= fa :gear
-				Options
+				%span Options
 			%ul.pop-out
 				- if user_signed_in? && current_user.is_contributor?
 					%li.action

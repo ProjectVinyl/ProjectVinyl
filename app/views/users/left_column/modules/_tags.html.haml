@@ -1,10 +1,11 @@
-%section.page.full-width
-	%h1.title Associated Tags
-	- if @user.tag_id
-		%ul.tags.artist-tags= render 'tags/thumb/normal', normal: @user.tag
-	- elsif @modifications_allowed
-		%ul.tags.artist-tags
-			%li.tag(title="Are you a content creator? Link an artist tag to help others find you faster!")
-				%a(rel="nofollow"){href: edit_user_registration_path}
-					= fa :plus
-	%ul.tags>= render partial: 'tags/thumb/normal', collection: @tags.includes(:tag_type)
+- if @user.tag_id || @tags.length > 0
+	%section.page.full-width
+		%h1.title Associated Tags
+		- if @user.tag_id
+			%ul.tags.artist-tags= render 'tags/thumb/normal', normal: @user.tag
+		- elsif @modifications_allowed
+			%ul.tags.artist-tags
+				%li.tag(title="Are you a content creator? Link an artist tag to help others find you faster!")
+					%a(rel="nofollow"){href: edit_user_registration_path}
+						= fa :plus
+		%ul.tags>= render partial: 'tags/thumb/normal', collection: @tags.includes(:tag_type)

@@ -1,14 +1,15 @@
-%section.page.full-width.recent-favourites
-	%h1.title
-		Favourites
-		= surround '(', ')' do
-			= number_with_delimiter @favourites.count
-		%span.icon(title="Private - only you and moderators can see this.")= fa :lock
-		%a.right(href="/stars")
-			View All
-			= fa :chevron_right
-	%ul.horizontal.video-list#uploads
-		- if @favourites.count > 0
-			= render partial: 'videos/thumb/normal', collection: @favourites.records
-		- else
-			%li.generic.virtual.keep
+- if @modifications_allowed
+	%section.page.full-width.recent-favourites
+		%h1.title
+			Favourites
+			= surround '(', ')' do
+				= number_with_delimiter @favourites.count
+			%span.icon(title="Private - only you and moderators can see this.")= fa :lock
+			%a.right(href="/stars")
+				View All
+				= fa :chevron_right
+		%ul.horizontal.video-list#uploads
+			- if @favourites.count > 0
+				= render partial: 'videos/thumb/normal', collection: @favourites.records
+			- else
+				%li.generic.virtual.keep

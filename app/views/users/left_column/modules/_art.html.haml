@@ -1,14 +1,15 @@
-%section.page.full-width.recent-uploads
-	%h1.title
-		Songs by
-		= @user.username
-		= surround '(', ')' do
-			= number_with_delimiter @art.count
-		%a.right{href: @user.tag.link}
-			View All
-			= fa :chevron_right
-	%ul.horizontal.video-list#songs
-		- if @art.count > 0
-			= render partial: 'videos/thumb/normal', collection: @art.records
-		- else
-			%li.generic.virtual.keep
+- if @art
+	%section.page.full-width.recent-uploads
+		%h1.title
+			Songs by
+			= @user.username
+			= surround '(', ')' do
+				= number_with_delimiter @art.count
+			%a.right{href: @user.tag.link}
+				View All
+				= fa :chevron_right
+		%ul.horizontal.video-list#songs
+			- if @art.count > 0
+				= render partial: 'videos/thumb/normal', collection: @art.records
+			- else
+				%li.generic.virtual.keep

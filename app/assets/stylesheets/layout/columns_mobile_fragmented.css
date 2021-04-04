@@ -1,0 +1,14 @@
+
+@media(max-width: 790px) {
+  .column-mobile-fragmented, .column-right.column-mobile-shown {
+    display: block !important;
+    float: none;
+  }
+  .column-mobile-fragmented > section:not(.column-mobile-shown) {
+    display: none;
+  }
+  .wrapper .wrapper.right.column-mobile-fragmented.wrap-around-fixed,
+  .wrapper .wrapper.right.column-mobile-fragmented > section.column-mobile-shown {
+    margin-left: 0 !important;
+  }
+}

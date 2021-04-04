@@ -7,6 +7,8 @@
  *= require ./containers
  *= require ./wrappers
  *= require ./columns
+ *= require ./columns_auto_wrapped
+ *= require ./columns_mobile_fragmented
  *= require ./grid
  *= require ./post
  *= require ./tabset

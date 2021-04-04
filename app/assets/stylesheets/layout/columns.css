@@ -1,9 +1,15 @@
 .wrapper {
   --columns-gap: 20px;
+  --min-column-right-width: 280px;
+  --max-column-right-width: 450px;
   --right-column-width: calc(100% / 3);
 }
 .fixed-right-column {
-  --right-column-width: calc(min(450px, 33vw));
+  --right-column-width: calc(min(
+      var(--max-column-right-width),
+      max(var(--min-column-right-width),
+      33vw
+  )));
 }
 
 .wrapper .wrapper.column-left,
@@ -20,72 +26,14 @@
   margin-left: 0px;
 }
 
-.wrapper.auto-wrap,
-.page.column-left.auto-wrap {
-  position: relative;
-  display: inline;
-  background: none;
-  box-shadow: none;
-  margin: 0;
-}
-
-.column-left.auto-wrap > .page {
-  display: block;
-  overflow: hidden;
-  margin-bottom: 15px;
-  margin-top: 0;
-}
-.column-left.auto-wrap > .page.split {
-  z-index: 1;
-  position: relative;
-  margin-bottom: -10px;
-  box-shadow: -5px -5px 10px -5px rgba(0,0,0,0.3),
-              10px -4px 10px -10px rgba(0,0,0,0.3),
-              10px -10px 10px -10px rgba(0,0,0,0.01);
-}
-.column-left.auto-wrap > .page.split ul {
-  margin-bottom: 0;
-}
-.column-left.auto-wrap > .page.split + .page {
-  z-index: 0;
-  overflow: visible;
-  padding-top: 0;
-}
-.column-right.wrap-around-fixed {
-  z-index: 10 !important;
-  position: relative;
-  margin-left: 15px !important;
-
-  width: calc(100vw / 4 - 10px) !important;
-  margin-right: 0px;
-  margin-left: 0px;
-  min-width: 400px;
-  max-width: 500px;
-}
-
-.full-width {
-  width: 100%;
-}
-.half-width {
-  width: 100%;
-  max-width: 340px !important;
-}
-
-@media(max-width: 790px) {
-  .column-mobile-fragmented, .column-right.column-mobile-shown {
-    display: block !important;
+@media(max-width: 600px) {
+  .wrapper .wrapper.right,
+  .wrapper .wrapper.left {
+    width: 100% !important;
     float: none;
   }
-  .column-mobile-fragmented > section:not(.column-mobile-shown) {
-    display: none;
-  }
-  .wrapper .page.column-left,
-  .wrapper .wrapper.right.column-mobile-fragmented.wrap-around-fixed,
-  .wrapper .wrapper.right.column-mobile-fragmented > section.column-mobile-shown {
-    margin-left: 0 !important;
-  }
-
-  .column-right.wrap-around-fixed {
-    min-width: 100%;
+  .wrapper .wrapper.left > .page,
+  .wrapper .wrapper.right > .page {
+    margin: 10px 0 !important;
   }
 }

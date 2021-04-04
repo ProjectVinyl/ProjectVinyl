@@ -9,14 +9,10 @@
   padding: 50px 0;
 }
 
-@media(max-width: 600px) {
-  .wrapper .wrapper.right {
-    width: 100% !important;
-  }
-  .wrapper .wrapper.right {
-    float: none;
-  }
-  .wrapper .wrapper.right > .page {
-    margin: 10px !important;
-  }
+.full-width {
+  width: 100%;
+}
+.half-width {
+  width: 100%;
+  max-width: 340px !important;
 }
