@@ -1,0 +1,19 @@
+.stats
+	%h3
+		= title
+		= surround '(', ')' do
+			= number_with_delimiter records.count
+	.stat-bar.checkerboard(style="height:120px")
+		- graph = records.line_graph
+		- ending_x = graph[:final_value]
+		%svg(style="transform:scaleX(-1)" |
+					preserveAspectRatio="xMinYMax meet" |
+					width="100%" |
+					height="100%" |
+					viewBox="0 0 #{[ending_x, 100].max} 100" |
+					xmlns="http://www.w3.org/2000/svg") |
+			%path.accumulation{graph[:accumulation]}
+			%path.sequence{graph[:sequence]}
+			- graph[:values].each do |item|
+				%ellipse.node{item[:node]}
+					%title #{item[:value][:value]} - #{since item[:value][:created_at]}

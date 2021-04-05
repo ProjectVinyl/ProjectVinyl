@@ -45,3 +45,16 @@
 .stat:hover .bar {
 	background: var(--bar-fill-hover);
 }
+
+.stat-bar .accumulation {
+  stroke: none;
+  fill: rgba(0, 0, 120, 0.3);
+}
+.stat-bar .sequence {
+  fill: none;
+  stroke: #1c98d5;
+  stroke-width: 1;
+}
+.stat-bar .node {
+  fill:red;
+}
