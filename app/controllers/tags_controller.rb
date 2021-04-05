@@ -42,6 +42,13 @@ class TagsController < ApplicationController
     @implies = @tag.implications
     @implied = @tag.implicators
     @aliases = @tag.aliases
+
+    @crumb = {
+      stack: [
+        { link: tags_path, title: 'Tags' }
+      ],
+      title: @tag.name
+    }
   end
 
   def index

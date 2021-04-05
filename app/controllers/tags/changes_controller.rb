@@ -28,7 +28,7 @@ module Tags
 
       @crumb = {
         stack: [
-          { title: 'Tags' },
+          { link: tags_path, title: 'Tags' },
           { link: @tag.link, title: @tag.name }
         ],
         title: "Tag Changes"
