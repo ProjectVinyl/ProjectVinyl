@@ -15,7 +15,7 @@ class UsersController < Users::BaseUsersController
 
       @videos = current_filter.videos.where(hidden: false, duplicate_id: 0, user_id: @user.id)
       @videos = @videos.where(listing: 0) if !edits_allowed
-      @videos = @videos.order(:created_at).reverse_order.paginate(0, 8) {|t| t.for_thumbnails(current_user) }
+      @videos = @videos.order(:created_at).reverse_order.paginate(0, 9) {|t| t.for_thumbnails(current_user) }
 
       @watched = @user.watched_videos.unmerged.reverse_order
       @watched = @watched.listable if !edits_allowed
@@ -28,12 +28,12 @@ class UsersController < Users::BaseUsersController
 
       @favourites = current_filter.videos.where(hidden: false, duplicate_id: 0, albums: [ @user.stars.id ])
       @favourites = @favourites.where(listing: 0) if !edits_allowed
-      @favourites = @favourites.order(:updated_at, :created_at).reverse_order.paginate(0, 8){|t| t.for_thumbnails(current_user)}
+      @favourites = @favourites.order(:updated_at, :created_at).reverse_order.paginate(0, 9){|t| t.for_thumbnails(current_user)}
 
       @albums = @user.albums.where(hidden: false)
       @albums = @albums.where(listing: 0) if !edits_allowed
       @albums = Pagination.paginate(@albums.order(:created_at), 0, 9, true)
-      @comments = Pagination.paginate(@user.comments.visible.decorated.with_owner.with_likes(current_user).order(:created_at), 0, 3, true)
+      @comments = Pagination.paginate(@user.comments.visible.decorated.with_owner.with_likes(current_user).order(:created_at), 0, 4, true)
     end
   end
 
