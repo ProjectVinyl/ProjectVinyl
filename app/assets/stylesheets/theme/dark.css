@@ -60,6 +60,11 @@ html, body {
   color: #3491b0;
 }
 
+.playlist {
+  --playlist-controls-color: #aaa;
+  --playlist-shadow-color: #111;
+}
+
 .comment {
   --comment-background: #151515;
   --comment-border-color: #575757;
