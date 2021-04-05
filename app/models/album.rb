@@ -27,11 +27,13 @@ class Album < ApplicationRecord
     index = self.album_items.length
     self.album_items.create(video_id: video.id, index: index, o_video_id: video.id)
     self.repaint_ordering(self.album_items)
+    video.update_index
   end
 
   def toggle(video)
     if item = self.album_items.where(video_id: video.id).first
       item.destroy
+      video.update_index
       return false
     end
     self.add_item(video)
