@@ -1,0 +1,21 @@
+.tab-bar .actions {
+  border-radius: 5px;
+  border: solid 1px var(--block-border-color);
+  padding: 5px;
+  margin: -5px;
+  flex-direction: column;
+}
+.tab-bar .actions .button {
+  display: block;
+  margin: 0;
+  border-radius: 0;
+}
+.tab-bar .actions .button:first-child {
+  border-radius: 5px 5px 0 0;
+}
+.tab-bar .actions .button:last-child {
+  border-radius: 0 0 5px 5px;
+}
+.tab-bar .actions .button ~ .button {
+  border-top: none;
+}

@@ -1,0 +1,26 @@
+.tab-set > .tab-set.tabs .button {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  position: relative;
+  border-bottom: none;
+  border-radius: 0 ;
+  box-shadow: 0 0 10px -5px rgba(0,0,0,0.3);
+	transition: background 0.125s ease;
+  --tab-background: var(--tab-background-inactive);
+  --tab-transition: 0.5s ease;
+  background: var(--tab-background);
+}
+.tab-set > .tab-set.tabs .button:hover {
+  --tab-background: var(--tab-background-inactive-hover);
+}
+.tab-set > .tab-set.tabs .button.selected {
+  --tab-background: var(--tab-background-active);
+}
+.tab-set > .tab-set.tabs .button[data-disabled] {
+  opacity: 0.3;
+}
+
+.tab-set > .tab-set.tabs .button i.fa-undo {
+  display: none;
+}

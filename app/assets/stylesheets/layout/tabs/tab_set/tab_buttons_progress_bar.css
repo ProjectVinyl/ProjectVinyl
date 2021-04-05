@@ -1,0 +1,19 @@
+.tab-set > .tab-set.tabs .button span.progress {
+  display: none;
+  position: absolute;
+  height: 3px;
+  width: 100%;
+  max-width: 100%;
+  top: 0px;
+  left: 0;
+  border-radius: 0 0 100% 100%;
+}
+.tab-set > .tab-set.tabs .button.uploading span.progress {
+  display: block;
+}
+.tab-set > .tab-set.tabs .button.uploading i {
+  display: none;
+}
+.tab-set > .tab-set.tabs .button.error i.fa-undo {
+  display: initial;
+}

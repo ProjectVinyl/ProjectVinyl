@@ -1,0 +1,32 @@
+.tab-set > .tab-set.tabs .button.hidden {
+  display: block !important;
+  --tab-transition: 0.25s linear;
+}
+.tab-set > .tab-set.tabs .button.hidden > * {
+  opacity: 1;
+  transition: opacity var(--tab-transition);
+}
+
+.tab-set > .tab-set.tabs .button span {
+  display: inline-block;
+  overflow: hidden;
+  white-space: nowrap;
+  max-width: 200px;
+  max-height: 1.3em;
+  margin-right: 0px;
+  text-overflow: ellipsis;
+  max-width: 200px;
+  transition:
+    background 0.5s ease,
+    opacity var(--tab-transition),
+    max-width var(--tab-transition),
+    margin-right var(--tab-transition);
+}
+.tab-set > .tab-set.tabs .button.hidden span {
+  opacity: 0;
+  max-width: 0 !important;
+  margin-right: -20px;
+}
+.tab-set > .tab-set.tabs .button.hidden > * {
+  opacity: 0;
+}

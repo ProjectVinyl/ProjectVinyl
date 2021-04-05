@@ -1,0 +1,15 @@
+.tab-set > .tab-set.tabs {
+  display: flex;
+  gap: 10px;
+  overflow-y: hidden;
+  background: var(--tabbar-background);
+  padding: 15px 15px 0 15px;
+  margin: -20px -20px 20px -20px;
+}
+.page.properties.tab-set > .tab-set.tabs {
+  margin: 0 0 20px 0;
+}
+.tab-set .tab-set .tabs {
+  background: var(--content-background);
+  box-shadow: 0 -2px 2px var(--block-border-color) inset;
+}

@@ -3,6 +3,9 @@
 	line-height: 19px;
   gap: 4px;
 }
+tr.actions {
+  display: table-row;
+}
 
 .action[disabled] {
   opacity: 0.3;

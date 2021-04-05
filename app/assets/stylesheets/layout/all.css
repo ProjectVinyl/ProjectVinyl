@@ -11,9 +11,7 @@
  *= require ./columns_mobile_fragmented
  *= require ./grid
  *= require ./post
- *= require ./tabset
- *= require ./tabs
- *= require ./tabbar
+ *= require ./tabs/all
  *= require ./footer
  *= require ./tables/all
  *= require ./lists/all
