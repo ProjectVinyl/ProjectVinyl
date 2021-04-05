@@ -1,9 +1,36 @@
+%hr
 .actions
+	%a.button.action{href: tag_changes_path(@tag)}>
+		= fa :history
+		%span Tag Changes
+	.divider
+	- if can_modify_filter?
+		%button.action.toggle.blue(data-family="tag-flags" data-descriminator="hide" data-target="tags" data-id="#{@tag.id}" data-action="actions/hide")>
+			%span.icon
+				- if current_user.hides?(@tag.id)
+					= fa :check
+			%span.label Hide Tag
+		%button.action.toggle.blue(data-family="tag-flags" data-descriminator="spoiler" data-target="tags" data-id="#{@tag.id}" data-action="actions/spoiler")>
+			%span.icon
+				- if current_user.spoilers?(@tag.id)
+					= fa :check
+			%span.label Spoiler Tag
+	- else
+		%a.button.blue{href: filters_path}>
+			%span Filter Tag
+	- if user_signed_in?
+		%button.action.toggle.blue(data-family="tag-flags" data-descriminator="watch" data-target="tags" data-id="#{@tag.id}" data-action="actions/watch")>
+			%span.icon
+				- if current_user.watches?(@tag.id)
+					= fa :check
+			%span.label
+				Watch Tag
 	- if @modifications_allowed
+		.spacer
 		.split-button.popper>
-			%button.action.options.pop-out-toggle>
-				%i.fa.fa-gear
-				Options
+			%button.action.options.mobile-friendly.pop-out-toggle>
+				= fa :gear
+				%span Options
 			%ul.pop-out
 				%li.action
 					%a(href="/admin/tags/#{@tag.id}")
@@ -11,31 +38,4 @@
 							%i.fa.fa-gavel
 						%span.label
 							Admin
-		%a.button.action{href: tag_changes_path(@tag)}>
-			%span.icon= fa :history
-			%span.label
-				Tag Changes
-	- if can_modify_filter?
-		%button.action.toggle.blue(data-family="tag-flags" data-descriminator="hide" data-target="tags" data-id="#{@tag.id}" data-action="actions/hide")>
-			%span.icon
-				- if current_user.hides?(@tag.id)
-					= fa :check
-			%span.label
-				Hide Tag
-		%button.action.toggle.blue(data-family="tag-flags" data-descriminator="spoiler" data-target="tags" data-id="#{@tag.id}" data-action="actions/spoiler")>
-			%span.icon
-				- if current_user.spoilers?(@tag.id)
-					= fa :check
-			%span.label
-				Spoiler Tag
-	- else
-		%a.button.action.blue{href: filters_path}>
-			%span.icon
-			%span.label
-				Filter Tag
-	%button.action.toggle.blue(data-family="tag-flags" data-descriminator="watch" data-target="tags" data-id="#{@tag.id}" data-action="actions/watch")>
-		%span.icon
-			- if current_user.watches?(@tag.id)
-				= fa :check
-		%span.label
-			Watch Tag
+%hr
