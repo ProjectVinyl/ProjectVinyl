@@ -1,6 +1,6 @@
 - title @video.title
 .wrapper.column-right.right.fixed-column-right
-	- cache(@video, expires_in: 1.week) do
+	- cache("#{@video.cache_key}_stats", expires_in: 1.hour) do
 		= render 'videos/statistics/media_info'
 		= render 'videos/statistics/metadata'
 		= render 'videos/statistics/referrals'
@@ -8,7 +8,7 @@
 	%h1
 		= fa :line_chart
 		Statistics
-	- cache(@video, expires_in: 30.minutes) do
+	- cache("#{@video.cache_key}_bars", expires_in: 30.minutes) do
 		= render 'videos/statistics/stat_bar', records: @video.votes.up, title: 'Upvotes'
 		= render 'videos/statistics/stat_bar', records: @video.votes.down, title: 'Downvotes'
 		= render 'videos/statistics/stat_bar', records: @video.tag_histories, title: 'Tag Changes'
