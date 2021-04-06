@@ -136,22 +136,14 @@ button, .button, input[type="submit"], .tag, .foobar {
   --toolbar-border-color: #313030;
   --divider-color: var(--toolbar-border-color);
 }
-.popper .pop-out {
-  background: #111;
-  box-shadow: 0px 1px rgba(0, 0, 0, 0.3) inset;
-}
 
-.popper .pop-out,
-.meta-toolbar .action div {
-  border: 1px solid #464444;
-  border-bottom-color: #4a4949;
-  border-top-color: #4a4949;
-}
-.pop-out-shown::after {
-  border-bottom: 12px solid #111;
-}
-.popper .pop-out li:hover {
-  background: #000;
+.popper, .meta-toolbar {
+  --popper-background: var(--input-background);
+  --popper-border-color: #464444;
+  --popper-border-top-color: #4a4949;
+  --popper-border-bottom-color: #4a4949;
+  --popper-shadow-color: rgba(0, 0, 0, 0.3);
+  --popper-item-highlight: var(--block-hover-color);
 }
 
 .listing.compact .items .row > a,

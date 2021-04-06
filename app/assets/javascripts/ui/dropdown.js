@@ -11,7 +11,7 @@ addDelegatedEvent(document, 'click', '.popper .pop-out-toggle, .popper.pop-out-t
 
   const content = target.querySelector('.pop-out');
 
-  target.classList.remove('pop-left', 'pop-right', 'pop-down');
+  target.classList.remove('pop-left', 'pop-right', 'pop-center');
 
   requestAnimationFrame(() => {
     const left = offset(content).left;
@@ -27,7 +27,7 @@ addDelegatedEvent(document, 'click', '.popper .pop-out-toggle, .popper.pop-out-t
     if (hitRight || hitLeft) {
       target.classList.toggle('pop-left', hitRight && !fallRightWouldOutFlow);
       target.classList.toggle('pop-right', hitLeft && !fallLeftWouldOutFlow);
-      target.classList.toggle('pop-down', fallLeftWouldOutFlow && fallRightWouldOutFlow);
+      target.classList.toggle('pop-center', fallLeftWouldOutFlow && fallRightWouldOutFlow);
     }
   });
 });

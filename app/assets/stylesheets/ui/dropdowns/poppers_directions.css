@@ -1,0 +1,31 @@
+
+.pop-out-shown.invert .pop-out {
+  bottom: 100%;
+  top: auto;
+}
+.pop-out-shown.invert::before,
+.pop-out-shown.invert::after {
+  border-bottom: none;
+  top: -1px;
+}
+.pop-out-shown.invert::before {
+  border-top: 12px solid var(--popper-border-color);
+  margin-top: 1px;
+}
+.pop-out-shown.invert::after {
+  border-top: 12px solid var(--popper-background);
+  margin-bottom: 0;
+}
+
+.popper.pop-left .pop-out {
+  right: 0;
+  left: auto;
+}
+.popper.pop-right .pop-out {
+  left: 0;
+  right: auto;
+}
+.popper.pop-center .pop-out {
+  left: -100px;
+  right: auto;
+}

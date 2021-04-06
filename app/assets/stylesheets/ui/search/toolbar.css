@@ -1,14 +1,23 @@
 .meta-toolbar {
-  display: flex;
-  background: var(--input-background);
-  color: var(--input-foreground-color);
-  border: solid 1px var(--input-border);
-  border-radius: var(--block-radius);
+  --popper-background: var(--input-background);
+  --popper-border-color: var(--input-border);
+  --popper-border-top-color: var(--input-border);
+  --popper-border-bottom-color: var(--input-border);
+  --popper-shadow-color: #ffffff4d;
+  --popper-item-highlight: var(--block-hover-color);
   --toolbar-item-padding: 10px;
+
+  display: flex;
+  background: var(--popper-background);
+  color: var(--input-foreground-color);
+  border: solid 1px var(--popper-border-color);
+  border-radius: var(--block-radius);
 }
+
 .meta-toolbar .spacer {
   flex-grow: 1;
 }
+
 .meta-toolbar .action {
   position: relative;
   text-decoration: none;
@@ -24,11 +33,11 @@
   top: var(--toolbar-item-padding);
   bottom: var(--toolbar-item-padding);
   left: 0;
-  border-left: solid 1px var(--input-border);
+  border-left: solid 1px var(--popper-border-color);
 }
 .meta-toolbar .action:hover,
 .meta-toolbar .action:focus-within {
-  background: var(--block-hover-color);
+  background: var(--popper-item-highlight);
 }
 
 .meta-toolbar .action div {
@@ -38,18 +47,18 @@
   position: absolute;
   top: 100%;
   left: 0;
-  background: var(--input-background);
+  background: var(--popper-background);
   flex-direction: column;
   padding: 10px 0;
-  box-shadow: 0px 1px #ffffff4d inset;
-  border: 1px solid #d6d6d6;
-  border-bottom-color: #cacaca;
-  border-top-color: #e2e2e2;
+  box-shadow: 0px 1px var(--popper-shadow-color) inset;
+  border: solid 1px var(--popper-border-color);
+  border-top-color: var(--popper-border-top-color);
+  border-bottom-color: var(--popper-border-bottom-color);
   opacity: 0;
   pointer-events: none;
 }
 .meta-toolbar .action div .spacer {
-  border-top: solid 1px var(--input-border);
+  border-top: solid 1px var(--popper-border-top-color);
   margin: 3px;
   display: block;
 }

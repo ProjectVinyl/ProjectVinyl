@@ -7,8 +7,7 @@
  *= require ./slideouts
  *= require ./slideacross
  *= require ./paginator
- *= require ./dropdowns
- *= require ./poppers
+ *= require ./dropdowns/all
  *= require ./avatars
  *= require ./onlineindicators
  *= require ./stats
