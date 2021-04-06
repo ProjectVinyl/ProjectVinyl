@@ -1,13 +1,15 @@
-%section.page.full-width.listing.compact.collapse-padding
-	- if @album.ordering && @album.ordering > 0
-		%span.album-notice<
-			= fa "sort-amount-#{@album.ordering_direction}"
-			This playlist is automatically sorted by
-			= @album.ordering_text
-			\.
-	.items#items{class: @modifications_allowed && "reorderable", "data-target": albums_items_path}
-		%span.bump(data-index="-1")
-		= render partial: 'albums/items/item', collection: @items.records
-	.load-more
-	- if @items.pages > 0
-		%button(data-page="0" data-url="#{album_items_path @album}" data-target="items") Load More
+.wrapper.column-left.left.fixed-right-column
+	%section.page.full-width.listing.compact.collapse-padding
+		%h1 Videos
+		- if @album.ordering && @album.ordering > 0
+			%span.album-notice<
+				= fa "sort-amount-#{@album.ordering_direction}"
+				This playlist is automatically sorted by
+				= @album.ordering_text
+				\.
+		.items#items{class: @modifications_allowed && "reorderable", "data-target": albums_items_path}
+			%span.bump(data-index="-1")
+			= render partial: 'albums/items/item', collection: @items.records
+		.load-more
+		- if @items.pages > 0
+			%button(data-page="0" data-url="#{album_items_path @album}" data-target="items") Load More

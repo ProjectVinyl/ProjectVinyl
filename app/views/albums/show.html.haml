@@ -1,3 +1,16 @@
 - title @album.title
-%section.page.full-width.resize-holder= render 'albums/album'
+%h1.title.breadcrumb
+	%a{href: root_path} Home
+	= fa :chevron_right
+	%a{href: albums_path} Albums
+	= fa :chevron_right
+	- if @modifications_allowed
+		%span.editable.short.inline.title{data: {target: album_path(@album), member: :title}}
+			%span.content= @album.title
+			%span.edit= fa :pencil
+	- else
+		= @aldum.title
+= render 'albums/actions'
+%hr
+= render 'albums/description'
 = render 'albums/items/items'

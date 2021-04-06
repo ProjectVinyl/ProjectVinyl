@@ -1,0 +1,20 @@
+.wrapper.column-right.right.fixed-right-column
+	%section.page.full-width
+		%ul.horizontal.center
+			= render partial: 'albums/thumb/normal', locals: {normal: @album}
+		.post
+			.tile.stack.left= render 'albums/tile_stack', items: @items.records
+			- if @modifications_allowed
+				.content.description.editable{data: {target: album_path(@album), member: "description"}}
+					%span.content= emotify @album.description
+					%textarea.input.js-auto-resize(name="album_description_#{@album.id}" autocomplete="false")= @album.description
+					%span.edit= fa :pencil
+			- else
+				.content.description= emotify @album.description
+			%span.tag-set.underline
+				By
+				%a{href: @user.link}= @user.username
+				|
+				= number_with_delimiter @items.count
+				videos | last updated 
+				= since @album.updated_at
