@@ -1,0 +1,9 @@
+%section.page.properties.full-width
+	%h1
+		= fa :pie_chart
+		Referrals
+	%ul
+		- @video.video_visits.pie_data(request.domain).each do |a|
+			%li
+				= a.referring_domain
+				= a.total

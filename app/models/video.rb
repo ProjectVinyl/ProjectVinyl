@@ -22,7 +22,7 @@ class Video < ApplicationRecord
   has_many :artist_tags, ->{ where(tag_type_id: 1) }, through: :video_genres, source: :tag, class_name: 'Tag'
 
   has_many :video_visits, dependent: :destroy
-  has_many :visits, through: :video_visits
+  has_many :visits, through: :video_visits, source: :ahoy_visit
 
   has_many :votes, dependent: :destroy
   has_many :tag_histories, dependent: :destroy

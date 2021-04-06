@@ -1,6 +1,5 @@
 class Album < ApplicationRecord
-  include Unlistable
-  include Titled
+  include Unlistable, Titled, Statable
 
   belongs_to :user
   has_many :album_items

@@ -1,0 +1,20 @@
+%section.page.properties.full-width
+	%h1
+		= fa :bar_chart
+		Media Info
+	%table.group.active
+		%tr
+			%td.label File Size
+			%td.field= "%.2f MB" % @video.file_size
+		%tr
+			%td.label File Type
+			%td.field= @video.file
+		%tr
+			%td.label Mime Type
+			%td.field= @video.mime
+		%tr
+			%td.label Duration
+			%td.field= duration @video.duration
+		%tr
+			%td.label Dimensions
+			%td.field= @video.dimensions

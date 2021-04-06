@@ -24,6 +24,8 @@ class VideosController < Videos::BaseVideosController
       )
     end
 
+    @video.video_visits.create
+
     load_album
 
     @path_type = 'videos'

@@ -1,0 +1,31 @@
+%section.page.properties.full-width
+	%h1
+		= fa :tag
+		Metadata
+	%table.group.active
+		%tr
+			%td.label Number of Albums
+			%td.field= number_with_delimiter @video.albums.count
+		%tr
+			%td.label Number of Views
+			%td.field= number_with_delimiter @video.views
+		%tr
+			%td.label Number of Impressions
+			%td.field= number_with_delimiter @video.total_votes
+		%tr
+			%td.label Number of Likes
+			%td.field= number_with_delimiter @video.upvotes
+		%tr
+			%td.label Number of Dislikes
+			%td.field= number_with_delimiter @video.downvotes
+		%tr
+			%td.label Favourability
+			%td.field #{@video.rating_percentage * 100}%
+		%tr
+			%td.label Score
+			%td.field
+				= @video.wilson_lower_bound
+				%br
+				= number_with_delimiter @video.score
+				%br
+				= @video.wilson_upper_bound
