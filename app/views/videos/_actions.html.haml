@@ -27,6 +27,10 @@
 					%span.icon= fa :history
 					%span.label Tag Changes
 			%li.action
+				%a{href: video_statistics_path(@video)}
+					%span.icon= fa :bar_chart
+					%span.label Statistics
+			%li.action
 				%a.slider-toggle(data-target=".slideout.info")
 					%span.icon= fa :info
 					%span.label File Info
