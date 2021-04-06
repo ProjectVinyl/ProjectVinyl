@@ -17,4 +17,5 @@
  *= require ./lists/all
  *= require ./windows/all
  *= require ./dock/all
+ *= require ./sticky
  */
