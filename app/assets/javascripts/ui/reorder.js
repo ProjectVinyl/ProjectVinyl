@@ -7,14 +7,15 @@ function reorder(container, item) {
   ajax.patch(`${container.dataset.target}/${item.dataset.id}`, { index: item.dataset.index }).text(e => e);
 }
 
-function grab(container, item) {
+function grab(container, item, ev) {
   const originalIndex = parseInt(item.dataset.index);
   
   container.classList.add('ordering');
-  
+
   const floater = item.cloneNode(true);
   floater.classList.add('floater');
-  floater.style.top = `${offset(item).top}px`;
+  moveFloater(ev);
+
   each(item.children, (a, i) => {
     floater.children[i].style.width = `${a.clientWidth}px`;
   });
@@ -28,7 +29,7 @@ function grab(container, item) {
   }
   
   function moveFloater(e) {
-    floater.style.top = `${e.pageY - offset(container).top}px`;
+    floater.style.top = `${e.clientY - offset(container).top - (item.clientHeight / 2)}px`;
   }
   
   document.addEventListener('mousemove', moveFloater);
@@ -54,9 +55,9 @@ addDelegatedEvent(document, 'mousedown', '.reorderable .handle', (e, handle) => 
   document.addEventListener('mouseup', cancelAll);
   document.addEventListener('blur', cancelAll);
   
-  function grabber() {
+  function grabber(e) {
     cancelAll();
-    grab(handle.closest('.reorderable'), handle.parentNode);
+    grab(handle.closest('.reorderable'), handle.parentNode, e);
   }
   
   function cancelAll() {

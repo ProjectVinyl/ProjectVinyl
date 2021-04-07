@@ -3,6 +3,7 @@
  *= require ./latest
  *= require ./vertical
  *= require ./compact
+ *= require ./compact_reorderable
  *= require ./waiting
  *= require ./emptymsg
  *= require ./types/all
