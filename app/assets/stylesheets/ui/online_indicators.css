@@ -1,0 +1,55 @@
+.online-indicator {
+  --tint: #958b8b;
+  --indicator-inset: 15%;
+  --indicator-offset: 0%;
+  
+  display: inline-block;
+  position: absolute;
+  overflow: hidden;
+  width: 20px;
+  height: 20px;
+  border-radius: 100%;
+  background: var(--tint);
+  border: solid 3px var(--content-background);
+}
+.online-indicator.online {
+  --tint: #8fbb61;
+}
+.online-indicator.away {
+  --tint: #7ee313;
+  --indicator-inset: 0%;
+  --indicator-offset: 40%;
+}
+
+.online-indicator::before {
+  content: '';
+  position: absolute;
+  left: 40%;
+  background: var(--content-background);
+  left: calc(var(--indicator-offset) + var(--indicator-inset));
+  top: var(--indicator-inset);
+  width: calc(100% - var(--indicator-inset) * 2);
+  height: calc(100% - var(--indicator-inset) * 2);
+  border-radius: 100%;
+}
+
+.online-indicator.online::before {
+  display: none;
+}
+
+.avatar-wrapper .online-indicator {
+  bottom: 7%;
+  right: 7%;
+}
+
+.avatar-wrapper.large .online-indicator {
+  transform: scale(1.5);
+  bottom: 10%;
+  right: 10%;
+}
+
+.avatar-wrapper.medium .online-indicator {
+  transform: scale(0.8);
+  bottom: 0%;
+  right: 0%;
+}

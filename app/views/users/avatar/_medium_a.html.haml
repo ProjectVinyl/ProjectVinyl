@@ -5,5 +5,5 @@
 		- else
 			%span{style: format_bg(user.avatar)}
 	- last_seen = user.last_active_at.nil? ? 'Never' : since(user.last_active_at)
-	.online-indicator{class: user.online? && "online",
+	.online-indicator{class: user.online_status,
 					title: user.online? ? "Online" : "Last Seen: #{last_seen}" }

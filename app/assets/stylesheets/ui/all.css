@@ -9,7 +9,7 @@
  *= require ./paginator
  *= require ./dropdowns/all
  *= require ./avatars
- *= require ./onlineindicators
+ *= require ./online_indicators
  *= require ./stats
  *= require ./hovercard
  *= require ./featuredvideo
