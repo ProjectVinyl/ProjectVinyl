@@ -148,7 +148,7 @@ button, .button, input[type="submit"], .tag, .foobar {
 
 .listing.compact .items .row > a,
 .listing.compact .items .row > div {
-  color: #e3e1e1;
+  color: #cacaca;
 }
 .listing.compact .items.reorderable .handle {
   text-shadow: 0 0 3px #1a1a1a;
