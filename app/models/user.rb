@@ -14,6 +14,7 @@ class User < ApplicationRecord
 
   before_validation :init_name
   after_save :update_index, if: :saved_change_to_username?
+  after_create :seed_profile
 
   has_many :comments
   has_many :votes
@@ -30,6 +31,7 @@ class User < ApplicationRecord
   has_many :thread_subscriptions, dependent: :destroy
   has_many :site_filters, dependent: :destroy
   has_many :pms, dependent: :destroy
+  has_many :profile_modules, dependent: :destroy
 
   has_many :unread_notifications, ->{ where(unread: true) }, class_name: "Notification"
   has_many :unread_pms, ->{ where(state: 0, unread: true) }, class_name: "Pm"
@@ -208,6 +210,10 @@ class User < ApplicationRecord
   end
 
   private
+  def seed_profile
+    ProfileModule.seed(self)
+  end
+
   def default_name
     "Background Pony ##{id.to_s(32)}"
   end

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20210405174944) do
+ActiveRecord::Schema.define(version: 20210406220706) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -194,6 +194,16 @@ ActiveRecord::Schema.define(version: 20210405174944) do
     t.index ["state"], name: "index_pms_on_state"
     t.index ["unread"], name: "index_pms_on_unread"
     t.index ["user_id"], name: "index_pms_on_user_id"
+  end
+
+  create_table "profile_modules", force: :cascade do |t|
+    t.integer "user_id"
+    t.integer "column"
+    t.integer "index"
+    t.string "module_type"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id", "column"], name: "index_profile_modules_on_user_id_and_column"
   end
 
   create_table "reports", id: :serial, force: :cascade do |t|

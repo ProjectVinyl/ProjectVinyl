@@ -1,7 +1,0 @@
-%section.page.full-width
-	%h1 Statistics
-	- cache(@user, expires_in: 30.minutes) do
-		= render 'users/left_column/modules/stat_bar', records: @user.videos, title: 'Uploads'
-		= render 'users/left_column/modules/stat_bar', records: @user.comments, title: 'Comments'
-		= render 'users/left_column/modules/stat_bar', records: @user.votes, title: 'Votes'
-		= render 'users/left_column/modules/stat_bar', records: @user.tag_histories, title: 'Tag Changes'
