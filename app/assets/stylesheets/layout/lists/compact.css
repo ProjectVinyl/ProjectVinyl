@@ -4,7 +4,7 @@
   padding: 0;
   width: 100%;
   table-layout: auto;
-  border-bottom: solid 1px var(--divider-color);
+  border-bottom: solid 1px var(--table-inner-border);
 }
 
 .listing.compact .row.heads {
@@ -44,6 +44,10 @@
 }
 .listing.compact .row.selected div {
   color: #fff;
+}
+.listing.compact .items .row.floater > a,
+.listing.compact .items .row.floater > div {
+  border-bottom: solid 1px var(--table-inner-border);
 }
 
 .listing.compact span, .listing.compact .row {

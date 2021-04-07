@@ -1,4 +1,5 @@
 import { ajax } from '../utils/ajax';
+import { clamp } from '../utils/math';
 import { once, addDelegatedEvent } from '../jslim/events';
 import { offset, each } from '../jslim/dom';
 
@@ -30,7 +31,8 @@ function grab(container, item, ev) {
   }
   
   function moveFloater(e) {
-    floater.style.top = `${e.clientY - offset(container).top - (item.clientHeight / 2)}px`;
+    const top = e.clientY - offset(container).top - (item.clientHeight / 2);
+    floater.style.top = `${clamp(top, 0, container.clientHeight)}px`;
   }
   
   document.addEventListener('mousemove', moveFloater);
