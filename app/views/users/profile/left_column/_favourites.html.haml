@@ -1,6 +1,8 @@
 - if @modifications_allowed
-	%section.page.full-width.recent-favourites
+	%section.page.full-width.recent-favourites.removeable(data-id="#{part.id}" data-index="#{part.index}")
 		%h1.title
+			- if @modifications_allowed
+				.handle(title="Arrange")= fw :th
 			Favourites
 			= surround '(', ')' do
 				= number_with_delimiter @favourites.count
@@ -8,7 +10,7 @@
 			%a.right(href="/stars")
 				View All
 				= fa :chevron_right
-		%ul.horizontal.video-list#uploads
+		%ul.floater-hidden.horizontal.video-list#uploads
 			- if @favourites.count > 0
 				= render partial: 'videos/thumb/normal', collection: @favourites.records
 			- else

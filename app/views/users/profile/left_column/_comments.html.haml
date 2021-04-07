@@ -1,9 +1,11 @@
-%section.page.full-width.recent-comments
+%section.page.full-width.recent-comments.removeable(data-id="#{part.id}" data-index="#{part.index}")
 	%h1.title
+		- if @modifications_allowed
+			.handle(title="Arrange")= fw :th
 		Comments (
 		= number_with_delimiter @comments.count
 		)
 		%a.right{href: user_comments_path(@user)}
 			View All
 			= fa :chevron_right
-	%ul.comment-list= render 'comments/set', thread: @comments.records, indirect: true
+	%ul.floater-hidden.comment-list= render 'comments/set', thread: @comments.records, indirect: true

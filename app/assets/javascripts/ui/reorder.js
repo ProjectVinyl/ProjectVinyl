@@ -16,22 +16,25 @@ function grab(container, item, ev) {
   container.classList.add('ordering');
 
   const floater = item.cloneNode(true);
+  const handle = floater.querySelector('.handle');
+
   floater.classList.add('floater');
-  moveFloater(ev);
 
   each(item.children, (a, i) => floater.children[i].style.width = `${a.clientWidth}px`);
 
   item.classList.add('grabbed');
   container.appendChild(floater);
-  
+  moveFloater(ev);
+
   const notFloating = Array.prototype.filter.call(container.children, c => !c.classList.contains('.floater'));
-  
+
   function childMouseover() {
     this.insertAdjacentElement('afterend', item);
   }
   
   function moveFloater(e) {
-    const top = e.clientY - offset(container).top - (item.clientHeight / 2);
+    const topOffset = (handle.clientTop - item.clientTop) + (handle.clientHeight / 2);
+    const top = e.clientY - offset(container).top - topOffset;
     floater.style.top = `${clamp(top, 0, container.clientHeight)}px`;
   }
   
@@ -62,7 +65,7 @@ addDelegatedEvent(document, 'mousedown', '.reorderable .handle', (e, handle) => 
   
   function grabber(e) {
     cancelAll();
-    grab(handle.closest('.reorderable'), handle.parentNode, e);
+    grab(handle.closest('.reorderable'), handle.closest('.removeable'), e);
   }
   
   function cancelAll() {

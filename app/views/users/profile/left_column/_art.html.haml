@@ -1,6 +1,8 @@
 - if @art
-	%section.page.full-width.recent-uploads
+	%section.page.full-width.recent-uploads.removeable(data-id="#{part.id}" data-index="#{part.index}")
 		%h1.title
+			- if @modifications_allowed
+				.handle(title="Arrange")= fw :th
 			Songs by
 			= @user.username
 			= surround '(', ')' do
@@ -8,7 +10,7 @@
 			%a.right{href: @user.tag.link}
 				View All
 				= fa :chevron_right
-		%ul.horizontal.video-list#songs
+		%ul.floater-hidden.horizontal.video-list#songs
 			- if @art.count > 0
 				= render partial: 'videos/thumb/normal', collection: @art.records
 			- else

@@ -59,6 +59,11 @@ Rails.application.routes.draw do
       resource :hovercard, only: [:show]
       resource :banner, only: [:show, :update]
       resource :avatar, :prefs, only: [:update]
+
+      resources :profile_columns, only: [] do
+        resources :items, controller: :profile_modules, only: [:update]
+      end
+      resources :profile_modules, controller: :profile_modules, only: [:create, :destroy]
     end
   end
 

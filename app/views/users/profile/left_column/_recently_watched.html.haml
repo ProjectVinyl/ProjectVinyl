@@ -1,10 +1,12 @@
 - if @watched
-	%section.page.full-width.recent-uploads
+	%section.page.full-width.recent-uploads.removeable(data-id="#{part.id}" data-index="#{part.index}")
 		%h1.title
+			- if @modifications_allowed
+				.handle(title="Arrange")= fw :th
 			Recently Watched
 			= surround '(', ')' do
 				= number_with_delimiter @watched_count
-		%ul.horizontal.video-list#uploads
+		%ul.floater-hidden.horizontal.video-list#uploads
 			- if @watched.count > 0
 				= render partial: 'videos/thumb/normal', collection: @watched.records
 			- else

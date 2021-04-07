@@ -1,5 +1,8 @@
 .reorderable {
   position: relative;
+  
+  --handle-color: #ddd;
+  --handle-shadow: #eee;
 }
 .reorderable.ordering,
 .reorderable.ordering * {
@@ -8,32 +11,68 @@
 
 .reorderable .handle {
   width: 13px;
-  border-right: solid 1px var(--divider-color);
-  color: #ddd;
-  text-shadow: 0 0 3px #eee;
+  color: var(--handle-color);
+  text-shadow: 0 0 3px var(--handle-shadow);
   cursor: move;
-  font-size: 20px;
   line-height: 0;
   vertical-align: middle;
   font-weight: normal;
   text-rendering: geometricPrecision;
 }
 .reorderable span.bump {
-  display: table-caption;
-  height: 10px;
-	margin-top: -10px;
+  display: none;
+  height: 30px;
+	margin-top: -30px;
+}
+.reorderable.ordering span.bump {
+  display: block;
 }
 
 .reorderable .floater {
   position: absolute;
-  padding: 0 !important;
   pointer-events: none;
   left: 0;
   right: 0;
+  min-height: auto;
   margin-top: -10px; /* Account for the height of the bump*/
   background: var(--content-background);
 }
+
+.reorderable .floater .floater-hidden {
+  display: none;
+}
+
+.reorderable .title .handle {
+  color: inherit;
+  text-shadow: inherit;
+  width: 50px;
+  float: left;
+  padding: inherit;
+  margin: inherit;
+  margin-right: 20px;
+  padding-right: 50px;
+}
+.reorderable .properties .title .handle {
+  margin: -20px;
+  margin-right: 20px;
+}
+.reorderable .title .handle:hover {
+  background: var(--content-highlight);
+}
+
+.listing.compact .ordering span.bump {
+  display: table-caption;
+}
+
+.listing.compact .floater {
+  padding: 0 !important;
+}
+.listing.compact .row .handle {
+  font-size: 20px;
+  border-right: solid 1px var(--divider-color);
+}
 .reorderable .grabbed {
-  opacity: 0;
+  opacity: 0.2;
   pointer-events: none;
 }
+

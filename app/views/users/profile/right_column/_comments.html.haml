@@ -1,9 +1,11 @@
-%section.properties.ribbed.page.full-width.recent-comments
+%section.properties.ribbed.page.full-width.recent-comments.removeable(data-id="#{part.id}" data-index="#{part.index}")
 	%h1.title
+		- if @modifications_allowed
+			.handle(title="Arrange")= fw :th
 		Comments (
 		= number_with_delimiter @comments.count
 		)
 		%a.right{href: user_comments_path(@user)}
 			View All
 			= fa :chevron_right
-	= render partial: 'comments/recent_set', locals: {comments: @comments.records}
+	.floater-hidden= render partial: 'comments/recent_set', locals: {comments: @comments.records}
