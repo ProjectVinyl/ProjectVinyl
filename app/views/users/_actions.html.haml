@@ -1,4 +1,4 @@
-.actions
+.profile-column.actions
 	- if user_signed_in?
 		%button.blue.mobile-friendly(data-external-form="#{new_message_path user: @user}" data-title="New Message")>
 			= fa :envelope
@@ -13,6 +13,13 @@
 			%span Upload Video
 	- if @modifications_allowed
 		.spacer
+		.state-toggle(data-state="editing" data-parent="main")
+			%button.green.on
+				= fa :pencil
+				Edit Profile
+			%button.red.off
+				= fa :times
+				Close
 		.split-button.popper>
 			%button.action.options.pop-out-toggle.mobile-friendly
 				= fa :gear

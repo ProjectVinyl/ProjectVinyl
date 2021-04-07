@@ -20,7 +20,7 @@ module Users
     
     def destroy
       check_details_then do |user, edits_allowed|
-        user.profile_modules.where(id: params[:profile_modules_id]).destroy
+        user.profile_modules.where(id: params[:id]).destroy_all
         head :ok
       end
     end

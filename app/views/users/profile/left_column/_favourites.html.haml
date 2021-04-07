@@ -1,8 +1,7 @@
 - if @modifications_allowed
-	%section.page.full-width.recent-favourites.removeable(data-id="#{part.id}" data-index="#{part.index}")
+	%section.page.full-width.recent-favourites.removeable(data-id="#{part.id}" data-target="/users/#{@user.id}/profile_modules" data-index="#{part.index}")
 		%h1.title
-			- if @modifications_allowed
-				.handle(title="Arrange")= fw :th
+			= render 'users/profile/module_actions'
 			Favourites
 			= surround '(', ')' do
 				= number_with_delimiter @favourites.count

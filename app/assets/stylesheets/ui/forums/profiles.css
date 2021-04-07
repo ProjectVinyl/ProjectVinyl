@@ -1,0 +1,37 @@
+
+main.wrapper:not(.editing) .profile-column .removeable .remove,
+main.wrapper:not(.editing) .profile-column .handle,
+main.wrapper.editing .removeable .title a {
+  display: none;
+}
+
+.reorderable .title .remove,
+.reorderable .title .handle {
+  color: inherit;
+  text-shadow: inherit;
+  width: 50px;
+  float: left;
+  padding: inherit;
+  margin: inherit;
+  padding-right: 50px;
+}
+.reorderable .title .handle {
+  margin-right: 20px;
+}
+.reorderable .title .remove {
+  cursor: pointer;
+  float: right;
+  color: #ec4848;
+}
+
+.reorderable .properties .title .remove,
+.reorderable .properties .title .handle {
+  margin: -20px;
+}
+.reorderable .properties .title .handle {
+  margin-right: 20px;
+}
+.reorderable .title .remove:hover,
+.reorderable .title .handle:hover {
+  background: var(--content-highlight);
+}

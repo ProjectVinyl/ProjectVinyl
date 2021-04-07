@@ -42,24 +42,6 @@
   display: none;
 }
 
-.reorderable .title .handle {
-  color: inherit;
-  text-shadow: inherit;
-  width: 50px;
-  float: left;
-  padding: inherit;
-  margin: inherit;
-  margin-right: 20px;
-  padding-right: 50px;
-}
-.reorderable .properties .title .handle {
-  margin: -20px;
-  margin-right: 20px;
-}
-.reorderable .title .handle:hover {
-  background: var(--content-highlight);
-}
-
 .listing.compact .ordering span.bump {
   display: table-caption;
 }

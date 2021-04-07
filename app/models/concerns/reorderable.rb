@@ -44,6 +44,6 @@ module Reorderable
 
   protected
   def shift_on_destroyed
-    siblings.following.shift_by(PREV) if respond_to?(:siblings)
+    siblings.following(index).shift_by(PREV) if respond_to?(:siblings)
   end
 end

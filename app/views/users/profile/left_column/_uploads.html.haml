@@ -1,7 +1,6 @@
-%section.page.full-width.recent-uploads.removeable(data-id="#{part.id}" data-index="#{part.index}")
+%section.page.full-width.recent-uploads.removeable(data-id="#{part.id}" data-target="/users/#{@user.id}/profile_modules" data-index="#{part.index}")
 	%h1.title
-		- if @modifications_allowed
-			.handle(title="Arrange")= fw :th
+		= render 'users/profile/module_actions'
 		Uploads
 		= surround '(', ')' do
 			= number_with_delimiter @videos.count
