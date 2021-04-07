@@ -1,8 +1,13 @@
 
 main.wrapper:not(.editing) .profile-column .removeable .remove,
 main.wrapper:not(.editing) .profile-column .handle,
+main.wrapper:not(.editing) .new-module,
 main.wrapper.editing .removeable .title a {
   display: none;
+}
+main.wrapper.editing .profile-column {
+  outline: dotted 1px var(--block-border-color);
+  outline-offset: 8px;
 }
 
 .reorderable .title .remove,
@@ -34,4 +39,13 @@ main.wrapper.editing .removeable .title a {
 .reorderable .title .remove:hover,
 .reorderable .title .handle:hover {
   background: var(--content-highlight);
+}
+
+.new-module {
+  padding: 20px;
+}
+.new-module button {
+  width: 100%;
+  border-radius: 0;
+  background: none;
 }
