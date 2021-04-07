@@ -15,6 +15,7 @@
  *= require ./featuredvideo
  *= require ./donate
  *= require ./notices
+ *= require ./reorderable
  *= require ./tags/all
  *= require ./forms/all
  *= require ./videos/all

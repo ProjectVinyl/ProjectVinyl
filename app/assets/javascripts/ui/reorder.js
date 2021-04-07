@@ -2,9 +2,11 @@ import { ajax } from '../utils/ajax';
 import { once, addDelegatedEvent } from '../jslim/events';
 import { offset, each } from '../jslim/dom';
 
-function reorder(container, item) {
+function saveOrdering(container, item) {
   each(container.children, (a, i) => a.dataset.index = (i - 1));
-  ajax.patch(`${container.dataset.target}/${item.dataset.id}`, { index: item.dataset.index }).text(e => e);
+  ajax.patch(`${container.dataset.target}/${item.dataset.id}`, {
+    index: item.dataset.index
+  });
 }
 
 function grab(container, item, ev) {
@@ -16,9 +18,8 @@ function grab(container, item, ev) {
   floater.classList.add('floater');
   moveFloater(ev);
 
-  each(item.children, (a, i) => {
-    floater.children[i].style.width = `${a.clientWidth}px`;
-  });
+  each(item.children, (a, i) => floater.children[i].style.width = `${a.clientWidth}px`);
+
   item.classList.add('grabbed');
   container.appendChild(floater);
   
@@ -33,7 +34,9 @@ function grab(container, item, ev) {
   }
   
   document.addEventListener('mousemove', moveFloater);
+
   notFloating.forEach(el => el.addEventListener('mouseover', childMouseover));
+
   once(document, 'mouseup', e => {
     e.preventDefault();
     
@@ -44,7 +47,7 @@ function grab(container, item, ev) {
     document.removeEventListener('mousemove', moveFloater);
     floater.parentNode.removeChild(floater);
     
-    reorder(container, item);
+    saveOrdering(container, item);
   });
 }
 

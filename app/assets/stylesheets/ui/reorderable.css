@@ -1,14 +1,14 @@
-.listing.compact .items.reorderable {
+.reorderable {
   position: relative;
 }
-.listing.compact .items.reorderable.ordering,
-.listing.compact .items.reorderable.ordering * {
+.reorderable.ordering,
+.reorderable.ordering * {
   cursor: move !important;
 }
 
-.listing.compact .items.reorderable .handle {
+.reorderable .handle {
   width: 13px;
-  border-right: solid 1px rgba(0,0,0,0.1);
+  border-right: solid 1px var(--divider-color);
   color: #ddd;
   text-shadow: 0 0 3px #eee;
   cursor: move;
@@ -18,22 +18,22 @@
   font-weight: normal;
   text-rendering: geometricPrecision;
 }
-.listing.compact .items span.bump {
+.reorderable span.bump {
   display: table-caption;
   height: 10px;
 	margin-top: -10px;
 }
 
-.listing.compact .row.floater {
+.reorderable .floater {
   position: absolute;
-  padding: 0;
+  padding: 0 !important;
   pointer-events: none;
   left: 0;
   right: 0;
-  margin-top: -10px;
+  margin-top: -10px; /* Account for the height of the bump*/
   background: var(--content-background);
 }
-.listing.compact .row.grabbed {
+.reorderable .grabbed {
   opacity: 0;
   pointer-events: none;
 }
