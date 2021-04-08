@@ -6,6 +6,9 @@ class ProfileModule < ApplicationRecord
   DEFAULT_LEFT = [ :description, :art, :favourites, :recently_watched, :uploads, :albums ]
   DEFAULT_RIGHT = [ :comments ]
 
+  PROFILE_COLUMN_TYPES = [:left, :right]
+  MODULE_TYPES = DEFAULT_LEFT + DEFAULT_RIGHT
+
   belongs_to :user
 
   has_siblings :column_items
@@ -13,8 +16,16 @@ class ProfileModule < ApplicationRecord
   scope :left_column, -> { where(column: LEFT).order(:index) }
   scope :right_column, -> { where(column: RIGHT).order(:index) }
 
+  def self.module_types
+    MODULE_TYPES
+  end
+
+  def self.profile_column_types
+    PROFILE_COLUMN_TYPES
+  end
+
   def self.seed(user)
-    user.profile_modules.destroy
+    user.profile_modules.destroy_all
     l = DEFAULT_LEFT.each_with_index.map do |t, i|
       { user: user, column: LEFT, index: i, module_type: t}
     end

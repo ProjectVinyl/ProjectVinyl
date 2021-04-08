@@ -6,6 +6,7 @@ module Reorderable
 
   included do
     before_destroy :shift_on_destroyed
+    after_create :shift_on_created
 
     scope :shift_by, ->(amount) { update_all("index = index + #{amount.to_i}") }
     scope :following, ->(index) { discriminate('>', index) }
@@ -43,6 +44,10 @@ module Reorderable
   end
 
   protected
+  def shift_on_created
+    puts "Shifting!"
+    siblings.following(index - 1).where.not(id: id).shift_by(NEXT) if respond_to?(:siblings)
+  end
   def shift_on_destroyed
     siblings.following(index).shift_by(PREV) if respond_to?(:siblings)
   end

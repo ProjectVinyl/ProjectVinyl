@@ -1,7 +1,7 @@
 - if !@user.description.nil? && !@user.description.blank?
 	%section.page.full-width.artist-bio.removeable(data-id="#{part.id}" data-target="/users/#{@user.id}/profile_modules" data-index="#{part.index}")
 		%h1.title
-			= render 'users/profile/module_actions'
+			= render 'users/profile_modules/actions'
 			Bio
 		.post.floater-hidden
 			%span.content.bio= emotify @user.description

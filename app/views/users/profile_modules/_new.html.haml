@@ -1,0 +1,16 @@
+= form_for(@part, as: "part", url: user_profile_modules_path(@part.user), html: {class: "async js-module-creator", method: :post}) do |f|
+	.message_content
+		%label.options
+			%span Column
+			%select{name: "part[column]"}= sensible_option_for_select(ProfileModule.profile_column_types.map(&:to_s).map(&:titlecase), @part.column)
+		%hr
+		%label.options
+			%span Type
+			%select{name: "part[module_type]"}= sensible_option_for_select(ProfileModule.module_types.map(&:to_s).map(&:titlecase), 0)
+		%hr
+		%label.options
+			%span Position
+			= f.number_field :index, value: @part.index
+	.foot
+		= f.submit "Create", class: "right green cancel", data: {resolve: true}
+		%button.right.red.cancel(data-resolve="false" type="button") Cancel

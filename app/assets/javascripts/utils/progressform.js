@@ -17,13 +17,13 @@ export function uploadForm(form, callbacks, e) {
     progress(percentage, secondsRemaining) {
       percent = percentage;
 
-      if (!message.classList.contains('plain')) {
+      if (message && !message.classList.contains('plain')) {
         message.classList.add('bobber');
       }
 
       form.classList.toggle('waiting', percentage >= 100);
 
-      if (callbacks.progress) {
+      if (message && callbacks.progress) {
         callbacks.progress(percentage, secondsRemaining, message, fill);
       }
     },
@@ -34,7 +34,9 @@ export function uploadForm(form, callbacks, e) {
     },
     error(error) {
       form.classList.add('error');
-      message.style.marginLeft = '';
+      if (message) {
+        message.style.marginLeft = '';
+      }
       callbacks.error(error, message, percent);
     },
     complete() {

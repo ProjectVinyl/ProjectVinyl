@@ -1,6 +1,6 @@
 %section.page.full-width.recent-uploads.removeable(data-id="#{part.id}" data-target="/users/#{@user.id}/profile_modules" data-index="#{part.index}")
 	%h1.title
-		= render 'users/profile/module_actions'
+		= render 'users/profile_modules/actions'
 		Albums
 		= surround '(', ')' do
 			= number_with_delimiter @albums.count

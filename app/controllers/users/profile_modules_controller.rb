@@ -3,9 +3,30 @@ module Users
 
     def create
       check_details_then do |user, edits_allowed|
-        user.profile_modules.create(params.permit(:module_type, :column, :index))
-        head :ok
+        @pars = params[:part].permit(:module_type, :column, :index)
+
+        @pars[:module_type] = ProfileModule.module_types[@pars[:module_type].to_i]
+
+        if @pars[:index].to_i == -1
+          @max = user.profile_modules.where(column: @pars[:column]).pluck('MAX(index)').first
+          @pars[:index] = @max.nil? ? 0 : (@max.to_i + 1)
+        end
+
+        @modifications_allowed = true
+        part = user.profile_modules.create(@pars)
+        load_profile_module part.module_type
+
+        render json: {
+          target: "##{ProfileModule.profile_column_types[part.column]}-column",
+          index: part.index,
+          html: render_to_string(partial: 'users/profile_modules/part', locals: {part: part}, formats: [:html])
+        }
       end
+    end
+
+    def new
+      @part = ProfileModule.new(params.permit(:user_id, :column, :index))
+      render partial: 'new', formats: [:html]
     end
 
     def update
@@ -17,7 +38,7 @@ module Users
         end
       end
     end
-    
+
     def destroy
       check_details_then do |user, edits_allowed|
         user.profile_modules.where(id: params[:id]).destroy_all

@@ -63,7 +63,7 @@ Rails.application.routes.draw do
       resources :profile_columns, only: [] do
         resources :items, controller: :profile_modules, only: [:update]
       end
-      resources :profile_modules, controller: :profile_modules, only: [:create, :destroy]
+      resources :profile_modules, only: [:new, :create, :destroy]
     end
   end
 

@@ -1,0 +1,6 @@
+.profile-column
+	= render partial: 'users/profile_modules/new_module_button', locals: {column: 0, index: 0}
+	#left-column.reorderable(data-target="/users/#{@user.id}/profile_columns/0/items")
+		%span.bump(data-index="-1")
+		= render partial: 'users/profile_modules/part', collection: @user.profile_modules.left_column
+	= render partial: 'users/profile_modules/new_module_button', locals: {column: 0, index: -1}
