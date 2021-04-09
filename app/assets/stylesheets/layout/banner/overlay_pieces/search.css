@@ -1,6 +1,7 @@
 
 #search {
-  width: 30vw;
+  width: min-content;
+  min-width: 30vw;
 }
 
 #search form {
