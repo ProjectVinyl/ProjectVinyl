@@ -67,7 +67,7 @@ div.page .positioner {
    margin-right: 0;
 }
 
-@media(max-width: 600px) {
+@media(max-width: 800px) {
   .page.right, .mobile-hidden {
     display: none;
   }

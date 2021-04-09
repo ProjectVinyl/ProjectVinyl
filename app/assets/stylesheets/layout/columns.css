@@ -26,7 +26,7 @@
   margin-left: 0px;
 }
 
-@media(max-width: 600px) {
+@media(max-width: 800px) {
   .wrapper .wrapper.right,
   .wrapper .wrapper.left {
     width: 100% !important;

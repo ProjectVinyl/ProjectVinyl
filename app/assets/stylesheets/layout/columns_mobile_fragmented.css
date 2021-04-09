@@ -1,5 +1,5 @@
 
-@media(max-width: 790px) {
+@media(max-width: 800px) {
   .column-mobile-fragmented, .column-right.column-mobile-shown {
     display: block !important;
     float: none;
