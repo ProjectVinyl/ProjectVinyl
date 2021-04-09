@@ -88,37 +88,11 @@
   margin-left: 8em;
 }
 
-@media(min-width: 450px) {
-  .artist-bio .post .title {
-    margin-left: 240px;
-  }
-}
-
-@media(max-width:600px) {
-  .artist-bio {
-    text-align: center;
-  }
-  .artist-bio h1, .artist-bio .actions, .artist-bio .details {
-    text-align: left;
-  }
-  .artist-bio .post .title {
-    display: block;
-    margin-left: 0;
-  }
-}
-
 @media(max-width:850px) {
   .page > div.group {
     padding: 0;
   }
   .page > div.group h1 {
     margin: 0;
-  }
-}
-
-
-@media(max-width:750px) {
-  .post .action.mobile-friendly span {
-    display: none;
   }
 }
