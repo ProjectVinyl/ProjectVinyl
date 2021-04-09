@@ -1,4 +1,4 @@
-.actions
+.actions.mobile-tabbed
 	%a.button.action{href: tag_changes_path(@tag)}>
 		= fa :history
 		%span Tag Changes
@@ -16,6 +16,7 @@
 			%span.label Spoiler Tag
 	- else
 		%a.button.blue{href: filters_path}>
+			= fa :filter
 			%span Filter Tag
 	- if user_signed_in?
 		%button.action.toggle.blue(data-family="tag-flags" data-descriminator="watch" data-target="tags" data-id="#{@tag.id}" data-action="actions/watch")>

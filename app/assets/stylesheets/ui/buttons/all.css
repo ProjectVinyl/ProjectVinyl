@@ -2,6 +2,7 @@
  *= require ./buttons
  *= require ./rating_bar
  *= require ./actions
+ *= require ./actions_mobile_tabbed
  *= require ./split_buttons
  *= require ./colours
  *= require ./bubbles

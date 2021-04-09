@@ -1,4 +1,4 @@
-.profile-column.actions
+.profile-column.actions.mobile-tabbed
 	- if user_signed_in?
 		%button.blue.mobile-friendly(data-external-form="#{new_message_path user: @user}" data-title="New Message")>
 			= fa :envelope
