@@ -12,6 +12,12 @@
   flex-direction: column;
   flex-grow: 1;
 }
+@media(max-width: 654px) {
+  .thumb, li.generic.thumb {
+    --thumb-width: calc(min(230px, 40vw));
+  }
+}
+
 .thumb.tiny {
   --thumb-width: 85px;
   width: var(--thumb-width);

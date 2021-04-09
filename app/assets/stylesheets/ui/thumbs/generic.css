@@ -12,6 +12,12 @@ li.generic {
 
   max-height: var(--thumb-height);
   min-height: calc(var(--thumb-height) - 110px);
+
+  transition:
+    max-width 0.5s ease,
+    min-width 0.5s ease,
+    max-height 0.5s ease,
+    min-height 0.5s ease;
 }
 
 li.generic.virtual,

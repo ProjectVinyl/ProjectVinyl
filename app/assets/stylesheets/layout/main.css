@@ -2,12 +2,17 @@ html, body {
   --site-width: 85vw;
   background: var(--site-background);
 }
+@media(max-width: 630px) {
+  html, body {
+    --site-width: 100%;
+  }
+}
 
 main {
   display: inline-block;
   position: relative;
   text-align: left;
-  width: 85vw;
+  width: 100%;
   max-width: var(--site-width);
   min-height: 100%;
 }
