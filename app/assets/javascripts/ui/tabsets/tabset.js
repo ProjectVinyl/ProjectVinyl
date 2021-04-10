@@ -1,6 +1,7 @@
-import { addDelegatedEvent } from '../../jslim/events';
+import { addDelegatedEvent, bindEvent } from '../../jslim/events';
+import { QueryParameters } from '../../utils/queryparameters';
 
-export function focusTab(me) {
+export function focusTab(me, noPush) {
   if (!me || me.classList.contains('selected') || !me.dataset.target) return;
   // Unfocus other tab first
   const other = me.parentNode.querySelector('.selected');
@@ -15,7 +16,21 @@ export function focusTab(me) {
   const thisTab = document.querySelector(`div[data-tab="${me.dataset.target}"]`);
   thisTab.classList.add('selected');
   thisTab.dispatchEvent(new CustomEvent('tabfocus', { bubbles: true }));
+
+  if (!noPush) {
+    QueryParameters.current.setItem('tab', me.dataset.target);
+  }
 }
+
+bindEvent(window, 'popstate', () => {
+  const tab = QueryParameters.current.getItem('tab');
+  if (tab) {
+    const me = document.querySelector(`.tab-set li.button[data-target="${tab}"]`);
+    if (me) {
+      focusTab(me, true);
+    }
+  }
+});
 
 addDelegatedEvent(document, 'click', '.tab-set > li.button:not([data-disabled])', (e, target) => {
   if (e.button !== 0) return;

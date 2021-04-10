@@ -3,22 +3,22 @@
 - can_api = @user == current_user && @token = ApiToken.get_token(@user)
 %section.page.full-width.properties.tab-set
 	%ul.tab-set.tabs
-		%li.button.selected(data-target="profile") Profile
-		%li.button(data-target="account") Account
+		%li.button{@tab_selection_hash[:profile]}(data-target="profile") Profile
+		%li.button{@tab_selection_hash[:account]}(data-target="account") Account
 		- if can_api
-			%li.button(data-target="api") API *
-		%li.button(data-target="filter") Content & Filter
-		%li.button(data-target="commenting") Notifications
-		%li.button(data-target="local") Local
-	.tab.selected(data-tab="profile")
+			%li.button{@tab_selection_hash[:api]}(data-target="api") API *
+		%li.button{@tab_selection_hash[:filter]}(data-target="filter") Content & Filter
+		%li.button{@tab_selection_hash[:commenting]}(data-target="commenting") Notifications
+		%li.button{@tab_selection_hash[:local]}(data-target="local") Local
+	.tab{@tab_selection_hash[:profile]}(data-tab="profile")
 		%h1 Profile Information
 		= render 'users/edit', user: current_user, url: "/users/#{current_user.id}", method: :patch
-	.tab(data-tab="account")= render 'account'
+	.tab{@tab_selection_hash[:account]}(data-tab="account")= render 'account'
 	- if can_api
-		.tab(data-tab="api")= render 'api'
-	.tab(data-tab="filter")= render 'videos/feeds/filter_settings'
-	.tab(data-tab="commenting")= render 'notifications'
-	.tab(data-tab="local")
+		.tab{@tab_selection_hash[:api]}(data-tab="api")= render 'api'
+	.tab{@tab_selection_hash[:filter]}(data-tab="filter")= render 'videos/feeds/filter_settings'
+	.tab{@tab_selection_hash[:commenting]}(data-tab="commenting")= render 'notifications'
+	.tab{@tab_selection_hash[:local]}(data-tab="local")
 		%h1 Local Settings
 		%table
 			%tr
