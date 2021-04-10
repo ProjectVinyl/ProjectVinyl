@@ -1,2 +1,2 @@
-import './grid';
+import './grid/all';
 import './subtable';

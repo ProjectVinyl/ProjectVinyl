@@ -1,10 +1,24 @@
 ul.horizontal {
   overflow: hidden;
-  margin-bottom: -1px;
   display: flex;
   flex-wrap: wrap;
   justify-content: space-around;
+
+
+  --horizontal-padding-scale: -1;
+  margin-bottom: -1px;
+  margin-left: calc(var(--content-block-padding, 0) * var(--horizontal-padding-scale));
+  margin-right: calc(var(--content-block-padding, 0) * var(--horizontal-padding-scale));
 }
+
+ul.horizontal.tag-list {
+  --horizontal-padding-scale: 0;
+}
+
+ul.horizontal.user-list {
+  --horizontal-padding-scale: -0.5;
+}
+
 ul.horizontal, .controls ul {
   list-style: none;
   padding: 0;

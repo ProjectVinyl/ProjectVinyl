@@ -3,6 +3,14 @@
   ul.horizontal.latest {
     flex-wrap: nowrap;
     overflow-x: auto;
-    justify-content: space-between;
+    justify-content: start;
+    scrollbar-width: thin;
+  }
+  
+  ul.horizontal.latest:not(:focus, :hover) {
+    scrollbar-color: transparent transparent;
+  }
+  ul.horizontal.latest .virtual:last-child {
+    min-width: 0;
   }
 }
