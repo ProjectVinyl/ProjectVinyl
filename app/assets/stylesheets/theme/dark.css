@@ -10,7 +10,7 @@ html, body {
   --site-background: #1c1313;
 
   --content-background: #2f2222;
- 
+  --content-unread: #5e1c3b;
   --content-highlight: #2b252b;
 
   --thumb-hover-color: #1e1d1d;

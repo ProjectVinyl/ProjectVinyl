@@ -38,12 +38,12 @@ li.notification .action:hover, li.notification .remove:hover {
   padding: 10px;
   color: #337287;
 }
-.notification[class*=comments_]::before {
+.notification[class*=Comment_]::before {
   content: "\f064";
 }
-.notification[class*=reports_]::before {
+.notification[class*=Report_]::before {
   content: "\f11e";
 }
-.notification[class*=comment_threads_]::before {
+.notification[class*=Comment_Thread_]::before {
   content: "\f075";
 }
