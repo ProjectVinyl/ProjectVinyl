@@ -4,9 +4,7 @@
 		.cell.handle= fa :ellipsis_v
 	.cell.title
 		.nowrap= item.title
-	.cell.duration.secondary
-		= duration item.video.duration
-	.cell.author.secondary
-		= item.video.user.username
+	.cell.duration= duration item.video.duration
+	.cell.author.secondary= item.video.user.username
 	- if @modifications_allowed
 		.cell.secondary.remove(title="Remove")= fa :times
