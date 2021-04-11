@@ -1,6 +1,6 @@
 .row
-	%a{href: tag_implication.link}
+	%a.cell{href: tag_implication.link}
 		= precede '#' do
 			= tag_implication.name
-	%div= fa :chevron_right
-	%div= render 'tags/taglist', collection: tag_implication.implications
+	.cell= fa :chevron_right
+	.cell= render 'tags/taglist', collection: tag_implication.implications

@@ -1,11 +1,11 @@
 %section.page.full-width.listing.compact.collapse-padding
 	.items
 		%span.row.heads
-			%div
-			%div Type Name
-			%div Total Tags
-			.center Hidden
-			%div Implications
+			.cell
+			.cell Type Name
+			.cell Total Tags
+			.cell.center Hidden
+			.cell Implications
 		= render partial: 'item', collection: @types
 	%span.row.foot
 		%a.button.button-bub.bub(title="add" data-title="Add Tag Type" data-external-form="#{new_admin_tagtype_path}")

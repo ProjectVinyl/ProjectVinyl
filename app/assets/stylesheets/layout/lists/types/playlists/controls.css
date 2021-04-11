@@ -1,0 +1,38 @@
+.playlist .controls {
+  border-top: solid 1px var(--seamless-button-hover-tint);
+  white-space: nowrap;
+}
+.playlist .controls a {
+  display: table-row;
+  width: 25%;
+  text-align: center;
+  float: left;
+  color: var(--playlist-controls-color);
+  padding: 5px 30px;
+  transition:
+    background 0.25s ease,
+    border-color 0.25s ease;
+}
+.playlist .controls a:hover {
+  background: var(--header-overlay-element-focus-fill);
+}
+
+.playlist .controls .slide-right {
+  border-left: solid 1px var(--seamless-button-hover-tint);
+}
+.playlist .controls .slide-left {
+  border-right: solid 1px var(--seamless-button-hover-tint);
+}
+.playlist .controls .title {
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  -o-text-overflow: ellipsis;
+}
+.playlist .controls .slide-left + .title,
+.playlist .controls .title.buff-right {
+  width: 75%;
+}
+.playlist .controls .slide-left + .title.buff-right {
+  width: 50%;
+}

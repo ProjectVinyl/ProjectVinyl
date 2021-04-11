@@ -1,15 +1,15 @@
 = form_for(item, as: 'tag_type', url: admin_tagtype_path(item), html: {method: :patch, class: "row row-group removeable state-binary tag-#{item.prefix}"}) do |f|
 	= f.text_field :id, hidden: true
 	.row
-		%div(style="width:30px")
+		.cell(style="width:30px")
 			%a.button.button-bub.state-toggle(data-state="editing" data-parent="form")= fa :pencil
-		%div
+		.cell
 			= item.prefix
 			\:
-		%div= number_with_delimiter item.referrers.count
-		.center
+		.cell= number_with_delimiter item.referrers.count
+		.cell.center
 			%i.fa{title: item.hidden, class: "fa-#{item.hidden ? "check" : "times"}"}
-		%div
+		.cell
 			%ul.tags= render partial: "tags/thumb/normal", collection: item.tags
 	.editing.row.row-spanned
 		.content.properties

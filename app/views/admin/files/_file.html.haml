@@ -1,16 +1,13 @@
 .row.row-group.row-group-collapse(data-stack-size="#{file.stack_size}")
 	%a.row{id: file.name, href: file.link, "data-type": file.type, target: !file.directory? && "__top"}
-		%div
-			%div
-				= fw file.icon
-				= file.name
-				%span.artifact= file.special_name
-		%div
-			%span= file.type
+		.cell
+			= fw file.icon
+			= file.name
+			%span.secondary.artifact= file.special_name
+		.cell.secondary= file.type
 	- file.each do |f|
 		%a.row{id: f.name, href: f.link, "data-type": f.type, target: !f.directory? && "__top"}
-			%div
+			.cell
 				= fw f.icon
 				= f.name
-			%div
-				%span= f.type
+			.cell.secondary= f.type

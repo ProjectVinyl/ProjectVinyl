@@ -1,15 +1,15 @@
 .row
-	%div= search_status
+	.cell= search_status
 	- begin
 		- es = search_status.to_s.titlecase.constantize.__elasticsearch__
 		- mappings = es.mappings
 		- mappings = mappings.to_hash[mappings.type.to_sym][:properties]
-		%div
+		.cell
 			- mappings.keys.each do |key|
-				%span= "#{key}:#{mappings[key][:type]}"
+				%span.secondary= "| #{key}:#{mappings[key][:type]}"
 	- rescue
-		%div Uh oh! Looks like elasticsearch is not running.
+		.cell Uh oh! Looks like elasticsearch is not running.
 	- if current_user.is_admin?
-		.actions
+		.cell.actions
 			%a.button.red{href: admin_reindex_path(id: search_status), data: {confirm: "", method: :put, title: "Reindex #{search_status.to_s.titlecase}"}}
 				= fw :refresh

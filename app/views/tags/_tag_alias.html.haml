@@ -1,9 +1,9 @@
 .row
-	%div
+	.cell
 		= precede '#' do
 			= tag_alias.name
-	%div= fa :chevron_right
-	%div
+	.cell= fa :chevron_right
+	.cell
 		%span
 			%a{href: tag_alias.alias.link}
 				= precede '#' do

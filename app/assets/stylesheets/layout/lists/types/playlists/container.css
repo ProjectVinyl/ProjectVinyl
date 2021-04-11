@@ -1,0 +1,22 @@
+.playlist {
+  --playlist-controls-color: #000;
+  --playlist-shadow-color: #bbb;
+}
+.playlist .scroll-container {
+  box-shadow: 0 0px 3px 0 var(--playlist-shadow-color) inset;
+}
+
+.listing.compact.playlist {
+  position: relative;
+  text-align: left;
+}
+.listing.compact.playlist .controls a {
+  padding: 10px;
+}
+.listing.compact.playlist .scroll-container {
+  position: relative;
+  min-height: 100px;
+  max-height: 500px;
+  width: 100%;
+  overflow-y: auto;
+}

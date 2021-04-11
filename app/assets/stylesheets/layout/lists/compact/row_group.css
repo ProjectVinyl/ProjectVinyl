@@ -1,0 +1,14 @@
+.listing.compact .row.row-group {
+  display: table-row-group;
+  width: 100%;
+}
+.listing.compact .row.row-group.row-group-collapse:hover .row ~ .row,
+.listing.compact .row.row-group .row {
+  display: table-row;
+}
+.listing.compact .row.row-group.row-group-collapse .row ~ .row {
+  display: none;
+}
+.listing.compact .row.row-group.row-group-collapse .row:hover {
+  background: rgba(199,100,220,0.1);
+}

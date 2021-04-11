@@ -1,0 +1,15 @@
+.listing.compact.playlist.virtual .row.selected + .row {
+  opacity: 0.5;
+}
+.listing.compact.playlist.virtual .row.selected + .row + .row {
+  opacity: 0.25;
+}
+.listing.compact.playlist.virtual .row.selected + .row + .row + .row {
+  opacity: 0.125;
+}
+.listing.compact.playlist.virtual .row.selected + .row + .row + .row + .row {
+  opacity: 0.05125;
+}
+.listing.compact.playlist.virtual .row.selected + .row + .row + .row + .row + .row {
+  opacity: 0;
+}

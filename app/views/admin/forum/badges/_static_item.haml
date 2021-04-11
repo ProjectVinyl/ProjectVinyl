@@ -1,10 +1,10 @@
 .row.row-group
 	.row
-		%div(style="width:30px")
+		.cell(style="width:30px")
 			%a.button.button-bub.disable= fa :pencil
-		%div(style="color:#{static_item.colour}")
+		.cell(style="color:#{static_item.colour}")
 			%i.fa.fa-4x{class: "fa-#{static_item.icon}"}
-		%div= static_item.title
-		.center
+		.cell= static_item.title
+		.cell.center
 			%i.fa.fa-times(title="false")
-		%div
+		.cell

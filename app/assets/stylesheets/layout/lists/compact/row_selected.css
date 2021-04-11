@@ -1,0 +1,18 @@
+.listing.compact .items .row.selected {
+  --table-secondary-color: rgba(255,255,255,0.8);
+  --table-inner-border: rgba(255,255,255,0.2);
+  --table-foreground-color: #fff;
+  --table-row-background: #6aaadd;
+  --table-row-focus-background: #7ebaea;
+}
+.listing.compact .row.selected .cell {
+  border-bottom: solid 1px var(--table-inner-border);
+}
+.listing.compact .row:hover {
+  background: var(--table-row-focus-background);
+}
+
+.listing.compact .items .row:target {
+  outline: solid 5px rgba(170,170,255,0.6);
+  --table-row-background: #eef;
+}

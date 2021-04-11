@@ -1,12 +1,12 @@
 = form_for(item, as: :notice, url: admin_sitenotice_path(item), html: {method: :patch, class: "row row-group removeable state-binary"}) do |f|
 	= f.text_field :id, hidden: true
 	.row
-		%div(style="width:30px")
+		.cell(style="width:30px")
 			%a.button.button-bub.state-toggle(data-state="editing" data-parent="form")= fa :pencil
-		%div= raw item.message
-		.center
+		.cell= raw item.message
+		.cell.center
 			%i.fa{title: !item.active, class: item.active ? "fa-check" : "fa-times"}
-		%div
+		.cell
 	.editing.row.row-spanned
 		.content.properties
 			%table

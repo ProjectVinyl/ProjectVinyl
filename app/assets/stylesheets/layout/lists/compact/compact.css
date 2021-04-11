@@ -1,0 +1,52 @@
+.listing.compact {
+  --table-foreground-color: #000;
+  --table-secondary-color: #888;
+  --table-row-background: var(--content-background);
+  --table-row-focus-background: var(--header-overlay-element-focus-fill);
+}
+.listing.compact .items {
+  display: table;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  table-layout: auto;
+  border-bottom: solid 1px var(--table-inner-border);
+}
+
+.listing.compact .row {
+  display: table-row;
+  font-weight: initial;
+  text-decoration: none;
+  padding: 0 10px;
+  background: var(--table-row-background);
+  color: var(--table-foreground-color);
+  transition:
+    background 0.25s ease,
+    border-color 0.25s ease;
+}
+
+.listing.compact .items .row .cell {
+  display: table-cell;
+  color: var(--table-foreground-color);
+  padding: 5px;
+  line-height: 20px;
+  border-top: solid 1px var(--table-inner-border);
+}
+
+.listing.compact .items .row .secondary {
+  position: relative;
+  color: var(--table-secondary-color);
+}
+.listing.compact .items .row .secondary::before {
+  content: '';
+  position: absolute;
+  top: 30%;
+  bottom: 30%;
+  left: 0;
+  border-left: solid 1px var(--table-inner-border);
+}
+
+.listing.compact .items .row .nowrap {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}

@@ -5,25 +5,28 @@
 	.listing.compact
 		.items
 			.row
-				%div
+				.cell
+				.cell
 					Jobs in queue: 
 					= Resque.info[:pending]
 					Total workers: 
 					= Resque.info[:workers]
-				%div
-				%div
+				.cell
+				.cell
 			- Resque.workers.each_with_index do |worker, i|
 				- payload = worker.job.dig("payload", "args")
 				- payload = "#{payload[0]["job_class"]}: #{payload[0]["arguments"]}" if payload
 				%a.row{href: "/admin/resque"}
-					%div
-						%span.active-icon{class: worker.working? && "active"}
+					.cell
+						.secondary
+							.active-icon{class: worker.working? && "active"}
+					.cell
 						= precede '#' do
 							= i+1
 						= precede ':' do
 							= worker.pid
-					%div= worker.queues.join(', ')
-					%div= payload || "No Task"
+					.cell= worker.queues.join(', ')
+					.cell= payload || "No Task"
 - rescue
 	%p Oops! Could not connect to Resque.
 %hr/

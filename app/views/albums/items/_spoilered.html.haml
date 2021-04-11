@@ -2,11 +2,8 @@
 									data: {target: "albums/items", "video-id": item.video_id, id: item.id, index: item.index}}
 	- if @modifications_allowed
 		.handle= fa :ellipsis_v
-	.title{title: @modifications_allowed && item.tooltip}
-		%div
-			\-------
-	.duration
-		%div --:--
+	.title{title: @modifications_allowed && item.tooltip} -------
+	.duration --:--
 	.author
 		%span ------
 	- if @modifications_allowed

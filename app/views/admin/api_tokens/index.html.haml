@@ -2,14 +2,14 @@
 	%p API Tokens allow for special access to a site's data. You can only have one token per registered user.
 	.items
 		%span.row.heads
-			%div
-			%div Id
-			%div Token
-			%div User
-			%div Hits
-			%div Total Hits
-			%div Generated
-			%div Last Hit
+			.cell
+			.cell Id
+			.cell Token
+			.cell User
+			.cell Hits
+			.cell Total Hits
+			.cell Generated
+			.cell Last Hit
 		= render partial: 'item', collection: @tokens
 	%span.row.foot
 		%a.button.button-bub.bub(title="add" data-title="Add Token" data-external-form="#{new_admin_api_path}")

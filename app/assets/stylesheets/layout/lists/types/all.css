@@ -1,7 +1,7 @@
 /*
  *= require ./bios
  *= require ./notifications
- *= require ./playlists
+ *= require ./playlists/all
  *= require ./tags
  *= require ./albums
  *= require ./files

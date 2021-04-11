@@ -4,11 +4,11 @@
 		Other than appearing in strategic places next to their names, badges have no semantic meaning.
 	.items
 		%span.row.heads
-			%div
-			.center(style="width:4em") Glyph
-			%div Name
-			.center(style="width:0") Hidden
-			%div Moderation notes
+			.cell
+			.cell.center(style="width:4em") Glyph
+			.cell Name
+			.cell.center(style="width:0") Hidden
+			.cell Moderation notes
 		= render partial: 'static_item', collection: Badge.static_badges
 		= render partial: 'item', collection: @badges
 	%span.row.foot

@@ -1,13 +1,13 @@
 = form_for(item, as: 'badge', url: admin_badge_path(item), method: :put, html: {class: "row row-group removeable state-binary"}) do |f|
 	.row
-		%div(style="width:30px")
+		.cell(style="width:30px")
 			%a.button.button-bub.state-toggle(data-state="editing" data-parent="form")= fa :pencil
-		%div(style="color:#{item.colour}")
+		.cell(style="color:#{item.colour}")
 			%i.fa.fa-4x{class: "fa-#{item.icon}"}
-		%div= item.title
-		.center
+		.cell= item.title
+		.cell.center
 			%i.fa{title: item.hidden, class: item.hidden ? "fa-check" : "fa-times"}
-		%div= item.note
+		.cell= item.note
 	.editing.row.row-spanned
 		.content.properties
 			%table

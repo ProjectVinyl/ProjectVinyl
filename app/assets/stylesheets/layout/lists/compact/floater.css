@@ -1,0 +1,4 @@
+
+.listing.compact .items .row.floater .cell {
+  border-bottom: solid 1px var(--table-inner-border);
+}

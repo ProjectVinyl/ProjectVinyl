@@ -2,7 +2,7 @@
  *= require ./horizontal
  *= require ./latest
  *= require ./vertical
- *= require ./compact
+ *= require ./compact/all
  *= require ./waiting
  *= require ./emptymsg
  *= require ./types/all

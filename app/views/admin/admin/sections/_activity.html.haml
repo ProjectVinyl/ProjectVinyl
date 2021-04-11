@@ -4,23 +4,23 @@
 .listing.compact
 	.items
 		.row.heads
-			%div Name
-			%div Created
-			%div Updated
-			%div Last Active
-			%div Votes
-			%div Sign ins
+			.cell Name
+			.cell Created
+			.cell Updated
+			.cell Last Active
+			.cell Votes
+			.cell Sign ins
 		- @users.records.each do |user|
 			%a.row{href: admin_user_path(user)}
-				%div
+				.cell
 					= user.username
 					= surround '(', ')' do
 						= user.id
-				%div{title: localise(user.created_at)}= since user.created_at
-				%div{title: localise(user.updated_at)}= since user.updated_at
+				.cell{title: localise(user.created_at)}= since user.created_at
+				.cell{title: localise(user.updated_at)}= since user.updated_at
 				- if user.last_active_at.nil?
-					%div null
+					.cell null
 				- else
-					%div{title: localise(user.last_active_at)}= since user.last_active_at
-				%div= user.votes.count
-				%div= user.sign_in_count
+					.cell{title: localise(user.last_active_at)}= since user.last_active_at
+				.cell= user.votes.count
+				.cell= user.sign_in_count

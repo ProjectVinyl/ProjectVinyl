@@ -1,8 +1,8 @@
 %a.row{href: admin_report_path(report)}
-	%div
-		%span.active-icon{class: report.open? && "active"}
+	.cell.secondary.active-icon{class: report.open? && "active"}
+	.cell
 		= precede '#' do
 			= report.id
-	%div= report.status
-	%div= since report.updated_at
-	%div= report.reportable_type
+	.cell= report.status
+	.cell= since report.updated_at
+	.cell= report.reportable_type

@@ -1,0 +1,40 @@
+.listing.compact .items .title:before {
+  content: '\f04b';
+  font-family:'FontAwesome';
+  padding-right: 10px;
+}
+.listing.compact .items .title {
+  padding: 0 0 0 30px;
+  position: relative;
+}
+.listing.compact .items .title div {
+  display: inline-block;
+  position: absolute;
+  left: 20px;
+  right: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.listing.compact .items .author  {
+  width: 0;
+}
+
+.listing.compact .items .duration {
+  text-align: center;
+  width: 90px;
+}
+
+.listing.compact .items .remove {
+  text-align: center;
+  width: 40px;
+}
+
+.listing.compact .items .hidden-item div {
+  font-weight: initial;
+  color: #aaa;
+}
+.listing.compact .items .hidden-item .title:before {
+  opacity: 0;
+}

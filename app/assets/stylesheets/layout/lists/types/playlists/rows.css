@@ -1,0 +1,40 @@
+.listing.compact.playlist .items {
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: wrap;
+}
+.listing.compact.playlist .items .row {
+  display: flex;
+  width: 100%;
+  padding: 0;
+}
+.listing.compact.playlist .row:not(.selected, .grabbed) {
+  opacity: 0.6;
+}
+
+.listing.compact.playlist .items .row .title {
+  padding: 0;
+}
+.listing.compact.playlist .items .row .primary {
+  display: flex;
+  flex-grow: 1;
+  flex-direction: column;
+  overflow: hidden;
+  padding-left: 15px;
+}
+.listing.compact.playlist .items .row .remove {
+  flex-grow: 0;
+  flex-shrink: 0;
+  vertical-align: center;
+  display: flex;
+  align-items: center;
+}
+.listing.compact.playlist .items .row .remove i {
+  flex-grow: 1;
+}
+.listing.compact.playlist .items .row .cell.primary .title,
+.listing.compact.playlist .items .row .cell.primary .author {
+  display: block;
+  overflow: hidden;
+  width: 100%;
+}

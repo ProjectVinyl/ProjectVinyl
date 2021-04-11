@@ -2,15 +2,13 @@
 %a.row{href: !spoilered && album_item.link,
 			 class: [spoilered && "hidden-item", @index == album_item.index && "selected scroll-focus"],
 				data: {id: album_item.id, index: album_item.index, "video-id": album_item.video_id, "album-id": album_item.album_id}}
-	.title(title="#{album_item.tooltip}")
-		%div>
+	.cell.primary(title="#{album_item.tooltip}")
+		.nowrap.title
 			- if spoilered
 				\----------
 			- else
 				=album_item.title
 		- if !album_item.video.hidden
-			.author
-				%span= album_item.video.user.username
+			.secondary.author= album_item.video.user.username
 	- if @album_editable
-		.remove(title="Remove" data-id="#{album_item.id}")
-			%span= fa :times
+		.cell.secondary.remove(title="Remove" data-id="#{album_item.id}")= fa :times
