@@ -146,9 +146,8 @@ button, .button, input[type="submit"], .tag, .foobar {
   --popper-item-highlight: var(--block-hover-color);
 }
 
-.listing.compact .items .row > a,
-.listing.compact .items .row > div {
-  color: #cacaca;
+.listing.compact {
+  --table-foreground-color: #cacaca;
 }
 .listing.compact .items.reorderable .handle {
   text-shadow: 0 0 3px #1a1a1a;
