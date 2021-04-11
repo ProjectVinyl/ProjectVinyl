@@ -1,0 +1,11 @@
+%a{href: target.link}
+	= precede '#' do
+		= target.name
+	= surround '(', ')' do
+		= target.videos.length
+		videos
+	= surround '(', ')' do
+		= target.users.length
+		users
+	= surround '(', ')' do
+		= render 'tags/flags', tag: target

@@ -1,0 +1,6 @@
+.row
+	%a.cell{href: row.link}
+		= precede '#' do
+			= row.name
+	.cell= fa :chevron_right
+	.cell= render partial: 'tags/implied/target', collection: row.implications

@@ -1,0 +1,6 @@
+.row
+	.cell
+		= precede '#' do
+			= row.name
+	.cell= fa :chevron_right
+	.cell.secondary= render partial: 'tags/aliases/target', locals: {target: row.alias}
