@@ -2,16 +2,16 @@
 	%p
 		Badges are a fun little feature that lets you add custom, sometimes humorous, notes a specific user.
 		Other than appearing in strategic places next to their names, badges have no semantic meaning.
-	.items
-		%span.row.heads
+	.items.display-grid
+		.row.heads
 			.cell
-			.cell.center(style="width:4em") Glyph
+			.cell Glyph
 			.cell Name
-			.cell.center(style="width:0") Hidden
+			.cell Hidden
 			.cell Moderation notes
 		= render partial: 'static_item', collection: Badge.static_badges
 		= render partial: 'item', collection: @badges
-	%span.row.foot
+	.row.foot
 		%a.button.button-bub.bub(title="add" data-title="Add Badge" data-external-form="#{new_admin_badge_path}")
 			= fa :plus
 			Add New

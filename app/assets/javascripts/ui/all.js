@@ -1,6 +1,6 @@
 import './infiniscroll';
 import './dropdown';
-import './layout/all';
+import './grid/all';
 import './lazy';
 import './reorder';
 import './slide';

@@ -1,22 +1,23 @@
-= form_for(item, as: 'badge', url: admin_badge_path(item), method: :put, html: {class: "row row-group removeable state-binary"}) do |f|
+.row.row-group.removeable.state-binary
 	.row
-		.cell(style="width:30px")
-			%a.button.button-bub.state-toggle(data-state="editing" data-parent="form")= fa :pencil
+		.cell
+			%a.button.button-bub.state-toggle(data-state="editing" data-parent=".state-binary")= fa :pencil
 		.cell(style="color:#{item.colour}")
 			%i.fa.fa-4x{class: "fa-#{item.icon}"}
 		.cell= item.title
-		.cell.center
+		.cell
 			%i.fa{title: item.hidden, class: item.hidden ? "fa-check" : "fa-times"}
 		.cell= item.note
 	.editing.row.row-spanned
 		.content.properties
-			%table
-				= render 'fields', f: f
-				%tr.actions
-					%td.label(colspan="2")
-						%a.button.red.right(data-confirm data-method="delete" href="#{admin_badge_path item}" data-title="Delete Badge")
-							= fa :trash
-							Delete
-						%button.green.right
-							= fa :save
-							Save
+			= form_for(item, as: 'badge', url: admin_badge_path(item), method: :put) do |f|
+				%table
+					= render 'fields', f: f
+					%tr.actions
+						%td.label(colspan="2")
+							%a.button.red.right(data-confirm data-method="delete" href="#{admin_badge_path item}" data-title="Delete Badge")
+								= fa :trash
+								Delete
+							%button.green.right
+								= fa :save
+								Save

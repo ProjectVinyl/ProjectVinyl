@@ -1,4 +1,4 @@
-import { all } from '../../../jslim/dom';
+import { all } from '../../jslim/dom';
 
 function getTargetPage(grid, b) {
   for (const page of grid.querySelectorAll('.page')) {

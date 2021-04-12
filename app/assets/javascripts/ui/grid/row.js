@@ -1,5 +1,5 @@
-import { bindEvent } from '../../../jslim/events';
-import { all } from '../../../jslim/dom';
+import { bindEvent } from '../../jslim/events';
+import { all } from '../../jslim/dom';
 
 function totalOuterWidth(element) {
   const style = window.getComputedStyle(element);

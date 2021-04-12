@@ -1,20 +1,40 @@
-.listing.compact .row-spanned {
-  position: relative;
-  margin-top: 100%;
+
+.listing.compact .items.display-grid {
+  display: flex;
+  flex-direction: column;
+  grid-template-columns: 60px 1fr 2fr min-content 3fr;
+}
+.listing.compact .items.display-grid.api-tokens {
+  grid-template-columns: 60px 1fr 2fr min-content 1fr 1fr 2fr 2fr;
+}
+.listing.compact .items.display-grid.site-notices {
+  grid-template-columns: 60px 2fr 1fr;
+}
+
+.listing.compact .items.display-grid .row,
+.listing.compact .items.display-grid .row.row-group .row {
   width: 100%;
-  overflow: hidden;
-  background: inherit;
+  display: grid;
+  grid-template-columns: inherit;
+  grid-auto-rows: minmax(100px, auto);
+  grid-template-rows: auto;
+  padding-left: 0;
+  padding-right: 0;
 }
-
-.listing.compact .row-spanned > .content {
-  position: absolute;
-  width: calc(100%);
-  height: 100%;
-  background: var(--content-background);
-  max-width: 100%;
-  padding: 0 !important;
-}
-
-.listing.compact .items .row.row-spanned > .content div {
+.listing.compact .items.display-grid .row.row-group {
   display: block;
+}
+.listing.compact .items.display-grid .row .cell {
+  width: auto !important;
+  display: flex;
+  align-items: center;
+}
+.listing.compact .items.display-grid .row-group .row.row-spanned {
+  grid-column: 1 / 5;
+  display: flex;
+  flex-direction: column;
+}
+.listing.compact .items.display-grid .row.row-spanned > .content {
+  flex-grow: 1;
+  background: var(--content-background);
 }

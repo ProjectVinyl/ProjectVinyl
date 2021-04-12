@@ -1,4 +1,4 @@
-import { ready, bindEvent } from '../../../jslim/events';
+import { ready, bindEvent } from '../../jslim/events';
 import { alignLists } from './row';
 import { resizeGrid } from './split';
 

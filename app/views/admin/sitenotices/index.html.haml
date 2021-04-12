@@ -1,11 +1,10 @@
 %section.page.full-width.listing.compact.collapse-padding
 	%p All the messages that appear on the site can be defined from here.
-	.items
+	.items.display-grid.site-notices
 		%span.row.heads
 			.cell
 			.cell Message
-			.cell.center(style="width:0") Active
-			.cell
+			.cell Active
 		= render partial: 'item', collection: @notices
 	%span.row.foot
 		%a.button.button-bub.bub(title="add" data-title="Add Notice" data-external-form="#{new_admin_sitenotice_path}")
