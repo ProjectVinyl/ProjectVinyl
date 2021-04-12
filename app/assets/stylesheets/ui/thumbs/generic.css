@@ -10,7 +10,6 @@ li.generic {
   max-width: calc(min(var(--thumb-width), 100%));
   min-width: calc(min(var(--thumb-width-min), 100%));
 
-  max-height: var(--thumb-height);
   min-height: calc(var(--thumb-height) - 110px);
 
   transition:

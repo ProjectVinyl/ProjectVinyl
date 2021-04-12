@@ -14,7 +14,7 @@
 }
 @media(max-width: 654px) {
   .thumb, li.generic.thumb {
-    --thumb-width: calc(min(230px, 40vw));
+    --thumb-width: calc(min(max(230px, 45vw), 100vw));
   }
 }
 
