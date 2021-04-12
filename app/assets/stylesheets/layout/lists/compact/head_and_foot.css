@@ -1,4 +1,6 @@
 .listing.compact .row.heads {
+  position: sticky;
+  top: 0;
   font-weight: bold;
 }
 .listing.compact .row.foot {
