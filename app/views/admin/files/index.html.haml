@@ -14,7 +14,7 @@
 		- if @user
 			%ul.horizontal= render partial: 'users/thumb/normal', locals: {normal: @user}
 	.infinite-page.items#files{data: {url: admin_files_path, path: @public.full_path, start: @public.start_ref, end: @public.end_ref}}
-		.row.header
+		.row.heads
 			.cell Name
 			.cell(style="width:10%") Type
 		= render partial: "file", collection: @public.items
