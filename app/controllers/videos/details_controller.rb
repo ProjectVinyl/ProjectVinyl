@@ -2,8 +2,18 @@ module Videos
   class DetailsController < BaseVideosController
     def update
       check_then do |video|
-        if (changes = video.set_tag_string(params[:tags]))
-          TagHistory.record_tag_changes(changes[0], changes[1], video.id, current_user.id)
+
+        begin
+          if (changes = video.set_all_tags(TagRule.test(Tag.ids_from_string(params[:tags]))))
+            TagHistory.record_tag_changes(changes[0], changes[1], video.id, current_user.id)
+          end
+        rescue TagRule::RuleNotFulfilledError => e
+          return render json: {
+            error: {
+              title: 'Tagging Requirements Not Met',
+              message: e.message
+            }
+          }
         end
 
         if video.source != params[:source]

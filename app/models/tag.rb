@@ -176,6 +176,10 @@ class Tag < ApplicationRecord
     self
   end
 
+  def self.ids_from_string(value)
+    create_from_names(split_tag_string(value))
+  end
+
   def self.create_from_names(names)
     return [] if names.blank?
 

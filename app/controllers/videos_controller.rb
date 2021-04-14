@@ -147,6 +147,17 @@ class VideosController < Videos::BaseVideosController
 
     return error('Error', 'You need at least one tag.') if video[:tag_string].blank?
 
+    if !source || source.blank?
+      video[:tag_string] = (video[:tag_string].split(',') + ['source needed']).uniq.join(',')
+    end
+
+    tag_ids = []
+    begin
+      tag_ids = TagRule.test(Tag.ids_from_string(video[:tag_string]))
+    rescue TagRule::RuleNotFulfilledError => e
+      return error('Tagging Requirements Not Met', e.message)
+    end
+
     data = file.read
     if !(checksum = Verification::VideoVerification.ensure_uniq(data))[:valid]
       return error('Duplication Error', 'The uploaded video already exists.')
@@ -156,6 +167,7 @@ class VideosController < Videos::BaseVideosController
     ext = Mimes.ext(file.content_type) if ext.blank?
 
     title = StringsHelper.check_and_trunk(video[:title], 'Untitled Video')
+    source = PathHelper.clean_url(video[:source])
 
     Video.transaction do
       @video = user.videos.create(
@@ -178,13 +190,9 @@ class VideosController < Videos::BaseVideosController
 
       @comments.subscribe(current_user) if current_user.subscribe_on_upload?
 
-      if @video.source && !@video.source.blank?
-        TagHistory.record_source_changes(@video, current_user.id)
-      else
-        video[:tag_string] = (video[:tag_string].split(',') + ['source needed']).uniq.join(',')
-      end
+      TagHistory.record_source_changes(@video, current_user.id) if source && !source.blank?
 
-      @video.tag_string = video[:tag_string]
+      @video.set_all_tags(tag_ids)
     end
 
     @video.video = data

@@ -36,8 +36,11 @@ module Taggable
   end
 
   def set_tag_string(value)
+    set_all_tags(Tag.ids_from_string(value))
+  end
+
+  def set_all_tags(loaded)
     existing = __current_tags
-    loaded = Tag.create_from_names(Tag.split_tag_string(value))
     common = existing & loaded
 
     return nil if existing.length == loaded.length && existing.length == common.length

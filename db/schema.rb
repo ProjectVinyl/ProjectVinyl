@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20210414082559) do
+ActiveRecord::Schema.define(version: 20210414195634) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -269,6 +269,16 @@ ActiveRecord::Schema.define(version: 20210414082559) do
     t.index ["implied_id"], name: "index_tag_implications_on_implied_id"
     t.index ["tag_id", "implied_id"], name: "index_tag_implications_on_tag_id_and_implied_id", unique: true
     t.index ["tag_id"], name: "index_tag_implications_on_tag_id"
+  end
+
+  create_table "tag_rules", force: :cascade do |t|
+    t.string "message"
+    t.integer "when_present", default: [], array: true
+    t.integer "all_of", default: [], array: true
+    t.integer "none_of", default: [], array: true
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "any_of", default: [], array: true
   end
 
   create_table "tag_subscriptions", id: :serial, force: :cascade do |t|
