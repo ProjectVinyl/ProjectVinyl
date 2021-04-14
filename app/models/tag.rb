@@ -1,8 +1,7 @@
 require 'elasticsearch/model'
 
 class Tag < ApplicationRecord
-  include Elasticsearch::Model
-  include Indexable
+  include Indexable, Upsert
 
   belongs_to :tag_type
   belongs_to :alias, class_name: "Tag", foreign_key: "alias_id"
@@ -25,32 +24,6 @@ class Tag < ApplicationRecord
 
   validates :name, uniqueness: true, presence: true
   before_validation :validate_name, if: :will_save_change_to_name?
-
-  document_type 'tag'
-  settings index: { number_of_shards: 1 } do
-    mappings dynamic: 'false' do
-      indexes :name, type: 'keyword'
-      indexes :slug, type: 'keyword'
-      indexes :namespace, type: 'keyword'
-      indexes :aliases, type: 'keyword'
-      indexes :implicators, type: 'keyword'
-      indexes :implications, type: 'keyword'
-      indexes :video_count, type: 'integer'
-      indexes :user_count, type: 'integer'
-      indexes :created_at, type: 'date'
-      indexes :updated_at, type: 'date'
-    end
-  end
-
-  def as_indexed_json(_options = {})
-    json = as_json(only: %w[name slug namespace video_count user_count])
-    json['slug'] = slug
-    json['namespace'] = namespace
-    json['aliases'] = aliases.pluck(:name)
-    json['implicators'] = implicators.pluck(:name)
-    json['implications'] = implications.pluck(:name)
-    json
-  end
 
   scope :pluck_actual_ids, -> { ( pluck(:id, :alias_id).map {|t| t[1] || t[0] }).uniq }
   scope :jsons, ->(sender=nil) { actualise.uniq.map {|t| t.to_json(sender)} }
@@ -86,6 +59,32 @@ class Tag < ApplicationRecord
         .limit(10)
         .jsons(sender)
   }
+
+  document_type 'tag'
+  settings index: { number_of_shards: 1 } do
+    mappings dynamic: 'false' do
+      indexes :name, type: 'keyword'
+      indexes :slug, type: 'keyword'
+      indexes :namespace, type: 'keyword'
+      indexes :aliases, type: 'keyword'
+      indexes :implicators, type: 'keyword'
+      indexes :implications, type: 'keyword'
+      indexes :video_count, type: 'integer'
+      indexes :user_count, type: 'integer'
+      indexes :created_at, type: 'date'
+      indexes :updated_at, type: 'date'
+    end
+  end
+
+  def as_indexed_json(_options = {})
+    json = as_json(only: %w[name slug namespace video_count user_count])
+    json['slug'] = slug
+    json['namespace'] = namespace
+    json['aliases'] = aliases.pluck(:name)
+    json['implicators'] = implicators.pluck(:name)
+    json['implications'] = implications.pluck(:name)
+    json
+  end
 
   def actual
     alias_id ? (self.alias || self) : self
@@ -159,34 +158,35 @@ class Tag < ApplicationRecord
   def self.create_from_names(names)
     return [] if names.blank?
     result = []
-    existing_names = []
-
+    existing_tags = []
+    
     Tag.where('name IN (?)', names).find_each do |tag|
       result << (tag.alias_id || tag.id)
-      existing_names << tag.name
+      existing_tags << tag
     end
 
-    new_tags = names - existing_names
-    new_tags.each do |name|
-      name = name.strip
-      next unless name.present? && name.index('uploader:') != 0 && name.index('title:') != 0
+    new_tags = (names - existing_tags.map(&:name))
+      .map(&:strip)
+      .filter{|name| is_valid_tag_name(name)}
+      .uniq
+      .map{|name| new_tag_hash(name) }
 
-      type = TagType.where(prefix: name.split(':')[0]).first if !name.index(':').nil?
-      tag = __make(name: name, description: '', tag_type_id: type ? type.id : 0, video_count: 0, user_count: 0)
+    new_tags = upsert_all(new_tags, returning: [:id, :tag_type_id], unique_by: [:name])
 
-      if tag.short_name.nil?
-        if type
-          name = name.sub(name.split(':')[0], '').strip
-          result |= type.create_implications! tag
-        end
-
-        tag.name = name
-        tag.save
-      end
-      result << tag.id
-    end
+    TagType.upsert_implications(existing_tags, new_tags, result)
 
     result.uniq
+  end
+  
+  def self.new_tag_hash(name)
+    type = TagType.for_tag_name(name)
+    pair = Tag.name_validation(type, name)
+
+    { name: pair[0], short_name: pair[1], description: '', tag_type_id: type ? type.id : 0, video_count: 0, user_count: 0 }
+  end
+  
+  def self.is_valid_tag_name(name)
+    name.present? && name.index('uploader:') != 0 && name.index('title:') != 0
   end
 
   def self.sanitize_name(name)
@@ -212,25 +212,22 @@ class Tag < ApplicationRecord
   end
 
   def validate_name
-    self.name = Tag.sanitize_name(name)
+    pair = name_validation(tag_type, name)
+    self.name = pair[0]
+    self.short_name = pair[1]
+  end
+  
+  def self.name_validation(tag_type, name)
+    name = Tag.sanitize_name(name)
 
-    if has_type
-      self.name = name.sub(tag_type.prefix + ':', '').delete(':')
-      self.name = tag_type.prefix + ":" + name if !tag_type.hidden
+    if tag_type
+      name = name.sub(tag_type.prefix + ':', '').delete(':')
+      name = tag_type.prefix + ":" + name if !tag_type.hidden
     else
-      self.name = name.delete(':')
+      name = name.delete(':')
     end
 
-    self.short_name = PathHelper.url_safe_for_tags(name)
-  end
-
-  # protected
-  # We don't use Tag.create any more because that can create duplicates
-  def self.__make(hash)
-    sql = 'INSERT INTO tags (' + hash.keys.join(',') + ') VALUES (?) ON CONFLICT (name) DO UPDATE SET name = excluded.name;'
-    sql = Tag.send :sanitize_sql_for_conditions, [sql, hash.values]
-    ApplicationRecord.connection.execute(sql)
-    where(name: hash[:name]).first
+    [name, PathHelper.url_safe_for_tags(name)]
   end
 
   def reindex!

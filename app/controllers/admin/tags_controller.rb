@@ -42,7 +42,7 @@ module Admin
 
       implications = Tag.split_to_ids(params[:tag][:tag_string])
       implications = TagImplication.expand(implications)
-      implications |= @tag.tag_type.unique_implication_ids if @tag.tag_type
+      implications |= @tag.tag_type.tag_type_implications.unique_tag_ids if @tag.tag_type
 
       TagImplication.load(@tag, implications)
     end

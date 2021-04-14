@@ -6,11 +6,7 @@ class TagSubscription < ApplicationRecord
 
   def self.notify_subscribers(gained, dropped, preserved)
     return if gained.empty? && dropped.empty?
-    if !preserved.empty?
-      preserved_recievers = TagSubscription.where('tag_id IN (?)', preserved).uniq.pluck(:user_id)
-    else
-      preserved_recievers = []
-    end
+    preserved_recievers = preserved.empty? ? [] : TagSubscription.where('tag_id IN (?)', preserved).uniq.pluck(:user_id)
     preserved_recievers << 0
     update_users(true, gained, preserved_recievers)
     update_users(false, dropped, preserved_recievers)
@@ -31,11 +27,10 @@ class TagSubscription < ApplicationRecord
 
   protected
   def self.update_users(op, tags, preserved_receivers)
-    if !tags.empty?
-      User.joins('INNER JOIN tag_subscriptions ON user_id = users.id')
-          .where("tag_subscriptions.tag_id IN (?) AND users.id NOT IN (?)#{op ? '' : ' AND feed_count > 0'}", tags, preserved_receivers)
-          .group('users.id')
-          .update_all("feed_count = feed_count #{op ? "+" : "-"} 1")
-    end
+    return if tags.empty?
+    User.joins('INNER JOIN tag_subscriptions ON user_id = users.id')
+        .where("tag_subscriptions.tag_id IN (?) AND users.id NOT IN (?)#{op ? '' : ' AND feed_count > 0'}", tags, preserved_receivers)
+        .group('users.id')
+        .update_all("feed_count = feed_count #{op ? "+" : "-"} 1")
   end
 end

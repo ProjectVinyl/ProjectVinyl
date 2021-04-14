@@ -1,9 +1,8 @@
 module Admin
   class TagtypesController < BaseAdminController
     def index
-      if !current_user.is_contributor?
-        return render_access_denied
-      end
+      return render_access_denied if !current_user.is_contributor?
+
       @crumb = {
         stack: [
           { link: '/admin', title: 'Admin' }
@@ -15,28 +14,34 @@ module Admin
     
     def update
       if !current_user.is_contributor?
-        if params[:format] == 'json'
-          return head :unauthorized
-        end
+        return head :unauthorized if params[:format] == 'json'
         return render file: '/public/403.html', layout: false
       end
       
       redirect_to action: :index
       
       if !(tagtype = TagType.where(id: params[:tag_type][:id]).first)
-        flash[:error] = "Error: Record not be found."
+        return flash[:error] = "Error: Record not be found."
       end
-      
-      if error = tagtype.set_metadata(params[:tag_type][:prefix], params[:tag_type][:hidden] == '1')
-        flash[:error] = error
+
+      prefix = Tag.sanitize_name(params[:tag_type][:prefix])
+
+      return flash[:error] = "Error: Prefix cannot be blank/null" if !StringsHelper.valid_string?(prefix)
+
+      if tagtype.prefix != prefix
+        return flash[:error] = "Error: A tag type with that prefix already exists." if TagType.where(prefix: prefix).count > 0
+        
+        tagtype.prefix = prefix
       end
+
+      tagtype.hidden = params[:tag_type][:hidden] == '1'
       tagtype.tag_string = params[:tag_type][:tag_string]
+      tagtype.save
+      tagtype.find_and_assign
     end
 
     def new
-      if !current_user.is_contributor?
-        return head :unauthorized
-      end
+      return head :unauthorized if !current_user.is_contributor?
 
       @tagtype = TagType.new
       render partial: 'new'
@@ -44,20 +49,13 @@ module Admin
 
     def create
       redirect_to action: :index
-      
-      if !current_user.is_contributor?
-        return flash[:error] = "Error: Login required."
-      end
-      
+
+      return flash[:error] = "Error: Login required." if !current_user.is_contributor?
+
       prefix = Tag.sanitize_name(params[:tag_type][:prefix])
-      
-      if !StringsHelper.valid_string?(prefix)
-        return flash[:error] = "Error: Prefix cannot be blank/null"
-      end
-      
-      if TagType.where(prefix: prefix).count > 0
-        return flash[:error] = "Error: A tagtype with that prefix already exists"
-      end
+
+      return flash[:error] = "Error: Prefix cannot be blank/null" if !StringsHelper.valid_string?(prefix)
+      return flash[:error] = "Error: A tagtype with that prefix already exists" if TagType.where(prefix: prefix).count > 0
       
       tagtype = TagType.create(prefix: prefix, hidden: params[:tag_type][:hidden] == '1')
       tagtype.tag_string = params[:tag_type][:tag_string]
@@ -65,17 +63,14 @@ module Admin
     end
 
     def delete
-      if !current_user.is_contributor?
-        return head :unauthorized
-      end
+      return head :unauthorized if !current_user.is_contributor?
       
       if !(tagtype = TagType.where(id: params[:id]).first)
         return render json: {
           error: "Error: Record not be found."
         }
       end
-      
-      Tag.where(tag_type_id: tagtype.id).update_all('tag_type_id = 0')
+
       tagtype.destroy
       render json: {}
     end

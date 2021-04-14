@@ -16,7 +16,7 @@ module Taggable
   end
 
   def drop_tags(ids)
-    __tag_relation.where('tag_id IN (?)', ids).deleted_all
+    __tag_relation.where('tag_id IN (?)', ids).destroy_all
   end
 
   def pick_up_tags(ids)
@@ -42,7 +42,7 @@ module Taggable
 
     return nil if existing.length == loaded.length && existing.length == common.length
 
-    __load_dif(loaded - common, existing - common, existing)
+    __load_dif(loaded - common, existing - common, common)
   end
 
   def add_tag(tag_name)
@@ -64,18 +64,22 @@ module Taggable
   def __current_tags
     aliased_from = []
     aliased_to = []
+
     existing = tags.pluck(:id, :alias_id).map do |t|
       if t[1]
         aliased_from << t[0]
         aliased_to << t[1]
       end
 
-      (t[1] || t[0])
+      t[0]
     end
 
     if !aliased_from.empty?
-      drop_tags(aliased_from)
+      existing -= aliased_from
       aliased_to -= existing
+      existing += aliased_to
+
+      drop_tags aliased_from
       add_tags aliased_to
     end
 

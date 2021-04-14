@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20210406220706) do
+ActiveRecord::Schema.define(version: 20210414082559) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -267,6 +267,7 @@ ActiveRecord::Schema.define(version: 20210406220706) do
     t.integer "tag_id"
     t.integer "implied_id"
     t.index ["implied_id"], name: "index_tag_implications_on_implied_id"
+    t.index ["tag_id", "implied_id"], name: "index_tag_implications_on_tag_id_and_implied_id", unique: true
     t.index ["tag_id"], name: "index_tag_implications_on_tag_id"
   end
 
