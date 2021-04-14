@@ -2,6 +2,7 @@ import { addDelegatedEvent, bindAll, halt, bindEvent } from '../../jslim/events'
 import { Key, isNumberKey, getNumberKeyValue } from '../../utils/key';
 import { triggerDrop } from './waterdrop';
 import { fullscreenPlayer } from './fullscreen';
+import { navTo } from './playlist_actions';
 
 export function registerEvents(player, el) {
   let tapped = false;
@@ -18,10 +19,10 @@ export function registerEvents(player, el) {
       }
 
       if (!player.contextmenu.hide(ev)) {
-        let target = ev.target.closest('.items a, #playlist_next, #playlist_prev');
+        let target = ev.target.closest('.items a, #playlist_next:not(.disabled), #playlist_prev:not(.disabled)');
         if (target) {
           halt(ev);
-          return player.navTo(target);
+          return navTo(player, target);
         }
 
         if (player.playlist && ev.target.closest('.playlist-toggle')) {

@@ -1,10 +1,18 @@
+- mark_seen(@album, @video)
 %section.listing.compact.collapse-padding.playlist.column-mobile-shown{class: @album.virtual? && "virtual"}
+	.controls
+		%a.title{class: @next_video && "buff-right", href: !@album.virtual? && @album.link}= @album.title
 	.controls
 		- if @prev_video
 			%a.slide-left#playlist_prev{title: "Previous", href: @prev_video.link, "data-video-id": @prev_video.id, "data-album-id": @album.id}= fw :step_backward
-		%a.title{class: @next_video && "buff-right", href: !@album.virtual? && @album.link}= @album.title
+		- else
+			%a.slide-left.disabled#playlist_prev(title="Previous")= fw :step_backward
+		%a.loop(name="loop" href="#" title="Loop Playlist"){class: playlist_looping? && 'active'}= fa :repeat
+		%a.shuffle(name="shuffle" href="#" title="Shuffle Playlist"){class: playlist_shuffling? && 'active'}= fa :random
 		- if @next_video
 			%a.slide-right#playlist_next{title: "Next", href: @next_video.link, "data-video-id": @next_video.id, "data-album-id": @album.id}= fw :step_forward
+		- else
+			%a.slide-right.disabled#playlist_next(title="Next")= fw :step_forward
 	.scroll-container(data-document-scroll-y="200")
 		.items{class: @album_editable && "reorderable", "data-target": "albumitem"}
 			= render partial: 'albums/album_item', collection: @items

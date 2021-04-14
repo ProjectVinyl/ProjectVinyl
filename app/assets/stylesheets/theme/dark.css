@@ -63,6 +63,7 @@ html, body {
 .playlist {
   --playlist-controls-color: #aaa;
   --playlist-shadow-color: #111;
+  --seamless-button-hover-tint: #403f3f;
 }
 
 .comment {

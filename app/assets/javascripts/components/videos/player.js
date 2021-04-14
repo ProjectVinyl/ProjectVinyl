@@ -8,7 +8,7 @@ import { clamp } from '../../utils/math';
 import { errorMessage, errorPresent } from '../../utils/videos';
 import { formatFuzzyBigNumber } from '../../utils/numbers';
 import { all } from '../../jslim/dom';
-import { ready, bindAll, bindEvent } from '../../jslim/events';
+import { ready } from '../../jslim/events';
 import { cookies } from '../../utils/cookies';
 import { TapToggler } from '../taptoggle';
 import { setFullscreen } from './fullscreen';
@@ -16,7 +16,6 @@ import { PlayerControls } from './playercontrols';
 import { setupNoise } from './noise';
 import { attachMessageListener } from './itc';
 import { createVideoElement, addSource } from './video_element';
-import { onPlaylistNavigate } from './playlist';
 import { attachFloater } from './floatingplayer';
 import { registerEvents } from './gestures';
 
@@ -120,12 +119,8 @@ Player.prototype = {
     
     this.volume(this.volumeLevel, false);
 
+    el.videoPlayer = this;
     return this;
-  },
-  navTo(sender) {
-    ajax.get(`videos/${sender.dataset.videoId}.json?list=${sender.dataset.albumId}`).json(json => {
-      onPlaylistNavigate(this, sender, json);
-    });
   },
   fullscreenChanged(inFullscreen) {
     if (!inFullscreen && this.redirect) {

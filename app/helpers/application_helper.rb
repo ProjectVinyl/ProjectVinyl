@@ -4,6 +4,7 @@ module ApplicationHelper
   include ValuesHelper, FormatsHelper, StringsHelper, TimeHelper
   include FiltersHelper
   include ThemesHelper
+  include PlaylistHelper
 
   def self.read_only
     ApplicationSettings.get(:read_only)

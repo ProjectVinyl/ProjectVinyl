@@ -19,10 +19,21 @@ export const cookies = {
     if (key) return tryUnmarshal(decodeURIComponent(key), def);
     return def;
   },
-  set: (key, value) => {
-    if (value == null || value === undefined || isNaN(value)) {
-      return document.cookie = `${key}=; max-age=-1; path=/;`;
+  set: (key, value, params) => {
+    params = params || {};
+    let age = params.age || COOKIE_MAX_AGE;
+    const path = params.path || '/';
+
+    if (value === '' || value === null || value === undefined || isNaN(value)) {
+      value = '';
+      age = -1;
     }
-    document.cookie = `${key}=${encodeURIComponent(value)}; max-age=${COOKIE_MAX_AGE}; path=/;`;
+    if (params.session) {
+      age = 'Session';
+    }
+
+    let base = `${key}=${value}; max-age=${age}; `;
+
+    document.cookie = `${base}path=${path};`;
   }
 };

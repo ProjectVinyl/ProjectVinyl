@@ -2,9 +2,9 @@
  * Initialises basic video playback functionality.
  */
 import { bindAll } from '../../jslim/events';
-import { fullscreenPlayer } from './fullscreen';
 import { sendMessage } from './itc';
 import { setWatchTime } from './watch_time';
+import { moveNext } from './playlist_actions';
 
 // Have to do this the long way to avoid caching errors in firefox
 export function addSource(video, src, type) {
@@ -54,11 +54,7 @@ export function createVideoElement(sender) {
     },
     ended: () => {
       if (sender.__autoplay) {
-        const next = document.querySelector('#playlist_next');
-        if (next) {
-          if (!sender.embedded && !fullscreenPlayer) return sender.click();
-          sender.navTo(next);
-        }
+        moveNext(sender);
       } else if (sender.pause()) {
         sender.setState('stopped');
       }

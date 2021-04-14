@@ -1,6 +1,8 @@
 - spoilered = album_item.video.hidden || current_filter.video_spoilered?(album_item.video)
 %a.row{href: !spoilered && album_item.link,
-			 class: [spoilered && "hidden-item", @index == album_item.index && "selected scroll-focus"],
+			 class: [spoilered && 'hidden-item',
+							@index == album_item.index && 'selected scroll-focus',
+							video_seen?(album_item.video_id) && 'seen'],
 				data: {id: album_item.id, index: album_item.index, "video-id": album_item.video_id, "album-id": album_item.album_id}}
 	.cell.primary(title="#{album_item.tooltip}")
 		.nowrap.title
