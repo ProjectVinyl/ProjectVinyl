@@ -13,7 +13,10 @@ module Videos
 
         video.save
 
-        head :ok
+        render json: {
+          source: video.source,
+          results: video.tags.order(:name).jsons(current_user)
+        }
       end
     end
   end
