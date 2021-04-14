@@ -30,26 +30,28 @@ class Tag < ApplicationRecord
   scope :split_to_ids, ->(tag_string) {
     names = Tag.split_tag_string(tag_string)
     return [] if names.blank?
-    where('"tags"."name" IN (?)', names.uniq).pluck_actual_ids
+    where(name: names.uniq).pluck_actual_ids
   }
   scope :by_tag_string, ->(tag_string) {
     names = Tag.split_tag_string(tag_string)
-    where('"tags"."name" IN (?) OR "tags"."short_name" IN (?)', names, names)
+    where(name: names).or(where(short_name: names))
   }
-  scope :to_tag_string, -> { pluck(:name).uniq.join(',') }
+  scope :by_names, ->(names) {
+    return [] if names.nil? || (names = names.uniq).empty?
+    where(name: names).or(where(short_name: names)).actualise
+  }
 
+  scope :to_tag_string, -> { pluck(:name).uniq.join(',') }
   scope :actualise, -> { includes(:alias).map(&:actual).uniq }
   scope :actual_names, -> { actualise.map(&:name).uniq }
 
-  scope :by_names, ->(names) {
-    return [] if names.nil? || (names = names.uniq).empty?
-    where('"tags"."name" IN (?) OR "tags"."short_name" IN (?)', names, names).actualise
-  }
   scope :by_name_or_id, ->(name) {
     return none if name.blank?
-    order(:video_count, :user_count)
-        .reverse_order
-        .where('"tags"."name" = ? OR "tags"."id"::text = ? OR "tags"."short_name" = ?', name, name, name)
+    where(name: name)
+      .or(where(short_name: name))
+      .or(where('"tags"."id"::text = ?', name))
+      .order(:video_count, :user_count)
+      .reverse_order
   }
   scope :find_matching_tags, ->(name, sender=nil) {
     name = name.downcase
@@ -155,8 +157,28 @@ class Tag < ApplicationRecord
     answer.join(' ')
   end
 
+  def validate_name_and_reindex
+    validate_name
+    reindex!
+  end
+
+  def validate_name
+    pair = name_validation(tag_type, name)
+    self.name = pair[0]
+    self.short_name = pair[1]
+  end
+
+  def reindex!
+    save
+    videos.each &:update_index
+    users.each &:update_index
+    update_index
+    self
+  end
+
   def self.create_from_names(names)
     return [] if names.blank?
+
     result = []
     existing_tags = []
     
@@ -167,9 +189,9 @@ class Tag < ApplicationRecord
 
     new_tags = (names - existing_tags.map(&:name))
       .map(&:strip)
-      .filter{|name| is_valid_tag_name(name)}
       .uniq
-      .map{|name| new_tag_hash(name) }
+      .filter(&Tag.method(:valid_name?))
+      .map(&Tag.method(:new_tag_hash))
 
     new_tags = upsert_all(new_tags, returning: [:id, :tag_type_id], unique_by: [:name])
 
@@ -180,13 +202,9 @@ class Tag < ApplicationRecord
   
   def self.new_tag_hash(name)
     type = TagType.for_tag_name(name)
-    pair = Tag.name_validation(type, name)
+    name,short_name = Tag.name_validation(type, name)
 
-    { name: pair[0], short_name: pair[1], description: '', tag_type_id: type ? type.id : 0, video_count: 0, user_count: 0 }
-  end
-  
-  def self.is_valid_tag_name(name)
-    name.present? && name.index('uploader:') != 0 && name.index('title:') != 0
+    { name: name, short_name: short_name, description: '', tag_type_id: type ? type.id : 0, video_count: 0, user_count: 0 }
   end
 
   def self.sanitize_name(name)
@@ -199,24 +217,13 @@ class Tag < ApplicationRecord
 
   def self.split_tag_string(tag_string)
     return [] if tag_string.blank?
-    tag_string.downcase.split(/,|;/).uniq.filter{|i| !Tag.name_illegal?(i) }
+    tag_string.downcase.split(/,|;/).uniq.filter(&Tag.method(:valid_name?))
   end
 
-  def self.name_illegal?(tag_name)
-    ProjectVinyl::Search::USER_INDEX_PARAMS.recognises?(tag_name) || ProjectVinyl::Search::VIDEO_INDEX_PARAMS.recognises?(tag_name)
+  def self.valid_name?(tag_name)
+    !name.nil? && name.present? && !ProjectVinyl::Search::USER_INDEX_PARAMS.recognises?(tag_name) && !ProjectVinyl::Search::VIDEO_INDEX_PARAMS.recognises?(tag_name)
   end
 
-  def validate_name_and_reindex
-    validate_name
-    reindex!
-  end
-
-  def validate_name
-    pair = name_validation(tag_type, name)
-    self.name = pair[0]
-    self.short_name = pair[1]
-  end
-  
   def self.name_validation(tag_type, name)
     name = Tag.sanitize_name(name)
 
@@ -228,13 +235,5 @@ class Tag < ApplicationRecord
     end
 
     [name, PathHelper.url_safe_for_tags(name)]
-  end
-
-  def reindex!
-    save
-    videos.each &:update_index
-    users.each &:update_index
-    update_index
-    self
   end
 end
