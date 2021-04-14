@@ -103,8 +103,8 @@ class VideosController < Videos::BaseVideosController
 
     if ApplicationHelper.read_only && !current_user.is_contributor?
       return render_error(
-        title: "Read Only",
-        description: "That feature is currently disabled."
+        title: 'Read Only',
+        description: 'That feature is currently disabled.'
       )
     end
 
@@ -114,8 +114,8 @@ class VideosController < Videos::BaseVideosController
   end
 
   def create
-    return error("Access Denied", "You can't do that right now.") if !user_signed_in?
-    return error("Read Only", "That feature is currently disabled.") if ApplicationHelper.read_only && !current_user.is_contributor?
+    return error('Access Denied', 'You can\'t do that right now.') if !user_signed_in?
+    return error('Read Only', 'That feature is currently disabled.') if ApplicationHelper.read_only && !current_user.is_contributor?
 
 		user = current_user
     video = params[:video]
@@ -123,15 +123,15 @@ class VideosController < Videos::BaseVideosController
     file = video[:file]
     cover = video[:cover]
 
-    return error("Error", "File is empty") if !file || file.size == 0
+    return error('Error', 'File is empty') if !file || file.size == 0
 
     if !file.content_type.include?('video/') && !file.content_type.include?('audio/')
-      return error("Error", "Mismatched content type: '#{file.content_type}'" )
+      return error('Error', "Mismatched content type: '#{file.content_type}'" )
     end
 
     if file.content_type.include?('audio/')
       if !cover || cover.size == 0 || !cover.content_type.include?('image/')
-        return error("Error", "Cover art is required for audio files.")
+        return error('Error', 'Cover art is required for audio files.')
       end
     end
 
@@ -141,21 +141,21 @@ class VideosController < Videos::BaseVideosController
       begin
         premier_time = DateTime.parse(params[:premier][:date] + ' ' + params[:premier][:time])
       rescue ArgumentError => e
-        return error("Error", "Premier was not specified in a valid date-time format")
+        return error('Error', 'Premier was not specified in a valid date-time format')
       end
     end
 
-    return error("Error", "You need at least one tag.") if video[:tag_string].blank?
+    return error('Error', 'You need at least one tag.') if video[:tag_string].blank?
 
     data = file.read
     if !(checksum = Verification::VideoVerification.ensure_uniq(data))[:valid]
-      return error("Duplication Error", "The uploaded video already exists.")
+      return error('Duplication Error', 'The uploaded video already exists.')
     end
 
     ext = File.extname(file.original_filename)
     ext = Mimes.ext(file.content_type) if ext.blank?
 
-    title = StringsHelper.check_and_trunk(video[:title], "Untitled Video")
+    title = StringsHelper.check_and_trunk(video[:title], 'Untitled Video')
 
     Video.transaction do
       @video = user.videos.create(
