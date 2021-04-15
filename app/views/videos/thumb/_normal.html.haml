@@ -1,6 +1,8 @@
 - spoilered = current_filter.video_spoilered?(normal)
+- rating = normal.rating_tags.first
 %li.generic.thumb.picture>
-	%a.thumb{class: normal.hidden && "thumb-hidden", href: normal.link}
+	%a.thumb{class: [normal.hidden && "thumb-hidden",
+									rating && "video-rating rating-#{rating.slug}"], href: normal.link}
 		.tile
 			%img(loading="lazy"){src: normal.tiny_thumb(current_user, current_filter)}
 			%span.tag-set.duration= duration normal.duration

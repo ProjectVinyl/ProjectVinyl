@@ -1,5 +1,7 @@
+- rating = recommendation.rating_tags.first
 %li.generic>
-	%a.thumb{class: recommendation.hidden && "thumb-hidden", href: recommendation.link}
+	%a.thumb{class: [recommendation.hidden && "thumb-hidden",
+									rating && "video-rating rating-#{rating.slug}"], href: recommendation.link}
 		.tile
 			%img(loading="lazy"){src: recommendation.tiny_thumb(current_user, current_filter)}
 			%span.tag-set.duration

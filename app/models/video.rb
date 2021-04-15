@@ -19,7 +19,9 @@ class Video < ApplicationRecord
   has_many :video_genres, dependent: :destroy
   has_many :video_chapters, dependent: :destroy
   has_many :tags, through: :video_genres
-  has_many :artist_tags, ->{ where(tag_type_id: 1) }, through: :video_genres, source: :tag, class_name: 'Tag'
+
+  has_many :artist_tags, ->{ by_prefix('artist') }, through: :video_genres, source: :tag, class_name: 'Tag'
+  has_many :rating_tags, ->{ by_prefix('rating') }, through: :video_genres, source: :tag, class_name: 'Tag'
 
   has_many :video_visits, dependent: :destroy
   has_many :visits, through: :video_visits, source: :ahoy_visit

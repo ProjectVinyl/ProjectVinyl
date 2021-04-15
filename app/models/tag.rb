@@ -40,6 +40,9 @@ class Tag < ApplicationRecord
     return [] if names.nil? || (names = names.uniq).empty?
     where(name: names).or(where(short_name: names)).actualise
   }
+  scope :by_prefix, ->(prefix) {
+    joins(:tag_type).where(tag_types: {prefix: prefix})
+  }
 
   scope :to_tag_string, -> { pluck(:name).uniq.join(',') }
   scope :actualise, -> { includes(:alias).map(&:actual).uniq }

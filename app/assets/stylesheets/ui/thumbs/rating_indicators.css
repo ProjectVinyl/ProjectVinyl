@@ -1,0 +1,30 @@
+.rating-everyone {
+  --rating-color: #78ac40;
+}
+.rating-teen {
+  --rating-symbol: 'T';
+  --rating-color: orange;
+  --rating-foreground: #fff;
+}
+.rating-mature {
+  --rating-symbol: 'M';
+  --rating-color: red;
+  --rating-foreground: #fff;
+}
+.video-rating:hover .tile::after,
+.video-rating:focus-within .tile::after {
+  content: var(--rating-symbol, 'E');
+  display: block;
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  color: #fff;
+  background: var(--rating-color);
+  padding: 3px;
+  border-radius: 3px;
+  width: 13px;
+  height: 13px;
+  line-height: 13px;
+  text-align: center;
+  border: solid 1px #888;
+}

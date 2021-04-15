@@ -3,5 +3,6 @@
  *= require ./tiles
  *= require ./videos
  *= require ./recommended_videos
+ *= require ./rating_indicators
  *= require ./stacks
  */
