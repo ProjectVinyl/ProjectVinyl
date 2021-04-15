@@ -53,6 +53,8 @@
   padding: 10px;
 }
 .popup-container .popup > h1 {
+  display: flex;
+  gap: 15px;
   border: none;
   cursor: move;
   background: var(--content-background);
