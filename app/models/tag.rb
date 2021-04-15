@@ -163,7 +163,7 @@ class Tag < ApplicationRecord
   end
 
   def validate_name
-    pair = name_validation(tag_type, name)
+    pair = Tag.name_validation(tag_type, name)
     self.name = pair[0]
     self.short_name = pair[1]
   end
