@@ -45,7 +45,7 @@ function splitTags(value, reg) {
 
 addDelegatedEvent(document, 'click', '.meta-toolbar[data-target] [data-insert]', (e, target) => {
   const toolbar = target.closest('[data-target]');
-  const input = document.querySelector(`#${toolbar.dataset.target} input[name="q"]`);
+  const input = document.querySelector(`#${toolbar.dataset.target} input[type="search"]`);
 
   let before = '';
   let after = target.dataset.insert;
