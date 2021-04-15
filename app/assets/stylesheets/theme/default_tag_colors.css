@@ -23,7 +23,12 @@
   --button-border-color: var(--button-foreground) !important;
   --button-foreground: #46a0b4 !important;
 }
-
+.tag-rating {
+  --button-background: #c1f7c9 !important;
+  --button-foreground: #b5ae4e !important;
+  --button-border-color: #b5ae4e !important;
+}
+.tag-warning,
 .tag[data-slug="artist needed"], .tag[data-slug="source needed"] {
   --button-background: #f99 !important;
   --button-border-color: #f80808 !important;

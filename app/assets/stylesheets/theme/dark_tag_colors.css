@@ -22,7 +22,12 @@
   --button-foreground: #48ceec !important;
   --button-border-color: #4aa3b7 !important;
 }
-
+.tag-rating {
+  --button-background: #26aa39 !important;
+  --button-foreground: #f9ec41 !important;
+  --button-border-color: #f9ec41 !important;
+}
+.tag-warning,
 .tag[data-slug="artist needed"], .tag[data-slug="source needed"] {
   --button-background: #363e04 !important;
   --button-foreground: #f4b1b1 !important;
