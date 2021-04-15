@@ -20,10 +20,8 @@ module Indexable
 
     clazz = self.to_s
     scope :update_index, ->(defer: true){
-      distrust do
-        return UpdateIndexJob.perform_later(clazz, pluck(:id)) if defer
-        each{|i| i.__elasticsearch__.index_document }
-      end
+      return UpdateIndexJob.perform_later(clazz, pluck(:id)) if defer
+      each{|i| i.__elasticsearch__.index_document }
     }
   end
 	
