@@ -11,7 +11,7 @@ module Videos
           return render json: {
             error: {
               title: 'Tagging Requirements Not Met',
-              message: e.message
+              msg: e.message
             }
           }
         end
