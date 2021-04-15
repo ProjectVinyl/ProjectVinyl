@@ -7,6 +7,14 @@ class FiltersController < ApplicationController
         description: "There was probably a filter here, but we can't find it right now."
       )
     end
+
+    flash[:notice] = 'This is your current filter' if @filter.id == current_filter.id
+    @crumb = {
+      stack: [
+        title: 'Site Filters', link: filters_path
+      ],
+      title: @filter.name
+    }
   end
 
   def new
@@ -15,9 +23,8 @@ class FiltersController < ApplicationController
     @new_filter = SiteFilter.new(params.permit(:name, :hide_filter, :spoiler_filter, :preferred))
 
     if params[:copy] && (copy = SiteFilter.where(id: params[:copy].to_i).first)
+      @new_filter = copy.dup
       @new_filter.name = "#{current_user.username}'s #{copy.name}"
-      @new_filter.hide_filter = copy.hide_filter
-      @new_filter.spoiler_filter = copy.spoiler_filter
     end
 
     @crumb = {

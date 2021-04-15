@@ -1,0 +1,60 @@
+- lim '900px'
+- title "Filters"
+.actions.mobile-tabbed
+	- if @filter.id != current_filter.id
+		%a.button.green(title="Use" data-method="put"){href: current_filter_path(filter_id: @filter.id)}
+			= fa :circle_o
+			Use This Filter
+		- if user_signed_in?
+			.divider
+	- if user_signed_in?
+		%a.button.green.mobile-friendly(title="Modify"){href: edit_filter_path(@filter)}
+			= fa :pencil
+			%span Edit
+		%a.button.blue.mobile-friendly(title="Duplicate"){href: new_filter_path(copy: @filter)}
+			= fa :copy
+			%span Copy
+		- if @filter.can_modify?(current_user)
+			.spacer
+			%a.button.red.mobile-friendly(title="Delete" data-method="delete" data-confirm="Are you sure?" data-title="Delete Filter"){href: filter_path(@filter)}
+				= fa :trash_o
+				%span Delete Filter
+%hr
+%section.page.full-width
+	.post.genre-bio
+		%span.genre-icon.fa-stack.fa-4x
+			%i.fa.fa-circle.fa-stack-2x
+			%i.fa.fa-filter.fa-inverse.fa-stack-1x
+		%h1
+			= @filter.name
+			- if @filter.id == default_filter.id
+				= surround '(', ')' do
+					default
+		.tag-set.subheading
+			Hides
+			= number_with_delimiter Tag.split_tag_string(@filter.hide_tags).length
+			tags
+			Spoilers
+			= number_with_delimiter Tag.split_tag_string(@filter.spoiler_tags).length
+			tags
+		%span
+			Maintained by
+			- if @filter.user
+				%a.user-link{href: @filter.user.link}=@filter.user.username
+			- else
+				Staff
+		%hr
+		%h2 Hidden Tags
+		%ul.tags= render partial: 'tags/thumb/normal', collection: Tag.by_tag_string(@filter.hide_tags)
+		- if @filter.hide_filter.present?
+			%h3 Complex Hide Filter
+			%blockquote= @filter.hide_filter
+		%hr
+		%h2 Spoilered Tags
+		%ul.tags= render partial: 'tags/thumb/normal', collection: Tag.by_tag_string(@filter.spoiler_tags)
+		- if @filter.spoiler_filter.present?
+			%h3 Complex Spoiler Filter
+			%blockquote= @filter.spoiler_filter
+		- if @filter.description.present?
+			%hr
+			.content.bio= @filter.description || 'No description provided'
