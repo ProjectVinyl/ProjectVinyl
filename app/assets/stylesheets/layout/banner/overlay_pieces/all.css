@@ -2,5 +2,6 @@
  *= require ./login
  *= require ./notices_bell
  *= require ./search
+ *= require ./filters
  *= require ./links
  */

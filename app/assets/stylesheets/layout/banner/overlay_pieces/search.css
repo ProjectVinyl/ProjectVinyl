@@ -23,18 +23,6 @@
   margin: 0;
 }
 
-#filters {
-  display: flex;
-}
-#filters select {
-  background: none;
-  color: var(--header-overlay-element-color);
-  padding: 5px 15px;
-  -moz-appearance: none;
-  -webkit-appearance: none;
-  appearance: none;
-}
-
 #search > form > * {
   height: 33px;
   min-height: 33px;

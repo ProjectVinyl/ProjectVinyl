@@ -1,0 +1,14 @@
+#filters {
+  display: flex;
+}
+#filters select {
+  background: none;
+  color: var(--header-overlay-element-color);
+  padding: 5px 15px;
+  -moz-appearance: none;
+  -webkit-appearance: none;
+  appearance: none;
+}
+#filters select optgroup, #filters select option {
+  background: var(--header-nav-background);
+}
