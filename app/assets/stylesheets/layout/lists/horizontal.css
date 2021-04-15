@@ -11,7 +11,8 @@ ul.horizontal {
   margin-right: calc(var(--content-block-padding, 0) * var(--horizontal-padding-scale));
 }
 
-ul.horizontal.tag-list {
+ul.horizontal.tag-list,
+ul.horizontal.filter-list {
   --horizontal-padding-scale: 0;
 }
 
