@@ -144,6 +144,7 @@ Rails.application.routes.draw do
     resources :files, only: [:index]
     namespace :tags do
       resources :types, except: [:show, :edit]
+      resources :rules, except: [:show, :edit]
     end
     resources :tags, only: [:show, :update]
     resources :sitenotices, except: [:show, :edit]

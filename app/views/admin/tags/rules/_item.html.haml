@@ -1,0 +1,53 @@
+= form_for(item, as: 'tag_rule', url: admin_tags_rule_path(item), html: {method: :patch, class: "row row-group removeable state-binary"}) do |f|
+	= f.text_field :id, hidden: true
+	.row
+		.cell
+			%a.button.button-bub.state-toggle(data-state="editing" data-parent="form")= fa :pencil
+		.cell= item.message
+		.cell
+			%ul.tags= render partial: "tags/thumb/normal", collection: item.when_present_tags
+		.cell
+			%ul.tags= render partial: "tags/thumb/normal", collection: item.all_of_tags
+		.cell
+			%ul.tags= render partial: "tags/thumb/normal", collection: item.none_of_tags
+		.cell
+			%ul.tags= render partial: "tags/thumb/normal", collection: item.any_of_tags
+	.editing.row.row-spanned
+		.content.properties
+			%table
+				%tr
+					%td.label= f.label :message
+					%td.field= f.text_field :message
+				%tr
+					%td.label= f.label :when_present
+					%td.field
+						= render layout: 'tags/editor', locals: { tags: item.when_present_tags } do
+							= f.text_area :when_present_tag_string
+				%tr
+					%td.label= f.label :all_of
+					%td.field
+						= render layout: 'tags/editor', locals: { tags: item.all_of_tags } do
+							= f.text_area :all_of_tag_string
+				%tr
+					%td.label= f.label :none_of
+					%td.field
+						= render layout: 'tags/editor', locals: { tags: item.none_of_tags } do
+							= f.text_area :none_of_tag_string
+				%tr
+					%td.label= f.label :any_of
+					%td.field
+						= render layout: 'tags/editor', locals: { tags: item.any_of_tags } do
+							= f.text_area :any_of_tag_string
+				%tr.actions
+					%td.label
+					%td.label
+						%a.button.red.right{href: admin_tags_rule_path(item),
+													data: {title: "Delete Tag Rule", icon: "warning",
+																confirm: "You are about to delete a tag rule.",
+																method: "delete",
+																title: "Remove Notice"}}
+							= fa :trash
+							Delete
+						%button.green.left
+							= fa :save
+							Save

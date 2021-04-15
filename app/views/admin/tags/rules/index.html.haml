@@ -1,0 +1,14 @@
+%section.page.full-width.listing.compact.collapse-padding
+	.items.display-grid.tag-rules
+		%span.row.heads
+			.cell
+			.cell Message
+			.cell When Present
+			.cell All Of
+			.cell None Of
+			.cell Any Of
+		= render partial: 'item', collection: @rules
+	%span.row.foot
+		%a.button.button-bub.bub(title="add" data-title="Add Tag Rule" data-external-form="#{new_admin_tags_rule_path}")
+			= fa :plus
+			Add New

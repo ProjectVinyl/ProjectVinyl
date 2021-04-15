@@ -1,0 +1,28 @@
+= form_for(@rule, as: 'tag_rule', url: admin_tags_rules_path, html: {method: :post}) do |f|
+	.properties
+		%table
+			%tr
+				%td.label= f.label :message
+				%td.field= f.text_field :message
+			%tr
+				%td.label= f.label :when_present
+				%td.field
+					= render layout: 'tags/editor', locals: { tags: nil } do
+						= f.text_area :when_present_tag_string
+			%tr
+				%td.label= f.label :all_of
+				%td.field
+					= render layout: 'tags/editor', locals: { tags: nil } do
+						= f.text_area :all_of_tag_string
+			%tr
+				%td.label= f.label :none_of
+				%td.field
+					= render layout: 'tags/editor', locals: { tags: nil } do
+						= f.text_area :none_of_tag_string
+			%tr
+				%td.label= f.label :any_of
+				%td.field
+					= render layout: 'tags/editor', locals: { tags: nil } do
+						= f.text_area :any_of_tag_string
+	.foot
+		= f.submit "Save", class: "green right button-fw"

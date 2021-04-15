@@ -50,7 +50,6 @@ module Admin
 
       def create
         redirect_to action: :index
-
         return flash[:error] = "Error: Login required." if !current_user.is_contributor?
 
         prefix = Tag.sanitize_name(params[:tag_type][:prefix])
@@ -63,8 +62,9 @@ module Admin
         tagtype.find_and_assign
       end
 
-      def delete
-        return head :unauthorized if !current_user.is_contributor?
+      def destroy
+        redirect_to action: :index
+        return flash[:error] = "Error: Login required." if !current_user.is_contributor?
 
         if !(tagtype = TagType.where(id: params[:id]).first)
           return render json: {
@@ -73,7 +73,6 @@ module Admin
         end
 
         tagtype.destroy
-        render json: {}
       end
     end
   end

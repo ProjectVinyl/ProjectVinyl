@@ -10,6 +10,9 @@
 .listing.compact .items.display-grid.site-notices {
   grid-template-columns: 60px 2fr 1fr;
 }
+.listing.compact .items.display-grid.tag-rules {
+  grid-template-columns: 60px 1fr 1fr 1fr 1fr 1fr;
+}
 
 .listing.compact .items.display-grid .row,
 .listing.compact .items.display-grid .row.row-group .row {

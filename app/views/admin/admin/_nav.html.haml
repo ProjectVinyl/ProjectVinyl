@@ -23,9 +23,6 @@
 		%a.button{href: videos_path(merged: 1)}
 			= fw :compress
 			Merged Videos
-		%a.button{href: admin_tags_types_path}
-			= fw :tags
-			Tag Types
 		%a.button{href: admin_sitenotices_path}
 			= fw :info
 			Site Notices
@@ -35,7 +32,15 @@
 		%a.button{href: admin_api_index_path}
 			= fw :key
 			Api Tokens
-	%h2 Files
+	%h2 Tagging
+	.actions
+		%a.button{href: admin_tags_types_path}
+			= fw :tags
+			Tag Types
+		%a.button{href: admin_tags_rules_path}
+			= fw :tags
+			Tag Rules
+	%h2 Storage
 	.actions
 		%a.button(href="/admin/files?p=encoding")
 			= fw :file_code_o
