@@ -1,4 +1,4 @@
-= form_for(item, as: 'tag_type', url: admin_tagtype_path(item), html: {method: :patch, class: "row row-group removeable state-binary tag-#{item.prefix}"}) do |f|
+= form_for(item, as: 'tag_type', url: admin_tags_type_path(item), html: {method: :patch, class: "row row-group removeable state-binary tag-#{item.prefix}"}) do |f|
 	= f.text_field :id, hidden: true
 	.row
 		.cell(style="width:30px")
@@ -32,7 +32,7 @@
 				%tr.actions
 					%td.label
 					%td.label
-						%a.button.red.right{href: admin_tagtype_path(item),
+						%a.button.red.right{href: admin_tags_type_path(item),
 													data: {title: "Delete Tag Type", icon: "warning",
 																confirm: "You are about to delete a tag type. Any related tags will lose their typing information and may have to be reassigned should you want to undo this.",
 																method: "delete",

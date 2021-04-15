@@ -142,8 +142,10 @@ Rails.application.routes.draw do
   namespace :admin, controller: :admin do
     resource :transfer, only: [:update]
     resources :files, only: [:index]
+    namespace :tags do
+      resources :types, except: [:show, :edit]
+    end
     resources :tags, only: [:show, :update]
-    resources :tagtypes, except: [:show, :edit]
     resources :sitenotices, except: [:show, :edit]
     resources :api, except: [:show], controller: :api_tokens
     resources :reindex, only: [:update]
