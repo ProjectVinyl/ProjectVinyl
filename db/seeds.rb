@@ -9,7 +9,9 @@ TagType.create([
   { id: 2, prefix: 'genre', hidden: 0 },
   { id: 3, prefix: 'oc', hidden: 0 },
   { id: 4, prefix: 'spoiler', hidden: 0 },
-  { id: 5, prefix: 'character', hidden: 1 }
+  { id: 5, prefix: 'character', hidden: 1 },
+  { id: 6, prefix: 'rating', hidden: 0 },
+  { id: 7, prefix: 'warning', hidden: 0 }
 ])
 TagTypeImplication.create([
   { id: 1, tag_type_id: 3, implied_id: 53 },
@@ -852,7 +854,86 @@ Tag.create([
     short_name: 'rarity',
     video_count: 0,
     user_count: 0,
+  },
+  {
+    id: 98,
+    name: 'rating:everyone',
+    description: 'Content suitable for all ages.',
+    tag_type_id: 6,
+    short_name: 'rating:everyone',
+    video_count: 0,
+    user_count: 0,
+  },
+  {
+    id: 99,
+    name: 'rating:teen',
+    description: 'Content suitable for teen (13+). Parental supervision advised',
+    tag_type_id: 6,
+    short_name: 'rating:teen',
+    video_count: 0,
+    user_count: 0,
+  },
+  {
+    id: 100,
+    name: 'rating:mature',
+    description: 'Content suitable for adults (18+).',
+    tag_type_id: 6,
+    short_name: 'rating:mature',
+    video_count: 0,
+    user_count: 0,
+  },
+  {
+    id: 101,
+    name: 'warning:grimdark',
+    description: 'Nightmarish things like dying painfully and traumatic abuse.',
+    tag_type_id: 7,
+    short_name: 'warning:grimdark',
+    video_count: 0,
+    user_count: 0,
+  },
+  {
+    id: 102,
+    name: 'warning:grotesque',
+    description: 'For the really gross/disturbing stuff like body horror, gore, filth and waste, etc.',
+    tag_type_id: 7,
+    short_name: 'warning:grotesque',
+    video_count: 0,
+    user_count: 0,
+  },
+  {
+    id: 103,
+    name: 'warning:explicit',
+    description: 'Explicit sexual content – visible genitals, detailed genital/anus representations, sex, cum, etc.',
+    tag_type_id: 7,
+    short_name: 'warning:explicit',
+    video_count: 0,
+    user_count: 0,
+  },
+  {
+    id: 104,
+    name: 'warning:suggestive',
+    description: 'Minorly/implicitly sexual; innuendos, sexual references, groping, clothing showing a lot of bulge/boob/ass, etc.',
+    tag_type_id: 7,
+    short_name: 'warning:suggestive',
+    video_count: 0,
+    user_count: 0,
+  },
+  {
+    id: 105,
+    name: 'warning:questionable',
+    description: 'Sexual, but not explicit; nipples, squicky fetish acts, sexual acts that aren\'t actually sex, etc.',
+    tag_type_id: 7,
+    short_name: 'warning:questionable',
+    video_count: 0,
+    user_count: 0,
   }
+])
+TagRules.create([
+  { id: 1, when_present: [], any_of: [98, 99,100], message: 'Image must have a rating tag'},
+  { id: 2, when_present: [98], none_of: [99,100], message: 'Only one rating tag per image'},
+  { id: 3, when_present: [99], none_of: [98,100], message: 'Only one rating tag per image'},
+  { id: 4, when_present: [100], none_of: [98,99], message: 'Only one rating tag per image'},
+  { id: 5, when_present: [98], none_of: [101,102,103,105], message: 'Safe images should not have any content warnings above suggestive'},
 ])
 TagImplication.create([
   { id: 1, tag_id: 52, implied_id: 53 },
@@ -861,6 +942,10 @@ TagImplication.create([
   { id: 7, tag_id: 68, implied_id: 53 },
   { id: 8, tag_id: 45, implied_id: 64 },
   { id: 9, tag_id: 48, implied_id: 53 }
+  { id: 10, tag_id: 105, implied_id: 99},
+  { id: 11, tag_id: 103, implied_id: 100},
+  { id: 12, tag_id: 101, implied_id: 100},
+  { id: 13, tag_id: 102, implied_id: 100}
 ])
 #User badges
 Badge.create([
@@ -872,13 +957,20 @@ Badge.create([
   { id: 6, title: 'Gem', colour: 'white', icon: 'gem', badge_type: 0 }
 ])
 #Default filters
-SiteFilter.create({
-  id: 1,
-  name: 'Everything',
-  description: 'The Default filter that hides nothing. Use this if you\'re brave.',
-  hide_filter: '',
-  spoiler_filter: ''
-})
+SiteFilter.create([
+  { id: 1, name: 'Everything', description: 'The Default filter that hides nothing. Use this if you\'re brave.', hide_filter: '', spoiler_filter: '' },
+  { id: 2, name: 'Default', description: 'The default filter. Hides mature content and spoilers fringe.',
+    hide_tags: 'rating:mature,warning:questionable,warning:explicit,warning:grimdark,warning:grotesque',
+    spoiler_tags: 'rating:teen,warning:suggestive',
+    preferred: 1
+  },
+  { id: 3, name: '18+', description: 'Displays erotic content whilst hiding dark and grotesque content.',
+    hide_tags: 'warning:grimdark,warning:grotesque,rating:everyone', spoiler_tags: ''
+  },
+  { id: 4, name: '18+ Dark', description: 'Displays dark and grotesque content whilst hiding non-erotic content.',
+    hide_tags: 'rating:everyone', spoiler_tags: ''
+  }
+])
 
 # init Elasic-Search
 Video.__elasticsearch__.create_index!
