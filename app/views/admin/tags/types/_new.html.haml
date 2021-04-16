@@ -5,6 +5,13 @@
 				%td.label= f.label :prefix
 				%td.field= f.text_field :prefix
 			%tr
+				%td.label= f.label :user_assignable
+				%td.field
+					%label.button.blue
+						= f.check_box :user_assignable
+						= fa :check
+						Allow users to create tags with this type
+			%tr
 				%td.label= f.label :hidden
 				%td.field
 					%label.button.blue

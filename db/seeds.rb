@@ -10,8 +10,8 @@ TagType.create([
   { id: 3, prefix: 'oc', hidden: 0 },
   { id: 4, prefix: 'spoiler', hidden: 0 },
   { id: 5, prefix: 'character', hidden: 1 },
-  { id: 6, prefix: 'rating', hidden: 0 },
-  { id: 7, prefix: 'warning', hidden: 0 }
+  { id: 6, prefix: 'rating', hidden: 0, user_assignable: 0 },
+  { id: 7, prefix: 'warning', hidden: 0, user_assignable: 0 }
 ])
 TagTypeImplication.create([
   { id: 1, tag_type_id: 3, implied_id: 53 },

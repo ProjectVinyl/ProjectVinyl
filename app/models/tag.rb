@@ -136,7 +136,7 @@ class Tag < ApplicationRecord
   end
 
   def validate_name
-    update(TagType.parse_name(name, tag_type)[:tag])
+    update(TagType.parse_name(name, tag_type: tag_type)[:tag])
   end
 
   def reindex!
@@ -176,7 +176,7 @@ class Tag < ApplicationRecord
       .uniq
       .filter(&Tag.method(:valid_name?))
       .map do |name|
-        TagType.parse_name(name)[:tag].merge(
+        TagType.parse_name(name, user_assign: true)[:tag].merge(
           description: '',
           video_count: 0,
           user_count: 0

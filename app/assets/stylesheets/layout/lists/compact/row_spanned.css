@@ -2,7 +2,7 @@
 .listing.compact .items.display-grid {
   display: flex;
   flex-direction: column;
-  grid-template-columns: 60px 1fr 2fr min-content 3fr;
+  grid-template-columns: 60px 2fr 1fr 1fr 1fr 3fr;
 }
 .listing.compact .items.display-grid.api-tokens {
   grid-template-columns: 60px 1fr 2fr min-content 1fr 1fr 2fr 2fr;

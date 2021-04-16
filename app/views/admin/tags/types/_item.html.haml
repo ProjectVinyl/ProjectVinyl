@@ -3,12 +3,12 @@
 	.row
 		.cell(style="width:30px")
 			%a.button.button-bub.state-toggle(data-state="editing" data-parent="form")= fa :pencil
-		.cell
-			= item.prefix
-			\:
+		.cell= item.prefix
 		.cell= number_with_delimiter item.referrers.count
 		.cell.center
 			%i.fa{title: item.hidden, class: "fa-#{item.hidden ? "check" : "times"}"}
+		.cell.center
+			%i.fa{title: item.user_assignable, class: "fa-#{item.user_assignable ? "check" : "times"}"}
 		.cell
 			%ul.tags= render partial: "tags/thumb/normal", collection: item.tags
 	.editing.row.row-spanned
@@ -17,6 +17,13 @@
 				%tr
 					%td.label= f.label :prefix
 					%td.field= f.text_field :prefix
+				%tr
+					%td.label= f.label :user_assignable
+					%td.field
+						%label.button.blue
+							= f.check_box :user_assignable
+							= fa :check
+							Allow users to create tags with this type
 				%tr
 					%td.label= f.label :hidden
 					%td.field

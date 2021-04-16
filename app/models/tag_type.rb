@@ -59,7 +59,7 @@ class TagType < ApplicationRecord
   # slug=artist-colon-collace
   #
 
-  def self.parse_name(name, tag_type = nil)
+  def self.parse_name(name, tag_type: nil, user_assign: false)
     name = Tag.sanitize_name(name)
     prefix, suffex = split_name(name)
 
@@ -70,6 +70,12 @@ class TagType < ApplicationRecord
       name = prefix + ':' + suffex
       
       name = remove_prefix(tag_type.prefix, name) if tag_type.hidden
+      
+      if user_assign && !tag_type.user_assignable
+        prefix = ''
+        name = name.sub(':', ' ')
+        tag_type = nil
+      end
     end
 
     {
