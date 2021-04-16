@@ -1,26 +1,28 @@
-- site_name ||= "ProjectVinyl"
-- width ||= 1280
-- height ||= 720
+- site_name ||= 'Project Vinyl'
+
 %meta(name="title" content="#{title}")
-%meta(name="description" content="#{description}")
+%meta(name="dc:title" content="#{title}")
+
+= render partial: 'layouts/metadata/global', locals: {site_name: site_name, site_description: description }
 
 - if tags.length > 0
 	- keywords = Tag.tag_string(tags)
 	%meta(name="keywords" content="#{keywords}")
 	%meta(name="dc:keywords" content="#{keywords}")
 
-%meta(name="dc:title" content="#{title}")
-%meta(name="dc:description" content="#{description}")
-
-%meta(property="og:site_name" content="#{site_name}")
 %meta(property="og:url" content="#{url}")
 %meta(property="og:title" content="#{title}")
 %meta(property="og:image" content="#{cover}")
 %meta(property="og:description" content="#{description}")
 %meta(property="og:type" content="#{og[:type]}")
 
+- width ||= 1280
+- height ||= 720
+
 - if type == :video
 	%meta(property="og:#{type}:type" content="#{mime}")
+	%meta(property="og:#{type}:width" content="#{width}")
+	%meta(property="og:#{type}:height" content="#{height}")
 	%meta(property="og:#{type}" content="#{file}")
 - else
 	%meta(property="og:#{type}:type" content="text/html")
@@ -30,33 +32,22 @@
 - if og[:album] && og[:album][:track]
 	%meta(property="og:album:track" content="#{og[:album][:track]}")
 
-%meta(property="og:#{type}:width" content="#{width}")
-%meta(property="og:#{type}:height" content="#{height}")
 %meta(property="og:#{type}:url" content="#{url}")
 
 - tags.each do |tag|
 	%meta(property="og:#{type}:tag" content="#{tag.name}")
 
-%meta(property="al:ios:app_name" content="#{site_name}")
-%meta(property="al:android:app_name" content="#{site_name}")
 %meta(property="al:web:url" content="#{url}")
 %meta(name="twitter:card" content="player")
-%meta(name="twitter:site" content="@#{site_name}")
 %meta(name="twitter:url" content="#{url}")
 %meta(name="twitter:title" content="#{title}")
 %meta(name="twitter:description" content="#{description}")
 %meta(name="twitter:image" content="#{cover}")
-%meta(name="twitter:app:name:iphone" content="#{site_name}")
-%meta(name="twitter:app:name:ipad" content="#{site_name}")
 
 - if type == 'video'
 	%meta(name="twitter:player" content="#{embed_url}")
 	%meta(name="twitter:player:width" content="#{width}")
 	%meta(name="twitter:player:height" content="#{height}")
 
-%meta(name="attribution" content="Alloy/")
-
 - if oembed
-	- oparam = "#{url}?#{oembed.to_param}"
-	%link(rel="alternate" type="application/json+oembed" href="#{oembed_path format: :json, url: oparam}" title="#{title}")
-	%link(rel="alternate" type="application/xml+oembed" href="#{oembed_path format: :xml, url: oparam}" title="#{title}")
+	= render partial: 'layouts/metadata/oembed', locals: {oembed: oembed, url: url, title: title }

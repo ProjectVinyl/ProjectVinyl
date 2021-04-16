@@ -10,6 +10,7 @@ class UsersController < Users::BaseUsersController
       @user.profile_modules.pluck(:module_type).uniq.each do |t|
         load_profile_module t
       end
+      @profile = { username: @user.username }
     end
   end
 

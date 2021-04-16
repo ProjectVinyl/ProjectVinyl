@@ -25,6 +25,7 @@ class VideosController < Videos::BaseVideosController
     end
 
     @video.video_visits.create
+    @mature = @video.rating_tags.where(suffex: 'mature').any?
 
     load_album
 

@@ -1,0 +1,15 @@
+- site_name = site_name || 'Project Vinyl'
+- site_description = site_description || 'Project Vinyl is a video, music, and animation platform build to archive and share videos relating to My Little Pony: Friendship is Magic'
+
+%meta(property="og:site_name" content="#{site_name}")
+%meta(name="description" content="#{site_description}")
+%meta(name="dc:description" content="#{site_description}")
+
+%meta(property="al:ios:app_name" content="#{site_name}")
+%meta(property="al:android:app_name" content="#{site_name}")
+
+%meta(name="twitter:site" content="@#{site_name.sub(' ', '_').downcase}")
+%meta(name="twitter:app:name:iphone" content="#{site_name}")
+%meta(name="twitter:app:name:ipad" content="#{site_name}")
+
+%meta(name="attribution" content="Alloy/")
