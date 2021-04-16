@@ -23,7 +23,7 @@ export function formatFuzzyBigNumber(number) {
     quadrillion: 'Q'
   };
   const denom = getDenomination(number);
-  if (denom.denom != 'unit') {
+  if (denom.multiplex > 100) {
     number /= denom.multiplex;
   }
   const unit = units[denom.denom] ? ' ' + units[denom.denom] : '';
@@ -40,13 +40,23 @@ function getDenomination(number) {
     13: 'trillion',
     16: 'quadrillion'
   };
-  let len = Math.round(Math.abs(number || 0)).toString().length;
+  let len = lenOf(number);
   while (len > 0 && !lengths[len]) {
     len--;
   }
-  
+
   return {
     denom: lengths[len] || 'unit',
     multiplex: Math.pow(10, len - 1)
   };
+}
+
+function lenOf(number) {
+  number = Math.round(Math.abs(number || 0));
+  let i = 0;
+  while (number > 1) {
+    i++;
+    number /= 10;
+  }
+  return i;
 }
