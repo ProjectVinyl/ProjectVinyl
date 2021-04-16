@@ -12,8 +12,8 @@ module Duplicateable
 
     AlbumItem.where(video_id: id).update_all('video_id = ' + other.id.to_s)
     Comment.where(comment_thread_id: comment_thread_id).update_all(comment_thread_id: other.comment_thread_id)
-    mytags = tags.pluck_actual_ids
-    tags = mytags - other.tags.pluck_actual_ids
+    mytags = tags.actual_ids
+    tags = mytags - other.tags.actual_ids
     tags = tags.uniq
 
     if !tags.empty?
@@ -39,7 +39,7 @@ module Duplicateable
   def do_unmerge
     if duplicate_id
       if other = Video.where(id: duplicate_id).first
-        add_tags(other.tags.pluck_actual_ids)
+        add_tags(other.tags.actual_ids)
         AlbumItem.where(video_id: other.id, o_video_id: id).update_all('video_id = o_video_id')
         Comment.where(comment_thread_id: other.comment_thread_id, o_comment_thread_id: comment_thread_id).update_all('comment_thread_id = o_comment_thread_id')
       end

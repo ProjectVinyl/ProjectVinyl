@@ -27,21 +27,20 @@ module Admin
 
       @tag.description = params[:tag][:description]
 
-      if params[:tag][:alias_tag] && (@alias = Tag.by_name_or_id(params[:tag][:alias_tag]).first.actual)
+      if params[:tag][:alias_tag].present? && (@alias = Tag.by_name_or_id(params[:tag][:alias_tag]).limit(1).actualise)
         alias_tag
       elsif @tag.alias
         unalias_tag
       end
 
       @tag.tag_type = TagType.where(id: params[:tag][:tag_type_id]).first
-      @tag.name = params[:tag][:suffex]
+      @tag.name = params[:tag][:name]
 
-      return flash[:alert] = "Duplicate Error: A Tag named '" + params[:tag][:suffex] + "' already exists" if @tag.invalid?
+      return flash[:alert] = "Duplicate Error: A Tag named '" + params[:tag][:name] + "' already exists" if @tag.invalid?
 
-      @tag.save
+      @tag.validate_name
 
-      implications = Tag.split_to_ids(params[:tag][:tag_string])
-      implications = TagImplication.expand(implications)
+      implications = TagImplication.expand(Tag.split_to_ids(params[:tag][:implications]))
       implications |= @tag.tag_type.tag_type_implications.unique_tag_ids if @tag.tag_type
 
       TagImplication.load(@tag, implications)

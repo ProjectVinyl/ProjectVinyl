@@ -7,11 +7,6 @@ class TagType < ApplicationRecord
 
   after_destroy :unlink_tags
 
-  def self.for_tag_name(name)
-    return nil if name.index(':').nil?
-    TagType.where(prefix: name.split(':')[0]).first
-  end
-
   def find_and_assign
     Tag.transaction do
       Tag.where('name LIKE ?', self.prefix + ':%').update_all(tag_type_id: self.id)
@@ -54,6 +49,50 @@ class TagType < ApplicationRecord
     end
 
     TagImplication.upsert_all(new_mps, returning: false, unique_by: [:tag_id, :implied_id])
+  end
+
+  #
+  # artist:sollace
+  # prefix=artist
+  # suffex=sollace
+  # name=artist:sollace
+  # slug=artist-colon-collace
+  #
+
+  def self.parse_name(name, tag_type = nil)
+    name = Tag.sanitize_name(name)
+    prefix, suffex = split_name(name)
+
+    tag_type = TagType.where(prefix: prefix).first if tag_type.nil?
+
+    if tag_type
+      prefix = tag_type.prefix
+      name = prefix + ':' + suffex
+      
+      name = remove_prefix(tag_type.prefix, name) if tag_type.hidden
+    end
+
+    {
+      tag_type: tag_type,
+      tag: {
+        tag_type_id: tag_type ? tag_type.id : 0,
+        name: name,
+        namespace: prefix,
+        suffex: suffex,
+        slug: name.sub(':', '-colon-')
+      }
+    }
+  end
+  
+  def self.split_name(name)
+    parts = name.split(':')
+    return [ parts[0], remove_prefix(parts[0], name) ] if parts.length > 1
+    ['', name]
+  end
+  
+  def self.remove_prefix(prefix, name)
+    return name.sub(prefix + ':', '').delete(':') if name.index(prefix + ':') == 0
+    name.delete(':')
   end
 
   private

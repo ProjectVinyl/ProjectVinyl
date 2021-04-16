@@ -32,10 +32,10 @@
 					default
 		.tag-set.subheading
 			Hides
-			= number_with_delimiter Tag.split_tag_string(@filter.hide_tags).length
+			= number_with_delimiter Tag.split_to_names(@filter.hide_tags).length
 			tags
 			Spoilers
-			= number_with_delimiter Tag.split_tag_string(@filter.spoiler_tags).length
+			= number_with_delimiter Tag.split_to_names(@filter.spoiler_tags).length
 			tags
 		%span
 			Maintained by

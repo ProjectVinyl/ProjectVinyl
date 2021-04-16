@@ -1,34 +1,35 @@
-.tag-artist {
+.tag[data-namespace="artist"] {
   --button-background: #f2fdab !important;
   --button-border-color: var(--button-foreground) !important;
   --button-foreground: #82ad2b !important;
 }
-.tag-genre {
+.tag[data-namespace="genre"] {
   --button-background: #a2a6d4 !important;
   --button-border-color: var(--button-foreground) !important;
   --button-foreground: #363b74 !important;
 }
-.tag-oc {
+.tag[data-namespace="oc"] {
   --button-background: #b1cee2 !important;
   --button-border-color: var(--button-foreground) !important;
   --button-foreground: #4c90bd !important;
 }
-.tag-spoiler {
+.tag[data-namespace="spoiler"] {
   --button-background: #f8d2c0 !important;
   --button-border-color: var(--button-foreground) !important;
   --button-foreground: #e97136 !important;
 }
-.tag-character {
+
+.tag[data-namespace="character"] {
   --button-background: #e6eeef !important;
   --button-border-color: var(--button-foreground) !important;
   --button-foreground: #46a0b4 !important;
 }
-.tag-rating {
+.tag[data-namespace="rating"] {
   --button-background: #c1f7c9 !important;
   --button-foreground: #b5ae4e !important;
   --button-border-color: #b5ae4e !important;
 }
-.tag-warning,
+.tag[data-namespace="warning"],
 .tag[data-slug="artist needed"], .tag[data-slug="source needed"] {
   --button-background: #f99 !important;
   --button-border-color: #f80808 !important;

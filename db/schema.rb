@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20210415000836) do
+ActiveRecord::Schema.define(version: 20210416122057) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -298,6 +298,7 @@ ActiveRecord::Schema.define(version: 20210415000836) do
   create_table "tag_types", id: :serial, force: :cascade do |t|
     t.string "prefix"
     t.boolean "hidden", default: true
+    t.index ["prefix"], name: "index_tag_types_on_prefix", unique: true
   end
 
   create_table "tags", id: :serial, force: :cascade do |t|
@@ -308,6 +309,9 @@ ActiveRecord::Schema.define(version: 20210415000836) do
     t.integer "video_count", default: 1
     t.integer "user_count", default: 1
     t.integer "alias_id"
+    t.string "namespace", default: ""
+    t.string "suffex", default: ""
+    t.string "slug", default: ""
     t.index ["name"], name: "index_tags_on_name", unique: true
   end
 

@@ -18,7 +18,7 @@
 				%td.label= f.label :name
 				%td.field
 					- if @prefix != 'artist' || !@user
-						= f.text_field :suffex, autofocus: true, autocomplete: "off"
+						= f.text_field :name, autofocus: true, autocomplete: "off"
 					- else
 						%span(title="Tag name synced to the associated artist. You cannot change it here.")= @tag.name
 			- if @prefix == 'artist'
@@ -41,7 +41,7 @@
 				%td.label= f.label :implications
 				%td.field
 					= render layout: 'tags/editor', locals: { tags: @tag.implications } do
-						= f.text_area :tag_string
+						= f.text_area :implications, value: @tag.implications.to_tag_string
 			%tr
 				%td.label= f.label :index
 				%td.field= @tag.as_indexed_json

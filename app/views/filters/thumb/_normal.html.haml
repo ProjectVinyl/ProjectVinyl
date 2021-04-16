@@ -16,10 +16,10 @@
 			Staff
 	%b
 		Hides
-		= number_with_delimiter Tag.split_tag_string(normal.hide_tags).length
+		= number_with_delimiter Tag.split_to_names(normal.hide_tags).length
 		tags
 		Spoilers
-		= number_with_delimiter Tag.split_tag_string(normal.spoiler_tags).length
+		= number_with_delimiter Tag.split_to_names(normal.spoiler_tags).length
 		tags
 	%hr
 	.details= normal.description || 'No description provided'

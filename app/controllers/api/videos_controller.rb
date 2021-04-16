@@ -72,7 +72,7 @@ module Api
           description: video.description,
           source: video.source,
           duration: video.duration,
-          tags: Tag.split_tag_string(video.tag_string),
+          tags: Tag.split_to_names(video.tag_string),
           data_modified: video.updated_at,
           date_published: video.created_at
         },

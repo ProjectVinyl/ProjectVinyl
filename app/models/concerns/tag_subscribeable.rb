@@ -14,7 +14,7 @@ module TagSubscribeable
   end
 
   def watches?(*tag_ids)
-    @watched_tag_ids ||= watched_tags.pluck_actual_ids
+    @watched_tag_ids ||= watched_tags.actual_ids
     !(tag_ids & @watched_tag_ids).empty?
   end
 end
