@@ -23,6 +23,8 @@ html, body {
   --heading-background: #393131;
   --heading-border-color: #403d3d;
 
+  --footer-buffer-color: rgba(21, 21, 21, 0.3);
+
   --header-nav-background: rgba(0, 0, 0, 0.62);
   --header-nav-foreground-active: #fff;
   --header-overlay-element-fill: rgba(0,0,0,0.6);

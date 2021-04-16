@@ -15,4 +15,6 @@ main {
   width: 100%;
   max-width: var(--site-width);
   min-height: 100%;
+  flex-grow: 1;
+  align-self: center;
 }

@@ -19,6 +19,8 @@
 }
 
 .layer-foreground.body {
+  display: flex;
+  flex-direction: column;
   margin-top: var(--banner-height);
   padding-top: 20px;
   background: inherit;

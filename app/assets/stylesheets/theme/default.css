@@ -15,33 +15,35 @@ html, body {
   --focus-outline: rgba(81, 125, 227, 0.7);
   --tooltip-background-color: rgba(28,28,28,0.9);
   --tooltip-color: #fff;
-  
+
   --content-background: #fff;
   --content-highlight: #fef;
   --content-unread: rgba(200,250,200,0.6);
 
   --dock-shadow-color: #333;
-  
+
   --block-shadow-color: #ccc;
   --block-border-color: #eee;
   --block-hover-color: var(--block-border-color);
   --block-radius: 3px;
-  
+
   --seamless-button-hover-tint: rgba(0,0,0,0.1);
-  
+
   --thumb-hover-color: #fcfcfc;
 
   --form-background: #f8f8f8;
   --notification-bobber-fill: #f00;
-  
+
   --input-shadow: rgba(255, 255, 255, 0.8);
   --input-border: #ccc;
   --input-foreground-color: #444;
   --input-background: rgb(255, 255, 250);
   --input-background-focus: rgba(200,200,200,0.1);
-  
+
   --heading-background: #f0f0f0;
   --heading-border-color: #ddd;
+
+  --footer-buffer-color: rgba(221, 221, 221, 0.3);
 
   --header-nav-background: rgba(255,255,255,0.9);
   --header-nav-foreground: #aaa;
@@ -56,7 +58,7 @@ html, body {
   --divider-color: rgba(0,0,255,0.1);
 
   --modal-footer-background: #efefef;
-  
+
   --bubble-background-hover: #e0e0e0;
   --bubble-background-active: #d0d0d0;
   --bubble-color: #fafafa;

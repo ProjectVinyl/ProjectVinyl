@@ -1,14 +1,7 @@
-footer, .push {
-  height: 202px;
-  margin-top: 50px;
-  display: block;
-}
-
 footer {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
+  display: block;
+  position: relative;
+  margin-top: 40px;
   color: var(--content-background);
   background: var(--content-background);
 }
@@ -28,32 +21,35 @@ footer a:not(:hover) {
 footer .logo {
   display: block;
   font-weight: bold;
-  background: var(--heading-border-color);
+  background: var(--footer-buffer-color);
   color: var(--content-background);
   text-shadow: 0px 1px 3px #000;
   vertical-align: top;
-  opacity: 0.3;
+  opacity: 0.7;
   vertical-align: middle;
   text-decoration: none;
-  border-bottom: solid 1px #aaa;
+  border-bottom: solid 1px var(--block-border-color);
   transition: color 1s ease;
   font-size: 2em;
   padding: 5px;
 }
 
+footer .blocks {
+  display: inline-flex;
+  flex-wrap: wrap;
+  text-align: left;
+  max-width: var(--site-width);
+  color: var(--no-link-color);
+  align-items: stretch;
+}
+
 footer .block {
   vertical-align: top;
-  display: inline-block;
-  width: 30%;
-  text-align: left;
-  font-size: 0.8em;
-  line-height: 2.2em;
-  height: 172px;
-  color: var(--no-link-color);
+  flex-grow: 1;
+  flex-basis: 200px;
   background: var(--content-background);
   transition: background 0.5s ease;
-  padding: 20px;
-  overflow-y: auto;
+  padding: 16px;
 }
 footer .block:hover {
   background: var(--content-highlight);
@@ -65,6 +61,7 @@ footer .block + .block {
 }
 
 footer .block ol {
+  padding-left: 20px;
   list-style: none;
 }
 
@@ -84,7 +81,10 @@ footer::before, .header .drop-down::after, .header .sparkline {
   opacity: 1 !important;
 }
 
-footer::before, .header ul .sparkline, .header .drop-down::after {
+footer::before,
+footer .sparkline,
+.header ul .sparkline,
+.header .drop-down::after {
   --gradient-color-start: #6aaadd;
   --gradiant-color-stop-a: #e6b91f;
   --gradiant-color-stop-b: #e97135;
@@ -110,4 +110,13 @@ footer::before, .header ul .sparkline, .header .drop-down::after {
         var(--gradiant-color-stop-a) 33%,
         var(--gradiant-color-stop-b) 66%,
         var(--gradient-color-end) 100%);
+}
+footer .sparkline {
+  display: inline-block;
+  line-height: 1em;
+  background-clip: text;
+  text-shadow: none !important;
+}
+footer .sparkline a {
+  color: transparent;
 }
