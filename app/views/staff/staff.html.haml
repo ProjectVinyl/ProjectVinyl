@@ -1,3 +1,4 @@
+- lim '800px'
 .wrapper.full-width
 	%section.page.full-width
 		%h1 Site Staff and Contributors
@@ -9,22 +10,27 @@
 			= surround '#', '!' do
 				%a{href: donate_path} donate
 	%section.space-fix
-		%h1 Administrators
+		%h2.title Administrators
+		%hr
 		%ul.staff
 			= render partial: "member", locals: { avatar: "images/avatar/anima fever.jpg", name: "Anima Fever", tag_line: "Archivist, Moral Support" }
 	%section.space-fix
-		%h1 Programming & Design
+		%h2.title Programming & Design
+		%hr
 		%ul.staff
 			= render partial: "member", locals: { avatar: "images/avatar/schwart.jpg", name: "The Schwarzschild Party", tag_line: "Graphic Design" }
 			= render partial: "member", locals: { avatar: "//www.gravatar.com/avatar/f5f7f51b935f0e988efdfd3ca2460807.png?s=150", name: "Sollace", tag_line: "Programming, Graphic Design" }
 	%section.space-fix
-		%h1 Contributors
+		%h2.title Contributors
+		%hr
 		%ul.staff
-			= render partial: "member", locals: { avatar: "", name: "ZizzyDizzyMC", tag_line: "Hosting" }
-			= render partial: "member", locals: { avatar: "", name: "FlyingSixtySix", tag_line: "Programmer" }
+			= render partial: "member", locals: { avatar: "images/avatar/zizzy.png", name: "ZizzyDizzyMC", tag_line: "Hosting, The Pony Archive Admin" }
+			= render partial: "member", locals: { avatar: "images/avatar/flying.jpg", name: "FlyingSixtySix", tag_line: "Programmer, Archivist" }
 			= render partial: "member", locals: { avatar: "images/avatar/d3lta.png", name: "D3LTA", tag_line: "Archivist" }
 	%section.space-fix
-		%h1 Retired Staff
+		%h2.title Retired Staff
+		%hr
 		%ul.staff
-			= render partial: "member", locals: { avatar: "", name: "Baba Daya", tag_line: "Resident Visionary, Graphic Design" }
-			= render partial: "member", locals: { avatar: "", name: "byte[]", tag_line: "Programmer" }
+			= render partial: "member", locals: { avatar: "images/avatar/marik.png", name: "Baba Daya (Marik)", tag_line: "Resident Visionary, Graphic Design" }
+			= render partial: "member", locals: { avatar: "images/avatar/byte.png", name: "byte[]", tag_line: "Programmer" }
+			= render partial: "member", locals: { avatar: "images/avatar/logic.png", name: "Logic", tag_line: "Sys Admin" }
