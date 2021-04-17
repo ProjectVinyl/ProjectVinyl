@@ -10,7 +10,7 @@ module Videos
     def load_album
       if params[:list] || params[:q]
         if params[:q]
-          @album = VirtualAlbum.new(params[:q], @video, params[:index].to_i, current_filter)
+          @album = Albums::VirtualAlbum.new(params[:q], @video, params[:index].to_i, current_filter)
           @video = @album.current(@video)
         else
           @album = Album.where(id: params[:list]).first
