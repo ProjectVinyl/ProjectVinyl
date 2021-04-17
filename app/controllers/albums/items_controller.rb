@@ -4,7 +4,7 @@ module Albums
     def create
       check_then_with(Album) do |album|
         return head :not_found if !(video = Video.where(id: params[:videoId]).first)
-        album.add_item(video)
+        album.video_set.add(video)
       end
     end
 

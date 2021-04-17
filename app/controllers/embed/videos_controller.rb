@@ -4,12 +4,13 @@ module Embed
       if params[:list] && (@album = Album.where(id: params[:list]).first)
         @items = @album.album_items
         @index = params[:index].to_i || (@items.first ? @items.first.index : 0)
-        @index = @album.current_index(@index)
+        @index = @album.video_set.current_index(@index)
 
         @video = @items.where(index: @index).first.video
+        @video = @album.video_set.current(@video)
 
-        @prev_video = @album.previous_video(current_filter, @index) if @index > 0
-        @next_video = @album.next_video(current_filter, @index)
+        @prev_video = @album.video_set.previous(current_filter, @index) if @index > 0
+        @next_video = @album.video_set.next(current_filter, @index)
       end
 
       @video = Video.where(id: params[:id]).first if !@video

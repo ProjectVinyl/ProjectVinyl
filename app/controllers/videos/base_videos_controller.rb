@@ -11,7 +11,7 @@ module Videos
       if params[:list] || params[:q]
         if params[:q]
           @album = Albums::VirtualAlbum.new(params[:q], @video, params[:index].to_i, current_filter)
-          @video = @album.current(@video)
+          @video = @album.video_set.current(@video)
         else
           @album = Album.where(id: params[:list]).first
         end
@@ -19,10 +19,10 @@ module Videos
         if @album
           @items = params[:q] ? @album.album_items : @album.album_items.order(:index)
           @index = params[:index].to_i || (@items.first ? @items.first.index : 0)
-          @index = @album.current_index(@index)
+          @index = @album.video_set.current_index(@index)
 
-          @prev_video = @album.previous_video(current_filter, @index) if @index > 0
-          @next_video = @album.next_video(current_filter, @index)
+          @prev_video = @album.video_set.previous(current_filter, @index) if @index > 0
+          @next_video = @album.video_set.next(current_filter, @index)
 
           @album_editable = user_signed_in? && @album.owned_by(current_user)
         end

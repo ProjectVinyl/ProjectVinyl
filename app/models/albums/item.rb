@@ -1,15 +1,15 @@
 module Albums
   module Item
-    def tiny_thumb(user, filter)
-      video.tiny_thumb(user, filter)
-    end
-
-    def owned_by(user)
-      album.owned_by(user)
+    extend ActiveSupport::Concern
+    included do
+      extend Forwardable
+      def_delegator :album, :virtual?
+      def_delegator :album, :owned_by
+      def_delegator :video, :tiny_thumb
     end
 
     def user
-      direct_user || @dummy || (@dummy = User.dummy(self.video.user_id))
+      direct_user || @dummy || (@dummy = User.dummy(video.user_id))
     end
 
     def link
@@ -18,10 +18,6 @@ module Albums
 
     def ref
       "list=#{album_id}&index=#{index}"
-    end
-
-    def virtual?
-      album.virtual?
     end
 
     def tooltip

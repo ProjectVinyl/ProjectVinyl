@@ -3,7 +3,7 @@
 		= fw :music
 		= featured_album.title
 	%ul.horizontal.video-list#videos
-		= render partial: 'videos/thumb/normal', collection: featured_album.sample_videos(current_filter)
+		= render partial: 'videos/thumb/normal', collection: featured_album.video_set.sample(current_filter)
 		%li.generic.thumb
 			%a.thumb{href:featured_album.link}
 				%span.tile.link

@@ -15,7 +15,7 @@ module Likeable
   end
 
   def star(user)
-    user.stars.toggle(self)
+    user.stars.video_set.toggle(self)
     self.favourites = self.favouriters.count
     save
     self.favourites

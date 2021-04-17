@@ -1,18 +1,18 @@
 module Albums
   class VirtualAlbum
-    include Compat
+    include Album
     attr_accessor :id, :user, :title, :safe_title, :description
     attr_reader :video_set
 
-    def_delegator :video_set, :videos, :videos
-    def_delegator :video_set, :album_items, :album_items
+    def_delegator :video_set, :videos
+    def_delegator :video_set, :album_items
 
     def initialize(query, current, index, current_filter)
       id = 0
       title = "Mix - #{query}"
       safe_title = title
       description = ""
-      @set = Albums::VirtualVideoSet.new(query, current, index, current_filter)
+      @video_set = Albums::VirtualVideoSet.new(query, current, index, current_filter)
     end
 
     def owned_by(_user)
@@ -23,7 +23,7 @@ module Albums
     end
 
     def link
-      "#{current.link}?q=#{video_set.query}&index=#{current_index}"
+      "#{video_set.current.link}?q=#{video_set.query}&index=#{video_set.current_index}"
     end
   end
 end

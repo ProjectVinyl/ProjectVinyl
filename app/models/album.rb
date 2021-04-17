@@ -1,5 +1,5 @@
 class Album < ApplicationRecord
-  include Albums::Compat
+  include Albums::Album
   include Unlistable, Titled, Statable
   include Albums::Orderable
 
