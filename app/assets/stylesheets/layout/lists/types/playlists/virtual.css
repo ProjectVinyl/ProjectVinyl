@@ -1,15 +1,34 @@
-.listing.compact.playlist.virtual .row.selected + .row {
-  opacity: 0.5;
+.listing.compact.playlist.virtual .scroll-container .row {
+  position: relative;
+  --row-fade-rate: 4;
 }
-.listing.compact.playlist.virtual .row.selected + .row + .row {
-  opacity: 0.25;
+.listing.compact.playlist.virtual .scroll-container .row:last-child:after {
+  content: '';
+  display: block;
+  pointer-events: none;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: calc(100% * var(--row-fade-rate));
+  background:
+    linear-gradient(0deg,
+      rgba(28, 19, 19, 1) 0%,
+      rgba(28, 19, 19, 0) 100%);
 }
-.listing.compact.playlist.virtual .row.selected + .row + .row + .row {
-  opacity: 0.125;
+.listing.compact.playlist.virtual .scroll-container .row:last-child:nth-child(4),
+.listing.compact.playlist.virtual .scroll-container .row.selected:nth-last-child(4) ~ .row {
+  --row-fade-rate: 3;
 }
-.listing.compact.playlist.virtual .row.selected + .row + .row + .row + .row {
-  opacity: 0.05125;
+.listing.compact.playlist.virtual .scroll-container .row:last-child:nth-child(3),
+.listing.compact.playlist.virtual .scroll-container .row.selected:nth-last-child(3) ~ .row {
+  --row-fade-rate: 2;
 }
-.listing.compact.playlist.virtual .row.selected + .row + .row + .row + .row + .row {
-  opacity: 0;
+.listing.compact.playlist.virtual .scroll-container .row:last-child:nth-child(2),
+.listing.compact.playlist.virtual .scroll-container .row.selected:nth-last-child(2) ~ .row {
+  --row-fade-rate: 1;
+}
+.listing.compact.playlist.virtual .scroll-container .row:last-child:nth-child(1),
+.listing.compact.playlist.virtual .scroll-container .row.selected:last-child {
+  --row-fade-rate: 0;
 }
