@@ -5,7 +5,7 @@ class UsersController < Users::BaseUsersController
 
   def show
     check_details_then do |user, edits_allowed|
-      @tags = @user.tags.includes(:tag_type)
+      @tags = @user.tags.ordered
       @modifications_allowed = edits_allowed
       @user.profile_modules.pluck(:module_type).uniq.each do |t|
         load_profile_module t

@@ -49,17 +49,15 @@ class Tag < ApplicationRecord
     where(name: name)
       .or(where(slug: name))
       .or(where('"tags"."id"::text = ?', name))
-      .order(:video_count, :user_count)
+      .ordered
       .reverse_order
   }
-  scope :by_name_or_slug, ->(name, sender=nil) {
+  scope :by_name_or_slug, ->(name) {
+    return none if name.blank?
     name = name.downcase
-    includes(:tag_type, :alias)
-        .where('"tags"."name" LIKE ? OR "tags"."slug" LIKE ?', "#{name}%", "#{name.sub(':', '-colon-')}%")
-        .order(:video_count, :user_count)
-        .limit(10)
-        .jsons(sender)
+    includes(:tag_type, :alias).where('"tags"."name" LIKE ? OR "tags"."slug" LIKE ?', "#{name}%", "#{name.sub(':', '-colon-')}%")
   }
+  scope :ordered, -> { order(:name, :video_count, :user_count) }
 
   document_type 'tag'
   settings index: { number_of_shards: 1 } do

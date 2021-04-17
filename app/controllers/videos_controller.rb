@@ -63,7 +63,7 @@ class VideosController < Videos::BaseVideosController
 
     @page = params[:page] ? params[:page].to_i - 1 : 0
 
-    @tags = @video.tags
+    @tags = @video.tags.ordered
     @user = @video.user
     @thread = @video.comment_thread
     @comments = @thread.get_comments(current_user).with_likes(current_user)

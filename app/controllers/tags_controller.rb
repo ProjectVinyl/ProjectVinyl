@@ -39,9 +39,9 @@ class TagsController < ApplicationController
 
     @user = User.where(tag_id: @tag.id).first if @tag.namespace == 'artist'
 
-    @implies = @tag.implications
-    @implied = @tag.implicators
-    @aliases = @tag.aliases
+    @implies = @tag.implications.ordered
+    @implied = @tag.implicators.ordered
+    @aliases = @tag.aliases.ordered
 
     @crumb = {
       stack: [
