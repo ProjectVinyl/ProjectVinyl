@@ -1,4 +1,10 @@
-﻿- title @query.length > 0 ? "Searching for #{@query}" : "Search"
+﻿- title @query.present? ? "Searching for #{@query}" : "Search"
+- if @query.present? && @results.count > 0
+	.actions.mobile-tabbed
+		%a.button.blue(href="#{@results.records.first.link}?q=#{@query}&index=0")
+			= fa :play
+			Play All
+	%hr
 .page.full-width
 	= render @results.exception ? 'warden_derpy' : 'results' do
 		= render partial: 'big_search', locals: { table: :videos }
