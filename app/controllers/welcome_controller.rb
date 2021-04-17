@@ -4,12 +4,12 @@ class WelcomeController < ApplicationController
     @threads = Comment.with_threads("Board").order(:created_at).reverse_order.limit(5)
     @featured_album = Album.where('featured > 0').first
 
-    @all = cached_videos(current_filter.videos.where(hidden: false, listing: 0, duplicate_id: 0)
+    @all = cache_videos(current_filter.videos.where(hidden: false, listing: 0, duplicate_id: 0)
               .order(:created_at)
               .reverse_order
               .limit(90), 'welcome_all').for_thumbnails(current_user)
 
-    @active = cached_videos(current_filter.videos.where(hidden: false, listing: 0, duplicate_id: 0)
+    @active = cache_videos(current_filter.videos.where(hidden: false, listing: 0, duplicate_id: 0)
               .order(:boosted)
               .filter({
                 range: {
@@ -29,7 +29,7 @@ class WelcomeController < ApplicationController
           .records
           .for_thumbnails(current_user)
     else
-      @popular = cached_videos(current_filter.videos.where(hidden: false, listing: 0, duplicate_id: 0)
+      @popular = cache_videos(current_filter.videos.where(hidden: false, listing: 0, duplicate_id: 0)
                   .sort({
                     _script: {
                       type: :number,
@@ -52,13 +52,5 @@ class WelcomeController < ApplicationController
               .for_thumbnails(current_user)
               .first
     @feed = TagSubscription.get_feed_items(current_user, current_filter).limit(15) if user_signed_in?
-  end
-
-  def cached_videos(elastic_record, key)
-    ids = cache(key, expires_in: 1.minute) do
-      elastic_record.ids
-    end
-
-    Video.where(id: ids).order("position(videos.id::text in '#{ids.join(',')}')")
   end
 end

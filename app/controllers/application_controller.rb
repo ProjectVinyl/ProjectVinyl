@@ -21,6 +21,10 @@ class ApplicationController < ActionController::Base
   def current_filter
     helpers.current_filter
   end
+  
+  def cache_videos(elastic_record, key)
+    helpers.cache_videos(elastic_record, key)
+  end
 
   def anonymous_user_id
     user_signed_in? ? current_user.id : UserAnon.anon_id(session)

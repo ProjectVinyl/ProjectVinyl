@@ -2,9 +2,10 @@ module ApplicationHelper
   include IconsHelper, BbcodeHelper
   include PathHelper
   include ValuesHelper, FormatsHelper, StringsHelper, TimeHelper
-  include FiltersHelper
+  include FiltersHelper, VideoCacheHelper
   include ThemesHelper
   include PlaylistHelper
+  
 
   def self.read_only
     ApplicationSettings.get(:read_only)
