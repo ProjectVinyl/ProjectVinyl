@@ -1,4 +1,6 @@
 class VirtualAlbum < Album
+  attr_reader :query, :videos
+
   def initialize(query, current, index, current_filter)
     @current = current
     @filter = current_filter
@@ -29,8 +31,6 @@ class VirtualAlbum < Album
   def id
     0
   end
-
-  attr_reader :query, :videos
 
   def title
     "Mix - #{@query}"
@@ -91,7 +91,7 @@ class VirtualAlbum < Album
       .where(hidden: false, duplicate_id: 0, listing: 0)
       .order(:created_at)
       .offset(@offset)
-      .limit(25)
+      .limit(@index + 5)
       .records
   end
 

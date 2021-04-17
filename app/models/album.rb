@@ -4,7 +4,7 @@ class Album < ApplicationRecord
   belongs_to :user
   has_many :album_items
   has_many :videos, through: :album_items
-  has_many :users, foreign_key: "star_id"
+  has_many :users, foreign_key: :star_id
 
   CREATED = 1
   ADDED = 2
