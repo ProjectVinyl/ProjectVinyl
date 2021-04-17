@@ -9,8 +9,8 @@ class TagType < ApplicationRecord
 
   def find_and_assign
     Tag.transaction do
-      Tag.where('name LIKE ?', self.prefix + ':%').update_all(tag_type_id: self.id)
-      Tag.where(tag_type_id: self.id).find_each(&:validate_name_and_reindex)
+      Tag.where('name LIKE ?', prefix + ':%').update_all(tag_type_id: id, namespace: prefix)
+      Tag.where(tag_type_id: id).find_each(&:validate_name_and_reindex)
     end
   end
 
@@ -26,17 +26,11 @@ class TagType < ApplicationRecord
   def self.upsert_implications(existing_tags, new_tags, result)
     new_tag_type_map = {}
     new_tags.each do |tag|
-      type_id = tag["tag_type_id"].to_i
-      id = tag["id"].to_i
-      if type_id
-        new_tag_type_map[type_id] = [] if !new_tag_type_map[type_id]
-        new_tag_type_map[type_id] << id
-      end
-
+      __push_id(new_tag_type_map, tag["tag_type_id"].to_i, tag["id"].to_i)
       result << id
     end
     existing_tags.each do |tag|
-      new_tag_type_map[tag.tag_type_id] = [] if !new_tag_type_map[tag.tag_type_id]
+      __push_id(new_tag_type_map, tag.tag_type_id)
     end
 
     new_mps = []
@@ -50,7 +44,7 @@ class TagType < ApplicationRecord
 
     TagImplication.upsert_all(new_mps, returning: false, unique_by: [:tag_id, :implied_id])
   end
-
+  
   #
   # artist:sollace
   # prefix=artist
@@ -102,6 +96,12 @@ class TagType < ApplicationRecord
   end
 
   private
+  def self.__push_id(mapping, type_id, id = nil)
+    return if !type_id
+    mapping[type_id] = [] if !mapping[type_id]
+    mapping[type_id] << id if !id.nil?
+  end
+
   def self.ids_to_type_imps(imps)
     imps.map{|implied_id| { implied_id: implied_id, tag_type_id: id } }
   end
@@ -111,6 +111,6 @@ class TagType < ApplicationRecord
   end
 
   def unlink_tags
-    Tag.where(tag_type_id: id).update_all('tag_type_id = 0')
+    Tag.where(tag_type_id: id).update_all(tag_type_id: 0, namespace: '')
   end
 end

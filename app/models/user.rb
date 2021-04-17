@@ -142,14 +142,6 @@ class User < ApplicationRecord
     UserDummy.new(id)
   end
 
-  def self.tag_for(user)
-    return user.tag if user.tag_id
-    if !(tag = Tag.where(short_name: user.username, tag_type_id: 1).first)
-      tag = Tag.create(tag_type_id: 1, name: user.username)
-    end
-    tag
-  end
-
   def albums
     all_albums.where(hidden: false)
   end

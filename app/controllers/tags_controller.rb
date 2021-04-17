@@ -37,7 +37,7 @@ class TagsController < ApplicationController
 
     @users = Pagination.paginate(@tag.users.order(:updated_at), 0, 8, true)
 
-    @user = User.where(tag_id: @tag.id).first if @tag.tag_type_id == 1
+    @user = User.where(tag_id: @tag.id).first if @tag.namespace == 'artist'
 
     @implies = @tag.implications
     @implied = @tag.implicators

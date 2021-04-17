@@ -44,7 +44,6 @@ class Tag < ApplicationRecord
     return [] if names.nil? || (names = names.uniq).empty?
     where(name: names).or(where(slug: names)).actualise
   }
-  scope :by_prefix, ->(namespace) { where(namespace: namespace) }
   scope :by_name_or_id, ->(name) {
     return none if name.blank?
     where(name: name)
