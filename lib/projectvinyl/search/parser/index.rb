@@ -15,14 +15,14 @@ module ProjectVinyl
         def recognises?(slurp)
           return true if @params.key?(:hash) && slurp[0] == '#'
 
-          slugs = slurp.split(/[<>:]/)
+          slugs = slurp.downcase.strip.split(/[<>:]/)
           return false if slugs.length < 2
 
           prefix = slugs[0]
           separator = slurp[prefix.length...(prefix.length + 1)].to_sym
           suffex = slurp[(prefix.length + 1)...slurp.length].strip.to_sym
 
-          prefix = prefix.downcase.to_sym
+          prefix = prefix.to_sym
 
           return true if pre_recognises_prefix?(:my, prefix, suffex)
           return true if pre_recognises_prefix?(:is, prefix, suffex)
@@ -34,7 +34,7 @@ module ProjectVinyl
         end
 
         def slurp_tags(opset, slurp)
-          slurp = slurp.strip
+          slurp = slurp.strip.downcase
 
           if @params.key?(:hash) && slurp[0] == '#'
             opset.push @params[:hash]
@@ -50,7 +50,7 @@ module ProjectVinyl
           separator = slurp[prefix.length...(prefix.length + 1)].to_sym
           suffex = slurp[(prefix.length + 1)...slurp.length].strip
 
-          prefix = prefix.downcase.to_sym
+          prefix = prefix.to_sym
 
           # Self-based tags
           return Op::MY if check_pre(opset, :my, prefix, suffex, nil)
