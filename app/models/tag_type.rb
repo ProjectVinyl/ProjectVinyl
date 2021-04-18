@@ -27,7 +27,6 @@ class TagType < ApplicationRecord
     new_tag_type_map = {}
     new_tags.each do |tag|
       __push_id(new_tag_type_map, tag["tag_type_id"].to_i, tag["id"].to_i)
-      result << id
     end
     existing_tags.each do |tag|
       __push_id(new_tag_type_map, tag.tag_type_id)
