@@ -25,10 +25,11 @@
 					= fa :check
 			%span.label
 				Watch Tag
-	.divider
-	%a.button.blue(href="#{@videos.records.first.link}?q=#{@tag.name}&index=0")
-		= fa :play
-		Play All
+	- if @videos.count > 0
+		.divider
+		%a.button.blue(href="#{@videos.records.first.link}?q=#{@tag.name}&index=0")
+			= fa :play
+			Play All
 	- if @modifications_allowed
 		.spacer
 		.split-button.popper>
