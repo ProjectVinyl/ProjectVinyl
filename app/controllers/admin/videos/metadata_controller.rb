@@ -2,46 +2,49 @@ module Admin
   module Videos
     class MetadataController < BaseVideosAdminController
       def update
-        try_to do |video|
-          pull_meta(video, params[:source], params)
-        end
+        try_to{|video| pull_meta(video) }
       end
 
       private
-      def pull_meta(video, src, fields)
-        if src.present?
-          fields[:artist] = fields[:tags]
+      def pull_meta(video)
+        return flash[:error] = "No source provided." if params[:source].blank?
 
-          src = "https://www.youtube.com/watch?v=#{ProjectVinyl::Web::Youtube.video_id(src)}"
-          meta = ProjectVinyl::Web::Youtube.get(src, fields)
+        meta = read_meta
 
-          video.source = src
-          video.title = meta[:title] if meta[:title]
-          video.description = meta[:description][:bbc] if meta[:description]
+        return flash[:error] = "Video source was not found" if meta.empty?
 
-          if meta[:artist]
-            if (artist_tag = Tag.sanitize_name(meta[:artist][:name])) && !artist_tag.empty?
-              artist_tag = video.add_tag('artist:' + artist_tag)
+        video.source = meta[:meta][:url]
+        video.title = meta[:attributes][:title] if meta[:attributes][:title]
+        video.description = meta[:attributes][:description][:bbc] if meta[:attributes][:description]
 
-              if !artist_tag.nil?
-                TagHistory.record_tag_changes(artist_tag[0], artist_tag[1], video.id)
-              end
-            end
-          end
+        add_artist_tag(video, meta[:included][:uploader]) if meta[:included][:uploader]
 
-          TagHistory.record_source_changes(video)
-          video.save
+        TagHistory.record_source_changes(video)
+        video.save
 
-          if meta.empty?
-            flash[:error] = "Video source was not found."
-            return
-          end
+        flash[:notice] = "The video was updated succesfully."
+      end
 
-          flash[:notice] = "The video was updated succesfully."
-          return
+      def add_artist_tag(video, uploader)
+        artist_tag = Tag.sanitize_name(uploader[:name])
+        return if !artist_tag.present?
+        artist_tag = video.add_tag('artist:' + artist_tag)
+        TagHistory.record_tag_changes(artist_tag[0], artist_tag[1], video.id) if !artist_tag.nil?
+      end
+
+      def read_meta
+        begin
+          src = "https://www.youtube.com/watch?v=#{ProjectVinyl::Web::Youtube.video_id(params[:source])}"
+
+          fields = params.permit(:title, :description, :tags)
+          fields[:artist] = params[:tags]
+
+          return ProjectVinyl::Web::Youtube.get(src, fields)
+        rescue Error => e
+          flash[:error] = "Unknown Error: #{e.message}"
         end
 
-        flash[:error] = "Error #{result}."
+        {}
       end
     end
   end

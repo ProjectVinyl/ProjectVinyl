@@ -2,20 +2,17 @@ require 'projectvinyl/web/youtube'
 
 module Api
   class YoutubesController < BaseApiController
-    def tube
-      ProjectVinyl::Web::Youtube
-    end
+    ALLOWED = [
+      :title, :views, :duration, :coppa, :description, :artist,
+      :rating, :thumbnails, :tags, :annotations, :sources
+    ].freeze
 
     def show
       @url = params[:url]
 
-      return fail :unauthorised, status: 302, message: "Invalid Request" if !tube.is_video_link(@url)
+      return fail :unauthorised, status: 302, message: "Invalid Request" if !ProjectVinyl::Web::Youtube.is_video_link(@url)
 
-      succeed id: tube.video_id(@url),
-        attributes: tube.get(@url, include_hash([:title, :description, :artist, :thumbnail, :iframe, :source, :coppa, :tags, :views, :rating, :duration])),
-        meta: {
-          url: @url
-      }
+      succeed ProjectVinyl::Web::Youtube.get(@url, include_hash(ALLOWED))
     end
   end
 end

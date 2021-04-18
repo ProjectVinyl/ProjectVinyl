@@ -1,239 +1,56 @@
 require 'projectvinyl/web/ajax'
 require 'projectvinyl/bbc/bbcode'
-require 'projectvinyl/bbc/parser/node_finder'
 require 'uri'
-require 'net/http'
 
 module ProjectVinyl
   module Web
     class Youtube
       def self.get(url, wanted_data = {})
-        output_data = {}
+        meta = Youtubedl.video_meta(url)
 
-        @all = Youtube.flag_set(wanted_data, :all)
+        all = flag_set(wanted_data, :all)
 
-        if @all ||
-            Youtube.flag_set(wanted_data, :title) ||
-            Youtube.flag_set(wanted_data, :artist) ||
-            Youtube.flag_set(wanted_data, :thumbnail) ||
-            Youtube.flag_set(wanted_data, :iframe)
-          Ajax.get('https://www.youtube.com/oembed', url: 'http:' + url.sub(/http?(s):/, ''), format: 'json') do |body|
-            begin
-              body = JSON.parse(body)
+        data = {
+          id: meta[:id],
+          attributes: {
+            upload_date: meta[:upload_date],
+            extension: meta[:ext],
+            codec: meta[:acodec],
+            live_stream: {
+              is_live: meta[:is_live] || false ,
+              start: meta[:start_time],
+              end: meta[:end_timer]
+            }
+          },
+          links: {
+            embed_url: "https://www.youtube.com/embed/#{meta[:id]}"
+          },
+          meta: {
+            url: url
+          },
+          included: {}
+        }
 
-              if @all || Youtube.flag_set(wanted_data, :title)
-                output_data[:title] = body['title']
-              end
+        data[:attributes][:title] = meta[:fulltitle] || meta[:title] || [] if all || flag_set(wanted_data, :title)
+        data[:attributes][:views] = meta[:view_count] if all || flag_set(wanted_data, :views)
+        data[:attributes][:duration] = meta[:duration] if all || flag_set(wanted_data, :duration)
+        data[:attributes][:coppa] = __coppa(meta) if all || flag_set(wanted_data, :coppa)
+        data[:attributes][:description] = __description(meta) if all || flag_set(wanted_data, :description)
+        data[:attributes][:rating] = __rating(meta) if all || flag_set(wanted_data, :rating)
 
-              if @all || Youtube.flag_set(wanted_data, :artist)
-                output_data[:artist] = {
-                  id: body['author_url'].split('/').last,
-                  name: body['author_name'],
-                  url: body['author_url']
-                }
-              end
+        data[:included][:series] = __series(meta) if (all || flag_set(wanted_data, :series)) && (meta[:series_name] || meta[:season_number] || meta[:episode_numer])
+        data[:included][:uploader], data[:included][:channel] = __artist(meta, data[:links]) if all || flag_set(wanted_data, :artist)
+        data[:included][:thumbnails] = __thumbnails(meta) if all || Youtube.flag_set(wanted_data, :thumbnails)
+        data[:included][:tags] = meta[:tags] || [] if all || flag_set(wanted_data, :tags)
+        data[:included][:categories] = meta[:categories] || [] if all || flag_set(wanted_data, :categories)
+        data[:included][:annotations] = meta[:annotations] || [] if all || flag_set(wanted_data, :annotations)
+        data[:included][:captions] = meta[:automatic_captions] || [] if all || flag_set(wanted_data, :captions)
+        data[:included][:chapters] = meta[:chapters] || [] if all || flag_set(wanted_data, :chapters)
+        data[:included][:sources] = meta[:requested_formats] || [] if all || flag_set(wanted_data, :source)
 
-              if @all || Youtube.flag_set(wanted_data, :thumbnail)
-                output_data[:thumbnail] = {
-                  url: body['thumbnail_url'],
-                  maxres: body['thumbnail_url'].sub("/hqdefault.jpg", "/maxresdefault.jpg"),
-                  width: body['thumbnail_width'],
-                  height: body['thumbnail_height']
-                }
-              end
-
-              if @all || Youtube.flag_set(wanted_data, :iframe)
-                output_data[:iframe] = body['html']
-              end
-            rescue e
-            end
-          end
-        end
-
-        if @all ||
-            Youtube.flag_set(wanted_data, :description) ||
-            Youtube.flag_set(wanted_data, :source) ||
-            Youtube.flag_set(wanted_data, :coppa) ||
-            Youtube.flag_set(wanted_data, :tags) ||
-            Youtube.flag_set(wanted_data, :views) ||
-            Youtube.flag_set(wanted_data, :rating) ||
-            Youtube.flag_set(wanted_data, :duration)
-          Ajax.get(url) do |body|
-            body = body.force_encoding('utf-8')
-            json = player_response(body)
-
-            if @all || Youtube.flag_set(wanted_data, :coppa)
-              output_data[:coppa] = !!body.index('isFamilySafe\\":true')
-            end
-
-            if @all || Youtube.flag_set(wanted_data, :description)
-              if desk = Youtube.description_from_html(body, json)
-                desc_node = ProjectVinyl::Bbc::Bbcode.from_html(desk)
-
-                desc_node.getElementsByTagName('a').each do |a|
-                  if a.attributes[:href].index('redirect?')
-                    a.attributes[:href] = extract_uri_parameter(a.attributes[:href], 'q')
-                  end
-                  if a.attributes[:href].index('/') == 0
-                    a.attributes[:href] = 'https://www.youtube.com' + a.attributes[:href]
-                  end
-                  a.inner_text = a.attributes[:href]
-                end
-
-                output_data[:description] = {
-                  html: desc_node.outer_html,
-                  bbc: desc_node.outer_bbc
-                }
-              end
-            end
-
-            if @all || Youtube.flag_set(wanted_data, :tags)
-              output_data[:tags] = tags_from_html(body, json)
-            end
-
-            if @all || Youtube.flag_set(wanted_data, :source)
-              if src = Youtube.source_from_html(body, json)
-                output_data[:source] = src
-              end
-            end
-
-            if @all || Youtube.flag_set(wanted_data, :views)
-              if json && json['videoDetails']
-                output_data[:views] = json['videoDetails']['viewCount'].to_i
-              end
-            end
-
-            if @all || Youtube.flag_set(wanted_data, :rating)
-              output_data[:rating] = video_sentiment(body, json)
-            end
-
-            if @all || Youtube.flag_set(wanted_data, :duration)
-              if json && json['videoDetails']
-                output_data[:duration] = json['videoDetails']['lengthSeconds'].to_i
-              end
-            end
-          end
-        end
-
-        output_data
+        data
       end
-
-      def self.tags_from_html(html, json)
-        if json && json['videoDetails'] && json['videoDetails']['keywords']
-          return json['videoDetails']['keywords']
-        end
-
-        if (tgs = Youtube.header_from_html(html))
-          return ProjectVinyl::Bbc::Parser::NodeFinder.parse(tgs, '<', '>', 'meta')
-              .filter{ |meta| meta.attributes[:property] == "og:video:tag" }
-              .map{ |meta| meta.attributes[:content] }
-        end
-
-        return []
-      end
-
-      def self.source_from_html(html, json)
-        return json['streamingData'] if json && json.key?('streamingData')
-
-        map_index = html.index('url_encoded_fmt_stream_map')
-
-
-        html = html[map_index..html.length]
-        html = html.split('<')[0]
-        html = html.split('"')[2]
-        html = html.split(',')
-        html = html.map {|s| URI.unescape(s)}
-        html = html.map {|s| s.split('\\u0026')}
-
-        html.map do |el|
-          o = {}
-
-          el.each do |s|
-            key = s.split('=')[0]
-            o[key.to_sym] = s.gsub(key + '=', '')
-          end
-
-          o
-        end
-      end
-
-      def self.video_sentiment(html, json)
-        rating = {}
-
-        if json && json['videoDetails']
-          rating[:average] = json['videoDetails']['averageRating']
-        end
-
-        if html.index('sentimentBarRenderer":{')
-          html = html.split('sentimentBarRenderer":{')[1].split('}')[0]
-          sentiment = JSON.parse("{#{html}}")
-
-          if sentiment && sentiment['tooltip'] && sentiment['tooltip'].index('/')
-            sentiment = sentiment['tooltip'].split('/')
-            rating[:likes] = sentiment[0].gsub(/[^0-9]/, '').to_i
-            rating[:dislikes] = sentiment[1].gsub(/[^0-9]/, '').to_i
-          end
-        end
-
-        return rating
-      end
-
-      def self.player_response(html)
-        map_index = html.index('ytplayer.config = ')
-        return nil if !map_index
-
-        html = html[(map_index + 'ytplayer.config = '.length)..html.length]
-        html = html.split(';ytplayer.')[0]
-        while html[html.length - 1] == ';'
-          html = html[0..(html.length - 2)]
-        end
-        html = JSON.parse(html)['args']
-
-        JSON.parse(html['player_response'])
-      end
-
-      def self.description_from_html(html, player_resp)
-        close = '</p>'
-        description_index = html.index('id="eow-description"')
-        if !description_index
-          close = '</div>'
-          description_index = html.index('id="description"')
-        end
-
-        if !description_index
-          if player_resp
-            player_resp = player_resp["videoDetails"]
-            if player_resp
-              player_resp = player_resp["shortDescription"]
-              return player_resp if player_resp
-            end
-          end
-
-          return nil
-        end
-
-        html = html[description_index..html.length]
-        html = html.split(close)[0].split('>')
-        html.shift
-        html.join('>')
-      end
-
-      def self.shorten_direct_link(url)
-        params = Ajax.new(url).params
-
-        required_params = URI.unescape(params['sparams'] || '').split(',')
-        required_params += ['sparams', 'sig']
-        params = params.select {|k,_| required_params.include? k }
-
-        args = params.entries.map {|entry| "#{entry[0]}=#{entry[1]}"}
-
-        "#{url.split('?')[0]}?#{args.join('&')}"
-      end
-
-      def self.header_from_html(html)
-        html.split('</head>')[0]
-      end
-
+      
       def self.is_video_link(url)
         if url.nil? || (url = url.strip).empty?
           return false
@@ -253,9 +70,83 @@ module ProjectVinyl
       def self.flag_set(hash, key)
         hash.key?(key) && hash[key]
       end
+      
+      private
+      def self.__coppa(meta)
+        {
+          age_limit: meta[:age_limit].to_i,
+          coppa: meta[:age_limit].to_i > 0
+        }
+      end
+      
+      def self.__series(meta)
+        {
+          name: meta[:series],
+          season_number: meta[:season_number],
+          episode_number: meta[:episode_number]
+        }
+      end
 
-      def self.extract_uri_parameter(url, parameter)
-        Rack::Utils.parse_nested_query(URI.parse(url).query)[parameter]
+      def self.__description(meta)
+        desc_node = ProjectVinyl::Bbc::Bbcode.from_html(meta[:description] || "")
+        {
+          html: desc_node.outer_html,
+          bbc: desc_node.outer_bbc
+        }
+      end
+
+      def self.__artist(meta, links)
+        links[:uploader_url] = meta[:uploader_url]
+        links[:channel_url] = meta[:channel_url]
+
+        [
+          {
+            id: meta[:uploader_id],
+            name: meta[:uploader],
+            url: meta[:uploader_url]
+          },
+          {
+            id: meta[:channel_id],
+            name: meta[:channel_name],
+            url: meta[:channel_url]
+          }
+        ]
+      end
+
+      def self.__rating(meta)
+        {
+          average: meta[:average_rating],
+          likes: meta[:like_count],
+          dislikes: meta[:dislike_count]
+        }
+      end
+
+      def self.__thumbnails(meta)
+        thumbnails = meta[:thumbnails].map do |thumbnail|
+          {
+            url: thumbnail[:url].split("?")[0],
+            width: thumbnail[:width],
+            height: thumbnail[:height]
+          }
+        end
+        thumbnails << {
+          url: "https://i.ytimg.com/vi/#{meta[:id]}/maxresdefault.jpg",
+          width: meta[:width],
+          height: meta[:height]
+        }
+        thumbnails
+      end
+
+      def self.__shorten_direct_link(url)
+        params = Ajax.new(url).params
+
+        required_params = URI.unescape(params['sparams'] || '').split(',')
+        required_params += ['sparams', 'sig']
+        params = params.select {|k,_| required_params.include? k }
+
+        args = params.entries.map {|entry| "#{entry[0]}=#{entry[1]}"}
+
+        "#{url.split('?')[0]}?#{args.join('&')}"
       end
     end
   end
