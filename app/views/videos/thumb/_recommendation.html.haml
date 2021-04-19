@@ -8,6 +8,7 @@
 				- if recommendation.liked?
 					= fa "thumbs-#{recommendation.disliked? ? 'down red' : 'up green'}"
 				= duration recommendation.duration
+			= render partial: 'videos/thumb/save_button', locals: { video: recommendation }
 			= render partial: 'videos/thumb/_watch_time_bar', locals: { id: recommendation.id }
 		.details
 			- spoilered = current_filter.video_spoilered?(recommendation)

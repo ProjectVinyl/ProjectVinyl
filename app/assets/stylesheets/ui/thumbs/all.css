@@ -1,8 +1,7 @@
 /*
  *= require ./generic
- *= require ./tiles
+ *= require ./tiles/all
  *= require ./videos
  *= require ./recommended_videos
- *= require ./rating_indicators
  *= require ./stacks
  */

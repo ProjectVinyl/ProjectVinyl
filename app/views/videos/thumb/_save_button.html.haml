@@ -1,0 +1,6 @@
+- if user_signed_in?
+	.save{class: video.faved?(current_user) && "liked"}(title="Add to..." data-external-form="#{video_add_path(video, format: :json)}" |
+			data-icon="star" |
+			data-max-width="800px" |
+			data-title="Add to...") |
+		= fa :star

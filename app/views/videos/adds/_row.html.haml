@@ -1,0 +1,5 @@
+.row.action.toggle(data-target="#{video_add_path @video}" data-item="#{row.id}")
+	.cell.icon
+		- if row.album_items.where(video_id: @video.id).any?
+			= fw :check
+	.cell= row.title

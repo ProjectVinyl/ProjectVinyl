@@ -47,7 +47,7 @@ Rails.application.routes.draw do
       resource :statistics, only: [:show]
       resource :details, :play_count, only: [:update]
       resource :download, only: [:show]
-      resource :add, only: [:update]
+      resource :add, only: [:show, :update]
     end
   end
 

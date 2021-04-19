@@ -1,0 +1,8 @@
+.listing.compact.scroll-container {
+  max-height: calc(min(90vh, 600px));
+  overflow: auto;
+  scrollbar-width: thin;
+}
+.listing.compact.scroll-container:not(:focus, :hover) {
+    scrollbar-color: transparent transparent;
+}

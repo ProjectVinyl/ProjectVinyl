@@ -1,0 +1,11 @@
+.listing.compact
+	.items.actions
+		%a.row(data-external-form="#{new_album_path initial: @video.id}" data-title="New Album" href="#{new_album_path initial: @video.id}")
+			.cell.icon= fw :pencil
+			.cell New Album
+		= render partial: 'videos/adds/row', locals: { row: current_user.album}
+.listing.compact.scroll-container
+	.items.actions
+		= render partial: 'videos/adds/row', collection: current_user.albums
+.foot
+	%button.right.cancel(data-resolve="false") Close

@@ -1,10 +1,12 @@
 /*
  *= require ./compact
  *= require ./albums
+ *= require ./scroll_container
  *= require ./row_group
  *= require ./row_spanned
  *= require ./row_selected
  *= require ./head_and_foot
  *= require ./floater
+ *= require ./actions
  */
  
