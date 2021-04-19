@@ -5,6 +5,16 @@ require 'uri'
 module ProjectVinyl
   module Web
     class Youtube
+      ALL_FLAGS = [
+        :title, :views, :duration, :coppa, :description, :rating,
+        :series, :artist, :thumbnails, :tags, :categories, :annotations,
+        :captions, :chapters, :sources
+      ].freeze
+
+      def self.all_flags
+        ALL_FLAGS
+      end
+
       def self.get(url, wanted_data = {})
         meta = Youtubedl.video_meta(url)
 
