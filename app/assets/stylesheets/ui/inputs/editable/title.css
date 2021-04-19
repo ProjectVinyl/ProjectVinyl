@@ -1,8 +1,8 @@
-[data-title] {
+[data-tooltip] {
   position: relative;
 }
 
-[data-title]::before, [data-title]::after,
+[data-tooltip]::before, [data-tooltip]::after,
 .editable .edit::after, .editable .edit::before {
   position: absolute;
   transform: translate(-50%);
@@ -14,7 +14,7 @@
   font-style: normal;
 }
 
-[data-title]::before, .editable .edit::before {
+[data-tooltip]::before, .editable .edit::before {
   background: var(--tooltip-background-color);
   color: var(--tooltip-color);
   font-size: 13pt;
@@ -25,11 +25,11 @@
 .editable .edit::before {
   content: 'Click to Edit';
 }
-[data-title]::before {
-  content: attr(data-title);
+[data-tooltip]::before {
+  content: attr(data-tooltip);
 }
 
-[data-title]::after, .editable .edit::after {
+[data-tooltip]::after, .editable .edit::after {
   content: '';
   top: -10%;
   border: solid 5px var(--tooltip-background-color);
