@@ -1,6 +1,6 @@
 module Albums
   class VirtualAlbum
-    include Album
+    include AlbumLike
     attr_accessor :id, :user, :title, :safe_title, :description
     attr_reader :video_set
 

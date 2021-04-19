@@ -29,8 +29,8 @@ module Albums
 
     def add(video)
       index = @owner.album_items.length
-      album_items.create(video_id: video.id, index: index, o_video_id: video.id)
-      repaint_ordering(album_items)
+      @owner.album_items.create(video_id: video.id, index: index, o_video_id: video.id)
+      @owner.repaint_ordering(@owner.album_items)
       video.update_index
     end
 

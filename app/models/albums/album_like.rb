@@ -1,5 +1,5 @@
 module Albums
-  module Album
+  module AlbumLike
     extend ActiveSupport::Concern
     included do
       extend Forwardable
