@@ -1,14 +1,9 @@
 .listing.compact .items.actions .row {
   cursor: pointer;
-  display: flex;
-  padding: 0;
 }
 .listing.compact .items.actions .row .cell {
-  flex-grow: 1;
   padding: 15px 10px;
-  text-align: left;
 }
 .listing.compact .items.actions .row .cell.icon {
-  width: 30px;
-  flex-grow: 0;
+  width: 38px;
 }
