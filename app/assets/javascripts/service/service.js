@@ -58,13 +58,15 @@ export function deregisterWorker(callback) {
       sub.unsubscribe().then(() => ajax.post('/services/deregister', subParams(sub)).text(() => {
         console.log('Service Stopped');
         workerStatus = STOPPED;
-        callback();
+        if (callback) {
+          callback();
+        }
       }));
     });
   });
 }
 
-export function readyWorker(callback, readyCallback) {
+export function registerWorker(callback, readyCallback) {
 	transitionState(STOPPED, () => {
     navigator.serviceWorker.register('/serviceworker.js', {scope: '/'});
     navigator.serviceWorker.addEventListener('message', callback);
