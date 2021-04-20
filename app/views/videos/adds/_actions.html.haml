@@ -1,8 +1,9 @@
 .listing.compact
 	.items.actions
 		%a.row(data-external-form="#{new_album_path initial: @video.id}" data-title="New Album" href="#{new_album_path initial: @video.id}")
-			.cell.icon= fw :pencil
+			.cell.icon= fa :pencil
 			.cell New Album
+			.cell.icon
 		= render partial: 'videos/adds/row', locals: { row: current_user.album}
 .listing.compact.scroll-container
 	.items.actions

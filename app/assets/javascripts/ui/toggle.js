@@ -11,6 +11,11 @@ function toggle(e, sender, options, callback) {
   if (options.dataset.id) path += `/${options.dataset.id}`;
   if (options.dataset.action) path += `/${options.dataset.action}`;
   
+  const loadingIcon = sender.dataset.loadingIcon;
+  if (loadingIcon) {
+    updateIcon(sender, loadingIcon);
+  }
+
   ajax.put(path, data).json(json => callback(json, options));
 }
 
@@ -23,8 +28,11 @@ function getTitle(element, state) {
 }
 
 function updateCheck(element, state) {
-  const icon = getIcon(element, state);
   element.title = getTitle(element, state);
+  updateIcon(element, getIcon(element, state));
+}
+
+function updateIcon(element, icon) {
   element.querySelector('.icon').innerHTML = icon.length ? `<i class="fa fa-${icon}"></i>` : '';
 }
 

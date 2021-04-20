@@ -1,5 +1,16 @@
-.row.action.toggle(data-target="#{video_add_path @video}" data-item="#{row.id}")
+.row.action.toggle(data-target="#{video_add_path @video}" |
+	data-checked-icon="check" |
+	data-unchecked-icon="circle-thin"
+	data-loading-icon="spin fa-circle-o-notch"
+	data-item="#{row.id}") |
 	.cell.icon
 		- if row.album_items.where(video_id: @video.id).any?
-			= fw :check
+			= fa :check
+		- else
+			= fa :circle_thin
 	.cell= row.title
+	.cell.icon
+		- if row.hidden
+			%span(title="Private - Only you can see this album")= fw :lock
+		- else
+			%span(title="Public - Anyone can see this album")= fw :globe
