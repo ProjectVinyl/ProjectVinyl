@@ -1,7 +1,23 @@
 .wrapper.column-right.right.fixed-right-column.stick-top
 	%section.page.full-width
 		%ul.horizontal.center
-			= render partial: 'albums/thumb/normal', locals: {normal: @album}
+			- normal = @album
+			%li.generic
+				%a{href: @album.link}
+					%span.tile.stack= render 'albums/tile_stack', items: normal.album_items.order(:index)
+		%h2.title.post-title.resize-target
+			= render 'albums/visibility', album: normal
+			= normal.title
+		.tag-set.subheading
+			= number_with_delimiter @items.count
+			videos
+			|
+			= number_with_delimiter @album.views
+			views
+			|
+			%span{title: localise(normal.created_at)}
+				updated
+				= since normal.created_at
 		.post
 			.tile.stack.left= render 'albums/tile_stack', items: @items.records
 			- if @modifications_allowed
@@ -11,10 +27,12 @@
 					%span.edit= fa :pencil
 			- else
 				.content.description= emotify @album.description
-			%span.tag-set.underline
-				By
-				%a{href: @user.link}= @user.username
-				|
-				= number_with_delimiter @items.count
-				videos | last updated 
-				= since @album.updated_at
+		%br
+		%a.user-attribution-block.user-link(data-id="#{@user.id}" href="#{@user.link}")
+			= render partial: 'users/avatar/small', locals: {user: @user}
+			.username= @user.username
+			= surround '(', ')' do
+				= @user.videos.count
+				videos,
+				= @user.albums.count
+				albums

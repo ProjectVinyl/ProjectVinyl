@@ -24,7 +24,11 @@ class AlbumsController < Albums::BaseAlbumsController
     @user = @album.user
     @records = @album.ordered(@album.album_items.includes(:direct_user))
     @items = Pagination.paginate(@records, 0, 50, false)
-    @modifications_allowed = user_signed_in? && @album.owned_by(current_user)
+
+    if !(@modifications_allowed = user_signed_in? && @album.owned_by(current_user))
+      @album.views += 1
+      @album.save
+    end
 
     @metadata = {
       og: {

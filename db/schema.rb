@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20210416144621) do
+ActiveRecord::Schema.define(version: 20210511163256) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -74,6 +74,7 @@ ActiveRecord::Schema.define(version: 20210416144621) do
     t.boolean "reverse_ordering", default: false
     t.integer "ordering", default: 0
     t.integer "listing", default: 0
+    t.integer "views", default: 0
     t.index ["user_id"], name: "index_albums_on_user_id"
   end
 
