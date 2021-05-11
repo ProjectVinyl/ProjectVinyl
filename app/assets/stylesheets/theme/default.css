@@ -21,10 +21,11 @@ html, body {
   --content-unread: rgba(200,250,200,0.6);
 
   --dock-shadow-color: #333;
-
   --block-shadow-color: #ccc;
   --block-border-color: #eee;
   --block-hover-color: var(--block-border-color);
+  --block-emboss-color: #f9f9f9;
+  --block-emboss-hover-color: var(--block-hover-color);
   --block-radius: 3px;
 
   --seamless-button-hover-tint: rgba(0,0,0,0.1);

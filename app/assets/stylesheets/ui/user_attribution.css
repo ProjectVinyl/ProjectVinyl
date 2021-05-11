@@ -1,0 +1,13 @@
+.user-attribution-block {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--default-header-color);
+  text-decoration: none;
+  background: var(--block-emboss-color);
+  padding: 12px;
+  border-radius: var(--block-radius);
+}
+.user-attribution-block:hover {
+  background: var(--block-hover-color);
+}

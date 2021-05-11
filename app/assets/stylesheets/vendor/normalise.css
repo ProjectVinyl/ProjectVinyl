@@ -34,6 +34,7 @@ h1, h2 {
   line-height: 1;
   text-shadow: 0 0.05em 0.03em rgba(0,0,0,0.3);
   font-weight: normal;
+  margin: 0;
 }
 h1, .subheading {
   border-bottom: 1px solid rgba(0,0,150, 0.3);

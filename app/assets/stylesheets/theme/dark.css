@@ -40,7 +40,9 @@ html, body {
 
   --block-shadow-color: #333;
   --block-border-color: #555;
-  --block-hover-color: #111;
+  --block-hover-color: #1e1c1c;
+  --block-emboss-color: #1f1f1f;
+  --block-emboss-hover-color: var(--block-hover-color);
 
   --bubble-background-hover: #201e1e;
   --bubble-background-active: #1c1b1b;
@@ -213,7 +215,7 @@ hr {
 }
 
 .comment-content blockquote.even {
-    background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.5);
 }
 
 #search_small::placeholder {

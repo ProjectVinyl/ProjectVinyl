@@ -2,7 +2,7 @@
   --table-foreground-color: #000;
   --table-secondary-color: #888;
   --table-row-background: var(--content-background);
-  --table-row-focus-background: var(--header-overlay-element-focus-fill);
+  --table-row-focus-background: var(--block-hover-color);
 }
 .listing.compact .items {
   display: table;
