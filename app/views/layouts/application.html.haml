@@ -17,7 +17,7 @@
 			:css
 				body {--site-banner: #{content_for(:custom_banner)};}
 %body{class: !user_signed_in? && "logged-out"}
-	.context-3d.dock-holder
+	.context-3d.no-3d.dock-holder
 		.dock-shadow
 		%header.header.banner-overlay
 			- if user_signed_in?

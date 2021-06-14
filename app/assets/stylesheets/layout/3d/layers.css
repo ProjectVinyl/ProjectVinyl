@@ -2,7 +2,7 @@
   position: absolute;
   width: 100%;
 }
-.context-3d .layer-background {
+.context-3d:not(.no-3d) .layer-background {
   transform-style: preserve-3d;
   -webkit-transform-style: preserve-3d;
 }
@@ -11,10 +11,10 @@
   z-index: 2;
 }
 
-.layer-background .far {
+.context-3d:not(.no-3d) .layer-background .far {
   transform: translateX(200%) translateZ(-1200px) scale(5.3);
 }
-.layer-background .near {
+.context-3d:not(.no-3d) .layer-background .near {
   transform: translateX(50%) translateZ(-300px) scale(2);
 }
 
