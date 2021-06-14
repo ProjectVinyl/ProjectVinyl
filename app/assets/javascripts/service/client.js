@@ -1,4 +1,4 @@
-import { readyWorker } from './service';
+import { deregisterWorker } from './service';
 import { docTitle } from '../utils/doctitle';
 
 function updateCounter(title, counter, count) {
