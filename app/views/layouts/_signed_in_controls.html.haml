@@ -6,7 +6,7 @@
 	%i.fa.fa-bell
 	%span.notification-count.count{data: {count: current_user.notification_count}}<
 		= safe_to_display current_user.notification_count, 999
-	%span.message-count.count.invert{data: {count: current_user.message_count}}
+	%span.message-count.count.invert{data: {count: current_user.message_count}}<
 		= safe_to_display current_user.message_count, 999
 %span.no-dock= render 'layouts/signed_in_menu'
 %a(rel="nofollow"){title: "Profile - #{current_user.username}", href: current_user.link}
