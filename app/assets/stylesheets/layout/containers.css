@@ -1,5 +1,6 @@
 .page {
   --content-block-padding: 20px;
+  --content-block-padding-half: calc(var(--content-block-padding) / 2);
   position: relative;
   min-height: 100%;
   display: inline-block;

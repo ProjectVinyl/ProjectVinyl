@@ -1,3 +1,6 @@
+.featured .post {
+  padding-top: var(--content-block-padding-half);
+}
 .featured .scoring {
   display: table;
   width: 100%;
