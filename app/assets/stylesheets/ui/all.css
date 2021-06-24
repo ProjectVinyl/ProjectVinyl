@@ -12,7 +12,7 @@
  *= require ./online_indicators
  *= require ./stats
  *= require ./hovercard
- *= require ./featuredvideo
+ *= require ./featured_video
  *= require ./donate
  *= require ./notices
  *= require ./reorderable
