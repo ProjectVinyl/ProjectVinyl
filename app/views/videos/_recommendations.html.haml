@@ -1,17 +1,16 @@
 %section
-	%h1 Related Videos
 	.slide-holder.slide-group
-		.group.active(data-stage="user")
+		.group.active(data-stage="global")
 			%h2.resize-target.slide-nav
-				%a Uploader
-				%a.slide-right.goto(data-to="global" title="Anyone")= fw :chevron_right
-			%ul.vertical
-				= render partial: 'videos/thumb/mix', locals: {mix: @video}
-				= render partial: 'videos/thumb/recommendation', collection: @queue[:user]
-		.group(data-stage="global")
-			%h2.resize-target.slide-nav
-				%a.goto.slide-left(data-to="user" title="Uploader")= fa :chevron_left
-				%a Anyone
+				%a Related
+				%a.slide-right.goto(data-to="user" title="Uploader")= fa :chevron_right
 			%ul.vertical
 				= render partial: 'videos/thumb/mix', locals: {mix: @video}
 				= render partial: 'videos/thumb/recommendation', collection: @queue[:global]
+		.group(data-stage="user")
+			%h2.resize-target.slide-nav
+				%a.slide-left.goto(data-to="global" title="Anyone")= fw :chevron_left
+				%a Uploader
+			%ul.vertical
+				= render partial: 'videos/thumb/mix', locals: {mix: @video}
+				= render partial: 'videos/thumb/recommendation', collection: @queue[:user]

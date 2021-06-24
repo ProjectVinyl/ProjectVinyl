@@ -28,6 +28,12 @@
 
 .post-content {
   word-wrap: break-word;
+  background: var(--seamless-highlight-content-background);
+}
+.seamless .post-content {
+  display: block;
+  padding: var(--content-block-padding);
+  border-radius: var(--block-radius);
 }
 
 .post .subheading {

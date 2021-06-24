@@ -1,5 +1,5 @@
 - if !@user.description.nil? && !@user.description.blank?
-	%section.page.full-width.artist-bio.removeable(data-id="#{part.id}" data-target="/users/#{@user.id}/profile_modules" data-index="#{part.index}")
+	%section.page.seamless.full-width.artist-bio.removeable(data-id="#{part.id}" data-target="/users/#{@user.id}/profile_modules" data-index="#{part.index}")
 		%h1.title
 			= render 'users/profile_modules/actions'
 			Bio

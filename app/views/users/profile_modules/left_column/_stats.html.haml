@@ -1,4 +1,4 @@
-%section.page.full-width
+%section.page.seamless.full-width
 	%h1 Statistics
 	- cache(@user, expires_in: 30.minutes) do
 		= render 'users/profile_modules/left_column/stat_bar', records: @user.videos, title: 'Uploads'

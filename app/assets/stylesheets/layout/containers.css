@@ -4,10 +4,15 @@
   position: relative;
   min-height: 100%;
   display: inline-block;
-  background: var(--content-background);
   padding: var(--content-block-padding);
+}
+.page:not(.seamless) {
+  background: var(--content-background);
   box-shadow: 0 0 5px 0 rgba(0,0,0,0.3);
   border-radius: var(--block-radius);
+}
+.page.seamless {
+  --heading-background: transparent;
 }
 .page.slim {
 	--content-block-padding: 0;

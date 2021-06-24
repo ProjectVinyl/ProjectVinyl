@@ -1,10 +1,10 @@
 - title @video.title
 = render partial: 'video'
-.page.resize-holder.column-right.right.center.fixed-right-column{class: @album && "column-mobile-fragmented"}
+.page.seamless.resize-holder.column-right.right.center.fixed-right-column{class: @album && "column-mobile-fragmented"}
 	- if @album
 		= render partial: 'albums/inline'
 	= render partial: 'recommendations'
 = render partial: 'description'
-%section.page.column-left.fixed-right-column
+%section.page.seamless.column-left.fixed-right-column
 	= render partial: 'forum/threads/view', locals: {identifier: @video.id, title: "#{@video.title} by #{@user.username}" }
 = render partial: 'sellout/aj_donate_plz_wide'
