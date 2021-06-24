@@ -7,13 +7,16 @@
   padding: var(--content-block-padding);
 }
 .page:not(.seamless) {
-  background: var(--content-background);
   box-shadow: 0 0 5px 0 rgba(0,0,0,0.3);
   border-radius: var(--block-radius);
 }
-.page.seamless {
+.page:not(.seamless):not(.seamed) {
+  background: var(--content-background);
+}
+.page.seamless, .page.seamed {
   --heading-background: transparent;
 }
+
 .page.slim {
 	--content-block-padding: 0;
 	transition: width 0.25s ease, height 0.25s ease;
@@ -21,6 +24,7 @@
 .page h1 {
   margin: calc(var(--content-block-padding) * -1);
   margin-bottom: 10px;
+  border-radius: inherit;
 }
 
 div.group {

@@ -1,35 +1,35 @@
-﻿.wrapper.resize-holder.column-right.right.column-mobile-fragmented.wrap-around-fixed.grid-root
+﻿.wrapper.resize-holder.column-right.column-padded-top.right.column-mobile-fragmented.wrap-around-fixed.grid-root
 	- if @featured
 		= render 'featured_video'
 	- if @threads.length > 0
-		%section.properties.ribbed.page.full-width
+		%section.properties.ribbed.page.seamed.full-width
 			%h1
 				= fw :comments
 				Forum Activity
 			%table(style="table-layout: auto")= render partial: 'recent_thumb', collection: @threads
 	- if @comments.length > 0
-		%section.properties.ribbed.page.full-width
+		%section.properties.ribbed.page.seamed.full-width
 			%h1
 				= fw :comments
 				Comments
 			= render partial: 'comments/recent_set', locals: {comments: @comments}
 	= render partial: 'sellout/aj_donate_plz_narrow'
-	%section.page.full-width.twitter
+	%section.page.seamed.full-width.twitter
 		%h1
 			= fw :newspaper_o
 			Twitter Feed
 		%iframe.twitter(loading="lazy" src="/embed/twitter")
 .wrapper.column-left.auto-wrap.resize-holder.grid-root
-	%section.page
+	%section.page.seamless
 		= render 'section', collection: @popular, type: 'popular', label: 'Popular Videos', filter: '', order: 2
 		- if @exception_flag
 			.right= fa :star_o
 	- if @active.length > 0
-		%section.page
+		%section.page.seamless
 			= render 'section', collection: @active, type: 'active', label: 'Trending Videos', filter: '', order: 2
 	- if @featured_album
-		%section.page= render 'featured_album', featured_album: @featured_album
+		%section.page.seamless= render 'featured_album', featured_album: @featured_album
 	- @all.group_by(&:period).each do |week, n|
-		%section.page= render 'section', collection: n, label: week, filter: n.first.period_search_range, order: 0
+		%section.page.seamless= render 'section', collection: n, label: week, filter: n.first.period_search_range, order: 0
 	- if @feed && @feed.length > 0
 		= render 'videos/feeds/show'
