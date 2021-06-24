@@ -23,6 +23,7 @@
   color: var(--button-foreground);
   font-weight: initial;
   letter-spacing: 0.06em;
+  flex-grow: 1;
 }
 .tag .counter {
   background: rgba(0, 0, 0, 0.09);
@@ -30,6 +31,7 @@
   padding: 5px 10px;
   margin: -5px;
   margin-left: 5px;
+  flex-grow: 0;
 }
 
 .tags.artist-tags {
