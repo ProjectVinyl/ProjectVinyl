@@ -1,3 +1,8 @@
+html {
+  --page-shadow: 0 0 5px 0 rgba(0,0,0,0.3);
+  --page-radius: var(--block-radius);
+}
+
 .page {
   --content-block-padding: 20px;
   --content-block-padding-half: calc(var(--content-block-padding) / 2);
@@ -5,16 +10,18 @@
   min-height: 100%;
   display: inline-block;
   padding: var(--content-block-padding);
-}
-.page:not(.seamless) {
-  box-shadow: 0 0 5px 0 rgba(0,0,0,0.3);
-  border-radius: var(--block-radius);
-}
-.page:not(.seamless):not(.seamed) {
   background: var(--content-background);
+  box-shadow: var(--page-shadow);
+  border-radius: var(--page-radius);
 }
-.page.seamless, .page.seamed {
+
+.seamless, .seamed {
   --heading-background: transparent;
+  --content-background: transparent;
+}
+.seamless {
+  --page-shadow: none;
+  --page-radius: 0;
 }
 
 .page.slim {

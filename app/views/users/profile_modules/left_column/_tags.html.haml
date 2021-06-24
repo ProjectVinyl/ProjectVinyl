@@ -1,6 +1,8 @@
 - if @user.tag_id || @tags.length > 0
-	%section.page.seamless.full-width
-		%h1.title Associated Tags
+	%section.page.seamed.full-width
+		%h1.title
+			= fw :tag
+			Associated Tags
 		- if @user.tag_id
 			%ul.tags.artist-tags= render 'tags/thumb/normal', normal: @user.tag
 		- elsif @modifications_allowed
