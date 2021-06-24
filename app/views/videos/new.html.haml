@@ -1,6 +1,6 @@
 - lim "900px"
 - title "Upload"
-.page.full-width.tab-set#uploader_frame
+.page.slim.full-width.tab-set#uploader_frame
 	%ul.tab-set.tabs
 		%li.button#new_tab_button(title="Add") +
 %ul.hidden#tab-template
@@ -40,23 +40,24 @@
 						.progress
 							.fill
 				.ui.hidden.post.description.resize-holder
-					%hr
-					%h2.title.editable.short.post-title.resize-target#video_title
-						%span.content Title
-						= f.text_field :title, class: "input"
-						%span.edit= fa :pencil
-						%span.hidden 11
-					.tag-set.subheading
-						%span.uploaded
-							Uploaded on
-							= Time.now.strftime('%e %B %Y')
-							by
-							%a.user-link.link{href: current_user.link, data: {id: current_user.id}}= current_user.username
-						%span.views.right
-							= number_with_delimiter @video.views
-							views
 					.properties
 						%table
+							%tr
+								%td
+									%h2.title.editable.short.post-title.resize-target#video_title
+										%span.content Title
+										= f.text_field :title, class: "input"
+										%span.edit= fa :pencil
+										%span.hidden 11
+									.tag-set.subheading
+										%span.uploaded
+											Uploaded on
+											= Time.now.strftime('%e %B %Y')
+											by
+											%a.user-link.link{href: current_user.link, data: {id: current_user.id}}= current_user.username
+										%span.views.right
+											= number_with_delimiter @video.views
+											views
 							%tr
 								%td
 									= render layout: "comments/description_box" do
@@ -84,9 +85,11 @@
 										%label.button
 											Time
 											%input(name="premier[time]" type="time")
-					.actions
-						%button.action.change-video(type="button") Change Main File
-						%span.notify.bob-holder
-							.bobber.bob-left Cover art is required to upload audio files.
-							= f.submit "Upload", class: "action right green"
-					= render 'foobar'
+							%tr
+								%td
+									.actions
+										%button.action.change-video(type="button") Change Main File
+										%span.notify.bob-holder
+											.bobber.bob-left Cover art is required to upload audio files.
+											= f.submit "Upload", class: "action right green"
+									= render 'foobar'
