@@ -1,0 +1,11 @@
+.tag-header {
+  vertical-align: middle;
+  min-height: 8em;
+}
+.tag-header .title {
+  font-size: 2.22em;
+  padding: 0;
+}
+.post .tag-header {
+  margin-left: 8em;
+}
