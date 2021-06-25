@@ -14,6 +14,8 @@ html, body {
   --content-highlight: #2b252b;
 
   --thumb-hover-color: #1e1d1d;
+  --seamless-thumb-hover-color: var(--thumb-hover-color);
+  
   --input-border: #575757;
   --input-foreground-color: #c4c4c4;
   --input-background: #151515;
@@ -87,6 +89,10 @@ label.focus .content {
 }
 .description .user-link:not(.link), .comment-content .user-link, .comment-content a[data-link="2"] {
   color: #fff;
+}
+
+.seamless {
+  --seamless-highlight-content-background: #2f2b2b;
 }
 
 .fade-away {
@@ -183,6 +189,11 @@ label.check-box:hover {
 
 .post .actions.actions-above-content {
   border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.properties.ribbed {
+  --rib-color: rgba(255,255,255,0.01);
+  --block-border-color: #222121: 
 }
 
 .checkerboard {
