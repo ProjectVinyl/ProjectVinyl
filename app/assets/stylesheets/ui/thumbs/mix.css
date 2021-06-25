@@ -1,0 +1,19 @@
+li.generic.mix {
+  background: var(--thumb-hover-color);
+  padding: 10px;
+  border-radius: var(--page-radius);
+}
+
+li.generic.mix .tile::after {
+  content: '\f09e';
+  font-family: 'FontAwesome';
+  position: absolute;
+  padding: 10px;
+  top: 0;
+  right: 0;
+  font-size: 2em;
+  opacity: 0.6;
+  text-align: center;
+  background: var(--tile-overlay-background);
+  border-radius: 0 0 0 5px;
+}

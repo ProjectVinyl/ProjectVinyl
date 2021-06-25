@@ -11,6 +11,7 @@
   display: flex;
   flex-direction: column;
   flex-grow: 1;
+  border-radius: var(--thumb-border-radius)
 }
 @media(max-width: 654px) {
   .thumb, li.generic.thumb {
@@ -34,28 +35,6 @@
   background: #95ffd5;
   border: solid 1px #ccc !important;
   margin: -1px;
-}
-
-li.generic.mix {
-  background: var(--thumb-hover-color);
-  padding: 10px;
-  border-top: solid 3px var(--block-border-color);
-  border-bottom: solid 3px var(--block-border-color);
-  border-radius: 3px;
-}
-
-li.generic.mix .tile::after {
-  content: '\f09e';
-  font-family: 'FontAwesome';
-  position: absolute;
-  padding: 10px;
-  top: 0;
-  right: 0;
-  font-size: 2em;
-  opacity: 0.6;
-  text-align: center;
-  background: var(--tile-overlay-background);
-  border-radius: 0 0 0 5px;
 }
 
 .thumb .tile .detail {
