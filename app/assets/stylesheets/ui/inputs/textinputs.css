@@ -1,3 +1,7 @@
+html {
+  --input-radius: 3px;
+}
+
 textarea,
 input[type=text]:not(.tag),
 input[type=number],
@@ -8,8 +12,7 @@ label.text-input {
   transition: background 0.125s ease;
   padding: 10px;
   border: 1px solid var(--input-border);
-  border-radius: 5px;
-  box-shadow: 0px 0px 12px rgba(0, 0, 0, 0.07) inset;
+  border-radius: var(--input-radius);
   background: var(--input-background);
   color: var(--input-foreground-color);
   text-shadow: 1px 1px var(--input-shadow);

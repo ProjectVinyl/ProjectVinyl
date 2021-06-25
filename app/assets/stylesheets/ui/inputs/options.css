@@ -1,10 +1,10 @@
 label.options {
   display: flex;
-  border: 1px solid var(--block-border-color);
+  border: 1px solid var(--input-border);
   margin: .625rem 0;
   color: var(--input-foreground-color);
   background: var(--content-background);
-  border-radius: 2px;
+  border-radius: var(--input-radius);
   min-width: 200px;
   transition: background 0.125s ease;
 }
@@ -21,8 +21,8 @@ label.options span {
   color: var(--input-foreground-color) !important;
   border-right: 1px solid var(--block-border-color);
   font-size: 0.9em;
-  border-top-left-radius: 2px;
-  border-bottom-left-radius: 2px;
+  border-top-left-radius: var(--input-radius);
+  border-bottom-left-radius: var(--input-radius);
 }
 
 label.options input,

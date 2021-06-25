@@ -5,13 +5,14 @@
   --popper-border-bottom-color: var(--input-border);
   --popper-shadow-color: #ffffff4d;
   --popper-item-highlight: var(--block-hover-color);
+  --toolbar-radius: var(--input-radius);
   --toolbar-item-padding: 10px;
 
   display: flex;
   background: var(--popper-background);
   color: var(--input-foreground-color);
   border: solid 1px var(--popper-border-color);
-  border-radius: var(--block-radius);
+  border-radius: var(--toolbar-radius);
 }
 
 .meta-toolbar .spacer {
