@@ -1,5 +1,10 @@
 - title "Private Messages"
 %h1.title.breadcrumb Private Messages
+.actions
+	%button.action.green.right(data-external-form="#{new_message_path}" data-title="New PM" type="button")
+		= fa :plus
+		New Message
+%hr/
 %section.page.tab-set.full-width
 	.tab-set.tabs.async(data-target="messages")
 		%a.button{href: "/inbox/new", "data-live-tab": "new", class: (@type == "new") && "selected"}
@@ -17,10 +22,6 @@
 		%a.button{href: "/inbox/deleted", class: @type == "deleted" && "selected"}
 			= fa :trash
 			Deleted
-	.actions.space-fix
-		%button.action.green.right(data-external-form="#{new_message_path}" data-title="New PM" type="button")
-			= fa :plus
-			New Message
-	%hr/
+	%br
 	.tab.selected(data-tab="messages")
 		= render "list_group", type: @type, paginated: @result, selected: true
