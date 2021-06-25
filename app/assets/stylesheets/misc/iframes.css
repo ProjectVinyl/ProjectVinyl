@@ -3,6 +3,7 @@ iframe.embed {
   width: 560px;
   height: 315px;
   max-width: 100%;
+  border-radius: var(--thumb-border-radius);
 }
 
 iframe.twitter {

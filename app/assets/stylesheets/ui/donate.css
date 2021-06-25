@@ -7,6 +7,7 @@
   background: url('../images/index.gif') center / 100%;
   padding-bottom: 100%;
   image-rendering: crisp-edges;
+  border-radius: var(--thumb-border-radius);
 }
 .donate [data-message]::after {
   transition: opacity 0.5s ease, right 0.5s ease;
@@ -33,4 +34,8 @@
 }
 .donate.wide-donate [data-message] {
   padding-bottom: 15%;
+}
+
+.donate .source {
+  text-align: right;
 }
