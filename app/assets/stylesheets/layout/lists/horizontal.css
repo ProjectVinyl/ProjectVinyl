@@ -9,6 +9,7 @@ ul.horizontal {
   margin-bottom: -1px;
   margin-left: calc(var(--content-block-padding, 0) * var(--horizontal-padding-scale));
   margin-right: calc(var(--content-block-padding, 0) * var(--horizontal-padding-scale));
+  min-height: 230px;
 }
 
 ul.horizontal.tag-list,
