@@ -8,7 +8,8 @@ module Videos
         @count = video.star(current_user) if params[:id] == 'star'
 
         return render json: {
-          count: @count
+          count: @count,
+          added: params[:id] == 'star' && video.faved?(current_user)
         }
       end
     end

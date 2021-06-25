@@ -10,5 +10,8 @@
 	- if @album
 		%li.playlist-toggle= fa :list
 	- if user_signed_in?
-		%li.action.toggle{title: "Star Video", data: {target: video_add_path(@video.id), "checked-icon": "star", "unchecked-idon": "star-o"}}
-			%span.icon= fa "star#{!@video.faved?(current_user) ? '-o' : ''}"
+		%li.action.toggle{title: "Star Video",
+			data: {target: video_action_path(@video.id, :star),
+				"checked-icon": "star",
+				"unchecked-icon": "star-o"}}
+			%span.icon= fa "star#{@video.faved?(current_user) ? '' : '-o'}"
