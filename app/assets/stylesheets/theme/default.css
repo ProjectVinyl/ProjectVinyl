@@ -30,7 +30,9 @@ html, body {
 
   --seamless-button-hover-tint: rgba(0,0,0,0.1);
 
-  --thumb-hover-color: #fcfcfc5e;
+  --thumb-hover-color: #f1edfd5e;
+  --seamless-thumb-hover-color: #fcfcfc5e;
+  --thumb-border-radius: 5px;
 
   --form-background: #f8f8f8;
   --notification-bobber-fill: #f00;
@@ -43,6 +45,8 @@ html, body {
 
   --heading-background: #f0f0f0;
   --heading-border-color: #ddd;
+  
+  --checkerboard-background: #fff;
 
   --footer-buffer-color: rgba(221, 221, 221, 0.3);
 

@@ -18,6 +18,7 @@
 }
 
 .checkerboard {
+  background-color: var(--checkerboard-background);
   background-image: url('data:image/svg+xml,<svg%20width="20"%20height="20"%20xmlns="http://www.w3.org/2000/svg"><g%20fill="%23eee"%20opacity="1"><rect%20width="10"%20height="10"/><rect%20width="10"%20height="10"%20x="10"%20y="10"/></g></svg>');
 }
 

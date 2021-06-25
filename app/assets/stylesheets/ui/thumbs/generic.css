@@ -26,12 +26,12 @@ li.generic:focus-within {
 }
 
 li.generic.virtual.keep::after {
-    content: "No Content";
-    position: absolute;
-    top: calc(50% + 0.5em);
-    left: calc(50% - 2.5em);
-    font-size: 2em;
-    color: #6666b8;
+  content: "No Content";
+  position: absolute;
+  top: calc(50% + 0.5em);
+  left: calc(50% - 2.5em);
+  font-size: 2em;
+  color: #6666b8;
 }
 
 ul.vertical li.generic {

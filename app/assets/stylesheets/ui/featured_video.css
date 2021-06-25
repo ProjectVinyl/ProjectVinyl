@@ -30,3 +30,6 @@
   --thumb-height: 150px;
   --thumb-width: 100%;
 }
+.featured .video, .featured video {
+  border-radius: var(--thumb-border-radius);
+}

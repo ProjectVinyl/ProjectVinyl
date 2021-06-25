@@ -18,6 +18,7 @@ html {
 .seamless, .seamed {
   --heading-background: transparent;
   --content-background: transparent;
+  --thumb-hover-color: var(--seamless-thumb-hover-color);
 }
 .seamless {
   --page-shadow: none;
@@ -31,7 +32,7 @@ html {
 .page h1 {
   margin: calc(var(--content-block-padding) * -1);
   margin-bottom: 10px;
-  border-radius: inherit;
+  border-radius: var(--page-radius) var(--page-radius) 0 0;
 }
 
 div.group {

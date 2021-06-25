@@ -1,6 +1,5 @@
 .donate {
   text-align: left;
-  border-radius: 5px;
   --message-padding: 10px;
 }
 .donate [data-message] {
