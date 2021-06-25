@@ -12,6 +12,8 @@ li.generic {
 
   min-height: calc(var(--thumb-height) - 110px);
 
+  border-radius: var(--thumb-border-radius);
+
   transition:
     max-width 0.5s ease,
     min-width 0.5s ease,
@@ -19,10 +21,16 @@ li.generic {
     min-height 0.5s ease;
 }
 
+li.generic:active {
+  --thumb-hover-color: var(--thumb-active-color);
+}
 li.generic.virtual,
 li.generic:hover,
 li.generic:focus-within {
   background: var(--thumb-hover-color);
+}
+li.generic.virtual {
+  opacity: 0.6;
 }
 
 li.generic.virtual.keep::after {

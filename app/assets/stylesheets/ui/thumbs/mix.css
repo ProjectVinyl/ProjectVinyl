@@ -3,6 +3,9 @@ li.generic.mix {
   padding: 10px;
   border-radius: var(--page-radius);
 }
+li.generic.mix:hover {
+  --thumb-hover-color: var(--thumb-active-color);
+}
 
 li.generic.mix .tile::after {
   content: '\f09e';

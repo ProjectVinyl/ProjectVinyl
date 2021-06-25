@@ -1,0 +1,11 @@
+
+i.fa {
+  transition: transform 0.2s;
+}
+.popper.pop-out-shown i.fa.fa-star,
+.popper.pop-out-shown i.fa.fa-gear {
+  transform: rotate(45deg);
+}
+.remove:hover i.fa.fa-close {
+  transform: rotate(90deg);
+}

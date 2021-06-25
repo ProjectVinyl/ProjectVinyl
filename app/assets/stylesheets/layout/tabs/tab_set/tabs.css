@@ -6,6 +6,7 @@
   padding: 15px 15px 0 15px;
   margin: calc(0 - var(--content-block-padding));
   margin-bottom: 0;
+  white-space: nowrap;
 }
 .page.properties.tab-set > .tab-set.tabs {
   margin: 0 0 20px 0;

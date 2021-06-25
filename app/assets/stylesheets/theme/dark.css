@@ -14,6 +14,7 @@ html, body {
   --content-highlight: #2b252b;
 
   --thumb-hover-color: #1e1d1d;
+  --thumb-active-color: #312f2f;
   --seamless-thumb-hover-color: var(--thumb-hover-color);
   
   --input-border: #575757;
@@ -53,6 +54,8 @@ html, body {
   --bubble-hover-color: #2d2727;
   
   --table-inner-border: rgba(255, 255, 255, 0.3);
+  
+  --page-shadow: 0 0 6px 0 rgba(0,0,0,0.6);
 }
 
 .notice {

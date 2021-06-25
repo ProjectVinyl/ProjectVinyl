@@ -31,7 +31,8 @@ html, body {
   --seamless-button-hover-tint: rgba(0,0,0,0.1);
 
   --thumb-hover-color: #f1edfd5e;
-  --seamless-thumb-hover-color: #fcfcfc5e;
+  --thumb-active-color: #acacac4d;
+  --seamless-thumb-hover-color: #acacac3d;
   --thumb-border-radius: 5px;
 
   --form-background: #f8f8f8;
@@ -50,7 +51,7 @@ html, body {
 
   --footer-buffer-color: rgba(221, 221, 221, 0.3);
 
-  --header-nav-background: rgba(255,255,255,0.9);
+  --header-nav-background: rgba(255,255,255,0.79);
   --header-nav-foreground: #aaa;
   --header-nav-foreground-active: var(--content-background);
 
