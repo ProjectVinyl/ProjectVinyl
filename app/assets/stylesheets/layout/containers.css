@@ -28,8 +28,11 @@ html {
 .page.slim {
 	--content-block-padding: 0;
 	transition: width 0.25s ease, height 0.25s ease;
+}
+.page.sharp {
   border-radius: 0;
 }
+
 .page h1 {
   margin: calc(var(--content-block-padding) * -1);
   margin-bottom: 10px;

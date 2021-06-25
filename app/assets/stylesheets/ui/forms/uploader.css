@@ -1,6 +1,7 @@
 #upload {
   background: var(--content-background);
   transition: text-shadow 0.5s ease, background 0.5s ease;
+  border-radius: var(--page-radius);
 }
 #upload:hover {
   background: var(--content-highlight);

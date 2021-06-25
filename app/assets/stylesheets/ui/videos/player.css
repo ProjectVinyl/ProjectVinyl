@@ -6,7 +6,9 @@
   padding-bottom: calc(min(var(--max-player-height), 100% / var(--aspect-ratio)));
   height: 0 !important;
   position: relative;
+  border-radius: inherit;
 }
+
 .video:fullscreen {
   padding: 0;
 }
