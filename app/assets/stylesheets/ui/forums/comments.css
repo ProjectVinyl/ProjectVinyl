@@ -87,10 +87,10 @@ label.focus .content {
   display: block;
   position: absolute;
   top: 20px;
-  left: -19px;
+  left: -18px;
   border: solid 10px;
   transition: border-color 0.5s ease;
-  border-color: transparent var(--comment-background-color) transparent transparent;
+  border-color: transparent var(--comment-background) transparent transparent;
 }
 .comment.basic > .content::before, .comment.basic > .content::after {
   display: none;
