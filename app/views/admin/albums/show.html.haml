@@ -1,7 +1,8 @@
 - title @album.title
 .wrapper.full-width
-	%section.page.resize-holder.column-left.left= render partial: 'albums/album'
-	%section.page.column-right.right.properties
+	= render 'albums/items/items'
+	= render partial: 'albums/description'
+	%section.page.column-left.left.properties
 		.actions
 			%table
 				= form_for(@album, as: "item", url: admin_transfer_path(type: :album), html: { method: :post }) do |f|
@@ -32,4 +33,3 @@
 						%a.button.red{href: admin_album_path(@album), data: {confirm: "", method: "delete", title: "Delete Album"}}
 							= fa :trash
 							Delete Album
-= render 'albums/items/items'
