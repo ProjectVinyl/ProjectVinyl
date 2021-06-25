@@ -22,7 +22,7 @@ html, body {
   --input-background-focus: rgb(28, 28, 28);
   --input-shadow: rgba(10, 10, 10, 0.8);
 
-  --heading-background: #393131;
+  --heading-background: #262222;
   --heading-border-color: #403d3d;
 
   --footer-buffer-color: rgba(21, 21, 21, 0.3);
@@ -73,8 +73,8 @@ html, body {
 }
 
 .comment {
-  --comment-background: #151515;
-  --comment-border-color: #575757;
+  --comment-background: rgb(17, 17, 15);
+  --comment-border-color: #262626;
   --comment-background-color: rgb(36, 27, 27);
   --comment-text-shadow-color: rgba(0, 0, 0, 0.8);
   --mention-color: #b7b7b7;
