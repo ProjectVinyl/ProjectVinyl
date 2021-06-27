@@ -31,6 +31,7 @@ li.generic:focus-within {
 }
 li.generic.virtual {
   opacity: 0.6;
+  pointer-events: none;
 }
 
 li.generic.virtual.keep::after {
