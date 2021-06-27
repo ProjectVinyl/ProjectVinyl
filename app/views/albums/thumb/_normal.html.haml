@@ -1,5 +1,5 @@
 %li.generic.thumb
-	%a.album{href: normal.link}
+	%a.album{href: album_path(normal)}
 		.tile.stack
 			= render 'albums/tile_stack', items: normal.album_items.order(:index)
 			%span.thumb-overlay.duration
