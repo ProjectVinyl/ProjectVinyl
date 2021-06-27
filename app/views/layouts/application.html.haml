@@ -21,9 +21,9 @@
 		.dock-shadow
 		%header.header.banner-overlay
 			- if user_signed_in?
-				#login.sharp-right.drop-down-holder= render partial: 'layouts/signed_in_controls'
+				= render partial: 'layouts/signed_in_controls'
 			- else
-				#login.sharp-right= render partial: 'layouts/signed_out_controls'
+				= render partial: 'layouts/signed_out_controls'
 			= render partial: "layouts/filter_dropdown"
 			= render partial: "search/small_search"
 			#dock-toggle.sharp-left= fa :bars
