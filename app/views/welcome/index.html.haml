@@ -20,16 +20,16 @@
 			Twitter Feed
 		%iframe.twitter(loading="lazy" src="/embed/twitter")
 .wrapper.column-left.auto-wrap.resize-holder.grid-root
-	%section.page.seamless
+	%section.page.seamless.slim
 		= render 'section', collection: @popular, type: 'popular', label: 'Popular Videos', filter: '', order: 2
 		- if @exception_flag
 			.right= fa :star_o
 	- if @active.length > 0
-		%section.page.seamless
+		%section.page.seamless.slim
 			= render 'section', collection: @active, type: 'active', label: 'Trending Videos', filter: '', order: 2
 	- if @featured_album
-		%section.page.seamless= render 'featured_album', featured_album: @featured_album
+		%section.page.seamless.slim= render 'featured_album', featured_album: @featured_album
 	- @all.group_by(&:period).each do |week, n|
-		%section.page.seamless= render 'section', collection: n, label: week, filter: n.first.period_search_range, order: 0
+		%section.page.seamless.slim= render 'section', collection: n, label: week, filter: n.first.period_search_range, order: 0
 	- if @feed && @feed.length > 0
 		= render 'videos/feeds/show'
