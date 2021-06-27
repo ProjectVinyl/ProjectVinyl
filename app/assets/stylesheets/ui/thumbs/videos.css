@@ -69,6 +69,9 @@
   width: 100%;
 }
 
+.thumb .tile .detail {
+  display: none;
+}
 .thumb .tile .detail, .thumb .title, .thumb + .title {
   max-height: 3.1em;
   overflow: hidden;
@@ -102,11 +105,11 @@
 .thumb .details .detail .uploader {
   color: var(--thumb-uploader-color);
 }
-.details .detail {
+.thumb .details .detail {
   display: flex;
   overflow: hidden;
 }
-.details .detail .grow {
+.thumb .details .detail .grow {
   flex-grow: 1;
 }
 
@@ -116,10 +119,4 @@ ul.horizontal .thumb .detail {
 }
 ul.horizontal .thumb .detail + .detail {
   font-style: italic;
-}
-
-@media(max-width: 700px) {
-  .thumb .date {
-    display: none;
-  }
 }

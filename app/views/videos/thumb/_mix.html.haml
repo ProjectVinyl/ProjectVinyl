@@ -3,6 +3,7 @@
 		%a.thumb(href="#{mix.link}?q=#{mix_string}&index=0" data-href="#{mix.link}?q=#{mix_string}&index=0")
 			.tile
 				%img(loading="lazy"){src: mix.tiny_thumb(current_user, current_filter)}
+				.overlay-element.bottom.right= fa :feed
 			.details
 				.title
 					MIX -

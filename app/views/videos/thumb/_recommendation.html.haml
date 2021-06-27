@@ -4,7 +4,7 @@
 									rating && "video-rating rating-#{rating.suffex}"], href: recommendation.link}
 		.tile
 			%img(loading="lazy"){src: recommendation.tiny_thumb(current_user, current_filter)}
-			%span.duration
+			.overlay-element.bottom.right
 				- if recommendation.liked?
 					= fa "thumbs-#{recommendation.disliked? ? 'down red' : 'up green'}"
 				= duration recommendation.duration

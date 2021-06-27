@@ -1,0 +1,45 @@
+.tile {
+  --overlay-buffer: 5px;
+  --overlay-element-radius: var(--overlay-buffer);
+}
+.tile .overlay-element {
+  position: absolute;
+  padding: 1px 6px;
+  border-radius: var(--overlay-element-radius);
+  background: var(--tile-overlay-background);
+  font-weight: 280;
+  font-size: 0.8em;
+  font-stretch: expanded;
+}
+
+.tile .overlay-element.top {
+  top: var(--overlay-buffer);
+}
+.tile .overlay-element.right {
+  right: var(--overlay-buffer);
+}
+.tile .overlay-element.bottom {
+  bottom: var(--overlay-buffer);
+}
+.tile .overlay-element.left {
+  left: var(--overlay-buffer);
+}
+
+.tile .overlay-element.hides {
+  opacity: 0;
+}
+
+.thumb:hover .tile .overlay-element.hides,
+.thumb:focus .tile .overlay-element.hides {
+  opacity: 1;
+}
+
+.thumb .tile .overlay-element .green {
+  color: #8bfb12;
+  text-shadow: 0 0 1px #fff;
+}
+
+.thumb .tile .overlay-element .red {
+  color: #fb1616;
+  text-shadow: 0 0 1px #fff;
+}

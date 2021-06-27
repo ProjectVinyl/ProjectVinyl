@@ -21,7 +21,7 @@
   color: #fff;
   background: var(--rating-color);
   padding: 3px;
-  border-radius: 3px;
+  border-radius: var(--overlay-element-radius);
   width: 13px;
   height: 13px;
   line-height: 13px;

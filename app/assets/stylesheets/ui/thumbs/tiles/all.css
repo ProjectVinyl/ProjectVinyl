@@ -2,6 +2,6 @@
  *= require ./tiles
  *= require ./watch_time
  *= require ./rating_indicators
+ *= require ./overlay_element
  *= require ./save_buttons
- *= require ./duration
  */

@@ -1,17 +1,7 @@
 .tile .save {
-  position: absolute;
-  top: 5px;
-  right: 5px;
-  color: #fff;
-  background: var(--video-background-color);
   padding: 3px;
-  border-radius: 3px;
   line-height: 13px;
-  text-align: center;
-  border: solid 1px #888;
   font-size: 2em;
-  display: block;
-  overflow: hidden;
   opacity: 0;
   transition: opacity 0.15s ease, transform 0.15s ease;
   transform: rotate(10deg);
