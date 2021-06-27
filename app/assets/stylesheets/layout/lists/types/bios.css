@@ -1,6 +1,4 @@
-/* Used for genres (tags) and user tiles */
-
-li.bio, li.genre {
+li.bio {
   float: left;
   margin: 5px;
   width: 200px;
@@ -8,10 +6,10 @@ li.bio, li.genre {
   min-height: 320px;
   overflow: hidden;
 }
-li.bio > *, li.genre {
+li.bio > * {
   vertical-align: middle;
 }
-li.bio, li.genre {
+li.bio {
   background: var(--content-background);
   border: solid 1px var(--tile-border-color);
   box-shadow: 1px 1px 1px 0 var(--tile-border-color);
@@ -23,10 +21,10 @@ li.bio.virtual {
   box-shadow: none;
 }
 
-.bio a, .genre a {
+.bio a {
   text-decoration: none;
 }
-li.bio h2, li.genre h2 {
+li.bio h2 {
   text-decoration: none;
   text-overflow: ellipsis;
   -o-text-overflow: ellipsis;

@@ -213,7 +213,7 @@ footer .logo {
   text-shadow: 0px 1px 3px #eee;
 }
 
-li.bio, li.genre {
+li.bio {
   --tile-border-color: #333;
 }
 .thumb .tile.link {

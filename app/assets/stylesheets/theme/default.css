@@ -76,7 +76,7 @@ label.options {
   --block-border-color: #ccc;
   --label-focus-color: var(--input-background-focus);
 }
-li.bio, li.genre {
+li.bio {
   --tile-border-color: #ccc;
 }
 .item.history {

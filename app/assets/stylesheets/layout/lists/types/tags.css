@@ -10,13 +10,8 @@ ul.horizontal.tag-list .tag m {
   flex-grow: 1;
 }
 
-
 li.tag.virtual {
   opacity: 0;
-}
-
-li.genre {
-  min-height: 150px;
 }
 
 .tag-set, .date, .source {
