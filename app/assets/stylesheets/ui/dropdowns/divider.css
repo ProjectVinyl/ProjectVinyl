@@ -1,0 +1,9 @@
+
+.pop-out .divider,
+.drop-down .divider {
+  border: none;
+  border-top: solid 1px var(--divider-color);
+  margin: 0 10px;
+  padding: 0;
+  opacity: 0.6;
+}

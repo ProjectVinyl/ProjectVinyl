@@ -1,4 +1,9 @@
 /*
+ *= require ./common
  *= require ./dropdowns
- *= require ./poppers
+ *= require ./popper_container
+ *= require ./popper_directions
+ *= require ./popper_showing
+ *= require ./items
+ *= require ./divider
  */

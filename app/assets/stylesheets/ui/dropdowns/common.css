@@ -1,0 +1,9 @@
+.drop-down, .popper {
+  --popper-foreground: var(--default-link-color);
+  --popper-background: #fff;
+  --popper-border-color: #d6d6d6;
+  --popper-border-top-color: #e2e2e2;
+  --popper-border-bottom-color: #cacaca;
+  --popper-shadow-color: rgba(255,255,255,0.3);
+  --popper-item-highlight: #eee;
+}

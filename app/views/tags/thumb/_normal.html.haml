@@ -18,10 +18,9 @@
 							= fa :check
 					%span.label Spoiler
 			- else
-				%li.action
-					%a{href: filters_path}
-						%span.icon
-						%span.label Filter
+				%a.action{href: filters_path}
+					%span.icon
+					%span.label Filter
 			%li.action.toggle(data-family="tag-flags" data-descriminator="watch" data-target="tags" data-id="#{normal.id}" data-action="actions/watch")
 				%span.icon
 					- if current_user.watches?(normal.id)

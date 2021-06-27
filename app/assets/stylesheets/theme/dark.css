@@ -152,7 +152,7 @@ button, .button, input[type="submit"], .tag, .foobar {
   --divider-color: var(--toolbar-border-color);
 }
 
-.popper, .meta-toolbar {
+.drop-down, .popper, .meta-toolbar {
   --popper-background: var(--input-background);
   --popper-border-color: #464444;
   --popper-border-top-color: #4a4949;

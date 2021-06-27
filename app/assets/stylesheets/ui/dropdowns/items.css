@@ -1,0 +1,48 @@
+.drop-down li {
+  background: var(--popper-background);
+}
+
+.drop-down li,
+.drop-down a,
+.drop-down .icon,
+.drop-down .label {
+  font-weight: bold;
+  color: var(--popper-foreground);
+  color: inherit;
+  font-size: 13px;
+}
+
+.popper .pop-out > * {
+  display: block;
+  cursor: pointer;
+  padding: 10px;
+  transition: background 0.1s ease;
+}
+.popper .pop-out > * .icon {
+  display: inline-block;
+  width: 30px;
+}
+
+.drop-down li a {
+  padding: 0 10px;
+  width: 100%;
+  font-size: 13px;
+}
+.popper .pop-out a {
+  text-decoration: none;
+  color: inherit;
+  font-weight: inherit;
+}
+
+.pop-out,
+.pop-out > *,
+.pop-out .label {
+  overflow-x: hidden;
+  text-overflow: ellipsis;
+  -o-text-overflow: ellipsis;
+}
+
+.drop-down > *:hover,
+.popper .pop-out > *:hover {
+  background: var(--popper-item-highlight);
+}

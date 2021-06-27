@@ -3,7 +3,7 @@
   position: absolute;
   right: 0;
   top: 100%;
-  min-width: 130px;
+  min-width: 150px;
   display: block;
   visibility: hidden;
   opacity: 0;
@@ -31,23 +31,6 @@ li:hover > .drop-down,
   color: inherit;
 }
 
-.drop-down li {
-  color: #337287;
-  background: var(--content-background);;
-}
-.drop-down li a {
-  padding: 0 10px;
-  width: 100%;
-  font-size: 13px;
-}
-.drop-down li:hover {
-  background: var(--block-hover-color);
-}
-
 .drop-down .drop-down {
   left: 100%;
-}
-
-.drop-down .divider {
-  border-top: solid 1px #aaf;
 }

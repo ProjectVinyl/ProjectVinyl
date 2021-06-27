@@ -1,0 +1,45 @@
+.pop-out-shown .pop-out, .pop-out.shown,
+.popper .pop-out:hover,
+.popper .pop-out:focus-within,
+.popper input:active + .pop-out,
+.popper input:focus + .pop-out {
+  visibility: visible !important;
+}
+
+.popper input + .pop-out {
+  left: -2px;
+}
+.popper input + .pop-out {
+  margin: 0 0 0 2px;
+}
+
+.pop-out-shown::before,
+.pop-out-shown::after {
+  content: '';
+  position: absolute;
+  cursor: initial;
+  bottom: 0;
+  left: 50%;
+  border-right: 11px solid transparent;
+  border-left: 11px solid transparent;
+  z-index: 999;
+}
+
+.pop-out-shown::before {
+  margin-left: -12px;
+  border-bottom: 12px solid var(--popper-border-color);
+}
+.pop-out-shown::after {
+  margin-left: -12px;
+  margin-bottom: -1px;
+  border-bottom: 12px solid var(--popper-background);
+}
+
+.split-button.pop-out-shown::before,
+.split-button.pop-out-shown::after {
+  bottom: -13px;
+}
+
+.split-button > .pop-out {
+  margin-top: 12px;
+}

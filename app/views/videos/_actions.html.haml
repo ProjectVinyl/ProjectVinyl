@@ -9,30 +9,24 @@
 		%button.action.options.mobile-friendly.pop-out-toggle(title="Options")= fa :gear
 		%ul.pop-out
 			- if user_signed_in? && current_user.is_contributor?
-				%li.action
-					%a{href: admin_video_path(@video)}
-						%span.icon= fa :gavel
-						%span.label Admin
-			%li.action
-				%a{href: new_admin_report_path(@video.reportable_hash)}
+				%a.action{href: admin_video_path(@video)}
+					%span.icon= fa :gavel
+					%span.label Admin
+				%a.action{href: new_admin_report_path(@video.reportable_hash)}
 					%span.icon= fa :warning
 					%span.label Report
 			- if @modifications_allowed
-				%li.action
-					%a{href: edit_video_path(@video)}
-						%span.icon= fa :pencil
-						%span.label Change Cover Image
-			%li.action
-				%a{href: video_changes_path(@video)}
-					%span.icon= fa :history
-					%span.label Tag Changes
-			%li.action
-				%a{href: video_statistics_path(@video)}
-					%span.icon= fa :bar_chart
-					%span.label Statistics
-			%li.action
-				%a.slider-toggle(data-target=".slideout.info")
-					%span.icon= fa :info
-					%span.label File Info
+				%a.action{href: edit_video_path(@video)}
+					%span.icon= fa :pencil
+					%span.label Change Cover Image
+			%a.action{href: video_changes_path(@video)}
+				%span.icon= fa :history
+				%span.label Tag Changes
+			%a.action{href: video_statistics_path(@video)}
+				%span.icon= fa :bar_chart
+				%span.label Statistics
+			%a.action.slider-toggle(data-target=".slideout.info")
+				%span.icon= fa :info
+				%span.label File Info
 = render partial: 'videos/share'
 = render partial: 'videos/info'
