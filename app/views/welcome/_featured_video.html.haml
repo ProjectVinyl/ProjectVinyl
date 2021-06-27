@@ -23,8 +23,8 @@
 																		title: "Likes", data: {count: @featured.upvotes,
 																													action: video_action_path(@featured, id: :like),
 																													id: @featured.id}}<>
-				%b.count= safe_to_display @featured.upvotes, 9999
 				= fw :thumbs_up
+				%b.count= safe_to_display @featured.upvotes, 9999
 			.rating-bar(style="--bar-percentage:#{@video.rating_percentage}"
 								title="#{@video.rating_percentage * 100}%"
 								data-total-votes="#{@video.total_votes}")
@@ -32,8 +32,8 @@
 																			title: "Dislikes", data: {count: @featured.downvotes,
 																																action: video_action_path(@featured, id: :dislike),
 																																id: @featured.id}}<>
-				%b.count= safe_to_display  @featured.downvotes, 9999
 				= fw :thumbs_down
+				%b.count= safe_to_display  @featured.downvotes, 9999
 			%a.button.blue.split-icon.comments{href: @featured.comment_thread.link, title: "Comments"}<>
-				%b= safe_to_display  @featured.comment_thread.total_comments, 9999
 				= fw :comments
+				%b= safe_to_display  @featured.comment_thread.total_comments, 9999
