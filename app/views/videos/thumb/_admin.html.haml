@@ -2,7 +2,7 @@
 	%a.thumb{href: admin_video_path(admin), title: admin.moderation_note}
 		.tile
 			%img(loading="lazy"){src: admin.tiny_thumb(current_user, current_filter)}
-			%span.tag-set.duration= duration admin.duration
+			%span.duration= duration admin.duration
 		.details
 			.title
 				- if admin.hidden

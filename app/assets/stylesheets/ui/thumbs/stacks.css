@@ -3,28 +3,24 @@
   position: relative;
   
   --stack-item-background: #000;
-  --stack-item-transform: translate(5%, 5%);
   --stack-item-outline: rgba(0,0,255,0.1);
+  --overlay-buffer: 0;
+  transform: scale(0.95);
+  transform-origin: 0 0;
 }
 .stack .stack-item {
   display: block;
   position: absolute;
-  background: var(--stack-item-background) center/contain no-repeat;
-  width: 95%;
-  height: 95%;
-}
-.stack .stack-item .stack-item {
-  transform: var(--stack-item-transform);
-  -ms-transform: var(--stack-item-transform);
-  -webkit-transform: var(--stack-item-transform);
-  -o-transform: var(--stack-item-transform);
-  -moz-transform: var(--stack-item-transform);
-  width: 100%;
-  height: 100%;
-}
-.stack .stack-item {
   top: 0;
   left: 0;
+  background: var(--stack-item-background) center/cover no-repeat;
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+}
+.stack .stack-item .stack-item {
+  top: 5%;
+  left: 5%;
 }
 .stack:hover .stack-item::before {
   position: absolute;
@@ -34,7 +30,9 @@
   bottom: 0;
   right: 0;
   transition: outline 0.3s ease;
-  outline: solid 3px var(--stack-item-outline);
+  margin: -3px;
+  border-radius: inherit;
+  border: solid 3px var(--stack-item-outline);
 }
 
 .post .stack {

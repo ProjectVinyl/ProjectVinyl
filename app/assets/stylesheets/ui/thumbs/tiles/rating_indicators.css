@@ -16,8 +16,8 @@
   content: var(--rating-symbol, 'E');
   display: block;
   position: absolute;
-  top: 5px;
-  left: 5px;
+  top: var(--overlay-buffer);
+  left: var(--overlay-buffer);
   color: #fff;
   background: var(--rating-color);
   padding: 3px;

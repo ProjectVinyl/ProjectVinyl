@@ -1,7 +1,7 @@
 %a.thumb{class: comment.hidden && "thumb-hidden", href: "#{comment.link}#comment_#{comment_id}"}
 	.tile
 		%img(loading="lazy"){src: comment.tiny_thumb(current_user, current_filter)}
-		%span.tag-set.duration
+		%span.duration
 			- if comment.liked?
 				= fa "thumbs-#{comment.disliked? ? 'down red' : 'up green'}"
 			= duration comment.duration
