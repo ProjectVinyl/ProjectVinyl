@@ -10,7 +10,11 @@ function createPopupContent(params) {
   return nodeFromHTML(`<div class="popup-container focus transitional hidden ui-draggable">
     <div class="popup">
       <h1 class="popup-header">
-        <i class="fa fa-${params.icon}"></i> ${params.title} <a class="close" data-resolve="false"></a>
+        <i class="fa fa-${params.icon}"></i>
+        ${params.title}
+        <a class="close" data-resolve="false">
+          <i class="fa fa-fw fa-close"></i>
+        </a>
       </h1>
       <div class="content">
         <div class="message_content">${params.content}</div>

@@ -5,6 +5,7 @@
   z-index: 3000;
   opacity: 1;
   transform: translate(0, 0);
+  border-radius: var(--block-radius);
 }
 .popup-container.hidden {
   opacity: 0;
@@ -25,7 +26,7 @@
 }
 .popup-container .popup {
   transition: box-shadow 0.35s linear;
-  border-radius: 5px;
+  border-radius: inherit;
   background: var(--content-background);
 }
 .popup-container.focus .popup {
@@ -34,12 +35,7 @@
 .popup-container .popup .content {
   background: var(--content-background);
   min-height: 100px;
-  border-radius: 0 0 5px 5px;
-}
-
-.modal {
-  background: var(--content-background);
-  min-height: 100px;
+  border-radius: var(--block-radius);
 }
 .popup-container .popup .content .message_content {
   padding: 10px 20px;
@@ -60,7 +56,7 @@
   margin: 0;
   padding: 15px;
   font-size: 15px;
-  border-radius: 5px 5px 0 0;
+  border-radius: var(--block-radius) var(--block-radius) 0 0;
 }
 .popup-container .popup h1 > .fa {
   margin-right: 5px;
@@ -75,12 +71,14 @@
   cursor: pointer;
   color: inherit;
   margin-left: 15px;
+  padding: inherit;
+  padding-bottom: 13px;
+  margin-right: -15px;
+  margin-top: -15px;
+  border-top-right-radius: var(--block-radius);
 }
-.popup-container .popup .close::before {
-  font-family: "FontAwesome";
-  content: "\f00d";
-  color: inherit;
-  font-size: 18px;
+.popup-container .popup .close:hover {
+  background: var(--content-highlight);
 }
 
 .popup-container.thin,

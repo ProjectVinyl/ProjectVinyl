@@ -6,6 +6,7 @@ i.fa {
 .popper.pop-out-shown i.fa.fa-gear {
   transform: rotate(45deg);
 }
+.popup-container .popup .close:hover i.fa.fa-close,
 .remove:hover i.fa.fa-close {
   transform: rotate(90deg);
 }

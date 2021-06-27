@@ -1,6 +1,7 @@
 .modal {
-  padding: 0px;
-  border-radius: 5px;
+  background: var(--content-background);
+  border-radius: var(--block-radius);
+  min-height: 100px;
   text-align: center;
 }
 .modal form, .tiny-foot {
@@ -22,6 +23,9 @@
 }
 .tiny-foot {
   background: var(--modal-footer-background);
+  border-radius: 0 0 var(--page-radius) var(--page-radius);
+  margin: calc(0px - var(--content-block-padding));
+  margin-top: 0;
 }
 .tiny-foot a {
   text-decoration: none;
