@@ -1,4 +1,4 @@
-#login.sharp-right.drop-down-holder
+#login.sharp-right
 	%a.notices-bell.feeds(title="Feed"){href: videos_feed_path}
 		%i.fa.fa-globe
 		%span.feed-count.count{data: {count: current_user.feed_count}}
@@ -9,6 +9,5 @@
 			= safe_to_display current_user.notification_count, 999
 		%span.message-count.count.invert{data: {count: current_user.message_count}}<
 			= safe_to_display current_user.message_count, 999
-	%span.no-dock= render 'layouts/signed_in_menu'
 	%a(rel="nofollow"){title: "Profile - #{current_user.username}", href: current_user.link}
 		= render 'users/avatar/small', user: current_user

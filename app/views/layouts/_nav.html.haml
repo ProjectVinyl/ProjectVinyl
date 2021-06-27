@@ -5,16 +5,14 @@
 				= fw :home
 				%span Home
 		- if user_signed_in?
-			%li.tinted-nav-item.users.dock-only<>
-				%a{href: current_user.link}
+			%li.tinted-nav-item.forum<>
+				%a(href="#{current_user.link}" rel="nofollow")
 					= fw :user
-					%span= current_user.username
+					%span
+						= current_user.username
+						's Profile
 					%span.icon<>= fa :caret_down
 				= render 'layouts/signed_in_menu'
-		%li.tinted-nav-item.albums{class: selected_path?('albums')}<>
-			%a{href: albums_path}
-				= fw :picture_o
-				%span Albums
 		%li.tinted-nav-item.videos{class: selected_path?('videos')}<>
 			%a{href: videos_path}
 				= fw :play
@@ -30,10 +28,35 @@
 						%a{href: new_video_path}
 							%span.icon= fw :upload
 							%span.label Upload
+		%li.tinted-nav-item.albums{class: selected_path?('albums')}<>
+			%a{href: albums_path}
+				= fw :picture_o
+				%span Albums
+			- if user_signed_in?
+				%span.icon.no-dock<>= fa :caret_down
+				%ul.drop-down.no-dock>
+					%li
+						%a(data-title="New Album" data-external-form="#{new_album_path}")
+							%span.icon= fw :plus
+							%span.label Create
+		%li.tinted-nav-item.genres{class: selected_path?('tags')}<>
+			%a{href: tags_path}
+				= fw :tags
+				%span Tags
+				%span.icon<>= fa :caret_down
+			%ul.drop-down>
+				%li
+					%a{href: aliases_path}
+						%span.icon= fw :tag
+						%span.label Aliased
+				%li
+					%a{href: implied_index_path}
+						%span.icon= fw :tag
+						%span.label Implied
 		%li.tinted-nav-item.forum{class: selected_path?('forum')}<>
 			%a{href: forum_index_path}
 				= fw :users
-				%span Forums
+				%span Forum
 				%span.icon<>= fa :caret_down
 			%ul.drop-down>
 				- Board.sorted.each do |board|
@@ -50,18 +73,4 @@
 					%a{href: forum_search_index_path}
 						%span.icon= fw :search
 						%span.label Find Posts
-		%li.tinted-nav-item.genres{class: selected_path?('tags')}<>
-			%a{href: tags_path}
-				= fw :tags
-				%span Tags
-				%span.icon<>= fa :caret_down
-			%ul.drop-down>
-				%li
-					%a{href: aliases_path}
-						%span.icon= fw :tag
-						%span.label Aliased
-				%li
-					%a{href: implied_index_path}
-						%span.icon= fw :tag
-						%span.label Implied
 		%li.sparkline

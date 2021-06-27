@@ -1,30 +1,38 @@
-%ul.drop-down(style="z-index:300;")
+%ul.drop-down
 	- if current_user.is_contributor?
 		%li
-			%a(href="#{admin_root_path}" rel="nofollow")
+			%a(rel="nofollow"){href: admin_root_path}
 				%span.icon= fw :gavel
 				%span.label Admin
+		%li.divider
 	%li
-		%a(href="#{current_user.link}" rel="nofollow" title="settings")
-			%span.icon= fw :user
-			%span.label Profile
+		%a(rel="nofollow" title="Notifications"){href: notifications_path}
+			%span.icon= fw :bell
+			%span.label
+				Notifications
+				= surround '(', ')' do
+					= number_with_delimiter current_user.notification_count
 	%li
-		%a(href="/inbox" rel="nofollow" title="messages")
+		%a(rel="nofollow" title="Messages"){href: inbox_path}
 			%span.icon= fw :envelope
-			%span.label Messages
-	%li
-		%a(href="#{new_video_path}" rel="nofollow" title="upload")
-			%span.icon= fw :upload
-			%span.label Upload
+			%span.label
+				Messages
+				= surround '(', ')' do
+					= number_with_delimiter current_user.message_count
 	%li
 		%a{href: stars_path}
 			%span.icon= fw :star
-			%span.label Stars
+			%span.label
+				Favourites
+				= surround '(', ')' do
+					= number_with_delimiter current_user.album_items.count
+	%li.divider
 	%li
-		%a(href="#{edit_user_registration_path}" rel="nofollow")
+		%a(rel="nofollow"){href: edit_user_registration_path}
 			%span.icon= fw :cog
 			%span.label Settings
+	%li.divider
 	%li
-		%a#sign-out(href="#{destroy_user_session_path}" rel="nofollow" data-method="delete")
+		%a#sign-out(rel="nofollow" data-method="delete"){href: destroy_user_session_path}
 			%span.icon= fw :sign_out
 			%span.label Sign Out

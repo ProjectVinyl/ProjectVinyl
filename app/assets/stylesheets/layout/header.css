@@ -41,11 +41,6 @@
   height: initial;
 }
 
-.header ul li:hover > .drop-down {
-  left: 0;
-  right: auto;
-}
-
 .header .drop-down,
 .header .drop-down li,
 .header .drop-down a {
