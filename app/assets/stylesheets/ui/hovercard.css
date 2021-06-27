@@ -10,7 +10,7 @@
   font-style: initial;
   font-size: 13px;
   
-  --gradient-light: var(--content-background);
+  --gradient-light: #fff;
   --gradient-dark: #f5f5ff;
   --gradient-middle: #f8f8ff;
 }
@@ -23,8 +23,6 @@
 }
 
 .hovercard li.bio {
-  box-shadow: 1px 1px var(--block-radius) 0 var(--block-shadow-color);
-  border-radius: var(--block-radius);
   background: repeating-linear-gradient(
     45deg,
     var(--gradient-dark) 0%,
@@ -45,4 +43,24 @@
 }
 .listing.compact .hovercard div {
   display: block !important;
+}
+
+.hovercard::before {
+  content: '';
+  display: block;
+  position: absolute;
+  top: 20px;
+  left: -14.5px;
+  border: solid 10px;
+  border-color: transparent var(--block-border-color) transparent transparent;
+}
+.hovercard::after {
+  content: '';
+  display: block;
+  position: absolute;
+  top: 20px;
+  left: -14px;
+  border: solid 10px;
+  transition: border-color 0.5s ease;
+  border-color: transparent var(--gradient-middle) transparent transparent;
 }

@@ -14,7 +14,7 @@ li.bio {
   border: solid 1px var(--tile-border-color);
   box-shadow: 1px 1px 1px 0 var(--tile-border-color);
   padding: 10px;
-  border-radius: var(--page-radius);
+  border-radius: var(--block-radius);
 }
 
 li.bio.virtual {

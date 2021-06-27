@@ -103,8 +103,9 @@ label.focus .content {
   --fade-end: rgba(47, 34, 34,0);
 }
 .hovercard {
+  --gradient-light: #262323;
   --gradient-dark: #242424;
-  --gradient-middle: #2f2f2f;
+  --gradient-middle: #242222;
 }
 .thread-list .items .thread {
   color: #bbb;
