@@ -4,4 +4,5 @@
  *= require ./rating_indicators
  *= require ./overlay_element
  *= require ./save_buttons
+ *= require ./animation
  */

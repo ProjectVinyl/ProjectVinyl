@@ -1,0 +1,9 @@
+.tile {
+  transition: transform 0.2s ease;
+}
+
+.generic:focus-within,
+.generic:active,
+.generic .tile:hover {
+  transform: scale(1.01);
+}
