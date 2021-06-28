@@ -4,6 +4,8 @@
 
 .comment .comment-actions > * {
   margin-left: 10px;
+  box-shadow: none;
+  font-size: 1.1em;
 }
 
 .comment .reply-comment {
@@ -16,7 +18,7 @@
   padding: 0;
   margin: 0;
 
-  --button-foreground: #337287;
+  --button-foreground: var(--default-link-color);
   --button-foreground-hover: #72c733;
   --button-foreground-active: #2362ef;
 }
