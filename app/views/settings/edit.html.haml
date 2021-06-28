@@ -1,0 +1,8 @@
+- title "Settings"
+- lim "900px"
+%section.page.full-width.properties.tab-set
+	%ul.tab-set.tabs
+		%li.button{@tab_selection_hash[:filter]}(data-target="filter") Content & Filter
+		%li.button{@tab_selection_hash[:local]}(data-target="local") Local
+	.tab{@tab_selection_hash[:filter]}(data-tab="filter")= render 'videos/feeds/filter_settings'
+	= render 'settings/local'

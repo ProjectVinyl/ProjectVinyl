@@ -13,6 +13,11 @@
 						's Profile
 					%span.icon<>= fa :caret_down
 				= render 'layouts/signed_in_menu'
+		- else
+			%li.tinted-nav-item.forum<>
+				%a(href="#{edit_settings_path}" rel="nofollow")
+					= fw :settings
+					Settings
 		%li.tinted-nav-item.videos{class: selected_path?('videos')}<>
 			%a{href: videos_path}
 				= fw :play

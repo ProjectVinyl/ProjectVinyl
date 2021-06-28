@@ -16,6 +16,8 @@ Rails.application.routes.draw do
     sessions: 'users/sessions'
   }
 
+  resource :settings, only: [:edit]
+
   scope controller: :staff do
     get 'copyright', 'fairuse', 'policy', 'terms', action: :policy
     get 'donate', 'staff'

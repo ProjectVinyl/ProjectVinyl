@@ -1,5 +1,25 @@
 %h1 Filter Settings
-= form_for(current_user, as: "user", url: videos_feed_path) do |f|
+- if user_signed_in?
+	= form_for(current_user, as: "user", url: videos_feed_path) do |f|
+		%table
+			%tr
+				%td.label Filters
+				%td.field
+					Are you looking for your filters?
+					They're 
+					%a{href: filters_path} over here.
+			%tr
+				%td.label Watched Tags
+				%td.field
+					Any tags you're specifically interested in.
+					You will be notified when these tags are added to any videos and they may appear in your feed.
+					= render 'tags/editor', tags: current_user.watched_tags do
+						= f.text_area :watched_tag_string, autocomplete: "off"
+			%tr.actions
+				%td.label
+				%td.field
+					= f.submit "Save Changes", class: "green"
+- else
 	%table
 		%tr
 			%td.label Filters
@@ -10,11 +30,6 @@
 		%tr
 			%td.label Watched Tags
 			%td.field
-				Any tags you're specifically interested in.
-				You will be notified when these tags are added to any videos and they may appear in your feed.
-				= render 'tags/editor', tags: current_user.watched_tags do
-					= f.text_area :watched_tag_string, autocomplete: "off"
-		%tr.actions
-			%td.label
-			%td.field
-				= f.submit "Save Changes", class: "green"
+				You must be
+				%a(data-external-form="/users/sign_in.json" data-icon="sign-in" data-thin="true" data-title="Sign In" href="/users/sign_in") signed in
+				to watch tags.

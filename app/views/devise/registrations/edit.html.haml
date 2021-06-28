@@ -17,20 +17,5 @@
 	- if can_api
 		.tab{@tab_selection_hash[:api]}(data-tab="api")= render 'api'
 	.tab{@tab_selection_hash[:filter]}(data-tab="filter")= render 'videos/feeds/filter_settings'
-	.tab{@tab_selection_hash[:commenting]}(data-tab="commenting")= render 'notifications'
-	.tab{@tab_selection_hash[:local]}(data-tab="local")
-		%h1 Local Settings
-		%table
-			%tr
-				%td.label Notifications
-				%td.field
-					%label.button
-						%input#give_me_notifications(name="give_me_notifications" type="checkbox")
-						= fa :check
-						Enable
-			%tr
-				%td.label Theme
-				%td.field
-					%label.options
-						%span Theme
-						%select#theme(name="theme")= sensible_option_for_select(themes, current_theme)
+	= render 'notifications'
+	= render 'settings/local'
