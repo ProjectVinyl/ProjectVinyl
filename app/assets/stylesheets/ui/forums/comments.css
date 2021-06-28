@@ -27,10 +27,6 @@ label.focus .content {
 .comment.deleted .content::before, .comment.deleted .content::after {
   display: none;
 }
-.comment.deleted .content {
-  background: #fee;
-  border-color: #a88;
-}
 
 .comment .name {
   border-bottom: solid 1px var(--divider-color);
