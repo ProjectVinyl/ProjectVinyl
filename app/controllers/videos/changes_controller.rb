@@ -19,7 +19,7 @@ module Videos
 
       if params[:format] == 'json'
         return render_empty_pagination 'warden_derpy' if @history.count == 0
-        render_paginated @history, partial: 'history/change', headers: 'history/column_headers', as: :json
+        render_paginated @history, partial: 'history/change', as: :json, headers: 'history/column_headers'
       end
 
       @crumb = {

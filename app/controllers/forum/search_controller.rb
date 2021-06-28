@@ -15,7 +15,7 @@ module Forum
 
       @results = Pagination.paginate(@q, params[:page].to_i, 20, params[:order] != '1')
       
-      render_paginated 'comments/comment', @results, as: :json, indirect: true if params[:format] == 'json'
+      render_paginated @results, partial: 'comments/comment', as: :json, indirect: true if params[:format] == 'json'
     end
   end
 end
