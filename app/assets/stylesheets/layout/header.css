@@ -55,6 +55,8 @@
 }
 .header .drop-down .icon {
   padding: 2px;
+  padding-right: 8px;
+  font-size: 1.1em;
 }
 
 .header ul li::after {
