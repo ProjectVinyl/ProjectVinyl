@@ -1,5 +1,6 @@
 .actions.mobile-tabbed
-	%a.button.blue.action{href: @items.records.first && @items.records.first.link}
+	- play_all = @album.play_all_path
+	%a.button.blue.action{href: play_all, disabled: play_all.nil?}
 		= fa :play
 		Play All
 	.spacer
