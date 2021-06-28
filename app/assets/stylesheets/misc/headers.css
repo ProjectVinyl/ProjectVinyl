@@ -1,5 +1,4 @@
 h1 {
-  background: var(--heading-background);
   border-bottom: solid 1px var(--heading-border-color);
   padding: 20px;
 }
@@ -12,6 +11,5 @@ h1 > i.fa {
 }
 
 .breadcrumb {
-  background: none;
   margin-bottom: 8px;
 }

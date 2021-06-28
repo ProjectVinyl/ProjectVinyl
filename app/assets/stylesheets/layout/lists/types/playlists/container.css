@@ -9,9 +9,9 @@
 .listing.compact.playlist {
   position: relative;
   text-align: left;
-}
-.listing.compact.playlist .controls a {
-  padding: 10px;
+  background: var(--block-emboss-hover-color);
+  border-radius: var(--block-radius);
+  margin-bottom: 15px;
 }
 .listing.compact.playlist .scroll-container {
   position: relative;
@@ -19,4 +19,5 @@
   max-height: 500px;
   width: 100%;
   overflow-y: auto;
+  border-radius: 0 0 var(--block-radius) var(--block-radius);
 }

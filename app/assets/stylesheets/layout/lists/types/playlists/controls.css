@@ -36,3 +36,12 @@
 .playlist .controls a.active {
   color: #7c7cff;
 }
+
+.listing.compact.playlist .controls:first-child {
+  border-radius: var(--block-radius) var(--block-radius) 0 0;
+}
+
+.listing.compact.playlist .controls a {
+  padding: 10px;
+  border-radius: inherit;
+}
