@@ -1,8 +1,11 @@
 .content
-	Comment Hidden
+	Comment posted by
+	= comment.user.username
+	deleted
+	= since comment.updated_at
 	- if comment.moderation_note
 		= surround '(', ')' do
 			= comment.moderation_note
 	- if user_signed_in? && current_user.is_contributor?
-		%a.remove-comment{title: "Restore Comment", href: comment_path(comment, indirect: indirect), data: {id: comment.get_open_id, title: "Restore Comment", icon: "warning"}}
+		%a.remove-comment.right{title: "Restore Comment", href: comment_path(comment, indirect: indirect), data: {id: comment.get_open_id, title: "Restore Comment", icon: "warning"}}
 			= fa :trash

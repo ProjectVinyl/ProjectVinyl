@@ -23,6 +23,7 @@ label.focus .content {
 
 .comment.deleted, .comment.deleted .content {
   min-height: 0;
+  text-align: center;
 }
 .comment.deleted .content::before, .comment.deleted .content::after {
   display: none;
