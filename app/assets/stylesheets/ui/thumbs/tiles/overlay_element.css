@@ -10,6 +10,8 @@
   font-weight: 280;
   font-size: 0.8em;
   font-stretch: expanded;
+  color: #fff;
+  text-decoration: none;
 }
 
 .tile .overlay-element.top {

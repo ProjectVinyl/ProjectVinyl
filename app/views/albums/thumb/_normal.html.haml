@@ -1,10 +1,13 @@
-%a.generic.thumb.album{href: album_path(normal)}
-	.tile.stack
+.generic.thumb.album
+	%a.tile.stack{href: normal.play_all_path || album_path(normal)}
 		= render 'albums/tile_stack', items: normal.album_items.order(:index)
-		%span.thumb-overlay.overlay-element.bottom.right
+		%span.overlay-element.bottom.right
 			= number_with_delimiter normal.album_items.count
 			Videos
-	.details
+		.overlay-element.bottom.left
+			Play All
+			= fw :play
+	%a.thumb.details{href: album_path(normal)}
 		.title{title: normal.title}
 			= render 'albums/visibility', album: normal
 			= normal.title
