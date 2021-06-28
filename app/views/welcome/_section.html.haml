@@ -1,5 +1,6 @@
-﻿.group
-	%h1
-		%a{href: search_index_path(tagquery: filter, orderby: order)}= label
-	%ul.horizontal.latest
-		= render partial: 'videos/thumb/normal', collection: collection
+﻿%h1
+	%a{href: search_index_path(tagquery: filter, orderby: order)}= label
+%section.page.seamless.slim
+	.group
+		%ul.horizontal.latest
+			= render partial: 'videos/thumb/normal', collection: collection
