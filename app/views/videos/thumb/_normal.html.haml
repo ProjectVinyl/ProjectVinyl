@@ -5,7 +5,7 @@
 									rating && "video-rating rating-#{rating.suffex}"], href: normal.link}
 		.tile
 			%img(loading="lazy"){src: normal.tiny_thumb(current_user, current_filter)}
-			.overlay-element.bottom.right.hides= duration normal.duration
+			.overlay-element.bottom.right= duration normal.duration
 			= render partial: 'videos/thumb/save_button', locals: { video: normal }
 			= render partial: 'videos/thumb/_watch_time_bar', locals: { id: normal.id }
 		.details
