@@ -138,8 +138,9 @@ label.focus .content {
   display: none;
 }
 
-.comment .artist-bio .tile {
-  width: 180px;
+.comment .artist-bio .thumb {
+  --thumb-width: 190px;
+  width: var(--thumb-width);
 }
 
 .comment .name a.mention,
