@@ -59,9 +59,7 @@ class VideosController < Videos::BaseVideosController
       }
     end
 
-    @order = '1'
-
-    @page = params[:page] ? params[:page].to_i - 1 : 0
+    read_search_params(params, default_order: 1)
 
     @tags = @video.tags.ordered
     @user = @video.user

@@ -36,11 +36,11 @@ module Searchable
     @sa = self.send(@sa) if !''.is_a?(@sa.class)
   end
 
-  def read_search_params(params)
+  def read_search_params(params, default_order: 0)
     @query_term = query_term
     @page = (params[:page] || 0).to_i
     @query = (params[@query_term] || '').strip
-    @order = (params[:order] || 0).to_i
+    @order = (params[:order] || default_order).to_i
     @orderby = (params[:orderby] || 0).to_i
     @ascending = @order == 0
     @data = URI.encode_www_form({
