@@ -1,0 +1,21 @@
+.the-pony-archive {
+  display: flex;
+  flex-direction: column;
+  background: url(/images/tpa_banner.jpg) center/cover;
+}
+.the-pony-archive .content {
+  color: #fff;
+  min-height: 300px;
+  margin: 0;
+  text-shadow: 2px 2px 3px rgba(0,0,0,0.6);
+  font-size: 2em;
+  padding: 30px;
+  text-align: center;
+}
+.the-pony-archive .content h3 {
+  font-size: 2em;
+  padding: 30px 0;
+}
+.the-pony-archive .content img {
+  border-radius: 13px;
+}

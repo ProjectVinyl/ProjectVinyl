@@ -20,3 +20,19 @@ blockquote > blockquote > blockquote > blockquote > blockquote > blockquote {
   padding: 3px 0;
   margin: 3px 0;
 }
+
+blockquote[who], blockquote[when] {
+  position: relative;
+  padding-top: 1em;
+}
+blockquote[who]::before, blockquote[when]::before {
+  display: block;
+  position: absolute;
+  top: -1em;
+  background: inherit;
+  box-shadow: inherit;
+  border: inherit;
+  border-radius: inherit;
+  padding: 2px 5px;
+  content: attr(who) ' ' attr(when);
+}

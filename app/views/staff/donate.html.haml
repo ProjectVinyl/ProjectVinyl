@@ -1,7 +1,26 @@
 - lim '800px'
-.wrapper.full-width
-	%section.page.full-width
-		%h1 Paypal
-		.right.donate(style="width:250px;height:250px")
-			%div
-		= render partial: 'donate_message'
+%section.page.full-width.the-pony-archive
+	%h1
+		= fw :paypal
+		The Pony Archive
+	.content
+		Project Vinyl is partnered with
+		%h3 The Pony Archive
+		%a(href="//theponyarchive.com/")
+			%img(src="/images/tpa.jpg")
+	%a.right.date(href="//derpibooru.org/515084") Image by CMaggot
+%section.page.full-width
+	%h1
+		= fw :paypal
+		Donations
+	= render partial: 'donate_message'
+%section.page.full-width
+	%h1
+		= fw :speaker
+		Spread The Word
+	%p
+		Spread the word! Pony
+		%b lives!
+	%p But only by working together can we make our dreams a reality.
+	%blockquote(who="Confucius" when="1300 BC")
+		Don't let your dreams be memes.

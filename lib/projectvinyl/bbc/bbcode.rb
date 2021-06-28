@@ -24,7 +24,7 @@ module ProjectVinyl
         "[#{tag.tag_name}]#{tag.inner_bbc}[/#{tag.tag_name}]"
       end
       TagGenerator.register(:bbc, [:blockquote]) do |tag|
-        "[q]#{tag.inner_bbc}[/q]"
+        "[q#{tag.attributes.only(:who, :when).to_html}]#{tag.inner_bbc}[/q]"
       end
       TagGenerator.register(:bbc, [:at]) do |tag|
         "@#{tag.inner_text}"
@@ -73,7 +73,7 @@ module ProjectVinyl
         "<i class=\"fa fa-fw fa-#{tag.inner_text.split(/[^a-zA-Z0-9]/)[0]}\"></#{tag.tag_name}>"
       end
       TagGenerator.register(:html, [:q]) do |tag|
-        "<blockquote#{!tag.even ? ' class="even"' : ''}>#{tag.inner_html}</blockquote>"
+        "<blockquote#{!tag.even ? ' class="even"' : ''}#{tag.attributes.only(:who, :when).to_html}>#{tag.inner_html}</blockquote>"
       end
       TagGenerator.register(:html, [:url]) do |tag|
         "<a rel=\"nofollow\" href=\"#{tag.equals_par  || tag.inner_text}\">#{tag.inner_html}</a>"
