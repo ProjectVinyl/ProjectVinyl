@@ -1,7 +1,6 @@
-li.generic.mix {
+.generic.mix {
   background: var(--thumb-hover-color);
-  border-radius: var(--page-radius);
 }
-li.generic.mix:hover {
+.generic.mix:hover {
   --thumb-hover-color: var(--thumb-active-color);
 }

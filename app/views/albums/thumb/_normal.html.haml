@@ -1,18 +1,17 @@
-%li.generic.thumb
-	%a.album{href: album_path(normal)}
-		.tile.stack
-			= render 'albums/tile_stack', items: normal.album_items.order(:index)
-			%span.thumb-overlay.overlay-element.bottom.right
-				= number_with_delimiter normal.album_items.count
-				Videos
-		.details
-			.title{title: normal.title}
-				= render 'albums/visibility', album: normal
-				= normal.title
-			.detail
-				%span.uploader.grow= normal.user.username
-			.detail
-				%span.timestamp.grow{title: localise(normal.created_at)}= since normal.created_at
-				%span
-					= fuzzy_big_number_with_delimiter normal.views
-					views
+%a.generic.thumb.album{href: album_path(normal)}
+	.tile.stack
+		= render 'albums/tile_stack', items: normal.album_items.order(:index)
+		%span.thumb-overlay.overlay-element.bottom.right
+			= number_with_delimiter normal.album_items.count
+			Videos
+	.details
+		.title{title: normal.title}
+			= render 'albums/visibility', album: normal
+			= normal.title
+		.detail
+			%span.uploader.grow= normal.user.username
+		.detail
+			%span.timestamp.grow{title: localise(normal.created_at)}= since normal.created_at
+			%span
+				= fuzzy_big_number_with_delimiter normal.views
+				views

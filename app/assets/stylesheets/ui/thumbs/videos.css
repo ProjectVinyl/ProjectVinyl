@@ -1,4 +1,4 @@
-.thumb, li.generic.thumb {
+.thumb, .generic.thumb {
   --thumb-width: 250px;
   --aspect-ratio: 0.92;
   --thumb-height: calc(var(--thumb-width) * var(--aspect-ratio));
@@ -14,7 +14,7 @@
   border-radius: var(--thumb-border-radius)
 }
 @media(max-width: 654px) {
-  .thumb, li.generic.thumb {
+  .thumb, .generic.thumb {
     --thumb-width: calc(min(max(230px, 45vw), 100vw));
   }
 }

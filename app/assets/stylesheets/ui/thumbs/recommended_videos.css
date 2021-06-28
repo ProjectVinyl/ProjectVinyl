@@ -3,7 +3,7 @@ ul.vertical .thumb {
 }
 ul.vertical .thumb .tile {
   --thumb-width: 10vw;
-  --aspect-ratio: 0.59;
+  --aspect-ratio: 0.56;
   width: var(--thumb-width);
   height: var(--thumb-height);
 }

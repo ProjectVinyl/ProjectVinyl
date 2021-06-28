@@ -3,10 +3,9 @@ ul.vertical {
   padding: 0;
 }
 
-ul.vertical > li {
+ul.vertical > * {
   display: block;
   position: relative;
-  padding: 5px 3px;
   overflow: hidden;
   min-width: 0;
 }

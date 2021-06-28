@@ -1,4 +1,4 @@
-li.generic {
+.generic {
   --thumb-width: 250px;
   --thumb-width-min: var(--thumb-width);
 
@@ -21,20 +21,20 @@ li.generic {
     min-height 0.5s ease;
 }
 
-li.generic:active {
+.generic:active {
   --thumb-hover-color: var(--thumb-active-color);
 }
-li.generic.virtual,
-li.generic:hover,
-li.generic:focus-within {
+.generic.virtual,
+.generic:hover,
+.generic:focus-within {
   background: var(--thumb-hover-color);
 }
-li.generic.virtual {
+.generic.virtual {
   opacity: 0.6;
   pointer-events: none;
 }
 
-li.generic.virtual.keep::after {
+.generic.virtual.keep::after {
   content: "No Content";
   position: absolute;
   top: calc(50% + 0.5em);
@@ -43,7 +43,7 @@ li.generic.virtual.keep::after {
   color: #6666b8;
 }
 
-ul.vertical li.generic {
+ul.vertical .generic {
   --thumb-width: 100%;
 }
 

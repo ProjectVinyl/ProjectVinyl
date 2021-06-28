@@ -5,7 +5,7 @@
   .grid-root {
     --grid-column-width: 190px;
   }
-  li.generic {
+  .generic {
     --thumb-width: 135px !important;
   }
   .tile {
@@ -17,7 +17,7 @@
   .grid-root {
     --grid-column-width: 100px;
   }
-  li.generic {
+  .generic {
     --thumb-width: 100px !important;
     --thumb-width-min: 90px !important;
   }
