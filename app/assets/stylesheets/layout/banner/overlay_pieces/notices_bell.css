@@ -22,6 +22,7 @@
   vertical-align: middle;
   animation: 1s bobben 0s 1;
   -webkit-animation: 1s bobben 0s 1;
+  z-index: 90;
 }
 .notices-bell span[data-count="0"] {
   display: none;
