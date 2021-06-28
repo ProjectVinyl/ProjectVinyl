@@ -1,0 +1,32 @@
+
+.comment .bio {
+  float: left;
+  padding-right: 20px;
+  position: relative;
+}
+.comment .bio:hover {
+  z-index: 90;
+}
+
+.comment .bio .author-overlay,
+.comment .artist-bio .thumb {
+  transition: transform 0.3s ease;
+  transform: scale(0.8);
+}
+
+.comment .artist-bio .thumb {
+  --thumb-width: 190px;
+  width: var(--thumb-width);
+
+}
+.comment .bio .author-overlay:hover,
+.comment .artist-bio .thumb:hover {
+  transform: scale(1);
+}
+
+.comment .bio .author-overlay {
+  position: absolute;
+  top: 0;
+  right: 30px;
+}
+

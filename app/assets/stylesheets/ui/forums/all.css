@@ -2,6 +2,7 @@
  *= require ./threadlists
  *= require ./comment_list
  *= require ./comments
+ *= require ./comment_author_overlay
  *= require ./comment_actions
  *= require ./reports
  *= require ./toolbars

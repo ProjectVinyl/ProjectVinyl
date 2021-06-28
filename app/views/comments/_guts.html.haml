@@ -8,6 +8,8 @@
 				%a.bubble-link{href: comment.comment_thread.owner.link}= comment.comment_thread.owner.title
 	.artist-bio.bio
 		= render 'videos/thumb/comment', comment: Video.where(id: comment.comment_thread.owner_id).with_likes(current_user).first, comment_id: comment.get_open_id
+		%a.author-overlay{class: !comment.anonymous? && "user-link", "data-id": comment.user_id, href: comment.user.link}
+			= render 'users/avatar/medium', user: comment.user
 - else
 	- if indirect
 		%div

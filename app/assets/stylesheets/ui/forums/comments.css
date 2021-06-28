@@ -32,11 +32,6 @@ label.focus .content {
   border-color: #a88;
 }
 
-.comment .bio {
-  float: left;
-  padding-right: 20px;
-}
-
 .comment .name {
   border-bottom: solid 1px var(--divider-color);
   margin-bottom: 10px;
@@ -136,11 +131,6 @@ label.focus .content {
 .comment .artist-bio a.user-link::before,
 .comment .name a.user-link::before {
   display: none;
-}
-
-.comment .artist-bio .thumb {
-  --thumb-width: 190px;
-  width: var(--thumb-width);
 }
 
 .comment .name a.mention,
