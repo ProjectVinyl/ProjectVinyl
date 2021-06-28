@@ -19,6 +19,7 @@
 				Messages
 				= surround '(', ')' do
 					= number_with_delimiter current_user.message_count
+	%li.divider
 	%li
 		%a{href: stars_path}
 			%span.icon= fw :star
@@ -26,6 +27,20 @@
 				Favourites
 				= surround '(', ')' do
 					= number_with_delimiter current_user.album_items.count
+	%li
+		%a{href: search_index_path(q: "uploaded_by:#{current_user.id}")}
+			%span.icon= fw :play
+			%span.label
+				Uploads
+				= surround '(', ')' do
+					= number_with_delimiter current_user.videos.count
+	%li
+		%a{href: user_albums_path(current_user)}
+			%span.icon= fw :list
+			%span.label
+				Albums
+				= surround '(', ')' do
+					= number_with_delimiter current_user.albums.count
 	%li.divider
 	%li
 		%a(rel="nofollow"){href: edit_user_registration_path}
