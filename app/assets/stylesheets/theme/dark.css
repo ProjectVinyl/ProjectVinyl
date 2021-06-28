@@ -26,6 +26,8 @@ html, body {
   --heading-background: #262222;
   --heading-border-color: #403d3d;
 
+  --checkerboard-background: #000;
+
   --footer-buffer-color: rgba(21, 21, 21, 0.3);
 
   --header-nav-background: rgba(0, 0, 0, 0.62);
