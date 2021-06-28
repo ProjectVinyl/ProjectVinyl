@@ -46,7 +46,17 @@ class WelcomeController < ApplicationController
                   .limit(6), "welcome_popular").for_thumbnails(current_user)
     end
 
-    @featured = current_filter.videos.where(hidden: false, duplicate_id: 0, featured: true)
+    @featured = current_filter.videos.where(hidden: false, duplicate_id: 0)
+              .must({
+                bool: {
+                  should: [
+                    { term: { featured: true } },
+                    { term: { tags: 'featured video' } }
+                  ]
+                }
+              })
+              .order(:featured)
+              .reverse_order
               .limit(1)
               .records
               .for_thumbnails(current_user)
