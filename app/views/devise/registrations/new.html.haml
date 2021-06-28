@@ -12,6 +12,6 @@
 					= @minimum_password_length
 					characters
 			= f.password_field :password_confirmation, autocomplete: "off", placeholder: :confirm_password
-			= recaptcha_tags
+			= recaptcha_tags('data-theme': current_theme_name)
 			.actions= f.submit "Sign up"
 		.tiny-foot= render "devise/shared/links"

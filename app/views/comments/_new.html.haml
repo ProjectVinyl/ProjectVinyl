@@ -22,7 +22,7 @@
 				%textarea.comment-content(required="true" name="comment")
 				%hr/
 				- if visitor.dummy?
-					= recaptcha_tags
+					= recaptcha_tags('data-theme': current_theme_name)
 					%hr/
 				.actions
 					.button.green.split-button.popper
