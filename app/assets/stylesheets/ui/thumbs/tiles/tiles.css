@@ -16,6 +16,7 @@
 
   text-align: left;
   text-decoration: none;
+  background: #000 center/contain no-repeat;
   border-radius: var(--thumb-border-radius);
   color: #fff;
 }
@@ -26,5 +27,5 @@
   width: 100%;
   height: 100%;
   border-radius: inherit;
-  background: #000;
+  transform: scale(1.008445);
 }
