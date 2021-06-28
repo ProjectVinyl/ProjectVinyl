@@ -5,7 +5,7 @@
 		Comments (
 		= number_with_delimiter @comments.count
 		)
-		%a.right{href: user_comments_path(@user)}
+		%a.heading-link.right{href: user_comments_path(@user)}
 			View All
 			= fa :chevron_right
 	.floater-hidden= render partial: 'comments/recent_set', locals: {comments: @comments.records}

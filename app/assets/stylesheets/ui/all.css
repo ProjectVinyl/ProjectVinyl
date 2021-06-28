@@ -21,5 +21,6 @@
  *= require ./forms/all
  *= require ./videos/all
  *= require ./user_attribution
+ *= require ./heading_link
  *= require ./animations
  */

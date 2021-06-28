@@ -1,0 +1,11 @@
+h1 .heading-link {
+  padding: 10px;
+  margin: -10px;
+  border-radius: var(--block-radius);
+}
+h1 .heading-link:hover {
+  background: var(--bubble-background-hover);
+}
+h1 .heading-link:active {
+  background: var(--bubble-background-active);
+}

@@ -6,7 +6,7 @@
 			= surround '(', ')' do
 				= number_with_delimiter @favourites.count
 			%span.icon(title="Private - only you and moderators can see this.")= fa :lock
-			%a.right(href="/stars")
+			%a.heading-link.right(href="/stars")
 				View All
 				= fa :chevron_right
 		%ul.floater-hidden.horizontal.video-list#uploads

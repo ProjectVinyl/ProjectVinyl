@@ -4,7 +4,7 @@
 		Albums
 		= surround '(', ')' do
 			= number_with_delimiter @albums.count
-		%a.right{href: user_albums_path(@user)}
+		%a.heading-link.right{href: user_albums_path(@user)}
 			View All
 			= fa :chevron_right
 	%ul.floater-hidden.album-list.horizontal#albums

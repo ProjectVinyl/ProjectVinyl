@@ -6,7 +6,7 @@
 			= @user.username
 			= surround '(', ')' do
 				= number_with_delimiter @art.count
-			%a.right{href: @user.tag.link}
+			%a.heading-link.right{href: @user.tag.link}
 				View All
 				= fa :chevron_right
 		%ul.floater-hidden.horizontal.video-list#songs
