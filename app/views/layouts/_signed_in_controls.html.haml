@@ -1,13 +1,15 @@
 #login.sharp-right
-	%a.notices-bell.feeds(title="Feed"){href: videos_feed_path}
+	%a.notices-bell(title="Feed"){href: videos_feed_path}
 		%i.fa.fa-globe
 		%span.feed-count.count{data: {count: current_user.feed_count}}
 			= safe_to_display current_user.feed_count, 999
-	%a.notices-bell.notices(title="Notifications"){href: notifications_path}
+	%a.notices-bell(title="Notifications"){href: notifications_path}
 		%i.fa.fa-bell
 		%span.notification-count.count{data: {count: current_user.notification_count}}<
-			= safe_to_display current_user.notification_count, 999
-		%span.message-count.count.invert{data: {count: current_user.message_count}}<
+			= safe_to_display current_user.message_count, 999
+	%a.notices-bell(title="Private Messages"){href: inbox_path}
+		%i.fa.fa-envelope
+		%span.message-count.count{data: {count: current_user.message_count}}<
 			= safe_to_display current_user.message_count, 999
 	%a(rel="nofollow"){title: "Profile - #{current_user.username}", href: current_user.link}
 		= render 'users/avatar/small', user: current_user
