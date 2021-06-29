@@ -48,10 +48,12 @@
 		%ul.normal.tags= render partial: 'tags/thumb/normal', collection: @tags
 		- if user_signed_in?
 			= form_for(@video, as: "video", url: video_details_path(@video), html: {class: "editing async form-state-toggle js-edit-video", method: :patch}, data: {state: "editing"}) do |f|
-				= render layout: 'tags/editor', locals: {tags: @video.tags} do
-					%textarea(autocomplete="off" name="tags")= raw @video.tag_string
 				.properties
 					%table
+						%tr
+							%td(colspan="2")
+								= render layout: 'tags/editor', locals: {tags: @video.tags} do
+									%textarea(autocomplete="off" name="tags")= raw @video.tag_string
 						%tr
 							%td.label
 								%label(for="video_source") Source
