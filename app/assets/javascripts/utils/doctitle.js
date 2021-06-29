@@ -1,38 +1,30 @@
 
-export function docTitle() {
-  const title = document.getElementById('document_title');
-  let focus = true;
-  
-  const me = {
-    get: _ => title.innerText,
-    set: text => title.innerText = text,
-    change: changerFunc => changerFunc(me.get(), me.set),
-    togglePrefix: on => {
-      if (!focus && on) return me.addPrefix();
-      me.removePrefix();
-    },
-    addPrefix: _ => {
-      const text = me.get();
-      if (text.indexOf('*') != 0) {
-        me.set(`* ${text}`);
-      }
-    },
-    removePrefix: _ => {
-      const text = me.get();
-      if (text.indexOf('*') == 0) {
-        me.set(text.replace('* ', ''));
-      }
-    }
-  };
-  
-  window.addEventListener('focus', () => {
-    focus = true;
-    me.removePrefix();
-  });
-  window.addEventListener('blur', () => {
-    focus = false;
-  });
-  
-  return me;
+let focus = true;
+
+function removePrefix() {
+  if (document.title.indexOf('*') == 0) {
+    document.title = document.title.replace('* ', '');
+  }
 }
 
+function addPrefix() {
+  if (document.title.indexOf('*') != 0) {
+    document.title = `* ${document.title}`;
+  }
+}
+
+
+export function togglePrefix(on) {
+  if (!focus && on) {
+    return addPrefix();
+  }
+  removePrefix();
+}
+
+window.addEventListener('focus', () => {
+  focus = true;
+  removePrefix();
+});
+window.addEventListener('blur', () => {
+  focus = false;
+});
