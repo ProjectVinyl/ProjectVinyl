@@ -1,10 +1,10 @@
 - title @video.title
-.wrapper.column-right.right.fixed-column-right
+.wrapper.column-right.column-padded-top.right.fixed-column-right
 	- cache("#{@video.cache_key}_stats", expires_in: 1.hour) do
 		= render 'videos/statistics/media_info'
 		= render 'videos/statistics/metadata'
 		= render 'videos/statistics/referrals'
-%section.page.full-width.column-left.left.fixed-column-right
+%section.page.seamless.full-width.column-left.left.fixed-column-right
 	%h1
 		= fa :line_chart
 		Statistics

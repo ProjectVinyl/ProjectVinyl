@@ -1,9 +1,9 @@
-%section.page.properties.full-width
+%section.page.seamed.properties.full-width
 	%h1
 		= fa :link
 		Referrals
-	%ul
+	%table.group.active
 		- @video.video_visits.pie_data(request.domain).each do |a|
-			%li
-				= a.referring_domain
-				= a.total
+			%tr
+				%td= a.referring_domain
+				%td= a.total
