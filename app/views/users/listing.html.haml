@@ -5,7 +5,7 @@
 		= tit
 		= surround '(', ')' do
 			= number_with_delimiter @records.count
-	= render layout: 'pagination/paginated', locals: { type: "users/#{@user.id}/#{@label.downcase}", paginated: @records, id: "page" } do
+	= render layout: 'pagination/paginated', locals: { type: "users/#{@user.id}/#{@table.downcase}", paginated: @records, id: "page" } do
 		%section.search-result
 			%ul.horizontal{id: @table.pluralize, class: "#{@table.underscore}-list"}
 				= render partial: @partial, collection: @records.records

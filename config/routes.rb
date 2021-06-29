@@ -56,7 +56,7 @@ Rails.application.routes.draw do
   # Users #
   resources :users, only: [:index, :update, :show] do
     scope module: :users do
-      resources :albums, :comments, only: [:index]
+      resources :albums, :comments, :watch_history, only: [:index]
 
       resource :hovercard, only: [:show]
       resource :banner, only: [:show, :update]

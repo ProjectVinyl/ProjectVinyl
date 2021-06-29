@@ -41,6 +41,10 @@
 				Albums
 				= surround '(', ')' do
 					= number_with_delimiter current_user.albums.count
+	%li
+		%a{href: user_watch_history_index_path(current_user)}
+			%span.icon= fw :history
+			%span.label Watch History
 	%li.divider
 	%li
 		%a(rel="nofollow"){href: edit_user_registration_path}

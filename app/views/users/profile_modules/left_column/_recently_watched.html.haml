@@ -5,6 +5,9 @@
 			Recently Watched
 			= surround '(', ')' do
 				= number_with_delimiter @watched_count
+			%a.heading-link.right{href: user_watch_history_index_path(@user)}
+				View All
+				= fa :chevron_right
 		%ul.floater-hidden.horizontal.video-list#uploads
 			- if @watched.count > 0
 				= render partial: 'videos/thumb/normal', collection: @watched.records

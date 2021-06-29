@@ -1,15 +1,19 @@
 module Users
-  class AlbumsController < Users::BaseUsersController
+  class WatchHistoryController < Users::BaseUsersController
+    before_action :authenticate_user!
+
     def index
       check_details_then do |user, edits_allowed|
-        @records = user.albums.order(:created_at).where(hidden: false)
+        return render_access_denied if user.id != current_user.id && !current_user.is_contributor?
+        
+        @records = user.watched_videos.unmerged.listable
         @records = @records.where(listing: 0) if !edits_allowed
         @records = Pagination.paginate(@records, params[:page].to_i, 50, true)
-        
-        @label = 'Albums'
-        @table = 'albums'
-        @partial = partial_for_type(:albums)
-        
+
+        @label = 'Watch History'
+        @table = 'watch_history'
+        @partial = partial_for_type(:videos)
+
         return render_paginated @records, partial: @partial, as: :json if params[:format] == 'json'
 
         @crumb = {
@@ -19,7 +23,7 @@ module Users
           ],
           title: @label
         }
-        
+
         render template: 'users/listing'
       end
     end
