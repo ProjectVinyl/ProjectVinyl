@@ -42,7 +42,7 @@ html, body {
   --input-border: #ccc;
   --input-foreground-color: #444;
   --input-background: rgb(255, 255, 250);
-  --input-background-focus: rgba(200,200,200,0.1);
+  --input-background-focus: rgb(241, 241, 241);
 
   --heading-background: #f0f0f0;
   --heading-border-color: #ddd;
