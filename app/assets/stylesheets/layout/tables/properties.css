@@ -16,6 +16,7 @@
   background: var(--label-background);
   width: 25%;
   border-right: solid 1px var(--block-border-color);
+  text-align: right;
 }
 .properties td.field {
   width: 75%;
