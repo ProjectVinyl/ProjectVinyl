@@ -7,9 +7,6 @@ ul.vertical .thumb .tile {
   width: var(--thumb-width);
   height: var(--thumb-height);
 }
-ul.vertical .thumb .tile .duration {
-  opacity: 1;
-}
 
 ul.vertical .thumb .details {
   padding: 0 5px;
@@ -25,11 +22,8 @@ ul.vertical .details .detail {
 ul.vertical .thumb .title {
   overflow: hidden;
   display: inline-block;
-  height: auto;
   max-height: 3.1em;
 }
 ul.vertical .thumb .tile .details {
   width: 100%;
-  left: 100%;
-  bottom: auto;
 }

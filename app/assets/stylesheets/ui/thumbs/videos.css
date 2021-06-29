@@ -18,6 +18,11 @@
     --thumb-width: calc(min(max(230px, 45vw), 100vw));
   }
 }
+@media(max-width: 499px) {
+  .thumb, .generic.thumb {
+    --thumb-width: 98vw;
+  }
+}
 
 .thumb.tiny {
   --thumb-width: 85px;
