@@ -10,6 +10,7 @@
 			%span.icon= fw :bell
 			%span.label
 				Notifications
+			%span.icon
 				= surround '(', ')' do
 					= number_with_delimiter current_user.notification_count
 	%li
@@ -17,6 +18,7 @@
 			%span.icon= fw :envelope
 			%span.label
 				Messages
+			%span.icon
 				= surround '(', ')' do
 					= number_with_delimiter current_user.message_count
 	%li.divider
@@ -25,6 +27,7 @@
 			%span.icon= fw :star
 			%span.label
 				Favourites
+			%span.icon
 				= surround '(', ')' do
 					= number_with_delimiter current_user.album_items.count
 	%li
@@ -32,6 +35,7 @@
 			%span.icon= fw :play
 			%span.label
 				Uploads
+			%span.icon
 				= surround '(', ')' do
 					= number_with_delimiter current_user.videos.count
 	%li
@@ -39,12 +43,24 @@
 			%span.icon= fw :list
 			%span.label
 				Albums
+			%span.icon
 				= surround '(', ')' do
 					= number_with_delimiter current_user.albums.count
 	%li
 		%a{href: user_watch_history_index_path(current_user)}
 			%span.icon= fw :history
-			%span.label Watch History
+			%span.label
+				Watch History
+			%span.icon= fw :chevron_right
+		%ul.drop-down
+			%li
+				%a{href: search_index_path(q: "upvoted_by:#{current_user.id}")}
+					%span.icon= fw :thumbs_up
+					%span.label Liked Videos
+			%li
+				%a{href: search_index_path(q: "upvoted_by:#{current_user.id}")}
+					%span.icon= fw :thumbs_down
+					%span.label Disliked Videos
 	%li.divider
 	%li
 		%a(rel="nofollow"){href: edit_user_registration_path}

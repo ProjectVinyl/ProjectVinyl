@@ -10,6 +10,10 @@
   color: var(--popper-foreground);
   color: inherit;
   font-size: 13px;
+  flex-grow: 1;
+}
+.drop-down .icon {
+  flex-grow: 0;
 }
 
 .popper .pop-out > * {
@@ -24,6 +28,10 @@
 }
 
 .drop-down li a {
+  display: flex;
+  align-items: baseline;
+  gap: 5px;
+  margin: 0;
   padding: 0 10px;
   width: 100%;
   font-size: 13px;

@@ -1,5 +1,4 @@
 .drop-down {
-  margin-top: -1px;
   position: absolute;
   right: 0;
   top: 100%;
@@ -32,5 +31,7 @@ li:hover > .drop-down,
 }
 
 .drop-down .drop-down {
+  position: absolute;
+  top: 0;
   left: 100%;
 }

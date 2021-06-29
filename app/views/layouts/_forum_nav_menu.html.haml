@@ -1,0 +1,30 @@
+%li.tinted-nav-item.forum{class: selected_path?('forum')}<>
+	%a{href: forum_index_path}
+		= fw :users
+		%span Forum
+		%span.icon<>= fa :caret_down
+	%ul.drop-down>
+		- Board.sorted.each do |board|
+			%li
+				- boards = board.threads.limit(6)
+				%a{href: board.link}
+					%span.icon= fw :comments
+					%span.label=board.title
+					- if boards.length > 0
+						%span.icon= fw :chevron_right
+				- if boards.length > 0
+					%ul.drop-down
+						- boards.each do |thread|
+							%li
+								%a{href: thread.link}
+									%span.icon= fw :comment
+									%span.label= thread.title
+		%li.divider
+		%li
+			%a{href: users_path}
+				%span.icon= fw :user
+				%span.label Users
+		%li
+			%a{href: forum_search_index_path}
+				%span.icon= fw :search
+				%span.label Find Posts
