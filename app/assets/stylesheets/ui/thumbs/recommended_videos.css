@@ -1,6 +1,8 @@
 ul.vertical .thumb {
   flex-direction: row;
+  gap: 3px;
 }
+
 ul.vertical .thumb .tile {
   --thumb-width: 10vw;
   --thumb-padding: -0.5px;
@@ -15,6 +17,7 @@ ul.vertical .thumb .details {
   width: 0;
   flex-grow: 1;
 }
+
 ul.vertical .details .detail {
   color: #aaa;
 }

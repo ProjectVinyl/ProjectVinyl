@@ -13,14 +13,10 @@
   flex-grow: 1;
   border-radius: var(--thumb-border-radius)
 }
+
 @media(max-width: 654px) {
   .thumb, .generic.thumb {
     --thumb-width: calc(min(max(230px, 45vw), 100vw));
-  }
-}
-@media(max-width: 499px) {
-  .thumb, .generic.thumb {
-    --thumb-width: 98vw;
   }
 }
 
@@ -91,6 +87,7 @@
   display: flex;
   flex-direction: column;
   flex-grow: 1;
+  text-decoration: none;
 }
 
 .thumb .details .detail,

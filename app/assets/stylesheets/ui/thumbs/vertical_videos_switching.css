@@ -1,0 +1,40 @@
+@media(max-width: 499px) {
+  ul.horizontal .thumb {
+    --thumb-width: 97vw;
+    flex-direction: row;
+    gap: 3px;
+  }
+
+  ul.horizontal .thumb .tile {
+    --thumb-width: 30vw;
+    --thumb-padding: -0.5px;
+    width: var(--thumb-width);
+    height: var(--thumb-height);
+  }
+
+  ul.horizontal .thumb .details {
+    padding: 0 5px;
+    text-align: left;
+    white-space: normal;
+    width: 0;
+    flex-grow: 1;
+  }
+
+  ul.horizontal .details .detail {
+    color: #aaa;
+  }
+
+  ul.horizontal .thumb .title {
+    overflow: hidden;
+    display: inline-block;
+    max-height: 3.1em;
+  }
+  ul.horizontal .thumb .tile .details {
+    width: 100%;
+  }
+  
+  ul.horizontal .virtual {
+    display: none;
+  }
+}
+

@@ -4,5 +4,6 @@
  *= require ./videos
  *= require ./mix
  *= require ./recommended_videos
+ *= require ./vertical_videos_switching
  *= require ./stacks
  */
