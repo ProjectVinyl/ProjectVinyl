@@ -1,6 +1,6 @@
 .video, #upload .cover-block {
   --aspect-ratio: calc(16 / 9);
-  --max-player-height: 70vh;
+  --max-player-height: 80vh;
   --max-player-width: calc(var(--max-player-height) * var(--aspect-ratio));
   
   --player-width: calc(min(100%, var(--max-player-width)));

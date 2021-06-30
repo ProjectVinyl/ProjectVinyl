@@ -1,27 +1,29 @@
-- if indirect && comment.comment_thread.owner_type == 'Video'
-	- if indirect
+- if indirect
+	- if comment.comment_thread.owner_type == 'Video'
 		%div
 			%p
 				In
 				%a.bubble-link{href: videos_path} Videos
 				\—
 				%a.bubble-link{href: comment.comment_thread.owner.link}= comment.comment_thread.owner.title
-	.artist-bio.bio
-		= render 'videos/thumb/comment', comment: Video.where(id: comment.comment_thread.owner_id).with_likes(current_user).first, comment_id: comment.get_open_id
-		%a.author-overlay{class: !comment.anonymous? && "user-link", "data-id": comment.user_id, href: comment.user.link}
-			= render 'users/avatar/medium', user: comment.user
-- else
-	- if indirect
+		.artist-bio.bio
+			= render 'videos/thumb/comment', comment: Video.where(id: comment.comment_thread.owner_id).with_likes(current_user).first, comment_id: comment.get_open_id
+			%a.author-overlay{class: !comment.anonymous? && "user-link", "data-id": comment.user_id, href: comment.user.link}
+				= render 'users/avatar/medium', user: comment.user
+	- else
 		%div
 			%p
 				In
 				%a.bubble-link{href: comment.comment_thread.owner.link}= comment.comment_thread.owner.title
 				\—
 				%a.bubble-link{href: comment.comment_thread.link}= comment.comment_thread.title
-	.artist-bio.bio
-		%a{class: !comment.anonymous? && "user-link", "data-id": comment.user_id, href: comment.user.link}
-			= render 'users/avatar/medium', user: comment.user
-.content{style: indirect && comment.comment_thread.owner_type == 'Video' && "margin-left:200px", "data-id": comment.id, "data-o-id": comment.get_open_id, "data-comment": comment.bbc_content}
+		.artist-bio.bio
+			- poster = comment.comment_thread.user
+			%a.author-overlay{href: poster.link}
+				= render 'users/avatar/avatar', user: poster
+			%a.author-overlay{class: !comment.anonymous? && "user-link", "data-id": comment.user_id, href: comment.user.link}
+				= render 'users/avatar/medium', user: comment.user
+.content{"data-id": comment.id, "data-o-id": comment.get_open_id, "data-comment": comment.bbc_content}
 	.comment-actions
 		- if user_signed_in?
 			%button.action.like{title: "Like", class: comment.liked? && "liked", data: {count: comment.likes_count, action: "comments/#{comment.id}/like"}}

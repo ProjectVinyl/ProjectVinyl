@@ -1,3 +1,6 @@
 - cache(comment.cache_key_with_user(current_user, indirect), expires_in: 1.minute) do
-	%li.comment.transitional{class: comment.hidden && "deleted", id: "comment_#{comment.get_open_id}", "data-user": comment.user.username}
+	%li.comment.transitional{class: [comment.hidden && "deleted",
+																	indirect && "indirect"],
+						id: "comment_#{comment.get_open_id}",
+						"data-user": comment.user.username}
 		= render partial: comment.hidden ? 'comments/guts_hidden' : 'comments/guts', locals: {comment: comment, indirect: indirect}
