@@ -27,8 +27,6 @@ function getPreferredColumnCount(ul) {
 }
 
 export function alignLists() {
-  all('ul.horizontal li.virtual:not(.keep)', li => li.parentNode.removeChild(li));
-
   requestAnimationFrame(() => {
     calculateAlignments();
     setTimeout(calculateAlignments, 500);
@@ -36,12 +34,13 @@ export function alignLists() {
 }
 
 function calculateAlignments() {
-  all('ul.horizontal li.virtual:not(.keep)', li => li.parentNode.removeChild(li));
   all('ul.horizontal:not([data-aligned="false"])', ul => {
     const columnCount = getPreferredColumnCount(ul);
     if (!columnCount) {
       return;
     }
+
+    all(ul, '.virtual:not(.keep)', li => li.parentNode.removeChild(li));
 
     let itemsLastRow = ul.children.length;
     if (!ul.classList.contains('latest')) {
