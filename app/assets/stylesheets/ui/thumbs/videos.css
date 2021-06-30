@@ -1,7 +1,7 @@
 .thumb, .generic.thumb {
   --thumb-width: 250px;
-  --aspect-ratio: 0.92;
-  --thumb-height: calc(var(--thumb-width) * var(--aspect-ratio));
+  --aspect-ratio: calc(16 / 9);
+  --thumb-height: calc(var(--thumb-width) / var(--aspect-ratio));
   --tile-overlay-background: rgba(0,0,0,0.3);
   --tile-overlay-color: #fff;
   --thumb-tags-color: #8db936;
@@ -28,9 +28,6 @@
   --thumb-width: 85px;
   width: var(--thumb-width);
   height: 100%;
-}
-.thumb.tiny .tile {
-  --aspect-ratio: 0.59;
 }
 
 .thumb-hidden {

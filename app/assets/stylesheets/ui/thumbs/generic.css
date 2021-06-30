@@ -1,10 +1,11 @@
 .generic {
+  --thumb-padding: 10px;
   --thumb-width: 250px;
   --thumb-width-min: var(--thumb-width);
 
   list-style: none;
   display: inline-block;
-  padding: 10px;
+  padding: var(--thumb-padding);
   margin: 4px;
 
   max-width: calc(min(var(--thumb-width), 100%));

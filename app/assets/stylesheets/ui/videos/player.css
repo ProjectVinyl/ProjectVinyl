@@ -1,9 +1,14 @@
 .video, #upload .cover-block {
+  --aspect-ratio: calc(16 / 9);
+  --max-player-height: 70vh;
+  --max-player-width: calc(var(--max-player-height) * var(--aspect-ratio));
+  
+  --player-width: calc(min(100%, var(--max-player-width)));
+  --player-height: calc(var(--player-width) / var(--aspect-ratio));
+
   display: block;
   width: 100%;
-  --max-player-height: 100vh;
-  --aspect-ratio: calc(16 / 9);
-  padding-bottom: calc(min(var(--max-player-height), 100% / var(--aspect-ratio)));
+  padding-bottom: var(--player-height);
   height: 0 !important;
   position: relative;
   border-radius: inherit;
