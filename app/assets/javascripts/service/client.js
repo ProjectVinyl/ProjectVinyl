@@ -1,4 +1,4 @@
-import { deregisterWorker } from './service';
+import { deregisterWorker, registerWorker } from './service';
 import { togglePrefix } from '../utils/doctitle';
 
 const counters = {
