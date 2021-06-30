@@ -23,6 +23,10 @@
 				= render 'users/avatar/avatar', user: poster
 			%a.author-overlay{class: !comment.anonymous? && "user-link", "data-id": comment.user_id, href: comment.user.link}
 				= render 'users/avatar/medium', user: comment.user
+- else
+	.artist-bio.bio
+		%a{class: !comment.anonymous? && "user-link", "data-id": comment.user_id, href: comment.user.link}
+			= render 'users/avatar/medium', user: comment.user
 .content{"data-id": comment.id, "data-o-id": comment.get_open_id, "data-comment": comment.bbc_content}
 	.comment-actions
 		- if user_signed_in?
