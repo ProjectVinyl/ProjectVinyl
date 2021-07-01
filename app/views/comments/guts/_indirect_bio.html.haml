@@ -1,0 +1,24 @@
+- if comment.comment_thread.owner_type == 'Video'
+	%div
+		%p
+			In
+			%a.bubble-link{href: videos_path} Videos
+			\—
+			%a.bubble-link{href: comment.comment_thread.owner.link}= comment.comment_thread.owner.title
+	.artist-bio.bio
+		= render 'videos/thumb/comment', comment: Video.where(id: comment.comment_thread.owner_id).with_likes(current_user).first, comment_id: comment.get_open_id
+		%a.author-overlay{class: !comment.anonymous? && "user-link", "data-id": comment.user_id, href: comment.user.link}
+			= render 'users/avatar/medium', user: comment.user
+- else
+	%div
+		%p
+			In
+			%a.bubble-link{href: comment.comment_thread.owner.link}= comment.comment_thread.owner.title
+			\—
+			%a.bubble-link{href: comment.comment_thread.link}= comment.comment_thread.title
+	.artist-bio.bio
+		- poster = comment.comment_thread.user
+		%a.author-overlay{href: poster.link}
+			= render 'users/avatar/avatar', user: poster
+		%a.author-overlay{class: !comment.anonymous? && "user-link", "data-id": comment.user_id, href: comment.user.link}
+			= render 'users/avatar/medium', user: comment.user

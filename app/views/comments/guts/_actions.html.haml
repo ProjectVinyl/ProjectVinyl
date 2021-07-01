@@ -1,0 +1,32 @@
+.comment-actions
+	- if user_signed_in?
+		%button.action.like{title: "Like", class: comment.liked? && "liked", data: {count: comment.likes_count, action: "comments/#{comment.id}/like"}}
+			%span
+				- if comment.likes_count && comment.likes_count > 0
+					%span.count= comment.likes_count
+			= fa :thumbs_up
+		- if !indirect
+			%a.reply-comment(title="Reply")= fa :reply
+		%span.popper
+			%a.action.pop-out-toggle= fa :gear
+			%ul.pop-out
+				- if comment.owned_by!(current_user)
+					%li.action
+						%a.edit-comment.state-toggle(data-state="editing" data-parent=".content")
+							%span.icon= fa :pencil
+							%span.label Edit
+				- if comment.owned_by(current_user)
+					%li.action
+						%a.remove-comment(href="#{comment_path comment, indirect: indirect}" data-id="#{comment.get_open_id}" data-title="Delete Comment")
+							%span.icon= fa :trash
+							%span.label Delete
+				%li.action
+					%a.report-comment(href="#{new_admin_report_path comment.reportable_hash}" data-id="#{comment.get_open_id}" data-title="Report Comment")
+						%span.icon= fa :warning
+						%span.label Report
+	- else
+		%span.button.like{title: "Likes", class: comment.liked? && "liked"}
+			- if comment.likes_count && comment.likes_count > 0
+				= comment.likes_count
+			= fa :thumbs_up
+		%a.report-comment(title="Report" href="#{new_admin_report_path comment.reportable_hash}" data-id="#{comment.get_open_id}" data-title="Report Comment")= fa :warning

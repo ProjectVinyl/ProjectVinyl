@@ -1,0 +1,3 @@
+.artist-bio.bio
+	%a{class: !comment.anonymous? && "user-link", "data-id": comment.user_id, href: comment.user.link}
+		= render 'users/avatar/medium', user: comment.user

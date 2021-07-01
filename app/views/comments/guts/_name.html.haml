@@ -1,0 +1,12 @@
+.name{class: comment.user.banned? && "banned"}
+	- if comment.anonymous?
+		%b= render 'comments/guts/plain_name', comment: comment
+	- else
+		%a{class: "user-link", "data-id": comment.user_id, href: comment.user.link}
+			= comment.user.username
+	= render 'forum/badges/badges', user: comment.user
+	
+	- comment.mentions.each do |mention|
+		%a.mention(href="#comment_#{Comment.encode_open_id(mention.parent_id)}" data-comment-id="#{mention.parent_id}")<
+			&gt;&gt;
+			= Comment.encode_open_id(mention.parent_id)

@@ -1,0 +1,7 @@
+= comment.user.username
+- if user_signed_in? && !comment.direct_user.nil? && (current_user.is_staff? || current_user.id == comment.user_id)
+	= surround '(', ')' do
+		- if current_user.id == comment.user_id
+			You
+		- else
+			= comment.direct_user.username
