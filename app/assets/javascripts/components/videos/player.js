@@ -97,8 +97,8 @@ Player.prototype = {
     });
     
     attachMessageListener(this, !standalone);
-    
-    if (!el.dataset.pending && !this.params.embedded) {
+
+    if (!el.dataset.pending) {
       this.floater = attachFloater(this);
     }
 
