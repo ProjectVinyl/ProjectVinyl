@@ -17,6 +17,7 @@
   visibility: hidden;
   position: absolute;
   opacity: 0;
+  width: 100%;
   transition: opacity 0.5s linear, visibility 0.5s linear;
 }
 .video .playback-controls::before {
