@@ -1,9 +1,10 @@
 
 .floating-player .playback-controls {
+  display: flex;
   background: var(--content-background);
   border-top: solid 1px var(--block-border-color);
   box-shadow: 0 0 3px var(--block-shadow-color);
-  padding: 0 10px;
+  padding: 0 calc((100vw - var(--site-width)) / 2);
   transition: bottom 0.5s ease;
   
   --controls-foreground: #444;
@@ -14,6 +15,20 @@
 
 .floating-player.hiding .playback-controls {
   bottom: -100%;
+}
+
+.floating-player .playback-controls ul {
+  margin: 5px;
+  flex-grow: 1;
+}
+
+.floating-player .playback-controls .icon {
+  border-radius: var(--block-radius);
+  padding: 1px 10px;
+  width: auto;
+}
+.floating-player .playback-controls .icon:hover {
+  background: var(--block-hover-color);
 }
 
 .floating-player .player {

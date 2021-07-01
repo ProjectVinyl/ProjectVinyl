@@ -1,0 +1,21 @@
+
+.playback-controls .floating-player-details {
+  display: none;
+}
+
+.floating-player .floating-player-details {
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  --thumb-width: 40px;
+  width: auto;
+  max-width: 200px;
+  gap: 10px;
+}
+
+.floating-player-details .title {
+  background: var(--block-hover-color);
+  border-radius: var(--block-radius);
+  padding: 5px 3px;
+  font-weight: bold;
+}

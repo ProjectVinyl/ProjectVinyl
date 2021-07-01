@@ -10,4 +10,5 @@
  *= require ./embed_actions
  *= require ./uploading
  *= require ./floating_player
+ *= require ./floating_player_details
  */

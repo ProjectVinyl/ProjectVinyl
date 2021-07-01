@@ -1,4 +1,8 @@
 .controls.playback-controls
+	.thumb.floating-player-details
+		.tile
+			%img(loading="lazy"){src: @video.tiny_thumb(current_user, current_filter)}
+		.title= @video.title
 	%ul
 		%li.icon.play(tabindex="0")
 			%span.indicator(tabindex="-1" title="Pause")= fa :play
