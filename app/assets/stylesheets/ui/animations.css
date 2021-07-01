@@ -10,3 +10,10 @@ i.fa {
 .remove:hover i.fa.fa-close {
   transform: rotate(90deg);
 }
+
+.button.refresh:hover i.fa.fa-refresh {
+  transform: rotate(180deg);
+}
+.remove-comment:hover i.fa.fa-undo {
+  transform: rotate(-280deg);
+}

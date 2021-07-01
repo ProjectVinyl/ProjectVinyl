@@ -7,5 +7,6 @@
 		= surround '(', ')' do
 			= comment.moderation_note
 	- if user_signed_in? && current_user.is_contributor?
-		%a.remove-comment.right{title: "Restore Comment", href: comment_path(comment, indirect: indirect), data: {id: comment.get_open_id, title: "Restore Comment", icon: "warning"}}
-			= fa :trash
+		.comment-actions
+			%a.remove-comment.right{title: "Restore Comment", href: comment_path(comment, indirect: indirect), data: {id: comment.get_open_id, title: "Restore Comment", icon: "warning"}}
+				= fa :undo
