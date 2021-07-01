@@ -63,9 +63,16 @@
 		
 	.name{class: comment.user.banned? && "banned"}
 		- if comment.anonymous?
-			%b= comment.user.username
+			%b
+				= comment.user.username
+				- if user_signed_in? && !comment.direct_user.nil? && (current_user.is_staff? || current_user.id == comment.user_id)
+					= surround '(', ')' do
+						- if current_user.id == comment.user_id
+							You
+						- else
+							= comment.direct_user.username
 		- else
-			%a{class: !comment.anonymous? && "user-link", "data-id": comment.user_id, href: comment.user.link}
+			%a{class: "user-link", "data-id": comment.user_id, href: comment.user.link}
 				= comment.user.username
 		= render 'forum/badges/badges', user: comment.user
 		
