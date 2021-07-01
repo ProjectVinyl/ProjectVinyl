@@ -65,7 +65,9 @@ module Users
 
     def load_comments_module
       return if @comments
-      @comments = Pagination.paginate(@user.comments.visible.decorated.with_owner.with_likes(current_user).order(:created_at), 0, 4, true)
+      @comments = @user.comments.visible.decorated.with_owner.with_likes(current_user).order(:created_at)
+      @comments = @comments.where(anonymous_id: 0) if !@modifications_allowed
+      @comments = Pagination.paginate(@comments, 0, 4, true)
     end
 
     def load_profile_module(type)

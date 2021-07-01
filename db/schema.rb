@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20210614085154) do
+ActiveRecord::Schema.define(version: 20210701160352) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -156,7 +156,7 @@ ActiveRecord::Schema.define(version: 20210614085154) do
     t.integer "o_comment_thread_id", default: 0
     t.string "moderation_note"
     t.integer "likes_count"
-    t.integer "anonymous_id"
+    t.integer "anonymous_id", default: 0
     t.index ["comment_thread_id"], name: "index_comments_on_comment_thread_id"
   end
 

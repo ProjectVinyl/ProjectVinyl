@@ -3,7 +3,7 @@ module Users
     def index
       check_details_then do |user, edits_allowed|
         @records = user.comments.visible.decorated.with_owner.with_likes(current_user).order(:created_at)
-
+        @records = @records.where(anonymous_id: 0) if !edits_allowed
         @records = Pagination.paginate(@records, params[:page].to_i, 50, true)
 
         @label = 'Comments'
