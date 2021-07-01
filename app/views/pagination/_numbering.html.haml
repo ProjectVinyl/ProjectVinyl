@@ -1,5 +1,5 @@
 - query_hash = request.query_parameters.except(:page)
-%span.pages.mobile-touch-toggle
+%span.pages
 	- if page > 0
 		- if page > 1
 			- query_hash[id] = 0
