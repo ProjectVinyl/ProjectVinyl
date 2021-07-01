@@ -1,6 +1,6 @@
 .content
 	Comment posted by
-	= comment.user.username
+	= render 'comments/guts/plain_name', comment: comment
 	deleted
 	= since comment.updated_at
 	- if comment.moderation_note
