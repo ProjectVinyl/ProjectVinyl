@@ -1,4 +1,4 @@
-#filters
+#filters.overlay-element
 	%select{ data: {method: :put, url: current_filter_path}, name: :filter_id}
 		%optgroup(label="Current Filter")
 			%option{value: current_filter.id}=current_filter.name

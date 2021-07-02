@@ -3,4 +3,4 @@
 	%ul.comment-list{id: "thread-#{@thread.id}"}
 		= render partial: "comments/set", locals: {thread: @comments.records, indirect: false}
 %hr/
-= render partial: "comments/new", locals: {invert: true}
+= render partial: "comments/new"

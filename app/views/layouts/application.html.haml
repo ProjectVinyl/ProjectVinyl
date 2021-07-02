@@ -19,19 +19,7 @@
 %body{class: !user_signed_in? && "logged-out"}
 	.context-3d.no-3d.dock-holder
 		.dock-shadow
-		%header.header.banner-overlay
-			- if user_signed_in?
-				= render partial: 'layouts/signed_in_controls'
-			- else
-				= render partial: 'layouts/signed_out_controls'
-			= render partial: "layouts/filter_dropdown"
-			= render partial: "search/small_search"
-			#dock-toggle.sharp-left= fa :bars
-		.layer-background#banner
-			.banner-background.far
-			%span.title.near
-				%img(src="/images/logo.svg")
-			%a.home-link(href="/")
+		= render 'layouts/banner/banner'
 		= render partial: "layouts/nav"
 		.layer-foreground.body
 			%main.wrapper{class: content_for?(:wrapper) && content_for(:wrapper)}

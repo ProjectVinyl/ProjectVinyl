@@ -1,57 +1,57 @@
-<% StringsHelper.explode([:moz, :webkit, :o]) do |prefix| %>
-@<%= prefix %>keyframes bobben {
-  0% {
-    <%= prefix %>transform: translateY(-100%);
-  }
-  5% {
-    <%= prefix %>transform: translateY(-100%);
-  }
-  15% {
-    <%= prefix %>transform: translateY(0);
-    margin-bottom: 5px;
-  }
-  30% {
-    <%= prefix %>transform: translateY(-50%);
-  }
-  40% {
-    <%= prefix %>transform: translateY(0);
-    margin-bottom: 6px;
-  }
-  50% {
-    <%= prefix %>transform: translateY(-30%);
-  }
-  70% {
-    <%= prefix %>transform: translateY(0%);
-    margin-bottom: 7px;
-  }
-  80% {
-    <%= prefix %>transform: translateY(-15%);
-  }
-  90% {
-    <%= prefix %>transform: translateY(0%);
-    margin-bottom: 8px;
-  }
-  95% {
-    <%= prefix %>transform: translateY(-7%);
-  }
-  97% {
-    <%= prefix %>transform: translateY(0%);
-    margin-bottom: 9px;
-  }
-  99% {
-    <%= prefix %>transform: translateY(-3%);
-  }
-  100% {
-    <%= prefix %>transform: translateY(0);
-    margin-bottom: 9px;
-  }
-}
-@<%= prefix %>keyframes intermediate {
-  0% {
-    background-position: 0 0;
-  }
-  100% {
-    background-position: 30px 0;
-  }
+<% StringsHelper.explode([:bobben, :bobbenagain], ignore_empty: true, wrap_char: '') do |name| %>
+@keyframes <%= name %> {
+	0% {
+		transform: translateY(-100%);
+	}
+	5% {
+		transform: translateY(-100%);
+	}
+	15% {
+		transform: translateY(0);
+		margin-bottom: 5px;
+	}
+	30% {
+		transform: translateY(-50%);
+	}
+	40% {
+		transform: translateY(0);
+		margin-bottom: 6px;
+	}
+	50% {
+		transform: translateY(-30%);
+	}
+	70% {
+		transform: translateY(0%);
+		margin-bottom: 7px;
+	}
+	80% {
+		transform: translateY(-15%);
+	}
+	90% {
+		transform: translateY(0%);
+		margin-bottom: 8px;
+	}
+	95% {
+		transform: translateY(-7%);
+	}
+	97% {
+		transform: translateY(0%);
+		margin-bottom: 9px;
+	}
+	99% {
+		transform: translateY(-3%);
+	}
+	100% {
+		transform: translateY(0);
+		margin-bottom: 9px;
+	}
 }
 <% end %>
+@keyframes intermediate {
+	0% {
+		background-position: 0 0;
+	}
+	100% {
+		background-position: 30px 0;
+	}
+}

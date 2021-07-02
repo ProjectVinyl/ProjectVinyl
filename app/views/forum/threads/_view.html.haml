@@ -3,6 +3,6 @@
 	= surround '(', ')' do
 		= @comments.count
 	= render 'forum/threads/watch_options'
-= render 'comments/new', invert: false
+= render 'comments/new'
 %hr/
 = render 'forum/threads/comments'

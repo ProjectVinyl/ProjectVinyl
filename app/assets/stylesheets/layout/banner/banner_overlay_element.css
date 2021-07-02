@@ -1,0 +1,41 @@
+.banner-overlay .overlay-element {
+  display: flex;
+  z-index: 20;
+  overflow: hidden;
+  background: var(--overlay-color);
+  height: calc(var(--overlay-height) / var(--overlay-rows));
+  border-radius: 0 0 var(--overlay-rounding) var(--overlay-rounding);
+}
+.banner-overlay .overlay-element.sharp-right {
+  border-radius: 0 0 0 var(--overlay-rounding);
+}
+.banner-overlay .overlay-element.sharp-left {
+  border-radius: 0 0 var(--overlay-rounding) 0;
+}
+
+.banner-overlay .overlay-element > * {
+  padding: var(--overlay-padding) calc(var(--overlay-padding) * 1.5);
+  color: var(--header-overlay-element-color);
+  background: none;
+  
+  border-radius: 0;
+  border: none;
+  box-shadow: none;
+  margin: 0;
+  font-size: 1.25em;
+  border: none;
+  color: var(--header-overlay-element-color) !important;
+  text-shadow: none;
+}
+.banner-overlay .overlay-element button {
+  transition: none;
+}
+.banner-overlay .overlay-element > :hover {
+  background: var(--header-overlay-fill);
+  transition: none;
+}
+.banner-overlay .overlay-element > :focus,
+.banner-overlay .overlay-element > :active {
+  background: var(--header-overlay-element-focus-fill);
+  transition: none;
+}

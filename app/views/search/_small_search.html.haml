@@ -1,5 +1,4 @@
-#search
-	%form(action="#{search_index_path}" method="get")
-		%input#search_small(name="q" type="search" placeholder="Search" value="#{query}" title="Separate terms with ',' supports '|' for optional terms and '-' for negation. Use 'title:sss' to search by a specific field.")
-		%button(type="submit" title="Search")= fa :search
-		%a(title="Syntax Help"){href: search_syntax_path}= fa :question
+%form#search.overlay-element(action="#{search_index_path}" method="get")
+	%input#search_small(name="q" type="search" placeholder="Search" value="#{query}" title="Separate terms with ',' supports '|' for optional terms and '-' for negation. Use 'title:sss' to search by a specific field.")
+	%button(type="submit" title="Search")= fa :search
+	%a(title="Syntax Help"){href: search_syntax_path}= fa :question

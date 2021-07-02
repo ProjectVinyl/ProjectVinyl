@@ -5,6 +5,7 @@
   right: 0;
   display: flex;
   white-space: nowrap;
+  gap: var(--overlay-gap);
   flex-direction: row-reverse;
 
   --overlay-color: var(--header-overlay-element-fill);
@@ -12,27 +13,5 @@
   --overlay-rows: 1;
   --overlay-gap: 10px;
   --overlay-rounding: 10px;
-}
-.banner-overlay > * {
-  z-index: 10;
-  background: var(--overlay-color);
-  padding: 10px;
-  height: calc(var(--overlay-height) / var(--overlay-rows));
-  border-radius: 0 0 var(--overlay-rounding) var(--overlay-rounding);
-}
-.banner-overlay > * + * {
-  margin-right: var(--overlay-gap);
-}
-.banner-overlay > .sharp-right {
-  border-radius: 0 0 0 var(--overlay-rounding);
-}
-.banner-overlay > .sharp-left {
-  border-radius: 0 0 var(--overlay-rounding) 0;
-}
-
-.banner-overlay > :hover,
-.banner-overlay > :focus,
-.banner-overlay > .hover,
-.banner-overlay > .focus {
-  --overlay-color: var(--header-overlay-fill) !important;
+  --overlay-padding: 10px;
 }

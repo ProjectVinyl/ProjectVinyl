@@ -2,4 +2,5 @@
   text-decoration: none;
   font-size: 1.25em;
   line-height: 34px;
+  padding: var(--overlay-padding);
 }

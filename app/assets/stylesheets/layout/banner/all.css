@@ -1,6 +1,7 @@
 /*
  *= require ./banner
  *= require ./banner_overlay
+ *= require ./banner_overlay_element
  *= require ./banner_overlay_mobile
  *= require ./overlay_pieces/all
  */

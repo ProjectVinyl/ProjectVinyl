@@ -23,8 +23,8 @@ module StringsHelper
     }).join
   end
 
-  def self.explode(prefixes)
-    yield('')
-    prefixes.each {|p| yield("-#{p}-")}
+  def self.explode(prefixes, ignore_empty: false, wrap_char: '-')
+    yield('') if ignore_empty.nil? || !ignore_empty
+    prefixes.each {|p| yield("#{wrap_char}#{p}#{wrap_char}")}
   end
 end
