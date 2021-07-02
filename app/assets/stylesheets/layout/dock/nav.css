@@ -62,14 +62,21 @@
     flex-grow: 1;
   }
   .header ul li a > span {
-    padding: 12px;
+    padding: 5px 12px;
   }
   .header ul li i {
     display: inline;
   }
   .header ul li i,
   .header ul li .icon {
-    padding: 12px;
+    padding: 5px 15px;
     flex-grow: 0;
+  }
+  .header ul li a > i {
+    padding: 5px 17px;
+  }
+  .header ul li a > i,
+  .header ul li a > .icon  {
+    font-size: 1.1em;
   }
 }
