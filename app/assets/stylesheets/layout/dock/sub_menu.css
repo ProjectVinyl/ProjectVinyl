@@ -30,9 +30,11 @@
     left: 90%;
     width: 10%;
     height: 100vh;
+    background: rgba(0, 0, 0, 0.3);
   }
   nav ul:focus-within ul::before {
-    left: -20%;
+    left: -100%;
+    width: 100%;
   }
 
   nav ul:focus-within,
