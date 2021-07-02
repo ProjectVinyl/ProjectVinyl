@@ -37,7 +37,7 @@
 							%span.label Upload
 		%li.tinted-nav-item.albums{class: selected_path?('albums')}<>
 			%a{href: albums_path}
-				= fw :picture_o
+				= fw :list
 				%span Albums
 				- if user_signed_in?
 					%span.icon.no-dock= fa :caret_down
