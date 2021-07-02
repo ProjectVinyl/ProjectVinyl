@@ -3,7 +3,7 @@
 		= fw :users
 		%span Forum
 		%span.icon.no-dock= fa :caret_down
-	%span.icon.dock-only(tabindex="4")= fw :chevron_right
+	%span.icon.dock-only(tabindex="4")= fw :caret_right
 	%ul.drop-down>
 		- Board.sorted.each do |board|
 			%li
@@ -12,9 +12,9 @@
 					%span.icon= fw :comments
 					%span.label=board.title
 					- if boards.length > 0
-						%span.icon.no-dock= fw :chevron_right
+						%span.icon.no-dock= fw :caret_right
 				- if boards.length > 0
-					%span.icon.dock-only(tabindex="5")= fw :chevron_right
+					%span.icon.dock-only(tabindex="5")= fw :caret_right
 					%ul.drop-down
 						- boards.each do |thread|
 							%li

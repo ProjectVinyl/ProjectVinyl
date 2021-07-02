@@ -45,8 +45,8 @@
 		%a{href: user_watch_history_index_path(current_user)}
 			%span.icon= fw :history
 			%span.label Watch History
-			%span.icon.no-dock= fw :chevron_right
-		%span.icon.dock-only(tabindex="6")= fw :chevron_right
+			%span.icon.no-dock= fw :caret_right
+		%span.icon.dock-only(tabindex="6")= fw :caret_right
 		%ul.drop-down
 			%li
 				%a{href: search_index_path(q: "upvoted_by:#{current_user.id}")}
