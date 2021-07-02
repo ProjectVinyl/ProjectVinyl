@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20210701160352) do
+ActiveRecord::Schema.define(version: 20210701215255) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -158,6 +158,15 @@ ActiveRecord::Schema.define(version: 20210701160352) do
     t.integer "likes_count"
     t.integer "anonymous_id", default: 0
     t.index ["comment_thread_id"], name: "index_comments_on_comment_thread_id"
+  end
+
+  create_table "external_sources", force: :cascade do |t|
+    t.integer "video_id"
+    t.string "provider"
+    t.string "key"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["provider", "key"], name: "index_external_sources_on_provider_and_key"
   end
 
   create_table "notification_receivers", force: :cascade do |t|

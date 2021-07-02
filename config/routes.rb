@@ -214,6 +214,11 @@ Rails.application.routes.draw do
     resources :videos, only: [:index, :show]
   end
 
+  # External redirects #
+  scope module: :external do
+    resource :watch, only: [:show]
+  end
+
   # Short links #
   get 'profile/:id' => 'users#show', constraints: { id: /([0-9]+).*/ }#*/
   get '/:id(-:safe_title)' => 'videos#show', constraints: { id: /([0-9]+)/ }
