@@ -1,0 +1,16 @@
+i.fa.fa-restore, i.fa.fa-volume-mid {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  margin-bottom: -2px;
+  background: transparent no-repeat scroll center center / 100% auto;
+}
+
+i.fa.fa-restore {
+  background-image: url("../fonts/restore-icon.svg");
+}
+
+i.fa.fa-volume-mid {
+  background-image: url("../fonts/vol-mid-icon.svg");
+  width: 16px;
+}

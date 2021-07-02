@@ -17,3 +17,7 @@ i.fa {
 .remove-comment:hover i.fa.fa-undo {
   transform: rotate(-280deg);
 }
+
+i.fa.fa-bullhorn {
+  transform: rotate(-45deg);
+}
