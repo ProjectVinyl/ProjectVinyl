@@ -8,16 +8,14 @@
 	%li
 		%a(rel="nofollow" title="Notifications"){href: notifications_path}
 			%span.icon= fw :bell
-			%span.label
-				Notifications
+			%span.label Notifications
 			%span.icon
 				= surround '(', ')' do
 					= number_with_delimiter current_user.notification_count
 	%li
 		%a(rel="nofollow" title="Messages"){href: inbox_path}
 			%span.icon= fw :envelope
-			%span.label
-				Messages
+			%span.label Messages
 			%span.icon
 				= surround '(', ')' do
 					= number_with_delimiter current_user.message_count
@@ -25,32 +23,28 @@
 	%li
 		%a{href: stars_path}
 			%span.icon= fw :star
-			%span.label
-				Favourites
+			%span.label Favourites
 			%span.icon
 				= surround '(', ')' do
 					= number_with_delimiter current_user.album_items.count
 	%li
 		%a{href: search_index_path(q: "uploaded_by:#{current_user.id}")}
 			%span.icon= fw :play
-			%span.label
-				Uploads
+			%span.label Uploads
 			%span.icon
 				= surround '(', ')' do
 					= number_with_delimiter current_user.videos.count
 	%li
 		%a{href: user_albums_path(current_user)}
 			%span.icon= fw :list
-			%span.label
-				Albums
+			%span.label Albums
 			%span.icon
 				= surround '(', ')' do
 					= number_with_delimiter current_user.albums.count
 	%li
 		%a{href: user_watch_history_index_path(current_user)}
 			%span.icon= fw :history
-			%span.label
-				Watch History
+			%span.label Watch History
 			%span.icon= fw :chevron_right
 		%ul.drop-down
 			%li

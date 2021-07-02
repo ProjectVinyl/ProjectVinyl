@@ -2,7 +2,8 @@
 	%a{href: forum_index_path}
 		= fw :users
 		%span Forum
-		%span.icon<>= fa :caret_down
+		%span.icon.no-dock= fa :caret_down
+	%span.icon.dock-only(tabindex="4")= fw :chevron_right
 	%ul.drop-down>
 		- Board.sorted.each do |board|
 			%li
@@ -11,8 +12,9 @@
 					%span.icon= fw :comments
 					%span.label=board.title
 					- if boards.length > 0
-						%span.icon= fw :chevron_right
+						%span.icon.no-dock= fw :chevron_right
 				- if boards.length > 0
+					%span.icon.dock-only(tabindex="5")= fw :chevron_right
 					%ul.drop-down
 						- boards.each do |thread|
 							%li

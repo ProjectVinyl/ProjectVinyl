@@ -11,7 +11,8 @@
 					%span
 						= current_user.username
 						's Profile
-					%span.icon<>= fa :caret_down
+					%span.icon.no-dock= fa :caret_down
+				%span.icon.dock-only(tabindex="0")= fw :chevron_right
 				= render 'layouts/signed_in_menu'
 		- else
 			%li.tinted-nav-item.forum<>
@@ -22,7 +23,8 @@
 			%a{href: videos_path}
 				= fw :play
 				%span Videos
-				%span.icon<>= fa :caret_down
+				%span.icon.no-dock= fa :caret_down
+			%span.icon.dock-only(tabindex="1")= fw :chevron_right
 			%ul.drop-down>
 				%li
 					%a{href: search_index_path(q: '*', random: 'y')}
@@ -37,9 +39,11 @@
 			%a{href: albums_path}
 				= fw :picture_o
 				%span Albums
+				- if user_signed_in?
+					%span.icon.no-dock= fa :caret_down
 			- if user_signed_in?
-				%span.icon.no-dock<>= fa :caret_down
-				%ul.drop-down.no-dock>
+				%span.icon.dock-only(tabindex="2")= fw :chevron_right
+				%ul.drop-down
 					%li
 						%a(data-title="New Album" data-external-form="#{new_album_path}")
 							%span.icon= fw :plus
@@ -48,7 +52,8 @@
 			%a{href: tags_path}
 				= fw :tags
 				%span Tags
-				%span.icon<>= fa :caret_down
+				%span.icon.no-dock= fa :caret_down
+			%span.icon.dock-only(tabindex="3")= fw :chevron_right
 			%ul.drop-down>
 				%li
 					%a{href: aliases_path}
