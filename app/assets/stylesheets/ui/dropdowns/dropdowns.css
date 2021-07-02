@@ -3,6 +3,7 @@
   right: 0;
   top: 100%;
   min-width: 170px;
+  width: min-content;
   display: block;
   visibility: hidden;
   opacity: 0;
