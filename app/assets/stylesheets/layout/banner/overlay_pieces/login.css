@@ -19,3 +19,7 @@
   border-radius: 15px;
   margin-top: -10px;
 }
+
+a#login {
+  padding: 0;
+}
