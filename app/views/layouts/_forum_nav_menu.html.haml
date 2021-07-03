@@ -3,30 +3,32 @@
 		= fw :users
 		%span Forum
 		%span.icon.no-dock= fa :caret_down
-	%span.icon.dock-only(tabindex="4")= fw :caret_right
-	%ul.drop-down>
-		- Board.sorted.each do |board|
-			%li
-				- boards = board.threads.limit(6)
-				%a{href: board.link}
-					%span.icon= fw :comments
-					%span.label=board.title
+	%span.drop-down-parent
+		%span.icon.dock-only(tabindex="4")= fw :caret_right
+		%ul.drop-down>
+			- Board.sorted.each do |board|
+				%li
+					- boards = board.threads.limit(6)
+					%a{href: board.link}
+						%span.icon= fw :comments
+						%span.label=board.title
+						- if boards.length > 0
+							%span.icon.no-dock= fw :caret_right
 					- if boards.length > 0
-						%span.icon.no-dock= fw :caret_right
-				- if boards.length > 0
-					%span.icon.dock-only(tabindex="5")= fw :caret_right
-					%ul.drop-down
-						- boards.each do |thread|
-							%li
-								%a{href: thread.link}
-									%span.icon= fw :comment
-									%span.label= thread.title
-		%li.divider
-		%li
-			%a{href: users_path}
-				%span.icon= fw :user
-				%span.label Users
-		%li
-			%a{href: forum_search_index_path}
-				%span.icon= fw :search
-				%span.label Find Posts
+						%span.drop-down-parent
+							%span.icon.dock-only(tabindex="5")= fw :caret_right
+							%ul.drop-down
+								- boards.each do |thread|
+									%li
+										%a{href: thread.link}
+											%span.icon= fw :comment
+											%span.label= thread.title
+			%li.divider
+			%li
+				%a{href: users_path}
+					%span.icon= fw :user
+					%span.label Users
+			%li
+				%a{href: forum_search_index_path}
+					%span.icon= fw :search
+					%span.label Find Posts

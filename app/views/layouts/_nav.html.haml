@@ -12,8 +12,9 @@
 						= current_user.username
 						's Profile
 					%span.icon.no-dock= fa :caret_down
-				%span.icon.dock-only(tabindex="0")= fw :caret_right
-				= render 'layouts/signed_in_menu'
+				%span.drop-down-parent
+					%span.icon.dock-only(tabindex="0")= fw :caret_right
+					= render 'layouts/signed_in_menu'
 		- else
 			%li.tinted-nav-item.forum<>
 				%a(href="#{edit_settings_path}" rel="nofollow")
@@ -24,17 +25,18 @@
 				= fw :play
 				%span Videos
 				%span.icon.no-dock= fa :caret_down
-			%span.icon.dock-only(tabindex="1")= fw :caret_right
-			%ul.drop-down>
-				%li
-					%a{href: search_index_path(q: '*', random: 'y')}
-						%span.icon= fw :random
-						%span.label Random
-				- if user_signed_in?
-					%li.no-dock
-						%a{href: new_video_path}
-							%span.icon= fw :upload
-							%span.label Upload
+			%span.drop-down-parent
+				%span.icon.dock-only(tabindex="1")= fw :caret_right
+				%ul.drop-down>
+					%li
+						%a{href: search_index_path(q: '*', random: 'y')}
+							%span.icon= fw :random
+							%span.label Random
+					- if user_signed_in?
+						%li.no-dock
+							%a{href: new_video_path}
+								%span.icon= fw :upload
+								%span.label Upload
 		%li.tinted-nav-item.albums{class: selected_path?('albums')}<>
 			%a{href: albums_path}
 				= fw :list
@@ -42,26 +44,28 @@
 				- if user_signed_in?
 					%span.icon.no-dock= fa :caret_down
 			- if user_signed_in?
-				%span.icon.dock-only(tabindex="2")= fw :caret_right
-				%ul.drop-down
-					%li
-						%a(data-title="New Album" data-external-form="#{new_album_path}")
-							%span.icon= fw :plus
-							%span.label Create
+				%span.drop-down-parent
+					%span.icon.dock-only(tabindex="2")= fw :caret_right
+					%ul.drop-down
+						%li
+							%a(data-title="New Album" data-external-form="#{new_album_path}")
+								%span.icon= fw :plus
+								%span.label Create
 		%li.tinted-nav-item.genres{class: selected_path?('tags')}<>
 			%a{href: tags_path}
 				= fw :tags
 				%span Tags
 				%span.icon.no-dock= fa :caret_down
-			%span.icon.dock-only(tabindex="3")= fw :caret_right
-			%ul.drop-down>
-				%li
-					%a{href: aliases_path}
-						%span.icon= fw :tag
-						%span.label Aliased
-				%li
-					%a{href: implied_index_path}
-						%span.icon= fw :tag
-						%span.label Implied
+			%span.drop-down-parent
+				%span.icon.dock-only(tabindex="3")= fw :caret_right
+				%ul.drop-down>
+					%li
+						%a{href: aliases_path}
+							%span.icon= fw :tag
+							%span.label Aliased
+					%li
+						%a{href: implied_index_path}
+							%span.icon= fw :tag
+							%span.label Implied
 		= render 'layouts/forum_nav_menu'
 		%li.sparkline

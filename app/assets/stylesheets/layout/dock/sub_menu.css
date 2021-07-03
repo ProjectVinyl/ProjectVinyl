@@ -2,63 +2,39 @@
   .header .drop-down::after {
     display: none;
   }
-
-  nav ul {
-    --dock-peek: 10%;
-    --dock-opened-sub-menu-width: 90%;
+  .header ul li {
+    position: static;
   }
 
   nav .drop-down {
     position: absolute;
-    display: none;
+    visibility: visible;
+    opacity: 1;
+    background: var(--content-background);
     top: 0;
     left: 0;
-    transform: translateX(110%);
-    width: var(--dock-opened-sub-menu-width);
-    height: 100wh;
-    opacity: 1;
+    width: calc(90% + 5px);
+    min-height: 100vh;
     box-shadow: none;
+    transform: translateX(130%);
+    transition: transform 0.3s linear !important;
   }
-  nav .drop-down:focus-within {
+  nav .drop-down-parent:focus-within > .drop-down {
     transform: translateX(10%);
   }
   nav .drop-down .drop-down {
     width: 100%;
-    transform: translateX(0%);
+    left: -10%;
   }
 
-  nav li, nav ul {
-    position: static;
-    transition: transform 0.3s linear !important;
-  }
-  nav ul:focus-within {
-    transform: translateX(-90%);
-    min-height: 100vh;
-  }
-
-  nav ul:focus-within ul::before  {
+  nav .drop-down-parent .drop-down::before  {
     display: block;
     position: absolute;
     content: '';
     top: 0;
-    right: 100%;
-    width: var(--dock-peek);
+    left: -10%;
+    width: 10%;
     height: 100vh;
     background: rgba(0, 0, 0, 0.3);
-  }
-
-  nav ul:focus-within,
-  nav ul:focus-within > li,
-  nav ul:focus-within > li > a {
-    background: var(--block-hover-color);
-  }
-
-  nav li:focus-within > .drop-down {
-    display: block;
-    visibility: visible;
-  }
-
-  .header ul li {
-    position: static;
   }
 }

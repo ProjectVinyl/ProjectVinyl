@@ -46,16 +46,17 @@
 			%span.icon= fw :history
 			%span.label Watch History
 			%span.icon.no-dock= fw :caret_right
-		%span.icon.dock-only(tabindex="6")= fw :caret_right
-		%ul.drop-down
-			%li
-				%a{href: search_index_path(q: "upvoted_by:#{current_user.id}")}
-					%span.icon= fw :thumbs_up
-					%span.label Liked Videos
-			%li
-				%a{href: search_index_path(q: "upvoted_by:#{current_user.id}")}
-					%span.icon= fw :thumbs_down
-					%span.label Disliked Videos
+		%span.drop-down-parent
+			%span.icon.dock-only(tabindex="6")= fw :caret_right
+			%ul.drop-down
+				%li
+					%a{href: search_index_path(q: "upvoted_by:#{current_user.id}")}
+						%span.icon= fw :thumbs_up
+						%span.label Liked Videos
+				%li
+					%a{href: search_index_path(q: "upvoted_by:#{current_user.id}")}
+						%span.icon= fw :thumbs_down
+						%span.label Disliked Videos
 	%li.divider
 	%li
 		%a(rel="nofollow"){href: edit_user_registration_path}
