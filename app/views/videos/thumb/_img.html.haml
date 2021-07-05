@@ -1,2 +1,7 @@
 %img(loading="lazy"){ src: video.tiny_thumb(current_user, current_filter),
 					data: { fallback: { src: spoilered ? "/images/default-cover-small-g.png" : "/images/default-cover-small.png" } } }
+- if spoilered
+	- reason_title,reason_text = current_filter.spoiler_reason_for?(video)
+	.overlay-element.bottom.left{title: reason_title}
+		*
+		= truncate reason_text

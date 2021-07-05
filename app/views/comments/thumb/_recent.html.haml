@@ -2,7 +2,8 @@
 	%td
 		%a.thumb.tiny.left{href: recent.comment_thread.owner.link}
 			- if recent.comment_thread.video?
-				.tile{style: format_bg(recent.comment_thread.owner.tiny_thumb(current_user, current_filter))}
+				- spoilered = current_filter.video_spoilered?(recent.comment_thread.owner)
+				.tile= render partial: 'videos/thumb/img', locals: { video: recent.comment_thread.owner, spoilered: spoilered }
 			- else
 				.tile{style: format_bg(recent.comment_thread.icon)}
 	%td

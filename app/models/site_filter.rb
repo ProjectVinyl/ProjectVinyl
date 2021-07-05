@@ -25,7 +25,7 @@ class SiteFilter < ApplicationRecord
     !(tag_ids & @spoilered_tag_ids).empty?
   end
 
-  def spoiler_reason(video)
+  def blacklisted_tags(video)
     return [] if !__spoilers_active?
 
     video.tags
@@ -33,8 +33,15 @@ class SiteFilter < ApplicationRecord
       .map{|tag| tag.name }
   end
 
+  def spoiler_reason_for?(video)
+    blacklisted = blacklisted_tags(video)
+    return ["Complex Filter", "Complex Filter"] if blacklisted.empty?
+    blacklisted = blacklisted.join(',')
+    ["Tagged: #{blacklisted}", blacklisted]
+  end
+
   def spoiler_image(video, fallback)
-    reason = spoiler_reason(video)
+    reason = blacklisted_tags(video)
     return fallback if reason.empty?
 
     "/spoiler_images/#{reason.first}.png"
