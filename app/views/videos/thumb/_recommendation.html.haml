@@ -1,8 +1,9 @@
+- spoilered = current_filter.video_spoilered?(recommendation)
 - rating = recommendation.rating_tags.first
 %a.generic.thumb{class: [recommendation.hidden && "thumb-hidden",
 									rating && "video-rating rating-#{rating.suffex}"], href: recommendation.link}>
 	.tile
-		%img(loading="lazy" src="#{recommendation.tiny_thumb(current_user, current_filter)}" data-fallback-src="#{spoilered ? "/images/default-cover-small-g.png" : "/images/default-cover-small.png"}")
+		= render partial: 'videos/thumb/img', locals: { video: recommendation, spoilered: spoilered }
 		.overlay-element.bottom.right
 			- if recommendation.liked?
 				= fa "thumbs-#{recommendation.disliked? ? 'down red' : 'up green'}"
@@ -10,7 +11,6 @@
 		= render partial: 'videos/thumb/save_button', locals: { video: recommendation }
 		= render partial: 'videos/thumb/_watch_time_bar', locals: { id: recommendation.id }
 	.details
-		- spoilered = current_filter.video_spoilered?(recommendation)
 		%span.title{title: !spoilered && recommendation.title}
 			- if recommendation.hidden
 				%span.icon(title="Private - Only you can see this item")= fa :lock

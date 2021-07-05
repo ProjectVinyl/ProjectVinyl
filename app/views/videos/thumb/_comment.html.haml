@@ -1,11 +1,11 @@
+- spoilered = current_filter.video_spoilered?(comment)
 %a.generic.thumb{class: comment.hidden && "thumb-hidden", href: "#{comment.link}#comment_#{comment_id}"}
 	.tile
-		%img(loading="lazy" src="#{comment.tiny_thumb(current_user, current_filter)}" data-fallback-src="#{spoilered ? "/images/default-cover-small-g.png" : "/images/default-cover-small.png"}")
+		= render partial: 'videos/thumb/img', locals: { video: comment, spoilered: spoilered }
 		%span.overlay-element.bottom.right
 			- if comment.liked?
 				= fa "thumbs-#{comment.disliked? ? 'down red' : 'up green'}"
 			= duration comment.duration
 		= render partial: 'videos/thumb/_watch_time_bar', locals: { id: comment.id }
-	- spoilered = current_filter.video_spoilered?(comment)
 	.title{title: !spoilered && comment.title}
 		= spoilered ? "[Spoilered]" : comment.title

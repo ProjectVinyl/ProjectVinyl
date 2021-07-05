@@ -1,7 +1,8 @@
 - if (mix_string = mix.mix_string(current_user)).length > 0
+	- spoilered = current_filter.video_spoilered?(mix)
 	%a.generic.mix.thumb(href="#{mix.link}?q=#{mix_string}&index=0" data-href="#{mix.link}?q=#{mix_string}&index=0")
 		.tile
-			%img(loading="lazy" src="#{mix.tiny_thumb(current_user, current_filter)}" data-fallback-src="#{spoilered ? "/images/default-cover-small-g.png" : "/images/default-cover-small.png"}")
+			= render partial: 'videos/thumb/img', locals: { video: mix, spoilered: spoilered }
 			.overlay-element.bottom.right= fa :feed
 		.details
 			.title
