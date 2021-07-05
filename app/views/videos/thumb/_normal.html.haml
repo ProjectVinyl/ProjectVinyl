@@ -4,7 +4,7 @@
 	.thumb{class: [normal.hidden && "thumb-hidden",
 									rating && "video-rating rating-#{rating.suffex}"]}
 		.tile
-			%img(loading="lazy"){src: normal.tiny_thumb(current_user, current_filter)}
+			%img(loading="lazy" src="#{normal.tiny_thumb(current_user, current_filter)}" data-fallback-src="#{spoilered ? "/images/default-cover-small-g.png" : "/images/default-cover-small.png"}")
 			.overlay-element.bottom.right= duration normal.duration
 			= render partial: 'videos/thumb/save_button', locals: { video: normal }
 			= render partial: 'videos/thumb/_watch_time_bar', locals: { id: normal.id }

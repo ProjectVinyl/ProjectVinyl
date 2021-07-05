@@ -25,6 +25,21 @@ class SiteFilter < ApplicationRecord
     !(tag_ids & @spoilered_tag_ids).empty?
   end
 
+  def spoiler_reason(video)
+    return [] if !__spoilers_active?
+
+    video.tags
+      .filter{|tag| spoilers?(tag.id) }
+      .map{|tag| tag.name }
+  end
+
+  def spoiler_image(video, fallback)
+    reason = spoiler_reason(video)
+    return fallback if reason.empty?
+
+    "/spoiler_images/#{reason.first}.png"
+  end
+
   def videos
     selector = ProjectVinyl::Search::ActiveRecord.new(Video) {|results| load_model_data results.ids}
     selector.must_not(__elastic_hide_params) if __filter_present? hide_filter

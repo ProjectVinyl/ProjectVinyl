@@ -1,7 +1,7 @@
 %li.generic.thumb{class: admin.processed == false && "working"}
 	%a.thumb{href: admin_video_path(admin), title: admin.moderation_note}
 		.tile
-			%img(loading="lazy"){src: admin.tiny_thumb(current_user, current_filter)}
+			%img(loading="lazy" src="#{admin.tiny_thumb(current_user, current_filter)}" data-fallback-src="#{spoilered ? "/images/default-cover-small-g.png" : "/images/default-cover-small.png"}")
 			.overlay-element.bottom.right= duration admin.duration
 		.details
 			.title

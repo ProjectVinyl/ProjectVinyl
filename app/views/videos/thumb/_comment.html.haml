@@ -1,6 +1,6 @@
 %a.generic.thumb{class: comment.hidden && "thumb-hidden", href: "#{comment.link}#comment_#{comment_id}"}
 	.tile
-		%img(loading="lazy"){src: comment.tiny_thumb(current_user, current_filter)}
+		%img(loading="lazy" src="#{comment.tiny_thumb(current_user, current_filter)}" data-fallback-src="#{spoilered ? "/images/default-cover-small-g.png" : "/images/default-cover-small.png"}")
 		%span.overlay-element.bottom.right
 			- if comment.liked?
 				= fa "thumbs-#{comment.disliked? ? 'down red' : 'up green'}"
