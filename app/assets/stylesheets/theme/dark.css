@@ -60,6 +60,11 @@ html, body {
   --page-shadow: 0 0 6px 0 rgba(0,0,0,0.6);
 }
 
+.playback-controls .floating-player-details {
+  --floating-player-title-primary-color: rgba(220,220,220,1);
+  --floating-player-title-secondary-color: rgba(220,220,220,0.3);
+}
+
 .notice {
   background: #003f5e;
   color: #c6c1c1;

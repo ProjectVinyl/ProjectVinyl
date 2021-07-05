@@ -1,6 +1,9 @@
 
 .playback-controls .floating-player-details {
   display: none;
+  
+  --floating-player-title-primary-color: rgba(20,20,20,1);
+  --floating-player-title-secondary-color: rgba(20,20,20,0.5);
 }
 
 .floating-player .floating-player-details {
@@ -9,13 +12,22 @@
   flex-direction: row;
   --thumb-width: 40px;
   width: auto;
-  max-width: 200px;
+  max-width: 300px;
   gap: 10px;
 }
 
 .floating-player-details .title {
+  display: block;
   background: var(--block-hover-color);
   border-radius: var(--block-radius);
-  padding: 5px 3px;
+  padding: 7px;
+  text-align: left;
   font-weight: bold;
+  font-size: 0.8em;
+  line-height: 0.8em;
+  color: var(--floating-player-title-secondary-color);
+}
+.floating-player-details .title::first-line {
+  font-size: 1.1em;
+  color: var(--floating-player-title-primary-color);
 }
