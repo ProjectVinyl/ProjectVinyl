@@ -5,6 +5,7 @@ require 'uri'
 module ProjectVinyl
   module Web
     class Youtube
+      URL_REG = /((https?:)?\/\/)?(www\.|m\.)?(youtube\.[^\/]+\/(watch\?.*v=|embed\/)|youtu\.be\/)([^&]+)/.freeze
       ALL_FLAGS = [
         :title, :views, :duration, :coppa, :description, :rating,
         :series, :artist, :thumbnails, :tags, :categories, :annotations,
@@ -60,12 +61,10 @@ module ProjectVinyl
 
         data
       end
-      
+
       def self.is_video_link(url)
-        if url.nil? || (url = url.strip).empty?
-          return false
-        end
-        !(url =~ /http?(s):\/\/(www\.|m\.)(youtube\.[^\/]+\/(watch\?.*v=|embed\/)|youtu\.be\/)([^&]+)/).nil?
+        return false if url.nil?
+        !(url =~ URL_REG).nil?
       end
 
       def self.embed_url(url)
@@ -73,14 +72,15 @@ module ProjectVinyl
       end
 
       def self.video_id(url)
-        return url.split('v=')[1].split('&')[0] if url.index('v=')
-        url.split('?')[0].split('/').last
+        url = URL_REG.match(url)
+        return nil if url.nil?
+        url[6]
       end
 
       def self.flag_set(hash, key)
         hash.key?(key) && hash[key]
       end
-      
+
       private
       def self.__coppa(meta)
         {
@@ -88,7 +88,7 @@ module ProjectVinyl
           coppa: meta[:age_limit].to_i > 0
         }
       end
-      
+
       def self.__series(meta)
         {
           name: meta[:series],

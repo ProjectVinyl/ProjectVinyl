@@ -7,6 +7,5 @@ class CreateVideoExternalSource < ActiveRecord::Migration[5.1]
       t.timestamps null: false
     end
     add_index :external_sources, [:provider, :key]
-    ProcessExternalSourcesJob.perform_later
   end
 end
