@@ -10,22 +10,18 @@ module PathHelper
   end
 
   def self.clean_url(s)
-    if s.blank?
-      return ''
-    end
-
-    if s.index('http:') != 0 && s.index('https:') != 0
-      return "https:#{s}"
-    end
-
+    return '' if s.blank?
+    return "https:#{s}" if s.index('http:') != 0 && s.index('https:') != 0
     s
   end
 
   def self.url_safe(txt)
+    return txt if txt.blank?
     txt.gsub(/(\/|[^:\!\@\$\^&\*\(\)\+=_;:'",a-zA-Z0-9\-])+/, '-').gsub(/--/, '-').gsub(/(^-)|(-$)/, '')
   end
 
   def self.url_safe_for_tags(txt)
+    return txt if txt.blank?
     txt.gsub(/(\/|[^:\!\@\$\^&\*\(\)\+=_;:'",a-zA-Z0-9 \-])+/, '-').gsub(/--/, '-').gsub(/(^-)|(-$)/, '')
   end
 
