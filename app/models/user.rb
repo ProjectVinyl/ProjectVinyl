@@ -131,7 +131,7 @@ class User < ApplicationRecord
   end
 
   def validate_name(name)
-    return false name.nil?
+    return false if name.nil?
     return false if (match = User.where('username = ? OR safe_name = ?', name, name).first) && match.id != id
     return false if bp_id = name.downcase.match(BP_PONY) && bp_id != id.to_s(36)
     return false if !(name.present? && !name.strip.empty?)
