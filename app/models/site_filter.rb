@@ -55,14 +55,13 @@ class SiteFilter < ApplicationRecord
   end
 
   def video_spoilered?(video)
-    return false if !(video || __spoilers_active?)
+    return false if !(video && __spoilers_active?)
     load_model_data([video.id])
     !__get_or_load_unspoiler_cache.include?(video.id)
   end
 
   def load_model_data(video_ids)
     return if !__spoilers_active?
-
     video_ids = video_ids.uniq
     video_ids = video_ids.filter{|id| !__loaded_model_data?(id) }
     return if video_ids.empty?
