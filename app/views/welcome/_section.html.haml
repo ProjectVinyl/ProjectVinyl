@@ -1,6 +1,6 @@
 ﻿%section.page.seamless.slim
 	%h1
-		%a{href: search_index_path(tagquery: filter, orderby: order)}= label
+		%a{href: search_index_path(q: filter, orderby: order)}= label
 	.group
 		%ul.horizontal.latest
 			= render partial: 'videos/thumb/normal', collection: collection
