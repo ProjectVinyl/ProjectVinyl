@@ -6,8 +6,8 @@
 			- @your_filters = SiteFilter.where(user_id: current_user.id).where.not(id: current_filter.id)
 			- if @your_filters.length > 0
 				%optgroup(label="Your Filters")
-				- @your_filters.each do |i|
-					%option{value: i.id}=i.name
+					- @your_filters.each do |i|
+						%option{value: i.id}=i.name
 		- @global_filters = SiteFilter.where(user_id: nil).where.not(id: current_filter.id)
 		- if @global_filters.length > 0
 			%optgroup(label="Global Filters")
