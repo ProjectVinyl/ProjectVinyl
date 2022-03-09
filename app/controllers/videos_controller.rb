@@ -146,6 +146,8 @@ class VideosController < Videos::BaseVideosController
 
     return error('Error', 'You need at least one tag.') if video[:tag_string].blank?
 
+    source = PathHelper.clean_url(video[:source])
+
     if !source || source.blank?
       video[:tag_string] = (video[:tag_string].split(',') + ['source needed']).uniq.join(',')
     end
@@ -166,7 +168,6 @@ class VideosController < Videos::BaseVideosController
     ext = Mimes.ext(file.content_type) if ext.blank?
 
     title = StringsHelper.check_and_trunk(video[:title], 'Untitled Video')
-    source = PathHelper.clean_url(video[:source])
 
     Video.transaction do
       @video = user.videos.create(

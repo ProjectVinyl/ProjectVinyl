@@ -72,7 +72,7 @@ module WithFiles
   end
 
   def self.storage_path(date)
-    date.strftime("%Y/%-m/%-d")
+    (date || DateTime.now).strftime("%Y/%-m/%-d")
   end
 
   def storage_path
