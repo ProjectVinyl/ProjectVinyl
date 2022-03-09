@@ -1,16 +1,19 @@
 #upload {
+  --hover-shadow: #bbb;
   background: var(--content-background);
   transition: text-shadow 0.5s ease, background 0.5s ease;
   border-radius: var(--page-radius);
 }
 #upload:hover {
+  text-shadow: 0 0 50px var(--hover-shadow);
+}
+#upload:hover .file-select::before {
   background: var(--content-highlight);
-  text-shadow: 0 0 50px #bbb;
 }
 
 #upload .playback-controls {
-  --controls-background: #eee;
-  --controls-border: #ccc;
+  --controls-background:  var(--block-emboss-color);
+  --controls-border: var(--block-emboss-hover-color);
   --bob-tint: var(--content-background);
   --bob-highlight: #efefef;
   --bob-outline: #bbb;
@@ -40,10 +43,19 @@
   margin: 0;
 }
 
+#upload .ui:not(.drag-target) {
+  margin: 0 10px;
+}
+
 #upload .video {
   margin-bottom: 50px;
 }
 
 #upload .video .player::after {
   display: none;
+}
+
+#upload #video-upload {
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
 }

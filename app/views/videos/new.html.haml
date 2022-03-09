@@ -70,7 +70,7 @@
 							%tr
 								%td.field
 									= f.text_field :source, class: "input", placeholder: "Source"
-									.notice.alert.info.hidden(style="color:red")
+									.notice.alert.hidden
 							%tr.premier-input
 								%td.field
 									%label.button.state-toggle.toggled{data: {parent: ".premier-input",state: :enabled, bubble: :true}}
@@ -86,10 +86,9 @@
 											Time
 											%input(name="premier[time]" type="time")
 							%tr
-								%td
-									.actions
-										%button.action.change-video(type="button") Change Main File
-										%span.notify.bob-holder
-											.bobber.bob-left Cover art is required to upload audio files.
-											= f.submit "Upload", class: "action right green"
-									= render 'foobar'
+								%td.actions
+									%span.spacer
+									%button.action.change-video(type="button") Change Main File
+									%span.notify.bob-holder
+										.bobber.bob-left Cover art is required to upload audio files.
+										= f.submit "Upload", class: "action right green"

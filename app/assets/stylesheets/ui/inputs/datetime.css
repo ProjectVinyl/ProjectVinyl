@@ -1,0 +1,6 @@
+
+label input[type="date"], label input[type="time"] {
+  background: none;
+  color: inherit;
+  font: inherit;
+}

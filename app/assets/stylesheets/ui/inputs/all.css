@@ -9,5 +9,6 @@
  *= require ./checkboxes
  *= require ./autolookup
  *= require ./options
+ *= require ./datetime
  */
  

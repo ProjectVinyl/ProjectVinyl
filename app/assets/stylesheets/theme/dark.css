@@ -90,7 +90,7 @@ html, body {
   --mention-color: #b7b7b7;
   --user-link-color: #3fb7df;
 }
-label.options {
+label.options, .post {
   --block-border-color: #555;
 }
 label.focus .content {
@@ -242,4 +242,8 @@ hr {
 
 #search_small::placeholder {
   opacity: 1;
+}
+
+#upload {
+  --hover-shadow: #000;
 }
