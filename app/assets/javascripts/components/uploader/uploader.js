@@ -1,4 +1,4 @@
-import { getTagEditor } from '../tageditor';
+import { getTagEditor } from '../tag_editor/all';
 import { ThumbPicker } from './thumbnailpicker';
 import { resizeFont } from '../../ui/resize';
 import { focusTab } from '../../ui/tabsets/tabset';
@@ -28,8 +28,7 @@ function cleanup(title) {
   // 5. Strip whitespace
   return title
     .toLowerCase()
-    .replace(/^[0-9]*/g, '')
-    .replace(/[-_]|[^a-z\s]/gi, ' ')
+    .replace(/[-_]|[^0-9a-z\s]/gi, ' ')
     .replace(/(^|\s)[a-z]/g, i => i.toUpperCase())
     .trim() || "Untitled";
 }
@@ -62,9 +61,9 @@ function Uploader() {
   
   this.thumbPick = this.el.querySelector(`li[data-target="thumbpick_${this.id}"]`);
   this.thumbUpload = this.el.querySelector(`li[data-target="thumbupload_${this.id}"]`);
-  
+
   this.tagEditor = getTagEditor(this.el.querySelector('.tag-editor'));
-  
+
   this.source = this.el.querySelector('#video_source');
   this.srcNeeded = true;
   
@@ -170,18 +169,21 @@ Uploader.prototype = extendObj({
       this.el.info.classList.add('hidden');
     }
     
-    if (tags.length === 0) return this.notify('You need at least one tag.');
+    if (tags.length === 0) {
+      return this.notify('You need at least one tag.');
+    }
+
     this.ready = true;
     this.el.notify.classList.remove('shown');
   },
   startOver() {
-    this.tab.classList.remove('uploading', 'error', 'waiting');
-    this.form.classList.remove('uploading', 'error', 'waiting');
+    this.tab.classList.remove('uploading', 'error', 'pending');
+    this.form.classList.remove('uploading', 'error', 'pending');
   },
   update(percentage) {
     this.tab.classList.add('uploading');
     this.tab.progress.fill.style.setProperty('--status-progress', `${percentage}%`);
-    this.tab.classList.toggle('waiting', percentage >= 100);
+    this.tab.classList.toggle('pending', percentage >= 100);
   },
   complete(ref) {
     this.form.classList.remove('uploading');
@@ -199,7 +201,7 @@ Uploader.prototype = extendObj({
   },
   error() {
     this.tab.classList.add('error');
-    this.tab.classList.remove('waiting');
+    this.tab.classList.remove('pending');
   },
   dispose() {
     INSTANCES.splice(INSTANCES.indexOf(this), 1);

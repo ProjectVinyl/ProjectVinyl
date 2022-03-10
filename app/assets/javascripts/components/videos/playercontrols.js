@@ -41,7 +41,7 @@ function didBufferChange(old, neu) {
 }
 
 function findChapter(chapters, time) {
-  return chapters.filter(chapter => chapter.time < time).reverse()[0] || {
+  return (chapters || []).filter(chapter => chapter.time < time).reverse()[0] || {
     title: '',
     time: 0
   };
@@ -51,11 +51,6 @@ function drawPreview(controls, progress) {
   const time = controls.player.getDuration() * progress;
   const chapter = findChapter(controls.player.params.chapters, time);
 
-  console.log({
-    chapter, time, 
-    chapters: controls.player.params.chapters
-  });
-  
   controls.track.preview.style.left = (progress * 100) + '%';
   controls.track.preview.dataset.time = `${toHMS(time)}\n${chapter.title}`;
   controls.preview.draw(time);

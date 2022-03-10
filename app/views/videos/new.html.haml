@@ -16,7 +16,7 @@
 			%section.tab-set.full-width.resize-holder.uploaded-preview.preview-selective
 				%ul.ui.hidden.tab-set.tabs
 					%li.button.selected(data-target="thumbpick_{id}") Pick Thumbnail
-					%li.button(data-target="thumbupload_{id}") Upload Image
+					%li.button(data-target="thumbupload_{id}") Upload Cover
 				.preview-selective-selected#upload
 					.ui.hidden
 						.tab.selected.video#video(data-tab="thumbpick_{id}" data-pending="1" data-video="0")
@@ -26,13 +26,13 @@
 							%span.drop-icon
 								%div
 									= fa :picture_o
-									.msg Select Cover Art
+									.msg Drag and drop Cover Art
 							= f.file_field :cover, accept: "image/*"
 					.ui.shown.cover-block.drag-target.file-select.video-drop#video-upload
 						%span.drop-icon
 							%div
 								= fa :upload
-								.msg Select an Audio/Video file to upload
+								.msg Drag and Drop a video file to upload
 						= f.file_field :file, accept: "audio/*,video/*"
 				.progressor
 					.cover-block
@@ -49,15 +49,6 @@
 										= f.text_field :title, class: "input"
 										%span.edit= fa :pencil
 										%span.hidden 11
-									.tag-set.subheading
-										%span.uploaded
-											Uploaded on
-											= Time.now.strftime('%e %B %Y')
-											by
-											%a.user-link.link{href: current_user.link, data: {id: current_user.id}}= current_user.username
-										%span.views.right
-											= number_with_delimiter @video.views
-											views
 							%tr
 								%td
 									= render layout: "comments/description_box" do
@@ -88,7 +79,11 @@
 							%tr
 								%td.actions
 									%span.spacer
-									%button.action.change-video(type="button") Change Main File
+									%button.action.change-video(type="button")
+										Change File
+										= fa :exchange
 									%span.notify.bob-holder
 										.bobber.bob-left Cover art is required to upload audio files.
-										= f.submit "Upload", class: "action right green"
+										= f.button "Upload", class: "action right green", tag: :button do
+											Upload
+											= fa :upload

@@ -70,6 +70,8 @@ html, body {
   --bubble-color: #fafafa;
   --bubble-hover-color: #efefef;
 
+  --bobber-border-color: #aaa;
+
   --table-inner-border: rgba(0,0,0,0.1);
 }
 label.options {

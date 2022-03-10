@@ -2,13 +2,16 @@ import { uploadForm, defaultCallbacks } from '../../utils/progressform';
 
 function tick(next) {
   const uploader = next();
-  if (!uploader) return;
+  if (!uploader) {
+    return;
+  }
+
   uploader.tab.classList.add('loading');
-  uploader.tab.classList.add('waiting');
+  uploader.tab.classList.add('pending');
   uploadForm(uploader.form, {
-    progress(percentage, secondsRemaining, message, fill) {
+    progress(percentage, duration, message, fill) {
       uploader.update(percentage);
-      defaultCallbacks.progress(percentage, secondsRemaining, message, fill);
+      defaultCallbacks.progress(percentage, duration, message, fill);
       if (next && percentage >= 100) next = tick(next);
     },
     success(data) {

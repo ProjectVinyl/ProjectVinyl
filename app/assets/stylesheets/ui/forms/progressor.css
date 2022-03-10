@@ -50,7 +50,8 @@ form.uploading .uploaded-preview + .progressor {
   line-height: 0px;
 }
 
-.waiting .progress .fill {
+.pending .progress .fill {
+  --status-progress: 100%;
   animation: 1s linear infinite intermediate;
   background: -webkit-repeating-linear-gradient(
     45deg,

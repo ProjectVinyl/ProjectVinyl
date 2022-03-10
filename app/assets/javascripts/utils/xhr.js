@@ -30,9 +30,9 @@ export function xhr(method, url, data, callbacks) {
       
       const timeElapsed = new Date() - timeStarted;
       const uploadSpeed = e.loaded / (timeElapsed / 1000);
-      const secondsRemaining = new Duration((e.total - e.loaded) / uploadSpeed);
+      const duration = new Duration((e.total - e.loaded) / uploadSpeed);
       
-      callbacks.progress(Math.min((e.loaded / e.total) * 100, 100), secondsRemaining);
+      callbacks.progress(Math.min((e.loaded / e.total) * 100, 100), duration);
     });
   }
   xhr.withCredentials = true;

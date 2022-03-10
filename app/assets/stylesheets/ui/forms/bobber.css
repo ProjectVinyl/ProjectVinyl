@@ -13,7 +13,6 @@
   white-space: nowrap;
   
   --content-offset: calc(50% -54px);
-  --bobber-border-color: #aaa;
 }
 .bobber::after {
   position: absolute;

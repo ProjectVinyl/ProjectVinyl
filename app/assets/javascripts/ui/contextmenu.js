@@ -33,7 +33,14 @@ ContextMenu.prototype = {
     
     val(initial);
   },
+  setDisabled(disabled) {
+    this.disabled = disabled;
+  },
   show(ev) {
+    if (this.disabled) {
+      return;
+    }
+
     ev.preventDefault();
     
     let x = ev.clientX, y = ev.clientY;
@@ -54,7 +61,9 @@ ContextMenu.prototype = {
     this.dom.classList.remove('hidden');
   },
   hide(ev) {
-    if (ev.which !== 1 || this.dom.classList.contains('hidden')) return;
+    if (ev.which !== 1 || this.dom.classList.contains('hidden')) {
+      return;
+    }
     this.dom.classList.add('hidden');
     return true;
   }

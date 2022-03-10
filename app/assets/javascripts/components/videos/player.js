@@ -153,8 +153,9 @@ Player.prototype = {
   },
   setAutoplay(on) {
     this.__autoplay = on;
-    cookies.set('autoplay', on);
-
+    if (!this.nonpersistent) {
+      cookies.set('autoplay', on);
+    }
     if (on) {
       this.setLoop(false);
     }
@@ -163,8 +164,9 @@ Player.prototype = {
   },
   setAutostart(on) {
     this.__autostart = on;
-    cookies.set('autostart', on);
-
+    if (!this.nonpersistent) {
+      cookies.set('autostart', on);
+    }
     return on;
   },
   setLoop(on) {
@@ -337,7 +339,9 @@ Player.prototype = {
     }
     this.volumeLevel = volume;
     this.isMuted = muted;
-    cookies.set('player_volume', this.volumeLevel);
+    if (!this.nonpersistent) {
+      cookies.set('player_volume', this.volumeLevel);
+    }
     this.controls.repaintVolumeSlider(muted ? 0 : volume);
   }
 };

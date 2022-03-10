@@ -11,19 +11,29 @@ export function createMiniTile(player) {
   return {
     dom,
     draw(time) {
+      const shown = player.params.path && player.params.id;
+
+      dom.classList.toggle('hidden', !shown);
+
+      if (!shown) {
+        return;
+      }
+
       if (player.audioOnly) {
         time = 0;
       }
 
       let frameNumber = (time * player.params.framerate) / 20;
 
-      if (frameNumber == lastFrameNumber) return;
+      if (frameNumber == lastFrameNumber) {
+        return;
+      }
 
       lastFrameNumber = frameNumber;
 
       let [pageNumber, frameIndex] = divmod(frameNumber, FRAMES_PER_SHEET)
 
-      pageNumber = ('' + (pageNumber + 1)).padStart(3, '0')
+      pageNumber = ('' + (pageNumber + 1)).padStart(3, '0');
 
       const [frameY, frameX] = divmod(frameIndex, FRAMES_PER_SIDE);
 

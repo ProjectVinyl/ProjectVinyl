@@ -3,13 +3,18 @@ import { Player } from '../videos/player';
 
 export const ThumbPicker = extendFunc(Player, {
   constructor(el) {
+    this.nonpersistent = true;
     ThumbPicker.Super.constructor.call(this, el, true);
     this.timeInput = el.querySelector('input');
     this.controls.fullscreen.parentNode.removeChild(this.controls.fullscreen);
     this.controls.volume.parentNode.removeChild(this.controls.volume);
+    this.contextmenu.setDisabled(true);
+    this.waterdrop = null;
   },
   pause() {
-    if (this.video) this.video.pause();
+    if (this.video) {
+      this.video.pause();
+    }
     return false;
   },
   createMediaElement() {

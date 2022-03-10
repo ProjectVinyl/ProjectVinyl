@@ -54,7 +54,9 @@ html, body {
   
   --bubble-color: #171616;
   --bubble-hover-color: #2d2727;
-  
+
+  --bobber-border-color: #000;
+
   --table-inner-border: rgba(255, 255, 255, 0.3);
   
   --page-shadow: 0 0 6px 0 rgba(0,0,0,0.6);
