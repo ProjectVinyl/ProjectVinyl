@@ -50,7 +50,7 @@
 		%tr.actions
 			%td.label Reindex Video
 			%td.field
-				= form_for(@video, as: "video", url: admin_reindex_path(id: :video), html: { method: :put }) do |f|
+				= form_for(@video, as: "video", url: admin_search_reindex_path(id: :video), html: { method: :put }) do |f|
 					= f.text_field :id, hidden: true
 					= f.submit "Reindex"
 		%tr.actions

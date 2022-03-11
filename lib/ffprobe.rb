@@ -2,7 +2,6 @@ require 'digest/md5'
 require 'open3'
 
 class Ffprobe
-
   SQUARE_CROP_COM = Ffmpeg.escape_filter_par('crop=min(iw,ih):min(iw,ih)').freeze
 
   def self.length(file)
@@ -55,7 +54,7 @@ class Ffprobe
   def self.run_command(*com)
     com = com.map{|i| i.to_s}
     puts "FFPROBE RUN: #{com}"
-    stdout, error_str, status = Open3.capture3(com.join(' '))
+    stdout, error_str, status = Open3.capture3(*com)
     stdout
   end
 end

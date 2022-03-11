@@ -1,15 +1,22 @@
 .row
-	.cell= search_status
-	- begin
-		- es = search_status.to_s.titlecase.constantize.__elasticsearch__
-		- mappings = es.mappings
-		- mappings = mappings.to_hash[mappings.type.to_sym][:properties]
-		.cell
+	.cell
+		%b= search_status.to_s.titlecase
+	.cell
+		- if current_user.is_admin?
+			%a.button.red{href: admin_search_reimport_path(id: search_status),
+					data: {confirm: "", method: :put, title: "Re-Import #{search_status.to_s.titlecase} Index"}}
+				Re-Import
+				= fw :refresh
+		%a.button.blue{href: admin_search_reindex_path(id: search_status),
+					data: {confirm: "", method: :put, title: "Re-Index All #{search_status.to_s.titlecase}s"}}
+			Re-Index
+			= fw :save
+		%hr
+		- begin
+			- es = search_status.to_s.titlecase.constantize.__elasticsearch__
+			- mappings = es.mappings
+			- mappings = mappings.to_hash[mappings.type.to_sym][:properties]
 			- mappings.keys.each do |key|
 				%span.secondary= "| #{key}:#{mappings[key][:type]}"
-	- rescue
-		.cell Uh oh! Looks like elasticsearch is not running.
-	- if current_user.is_admin?
-		.cell.actions
-			%a.button.red{href: admin_reindex_path(id: search_status), data: {confirm: "", method: :put, title: "Reindex #{search_status.to_s.titlecase}"}}
-				= fw :refresh
+		- rescue
+			Uh oh! Looks like elasticsearch is not running.

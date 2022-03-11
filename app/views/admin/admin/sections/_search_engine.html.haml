@@ -2,4 +2,19 @@
 	= fa :search
 	Search Engine
 .listing.compact
-	.items= render partial: 'admin/admin/sections/search_status', collection: @tables
+	%h2 Elastic-Search Status
+	.items
+		.row
+			.cell Read-Only
+			.cell.actions
+				%button.action.toggle(data-action="elastic_read_only" data-target="admin/settings/toggle")<
+					%span.icon
+						- if ElasticSearch.read_only?
+							= fa :check
+					%span.label Read Only
+	%h2 Model Indices
+	.items
+		.row.header
+			.cell Index-Name
+			.cell Index Details
+		= render partial: 'admin/admin/sections/search_status', collection: @tables

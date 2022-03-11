@@ -9,6 +9,11 @@ module Admin
     end
     
     def toggle
+      if (params[:key] == 'elastic_read_only')
+        return render json: {
+          added: ElasticSearch.read_only = !ElasticSearch.read_only?
+        }
+      end
       render json: {
         added: ApplicationSettings.toggle(params[:key].to_sym)
       }

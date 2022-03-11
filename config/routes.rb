@@ -151,7 +151,11 @@ Rails.application.routes.draw do
     resources :tags, only: [:show, :update]
     resources :sitenotices, except: [:show, :edit]
     resources :api, except: [:show], controller: :api_tokens
-    resources :reindex, only: [:update]
+    
+    namespace :search do
+      resources :reindex, only: [:update]
+      resources :reimport, only: [:update]
+    end
 
     resource :settings, only: [] do
       put 'set/:key', action: :set

@@ -103,7 +103,7 @@ class Ffmpeg
             line.chomp!
           end
           io.close
-          yield
+          yield if block_given?
         rescue Exception => e
           puts e
           puts e.backtrace
