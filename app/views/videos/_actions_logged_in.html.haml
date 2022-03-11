@@ -28,6 +28,7 @@
 		%li.action(data-external-form="#{new_album_path initial: @video.id}" data-title="New Album")
 			%span.icon= fa :pencil
 			%span.label New Album
+		%span.divider
 		- current_user.albums.each do |album|
 			%li.action.toggle(data-target="#{video_add_path @video}" data-item="#{album.id}")
 				%span.icon
