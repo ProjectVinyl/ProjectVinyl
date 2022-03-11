@@ -12,7 +12,7 @@
 		%tr.actions
 			%td.label
 			%td.field
-				= form_for(@video, as: "video", url: admin_videos_listing_path(@video), html: { method: :put }) do |f|
+				= form_for(@video, as: "video", url: admin_video_listing_path(@video), html: { method: :put }) do |f|
 					%label.options
 						%span Visibility
 						%select{name: "video[listing]"}= sensible_option_for_select(["Public", "Unlisted", "Private"], @video.listing)

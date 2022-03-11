@@ -166,13 +166,14 @@ Rails.application.routes.draw do
       resources :unprocessed, only: [:index], controller: :unprocessed_videos
       resources :hidden, only: [:index, :destroy], controller: :hidden_videos
       resource :requeue, only: [:update], controller: :requeue_videos
-      resource :thumbnail, :listing, only: [:update]
+      resource :thumbnail, only: [:update]
     end
     resources :videos, only: [:show, :destroy] do
       scope module: :videos do
         resource :hide, only: [:update], controller: :hidden_videos
         resource :feature, only: [:update], controller: :featured_videos
         resource :reprocess, only: [:update], controller: :unprocessed_videos
+        resource :listing, only: [:update], controller: :listing_videos
         resource :merge, only: [:update], controller: :merged_videos
         resource :thumbnail, only: [:destroy]
         resource :metadata, :moderation, only: [:update]
