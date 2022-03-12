@@ -64,6 +64,7 @@
 .playback-controls ul {
   display: flex;
   align-items: center;
+  gap: 12px;
 }
 
 .video .playback-controls ul {
