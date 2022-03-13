@@ -1,18 +1,26 @@
 
+let pings = 0;
 let focus = true;
 
+let originalTitle;
+
 function removePrefix() {
-  if (document.title.indexOf('*') == 0) {
-    document.title = document.title.replace('* ', '');
+  pings = 0;
+  if (!originalTitle) {
+    originalTitle = document.title;
   }
+  document.title = originalTitle;
 }
 
 function addPrefix() {
-  if (document.title.indexOf('*') != 0) {
-    document.title = `* ${document.title}`;
-  }
-}
+  pings++;
 
+  if (!originalTitle) {
+    originalTitle = document.title;
+  }
+
+  document.title = `(${pings}) ${originalTitle}`;
+}
 
 export function togglePrefix(on) {
   if (!focus && on) {
