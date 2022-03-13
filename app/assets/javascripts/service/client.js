@@ -1,6 +1,7 @@
 import { deregisterWorker, registerWorker } from './service';
 import { togglePrefix } from '../utils/doctitle';
 import { formatNumber, formatWithDelimiters } from '../utils/numbers';
+import { all } from '../jslim/dom';
 
 const counters = {
   feeds: '.notices-bell.feed-count',
@@ -29,7 +30,7 @@ export function toggle(enable, readyCallback) {
 
       if (!handler) return;
       
-      updateCounter(document.querySelector(handler), e.data.count);
+      all(handler, counter => updateCounter(counter, e.data.count));
     }, readyCallback);
   } else {
     deregisterWorker(readyCallback);

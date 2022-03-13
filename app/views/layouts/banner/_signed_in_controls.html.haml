@@ -3,7 +3,7 @@
 			data: {label: "Feed", count: safe_to_display(current_user.feed_count, 999)}}
 		%i.fa.fa-globe
 	%a.notices-bell.notification-count(title="Notifications"){href: notifications_path,
-			data: {label: "Notifications", count: safe_to_display(current_user.message_count, 999)}}
+			data: {label: "Notifications", count: safe_to_display(current_user.notification_count, 999)}}
 		%i.fa.fa-bell
 	%a.notices-bell.message-count(title="Private Messages"){href: inbox_path,
 			data: {label: "Private Messages", count: safe_to_display(current_user.message_count, 999)}}

@@ -19,7 +19,8 @@ function transitionState(initialState, callback) {
 
 	workerStatus = CHANGING;
 	
-  if (document.location.protocol !== 'https:') {
+  if (document.location.protocol !== 'https:'
+   && document.location.hostname !== 'localhost') {
     console.warn('Service worker requires a secured context.');
     return;
   }
