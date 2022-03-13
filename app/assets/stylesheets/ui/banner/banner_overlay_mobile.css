@@ -6,10 +6,18 @@
   .banner-overlay #search {
     flex-grow: 1;
   }
+  body {
+    --banner-height: 120px !important;
+  }
+}
+@media(max-width:700px) {
+  body {
+    --banner-height: 50px !important;
+  }
 }
 @media(max-width: 646px) {
   body {
-    --banner-height: 120px !important;
+    --banner-height: 95px !important;
   }
 
   .banner-overlay #filters {

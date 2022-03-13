@@ -22,7 +22,7 @@
   border: none;
   box-shadow: none;
   margin: 0;
-  font-size: 1.25em;
+  font-size: var(--overlay-font-size);
   border: none;
   color: var(--header-overlay-element-color) !important;
   text-shadow: none;

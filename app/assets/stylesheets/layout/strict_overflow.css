@@ -1,0 +1,18 @@
+.strict-no-wrap {
+  white-space: nowrap;
+  flex-wrap: nowrap;
+}
+
+.strict-overflow {
+  display: inline-flex;
+  overflow: hidden;
+}
+
+.strict-overflow .overflowable {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.strict-overflow .overflowable-mx150 {
+  max-width: 150px;
+}

@@ -6,11 +6,11 @@
 				%span Home
 		- if user_signed_in?
 			%li.tinted-nav-item.forum<>
-				%a(href="#{current_user.link}" rel="nofollow")
+				%a.strict-no-wrap(href="#{current_user.link}" rel="nofollow")
 					= fw :user
-					%span
-						= current_user.username
-						's Profile
+					%span.strict-overflow
+						%span.overflowable.overflowable-mx150= current_user.username
+						%span 's Profile
 					%span.icon.no-dock= fa :caret_down
 				%span.drop-down-parent
 					%span.icon.dock-only(tabindex="0")= fw :caret_right

@@ -8,10 +8,11 @@
   gap: var(--overlay-gap);
   flex-direction: row-reverse;
 
+  --overlay-font-size: 1.125em;
   --overlay-color: var(--header-overlay-element-fill);
-  --overlay-height: 54px;
+  --overlay-height: 45px;
   --overlay-rows: 1;
   --overlay-gap: 10px;
   --overlay-rounding: 10px;
-  --overlay-padding: 10px;
+  --overlay-padding: 7px;
 }

@@ -11,7 +11,7 @@
 }
 
 .header ul li, .header ul a {
-  font-size: 20px;
+  font-size: 18px;
   display: inline-block;
   line-height: 40px;
   text-shadow: 0 0.05em 0.03em rgba(0,0,0,0.3);

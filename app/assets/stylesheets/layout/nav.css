@@ -1,6 +1,7 @@
 nav {
-  margin-top: 160px;
-  min-height: 40px;
+  --nav-height: 40px;
+  margin-top: calc(var(--banner-height) - var(--nav-height));
+  min-height: var(--nav-height);
 }
 nav .albums {
   --nav-item-tint: #e6b91f;
