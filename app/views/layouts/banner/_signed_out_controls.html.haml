@@ -1,4 +1,8 @@
-%a#login.overlay-element.sharp-right(data-external-form="#{new_user_session_path}.json" data-icon="sign-in" data-title="Login" data-thin="true" href="#{new_user_session_path}")
-	%span
-		= fa :sign_in
-		Login / Sign Up
+#login.overlay-element.sharp-right
+	%a(data-external-form="#{new_registration_path(:user)}.json" data-icon="sign-in" data-title="Register" data-thin="true" href="#{new_registration_path(:user)}")
+		%span
+			Register
+	%a(data-external-form="#{new_user_session_path}.json" data-icon="sign-in" data-title="Login" data-thin="true" href="#{new_user_session_path}")
+		%span
+			Login
+			= fa :sign_in

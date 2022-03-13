@@ -2,6 +2,14 @@ class Users::RegistrationsController < Devise::RegistrationsController
   prepend_before_action :check_captcha, only: [:create]
   prepend_before_action :load_tab, only: [:edit]
 
+  def new
+    if params[:format] == 'json'
+      self.resource = resource_class.new
+      return render partial: 'devise/registrations/new', formats: [:html]
+    end
+    super
+  end
+
   private
   def load_tab
     @current_tab = (params[:tab] || "profile").to_sym
