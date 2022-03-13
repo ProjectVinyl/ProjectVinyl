@@ -72,6 +72,7 @@
 }
 .thumb .tile .detail, .thumb .title, .thumb + .title {
   max-height: 3.1em;
+  padding-top: 5px;
   overflow: hidden;
   text-overflow: ellipsis;
   -o-text-overflow: ellipsis;
