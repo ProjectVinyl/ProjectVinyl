@@ -4,6 +4,7 @@
  *= require ./thumbs/all
  *= require ./inputs/all
  *= require ./buttons/all
+ *= require ./banner/all
  *= require ./slideouts
  *= require ./slideacross
  *= require ./paginator

@@ -2,7 +2,6 @@
  *= require ./3d/all
  *= require ./nav
  *= require ./header
- *= require ./banner/all
  *= require ./main
  *= require ./containers
  *= require ./wrappers
