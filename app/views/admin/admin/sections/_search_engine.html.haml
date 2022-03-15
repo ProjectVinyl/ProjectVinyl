@@ -3,18 +3,29 @@
 	Search Engine
 .listing.compact
 	%h2 Elastic-Search Status
+	%br
 	.items
+		.row.heads
+			.cell Field
+			.cell Status
+			.cell Actions
 		.row
 			.cell Read-Only
+			.cell
+				.secondary
+					.active-icon{class: !ElasticSearch.read_only? && "active", title: ElasticSearch.read_only? ? "Error" : "Ok"}
 			.cell.actions
 				%button.action.toggle(data-action="elastic_read_only" data-target="admin/settings/toggle")<
 					%span.icon
 						- if ElasticSearch.read_only?
 							= fa :check
 					%span.label Read Only
+	%br
 	%h2 Model Indices
+	%br
 	.items
-		.row.header
-			.cell Index-Name
-			.cell Index Details
+		.row.heads.strict-no-wrap
+			.cell Table Name
+			.cell Index Fields
+			.cell Actions
 		= render partial: 'admin/admin/sections/search_status', collection: @tables
