@@ -1,7 +1,5 @@
 module Assets
-  class ServiceworkersController < ApplicationController
-    include Assetable
-
+  class ServiceworkersController < BaseAssetsController
     def show
       serve_asset('serviceworker.js', 'application/javascript')
     end

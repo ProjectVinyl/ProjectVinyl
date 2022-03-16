@@ -1,6 +1,11 @@
 module Assets
-  class BaseAssetsController < ApplicationController
+  class BaseAssetsController < ActionController::Base
+    include Errorable
     include Assetable
+
+    skip_before_action :set_ahoy_cookies
+    skip_before_action :track_ahoy_visit
+    skip_around_action :set_ahoy_request_store
 
     protected
     def with_video

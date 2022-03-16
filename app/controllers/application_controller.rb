@@ -21,7 +21,7 @@ class ApplicationController < ActionController::Base
   def current_filter
     helpers.current_filter
   end
-  
+
   def cache_videos(elastic_record, key)
     helpers.cache_videos(elastic_record, key)
   end
