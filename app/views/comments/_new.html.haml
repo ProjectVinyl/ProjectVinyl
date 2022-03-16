@@ -23,7 +23,6 @@
 				%hr/
 				- if visitor.dummy?
 					= recaptcha_tags('data-theme': current_theme_name)
-					%hr/
 				.actions
 					.button.green.split-button.popper
 						.post-submitter.disable(type="button" data-thread-id="#{@thread.id}" data-order="#{@order}" data-url="#{comments_path}" data-anonymous="0")>
