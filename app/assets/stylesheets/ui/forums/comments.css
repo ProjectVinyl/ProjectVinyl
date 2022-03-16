@@ -88,6 +88,16 @@ label.focus .content {
   display: none;
 }
 
+
+@media(max-width: 400px) {
+  .comment .bio, .comment .content::before, .comment .content::after {
+    display: none;
+  }
+  .comment .content {
+    margin-left: 0;
+  }
+}
+
 .comment .content .comment-content {
   resize: vertical;
   width: 100%;
