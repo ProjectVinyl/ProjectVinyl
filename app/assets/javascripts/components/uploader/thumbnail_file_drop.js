@@ -17,7 +17,8 @@ addDelegatedEvent(document, 'frame:tab_created', '#uploader_frame', e => {
   });
 
   const coverInput = el.querySelector('#cover-upload input[type=file]');
-  thumbnailForm.addEventListener('submit', event => {
+
+  function submit() {
     if (thumbnailForm.save) {
       thumbnailForm.save.disabled = true;
     }
@@ -34,10 +35,10 @@ addDelegatedEvent(document, 'frame:tab_created', '#uploader_frame', e => {
     UPLOADING_QUEUE.enqueue(progressor);
     validationCallback();
     event.preventDefault();
-  });
-  coverInput.addEventListener('change', () => {
-    thumbnailForm.submit();
-  });
+  }
+
+  thumbnailForm.addEventListener('submit', submit);
+  coverInput.addEventListener('change', submit);
   el.addEventListener('video_file_drop', event => {
     const {needsCover, mime, file, id, params} = event.detail.data;
 
