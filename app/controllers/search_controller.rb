@@ -21,7 +21,7 @@ class SearchController < ApplicationController
       return redirect_to action: :show, controller: :videos, id: @single.id
     end
 
-    @results = @results.paginate(@page, 20)
+    @results = @results.paginate(@page, 20){|recs| recs.for_thumbnails(current_user)}
 
     return render_paginated @results, partial: @partial, as: :json if params[:format] == 'json'
 
