@@ -1,42 +1,37 @@
 import { addDelegatedEvent } from '../../jslim/events';
-import { ThumbPicker } from './thumbnail_picker';
+import { TimeSelecter } from './time_selecter';
 import { validateVideoForm } from './video_form_validations';
+import { UploadQueue } from './queue';
 import { canPlayType } from '../../utils/videos';
+import { ofAll, initProgressor } from './progress_bar_callback';
+
+const UPLOADING_QUEUE = new UploadQueue();
 
 addDelegatedEvent(document, 'frame:tab_created', '#uploader_frame', e => {
   const {el,tab,id,initial} = e.detail.data;
   const detailsForm = el.querySelector('.details-form');
+  const thumbnailForm = el.querySelector('.thumbnail-form');
 
-  let lastTime = -1;
-  const thumbnailTime = el.querySelector('#time');
-  const thumbPicker = el.querySelector(`.tab[data-tab="thumbpick_${id}"]`);
-  thumbPicker.addEventListener('tabblur', () => {
-    lastTime = thumbnailTime.value;
-    thumbnailTime.value = -1;
-  });
-  thumbPicker.addEventListener('tabfocus', () => {
-    thumbnailTime.value = lastTime;
-  });
-
-  const player = new ThumbPicker();
+  const player = new TimeSelecter();
   player.constructor(el.querySelector('.video'));
 
+  const validationCallback = () => validateVideoForm(detailsForm);
   const picker = el.querySelector(`li[data-target="thumbpick_${id}"]`);
   const uploader = el.querySelector(`li[data-target="thumbupload_${id}"]`);
 
-  const validationCallback = () => validateVideoForm(detailsForm);
-
-  picker.addEventListener('tabblur', validationCallback);
-  picker.addEventListener('tabfocus', validationCallback);
-
-  const coverInput = el.querySelector('#cover-upload input[type=file]');
-  coverInput.addEventListener('change', () => {
-    detailsForm.dataset.hasCover = true;
+  let lastTime = -1;
+  uploader.addEventListener('tabblur', () => {
+    player.timeInput.value = lastTime;
+    validationCallback();
   });
+  uploader.addEventListener('tabfocus', () => {
+    lastTime = player.timeInput.value;
+    player.timeInput.value = -1;
+    validationCallback();
+  });
+
   el.addEventListener('video_file_drop', event => {
     const {needsCover, mime, file, id, params} = event.detail.data;
-
-    detailsForm.dataset.needsCover = needsCover;
 
     if (params) {
       player.params = params;
@@ -58,9 +53,19 @@ addDelegatedEvent(document, 'frame:tab_created', '#uploader_frame', e => {
     }
   });
   
+  let prev = -2;
   if (initial) {
     player.play();
-    player.skipTo(thumbnailTime.value);
+    player.skipTo(player.timeInput.value);
     validationCallback();
   }
+
+  player.timeInput.addEventListener('change', () => {
+    const time = parseFloat(player.timeInput.value);
+    
+    if (time != prev) {
+      thumbnailForm.save.disabled = prev == -2 || time < 0;
+      prev = time;
+    }
+  });
 });

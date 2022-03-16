@@ -166,6 +166,7 @@ class VideosController < Videos::BaseVideosController
     @comments.subscribe(current_user) if current_user.subscribe_on_upload?
 
     EncodeFilesJob.perform_later(@video.id)
+    ExtractThumbnailJob.queue_video(@video, nil, 0) if !@video.audio_only
 
     render json: {
       success: true,
@@ -186,14 +187,8 @@ class VideosController < Videos::BaseVideosController
     return api_error_response('Access Denied', "You can't do that right now.") if !@video.owned_by(current_user)
 
     video = params[:video]
-    cover = video[:cover]
-    cover = nil if params[:erase_cover]
 
     if params[:_intent] == 'publish'
-      if @video.mime.include?('audio/') && (!cover || cover.size == 0 || !cover.content_type.include?('image/'))
-        return api_error_response('Error', 'Cover art is required for audio files.')
-      end
-
       return api_error_response('Error', 'You need at least one tag.') if video[:tag_string].blank?
     end
 
@@ -244,8 +239,6 @@ class VideosController < Videos::BaseVideosController
     @video.publish if params[:_intent] == 'publish' && @video.draft && @video.premiered_at.nil?
     @video.save
     @video.comment_thread.save
-
-    ExtractThumbnailJob.queue_video(@video, cover, video[:time])
 
     return redirect_to action: :show, id: @video.id if params[:format] != 'json'
     render json: {

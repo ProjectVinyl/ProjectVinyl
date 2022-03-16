@@ -59,3 +59,11 @@
   border-top-left-radius: 0;
   border-top-right-radius: 0;
 }
+
+.uploader-frame-tab-bar {
+  z-index: 60;
+}
+
+.uploader-frame-tab-bar + .tab .stick-top {
+  top: 45px;
+}

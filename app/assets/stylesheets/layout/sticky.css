@@ -8,9 +8,12 @@
   bottom: 0;
 }
 
-.sticky-action-bar {
+.sticky-action-bar, .sticky-overlay {
   position: sticky;
   z-index: 50;
+}
+
+.sticky-action-bar {
   background: var(--content-background);
   border-radius: var(--block-radius);
 }

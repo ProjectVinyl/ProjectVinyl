@@ -1,22 +1,6 @@
-- thumbnail = video.id.nil? ? nil : format_bg(video.cover)
-
-= form_for(video, url: @upload_gateway + (video.id.nil? ? videos_path : video_path(video)), html: {class: "details-form ui #{classes}", data: {"video-id": video.id }, method: :patch}) do |f|
-	%section.tab-set.full-width.resize-holder.uploaded-preview.preview-selective
-		%ul.tab-set.tabs
-			%li.button(data-target="thumbpick_#{tab_id}"){ class: !video.audio_only && "selected"} Pick Thumbnail
-			%li.button(data-target="thumbupload_#{tab_id}"){ class: video.audio_only && "selected"} Upload Cover
-		.preview-selective-selected#upload
-			.tab.video#video(data-tab="thumbpick_#{tab_id}"){class: !video.audio_only && "selected",
-					style: thumbnail,
-					data: video.thumb_picker_header}
-				= render 'videos/widget/slim'
-			.cover-block.tab.drag-target.file-select.image-selector#cover-upload(data-tab="thumbupload_#{tab_id}"){ class: video.audio_only && "selected"}
-				%span.preview{style: thumbnail}
-				%span.drop-icon
-					%div
-						= fa :picture_o
-						.msg Drag and drop Cover Art
-				= f.file_field :cover, accept: "image/*"
+%section.full-width.resize-holder.uploaded-preview.preview-selective
+	= render partial: 'videos/form/thumbnail_form_arged', locals: {video: video, classes: classes, tab_id: tab_id}
+	= form_for(video, url: @upload_gateway + (video.id.nil? ? videos_path : video_path(video)), html: {class: "details-form ui #{classes}", data: {"video-id": video.id }, method: :patch}) do |f|
 		.progressor
 			.cover-block
 				.message Uploading...
@@ -25,7 +9,10 @@
 		.post.description.resize-holder
 			.properties
 				%table
-					%tr
+					%tr.sticky-action-bar.stick-top
+						%td(colspan="3")
+							%h3 Video Details
+					%tr.sticky-action-bar.stick-top
 						%td(colspan="3")
 							%h2.title.editable.short.post-title.resize-target#video_title
 								%span.content= video.title

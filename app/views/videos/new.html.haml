@@ -2,7 +2,7 @@
 - title "Upload"
 - drafts = current_user.videos.where(draft: true)
 .page.slim.full-width.tab-set#uploader_frame(data-tab-template="#tab-template" data-content-template="#template")
-	%ul.tab-set.tabs.uploader-frame-tab-bar
+	%ul.tab-set.tabs.uploader-frame-tab-bar.sticky-overlay.stick-top
 		- drafts.each_with_index do |draft, index|
 			%li.button(data-target="new[#{index}]"){class: index == 0 && "selected"}
 				%span.progress

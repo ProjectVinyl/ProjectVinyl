@@ -3,7 +3,7 @@ require 'resque/server'
 Rails.application.routes.draw do
   constraints :subdomain => "upload" do
     resources :videos, only: [:create, :update, :destroy] do
-      resource :media, only: [:update], module: :videos
+      resource :media, :thumbnail, only: [:update], module: :videos
     end
 
     get '/*any', to: redirect(subdomain: '')
