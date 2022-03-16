@@ -4,9 +4,10 @@
 		html: {class: "thumbnail-form ui #{classes}",
 			method: :patch}) do |f|
 	.tab-set
+		%h3 Cover Art
 		%ul.tab-set.tabs.stick-top
-			%li.button(data-target="thumbpick_#{tab_id}"){ class: !video.audio_only && "selected"} Pick Thumbnail
-			%li.button(data-target="thumbupload_#{tab_id}"){ class: video.audio_only && "selected"} Upload Cover
+			%li.button(data-target="thumbpick_#{tab_id}"){ class: !video.audio_only && "selected"} Pick Time
+			%li.button(data-target="thumbupload_#{tab_id}"){ class: video.audio_only && "selected"} Upload Image
 		.preview-selective-selected#upload
 			.tab(data-tab="thumbpick_#{tab_id}"){class: !video.audio_only && "selected"}
 				.post.description.sticky-action-bar.stick-top
@@ -24,7 +25,7 @@
 				%span.drop-icon
 					%div
 						= fa :picture_o
-						.msg Drag and drop Cover Art
+						.msg Drag and drop an image file to upload
 				= f.file_field :cover, accept: "image/*"
 		.progressor
 			.cover-block

@@ -51,6 +51,17 @@
   margin-bottom: 50px;
 }
 
+.thumbnail-form .video, .thumbnail-form .cover-block {
+  --max-player-height: 30% !important;
+  width: var(--player-width) !important;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.thumbnail-form .cover-block .drop-icon {
+  background: rgba(0,0,0,0.9);
+}
+
 #upload .video .player::after {
   display: none;
 }
