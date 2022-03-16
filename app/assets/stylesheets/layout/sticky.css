@@ -2,3 +2,15 @@
   position: sticky;
   top: 0;
 }
+
+.stick-bottom {
+  position: sticky;
+  bottom: 0;
+}
+
+.sticky-action-bar {
+  position: sticky;
+  z-index: 50;
+  background: var(--content-background);
+  border-radius: var(--block-radius);
+}

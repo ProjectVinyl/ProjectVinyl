@@ -7,9 +7,7 @@ module Indexable
     include Elasticsearch::Model
 
     after_commit(on: :create) do
-			distrust do
-				__elasticsearch__.index_document
-			end
+      update_index(defer: false)
     end
 
     after_commit(on: :destroy) do

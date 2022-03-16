@@ -1,0 +1,11 @@
+%ul.hidden#tab-template
+	%li.button.hidden(data-target="new[{id}]")
+		%span.progress
+			%span.fill
+		%span.label Untitled {index}
+		= fa :close
+		= fa :undo
+.hidden#template
+	.tab.selected(data-tab="new[{id}]")
+		= render partial: 'videos/form/media_form_template', locals: {video: @video, classes: "ui shown", initial_method: :post}
+		= render partial: 'videos/form/details_form_template'

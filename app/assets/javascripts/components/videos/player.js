@@ -246,7 +246,7 @@ Player.prototype = {
     }
     video.play();
 
-    if (this.dom.dataset.state !== 'paused') {
+    if (!this.nonpersistent && this.dom.dataset.state !== 'paused') {
       ajax.put(`videos/${this.params.id}/play_count`).json(json => {
         all('.js-play-counter', counter => {
           counter.innerText = `${formatFuzzyBigNumber(json.count)} views`;

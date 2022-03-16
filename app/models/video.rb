@@ -41,6 +41,7 @@ class Video < ApplicationRecord
   tag_relation :video_genres
   after_save :dispatch_mentions, if: :saved_change_to_description?
   after_save :validate_source, if: :saved_change_to_source?
+  after_save :validate_hide_state, if: :saved_change_to_hidden?
 
   scope :unmerged, -> { where(duplicate_id: 0) }
   scope :listable, -> { where(hidden: false).unmerged }
@@ -100,28 +101,26 @@ class Video < ApplicationRecord
     self.save
     self.update_index(defer: false)
   end
+  
+  def publish
+    self.draft = false
+    self.hidden = false
 
-  def set_hidden(val)
-    if hidden != val
-      self.hidden = val
-      update_file_locations
-      update_index(defer: true)
-    end
+    return if listing != 0
+    artist_tag = user.tag
+    return if !artist_tag
+
+    Notification.notify_receivers(artist_tag.subscribers.pluck(:id), self, "#{user.username} has just uploaded a new video.", link)
   end
 
-  def media=(media)
+  def upload_media(media, checksum)
     self.remove_media if file
     self.file = Mimes.media_ext(media)
     self.mime = media.content_type
-    self.video = media.read
-
-    EncodeFilesJob.queue_video(self)
-  end
-
-  def video=(data)
-    self.checksum = nil
-    store_file(video_path, data)
-    self.realise_checksum
+    self.audio_only = self.mime.include?('audio/')
+    store_file(video_path, checksum[:data])
+    self.checksum = checksum[:value]
+    self.realise_checksum if checksum.nil?
   end
 
   def realise_checksum
@@ -292,4 +291,8 @@ class Video < ApplicationRecord
     self.source = PathHelper.clean_url(source)
   end
 
+  def validate_hide_state
+    update_file_locations
+    update_index
+  end
 end

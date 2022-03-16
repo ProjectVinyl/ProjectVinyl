@@ -15,7 +15,7 @@ module Admin
 
       def update
         check_then do |video|
-          video.set_hidden(!video.hidden)
+          video.hidden = !video.hidden
           video.save
 
           render json: {

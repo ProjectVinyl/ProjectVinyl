@@ -2,8 +2,8 @@ require 'resque/server'
 
 Rails.application.routes.draw do
   constraints :subdomain => "upload" do
-    resources :videos, only: [:create, :update] do
-      resource :cover, only: [:update], module: :videos
+    resources :videos, only: [:create, :update, :destroy] do
+      resource :media, only: [:update], module: :videos
     end
 
     get '/*any', to: redirect(subdomain: '')
@@ -45,12 +45,12 @@ Rails.application.routes.draw do
   namespace :videos do
     resource :feed, only: [:edit, :update, :show]
   end
-  resources :videos, except: [:destroy, :create] do
+  resources :videos, except: [:create, :update, :destroy] do
     scope module: :videos do
       resources :actions, only: [:update]
       resources :changes, only: [:index]
       resource :statistics, only: [:show]
-      resource :details, :play_count, only: [:update]
+      resource :details, :description, :play_count, only: [:update]
       resource :download, only: [:show]
       resource :add, only: [:show, :update]
     end

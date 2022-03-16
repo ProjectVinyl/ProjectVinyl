@@ -1,6 +1,20 @@
 module Videos
   class BaseVideosController < ApplicationController
     protected
+    def upload_gateway
+      '//' + Rails.application.config.gateway
+    end
+
+    def api_error_response(title, description)
+      return render json: {
+          success: false,
+          error: {
+            title: title,
+            description: description
+          }
+        }
+    end
+
     def check_then
       return head :unauthorized if !user_signed_in?
       return head :not_found if !(video = Video.where(id: params[:video_id]).first)

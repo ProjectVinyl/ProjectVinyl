@@ -1,0 +1,3 @@
+- if video.draft || current_user.is_staff?
+	= render partial: 'videos/form/media_form_template', locals: {video: video, classes: "hidden", initial_method: :patch}
+= render partial: 'videos/form/details_form', locals: {video: video, tab_id: tab_id}

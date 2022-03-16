@@ -50,11 +50,13 @@ export function uploadForm(form, callbacks, e) {
 
 export const defaultCallbacks = {
   progress: (percentage, duration, message, fill) => {
-    message.innerText = percentage < 100
-      ? `${Math.floor(percentage)}% - ${duration.toString()}`
-      : 'Waiting for server...';
-    fill.style.setProperty('--status-progress', `${percentage}%`);
-    message.style.setProperty('--content-offset', `calc(${percentage}% - ${message.offsetWidth / 2}px)`);
+    if (message) {
+      message.innerText = percentage < 100
+        ? `${Math.floor(percentage)}% - ${duration.toString()}`
+        : 'Waiting for server...';
+      fill.style.setProperty('--status-progress', `${percentage}%`);
+      message.style.setProperty('--content-offset', `calc(${percentage}% - ${message.offsetWidth / 2}px)`);
+    }
   },
   error: (error, message, percentage) => {
     if (error.length > 200) {
@@ -62,7 +64,7 @@ export const defaultCallbacks = {
         title: 'Error',
         content: error
       });
-    } else {
+    } else if (message) {
       message.innerText = error;
       message.style.setProperty('--content-offset', `calc(${percentage}% - ${message.offsetWidth / 2}px)`);
     }

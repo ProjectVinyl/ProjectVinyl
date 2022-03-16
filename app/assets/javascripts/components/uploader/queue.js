@@ -6,8 +6,7 @@ function tick(next) {
     return;
   }
 
-  uploader.tab.classList.add('loading');
-  uploader.tab.classList.add('pending');
+  uploader.begin();
   uploadForm(uploader.form, {
     progress(percentage, duration, message, fill) {
       uploader.update(percentage);
@@ -15,11 +14,11 @@ function tick(next) {
       if (next && percentage >= 100) next = tick(next);
     },
     success(data) {
-      uploader.complete(data.ref);
+      uploader.complete(data);
       if (next) next = tick(next);
     },
     error(error, message, percentage) {
-      uploader.error();
+      uploader.error(error);
       defaultCallbacks.error(error, message, percentage);
       if (next) next = tick(next);
       return error;
@@ -30,20 +29,22 @@ function tick(next) {
 export function UploadQueue() {
   let running = false;
   const items = [];
-  
+
   function poke() {
     if (running) return;
     tick(() => {
       let i = 0;
-      while (items.length && !(i = items.shift()).isReady());
-      running = i && i.isReady();
-      if (running) return i;
+      while (items.length && !(i = items.shift()));
+      running = !!i;
+      if (running) {
+        return i;
+      }
     });
   }
-  
+
   return {
     enqueue: function(me) {
-      if (me.isReady()) this.enqueueAll([me]);
+      this.enqueueAll([me]);
     },
     enqueueAll(args) {
       items.push.apply(items, args);

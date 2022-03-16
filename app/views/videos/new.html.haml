@@ -1,89 +1,19 @@
 - lim 'calc(min(85vw, 1800px))'
 - title "Upload"
-.page.slim.full-width.tab-set#uploader_frame
-	%ul.tab-set.tabs
+- drafts = current_user.videos.where(draft: true)
+.page.slim.full-width.tab-set#uploader_frame(data-tab-template="#tab-template" data-content-template="#template")
+	%ul.tab-set.tabs.uploader-frame-tab-bar
+		- drafts.each_with_index do |draft, index|
+			%li.button(data-target="new[#{index}]"){class: index == 0 && "selected"}
+				%span.progress
+					%span.fill
+				%span.label
+					Draft
+					= draft.title
+				= fa :close
+				= fa :undo
 		%li.button#new_tab_button(title="Add") +
-%ul.hidden#tab-template
-	%li.button.hidden(data-target="new[{id}]")
-		%span.progress
-			%span.fill
-		%span.label Untitled {index}
-		= fa :close
-		= fa :undo
-.hidden#template
-	.tab.selected(data-tab="new[{id}]")
-		= form_for(@video, url: @upload_path, html: {class: "new_video", method: :post}) do |f|
-			%section.tab-set.full-width.resize-holder.uploaded-preview.preview-selective
-				%ul.ui.hidden.tab-set.tabs
-					%li.button.selected(data-target="thumbpick_{id}") Pick Thumbnail
-					%li.button(data-target="thumbupload_{id}") Upload Cover
-				.preview-selective-selected#upload
-					.ui.hidden
-						.tab.selected.video#video(data-tab="thumbpick_{id}" data-pending="1" data-video="0")
-							= render 'videos/widget/slim'
-						.cover-block.tab.drag-target.file-select.image-selector#cover-upload(data-tab="thumbupload_{id}")
-							%span.preview
-							%span.drop-icon
-								%div
-									= fa :picture_o
-									.msg Drag and drop Cover Art
-							= f.file_field :cover, accept: "image/*"
-					.ui.shown.cover-block.drag-target.file-select.video-drop#video-upload
-						%span.drop-icon
-							%div
-								= fa :upload
-								.msg Drag and Drop a video file to upload
-						= f.file_field :file, accept: "audio/*,video/*"
-				.progressor
-					.cover-block
-						.message Uploading...
-						.progress
-							.fill
-				.ui.hidden.post.description.resize-holder
-					.properties
-						%table
-							%tr
-								%td
-									%h2.title.editable.short.post-title.resize-target#video_title
-										%span.content Title
-										= f.text_field :title, class: "input"
-										%span.edit= fa :pencil
-										%span.hidden 11
-							%tr
-								%td
-									= render layout: "comments/description_box" do
-										= f.text_area :description, autofocus: true, class: "comment-content"
-							%tr
-								%td
-									.post-tags
-										= render layout: "tags/editor", locals: {tags: nil} do
-											= f.text_area :tag_string
-							%tr
-								%td.field
-									= f.text_field :source, class: "input", placeholder: "Source"
-									.notice.alert.info.hidden
-							%tr.premier-input
-								%td.field
-									%label.button.state-toggle.toggled{data: {parent: ".premier-input",state: :enabled, bubble: :true}}
-										= check_box :premier, :premier
-										%span.on= fa :check
-										%span.off= fa :close
-										Schedule a Premier
-									%span.premier-fields
-										%label.button
-											Date
-											%input(name="premier[date]" type="date")
-										%label.button
-											Time
-											%input(name="premier[time]" type="time")
-							%tr
-								%td.actions
-									%span.spacer
-									%button.action.change-video(type="button")
-										Change File
-										= fa :exchange
-									%span.notify.bob-holder
-										.bobber.bob-left Cover art is required to upload audio files.
-										= f.button "Upload", class: "action right green", tag: :button do
-											Upload
-											= fa :upload
+	- drafts.each_with_index do |draft, index|
+		.tab(data-tab="new[#{index}]"){class: index == 0 && "selected"}
+			= render partial: 'videos/form/uploader_frame_content', locals: {video: draft, tab_id: index}
+= render partial: 'videos/form/uploader_frame_content_template'

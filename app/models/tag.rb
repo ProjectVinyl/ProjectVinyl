@@ -12,6 +12,9 @@ class Tag < ApplicationRecord
   has_many :videos, through: :video_genres
   has_many :artist_genres
   has_many :users, through: :artist_genres
+  
+  has_many :tag_subscriptions
+  has_many :subscribers, through: :tag_subscriptions, class_name: "User"
 
   has_many :tag_implications, dependent: :destroy
   has_many :implications, through: :tag_implications, foreign_key: "implied_id"
@@ -35,6 +38,10 @@ class Tag < ApplicationRecord
   scope :to_tag_string, -> { pluck(:name).uniq.join(',') }
   scope :actualise, -> { includes(:alias).map(&:actual).uniq }
   scope :actual_names, -> { actualise.map(&:name).uniq }
+  scope :matching, ->(tags_to_find) {
+    common = actual_names & tags_to_find
+    tags_to_find.index(common.first)
+  }
 
   scope :by_tag_string, ->(tag_string) {
     names = Tag.split_to_names(tag_string)

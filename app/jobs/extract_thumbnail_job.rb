@@ -7,7 +7,7 @@ class ExtractThumbnailJob < ApplicationJob
     video.save_file(video.cover_path, cover, 'image/')
 
     begin
-      ProcessUploadJob.set(queue: queue).perform_later(video.id, time)
+      ExtractThumbnailJob.set(queue: queue).perform_later(video.id, time)
     rescue Exception => e
       return "Error: Could not schedule action."
     end

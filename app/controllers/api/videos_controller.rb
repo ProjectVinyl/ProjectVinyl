@@ -74,7 +74,7 @@ module Api
           duration: video.duration,
           tags: Tag.split_to_names(video.tag_string),
           data_modified: video.updated_at,
-          date_published: video.created_at
+          date_published: video.draft ? nil : video.created_at
         },
         meta: {
           url: PathHelper.absolute_url(video.link, root),

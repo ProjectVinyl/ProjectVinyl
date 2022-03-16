@@ -1,6 +1,11 @@
 class VideosController < Videos::BaseVideosController
   include Searchable
 
+  RATING_TAGS = ['rating:everyone', 'rating:teen', 'rating:mature'].freeze
+  def self.rating_tags
+    RATING_TAGS
+  end
+
   configure_ordering [ :date, :rating, [:wilson_score, :wilson_lower_bound], :heat, :length, :random, :relevance ], search_action: :search_index_path, only: [ :index ]
 
   def show
@@ -99,131 +104,11 @@ class VideosController < Videos::BaseVideosController
 
   def new
     return render_access_denied if !user_signed_in?
-
-    if ApplicationHelper.read_only && !current_user.is_contributor?
-      return render_error(
-        title: 'Read Only',
-        description: 'That feature is currently disabled.'
-      )
-    end
-
-    @upload_path = '//' + Rails.application.config.gateway + videos_path
-    @user = current_user
-    @video = Video.new
-  end
-
-  def create
-    return error('Access Denied', 'You can\'t do that right now.') if !user_signed_in?
     return error('Read Only', 'That feature is currently disabled.') if ApplicationHelper.read_only && !current_user.is_contributor?
 
-		user = current_user
-    video = params[:video]
-
-    file = video[:file]
-    cover = video[:cover]
-
-    return error('Error', 'File is empty') if !file || file.size == 0
-
-    if !file.content_type.include?('video/') && !file.content_type.include?('audio/')
-      return error('Error', "Mismatched content type: '#{file.content_type}'" )
-    end
-
-    if file.content_type.include?('audio/')
-      if !cover || cover.size == 0 || !cover.content_type.include?('image/')
-        return error('Error', 'Cover art is required for audio files.')
-      end
-    end
-
-    premier_time = nil
-
-    if params[:premier][:premier] == '1'
-      begin
-        premier_time = DateTime.parse(params[:premier][:date] + ' ' + params[:premier][:time])
-      rescue ArgumentError => e
-        return error('Error', 'Premier was not specified in a valid date-time format')
-      end
-    end
-
-    return error('Error', 'You need at least one tag.') if video[:tag_string].blank?
-
-    source = PathHelper.clean_url(video[:source])
-
-    if !source || source.blank?
-      video[:tag_string] = (video[:tag_string].split(',') + ['source needed']).uniq.join(',')
-    end
-
-    tag_ids = []
-    begin
-      tag_ids = TagRule.test(Tag.ids_from_string(video[:tag_string]))
-    rescue TagRule::RuleNotFulfilledError => e
-      return error('Tagging Requirements Not Met', e.message)
-    end
-
-    data = file.read
-    if !(checksum = Verification::VideoVerification.ensure_uniq(data))[:valid]
-      return error('Duplication Error', 'The uploaded video already exists.')
-    end
-
-    ext = File.extname(file.original_filename)
-    ext = Mimes.ext(file.content_type) if ext.blank?
-
-    title = StringsHelper.check_and_trunk(video[:title], 'Untitled Video')
-
-    Video.transaction do
-      @video = user.videos.create(
-        title: title,
-        safe_title: PathHelper.url_safe(title),
-        description: video[:description],
-        source: PathHelper.clean_url(video[:source]),
-        audio_only: file.content_type.include?('audio/'),
-        file: ext,
-        mime: file.content_type,
-        upvotes: 0, downvotes: 0, views: 0, duplicate_id: 0,
-        hidden: premier_time != nil,
-        premiered_at: premier_time,
-        processed: false,
-        checksum: checksum[:value]
-      )
-
-      @comments = @video.comment_thread = CommentThread.create(user_id: user, title: title)
-      @comments.save
-
-      @comments.subscribe(current_user) if current_user.subscribe_on_upload?
-
-      TagHistory.record_source_changes(@video, current_user.id) if source && !source.blank?
-
-      @video.set_all_tags(tag_ids)
-    end
-
-    @video.video = data
-    @video.save
-
-    ProcessUploadJob.queue_video(@video, cover, video[:time])
-
-    if params[:format] == 'json'
-      return render json: {
-        result: "success",
-        ref: @video.link
-      }
-    end
-    redirect_to action: :show, id: @video.id
-  end
-
-  def update
-    return head 401 if !user_signed_in?
-    return head :not_found if !(video = Video.where(id: params[:id]).first)
-    return head 401 if !video.owned_by(current_user)
-
-		if params[:field] == 'description'
-			video.description = params[:value]
-			render json: { content: BbcodeHelper.emotify(video.description) }
-		elsif params[:field] == 'title'
-			video.title = params[:value]
-			render json: { content: video.title }
-		end
-
-    video.save
-
+    @upload_gateway = upload_gateway
+    @user = current_user
+    @video = Video.new
   end
 
   def edit
@@ -237,8 +122,148 @@ class VideosController < Videos::BaseVideosController
     end
     return render_access_denied if !@video.owned_by(current_user)
 
-    @upload_path = '//' + Rails.application.config.gateway + video_cover_path(@video)
+    @rating = @video.tags.matching(RATING_TAGS)
+    @tags = @video.tags
+    @upload_gateway = upload_gateway
     @user = @video.user
+  end
+
+  def create
+    return api_error_response('Access Denied', 'You can\'t do that right now.') if !user_signed_in?
+    return api_error_response('Read Only', 'That feature is currently disabled.') if ApplicationHelper.read_only && !current_user.is_contributor?
+
+    file = params[:video][:file]
+
+    return api_error_response('Invalid File', 'File is empty') if !file || file.size == 0
+    return api_error_response('Invalid File', "Unsupported format: '#{file.content_type}'") if !file.content_type.include?('video/') && !file.content_type.include?('audio/')
+
+    checksum = Verification::VideoVerification.ensure_uniq(file.read)
+
+    return api_error_response('Duplication Error', 'The uploaded video already exists.') if !checksum[:valid]
+
+    Video.transaction do
+      @video = current_user.videos.create(
+        title: file.original_filename,
+        description: '',
+        source: '',
+        upvotes: 0,
+        downvotes: 0,
+        views: 0,
+        duplicate_id: 0,
+        hidden: true,
+        listing: 2,
+        processed: false,
+        draft: true
+      )
+
+      @video.upload_media(file, checksum)
+      @video.save
+
+      @comments = @video.create_comment_thread(user: current_user, title: @video.title)
+      @comments.save
+    end
+
+    @comments.subscribe(current_user) if current_user.subscribe_on_upload?
+
+    EncodeFilesJob.perform_later(@video.id)
+
+    render json: {
+      success: true,
+      upload_id: @video.id,
+      media_update_url: upload_gateway + video_media_path(@video),
+      details_update_url: upload_gateway + video_path(@video),
+      params: @video.thumb_picker_header
+    }
+  end
+
+  def update
+    api_error_response('Access Denied', "You can't do that right now.") if !user_signed_in?
+
+    if !(@video = Video.where(id: params[:id]).first)
+      return api_error_response('404', 'Record not found')
+    end
+
+    return api_error_response('Access Denied', "You can't do that right now.") if !@video.owned_by(current_user)
+
+    video = params[:video]
+    cover = video[:cover]
+    cover = nil if params[:erase_cover]
+
+    if params[:_intent] == 'publish'
+      if @video.mime.include?('audio/') && (!cover || cover.size == 0 || !cover.content_type.include?('image/'))
+        return api_error_response('Error', 'Cover art is required for audio files.')
+      end
+
+      return api_error_response('Error', 'You need at least one tag.') if video[:tag_string].blank?
+    end
+
+    source = PathHelper.clean_url(video[:source])
+
+    tags = params[:tags]
+      .permit(:contributors, :characters, :spoilers)
+      .to_hash
+      .map{|key, value| Tag.split_to_names(value)}
+      .flatten
+    tags += Tag.split_to_names(video[:tag_string])
+    tags << 'source needed' if !source
+    tags -= RATING_TAGS
+    tags << RATING_TAGS[video[:rating].to_i]
+    tags = tags.uniq
+
+    begin
+      if (changes = @video.set_all_tags(TagRule.test(Tag.create_from_names(tags))))
+        TagHistory.record_tag_changes(changes[0], changes[1], @video.id, current_user.id)
+      end
+    rescue TagRule::RuleNotFulfilledError => e
+      return api_error_response('Tagging Requirements Not Met', e.message) if params[:_intent] == 'publish'
+    end
+
+    @video.comment_thread.locked = video[:commenting].to_i != 0
+    @video.title = StringsHelper.check_and_trunk(video[:title], 'Untitled Video')
+    @video.comment_thread.title = @video.title
+    @video.safe_title = PathHelper.url_safe(@video.title)
+    @video.description = video[:description]
+    @video.listing = video[:listing].to_i
+
+    was_draft = @video.draft
+
+    if @video.draft && params[:premier][:premier] == '1'
+      begin
+        @video.premiered_at = DateTime.parse(params[:premier][:date] + ' ' + params[:premier][:time])
+        PremierVideoJob.enqueue_video(@video) if params[:_intent] == 'publish'
+      rescue ArgumentError => e
+        return api_error_response('Error', 'Premier was not specified in a valid date-time format') if params[:_intent] == 'publish'
+      end
+    end
+
+    if @video.source != source
+      @video.source = source
+      TagHistory.record_source_changes(@video, current_user.id)
+    end
+
+    @video.publish if params[:_intent] == 'publish' && @video.draft && @video.premiered_at.nil?
+    @video.save
+    @video.comment_thread.save
+
+    ExtractThumbnailJob.queue_video(@video, cover, video[:time])
+
+    return redirect_to action: :show, id: @video.id if params[:format] != 'json'
+    render json: {
+      success: true,
+      ref: params[:_intent] == 'publish' && was_draft && @video.ref
+    }
+  end
+
+  def destroy
+    if !(video = current_user.videos.where(id: params[:id], draft: true).first)
+      return api_error_response('404', 'Record not found')
+    end
+
+    #video.destroy
+    render json: {
+      success: true,
+      discard: true
+    }
   end
 
   def index
@@ -251,6 +276,7 @@ class VideosController < Videos::BaseVideosController
   end
 
   private
+
   def find_records
     read_search_params params
     return aha!(current_filter.videos.where_not(duplicate_id: 0), :merged) if params[:merged]

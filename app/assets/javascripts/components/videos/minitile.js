@@ -11,7 +11,7 @@ export function createMiniTile(player) {
   return {
     dom,
     draw(time) {
-      const shown = player.params.path && player.params.id;
+      const shown = player.params.path && player.params.id && !player.nonpersistent;
 
       dom.classList.toggle('hidden', !shown);
 

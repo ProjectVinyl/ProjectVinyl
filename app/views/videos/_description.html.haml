@@ -10,7 +10,7 @@
 				= @video.moderation_note
 	.post.description.resize-holder
 		- if @modifications_allowed
-			%h2.title.post-title.resize-target.editable.short(data-target="#{video_path @video}" data-member="title")
+			%h2.title.post-title.resize-target.editable.short(data-target="#{video_description_path @video}" data-member="title")
 				%span.content= @video.title
 				%span.edit= fa :pencil
 				%span.hidden 11
@@ -32,7 +32,7 @@
 				views
 		= render partial: 'videos/actions'
 		- if @modifications_allowed
-			%span.post-content.editable(data-target="#{video_path @video}" data-member="description")
+			%span.post-content.editable(data-target="#{video_description_path @video}" data-member="description")
 				%span.content= emotify @video.description
 				%textarea.input.js-auto-resize(name="description_video_#{@video.id}")= @video.description
 				%span.edit= fa :pencil

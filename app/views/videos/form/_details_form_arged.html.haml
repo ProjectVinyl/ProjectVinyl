@@ -1,0 +1,143 @@
+- thumbnail = video.id.nil? ? nil : format_bg(video.cover)
+
+= form_for(video, url: @upload_gateway + (video.id.nil? ? videos_path : video_path(video)), html: {class: "details-form ui #{classes}", data: {"video-id": video.id }, method: :patch}) do |f|
+	%section.tab-set.full-width.resize-holder.uploaded-preview.preview-selective
+		%ul.tab-set.tabs
+			%li.button(data-target="thumbpick_#{tab_id}"){ class: !video.audio_only && "selected"} Pick Thumbnail
+			%li.button(data-target="thumbupload_#{tab_id}"){ class: video.audio_only && "selected"} Upload Cover
+		.preview-selective-selected#upload
+			.tab.video#video(data-tab="thumbpick_#{tab_id}"){class: !video.audio_only && "selected",
+					style: thumbnail,
+					data: video.thumb_picker_header}
+				= render 'videos/widget/slim'
+			.cover-block.tab.drag-target.file-select.image-selector#cover-upload(data-tab="thumbupload_#{tab_id}"){ class: video.audio_only && "selected"}
+				%span.preview{style: thumbnail}
+				%span.drop-icon
+					%div
+						= fa :picture_o
+						.msg Drag and drop Cover Art
+				= f.file_field :cover, accept: "image/*"
+		.progressor
+			.cover-block
+				.message Uploading...
+				.progress
+					.fill
+		.post.description.resize-holder
+			.properties
+				%table
+					%tr
+						%td(colspan="3")
+							%h2.title.editable.short.post-title.resize-target#video_title
+								%span.content= video.title
+								= f.text_field :title, class: "input js-auto-resize"
+								%span.edit= fa :pencil
+								%span.hidden 11
+					%tr
+						%td(colspan="3")
+							= render layout: "comments/description_box" do
+								= f.text_area :description, autofocus: true, class: "comment-content"
+					%tr
+						%td(colspan="3")
+							%h3 Contributors, Animators, Writers, Credits
+							%p
+								List all artists and animators who contributed to creating this video.
+								E.g.
+								%code artist:some-awesome-dude
+							.post-tags
+								= render layout: "tags/editor", locals: {tags: nil} do
+									%textarea(name="tags[contributors]" id="video_tag_string_contributors")
+					%tr
+						%td(colspan="3")
+							%h3 Places and Characters
+							%p
+								Who appears in this video? Are they human? Pony? [insert unnamed creature here]?
+								E.g.
+								%code pinkie_pie
+								,
+								%code twilight_sparkle
+								,
+								%code human
+							.post-tags
+								= render layout: "tags/editor", locals: {tags: nil} do
+									%textarea(name="tags[characters]" id="video_tag_string_characters")
+					%tr
+						%td(colspan="3")
+							%h3 Series, Shows, and Spoilers
+							%p
+								Is this video part of a series, or does it contain references to existing programs or spoilers?
+								E.g.
+								%code series:the_twilight_saga
+								,
+								%code spoilers:game_of_thrones
+							.post-tags
+								= render layout: "tags/editor", locals: {tags: nil} do
+									%textarea(name="tags[spoilers]" id="video_tag_string_spoilers")
+					%tr
+						%td(colspan="3")
+							%h3 Other Tags
+							%p Anything else that can help make your video easier to find.
+							.post-tags
+								= render layout: "tags/editor", locals: {tags: video.tags} do
+									= f.text_area :tag_string
+					%tr
+						%td.field(colspan="3")
+							%h3 Source
+							%p Where did you find this video? Leave blank if this video has not been published anywhere else.
+							= f.text_field :source, class: "input", placeholder: "Source"
+							.notice.alert.info.hidden
+					%tr.premier-input
+						%td.field(colspan="3")
+							%h3 Premier
+							%p You can publish this video imemdiately or specify a future date and time to make it public.
+							%label.button.state-toggle.toggled{data: {parent: ".premier-input",state: :enabled, bubble: :true}}
+								= check_box :premier, :premier
+								%span.on= fa :check
+								%span.off= fa :close
+								Schedule a Premier
+							%span.premier-fields
+								%label.button
+									Date
+									%input(name="premier[date]" type="date")
+								%label.button
+									Time
+									%input(name="premier[time]" type="time")
+					%tr
+						%td.field
+							#slug-search
+								%label.options
+									%span Audience Rating
+									%select(name="video[rating]")= sensible_option_for_select %W[ Everyone Teen Mature ], video.tags.matching(VideosController.rating_tags) || 0
+								%label.options
+									%span Visibility
+									%select(name="video[listing]")= sensible_option_for_select %W[ Public Unlisted Private ], video.listing
+								%label.options
+									%span Commenting
+									%select(name="video[commenting]")= sensible_option_for_select %W[ Allow Disable ], !video.comment_thread || !video.comment_thread.locked
+					%tr.sticky-action-bar.stick-bottom
+						%td(colspan="3")
+							.actions
+								- if video.draft
+									= f.button class: "action red", name: :discard, data: {'form-method': :delete, confirm: '', title: 'Discard Draft'} do
+										= fa :trash_o
+										Discard
+								%span.spacer
+								- if allow_reupload
+									= f.button class: "action", name: :change_video, type: :button do
+										= fa :exchange
+										Change File
+								%span.divider
+								- if video.draft
+									= f.button class: "action blue", name: :save_draft, data: {'form-method': :patch } do
+										= fa :save
+										Save Draft
+									%span.notify.bob-holder
+										.bobber.bob-left
+										= f.button class: "action green", name: :publish, data: {'form-method': :patch }, disabled: true do
+											= fa :upload
+											Publish Video
+								- else
+									%span.notify.bob-holder
+										.bobber.bob-left
+										= f.button class: "action right green", name: :publish, data: {'form-method': :patch }, disabled: true do
+											Save Changes
+

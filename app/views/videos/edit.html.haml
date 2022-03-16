@@ -1,43 +1,15 @@
 - lim 'calc(min(85vw, 1800px))'
-%section.page.full-width#video-editor{"data-needs-cover": @video.audio_only, class: !@video.audio_only && "tab-set"}
-	- if !@video.audio_only
-		%ul.tab-set.tabs
-			%li.button.selected(data-target="thumbupload") Upload Image
-			%li.button(data-target="thumbpick") Pick Time
-	= form_for(@video, as: "video", url: @upload_path, html: {class: "edit_video async", method: :patch}) do |f|
-		= f.text_field :id, hidden: true
-		.progressor
-			.cover-block
-				.message Uploading...
-				.progress
-					.fill
-		#upload
-			- if !@video.audio_only
-				.tab.video#video{style: format_bg(@video.cover), data: @video.thumb_picker_header}
-					= render 'videos/widget/slim'
-			.cover-block.selected.tab.drag-target.file-select.image-selector#cover-upload(data-tab="thumbupload")
-				%span.preview{style: format_bg(@video.cover)}
-				%span.drop-icon
-					%div
-						= fa :picture_o
-						.msg Select Cover Art
-				= f.file_field :cover, accept: 'image/*'
-			- if current_user.is_staff?
-				.hidden.cover-block.drag-target.file-select.video-drop#video-upload
-					%span.drop-icon
-						= fa :upload
-						%div Select an Audio/Video file to upload
-					= f.file_field :file, accept: 'audio/*,video/*'
-		.post.description.resize-holder
-			.actions
-				%label.button
-					%input(name="erase" type="checkbox")
-					= fa :check
-					Remove current Image
-				- if current_user.is_staff?
-					%button.action.change-video(type="button") Change Main File
-				%span.notify.bob-holder
-					.bobber.bob-left
-						Cover art is required to upload audio files
-					= f.submit "Save", class: "action right green"
-			= render partial: 'videos/foobar'
+.page.slim.full-width.tab-set#uploader_frame(data-tab-template="#tab-template" data-content-template="#template")
+	%ul.tab-set.tabs.uploader-frame-tab-bar
+		%li.button.selected(data-target="new[0]")
+			%span.progress
+				%span.fill
+			%span.label
+				Editing
+				= @video.title
+			= fa :close
+			= fa :undo
+		%li.button#new_tab_button(title="Add") +
+	.tab.selected(data-tab="new[0]")
+		= render partial: 'videos/form/uploader_frame_content', locals: {video: @video, tab_id: 0}
+= render partial: 'videos/form/uploader_frame_content_template'

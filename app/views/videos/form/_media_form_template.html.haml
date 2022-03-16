@@ -1,0 +1,13 @@
+= form_for(video,
+		url: @upload_gateway + (initial_method == :patch ? video_media_path(video) : videos_path),
+		html: {class: "video-file-form #{classes}",
+			method: :post}) do |f|
+	= hidden_field_tag(:_method, initial_method, id: nil)
+	%section.tab-set.full-width.resize-holder.uploaded-preview.preview-selective
+		.preview-selective-selected#upload
+			.cover-block.drag-target.file-select.video-drop#video-upload
+				%span.drop-icon
+					%div
+						= fa :upload
+						.msg Drag and Drop a video file to upload
+				= f.file_field :file, accept: "audio/*,video/*"

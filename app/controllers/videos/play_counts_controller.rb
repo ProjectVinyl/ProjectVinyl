@@ -1,7 +1,7 @@
 module Videos
   class PlayCountsController < BaseVideosController
     def update
-      return head :not_found if !(video = Video.where(id: params[:video_id]).first)
+      return head :not_found if !(video = Video.where(id: params[:video_id], draft: false).first)
 
       video.play_count += 1
       video.compute_hotness.save
