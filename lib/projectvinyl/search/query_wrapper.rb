@@ -20,29 +20,23 @@ module ProjectVinyl
 
       def ids
         return [] if @exception
-        @search.map(&:id).map(&:to_i)
-      rescue Elasticsearch::Transport::Transport::Errors::BadRequest => e
-        excepted! e, []
-      rescue Faraday::ConnectionFailed => e
-        excepted! e, []
+        distrust do
+          @search.map(&:id).map(&:to_i)
+        end
       end
 
       def total
         return 0 if @exception
-        @search.results.total
-      rescue Elasticsearch::Transport::Transport::Errors::BadRequest => e
-        excepted! e, 0
-      rescue Faraday::ConnectionFailed => e
-        excepted! e, 0
+        distrust do
+          @search.results.total
+        end
       end
 
       def count
         return 0 if @exception
-        @search.count
-      rescue Elasticsearch::Transport::Transport::Errors::BadRequest => e
-        excepted! e, 0
-      rescue Faraday::ConnectionFailed => e
-        excepted! e, 0
+        distrust do
+          @search.count
+        end
       end
 
       def records
@@ -52,6 +46,16 @@ module ProjectVinyl
       end
 
       private
+      def distrust
+        return yield
+      rescue Elasticsearch::Transport::Transport::Errors::ServiceUnavailable => e
+        excepted! e, 0
+      rescue Elasticsearch::Transport::Transport::Errors::BadRequest => e
+        excepted! e, 0
+      rescue Faraday::ConnectionFailed => e
+        excepted! e, 0
+      end
+
       def excepted!(e, v = nil)
         @exception = e
         @exceptable.excepted! e
