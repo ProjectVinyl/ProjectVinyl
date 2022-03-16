@@ -35,6 +35,9 @@ Rails.application.routes.draw do
     scope 'stream/:year/:month/:day/:id', module: :videos do
       resource :cover, :thumb, :source, :video, only: [:show]
     end
+    scope 'stream/:year/:month/:day/:id/frames', module: :videos do
+      get ':sheet_name', action: :show, controller: :tilesheets
+    end
     resource :serviceworker, only: [:show]
   end
 
