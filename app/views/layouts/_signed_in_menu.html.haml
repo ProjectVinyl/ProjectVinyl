@@ -54,7 +54,7 @@
 						%span.icon= fw :thumbs_up
 						%span.label Liked Videos
 				%li
-					%a{href: search_index_path(q: "upvoted_by:#{current_user.id}")}
+					%a{href: search_index_path(q: "downvoted_by:#{current_user.id}")}
 						%span.icon= fw :thumbs_down
 						%span.label Disliked Videos
 	%li.divider
