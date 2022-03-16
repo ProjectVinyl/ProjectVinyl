@@ -113,7 +113,7 @@
 									%select(name="video[listing]")= sensible_option_for_select %W[ Public Unlisted Private ], video.listing
 								%label.options
 									%span Commenting
-									%select(name="video[commenting]")= sensible_option_for_select %W[ Allow Disable ], !video.comment_thread || !video.comment_thread.locked
+									%select(name="video[commenting]")= sensible_option_for_select %W[ Allow Disallow ], (video.comment_thread.nil? || !video.comment_thread.locked) ? 0 : 1
 					%tr.sticky-action-bar.stick-bottom
 						%td(colspan="3")
 							.actions
