@@ -51,7 +51,7 @@ function getAllIssues(form) {
     issues.critical.push('Video is still processing. Please wait.');
   }
 
-  if (form['premier[premier]'][1].checked) {
+  if (form['premier[premier]'] && form['premier[premier]'][1].checked) {
     const premierDate = form['premier[date]'].value;
     const premierTime = form['premier[time]'].value;
 

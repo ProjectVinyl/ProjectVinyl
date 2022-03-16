@@ -85,22 +85,23 @@
 							%p Where did you find this video? Leave blank if this video has not been published anywhere else.
 							= f.text_field :source, class: "input", placeholder: "Source"
 							.notice.alert.info.hidden
-					%tr.premier-input
-						%td.field(colspan="3")
-							%h3 Premier
-							%p You can publish this video imemdiately or specify a future date and time to make it public.
-							%label.button.state-toggle.toggled{data: {parent: ".premier-input",state: :enabled, bubble: :true}}
-								= check_box :premier, :premier
-								%span.on= fa :check
-								%span.off= fa :close
-								Schedule a Premier
-							%span.premier-fields
-								%label.button
-									Date
-									%input(name="premier[date]" type="date")
-								%label.button
-									Time
-									%input(name="premier[time]" type="time")
+					- if video.draft
+						%tr.premier-input
+							%td.field(colspan="3")
+								%h3 Premier
+								%p You can publish this video imemdiately or specify a future date and time to make it public.
+								%label.button.state-toggle.toggled{data: {parent: ".premier-input",state: :enabled, bubble: :true}}
+									= check_box :premier, :premier
+									%span.on= fa :check
+									%span.off= fa :close
+									Schedule a Premier
+								%span.premier-fields
+									%label.button
+										Date
+										%input(name="premier[date]" type="date")
+									%label.button
+										Time
+										%input(name="premier[time]" type="time")
 					%tr
 						%td.field
 							#slug-search
