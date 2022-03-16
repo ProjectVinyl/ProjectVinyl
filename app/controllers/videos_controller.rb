@@ -252,7 +252,7 @@ class VideosController < Videos::BaseVideosController
       return api_error_response('404', 'Record not found')
     end
 
-    #video.destroy
+    video.destroy
     render json: {
       success: true,
       discard: true
