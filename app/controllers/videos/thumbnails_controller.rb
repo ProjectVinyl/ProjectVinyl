@@ -14,7 +14,7 @@ module Videos
       cover = params[:video][:cover]
       time = params[:video][:time].to_i
 
-      cover = nil if !@video.audio_only && time > -1
+      time = nil if !cover.nil?
 
       has_cover = cover && cover.size > 0 && cover.content_type.include?('image/')
 
