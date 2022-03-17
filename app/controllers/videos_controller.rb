@@ -172,6 +172,7 @@ class VideosController < Videos::BaseVideosController
       success: true,
       upload_id: @video.id,
       media_update_url: upload_gateway + video_media_path(@video),
+      thumbnail_update_url: upload_gateway + video_thumbnail_path(@video),
       details_update_url: upload_gateway + video_path(@video),
       params: @video.thumb_picker_header
     }

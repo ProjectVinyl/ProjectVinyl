@@ -1,47 +1,21 @@
 import { addDelegatedEvent } from '../../jslim/events';
-import { validateVideoForm } from './video_form_validations';
-import { UploadQueue } from './queue';
-import { ofAll, initProgressor } from './progress_bar_callback';
 
-const UPLOADING_QUEUE = new UploadQueue();
+function triggerFileReady(sender) {
+  (sender || document).dispatchEvent(new CustomEvent('thumbnail_file_drop', {
+    bubbles: true, cancelable: true
+  }));
+}
 
 addDelegatedEvent(document, 'frame:tab_created', '#uploader_frame', e => {
   const {el,tab} = e.detail.data;
-  const detailsForm = el.querySelector('.details-form');
-  const thumbnailForm = el.querySelector('.thumbnail-form');
 
-  const validationCallback = () => validateVideoForm(detailsForm);
-
-  tab.querySelector('i.fa-undo').addEventListener('click', () => {
-    thumbnailForm.classList.remove('uploading', 'error', 'pending');
+  const coverInput = el.querySelector('.thumbnail-upload-form input[type=file]');
+  coverInput.addEventListener('change', event => {
+    triggerFileReady(coverInput);
   });
 
-  const coverInput = el.querySelector('#cover-upload input[type=file]');
-
-  function submit() {
-    if (thumbnailForm.save) {
-      thumbnailForm.save.disabled = true;
-    }
-    const progressor = ofAll([initProgressor(tab, thumbnailForm), {
-      complete(data) {
-        if (!data.success) {
-          detailsForm.dataset.hasCover = false;
-          detailsForm.dataset.uploadError = data.error.title + ': ' + data.error.description;
-        }
-        validationCallback();
-      }
-    }]);
-    progressor.form = thumbnailForm;
-    UPLOADING_QUEUE.enqueue(progressor);
-    validationCallback();
-    event.preventDefault();
-  }
-
-  thumbnailForm.addEventListener('submit', submit);
-  coverInput.addEventListener('change', submit);
+  const detailsForm = el.querySelector('.details-form');
   el.addEventListener('video_file_drop', event => {
-    const {needsCover, mime, file, id, params} = event.detail.data;
-
-    detailsForm.dataset.needsCover = needsCover;
+    detailsForm.dataset.needsCover = event.detail.data.needsCover;
   });
 });

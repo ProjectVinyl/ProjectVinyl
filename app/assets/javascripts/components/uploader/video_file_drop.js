@@ -22,6 +22,7 @@ addDelegatedEvent(document, 'frame:tab_created', '#uploader_frame', e => {
   }
 
   const detailsForm = el.querySelector('.details-form');
+  const thumbnailForm = el.querySelector('.thumbnail-form');
 
   addDelegatedEvent(el, 'click', 'button[name="change_video"]', () => {
     videoInput.click();
@@ -50,6 +51,9 @@ addDelegatedEvent(document, 'frame:tab_created', '#uploader_frame', e => {
         }
         if (data.details_update_url) {
           detailsForm.action = data.details_update_url;
+        }
+        if (data.thumbnail_update_url) {
+          thumbnailForm.action = data.thumbnail_update_url;
         }
         if (data.upload_id) {
           fileParams.id = data.upload_id;

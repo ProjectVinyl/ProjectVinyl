@@ -6,10 +6,9 @@ export const TimeSelecter = extendFunc(Player, {
     this.nonpersistent = true;
     TimeSelecter.Super.constructor.call(this, el, true);
     this.timeInput = el.querySelector('input');
-    this.controls.fullscreen.parentNode.removeChild(this.controls.fullscreen);
-    this.controls.volume.parentNode.removeChild(this.controls.volume);
     this.contextmenu.setDisabled(true);
     this.waterdrop = null;
+    this.volume(0, true);
   },
   pause() {
     if (this.video) {
@@ -25,6 +24,7 @@ export const TimeSelecter = extendFunc(Player, {
   play() {
     TimeSelecter.Super.play.call(this);
     this.pause();
+    this.volume(0, true);
   },
   track(time, duration) {
     TimeSelecter.Super.track.call(this, time, duration);

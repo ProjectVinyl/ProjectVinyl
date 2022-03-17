@@ -4,5 +4,6 @@ import './video_editor';
 import './video_editor_tag_input';
 import './thumbnail_time_select';
 import './thumbnail_file_drop';
+import './thumbnail_uploader';
 import './dropper_to_editor';
 import './video_form_validations';

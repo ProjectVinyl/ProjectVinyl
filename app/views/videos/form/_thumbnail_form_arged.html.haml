@@ -1,14 +1,14 @@
 - thumbnail = video.id.nil? ? nil : format_bg(video.cover)
-= form_for(video,
-		url: @upload_gateway + (video.id.nil? ? videos_path : video_thumbnail_path(video)),
-		html: {class: "thumbnail-form ui #{classes}",
-			method: :patch}) do |f|
-	.tab-set
-		%h3 Cover Art
-		%ul.tab-set.tabs.stick-top
-			%li.button(data-target="thumbpick_#{tab_id}"){ class: !video.audio_only && "selected"} Pick Time
-			%li.button(data-target="thumbupload_#{tab_id}"){ class: video.audio_only && "selected"} Upload Image
-		.preview-selective-selected#upload
+.tab-set.ui{class: classes}
+	%h3 Cover Art
+	%ul.tab-set.tabs.stick-top
+		%li.button(data-target="thumbpick_#{tab_id}"){ class: !video.audio_only && "selected"} Pick Time
+		%li.button(data-target="thumbupload_#{tab_id}"){ class: video.audio_only && "selected"} Upload Image
+	#upload
+		= form_for(video,
+				url: @upload_gateway + (video.id.nil? ? videos_path : video_thumbnail_path(video)),
+				html: {class: "thumbnail-form thumbnail-time-form",
+					method: :patch}) do |f|
 			.tab(data-tab="thumbpick_#{tab_id}"){class: !video.audio_only && "selected"}
 				.post.description.sticky-action-bar.stick-top
 					.properties
@@ -20,15 +20,22 @@
 				.video#video{style: thumbnail,
 						data: video.thumb_picker_header}
 					= render 'videos/widget/slim'
-			.cover-block.tab.drag-target.file-select.image-selector#cover-upload(data-tab="thumbupload_#{tab_id}"){ class: video.audio_only && "selected"}
+				.progressor
+					.message Uploading...
+					.progress
+						.fill
+		= form_for(video,
+				url: @upload_gateway + (video.id.nil? ? videos_path : video_thumbnail_path(video)),
+				html: {class: "thumbnail-form thumbnail-upload-form",
+					method: :patch}) do |f|
+			.tab.cover-block.drag-target.file-select.image-selector#cover-upload(data-tab="thumbupload_#{tab_id}"){ class: video.audio_only && "selected"}
 				%span.preview{style: thumbnail}
 				%span.drop-icon
 					%div
 						= fa :picture_o
 						.msg Drag and drop an image file to upload
 				= f.file_field :cover, accept: "image/*"
-		.progressor
-			.cover-block
+			.progressor
 				.message Uploading...
 				.progress
 					.fill

@@ -3,35 +3,21 @@ import { TimeSelecter } from './time_selecter';
 import { validateVideoForm } from './video_form_validations';
 import { UploadQueue } from './queue';
 import { canPlayType } from '../../utils/videos';
-import { ofAll, initProgressor } from './progress_bar_callback';
 
 const UPLOADING_QUEUE = new UploadQueue();
 
 addDelegatedEvent(document, 'frame:tab_created', '#uploader_frame', e => {
-  const {el,tab,id,initial} = e.detail.data;
-  const detailsForm = el.querySelector('.details-form');
-  const thumbnailForm = el.querySelector('.thumbnail-form');
+  const {el,id,initial} = e.detail.data;
 
   const player = new TimeSelecter();
-  player.constructor(el.querySelector('.video'));
+  player.constructor(el.querySelector('.thumbnail-form.thumbnail-time-form .video'));
 
-  const validationCallback = () => validateVideoForm(detailsForm);
-  const picker = el.querySelector(`li[data-target="thumbpick_${id}"]`);
-  const uploader = el.querySelector(`li[data-target="thumbupload_${id}"]`);
-
-  let lastTime = -1;
-  uploader.addEventListener('tabblur', () => {
-    player.timeInput.value = lastTime;
-    validationCallback();
-  });
-  uploader.addEventListener('tabfocus', () => {
-    lastTime = player.timeInput.value;
-    player.timeInput.value = -1;
-    validationCallback();
-  });
+  const validationCallback = () => validateVideoForm(el.querySelector('.details-form'));
+  const pickerTab = el.querySelector(`li[data-target="thumbpick_${id}"]`);
+  const uploaderTab = el.querySelector(`li[data-target="thumbupload_${id}"]`);
 
   el.addEventListener('video_file_drop', event => {
-    const {needsCover, mime, file, id, params} = event.detail.data;
+    const {needsCover, mime, file, params} = event.detail.data;
 
     if (params) {
       player.params = params;
@@ -39,16 +25,16 @@ addDelegatedEvent(document, 'frame:tab_created', '#uploader_frame', e => {
 
     if (needsCover) {
       player.load(null);
-      uploader.click();
-      picker.dataset.disabled = 1;
+      uploaderTab.click();
+      pickerTab.dataset.disabled = 1;
     } else {
       if (canPlayType(mime)) {
         player.load(file, true);
-        picker.removeAttribute('data-disabled');
-        picker.click();
+        pickerTab.removeAttribute('data-disabled');
+        pickerTab.click();
       } else {
-        uploader.click();
-        picker.dataset.disabled = 1;
+        uploaderTab.click();
+        pickerTab.dataset.disabled = 1;
       }
     }
   });
@@ -64,7 +50,7 @@ addDelegatedEvent(document, 'frame:tab_created', '#uploader_frame', e => {
     const time = parseFloat(player.timeInput.value);
     
     if (time != prev) {
-      thumbnailForm.save.disabled = prev == -2 || time < 0;
+      player.timeInput.form.save.disabled = prev == -2 || time < 0;
       prev = time;
     }
   });
