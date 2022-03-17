@@ -1,11 +1,6 @@
-%section.full-width.resize-holder.uploaded-preview.preview-selective
+%section.full-width.resize-holder
 	= render partial: 'videos/form/thumbnail_form_arged', locals: {video: video, classes: classes, tab_id: tab_id}
 	= form_for(video, url: @upload_gateway + (video.id.nil? ? videos_path : video_path(video)), html: {class: "details-form ui #{classes}", data: {"video-id": video.id }, method: :patch}) do |f|
-		.progressor
-			.cover-block
-				.message Uploading...
-				.progress
-					.fill
 		.post.description.resize-holder
 			.properties
 				%table
@@ -103,11 +98,14 @@
 									%select(name="video[commenting]")= sensible_option_for_select %W[ Allow Disallow ], (video.comment_thread.nil? || !video.comment_thread.locked) ? 0 : 1
 					%tr.sticky-action-bar.stick-bottom
 						%td(colspan="3")
+							.progressor
+								.message Uploading...
+								.progress
+									.fill
 							.actions
 								- if video.draft
 									= f.button class: "action red", name: :discard, data: {'form-method': :delete, confirm: '', title: 'Discard Draft'} do
 										= fa :trash_o
-										Discard
 								%span.spacer
 								- if allow_reupload
 									= f.button class: "action", name: :change_video, type: :button do

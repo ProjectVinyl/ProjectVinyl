@@ -1,6 +1,4 @@
-form .progressor, form.uploading > :not(.uploaded-preview),
-form.uploading .uploaded-preview.preview-selective > :not(.preview-selective-selected),
-form.uploading .drop-icon, form.uploading input {
+form .progressor {
   display: none;
 }
 

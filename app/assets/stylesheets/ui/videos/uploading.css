@@ -2,9 +2,3 @@
 .uploading ul.tab-set {
   display: none;
 }
-.uploading #video {
-  height: 0 !important;
-}
-.uploading #video {
-  margin: 0;
-}
