@@ -21,7 +21,7 @@ function TagEditor(el) {
   this.textarea.value = this.tags.join(',');
 
   this.list = el.querySelector('ul.tags');
-  this.norm = el.parentNode.parentNode.querySelector('.normal.tags');
+  this.norm = relative(el, '.post-tags', '.normal.tags');
 
   this.tagTemplate = el.querySelector('.js-tag-template').innerHTML;
   if (this.norm) {
@@ -40,6 +40,10 @@ function TagEditor(el) {
   };
 }
 
+function relative(el, parent, selector) {
+  el = el.closest(parent);
+  return el ? el.querySelector(selector) : el;
+}
 
 function initEditors() {
   all('.tag-editor', getTagEditor);

@@ -1,15 +1,16 @@
 %li.tag.drop-down-holder.popper{class: "tag", "data-namespace": "{namespace}", "data-slug": "{slug}"}>
 	%a(href="/tags/{link}")
 		%span {name}
-	%span.count(data-count="{members}") ({members})
 	{flags}
-	%ul.drop-down.pop-out
-		%li.action.toggle(data-family="tag-flags" data-descriminator="hide" data-target="tags" data-id="{id}" data-action="hide")
-			%span.icon
-			%span.label Hide
-		%li.action.toggle(data-family="tag-flags" data-descriminator="spoiler" data-target="tags" data-id="{id}" data-action="spoiler")
-			%span.icon
-			%span.label Spoiler
-		%li.action.toggle(data-family="tag-flags" data-descriminator="watch" data-target="tags" data-id="{id}" data-action="watch")
-			%span.icon
-			%span.label Watch
+	%span.counter {members}
+	- if user_signed_in?
+		%ul.drop-down.pop-out
+			%li.action.toggle(data-family="tag-flags" data-descriminator="hide" data-target="tags" data-id="{id}" data-action="actions/hide")
+				%span.icon
+				%span.label Hide
+			%li.action.toggle(data-family="tag-flags" data-descriminator="spoiler" data-target="tags" data-id="{id}" data-action="actions/spoiler")
+				%span.icon
+				%span.label Spoiler
+			%li.action.toggle(data-family="tag-flags" data-descriminator="watch" data-target="tags" data-id="{id}" data-action="actions/watch")
+				%span.icon
+				%span.label Watch

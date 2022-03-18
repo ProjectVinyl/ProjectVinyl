@@ -167,31 +167,30 @@ class Tag < ApplicationRecord
   def self.create_from_names(names)
     return [] if names.blank?
 
-    result = []
-    existing_tags = []
-    
-    Tag.where('name IN (?)', names).find_each do |tag|
-      result << (tag.alias_id || tag.id)
-      existing_tags << tag
+    Tag.transaction do
+      existing_tags = Tag.where('name IN (?)', names).pluck(:id, :alias_id, :name, :tag_type_id)
+      result = existing_tags.map{ |tag| tag[1] || tag[0] }
+      names -= existing_tags.pluck(2)
+      new_tags = names
+        .map(&:strip)
+        .uniq
+        .filter(&Tag.method(:valid_name?))
+        .map do |name|
+          TagType.parse_name(name, user_assign: true)[:tag].merge(
+            description: '',
+            video_count: 0,
+            user_count: 0
+          )
+      end
+
+      new_tags = upsert_all(new_tags, returning: [:id, :tag_type_id], unique_by: [:name])
+
+      result += new_tags.pluck("id")
+
+      TagType.upsert_implications(existing_tags.pluck(3), new_tags, result)
+
+      result.uniq
     end
-
-    new_tags = (names - existing_tags.map(&:name))
-      .map(&:strip)
-      .uniq
-      .filter(&Tag.method(:valid_name?))
-      .map do |name|
-        TagType.parse_name(name, user_assign: true)[:tag].merge(
-          description: '',
-          video_count: 0,
-          user_count: 0
-        )
-    end
-
-    new_tags = upsert_all(new_tags, returning: [:id, :tag_type_id], unique_by: [:name])
-
-    TagType.upsert_implications(existing_tags, new_tags, result)
-
-    result.uniq
   end
 
   def self.sanitize_name(name)
