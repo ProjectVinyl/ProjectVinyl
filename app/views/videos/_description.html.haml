@@ -1,4 +1,4 @@
-%section.page.seamless.column-left.fixed-right-column
+%section.page.slim.seamless.column-left.fixed-right-column
 	%span.notices
 		- if !@video.processed
 			.notice.pending This video is still being processed by our background ponies. If it does not play correctly try again later.
@@ -37,8 +37,9 @@
 				%textarea.input.js-auto-resize(name="description_video_#{@video.id}")= @video.description
 				%span.edit= fa :pencil
 		- else
-			%span.post-content
-				%span.content= emotify @video.description
+			- if @video.description.present?
+				%span.post-content
+					%span.content= emotify @video.description
 	%br/
 	.post-tags
 		.normal.tiny-link
