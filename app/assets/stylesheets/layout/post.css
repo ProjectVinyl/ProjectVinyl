@@ -32,7 +32,7 @@
 }
 .seamless .post-content {
   display: block;
-  padding: var(--content-block-padding);
+  padding: 15px;
   border-radius: var(--block-radius);
 }
 
