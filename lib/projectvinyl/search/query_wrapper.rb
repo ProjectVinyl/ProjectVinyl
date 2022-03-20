@@ -20,7 +20,7 @@ module ProjectVinyl
 
       def ids
         return [] if @exception
-        distrust do
+        distrust([]) do
           @search.map(&:id).map(&:to_i)
         end
       end
@@ -46,14 +46,14 @@ module ProjectVinyl
       end
 
       private
-      def distrust
+      def distrust(v = 0)
         return yield
       rescue Elasticsearch::Transport::Transport::Errors::ServiceUnavailable => e
-        excepted! e, 0
+        excepted! e, v
       rescue Elasticsearch::Transport::Transport::Errors::BadRequest => e
-        excepted! e, 0
+        excepted! e, v
       rescue Faraday::ConnectionFailed => e
-        excepted! e, 0
+        excepted! e, v
       end
 
       def excepted!(e, v = nil)
