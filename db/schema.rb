@@ -51,7 +51,7 @@ ActiveRecord::Schema.define(version: 20220315130202) do
     t.index ["visit_token"], name: "index_ahoy_visits_on_visit_token", unique: true
   end
 
-  create_table "album_items", id: :serial, force: :cascade do |t|
+  create_table "album_items", id: :integer, default: nil, force: :cascade do |t|
     t.integer "album_id"
     t.integer "video_id"
     t.integer "index"
@@ -62,7 +62,7 @@ ActiveRecord::Schema.define(version: 20220315130202) do
     t.index ["video_id"], name: "index_album_items_on_video_id"
   end
 
-  create_table "albums", id: :serial, force: :cascade do |t|
+  create_table "albums", id: :integer, default: nil, force: :cascade do |t|
     t.string "title", limit: 340
     t.text "description"
     t.datetime "created_at", null: false
@@ -90,14 +90,14 @@ ActiveRecord::Schema.define(version: 20220315130202) do
     t.index ["user_id"], name: "index_api_tokens_on_user_id"
   end
 
-  create_table "artist_genres", id: :serial, force: :cascade do |t|
+  create_table "artist_genres", id: :integer, default: nil, force: :cascade do |t|
     t.integer "tag_id"
     t.integer "user_id"
     t.integer "o_tag_id"
     t.index ["user_id"], name: "index_artist_genres_on_user_id"
   end
 
-  create_table "badges", id: :serial, force: :cascade do |t|
+  create_table "badges", id: :integer, default: nil, force: :cascade do |t|
     t.string "title"
     t.string "colour"
     t.string "icon"
@@ -109,7 +109,7 @@ ActiveRecord::Schema.define(version: 20220315130202) do
     t.boolean "hidden", default: false
   end
 
-  create_table "boards", id: :serial, force: :cascade do |t|
+  create_table "boards", id: :integer, default: nil, force: :cascade do |t|
     t.string "title"
     t.text "description"
     t.datetime "created_at", null: false
@@ -117,14 +117,14 @@ ActiveRecord::Schema.define(version: 20220315130202) do
     t.string "short_name"
   end
 
-  create_table "comment_replies", id: :serial, force: :cascade do |t|
+  create_table "comment_replies", id: :integer, default: nil, force: :cascade do |t|
     t.integer "parent_id"
     t.integer "comment_id"
     t.index ["comment_id"], name: "index_comment_replies_on_comment_id"
     t.index ["parent_id"], name: "index_comment_replies_on_parent_id"
   end
 
-  create_table "comment_threads", id: :serial, force: :cascade do |t|
+  create_table "comment_threads", id: :integer, default: nil, force: :cascade do |t|
     t.string "title", limit: 340
     t.integer "user_id"
     t.datetime "created_at", null: false
@@ -138,7 +138,7 @@ ActiveRecord::Schema.define(version: 20220315130202) do
     t.index ["owner_type", "owner_id"], name: "index_comment_threads_on_owner_type_and_owner_id"
   end
 
-  create_table "comment_votes", id: :serial, force: :cascade do |t|
+  create_table "comment_votes", id: :integer, default: nil, force: :cascade do |t|
     t.integer "user_id"
     t.integer "comment_id"
     t.datetime "created_at", null: false
@@ -146,7 +146,7 @@ ActiveRecord::Schema.define(version: 20220315130202) do
     t.index ["comment_id"], name: "index_comment_votes_on_comment_id"
   end
 
-  create_table "comments", id: :serial, force: :cascade do |t|
+  create_table "comments", id: :integer, default: nil, force: :cascade do |t|
     t.integer "user_id"
     t.integer "comment_thread_id"
     t.text "bbc_content"
@@ -179,7 +179,7 @@ ActiveRecord::Schema.define(version: 20220315130202) do
     t.index ["user_id"], name: "index_notification_receivers_on_user_id"
   end
 
-  create_table "notifications", id: :serial, force: :cascade do |t|
+  create_table "notifications", id: :integer, default: nil, force: :cascade do |t|
     t.string "message", limit: 340
     t.string "source"
     t.integer "user_id"
@@ -191,7 +191,7 @@ ActiveRecord::Schema.define(version: 20220315130202) do
     t.index ["user_id"], name: "index_notifications_on_user_id"
   end
 
-  create_table "pms", id: :serial, force: :cascade do |t|
+  create_table "pms", id: :integer, default: nil, force: :cascade do |t|
     t.integer "state", default: 0
     t.boolean "unread", default: false
     t.integer "sender_id"
@@ -216,7 +216,7 @@ ActiveRecord::Schema.define(version: 20220315130202) do
     t.index ["user_id", "column"], name: "index_profile_modules_on_user_id_and_column"
   end
 
-  create_table "reports", id: :serial, force: :cascade do |t|
+  create_table "reports", id: :integer, default: nil, force: :cascade do |t|
     t.integer "reportable_id"
     t.integer "user_id"
     t.boolean "resolved"
@@ -260,7 +260,7 @@ ActiveRecord::Schema.define(version: 20220315130202) do
     t.index ["active"], name: "index_site_notices_on_active"
   end
 
-  create_table "tag_histories", id: :serial, force: :cascade do |t|
+  create_table "tag_histories", id: :integer, default: nil, force: :cascade do |t|
     t.integer "video_id"
     t.integer "tag_id"
     t.integer "user_id"
@@ -273,7 +273,7 @@ ActiveRecord::Schema.define(version: 20220315130202) do
     t.index ["video_id"], name: "index_tag_histories_on_video_id"
   end
 
-  create_table "tag_implications", id: :serial, force: :cascade do |t|
+  create_table "tag_implications", id: :integer, default: nil, force: :cascade do |t|
     t.integer "tag_id"
     t.integer "implied_id"
     t.index ["implied_id"], name: "index_tag_implications_on_implied_id"
@@ -291,7 +291,7 @@ ActiveRecord::Schema.define(version: 20220315130202) do
     t.integer "any_of", default: [], array: true
   end
 
-  create_table "tag_subscriptions", id: :serial, force: :cascade do |t|
+  create_table "tag_subscriptions", id: :integer, default: nil, force: :cascade do |t|
     t.integer "user_id"
     t.integer "tag_id"
     t.datetime "created_at", null: false
@@ -300,19 +300,19 @@ ActiveRecord::Schema.define(version: 20220315130202) do
     t.index ["user_id"], name: "index_tag_subscriptions_on_user_id"
   end
 
-  create_table "tag_type_implications", id: :serial, force: :cascade do |t|
+  create_table "tag_type_implications", id: :integer, default: nil, force: :cascade do |t|
     t.integer "tag_type_id"
     t.integer "implied_id"
   end
 
-  create_table "tag_types", id: :serial, force: :cascade do |t|
+  create_table "tag_types", id: :integer, default: nil, force: :cascade do |t|
     t.string "prefix"
     t.boolean "hidden", default: true
     t.boolean "user_assignable", default: true
     t.index ["prefix"], name: "index_tag_types_on_prefix", unique: true
   end
 
-  create_table "tags", id: :serial, force: :cascade do |t|
+  create_table "tags", id: :integer, default: nil, force: :cascade do |t|
     t.string "name", default: ""
     t.text "description"
     t.integer "tag_type_id"
@@ -326,7 +326,7 @@ ActiveRecord::Schema.define(version: 20220315130202) do
     t.index ["name"], name: "index_tags_on_name", unique: true
   end
 
-  create_table "thread_subscriptions", id: :serial, force: :cascade do |t|
+  create_table "thread_subscriptions", id: :integer, default: nil, force: :cascade do |t|
     t.integer "user_id"
     t.integer "comment_thread_id"
     t.datetime "created_at", null: false
@@ -335,7 +335,7 @@ ActiveRecord::Schema.define(version: 20220315130202) do
     t.index ["user_id"], name: "index_thread_subscriptions_on_user_id"
   end
 
-  create_table "user_badges", id: :serial, force: :cascade do |t|
+  create_table "user_badges", id: :integer, default: nil, force: :cascade do |t|
     t.integer "badge_id"
     t.integer "user_id"
     t.string "custom_title"
@@ -345,7 +345,7 @@ ActiveRecord::Schema.define(version: 20220315130202) do
     t.index ["user_id"], name: "index_user_badges_on_user_id"
   end
 
-  create_table "users", id: :serial, force: :cascade do |t|
+  create_table "users", id: :integer, default: nil, force: :cascade do |t|
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
     t.string "reset_password_token"
@@ -394,7 +394,7 @@ ActiveRecord::Schema.define(version: 20220315130202) do
     t.index ["video_id"], name: "index_video_chapters_on_video_id"
   end
 
-  create_table "video_genres", id: :serial, force: :cascade do |t|
+  create_table "video_genres", id: :integer, default: nil, force: :cascade do |t|
     t.integer "video_id"
     t.integer "tag_id"
     t.integer "o_tag_id"
@@ -411,7 +411,7 @@ ActiveRecord::Schema.define(version: 20220315130202) do
     t.index ["video_id"], name: "index_video_visits_on_video_id"
   end
 
-  create_table "videos", id: :serial, force: :cascade do |t|
+  create_table "videos", id: :integer, default: nil, force: :cascade do |t|
     t.string "title", limit: 340
     t.text "description"
     t.boolean "audio_only"
@@ -452,7 +452,7 @@ ActiveRecord::Schema.define(version: 20220315130202) do
     t.index ["user_id"], name: "index_videos_on_user_id"
   end
 
-  create_table "votes", id: :serial, force: :cascade do |t|
+  create_table "votes", id: :integer, default: nil, force: :cascade do |t|
     t.integer "user_id"
     t.integer "video_id"
     t.boolean "negative"
