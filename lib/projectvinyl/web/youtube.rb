@@ -24,13 +24,23 @@ module ProjectVinyl
         data = {
           id: meta[:id],
           attributes: {
+            visibility: meta[:availability],
             upload_date: meta[:upload_date],
+            release_date: meta[:release_timestamp],
             extension: meta[:ext],
-            codec: meta[:acodec],
+            codec: {
+              audio: meta[:acodec],
+              video: meta[:vcodec]
+            },
             live_stream: {
-              is_live: meta[:is_live] || false ,
+              is_live: meta[:is_live] || meta[:live_status] == 'live' || false,
+              was_live: meta[:was_live] || false,
               start: meta[:start_time],
               end: meta[:end_timer]
+            },
+            dimensions: {
+              width: meta[:width],
+              height: meta[:height]
             }
           },
           links: {
@@ -57,7 +67,7 @@ module ProjectVinyl
         data[:included][:annotations] = meta[:annotations] || [] if all || flag_set(wanted_data, :annotations)
         data[:included][:captions] = meta[:automatic_captions] || [] if all || flag_set(wanted_data, :captions)
         data[:included][:chapters] = meta[:chapters] || [] if all || flag_set(wanted_data, :chapters)
-        data[:included][:sources] = meta[:requested_formats] || [] if all || flag_set(wanted_data, :source)
+        data[:included][:sources] = meta[:requested_formats] || [] if all || flag_set(wanted_data, :sources)
 
         data
       end
@@ -124,11 +134,12 @@ module ProjectVinyl
       end
 
       def self.__rating(meta)
-        {
-          average: meta[:average_rating],
-          likes: meta[:like_count],
-          dislikes: meta[:dislike_count]
-        }
+        ReturnYTDislike.get(meta[:id])
+        #{
+        #  average: meta[:average_rating],
+        #  likes: meta[:like_count],
+        #  dislikes: meta[:dislike_count]
+        #}
       end
 
       def self.__thumbnails(meta)
@@ -157,6 +168,20 @@ module ProjectVinyl
         args = params.entries.map {|entry| "#{entry[0]}=#{entry[1]}"}
 
         "#{url.split('?')[0]}?#{args.join('&')}"
+      end
+    end
+
+    class ReturnYTDislike
+      API_URL = 'https://returnyoutubedislikeapi.com/votes'.freeze
+
+      def self.get(videoId)
+        output = {}
+        Ajax.get(API_URL, {
+          videoid: videoId
+        }) do |response|
+          output = JSON.parse(response, symbolize_names: true)
+        end
+        return output.slice(:likes, :dislikes, :rating, :viewCount)
       end
     end
   end
