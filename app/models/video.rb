@@ -19,6 +19,7 @@ class Video < ApplicationRecord
   has_many :video_genres, dependent: :destroy
   has_many :video_chapters, dependent: :destroy
   has_many :tags, through: :video_genres
+  has_many :external_sources
 
   has_many :artist_tags, ->{ where(namespace: 'artist') }, through: :video_genres, source: :tag, class_name: 'Tag'
   has_many :rating_tags, ->{ where(namespace: 'rating') }, through: :video_genres, source: :tag, class_name: 'Tag'
@@ -110,7 +111,7 @@ class Video < ApplicationRecord
     artist_tag = user.tag
     return if !artist_tag
 
-    Notification.notify_receivers(artist_tag.subscribers.pluck(:id), self, "#{user.username} has just uploaded a new video.", link)
+    Notification.notify_receivers(artist_tag.subscribers.pluck(:id), comment_thread, "#{user.username} has just uploaded a new video.", link)
   end
 
   def upload_media(media, checksum)

@@ -14,7 +14,7 @@ class Tag < ApplicationRecord
   has_many :users, through: :artist_genres
   
   has_many :tag_subscriptions
-  has_many :subscribers, through: :tag_subscriptions, class_name: "User"
+  has_many :subscribers, through: :tag_subscriptions, class_name: "User", source: :user
 
   has_many :tag_implications, dependent: :destroy
   has_many :implications, through: :tag_implications, foreign_key: "implied_id"
