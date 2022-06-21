@@ -1,6 +1,6 @@
 .wrapper.center
 	%section.page.half-width.modal
-		= devise_error_messages!
+		= render "devise/shared/error_messages", resource: resource
 		%h2 Resend unlock instructions
 		= form_for(resource, as: resource_name, url: unlock_path(resource_name), html: { method: :post }) do |f|
 			= f.email_field :email, placeholder: :email, autofocus: true
