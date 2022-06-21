@@ -23,11 +23,11 @@
 %hr
 %table
 	%tr
-		%td.label
+		%td.highlight
 			Extra data can be returned from each of the below routes using the optional include
 			parameters. Simply epecify the requested keys in a come-delimited list.
 	%tr
-		%td.label
+		%td.highlight
 			= absolute_url '/api/path?key[your_api_key]&include=key1,key2,key3...'
 %table
 	%tr
@@ -35,7 +35,7 @@
 			%a(href="/api/videos?key=#{@token.token}")
 				= absolute_url '/api/videos'
 	%tr
-		%td.label
+		%td.highlight
 			%b Parameters
 			%table
 				%thead
@@ -59,8 +59,9 @@
 						%td q
 						%td optional
 						%td Optional search query to filter results.
+						%td
 	%tr
-		%td.label
+		%td.highlight
 			%b Optional Include Parameters
 			%ul
 				%li user
@@ -70,7 +71,7 @@
 			%a(href="/api/videos/1?key=#{@token.token}")
 				= absolute_url '/api/videos/[video_id]'
 	%tr
-		%td.label
+		%td.highlight
 			%b Optional Include Parameters
 			%ul
 				%li user
@@ -80,7 +81,7 @@
 			%a(href="/api/youtube?key=#{@token.token}&url=https://www.youtube.com/watch?v=-wekCRyFH40")
 				= absolute_url '/api/youtube?url=[youtube_video_url]'
 	%tr
-		%td.label
+		%td.highlight
 			%b Parameters
 			%table
 				%thead
@@ -96,7 +97,7 @@
 						%td A link to any video hosted on youtube. Mobile and desktop formats both supported.
 						%td
 	%tr
-		%td.label
+		%td.highlight
 			%b Optional Include Parameters
 			%ul
 				%li
@@ -138,6 +139,6 @@
 	OEmbed is also supported!
 %table
 	%tr
-		%td.label
+		%td.highlight
 			%a(href="/oembed.json?url=#{absolute_url 1}")
 				= absolute_url '/oembed.json?url=[url]'

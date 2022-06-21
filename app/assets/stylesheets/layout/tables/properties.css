@@ -12,10 +12,12 @@
   padding: 10px;
   border-top: solid 1px var(--block-border-color);
 }
-.properties td.label {
+.properties td.label, .properties td.highlight {
   background: var(--label-background);
   width: 25%;
   border-right: solid 1px var(--block-border-color);
+}
+.properties td.label {
   text-align: right;
 }
 .properties td.field {
