@@ -111,7 +111,7 @@ class Video < ApplicationRecord
     return if listing != 0
     artist_tag = user.tag
     return if !artist_tag
-
+    return if comment_thread.nil?
     Notification.notify_receivers(artist_tag.subscribers.pluck(:id), comment_thread, "#{user.username} has just uploaded a new video.", link)
   end
 
