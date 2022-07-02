@@ -3,61 +3,28 @@
 	%table
 		%tr
 			%td.label Media Type
-			%td.field= @video.audio_only ? "Audio" : "Video"
-			%td
+			%td.field(colspan="3")= @video.audio_only ? "Audio" : "Video"
 		%tr
 			%td.label File Type
-			%td.field= "#{@video.mime} (#{@video.file})"
-			%td
+			%td.field(colspan="3")= "#{@video.mime} (#{@video.file})"
 		%tr
 			%td.label Dimensions
-			%td.field= @video.dimensions
+			%td.field(colspan="3")= @video.dimensions
 		%tr
 			%td.label Size
-			%td.field= "%.2f MB" % @video.file_size
-		%tr
-			%td.label
-				SRC
-				= surround '(', ')' do
-					= @video.file
-			%td.field= bool File.exist?(@video.video_path)
-			%td
-				%a.button{href: @video.video_file_link} View
-		%tr
-			%td.label MP3
-			%td.field
-				- if @video.file == '.mp3'
-					N/A
-				- else
-					= bool File.exist?(@video.audio_path)
-			%td
-				%a.button{href: @video.audio_file_link} View
-		- if !@video.audio_only
+			%td.field(colspan="3")= "%.2f MB" % @video.file_size
+		- @video.assets(:all).filter{|media| media.name == 'video_file_name' || media.ext != @video.file}.sort{|f| f.name == 'video_file_name' ? -1 : (f.path.exist? ? 0 : 1)}.uniq(&:ext).each do |media|
 			%tr
-				%td.label MP4
-				%td.field
-					- if @video.file == '.mp4'
-						N/A
+				%td.label
+					- if media.name == 'video_file_name'
+						= precede 'SOURCE' do
+							= @video.file
 					- else
-						= bool File.exist?(@video.mpeg_path)
-				%td
-					%a.button{href: @video.mpeg_file_link} View
-			%tr
-				%td.label WEBM
+						= media.name.upcase
 				%td.field
-					- if @video.file == '.webm'
-						N/A
-					- else
-						= bool File.exist?(@video.webm_path)
+					= bool media.path.exist?
+					.right
+						= surround '(',')' do
+							= "%.2f MB" % media.size
 				%td
-					%a.button{href: @video.webm_file_link} View
-		%tr
-			%td.label Cover
-			%td.field= bool File.exist?(@video.cover_path)
-			%td
-				%a.button{href: @video.cover_file_link} View
-		%tr
-			%td.label Thumbnail
-			%td.field= bool File.exist?(@video.tiny_cover_path)
-			%td
-				%a.button{href: @video.tiny_cover_file_link} View
+					%a.button{href: media.link} View

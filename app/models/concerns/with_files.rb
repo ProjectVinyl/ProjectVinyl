@@ -19,6 +19,7 @@ module WithFiles
 
       path_method_sym = "#{asset_name}_path".to_sym
       url_method_sym = "#{asset_name}_url".to_sym
+      file_link_sym = "#{asset_name}_file_link".to_sym
 
       define_method path_method_sym do |root=nil|
         Rails.root.join(root || storage_root, asset_root, storage_path, is_method ? self.send(file_name, asset_name) : file_name)
@@ -29,7 +30,7 @@ module WithFiles
       define_method "has_#{asset_name}?".to_sym do
         File.exist?(send(path_method_sym))
       end
-      define_method "#{asset_name}_file_link".to_sym do
+      define_method file_link_sym do
         name = is_method ? self.send(file_name, asset_name) : file_name
         "/admin/files?p=#{[storage_root, asset_root, storage_path].join('/')}&start=#{name}##{name}"
       end
@@ -40,20 +41,29 @@ module WithFiles
         def_accessor = params[:cache_bust].is_a?(Symbol) ? params[:cache_bust] : asset_name
         define_method def_accessor do cache_bust(send(url_method_sym)) end
       end
+      
+      asset_syms = {
+        name: file_name.to_s,
+        path: path_method_sym,
+        url: url_method_sym,
+        link: file_link_sym
+      }
 
-      group = params[:group] || :all
+      groups = params[:group] || :all
+      groups = [groups] if :a.is_a?(groups.class)
+      groups.each do |group|
+        if !__asset_groups.key?(group)
+          __asset_groups[group] = []
 
-      if !__asset_groups.key?(group)
-        __asset_groups[group] = []
-
-        if group != :all
-          define_method "remove_#{group}".to_sym do
-            each_asset(group) {|f| del_file(send(f)) }
+          if group != :all
+            define_method "remove_#{group}".to_sym do
+              each_asset(group) {|f| del_file(send(f)) }
+            end
           end
         end
-      end
 
-      __asset_groups[group] << "#{asset_name}_path".to_sym
+        __asset_groups[group] << asset_syms
+      end
     end
   end
 
@@ -104,15 +114,61 @@ module WithFiles
       file.flush
     end
   end
+  
+  def assets(*groups)
+    entries = self.class.__asset_groups
+    groups = entries.keys if groups.include?(:all)
+    groups
+      .flat_map{|g| entries[g] || []}
+      .uniq
+      .map{|syms| Asset.new(self, syms)}
+  end
 
   protected
   def each_asset(*groups, &block)
     entries = self.class.__asset_groups
     groups = entries.keys if groups.include?(:all)
-    groups.flat_map{|g| entries[g] || []}.each &block
+    groups
+      .flat_map{|g| entries[g] || []}
+      .uniq
+      .each &block
   end
 
   def remove_assets
-    each_asset(:all) {|f| del_file(send(f)) }
+    each_asset(:all) {|f| del_file(send(f[:path])) }
+  end
+  
+  class Asset
+    attr_reader :name
+    
+    def initialize(owner, method_syms)
+      @name = method_syms[:name]
+      @owner = owner
+      @method_syms = method_syms
+    end
+    
+    def path
+      @owner.send(@method_syms[:path])
+    end
+    
+    def url
+      @owner.send(@method_syms[:url])
+    end
+    
+    def link
+      @owner.send(@method_syms[:link])
+    end
+    
+    def size
+      return 0 if !path.exist?
+      return path.size?.to_f / 2**20 if !path.directory?
+      path.children
+        .map{|f| f.size?.to_f / 2**20}
+        .sum 
+    end
+    
+    def ext
+      path.extname.sub('.', '')
+    end
   end
 end

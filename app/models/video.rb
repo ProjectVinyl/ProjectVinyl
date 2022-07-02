@@ -31,10 +31,11 @@ class Video < ApplicationRecord
   has_many :tag_histories, dependent: :destroy
 
   asset_root :stream
-  has_asset :video, :video_file_name, group: :media
-  has_asset :audio, 'audio.mp3', group: :media
-  has_asset :webm, 'video.webm', group: :media
-  has_asset :mpeg, 'video.mp4', group: :media
+  has_asset :video, :video_file_name, group: [:media, :downloadable_media]
+  has_asset :audio, 'audio.mp3', group: [:media, :downloadable_media, :audio_media]
+  has_asset :webm, 'video.webm', group: [:media, :downloadable_media]
+  has_asset :mpeg, 'video.mp4', group: [:media, :downloadable_media]
+  has_asset :mkv, 'video.mkv', group: [:media, :downloadable_media]
   has_asset :frames, 'frames', group: :media
   has_asset :cover, 'cover.png', cache_bust: true, group: :cover_files
   has_asset :tiny_cover, 'thumb.png', cache_bust: true, group: :cover_files

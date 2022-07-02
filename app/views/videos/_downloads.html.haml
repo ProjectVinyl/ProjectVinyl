@@ -3,24 +3,11 @@
 		= fa :download
 		%span Download
 	%ul.pop-out
-		%li.action{disabled: !File.exist?(@video.video_path)}
-			%a(download target="_blank" href="#{video_download_path @video}#{@video.file}")
-				%span.icon= fa @video.audio_only ? :music : :video_camera
+		- @video.assets(:downloadable_media).uniq(&:ext).each do |media|
+			%li.action{disabled: !media.path.exist?}
+				%a(download target="_blank" href="#{video_download_path @video}.#{media.ext}")
+				%span.icon
+					= fa media.ext == 'mp3' ? :music : :video_camera
 				%span.label
-					Original (
-					= @video.file.gsub(/\./,'')
-					)
-			%li.divider
-		- if !@video.audio_only
-			%li.action{disabled: !File.exist?(@video.webm_path)}
-				%a(download target="_blank" href="#{video_download_path @video}.webm")
-					%span.icon= fa :video_camera
-					%span.label WEBM Video
-			%li.action{disabled: !File.exist?(@video.mpeg_path)}
-				%a(download target="_blank" href="#{video_download_path @video}.mp4")
-					%span.icon= fa :video_camera
-					%span.label MP4 Video
-		%li.action{disabled: !File.exist?(@video.audio_path)}
-			%a(download target="_blank" href="#{video_download_path @video}.mp3")
-				%span.icon= fa :music
-				%span.label MP3 Audio
+					= media.ext.upcase
+					= media.ext == 'mp3' ? 'Audio' : 'Video'

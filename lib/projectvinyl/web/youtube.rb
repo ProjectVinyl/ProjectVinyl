@@ -1,4 +1,5 @@
 require 'projectvinyl/web/ajax'
+require 'projectvinyl/web/the_pony_archive'
 require 'projectvinyl/bbc/bbcode'
 require 'uri'
 
@@ -18,7 +19,18 @@ module ProjectVinyl
 
       def self.get(url, wanted_data = {})
         meta = Youtubedl.video_meta(url)
+        if meta.key?(:error)
+          puts "Youtube Error: #{meta[:error]}"
+          id = video_id(url)
+          meta = ThePonyArchive.video_meta(id) if !id.nil?
+          meta = meta[:metadata] if meta.key?(:metadata)
+        end
 
+        return meta if meta.nil? || meta.key?(:error)
+        parse_metadata(meta, wanted_data)
+      end
+
+      def self.parse_metadata(meta, wanted_data = {})
         all = flag_set(wanted_data, :all)
 
         data = {
@@ -47,7 +59,7 @@ module ProjectVinyl
             embed_url: "https://www.youtube.com/embed/#{meta[:id]}"
           },
           meta: {
-            url: url
+            url: "https://www.youtube.com/watch?v=#{meta[:id]}"
           },
           included: {}
         }
@@ -146,8 +158,8 @@ module ProjectVinyl
         thumbnails = meta[:thumbnails].map do |thumbnail|
           {
             url: thumbnail[:url].split("?")[0],
-            width: thumbnail[:width],
-            height: thumbnail[:height]
+            width: thumbnail[:width] || 0,
+            height: thumbnail[:height] || 0
           }
         end
         thumbnails << {
