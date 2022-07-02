@@ -9,7 +9,7 @@ module External
         response = ImportYtVideoJob.queue_video(current_user, params[:v])
 
         flash[:info] = response[:response]
-        return redirect_to controller: '/videos', id: response[:id] if response[:ok]
+        return redirect_to action: :show, controller: '/videos', id: response[:id] if response[:ok]
       else
         flash[:error] = "The requested video could be found: #{params[:v]}"
       end
