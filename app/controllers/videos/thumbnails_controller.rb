@@ -20,7 +20,7 @@ module Videos
 
       return api_error_response('Error', 'Cover art is required for audio files.') if @video.audio_only && !has_cover
 
-      ExtractThumbnailJob.queue_video(@video, cover, time, queue: :manual)
+      Encode::ThumbnailJob.queue_video(@video, cover, time, queue: :manual)
 
       render json: {
         success: true,

@@ -26,7 +26,7 @@ module Import
       video.listing = 0
       video.publish
       video.save
-      EncodeFilesJob.perform_later(video.id)
+      Encode::VideoJob.perform_later(video.id)
     end
 
     def perform(video_id, archived, yt_id)

@@ -165,8 +165,8 @@ class VideosController < Videos::BaseVideosController
 
     @comments.subscribe(current_user) if current_user.subscribe_on_upload?
 
-    EncodeFilesJob.perform_later(@video.id)
-    ExtractThumbnailJob.queue_video(@video, nil, 0) if !@video.audio_only
+    Encode::VideoJob.perform_later(@video.id)
+    Encode::ThumbnailJob.queue_video(@video, nil, 0) if !@video.audio_only
 
     render json: {
       success: true,

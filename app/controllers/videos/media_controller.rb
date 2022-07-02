@@ -18,7 +18,7 @@ module Videos
       @video.upload_media(file, checksum)
       @video.save
 
-      EncodeFilesJob.queue_video(@video, queue: :manual)
+      Encode::VideoJob.queue_video(@video, queue: :manual)
 
       render json: {
         success: true,

@@ -42,10 +42,10 @@ class FileEncoder
 
   def self.encode_file(record, input, output, ext)
     prepare("#{record.id}.#{ext}", input, output) do |temp|
-      return yield if temp.nil?
+      return yield if block_given? && temp.nil?
       Ffmpeg.wait_on(Rails.root.join('encode').to_s, input.to_s, temp.to_s, output.to_s, ARGS_BY_FORMAT[ext.to_sym]) do
         puts "Conversion complete (#{output})"
-        yield
+        yield if block_given?
       end
     end
   end

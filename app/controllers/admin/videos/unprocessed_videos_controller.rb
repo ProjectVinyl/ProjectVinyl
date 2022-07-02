@@ -7,7 +7,7 @@ module Admin
 
       def update
         try_to do |video|
-          flash[:notice] = EncodeFilesJob.queue_video(video, :manual)
+          flash[:notice] = Encode::VideoJob.queue_video(video, :manual)
         end
       end
     end

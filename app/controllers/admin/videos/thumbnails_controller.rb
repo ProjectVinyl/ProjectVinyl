@@ -14,7 +14,7 @@ module Admin
 
       def destroy
         try_to do |video|
-          flash[:notice] = ExtractThumbnailJob.queue_video(video, nil, nil, :manual)
+          flash[:notice] = Encode::ThumbnailJob.queue_video(video, nil, nil, :manual)
         end
       end
     end
