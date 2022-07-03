@@ -1,10 +1,15 @@
 require 'projectvinyl/web/ajax'
 
 module Import
+  #
+  # Links supported video formats, downloading if required
+  #
   class VideoMediaJob < ApplicationJob
     queue_as :default
 
-    def self.perform_now(video, archived, yt_id)
+    def perform(video_id, archived, yt_id)
+      video = Video.find(video_id)
+
       if !archived.key?(:error) && archived[:file_paths][:additional_sources].length > 0
         FileUtils.mkdir_p File.dirname(video.video_path)
         archived[:file_paths][:additional_sources].each do |path|
@@ -23,14 +28,8 @@ module Import
 
       video.realise_checksum
       video.read_media_attributes
-      video.listing = 0
-      video.publish
       video.save
       Encode::VideoJob.perform_later(video.id)
-    end
-
-    def perform(video_id, archived, yt_id)
-      VideoMediaJob.perform_now(Video.find(video_id), archived, yt_id)
     end
   end
 end

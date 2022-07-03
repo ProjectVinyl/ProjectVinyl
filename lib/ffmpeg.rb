@@ -75,15 +75,6 @@ class Ffmpeg
     run_command('-i', src, '-vf', escape_filter_par("scale=#{args[0]}:#{args[1]}"), dst)
   end
 
-  def self.extract_thumbnail(src, dst_full, dst_sml, time)
-    time = to_h_m_s_accurate(time)
-    run_command('-i', src, '-ss', time, '-vframes', 1, dst_full, '-ss', time, '-vframes', 1, '-vf', SCALE_ONE_THIRTY, dst_sml)
-  end
-
-  def self.extract_tiny_thumb_from_existing(src, dst)
-    run_command('-i', src, '-vf', SCALE_ONE_THIRTY, dst)
-  end
-
   def self.run_command(*com)
     com = HEADER + com.map{|i| i.to_s}
     puts "FFMPEG RUN: #{com}"

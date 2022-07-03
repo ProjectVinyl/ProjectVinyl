@@ -1,4 +1,7 @@
 module Encode
+  #
+  # Extracts thumbnails from a video or an uploaded cover image
+  #
   class ThumbnailJob < ApplicationJob
     queue_as :default
 
@@ -21,13 +24,17 @@ module Encode
     def perform(video_id, time)
       video = Video.find(video_id)
 
-      video.del_file(video.tiny_cover_path)
-      
-      if video.has_cover?
-        Ffmpeg.extract_tiny_thumb_from_existing(video.cover_path, video.tiny_cover_path)
+      if video.cover_path.exist?
+        video.del_file(video.tiny_cover_path)
+        ThumbnailExtractor.extract_from_image(video.cover_path, video.cover_path, video.tiny_cover_path)
       elsif !video.audio_only
-        time = time ? time.to_f : video.duration.to_f / 2
-        Ffmpeg.extract_thumbnail(video.video_path, video.cover_path, video.tiny_cover_path, time)
+        video.del_file(video.tiny_cover_path)
+        ThumbnailExtractor.extract_from_video(
+          video.video_path,
+          video.cover_path,
+          video.tiny_cover_path,
+          time ? time.to_f : video.duration.to_f / 2
+        )
       end
     end
   end

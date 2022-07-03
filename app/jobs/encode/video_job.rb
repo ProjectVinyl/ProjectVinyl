@@ -1,4 +1,7 @@
 module Encode
+  #
+  # Encodes both a video's AV files and tilesheets
+  #
   class VideoJob < ApplicationJob
     queue_as :default
 
@@ -6,9 +9,7 @@ module Encode
       video.set_status(nil)
 
       begin
-        Encode::VideoFilesJob.set(queue: queue).perform_later(video.id)
-        Encode::AudioFilesJob.set(queue: :default).perform_later(video.id)
-        Encode::ThumbsheetJob.set(queue: :default).perform_later(video.id)
+        Encode::VideoJob.set(queue: :default).perform_later(video.id)
       rescue Exception => e
         return "Error: Could not schedule action."
       end
@@ -17,9 +18,17 @@ module Encode
     end
 
     def perform(video_id)
-      Encode::AudioFilesJob.perform_later(video_id)
-      Encode::ThumbsheetJob.perform_later(video_id)
-      Encode::VideoFilesJob.perform_now(video_id)
+      video = Video.find(video_id)
+      video.del_file(video.frames_path)
+      MultiFileEncoder.encode_multi(video, video.video_path, [
+        video.audio_path,
+        video.webm_path,
+        video.mpeg_path
+      ], tile_sheet_path: video.audio_only ? nil : video.frames_path) do
+        video = Video.find(video_id)
+        video.set_status(true)
+        video.update_file_locations
+      end
     end
   end
 end

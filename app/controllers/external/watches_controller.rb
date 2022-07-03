@@ -6,7 +6,7 @@ module External
       end
 
       if user_signed_in?
-        response = ImportYtVideoJob.queue_video(current_user, params[:v])
+        response = Import::VideoJob.queue_and_publish_now(current_user, params[:v])
 
         flash[:info] = response[:response]
         return redirect_to action: :show, controller: '/videos', id: response[:id] if response[:ok]

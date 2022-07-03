@@ -5,7 +5,19 @@ require 'projectvinyl/web/ajax'
 module Import
   class VideoJob < ApplicationJob
     queue_as :default
-    
+
+    def self.queue_and_publish_now(user, yt_id, queue = :default)
+      Import::VideoJob.create_video(user, yt_id) do |video, data, archived|
+          Import::VideoAttributesJob.perform_now(video.id, data, archived, yt_id)
+          Import::VideoThumbnailJob.perform_now(video.id, archived, yt_id)
+          Import::VideoMediaJob.set(queue: queue).perform_later(video.id, archived, yt_id)
+
+          video.listing = 0
+          video.publish
+          video.save
+      end
+    end
+
     def self.create_video(user, yt_id)
       begin
         raise 'Invalid length: Id must be 11 characters' if yt_id.length != 11

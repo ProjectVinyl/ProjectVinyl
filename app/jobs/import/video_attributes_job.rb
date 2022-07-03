@@ -2,7 +2,8 @@ module Import
   class VideoAttributesJob < ApplicationJob
     queue_as :default
 
-    def self.perform_now(video, data, archived, yt_id)
+    def perform(video_id, data, archived, yt_id)
+      video = Video.find(video_id)
       attributes = data[:attributes]
 
       video.title = attributes[:title]
@@ -27,10 +28,6 @@ module Import
       if (changes = video.set_all_tags(Tag.create_from_names(tags)))
         TagHistory.record_tag_changes(changes[0], changes[1], video.id, video.user_id)
       end
-    end
-
-    def perform(video_id, data, archived, yt_id)
-      perform_now(Video.find(video_id), YAML.load(data), YAML.load(archived), yt_id)
     end
   end
 end

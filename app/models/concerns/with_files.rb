@@ -28,7 +28,7 @@ module WithFiles
         ["/#{asset_root}", storage_path, is_method ? self.send(file_name, asset_name) : file_name].join('/')
       end
       define_method "has_#{asset_name}?".to_sym do
-        File.exist?(send(path_method_sym))
+        send(path_method_sym).exist?
       end
       define_method file_link_sym do
         name = is_method ? self.send(file_name, asset_name) : file_name
@@ -57,7 +57,7 @@ module WithFiles
 
           if group != :all
             define_method "remove_#{group}".to_sym do
-              each_asset(group) {|f| del_file(send(f)) }
+              each_asset(group) {|f| del_file(send(f[:path])) }
             end
           end
         end

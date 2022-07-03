@@ -8,24 +8,28 @@ class CheckThumbnailJob < ApplicationJob
       return "Error: Could not schedule action."
     end
 
-    "All thumbnails have been queue for a refresh"
+    "All thumbnails have been queued for a refresh"
   end
 
   def perform(video_id)
     video = Video.find(video_id)
     video.uncache
 
-    if !video.audio_only
-      if video.has_cover?
-        if !video.has_tiny_cover?
-          Ffmpeg.extract_tiny_thumb_from_existing(video.cover_path, video.tiny_cover_path)
-        end
-      elsif video.has_video?
-        video.del_file(video.tiny_cover_path)
+    return if video.audio_only
 
-        time = video.duration.to_f / 2
-        Ffmpeg.extract_thumbnail(video.video_path, video.cover_path, video.tiny_cover_path, time)
-      end
+    if video.cover_path.exist?
+      ThumbnailExtractor.extract_from_image(
+        video.cover_path, video.cover_path, video.tiny_cover_path
+      )
+    elsif video.has_video?
+      video.del_file(video.cover_path)
+      video.del_file(video.tiny_cover_path)
+      ThumbnailExtractor.extract_from_video(
+        video.video_path,
+        video.cover_path,
+        video.tiny_cover_path,
+        video.duration.to_f / 2
+      )
     end
   end
 end
