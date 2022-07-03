@@ -6,8 +6,8 @@
 		- @video.assets(:downloadable_media).uniq(&:ext).each do |media|
 			%li.action{disabled: !media.path.exist?}
 				%a(download target="_blank" href="#{video_download_path @video}.#{media.ext}")
-				%span.icon
-					= fa media.ext == 'mp3' ? :music : :video_camera
-				%span.label
-					= media.ext.upcase
-					= media.ext == 'mp3' ? 'Audio' : 'Video'
+					%span.icon
+						= fa media.ext == 'mp3' ? :music : :video_camera
+					%span.label
+						= media.ext.upcase
+						= media.ext == 'mp3' ? 'Audio' : 'Video'
