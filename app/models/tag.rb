@@ -198,6 +198,8 @@ class Tag < ApplicationRecord
   end
 
   def self.valid_name?(tag_name)
+    require 'projectvinyl/search/search'
+
     !name.nil? && name.present? && !ProjectVinyl::Search::USER_INDEX_PARAMS.recognises?(tag_name) && !ProjectVinyl::Search::VIDEO_INDEX_PARAMS.recognises?(tag_name)
   end
 end
