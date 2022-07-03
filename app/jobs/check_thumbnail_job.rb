@@ -18,17 +18,18 @@ class CheckThumbnailJob < ApplicationJob
     return if video.audio_only
 
     if video.cover_path.exist?
+      video.del_file(video.tiny_cover_path)
       ThumbnailExtractor.extract_from_image(
         video.cover_path, video.cover_path, video.tiny_cover_path
       )
-    elsif video.has_video?
+    elsif !video.audio_only && video.has_video?
       video.del_file(video.cover_path)
       video.del_file(video.tiny_cover_path)
       ThumbnailExtractor.extract_from_video(
         video.video_path,
         video.cover_path,
         video.tiny_cover_path,
-        video.duration.to_f / 2
+        video.thumbnail_time
       )
     end
   end
