@@ -13,6 +13,9 @@
 		%tr
 			%td.label Size
 			%td.field(colspan="3")= "%.2f MB" % @video.file_size
+		%tr
+			%td.label Thumbnail Time
+			%td.field(colspan="3")= @video.thumbnail_time
 		- @video.assets(:all).filter{|media| media.name == 'video_file_name' || media.ext != @video.file}.sort{|f| f.name == 'video_file_name' ? -1 : (f.path.exist? ? 0 : 1)}.uniq(&:ext).each do |media|
 			%tr
 				%td.label
