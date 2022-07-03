@@ -5,7 +5,10 @@ class Mimes
     end
   end
 
-  MIME_TYPES = self.safe_invert(Rack::Mime::MIME_TYPES)
+  EXT_TO_MIME = Rack::Mime::MIME_TYPES.merge({
+    '.mkv' => 'video/x-matroska'
+  })
+  MIME_TO_EXT = self.safe_invert(EXT_TO_MIME)
 
   def self.media_ext(media)
     ext = File.extname(media.original_filename)
@@ -14,10 +17,10 @@ class Mimes
   end
 
   def self.ext(mime)
-    MIME_TYPES[mime]
+    MIME_TO_EXT[mime]
   end
 
   def self.mime(ext)
-    Rack::Mime::MIME_TYPES[ext]
+    EXT_TO_MIME['.' + ext.gsub(/^\.+/, '')]
   end
 end
