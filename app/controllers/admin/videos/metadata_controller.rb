@@ -8,9 +8,8 @@ module Admin
       private
       def pull_meta(video)
         return flash[:error] = "No source provided." if params[:source].blank?
-
         meta = read_meta
-
+        return flash[:error] = meta[:error] if meta.key?(:error)
         return flash[:error] = "Video source was not found" if meta.empty?
 
         video.source = meta[:meta][:url]
@@ -22,6 +21,8 @@ module Admin
         TagHistory.record_source_changes(video)
         video.save
 
+        Import::VideoThumbnailJob.perform_later(video.id, nil, meta[:id]) if params[:thumbnails]
+
         flash[:notice] = "The video was updated succesfully."
       end
 
@@ -32,19 +33,26 @@ module Admin
         TagHistory.record_tag_changes(artist_tag[0], artist_tag[1], video.id) if !artist_tag.nil?
       end
 
-      def read_meta
-        begin
-          src = "https://www.youtube.com/watch?v=#{ProjectVinyl::Web::Youtube.video_id(params[:source])}"
-
-          fields = params.permit(:title, :description, :tags)
-          fields[:artist] = params[:tags]
-
-          return ProjectVinyl::Web::Youtube.get(src, fields)
-        rescue Error => e
-          flash[:error] = "Unknown Error: #{e.message}"
+      def include_hash(asked)
+        data = {}
+        [:title, :description, :tags].each do |key|
+          data[key] = true if asked.include?(key)
         end
 
-        {}
+        data
+      end
+
+      def read_meta
+        begin
+          src = "https://www.youtube.com/watch?v=#{params[:source]}"
+
+          fields = include_hash(params)
+          fields[:artist] = params.include?(:tags)
+
+          return ProjectVinyl::Web::Youtube.get(src, fields)
+        rescue Exception => e
+          return {error: "Unknown Error: #{e.message}"}
+        end
       end
     end
   end

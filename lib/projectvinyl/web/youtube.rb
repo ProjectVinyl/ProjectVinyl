@@ -18,10 +18,11 @@ module ProjectVinyl
       end
 
       def self.get(url, wanted_data = {})
+        id = video_id(url)
+        return {error: "Not a video: #{url}" } if id.nil?
         meta = Youtubedl.video_meta(url)
         if meta.key?(:error)
           puts "Youtube Error: #{meta[:error]}"
-          id = video_id(url)
           meta = ThePonyArchive.video_meta(id) if !id.nil?
           meta = meta[:metadata] if meta.key?(:metadata)
         end

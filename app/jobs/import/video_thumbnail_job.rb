@@ -1,4 +1,5 @@
 require 'projectvinyl/web/ajax'
+require 'projectvinyl/web/the_pony_archive'
 
 module Import
   #
@@ -8,11 +9,13 @@ module Import
     queue_as :default
 
     def perform(video_id, archived, yt_id)
+      archived = ProjectVinyl::Web::ThePonyArchive.video_meta(yt_id) if archived.nil?
       video = Video.find(video_id)
+      video.del_file video.cover_path
+      video.del_file video.tiny_cover_path
 
       if !archived.key?(:error) && archived[:file_paths][:thumbnail].exist?
         FileUtils.mkdir_p File.dirname(video.cover_path)
-
         ThumbnailExtractor.extract_from_image(
           archived[:file_paths][:thumbnail],
           video.cover_path,
