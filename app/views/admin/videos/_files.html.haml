@@ -21,7 +21,7 @@
 							= @video.file
 					- else
 						= media.name.upcase
-				%td.field
+				%td.field.file-detail(existing="#{media.path.exist?}" symbolic="#{media.path.symlink?}")
 					= bool media.path.exist?
 					.right
 						= surround '(',')' do

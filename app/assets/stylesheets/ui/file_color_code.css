@@ -1,0 +1,9 @@
+.file-detail[existing=false] {
+  color: #ec4848;
+}
+.file-detail[existing=true] {
+  color: #7bb042;
+}
+.file-detail[symbolic=true] {
+  color: #7b42b0;
+}
