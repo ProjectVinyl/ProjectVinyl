@@ -85,6 +85,10 @@ module WithFiles
     (date || DateTime.now).strftime("%Y/%-m/%-d")
   end
 
+  def absolute_storage_path(root=nil)
+    Rails.root.join(root || storage_root, asset_root, storage_path)
+  end
+
   def storage_path
     [WithFiles.storage_path(created_at), id].join('/')
   end
