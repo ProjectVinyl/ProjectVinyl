@@ -1,10 +1,12 @@
 module Videos
   class DownloadsController < BaseVideosController
     include ActionController::Live
+    include Assetable
 
     def show
       return head :bad_request if params[:format].nil?
       mime = Mimes.mime('.' + params[:format])
+
       if mime.nil? || ['audio', 'video'].index(mime.split('/').first).nil?
         return render status: :bad_request, plain: "Bad Request"
       end
@@ -16,19 +18,29 @@ module Videos
 
       return head :forbidden if @video.hidden && !(user_signed_in? && @video.owned_by(current_user))
 
+      sent_file_name = "#{@video.id}_#{@video.title}_by_#{@video.artist_tags.to_tag_string}.#{params[:format]}"
+
       file = get_file(@video, params[:format], mime)
-      if false && file.exist?
+      if file.exist?
+        return serve_direct(file, mime) if params[:stream] == '1'
         response.headers['Content-Length'] = file.size.to_s
         return send_file(file,
-          filename: "#{@video.id}_#{@video.title}_by_#{@video.artist_tags.to_tag_string}#{file.extname}",
+          filename: sent_file_name,
           type: mime
         )
       end
 
-      send_file_headers!(
-        filename: "#{@video.id}_#{@video.title}_by_#{@video.artist_tags.to_tag_string}.#{params[:format]}",
-        type: mime
-      )
+      if params[:stream] == '1'
+        send_file_headers!(
+          disposition: 'inline',
+          type: mime,
+          filename: sent_file_name
+        )
+      else
+        send_file_headers!(filename: sent_file_name, type: mime)
+      end
+
+      response.headers['Last-Modified'] = Time.now.ctime.to_s
 
       begin
         Ffstream.produce(@video.video_path, params[:format]) do |io|

@@ -6,7 +6,18 @@ class Mimes
   end
 
   EXT_TO_MIME = Rack::Mime::MIME_TYPES.merge({
-    '.mkv' => 'video/x-matroska'
+    '.mkv' => 'video/x-matroska',
+    '.aac' => 'audio/aac',
+    '.flac' => 'audio/flac',
+    '.avif' => 'image/avif',
+    '.avi' => 'video/x-msvideo',
+    '.bmp' => 'image/bmp',
+    '.mid' => 'audio/midi',
+    '.midi' => 'audio/midi',
+    '.ogg' => 'audio/ogg',
+    '.opus' => 'audio/opus',
+    '.weba' => 'audio/webm',
+    '.webp' => 'image/webp'
   })
   MIME_TO_EXT = self.safe_invert(EXT_TO_MIME)
 
