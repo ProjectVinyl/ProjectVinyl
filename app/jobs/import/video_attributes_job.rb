@@ -27,7 +27,7 @@ module Import
       end
       video.save
 
-      tags = included[:tags] || []).uniq
+      tags = (included[:tags] || []).uniq
       
       if included[:uploader]
         artist_tag = Tag.sanitize_name(included[:uploader][:name])
