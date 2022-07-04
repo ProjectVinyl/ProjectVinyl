@@ -28,4 +28,8 @@ module Assetable
     file = File.join(Rails.application.assets_manifest.dir, file)
     serve_direct(file, mime)
   end
+  
+  def valid_media_mime?(mime)
+    !mime.nil? && !['audio', 'video'].index(mime.split('/').first).nil?
+  end
 end

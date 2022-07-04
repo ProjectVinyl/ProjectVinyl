@@ -33,7 +33,8 @@ Rails.application.routes.draw do
       resource :avatar, :thumb, :banner, only: [:show]
     end
     scope 'stream/:year/:month/:day/:id', module: :videos do
-      resource :cover, :thumb, :source, :video, only: [:show]
+      resource :cover, :thumb, only: [:show]
+      resource :source, :video, :audio, controller: :streams, only: [:show]
     end
     scope 'stream/:year/:month/:day/:id/frames', module: :videos do
       get ':sheet_name', action: :show, controller: :tilesheets

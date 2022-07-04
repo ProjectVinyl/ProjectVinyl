@@ -6,10 +6,8 @@ module Videos
     def show
       return head :bad_request if params[:format].nil?
       mime = Mimes.mime('.' + params[:format])
+      return render status: :bad_request, plain: "Bad Request" if !valid_media_mime?(mime)
 
-      if mime.nil? || ['audio', 'video'].index(mime.split('/').first).nil?
-        return render status: :bad_request, plain: "Bad Request"
-      end
       if !(@video = Video.where(id: params[:video_id]).first)
         return render status: :not_found, plain: "Not Found"
       end
@@ -22,7 +20,6 @@ module Videos
 
       file = get_file(@video, params[:format], mime)
       if file.exist?
-        return serve_direct(file, mime) if params[:stream] == '1'
         response.headers['Content-Length'] = file.size.to_s
         return send_file(file,
           filename: sent_file_name,
@@ -30,20 +27,13 @@ module Videos
         )
       end
 
-      if params[:stream] == '1'
-        send_file_headers!(
-          disposition: 'inline',
-          type: mime,
-          filename: sent_file_name
-        )
-      else
-        send_file_headers!(filename: sent_file_name, type: mime)
-      end
-
+      send_file_headers!(filename: sent_file_name, type: mime)
       response.headers['Last-Modified'] = Time.now.ctime.to_s
 
+      return head :not_found if !@video.video_path.exist?
+
       begin
-        Ffstream.produce(@video.video_path, params[:format]) do |io|
+        Ffstream.produce(@video.video_path, params[:format], optimize_for: :quality) do |io|
           if Ffstream.copy_streams(io, response.stream) == 0
             render status: :not_found, plain: 'Format not available for streaming'
             puts "Format not available for streaming: #{params[:format]}"

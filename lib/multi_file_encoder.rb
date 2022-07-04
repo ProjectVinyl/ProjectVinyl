@@ -34,9 +34,8 @@ class MultiFileEncoder
     args = ['-i', input]
     temp_paths.each do |output|
       args += output[:args]
-      args << output[:from].to_s
+      args << output[:from]
       FileUtils.mkdir_p File.dirname(output[:to])
-      FileUtils.ln_s output[:from], output[:to]
     end
 
     if !thumbnail_args.nil?
@@ -54,7 +53,7 @@ class MultiFileEncoder
         .each do |output|
           args += ['-ss', thumbnail_args[:time]] if !thumbnail_args[:time].nil?
           args += output[:args]
-          args << output[:path].to_s
+          args << output[:path]
         end
     end
 
@@ -69,13 +68,11 @@ class MultiFileEncoder
 
     Ffmpeg.run_command *args do
       puts "Conversion complete (#{media_paths}), thumbs: #{!thumbnail_args.nil?}, tiles: #{!tile_sheet_path.nil?}"
-      temp_paths.each do |output|
-        FileUtils.remove_entry output[:to]
-        FileUtils.mv output[:from], output[:to], force: true
-      end
-
+      temp_paths.each{|output| move_file output[:from], output[:to]}
       yield if block_given?
     end
+
+    return 'Conversion Started'
   end
 
   private
@@ -88,15 +85,29 @@ class MultiFileEncoder
   end
 
   def self.detect_existing(output)
-    temp = output[:from]
-    return false if !temp.exist?
-    
-    if temp.mtime > Time.now.ago(1800)
-      temp.remove
-      return false
+    from = output[:from]
+    to = output[:to]
+
+    return false if !from.exist?
+
+    if to.exist? && to.size >= from.size
+      FileUtils.remove_entry from
+      return true # to exists but is larger
     end
 
-    FileUtils.mv output[:from], output[:to], force: true
-    true
+    # to exists but is smaller
+
+    if from.mtime < Time.now.ago(1800)
+      move_file output[:from], output[:to]
+      return true
+    end
+
+    FileUtils.remove_entry from
+    false
+  end
+
+  def self.move_file(from, to)
+    FileUtils.remove_entry to
+    FileUtils.mv from, to
   end
 end
