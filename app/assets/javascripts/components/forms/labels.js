@@ -1,10 +1,10 @@
 import { addDelegatedEvent } from '../../jslim/events';
 
-// Hover events for labels in the search forms (and other places, maybe, eventually)
-addDelegatedEvent(document, 'focusin', 'label input, label select, label textarea', (e) => {
-  e.target.closest('label').classList.add('focus');
-});
+function toggleFocus(e, on) {
+  const label = e.target.closest('label');
+  if (label) label.classList.toggle('focus', on);
+}
 
-addDelegatedEvent(document, 'focusout', 'label input, label select, label textarea', (e) => {
-  e.target.closest('label').classList.remove('focus');
-});
+// Hover events for labels in the search forms (and other places, maybe, eventually)
+addDelegatedEvent(document, 'focusin', 'label input, label select, label textarea', e => toggleFocus(e, true));
+addDelegatedEvent(document, 'focusout', 'label input, label select, label textarea', e => toggleFocus(e, false));
