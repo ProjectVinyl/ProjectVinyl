@@ -1,7 +1,7 @@
 %h1.title
 	Comments
 	= surround '(', ')' do
-		= @comments.count
+		= fuzzy_big_number_with_delimiter @comments.count
 	= render 'forum/threads/watch_options'
 = render 'comments/new'
 %hr/

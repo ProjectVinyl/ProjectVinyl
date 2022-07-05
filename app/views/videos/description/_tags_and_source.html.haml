@@ -1,0 +1,38 @@
+.slideout.shown.post-details
+	.post-tags.group.active
+		.normal
+			%b Tags
+			%br/
+			%ul.tags= render partial: 'tags/thumb/normal', collection: @tags
+			%hr/
+			- @sources = @video.external_sources.pluck(:url)
+			- if !@sources.empty?
+				%b Sources
+				%ol.video-sources
+					- @sources.each_with_index do |url, i|
+						%li.date
+							%a{href: url}= url
+		- if user_signed_in?
+			%hr.normal
+			%button.normal.right.state-toggle(data-parent=".post-tags" data-state="editing") Edit Tags Or Source
+			%br.normal
+			= form_for(@video, as: "video", url: video_details_path(@video), html: {class: "editing async form-state-toggle js-edit-video", method: :patch}, data: {state: "editing"}) do |f|
+				%b Editing Tags & Sources
+				.properties
+					%table
+						%tr
+							%td.field
+								= render layout: 'tags/editor', locals: {tags: @video.tags} do
+									%textarea(autocomplete="off" name="tags")= raw @video.tag_string
+						%tr
+							%td.field
+								= render layout: 'external_sources/editor', locals: {tags: @video.external_sources} do
+									%textarea(autocomplete="off" name="source")= raw @video.source
+						%tr
+							%td.field
+								%button.form-submitter.green.right Save Changes
+								%button.right.state-toggle(type="button" data-parent=".post-tags" data-state="editing") Close
+				.progressor
+					.message Uploading...
+					.progress
+						.fill

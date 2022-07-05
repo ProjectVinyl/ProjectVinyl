@@ -5,6 +5,7 @@
  *= require ./comments_indirect
  *= require ./comment_author_overlay
  *= require ./comment_actions
+ *= require ./post_box
  *= require ./reports
  *= require ./toolbars
  *= require ./bbc/all

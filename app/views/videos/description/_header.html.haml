@@ -1,0 +1,8 @@
+- if @modifications_allowed
+	%h2.title.post-title.resize-target.editable.short(data-target="#{video_description_path @video}" data-member="title")
+		%span.content= @video.title
+		%span.edit= fa :pencil
+		%span.hidden 11
+- else
+	%h2.title.post-title.resize-target
+		%span.content= @video.title

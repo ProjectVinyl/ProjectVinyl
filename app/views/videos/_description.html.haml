@@ -1,73 +1,12 @@
-%section.page.slim.seamless.column-left.fixed-right-column
-	%span.notices
-		- if !@video.processed
-			.notice.pending This video is still being processed by our background ponies. If it does not play correctly try again later.
-		- if @video.hidden
-			.notice.alert This video has been hidden. It will not be shown on other parts of the site until being passed by moderation.
-		- if @video.moderation_note && !@video.moderation_note.empty?
-			.notice.alert
-				%b Reason:
-				= @video.moderation_note
-	.post.description.resize-holder
-		- if @modifications_allowed
-			%h2.title.post-title.resize-target.editable.short(data-target="#{video_description_path @video}" data-member="title")
-				%span.content= @video.title
-				%span.edit= fa :pencil
-				%span.hidden 11
-		- else
-			%h2.title.post-title.resize-target
-				%span.content= @video.title
-		.tag-set.subheading
-			%span.uploaded
-				%a.user-link.link{href: @user.link, data: {id: @user.id}}= @user.username
-				\-
-				- if @video.premiered_at
-					premiered
-					= find_and_preserve "<span title=\"Premiered: #{localise_ftime(@video.premiered_at)}\n Uploaded: #{localise_ftime(@video.created_at)}\">#{since @video.premiered_at}</span>"
-				- else
-					uploaded
-					%span(title="Uploaded: #{localise_ftime(@video.created_at)}")= since @video.created_at
-			%span.views.right.js-play-counter{title: number_with_delimiter(@video.play_count) + ' views'}
-				= fuzzy_big_number_with_delimiter @video.play_count
-				views
-		= render partial: 'videos/actions'
-		- if @modifications_allowed
-			%span.post-content.editable(data-target="#{video_description_path @video}" data-member="description")
-				%span.content= emotify @video.description
-				%textarea.input.js-auto-resize(name="description_video_#{@video.id}")= @video.description
-				%span.edit= fa :pencil
-		- else
-			- if @video.description.present?
-				%span.post-content
-					%span.content= emotify @video.description
-	%br/
-	.post-tags
-		.normal.tiny-link
-			Source: 
-			%a{href: @video.source}= @video.source
-		%hr/
-		%ul.normal.tags= render partial: 'tags/thumb/normal', collection: @tags
-		- if user_signed_in?
-			= form_for(@video, as: "video", url: video_details_path(@video), html: {class: "editing async form-state-toggle js-edit-video", method: :patch}, data: {state: "editing"}) do |f|
-				.properties
-					%table
-						%tr
-							%td(colspan="2")
-								= render layout: 'tags/editor', locals: {tags: @video.tags} do
-									%textarea(autocomplete="off" name="tags")= raw @video.tag_string
-						%tr
-							%td.label
-								%label(for="video_source") Source
-							%td.field
-								%input(autocomplete="off" class="input" name="source" type="text" value="#{@video.source}")
-						%tr
-							%td.label
-							%td.field
-								%button.form-submitter Save Changes
-								%button.state-toggle(type="button" data-parent=".post-tags" data-state="editing") Close
-				.progressor
-					.message Uploading...
-					.progress
-						.fill
-			%hr.normal
-			%button.normal.state-toggle(data-state="editing") Edit Tags Or Source
+= cache(@video, 1.hour) do
+	%section.page.slim.seamless.column-left.fixed-right-column
+		= render partial: 'videos/description/system_messages'
+		.post.description.resize-holder
+			= render partial: 'videos/description/header'
+			= render partial: 'videos/description/sub_header'
+			= render partial: 'videos/description/actions'
+			= render partial: 'videos/description/body'
+			= render partial: 'videos/description/share'
+			= render partial: 'videos/description/file_info'
+		= render partial: 'videos/description/tags_and_source'
+		= render partial: 'videos/description/footer'

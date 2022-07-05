@@ -65,7 +65,8 @@
 						%td.field(colspan="3")
 							%h3 Source
 							%p Where did you find this video? Leave blank if this video has not been published anywhere else.
-							= f.text_field :source, class: "input", placeholder: "Source"
+							= render layout: 'external_sources/editor', locals: {tags: video.external_sources} do
+								= f.text_area :source, class: "input", placeholder: "Source"
 							.notice.alert.info.hidden
 					- if video.draft
 						%tr.premier-input

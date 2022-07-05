@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20220703154403) do
+ActiveRecord::Schema.define(version: 20220705105843) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -166,7 +166,9 @@ ActiveRecord::Schema.define(version: 20220703154403) do
     t.string "key"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "url"
     t.index ["provider", "key"], name: "index_external_sources_on_provider_and_key"
+    t.index ["video_id", "url"], name: "index_external_sources_on_video_id_and_url", unique: true
   end
 
   create_table "notification_receivers", force: :cascade do |t|

@@ -1,27 +1,29 @@
 .actions.actions-above-content
-	= render partial: user_signed_in? ? 'videos/actions_logged_in' : 'videos/actions_logged_out'
+	= render partial: user_signed_in? ? 'videos/description/actions_logged_in' : 'videos/description/actions_logged_out'
 	%span.divider>
-	%button.action.share.mobile-friendly.slider-toggle(title="Share Video" data-target=".slideout.share")>
-		= fa :share
-		%span Share
-	= render partial: 'videos/downloads'
+	%a.button.blue.action.mobile-friendly(title="Comments" href="#comment_section")>
+		= fw :comments
+		= fuzzy_big_number_with_delimiter @comments.count
+		%span Comments
+	- if @modifications_allowed
+		%a.button.action.blue.mobile-friendly(title="Edit Video"){href: edit_video_path(@video)}>
+			= fa :pencil
+			%span Edit Video
 	.split-button.popper>
 		%button.action.options.mobile-friendly.pop-out-toggle(title="Options")= fa :gear
 		%ul.pop-out
 			%a.action.slider-toggle(data-target=".slideout.info")
 				%span.icon= fw :info
 				%span.label File Info
+			%a.action.slider-toggle(data-target=".slideout.share")
+				%span.icon= fw :share
+				%span.label Share
 			%a.action{href: video_statistics_path(@video)}
 				%span.icon= fw :bar_chart
 				%span.label Statistics
 			%a.action{href: video_changes_path(@video)}
 				%span.icon= fw :history
 				%span.label Changes
-			- if @modifications_allowed
-				%span.divider
-				%a.action{href: edit_video_path(@video)}
-					%span.icon= fw :pencil
-					%span.label Edit Video
 			%span.divider
 			- if user_signed_in? && current_user.is_contributor?
 				%a.action{href: admin_video_path(@video)}
@@ -30,5 +32,3 @@
 			%a.action{href: new_admin_report_path(@video.reportable_hash)}
 				%span.icon= fw :warning
 				%span.label Report Video
-= render partial: 'videos/share'
-= render partial: 'videos/info'

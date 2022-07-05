@@ -1,20 +1,30 @@
 .slideout {
   position: relative;
   display: block;
+  visibility: hidden;
   overflow: hidden;
   clear: both;
   opacity: 0;
   background: var(--content-background);
-  transition: max-height 0.25s linear, min-height 0.25s linear, opacity 0.5s linear 0.25s, background 0.5s linear;
+  transition:
+    max-height 0.25s linear,
+    min-height 0.25s linear,
+    opacity 0.25s linear,
+    margin 0.25s linear,
+    background 0.25s linear,
+    visibility 0.25s linear
+    ;
   border-radius: var(--block-radius);
   margin-top: 5px;
-  white-space: nowrap;
+  margin-bottom: 12px;
 }
 .slideout.shown {
   opacity: 1;
+  visibility: visible;
   background: var(--form-background);
 }
 .slideout:not(.shown) {
+  margin: 0;
   min-height: 0 !important;
   max-height: 0 !important;
 }

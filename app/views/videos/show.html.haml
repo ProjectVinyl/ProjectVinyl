@@ -5,6 +5,6 @@
 		= render partial: 'albums/inline'
 	= render partial: 'recommendations'
 = render partial: 'description'
-%section.page.seamless.column-left.fixed-right-column
+%section.page.seamless.column-left.fixed-right-column#comment_section
 	= render partial: 'forum/threads/view', locals: {identifier: @video.id, title: "#{@video.title} by #{@user.username}" }
 = render partial: 'sellout/aj_donate_plz_wide'

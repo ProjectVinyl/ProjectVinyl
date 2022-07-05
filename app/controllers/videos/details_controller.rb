@@ -24,7 +24,7 @@ module Videos
         video.save
 
         render json: {
-          source: video.source,
+          sources: video.external_sources.jsons,
           results: video.tags.order(:name).jsons(current_user)
         }
       end

@@ -7,7 +7,7 @@ module Upsert
       upsert_all([hash], returning: returning, unique_by: unique_by).first
     end
 
-    def self.upsert_all(attributes, returning: nil, unique_by: nil)
+    def self.upsert_all(attributes, returning: nil, on_duplicate: :update, unique_by: nil)
       return none if attributes.empty?
 
       conn = ActiveRecord::Base.connection

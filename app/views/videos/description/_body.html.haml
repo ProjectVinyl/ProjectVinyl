@@ -1,0 +1,11 @@
+.slideout.shown.description-slideout
+	.group.active
+		- if @modifications_allowed
+			%span.post-content.editable(data-target="#{video_description_path @video}" data-member="description")
+				%span.content= emotify @video.description
+				%textarea.input.js-auto-resize(name="description_video_#{@video.id}")= @video.description
+				%span.edit= fa :pencil
+		- else
+			- if @video.description.present?
+				%span.post-content
+					%span.content= emotify @video.description

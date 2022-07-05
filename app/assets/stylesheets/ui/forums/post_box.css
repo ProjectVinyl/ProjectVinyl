@@ -1,0 +1,10 @@
+.slim-post-box .comment.post-box label:not(.focus) .name,
+.slim-post-box .comment.post-box label:not(.focus) .toolbar,
+.slim-post-box.comment.post-box label:not(.focus) .actions,
+.slim-post-box .comment.post-box label:not(.focus) hr {
+  visibility: hidden;
+}
+.slim-post-box .comment.post-box label:not(.focus) .content {
+  max-height: 50px;
+  min-height: 10px;
+}

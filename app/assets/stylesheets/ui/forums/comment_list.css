@@ -27,3 +27,6 @@
   overflow: hidden;
   opacity: 0;
 }
+.comment-list li.comment .content .comment-content {
+  min-height: 50px;
+}

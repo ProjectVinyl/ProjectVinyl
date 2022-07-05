@@ -1,0 +1,8 @@
+= render 'view/multi_input',
+	display: false,
+	placeholder: "Source list...",
+	path: '',
+	type: 'external_sources',
+	tags: (tags ? tags.pluck(:url) : []),
+	data: (tags ? tags.jsons : []) do
+		= yield

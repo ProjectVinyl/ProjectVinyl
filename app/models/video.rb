@@ -19,7 +19,7 @@ class Video < ApplicationRecord
   has_many :video_genres, dependent: :destroy
   has_many :video_chapters, dependent: :destroy
   has_many :tags, through: :video_genres
-  has_many :external_sources
+  has_many :external_sources, dependent: :destroy
 
   has_many :artist_tags, ->{ where(namespace: 'artist') }, through: :video_genres, source: :tag, class_name: 'Tag'
   has_many :rating_tags, ->{ where(namespace: 'rating') }, through: :video_genres, source: :tag, class_name: 'Tag'
@@ -290,7 +290,15 @@ class Video < ApplicationRecord
   end
 
   def validate_source
-    self.source = PathHelper.clean_url(source)
+    urls = source
+      .split(',')
+      .map(&PathHelper.method(:clean_url))
+      .filter(&:present?)
+      .uniq
+      .map{|url| ExternalSource.attributes_for_url(id, url) }
+
+    external_sources.delete_all
+    external_sources.create(urls)
   end
 
   def validate_hide_state

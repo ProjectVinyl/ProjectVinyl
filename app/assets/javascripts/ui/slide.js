@@ -2,10 +2,12 @@ import { ajax } from '../utils/ajax';
 import { all } from '../jslim/dom';
 import { addDelegatedEvent } from '../jslim/events';
 
-export function slideOut(holder) {
+export function slideOut(holder, keepRest) {
   recomputeHeight(holder);
   holder.classList.toggle('shown');
-  all('.slideout.shown', el => el.classList.toggle('shown', el == holder));
+  if (!keepRest) {
+    all('.slideout.shown', el => el.classList.toggle('shown', el == holder));
+  }
   return holder;
 }
 
@@ -33,4 +35,8 @@ addDelegatedEvent(document, 'click', '.slider-toggle:not(.loading)', (e, target)
   }
   
   slideOut(holder);
+});
+
+addDelegatedEvent(document, 'toggle', '.slideout', (e, target) => {
+  recomputeHeight(target);
 });

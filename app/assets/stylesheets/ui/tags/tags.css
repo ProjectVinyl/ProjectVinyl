@@ -17,6 +17,9 @@
   
   border-color: var(--button-border-color);
 }
+.tag.source-link {
+  display: flex;
+}
 
 .tag a, .tag span {
   text-decoration: none;

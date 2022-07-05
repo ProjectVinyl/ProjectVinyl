@@ -30,7 +30,8 @@
   word-wrap: break-word;
   background: var(--seamless-highlight-content-background);
 }
-.seamless .post-content {
+.seamless .post-content,
+.seamless .post-tags {
   display: block;
   padding: 15px;
   border-radius: var(--block-radius);

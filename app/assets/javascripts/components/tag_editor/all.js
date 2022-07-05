@@ -25,7 +25,8 @@ function TagEditor(el) {
 
   this.tagTemplate = el.querySelector('.js-tag-template').innerHTML;
   if (this.norm) {
-    this.displayTemplate = el.querySelector('.js-display-template').innerHTML;
+    const displayEL = el.querySelector('.js-display-template');
+    this.displayTemplate = displayEL ? displayEL.innerHTML : '';
   }
 
   addDelegatedEvent(el, 'click', 'i.remove', (e, target) => {

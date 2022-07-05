@@ -1,0 +1,13 @@
+.tag-set.subheading
+	%span.uploaded
+		%a.user-link.link{href: @user.link, data: {id: @user.id}}= @user.username
+		\-
+		- if @video.premiered_at
+			premiered
+			= find_and_preserve "<span title=\"Premiered: #{localise_ftime(@video.premiered_at)}\n Uploaded: #{localise_ftime(@video.created_at)}\">#{since @video.premiered_at}</span>"
+		- else
+			uploaded
+			%span(title="Uploaded: #{localise_ftime(@video.created_at)}")= since @video.created_at
+	%span.views.right.js-play-counter{title: number_with_delimiter(@video.play_count) + ' views'}
+		= fuzzy_big_number_with_delimiter @video.play_count
+		views
