@@ -33,7 +33,7 @@ export function addTag(editor, tag) {
 export function removeTag(editor, item) {
   const tag = editor.tags.find(a => a.namespace == item.dataset.namespace && a.slug == item.dataset.slug);
   if (!tag) {
-    return console.error(`tag "${tag}" not found.`);
+    return console.error(`tag "${JSON.stringify(item)}" not found.`);
   }
   editor.tags.remove(tag);
   
