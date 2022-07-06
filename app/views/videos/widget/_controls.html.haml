@@ -24,7 +24,7 @@
 		%li.icon.timer
 			%span.current 00:00
 			= '/'
-			%span.total= Ffmpeg.to_h_m_s(@video.duration, cut_leading_zero_hours: true)
+			%span.total= duration @video.duration, allow_zero: true
 		%li.icon.maximise(tabindex="0")
 			%span.indicator(tabindex="-1" title="Wide Screen")= fa :tv
 		%li.icon.fullscreen(tabindex="0")
