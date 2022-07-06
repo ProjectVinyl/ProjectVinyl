@@ -1,5 +1,6 @@
 body {
-  --banner-height: 200px;
+  --banner-height: 150px;
+  --banner-logo-height: 150px;
 }
 
 #banner.layer-background {
@@ -16,8 +17,8 @@ body {
 
 #banner .title {
   text-align: left;
-  margin-top: 20px;
-  height: 150px;
+  margin-top: calc((var(--banner-height) - var(--banner-logo-height)) / 1.5);
+  height: var(--banner-logo-height);
   max-width: 100%;
   overflow: hidden;
   padding: 20px;
