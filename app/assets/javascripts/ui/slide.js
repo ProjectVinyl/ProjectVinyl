@@ -4,10 +4,15 @@ import { addDelegatedEvent } from '../jslim/events';
 
 export function slideOut(holder, keepRest) {
   recomputeHeight(holder);
-  holder.classList.toggle('shown');
-  if (!keepRest) {
-    all('.slideout.shown', el => el.classList.toggle('shown', el == holder));
-  }
+  requestAnimationFrame(() => {
+    holder.classList.toggle('shown');
+    all('.slideout.shown', el => {
+      recomputeHeight(el);
+      if (!keepRest) {
+        requestAnimationFrame(() => el.classList.toggle('shown', el == holder));
+      }
+    });
+  });
   return holder;
 }
 
@@ -19,9 +24,9 @@ export function recomputeHeight(holder) {
 
 addDelegatedEvent(document, 'click', '.slider-toggle:not(.loading)', (e, target) => {
   if (e.button !== 0) return;
-  e.preventDefault();
-  
+
   const holder = document.querySelector(target.dataset.target);
+  const keepRest = e.ctrlKey;
   
   if (target.classList.contains('loadable')) {
     target.classList.add('loading');
@@ -29,14 +34,12 @@ addDelegatedEvent(document, 'click', '.slider-toggle:not(.loading)', (e, target)
       target.classList.remove('loading');
       target.classList.remove('loadable');
       holder.innerHTML = json.content;
-      slideOut(holder);
+      slideOut(holder, keepRest);
     });
     return;
   }
   
-  slideOut(holder);
+  slideOut(holder, keepRest);
 });
 
-addDelegatedEvent(document, 'toggle', '.slideout', (e, target) => {
-  recomputeHeight(target);
-});
+addDelegatedEvent(document, 'toggle', '.slideout', (e, target) => recomputeHeight(target));
