@@ -1,0 +1,5 @@
+
+.layer-foreground.body {
+  background-blend-mode: overlay;
+  background: var(--custom-background, none) var(--site-background);
+}

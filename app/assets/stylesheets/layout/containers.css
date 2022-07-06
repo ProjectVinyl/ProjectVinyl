@@ -17,12 +17,11 @@ html {
 
 .seamless, .seamed {
   --heading-background: transparent;
-  --content-background: transparent;
+  --content-background: var(--site-background, transparent);
   --thumb-hover-color: var(--seamless-thumb-hover-color);
 }
 .seamless {
   --page-shadow: none;
-  --page-radius: 0;
 }
 
 .page.slim {

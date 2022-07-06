@@ -1,7 +1,7 @@
 = form_for(@user, as: "user", url: user_banner_path(@user), html: {class: "async js-banner-select", method: :patch}) do |f|
 	.uploaded-preview
 		.banner.drag-target.file-select.image-selector.uploaded-preview.auto-submit#banner-upload(data-path="/banner/#{@user.id}.png")
-			%span.preview(style="'#{format_bg @user.banner}")
+			%span.preview(style="#{format_bg @user.banner}")
 			%span.drop-icon(style="box-shadow: none")
 				%div= fa :camera
 			= f.file_field :banner, accept: 'image/*'

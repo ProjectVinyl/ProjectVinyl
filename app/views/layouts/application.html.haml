@@ -15,7 +15,10 @@
 				body {--site-width: #{content_for(:width)};}
 		- if content_for?(:custom_banner)
 			:css
-				body {--site-banner: #{content_for(:custom_banner)};}
+				body {
+					--site-banner: #{content_for(:custom_banner)};
+					--custom-background: #{content_for(:custom_banner).split(' ').first.html_safe};
+				}
 %body{class: !user_signed_in? && "logged-out"}
 	.context-3d.no-3d.dock-holder
 		.dock-shadow

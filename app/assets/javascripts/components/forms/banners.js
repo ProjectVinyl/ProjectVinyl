@@ -1,8 +1,12 @@
 import { addDelegatedEvent } from '../../jslim/events';
 
 addDelegatedEvent(document, 'ajax:complete', 'form.js-banner-select', (e, target) => {
-  const me = document.querySelector('#banner-upload');
-  const banner = document.querySelector('#banner .banner-background');
-  const erase = target.querySelector('input[name="erase"]');
-  banner.style.background = erase.checked ? '' : `url(${me.dataset.path}?${new Date().getTime()}) center center/cover #000`;
+  target.querySelector('input[name="erase"]').checked = false;
+
+  let url = e.detail.data.url;
+  url = url ? `url('${e.detail.data.url}?${new Date().getTime()}')` : '';
+
+  target.querySelector('.preview').style.backgroundImage = url;
+  document.body.style.setProperty('--site-banner', url ? `${url} center center/cover #000` : '');
+  document.body.style.setProperty('--custom-background', url);
 });

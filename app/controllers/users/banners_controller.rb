@@ -13,10 +13,10 @@ module Users
           user.banner = params[:erase] ? false : params[:user][:banner]
           user.save
         end
-        
         return redirect_to action: :view, id: user.id if params[:format] != 'json'
         render json: {
-          result: "success"
+          result: :success,
+          url: user.banner
         }
       end
     end
