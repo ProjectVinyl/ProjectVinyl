@@ -122,7 +122,7 @@ module ProjectVinyl
       def self.__coppa(meta)
         {
           age_limit: meta[:age_limit].to_i,
-          coppa: meta[:age_limit].to_i > 0
+          coppa: meta[:__coppa].present?
         }
       end
 
