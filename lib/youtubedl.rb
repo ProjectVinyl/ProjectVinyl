@@ -3,16 +3,16 @@ require 'open3'
 
 class Youtubedl
   def self.video_meta(src)
-    temp_dir = Rails.root.join('temp/youtubedl')
-    temp_dir.mkdir
+    temp_dir = Rails.root.join('tmp/youtubedl')
+    FileUtils.mkdir_p temp_dir
     Dir.chdir(temp_dir) do
-      stdout, error_str, status = Open3.capture3('yt-dlp', src, '--dump-json', '--write-pages', '-o', Rails.root.join('encoding/temp').to_s)
+      stdout, error_str, status = Open3.capture3('yt-dlp', src, '--dump-json', '--write-pages')
       return {error: error_str} if !error_str.empty?
       json = JSON.parse(stdout, symbolize_names: true)
       pages = Dir.glob("#{temp_dir.to_s}/#{json[:id]}*")
-      json[:__coppa] = pages.filter{ |page| /.*"Try Youtube Kids".*/im.match?(File.read(file)) }.present?
+      json[:__coppa] = pages.filter{ |page| /.*"Try Youtube Kids".*/im.match?(File.read(page)) }.present?
       pages.each(&FileUtils.method(:remove_entry))
-      end
+      json
     end
   end
 
