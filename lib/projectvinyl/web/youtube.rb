@@ -6,7 +6,8 @@ require 'uri'
 module ProjectVinyl
   module Web
     class Youtube
-      URL_REG = /((https?:)?\/\/)?(www\.|m\.)?(youtube\.[^\/]+\/(watch\?.*v=|embed\/)|youtu\.be\/)([^&]+)/.freeze
+      URL_REG = /((https?:)?\/\/)?(www\.|m\.)?(youtube\.[^\/]+\/(watch\?.*v=|embed\/|shorts\/)|youtu\.be\/)([^&]+)/.freeze
+      URL_REG_2 = /((https?:)?\/\/)?i.ytimg.com\/..\/([^\/]+).*/.freeze
       ALL_FLAGS = [
         :title, :views, :duration, :coppa, :description, :rating,
         :series, :artist, :thumbnails, :tags, :categories, :annotations,
@@ -57,10 +58,10 @@ module ProjectVinyl
             }
           },
           links: {
-            embed_url: "https://www.youtube.com/embed/#{meta[:id]}"
+            embed_url: unchecked_embed_url(meta[:id])
           },
           meta: {
-            url: "https://www.youtube.com/watch?v=#{meta[:id]}"
+            url: video_url(meta[:id])
           },
           included: {}
         }
@@ -70,7 +71,7 @@ module ProjectVinyl
         data[:attributes][:duration] = meta[:duration] if all || flag_set(wanted_data, :duration)
         data[:attributes][:coppa] = __coppa(meta) if all || flag_set(wanted_data, :coppa)
         data[:attributes][:description] = __description(meta) if all || flag_set(wanted_data, :description)
-        data[:attributes][:rating] = __rating(meta) if all || flag_set(wanted_data, :rating)
+        data[:attributes][:rating] = ReturnYTDislike.get(meta[:id]) if all || flag_set(wanted_data, :rating)
 
         data[:included][:series] = __series(meta) if (all || flag_set(wanted_data, :series)) && (meta[:series_name] || meta[:season_number] || meta[:episode_numer])
         data[:included][:uploader], data[:included][:channel] = __artist(meta, data[:links]) if all || flag_set(wanted_data, :artist)
@@ -85,19 +86,32 @@ module ProjectVinyl
         data
       end
 
+      def self.download_thumbnail(video_id)
+        Ajax.get(thumbnail_url(video_id)) {|body| yield(body) }
+      end
+
       def self.is_video_link(url)
-        return false if url.nil?
-        !(url =~ URL_REG).nil?
+        url.present? && !video_id(url).nil?
       end
 
       def self.embed_url(url)
         "https://www.youtube.com/embed/#{video_id(url)}"
       end
 
+      def self.unchecked_embed_url(id)
+        "https://www.youtube.com/embed/#{id}"
+      end
+
+      def self.thumbnail_url(id)
+        "https://i.ytimg.com/vi/#{id}/maxresdefault.jpg"
+      end
+
+      def self.video_url(id)
+        "https://www.youtube.com/watch?v=#{id}"
+      end
+
       def self.video_id(url)
-        url = URL_REG.match(url)
-        return nil if url.nil?
-        url[6]
+        URL_REG.match(url).to_a.last || URL_REG_2.match(url).to_a.last
       end
 
       def self.flag_set(hash, key)
@@ -146,15 +160,6 @@ module ProjectVinyl
         ]
       end
 
-      def self.__rating(meta)
-        ReturnYTDislike.get(meta[:id])
-        #{
-        #  average: meta[:average_rating],
-        #  likes: meta[:like_count],
-        #  dislikes: meta[:dislike_count]
-        #}
-      end
-
       def self.__thumbnails(meta)
         thumbnails = meta[:thumbnails].map do |thumbnail|
           {
@@ -164,7 +169,7 @@ module ProjectVinyl
           }
         end
         thumbnails << {
-          url: "https://i.ytimg.com/vi/#{meta[:id]}/maxresdefault.jpg",
+          url: thumbnail_url(meta[:id]),
           width: meta[:width],
           height: meta[:height]
         }

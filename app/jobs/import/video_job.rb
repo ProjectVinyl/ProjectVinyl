@@ -24,7 +24,7 @@ module Import
         video = user.videos.create(
           title: "Untitled Import #{yt_id}",
           description: '',
-          source: "https://www.youtube.com/watch?v=#{yt_id}",
+          source: ProjectVinyl::Web::Youtube.video_url(yt_id),
           upvotes: 0,
           downvotes: 0,
           views: 0,
@@ -64,17 +64,17 @@ module Import
         }
       end
     end
-    
+
     def self.query_importable_data(yt_id)
-      data = ProjectVinyl::Web::Youtube.get("https://www.youtube.com/watch?v=#{yt_id}", {
+      data = ProjectVinyl::Web::Youtube.get(ProjectVinyl::Web::Youtube.video_url(yt_id), {
         title: true, description: true, artist: true, tags: true
       })
       archived = ProjectVinyl::Web::ThePonyArchive.video_meta(yt_id)
-      
+
       yield(data, archived)
     end
 
-    def perform(user_id, yt_id)    
+    def perform(user_id, yt_id)
       # Stub for now
     end
   end

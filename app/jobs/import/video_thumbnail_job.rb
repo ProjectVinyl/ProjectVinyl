@@ -1,4 +1,4 @@
-require 'projectvinyl/web/ajax'
+require 'projectvinyl/web/youtube'
 require 'projectvinyl/web/the_pony_archive'
 
 module Import
@@ -22,7 +22,7 @@ module Import
           video.tiny_cover_path
         )
       else
-        ProjectVinyl::Web::Ajax.get("https://i.ytimg.com/vi/#{yt_id}/maxresdefault.jpg") do |body|
+        ProjectVinyl::Web::Youtube.download_thumbnail(yt_id) do |body|
           temp = video.cover_path.to_s + '.jpg'
           video.store_file(temp, body)
 
