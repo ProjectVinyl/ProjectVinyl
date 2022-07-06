@@ -17,4 +17,8 @@ module TimeHelper
   def localise_ftime(date)
     localise(date).to_time.strftime('%e %B %Y at %H:%m:%S')
   end
+  
+  def localise_short_date(date)
+    localise(date).to_time.strftime('%e %B %Y')
+  end
 end

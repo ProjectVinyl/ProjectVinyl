@@ -38,7 +38,9 @@
 }
 
 .post .subheading {
-  margin-bottom: 10px;
+  margin-bottom: 9px;
+  margin-top: 9px;
+  font-size: 0.9em;
 }
 
 .post .date {
