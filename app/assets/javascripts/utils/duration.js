@@ -15,7 +15,7 @@ Duration.prototype = {
     if (this.hours) s.push(this.hours + 'h');
     if (this.minutes) s.push(this.minutes + 'm');
     if (this.seconds) s.push(this.seconds + 's');
-    return s.join(this.delimiter);
+    return s.map(padTimeComponent).join(this.delimiter);
   },
   valueOf: function() {
     return this.timeframe;
@@ -38,6 +38,12 @@ export function toHMS(timeframe, delimiter) {
     timeframe = Math.floor(timeframe / 60);
   }
   times.unshift(timeframe);
-  if (times.length < 2) times.unshift(0);
-  return times.join(delimiter || ':');
+  if (times.length < 2) times.unshift('00');
+  return times.map(padTimeComponent).join(delimiter || ':');
+}
+
+function padTimeComponent(c) {
+  c = c.toString().split('.');
+  c[0] = c[0].padStart(2, '0');
+  return c.join('');
 }

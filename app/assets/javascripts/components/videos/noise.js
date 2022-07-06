@@ -18,7 +18,7 @@ export function setupNoise(parent) {
   
   let running = true;
   
-  canvas.width = canvas.height = 256;
+  canvas.width = canvas.height = 512;
   parent.appendChild(canvas);
   
   function loop() {

@@ -9,12 +9,12 @@ import { clampPercentage } from '../../utils/math';
 function evToProgress(track, ev) {
   const width = track.clientWidth;
   if (width === 0) return -1;
-  
+
   let x = ev.pageX;
   if (!x && ev.touches) {
     x = ev.touches[0].pageX || 0;
   }
-  
+
   x -= track.getBoundingClientRect().left + window.pageXOffset;
 
   return clampPercentage(x, width);
@@ -23,12 +23,12 @@ function evToProgress(track, ev) {
 function evToVolume(volume, ev) {
   const height = volume.slider.clientHeight;
   if (height === 0) return -1;
-  
+
   let y = ev.pageY;
   if (!y && ev.touches) {
     y = ev.touches[0].pageY || 0;
   }
-  
+
   y -= volume.slider.getBoundingClientRect().top + window.pageYOffset;
 
   return clampPercentage(height - y, height);
@@ -77,11 +77,16 @@ export function PlayerControls(player, dom) {
   this.track.chapters = dom.querySelector('.track .chapters');
   this.track.fill = dom.querySelector('.track .fill');
   this.track.preview = dom.querySelector('.track .previewer');
-  
+
   this.volume = dom.querySelector('.volume');
   this.volume.indicator = dom.querySelector('.volume .indicator i');
   this.volume.slider = dom.querySelector('.volume .slider');
-  
+
+  this.timer = {
+    current: dom.querySelector('.timer .current'),
+    total: dom.querySelector('.timer .total')
+  };
+
   this.preview = createMiniTile(player);
   this.preview.draw(0);
 
@@ -108,7 +113,7 @@ export function PlayerControls(player, dom) {
   });
 
   new TapToggler(this.volume);
-  
+
   Slider(this.volume.slider, ev => {
     if (!player.contextmenu.hide(ev)) {
       const volume = evToVolume(this.volume, ev);
@@ -182,15 +187,17 @@ PlayerControls.prototype = {
     this.volume.style.setProperty('--volume-level', volume);
   },
   repaintTrackBar(percentFill) {
+    const duration = this.player.getDuration();
+
+    this.timer.current.innerText = toHMS(duration * percentFill / 100);
+    this.timer.total.innerText = toHMS(duration)
     this.track.style.setProperty('--track-progress', percentFill);
 
     if (didBufferChange(this.buffer, this.player.video.buffered)) {
       this.repaintProgress(this.player.video);
     }
-    
-    if (this.player.params.chapters != this.chapters) {
-      const duration = this.player.getDuration();
 
+    if (this.player.params.chapters != this.chapters) {
       this.chapters = this.player.params.chapters;
 
       this.track.chapters.innerHTML = this.chapters.map((chapter, index) => {
@@ -205,13 +212,13 @@ PlayerControls.prototype = {
     const duration = this.player.getDuration();
     const videoBuffer = video.buffered;
     const result = [];
-    
+
     for (let range = 0; range < videoBuffer.length; range++) {
       let start = videoBuffer.start(range) * 100 / duration;
       let end = videoBuffer.end(range) * 100 / duration;
       result.push(`<span style="left:${start}%;width:${end}%"></span>`);
     }
-    
+
     this.track.load.innerHTML = result.join('');
     this.buffer = {
       length: videoBuffer.length,

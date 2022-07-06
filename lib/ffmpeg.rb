@@ -38,11 +38,12 @@ class Ffmpeg
     end
   end
 
-  def self.to_h_m_s(length)
+  def self.to_h_m_s(length, cut_leading_zero_hours: false)
     h = length / 3600
     m = (length / 60) % 60
     s = length % 60
     yield(h, m, s) if block_given?
+    return format("%02d:%02d", m, s) if h == 0 && cut_leading_zero_hours
     format("%02d:%02d:%02d", h, m, s)
   end
 

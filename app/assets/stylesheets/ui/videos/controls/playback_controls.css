@@ -14,11 +14,14 @@
   color: var(--controls-foreground);
 }
 .video .playback-controls {
+  --hide-delay: 3s;
   visibility: hidden;
   position: absolute;
   opacity: 0;
   width: 100%;
-  transition: opacity 0.5s linear, visibility 0.5s linear;
+  transition:
+    opacity 0.5s linear var(--hide-delay),
+    visibility 0.5s linear var(--hide-delay);
 }
 .video .playback-controls::before {
   display: block;
@@ -34,21 +37,25 @@
 }
 
 .video[data-state=playing] .playback-controls,
-.video[data-state=paused] .playback-controls {
+.video[data-state=paused] .playback-controls,
+.video[data-state=error] .playback-controls {
   visibility: visible;
 }
 
-.video[data-state=paused] .playback-controls {
+.video[data-state=paused] .playback-controls,
+.video[data-state=error] .playback-controls {
   opacity: 1;
 }
 
 .video:hover .playback-controls, 
 .video.hover .playback-controls,
+.video:focus-within .playback-controls,
 .video.audio-only .playback-controls,
 .video .playback-controls:hover,
 .video .playback-controls:focus-within {
   opacity: 1;
   visibility: visible;
+  --hide-delay: 0s;
 }
 
 .video[data-state=stopped] .playback-controls,
