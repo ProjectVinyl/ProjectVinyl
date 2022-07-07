@@ -5,7 +5,7 @@ module Assets
 
       def show
         with_video do |video|
-          return not_found if !video || video.hidden
+          return not_found if !video || !video.visible_to?(current_user)
           return forbidden if !special_access?
           return serve_media_stream video
         end
