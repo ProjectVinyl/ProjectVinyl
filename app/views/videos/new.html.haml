@@ -1,7 +1,7 @@
 - lim 'calc(min(85vw, 1800px))'
 - title "Upload"
 - drafts = current_user.videos.where(draft: true)
-.page.slim.full-width.tab-set#uploader_frame(data-tab-template="#tab-template" data-content-template="#template")
+.page.slim.column-left.tab-set#uploader_frame(data-tab-template="#tab-template" data-content-template="#template")
 	%ul.tab-set.tabs.uploader-frame-tab-bar.sticky-overlay.stick-top
 		- drafts.each_with_index do |draft, index|
 			%li.button(data-target="new[#{index}]"){class: index == 0 && "selected"}
@@ -14,6 +14,10 @@
 				= fa :undo
 		%li.button#new_tab_button(title="Add") +
 	- drafts.each_with_index do |draft, index|
-		.tab(data-tab="new[#{index}]"){class: index == 0 && "selected"}
-			= render partial: 'videos/form/uploader_frame_content', locals: {video: draft, tab_id: index}
+		= render partial: 'videos/form/uploader_frame_content', locals: {video: draft, tab_id: index}
+.page.resize-holder.column-right.right
+	%a.seamless-button(data-external-form="/videos/import/new" data-title="Import Video" data-width="500px")
+		.icon= fa :reply
+		Import From URL
+
 = render partial: 'videos/form/uploader_frame_content_template'

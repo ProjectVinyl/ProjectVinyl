@@ -1,0 +1,35 @@
+
+.error-shakeable {
+	--error-shake-amount: 1%;
+}
+.error-shakeable.errored {
+	animation: 0.2s error-shake 0s 2 linear;
+}
+
+<% StringsHelper.explode(['error-shake'], ignore_empty: true, wrap_char: '') do |name| %>
+@keyframes error-shake {
+	0% {
+		transform: translateX(0%);
+	}
+	25% {
+		transform: translateX(var(--error-shake-amount));
+	}
+	50% {
+		transform: translateX(0%);
+	}
+	75% {
+		transform: translatex(calc(var(--error-shake-amount) * -1));
+	}
+	100% {
+		transform: translateX(0);
+	}
+}
+<% end %>
+@keyframes intermediate {
+	0% {
+		background-position: 0 0;
+	}
+	100% {
+		background-position: 30px 0;
+	}
+}

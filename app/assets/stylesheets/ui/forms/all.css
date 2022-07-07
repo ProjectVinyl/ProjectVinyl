@@ -3,5 +3,6 @@
  *= require ./bobber
  *= require ./reporter
  *= require ./uploader
+ *= require ./importer
  *= require ./premier
  */

@@ -45,6 +45,7 @@ Rails.application.routes.draw do
   # Videos #
   namespace :videos do
     resource :feed, only: [:edit, :update, :show]
+    resource :import, only: [:new, :create]
   end
   resources :videos, except: [:create, :update, :destroy] do
     scope module: :videos do

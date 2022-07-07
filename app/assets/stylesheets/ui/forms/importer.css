@@ -1,0 +1,19 @@
+
+.video-import-form input[type="text"] {
+  width: 500px;
+}
+.video-import-form .message_content {
+  padding: 50px;
+}
+.video-import-form .message_content .red {
+  padding-top: 10px;
+  font-size: 0.8em;
+}
+
+.video-import-form input {
+  transition: opacity 0.3s ease;
+}
+.video-import-form.uploading input {
+  pointer-events: none;
+  opacity: 0.5;
+}

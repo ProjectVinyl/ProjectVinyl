@@ -1,0 +1,8 @@
+= form_with url: videos_import_path, class: 'async video-import-form js-video-import', method: :post do |f|
+	.message_content
+		= f.text_field :url, placeholder: 'Video URL'
+		.red
+			= fa :info
+			Links supported: youtube.com/watch?v=ID, youtu.be/ID, youtube.com/shorts/ID
+	.foot
+		= f.submit "Submit", class: "blue confirm right"

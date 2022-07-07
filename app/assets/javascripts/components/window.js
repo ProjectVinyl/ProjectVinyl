@@ -7,7 +7,7 @@ import { Key } from '../utils/key';
 import { initDraggable, move } from './draggable';
 
 function createPopupContent(params) {
-  return nodeFromHTML(`<div class="popup-container focus transitional hidden ui-draggable">
+  return nodeFromHTML(`<div class="popup-container focus transitional hidden ui-draggable error-shakeable">
     <div class="popup">
       <h1 class="popup-header">
         <i class="fa fa-${params.icon}"></i>

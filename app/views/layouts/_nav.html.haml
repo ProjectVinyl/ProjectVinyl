@@ -37,6 +37,10 @@
 							%a{href: new_video_path}
 								%span.icon= fw :upload
 								%span.label Upload
+						%li.no-dock
+							%a{href: new_video_path(intention: :import)}
+								%span.icon= fw :youtube
+								%span.label Import
 		%li.tinted-nav-item.albums{class: selected_path?('albums')}<>
 			%a{href: albums_path}
 				= fw :list

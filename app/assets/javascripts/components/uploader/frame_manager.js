@@ -41,6 +41,10 @@ function setupUploaderFrame(frame) {
   }
 
   function createInstance() {
+    pushInstance(contentTemplate, tabTemplate);
+  }
+
+  function pushInstance(contentTemplate, tabTemplate) {
     const id = instances.length;
     const el = nodeFromHTML(fillTemplate({ id, index: id + 1 }, contentTemplate));
     const tab = nodeFromHTML(fillTemplate({ id, index: id + 1 }, tabTemplate));
@@ -65,7 +69,10 @@ function setupUploaderFrame(frame) {
       createInstance();
     }
   });
-  
+  frame.addEventListener('frame:frame_content', e => {
+    pushInstance(e.detail.data.editor, e.detail.data.tab);
+  });
+
   detectExisting(instances, frame);
   if (!instances.length) {
     createInstance();
