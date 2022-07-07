@@ -1,6 +1,7 @@
 /*
  * Ajax - A cleaner wrapper to hide the nastiness of fetch
  */
+import { dispatchEvent } from '../jslim/events';
 import { popupError } from '../components/popup';
 import { csrfHeaders } from '../ujs/csrf';
 import { QueryParameters } from './queryparameters';
@@ -13,10 +14,7 @@ export function handleError(response) {
 }
 
 export function triggerAjaxComplete(data, sender) {
-  (sender || document).dispatchEvent(new CustomEvent('ajax:complete', {
-    detail: { data: data }, bubbles: true, cancelable: true
-  }));
-  return data;
+  return dispatchEvent('ajax:complete', data, sender);
 }
 
 function request(method, resource, data) {

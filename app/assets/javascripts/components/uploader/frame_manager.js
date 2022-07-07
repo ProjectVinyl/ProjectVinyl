@@ -1,14 +1,7 @@
 import { all, nodeFromHTML } from '../../jslim/dom';
-import { ready, addDelegatedEvent } from '../../jslim/events';
+import { ready, addDelegatedEvent, dispatchEvent } from '../../jslim/events';
 import { fillTemplate } from '../../utils/template';
 import { focusTab } from '../../ui/tabsets/tabset';
-
-function dispatchEvent(event, data, sender) {
-  (sender || document).dispatchEvent(new CustomEvent(event, {
-    detail: { data: data }, bubbles: true, cancelable: true
-  }));
-  return data;
-}
 
 function setupUploaderFrame(frame) {
   const instances = [];

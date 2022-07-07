@@ -1,16 +1,9 @@
-import { ready, addDelegatedEvent } from '../../jslim/events';
+import { ready, addDelegatedEvent, dispatchEvent } from '../../jslim/events';
 import { canPlayType } from '../../utils/videos';
 import { UploadQueue } from './queue';
 import { ofAll, initProgressor } from './progress_bar_callback';
 
 const UPLOADING_QUEUE = new UploadQueue();
-
-function triggerFileReady(data, sender) {
-  (sender || document).dispatchEvent(new CustomEvent('video_file_drop', {
-    detail: { data: data }, bubbles: true, cancelable: true
-  }));
-  return data;
-}
 
 addDelegatedEvent(document, 'frame:tab_created', '#uploader_frame', e => {
   const {el,tab} = e.detail.data;
@@ -65,16 +58,16 @@ addDelegatedEvent(document, 'frame:tab_created', '#uploader_frame', e => {
         if (!data.success) {
           detailsForm.dataset.uploadError = data.error.title + ': ' + data.error.description;
         }
-        triggerFileReady(fileParams, el);
+        dispatchEvent('video_file_drop', fileParams, el);
       },
       error(error) {
         detailsForm.dataset.uploadError = `Upload failed with "${error}". Please try again.`;
-        triggerFileReady(fileParams, el);
+        dispatchEvent('video_file_drop', fileParams, el);
       }
     }]);
     tabProgressBar.form = videoInput.form;
     detailsForm.dataset.uploadError = '';
     UPLOADING_QUEUE.enqueue(tabProgressBar);
-    triggerFileReady(fileParams, el);
+    dispatchEvent('video_file_drop', fileParams, el);
   });
 });

@@ -54,9 +54,8 @@ function PopupWindow(dom) {
   this.dom = createPopupContent(dom);
   this.dom.windowObj = this;
   this.content = this.dom.querySelector('.content');
-  
-  addDelegatedEvent(this.dom, 'click', '[data-resolve]', (e, target) => {
-    resolve(this, target.dataset.resolve === 'true');
+  this.dom.addEventListener('resolve', e => {
+    resolve(this, e.detail.data.resolution === 'true');
   });
   initDraggable(this.dom, 'h1.popup-header');
   this.show();

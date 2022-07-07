@@ -58,3 +58,10 @@ export function halt(ev) {
   ev.preventDefault();
   ev.stopPropagation();
 }
+
+export function dispatchEvent(event, data, sender) {
+  (sender || document).dispatchEvent(new CustomEvent(event, {
+    detail: { data: data }, bubbles: true, cancelable: true
+  }));
+  return data;
+}

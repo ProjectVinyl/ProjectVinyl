@@ -7,3 +7,4 @@ import './csrf';
 import './method';
 import './fallback';
 import './intent';
+import './resolve';
