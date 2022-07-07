@@ -1,7 +1,7 @@
 module External
   class WatchesController < ApplicationController
     def show
-      if (@source = VideoSource.youtube.where(key: params[:v]).first)
+      if (@source = ExternalSource.youtube.where(key: params[:v]).first)
         return redirect_to @video.link if (@video = @source.video)
       end
 
