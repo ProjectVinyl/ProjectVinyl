@@ -26,20 +26,28 @@ function createPopupContent(params) {
 
 function focus(dom) {
   all(document, '.popup-container.focus', a => a.classList.remove('focus'));
-  dom.classList.remove('hidden');
-  dom.classList.add('focus');
+  requestAnimationFrame(() => {
+    dom.classList.remove('hidden');
+    dom.classList.add('focus');
+  });
 }
 
 function resolve(win, result) {
   win.dom.classList.add('hidden');
+
   if (win.dom.classList.contains('focus'))  {
     const others = document.querySelectorAll('.popup-container:not(.hidden)');
+
     if (others.length) {
       focus(others[others.length - 1]);
     }
   }
-  setTimeout(() => win.dom.parentNode.removeChild(win.dom), 500);
-  if (result && win.accept) win.accept();
+
+  setTimeout(() => win.dom.remove(), 500);
+
+  if (result && win.accept) {
+    win.accept();
+  }
 }
 
 function PopupWindow(dom) {
@@ -55,6 +63,7 @@ function PopupWindow(dom) {
 }
 PopupWindow.prototype = {
   show() {
+    this.dom.classList.add('hidden');
     document.querySelector('.fades').insertAdjacentElement('beforebegin', this.dom);
     requestAnimationFrame(() => {
       focus(this.dom);
@@ -85,6 +94,7 @@ bindEvent(document, 'keydown', e => {
   if (e.which === Key.ENTER) {
     e.preventDefault(); // hitting enter triggers the link again. Let's stop that.
     const accept = activeWindow.querySelector('.confirm');
+
     if (accept) {
       accept.click();
     } else {
