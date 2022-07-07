@@ -47,6 +47,7 @@
   overflow: hidden;
   background: rgba(180,180,180,0.1);
   padding: 10px;
+  border-radius: 0 0 var(--block-radius) var(--block-radius);
 }
 .popup-container .popup > h1 {
   border: none;
