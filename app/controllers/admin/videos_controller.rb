@@ -13,6 +13,7 @@ module Admin
       @modifications_allowed = true
       @user = @video.user
       @tags = @video.tags
+      @comments = @video.comment_thread.comments
       @crumb = {
         stack: [
           { link: '/admin', title: 'Admin' },
