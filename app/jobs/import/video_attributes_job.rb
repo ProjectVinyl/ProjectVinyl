@@ -30,6 +30,8 @@ module Import
       video.save
 
       tags = (included[:tags] || []).uniq
+      tags << (data[:coppa][:age] >= 18 ? 'rating:mature' : 'rating:everyone')
+      tags << 'coppa' if data[:coppa][:coppa]
 
       if included[:uploader]
         artist_tag = Tag.sanitize_name(included[:uploader][:name])
