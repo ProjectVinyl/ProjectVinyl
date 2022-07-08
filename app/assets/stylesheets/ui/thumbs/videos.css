@@ -30,9 +30,18 @@
   opacity: 0.3;
 }
 .thumb.working {
-  background: #95ffd5;
-  border: solid 1px #ccc !important;
-  margin: -1px;
+  background: #95ffd517;
+}
+.thumb.working .tile::after {
+  content: '\f013';
+  font-family: 'FontAwesome';
+  position: absolute;
+  top: 50%;
+  left: calc(50% - 0.5em);
+  font-size: 2em;
+  animation: fa-spin 2s infinite linear;
+  line-height: 0;
+  color: #1f1d2b;
 }
 
 .thumb .tile:hover:before,
