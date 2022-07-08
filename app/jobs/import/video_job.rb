@@ -50,11 +50,8 @@ module Import
           raise e
         end
 
-        Video.transaction do
-          video.external_sources.create(key: yt_id, provider: 'youtube').save
-          @comments = video.create_comment_thread(user: user, title: video.title)
-          @comments.subscribe(user) if user.subscribe_on_upload?
-        end
+        @comments = video.create_comment_thread(user: user, title: video.title)
+        @comments.subscribe(user) if user.subscribe_on_upload?
 
         {
           response: 'The video will be imported shortly',
@@ -63,6 +60,7 @@ module Import
           ok: true
         }
       rescue Exception => e
+        raise e
         return {
           response: "Error: Could not schedule action: #{e}",
           ok: false
