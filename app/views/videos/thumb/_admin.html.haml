@@ -12,7 +12,7 @@
 				- if admin.unlisted?
 					%span.icon(title="Unlisted - Limited to direct links")= fa :unlock
 				- if admin.listed?
-					%span.icon(title="Listed - Publicly available to app parts of the site")= fa :globe
+					%span.icon(title="Listed - Publicly available to all parts of the site")= fa :globe
 				= admin.title
 			- uploader = admin.user
 			.detail
