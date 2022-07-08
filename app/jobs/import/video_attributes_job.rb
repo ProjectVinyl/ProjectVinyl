@@ -30,7 +30,7 @@ module Import
       video.save
 
       tags = (included[:tags] || []).uniq
-      
+
       if included[:uploader]
         artist_tag = Tag.sanitize_name(included[:uploader][:name])
         tags << 'artist:' + artist_tag if artist_tag.present?

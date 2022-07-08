@@ -10,7 +10,7 @@ module Import
     def self.queue_and_publish_now(user, yt_id, queue = :default, publish: true)
       create_video(user, yt_id) do |video|
         archived = archival_data_for(yt_id)
-        Import::VideoAttributesJob.set(queue: queue).perform_later(video.id, archived, yt_id)
+        Import::VideoAttributesJob.perform_now(video.id, archived, yt_id)
         Import::VideoMediaJob.set(queue: queue).perform_later(video.id, archived, yt_id)
         Import::VideoThumbnailJob.perform_now(video.id, archived, yt_id)
 
@@ -83,7 +83,7 @@ module Import
     def perform(user_id, yt_id)
       response = VideoJob.create_video(User.find(user_id), yt_id) do |video|
         archived = VideoJob.archival_data_for(yt_id)
-        Import::VideoAttributesJob.perform_later(video.id, archived, yt_id)
+        Import::VideoAttributesJob.perform_now(video.id, archived, yt_id)
         Import::VideoThumbnailJob.perform_now(video.id, archived, yt_id)
         Import::VideoMediaJob.perform_now(video.id, archived, yt_id)
 
