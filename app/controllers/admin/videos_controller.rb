@@ -9,7 +9,12 @@ module Admin
           description: 'This is not the video you are looking for.'
         )
       end
-      
+
+      if !@video.comment_thread
+        @video.create_comment_thread(title: @video.title)
+        @video.comment_thread.save
+      end
+
       @modifications_allowed = true
       @user = @video.user
       @tags = @video.tags
