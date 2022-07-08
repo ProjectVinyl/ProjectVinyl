@@ -259,14 +259,13 @@ class Video < ApplicationRecord
   end
 
   def read_media_attributes
-    self.framerate, self.width, self.height = [1,1,1]
+    self.framerate, self.width, self.height = [self.framerate || 1, self.width || 1, self.height || 1]
 
     self.length = Ffprobe.length(video_path) if has_video?
     self.framerate = Ffprobe.framerate(video_path) if !audio_only && has_video?
 
     path = audio_only && has_cover? ? cover_path : video_path
     self.width, self.height = Ffprobe.dimensions(path) if File.exist?(path)
-    self.save
   end
 
   def dispatch_mentions
