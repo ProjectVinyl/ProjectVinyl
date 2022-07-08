@@ -25,14 +25,14 @@ label.options span {
   border-bottom-left-radius: var(--input-radius);
 }
 
-label.options input,
+label.options input[type],
 label.options select {
   flex-grow: 1;
   min-width: 0;
 }
 
-.search-options input,
-label.options input,
+.search-options input[type],
+label.options input[type],
 label.options select {
   border: none;
   background: inherit;

@@ -1,3 +1,6 @@
+require 'projectvinyl/web/youtube'
+require 'projectvinyl/web/youtube_oembed'
+
 module Videos
   class ImportsController < Videos::BaseVideosController
     def new
@@ -11,17 +14,35 @@ module Videos
         error: "Invalid Url"
       } if yt_id.nil?
 
-      return render json: {
-        info: "Video ID: #{yt_id}, Provider: YouTube"
-      } if params[:_intent] == 'check'
+      begin
+        problem = ProjectVinyl::Web::Youtube.validate_id(yt_id)
+        return render json: {
+          error: problem
+        } if !problem.nil?
+      end
+
+      oembed = ProjectVinyl::Web::YoutubeOembed.get(yt_id)
+
+      if params[:_intent] == 'check'
+        return render json: {
+          info: "Video ID: #{yt_id}, #{oembed[:title]} by #{oembed[:author_name]}, Provider: #{oembed[:provider_name]}"
+        }
+      end
 
       if (@source = ExternalSource.youtube.where(key: yt_id).first)
         return render json: {
-          error: "Item already exists"
+          error: 'Item already exists'
         } if @source.video
       end
 
-      response = Import::VideoJob.queue_and_return(current_user, yt_id)
+      if params[:order] == 'Post Now'
+        #Import::VideoJob.perform_later(current_user.id, yt_id)
+        return render json: {
+          info: 'Thank you! Video will be imported shortly'
+        }
+      end
+
+      response = Import::VideoJob.queue_and_publish_now(current_user, yt_id, publish: false)
 
       return render json: {
         error: response[:response]

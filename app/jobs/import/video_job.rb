@@ -4,32 +4,25 @@ require 'projectvinyl/web/ajax'
 
 module Import
   class VideoJob < ApplicationJob
-    queue_as :default
+    queue_as :manual
 
-    def self.queue_and_publish_now(user, yt_id, queue = :default)
+    def self.queue_and_publish_now(user, yt_id, queue = :default, publish: true)
       Import::VideoJob.create_video(user, yt_id) do |video, data, archived|
-          Import::VideoAttributesJob.perform_now(video.id, data, archived, yt_id)
-          Import::VideoThumbnailJob.perform_now(video.id, archived, yt_id)
-          Import::VideoMediaJob.set(queue: queue).perform_later(video.id, archived, yt_id)
+        Import::VideoAttributesJob.perform_now(video.id, data, archived, yt_id)
+        Import::VideoThumbnailJob.perform_now(video.id, archived, yt_id)
+        Import::VideoMediaJob.set(queue: queue).perform_later(video.id, archived, yt_id)
 
+        if publish
           video.listing = 0
           video.publish
-          video.save
-      end
-    end
-
-    def self.queue_and_return(user, yt_id, queue = :default)
-      Import::VideoJob.create_video(user, yt_id) do |video, data, archived|
-          Import::VideoAttributesJob.perform_now(video.id, data, archived, yt_id)
-          Import::VideoThumbnailJob.perform_now(video.id, archived, yt_id)
-          Import::VideoMediaJob.set(queue: queue).perform_later(video.id, archived, yt_id)
-          video.save
+        end
+        video.save
       end
     end
 
     def self.create_video(user, yt_id)
       begin
-        raise 'Invalid length: Id must be 11 characters' if yt_id.length != 11
+        ProjectVinyl::Web::Youtube.validate_id!(yt_id)
         video = user.videos.create(
           title: "Untitled Import #{yt_id}",
           description: '',
@@ -67,7 +60,6 @@ module Import
           ok: true
         }
       rescue Exception => e
-        raise e
         return {
           response: "Error: Could not schedule action: #{e}",
           ok: false
@@ -85,7 +77,15 @@ module Import
     end
 
     def perform(user_id, yt_id)
-      # Stub for now
+      Import::VideoJob.create_video(User.find(user_id), yt_id) do |video, data, archived|
+        Import::VideoAttributesJob.perform_now(video.id, data, archived, yt_id)
+        Import::VideoThumbnailJob.perform_now(video.id, archived, yt_id)
+        Import::VideoMediaJob.perform_now(video.id, archived, yt_id)
+
+        video.listing = 0
+        video.publish
+        video.save
+      end
     end
   end
 end

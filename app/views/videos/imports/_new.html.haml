@@ -1,6 +1,8 @@
 = form_with url: videos_import_path, class: 'async video-import-form js-video-import', method: :post do |f|
 	.message_content
-		= f.text_field :url, placeholder: 'Video URL'
+		%label.options
+			= f.text_field :url, placeholder: 'Video URL'
+			%select(name="order")= sensible_option_for_select ['Post Now', 'Open As Draft'], 0
 		.red
 			= fa :info
 			Links supported: youtube.com/watch?v=ID, youtu.be/ID, youtube.com/shorts/ID

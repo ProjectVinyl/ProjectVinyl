@@ -86,31 +86,47 @@ module ProjectVinyl
         data
       end
 
-      def self.download_thumbnail(video_id)
-        Ajax.get(thumbnail_url(video_id)) {|body| yield(body) }
+      def self.download_thumbnail(id)
+        Ajax.get(thumbnail_url(id)) {|body| yield(body) }
       end
 
       def self.is_video_link(url)
-        url.present? && !video_id(url).nil?
+        validate_id(video_id(url)).nil?
+      end
+
+      def self.validate_id(id)
+        return 'Invalid id: nil' if id.blank?
+        return 'Invalid length: Id must be 11 characters' if id.length != 11
+        return 'Invalid characters: Id can only contain [a-zA-Z0-9_0]' if /[^a-zA-Z0-9_-]/.match(id)
+        # https://webapps.stackexchange.com/questions/54443/format-for-id-of-youtube-video
+        return 'Invalid id' if !/[0-9A-Za-z_-]{10}[048AEIMQUYcgkosw]/.match?(id)
+        nil
+      end
+
+      def self.validate_id!(id)
+        error = validate_id id
+        raise error if !error.nil?
+        id
       end
 
       def self.embed_url(url)
-        "https://www.youtube.com/embed/#{video_id(url)}"
+        "https://www.youtube.com/embed/#{validate_id!(video_id(url))}"
       end
 
       def self.unchecked_embed_url(id)
-        "https://www.youtube.com/embed/#{id}"
+        "https://www.youtube.com/embed/#{validate_id!(id)}"
       end
 
       def self.thumbnail_url(id)
-        "https://i.ytimg.com/vi/#{id}/maxresdefault.jpg"
+        "https://i.ytimg.com/vi/#{validate_id!(id)}/maxresdefault.jpg"
       end
 
       def self.video_url(id)
-        "https://www.youtube.com/watch?v=#{id}"
+        "https://www.youtube.com/watch?v=#{validate_id!(id)}"
       end
 
       def self.video_id(url)
+        return nil if url.blank?
         URL_REG.match(url).to_a.last || URL_REG_2.match(url).to_a.last
       end
 

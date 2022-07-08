@@ -8,6 +8,7 @@ input[type=number],
 input[type=search],
 input[type=email],
 input[type=password],
+input[type=url],
 label.text-input {
   transition: background 0.125s ease;
   padding: 10px;
@@ -27,6 +28,7 @@ input[type=number]:focus,
 input[type=search]:focus,
 input[type=email]:focus,
 input[type=password]:focus,
+input[type=url]:focus,
 label.text-input.focus,
 label.focus {
   background: var(--input-background-focus);
