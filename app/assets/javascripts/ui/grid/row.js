@@ -54,7 +54,7 @@ function calculateAlignments() {
     while (itemsLastRow++ < columnCount) {
       ul.appendChild(ul.firstElementChild.cloneNode());
       ul.lastChild.classList.add('virtual');
-      ul.lastChild.classList.remove('keep');
+      ul.lastChild.classList.remove('keep', 'working');
     }
   });
 }
