@@ -19,6 +19,8 @@ module Encode
 
     def perform(video_id)
       video = Video.find(video_id)
+      video.read_media_attributes
+      video.save
       video.del_file(video.frames_path)
       MultiFileEncoder.encode_multi(video, video.video_path, [
         video.audio_path,
@@ -28,6 +30,8 @@ module Encode
         video = Video.find(video_id)
         video.set_status(true)
         video.update_file_locations
+        video.read_media_attributes
+        video.save
       end
     end
   end
