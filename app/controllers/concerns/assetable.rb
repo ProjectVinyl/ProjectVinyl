@@ -4,8 +4,9 @@ module Assetable
     serve_direct "#{Rails.root.join('public', 'images', file_name)}", 'image/png'
   end
 
-  def serve_direct(file, mime)
-    not_found if !File.exist?(file)
+  def serve_direct(file, mime, fallback: nil)
+    return redirect_to fallback if !File.exist?(file) && !fallback.nil?
+    return not_found if !File.exist?(file)
 
     response.headers['Content-Length'] = File.size(file).to_s
     send_file file.to_s, {
