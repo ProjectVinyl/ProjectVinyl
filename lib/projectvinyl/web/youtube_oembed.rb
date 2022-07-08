@@ -8,15 +8,9 @@ module ProjectVinyl
       API_URL = 'https://www.youtube.com/oembed'.freeze
 
       def self.get(id)
-        output = {}
-        puts API_URL + Youtube.video_url(id).to_query('url')
-        Ajax.get(API_URL, {
-          url: Youtube.video_url(id),
-          format: :json
-        }) do |response|
-          output = JSON.parse(response, symbolize_names: true)
-        end
-        return output
+        output = Ajax.get(API_URL, url: Youtube.video_url(id), format: :json)
+        return {} if output.nil?
+        JSON.parse(output, symbolize_names: true)
       end
     end
   end

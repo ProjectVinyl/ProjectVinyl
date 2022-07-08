@@ -87,7 +87,7 @@ module ProjectVinyl
       end
 
       def self.download_thumbnail(id)
-        Ajax.get(thumbnail_url(id)) {|body| yield(body) }
+        Ajax.get(thumbnail_url(id))
       end
 
       def self.is_video_link(url)
@@ -209,13 +209,9 @@ module ProjectVinyl
       API_URL = 'https://returnyoutubedislikeapi.com/votes'.freeze
 
       def self.get(videoId)
-        output = {}
-        Ajax.get(API_URL, {
-          videoid: videoId
-        }) do |response|
-          output = JSON.parse(response, symbolize_names: true)
-        end
-        return output.slice(:likes, :dislikes, :rating, :viewCount)
+        output = Ajax.get(API_URL, videoid: videoId)
+        return {} if output.nil?
+        JSON.parse(output, symbolize_names: true).slice(:likes, :dislikes, :rating, :viewCount)
       end
     end
   end

@@ -22,7 +22,8 @@ module Import
           video.tiny_cover_path
         )
       else
-        ProjectVinyl::Web::Youtube.download_thumbnail(yt_id) do |body|
+        body = ProjectVinyl::Web::Youtube.download_thumbnail(yt_id)
+        if body.present?
           temp = video.cover_path.to_s + '.jpg'
           video.store_file(temp, body)
 
