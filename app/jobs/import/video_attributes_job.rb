@@ -2,8 +2,10 @@ module Import
   class VideoAttributesJob < ApplicationJob
     queue_as :default
 
-    def perform(video_id, data, archived, yt_id)
+    def perform(video_id, archived, yt_id)
       video = Video.find(video_id)
+      data = VideoJob.data_for(yt_id)
+
       attributes = data[:attributes]
       included = data[:included] || {}
 

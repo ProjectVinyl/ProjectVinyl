@@ -1,4 +1,5 @@
 require 'projectvinyl/web/youtube'
+require 'projectvinyl/web/youtube_oembed'
 require 'projectvinyl/web/the_pony_archive'
 require 'projectvinyl/web/ajax'
 
@@ -7,10 +8,11 @@ module Import
     queue_as :manual
 
     def self.queue_and_publish_now(user, yt_id, queue = :default, publish: true)
-      Import::VideoJob.create_video(user, yt_id) do |video, data, archived|
-        Import::VideoAttributesJob.perform_now(video.id, data, archived, yt_id)
-        Import::VideoThumbnailJob.perform_now(video.id, archived, yt_id)
+      create_video(user, yt_id) do |video|
+        archived = archival_data_for(yt_id)
+        Import::VideoAttributesJob.set(queue: queue).perform_later(video.id, archived, yt_id)
         Import::VideoMediaJob.set(queue: queue).perform_later(video.id, archived, yt_id)
+        Import::VideoThumbnailJob.perform_now(video.id, archived, yt_id)
 
         if publish
           video.listing = 0
@@ -23,10 +25,13 @@ module Import
     def self.create_video(user, yt_id)
       begin
         ProjectVinyl::Web::Youtube.validate_id!(yt_id)
+        oembed = ProjectVinyl::Web::YoutubeOembed.get(yt_id)
         video = user.videos.create(
-          title: "Untitled Import #{yt_id}",
-          description: '',
+          title: oembed[:title] || "Untitled Import #{yt_id}",
+          description: '[Pending Import]',
           source: ProjectVinyl::Web::Youtube.video_url(yt_id),
+          width: oembed[:thumbnail_width] || 0,
+          height: oembed[:thumbnail_height] || 0,
           upvotes: 0,
           downvotes: 0,
           views: 0,
@@ -39,9 +44,7 @@ module Import
         )
 
         begin
-          VideoJob.query_importable_data(yt_id) do |data, archived|
-            yield(video, data, archived)
-          end
+          yield(video)
         rescue Exception => e
           video.destroy
           raise e
@@ -67,18 +70,20 @@ module Import
       end
     end
 
-    def self.query_importable_data(yt_id)
-      data = ProjectVinyl::Web::Youtube.get(ProjectVinyl::Web::Youtube.video_url(yt_id), {
+    def self.data_for(yt_id)
+      ProjectVinyl::Web::Youtube.get(ProjectVinyl::Web::Youtube.video_url(yt_id), {
         title: true, description: true, artist: true, tags: true
       })
-      archived = ProjectVinyl::Web::ThePonyArchive.video_meta(yt_id)
+    end
 
-      yield(data, archived)
+    def self.archival_data_for(yt_id)
+      ProjectVinyl::Web::ThePonyArchive.video_meta(yt_id)
     end
 
     def perform(user_id, yt_id)
-      Import::VideoJob.create_video(User.find(user_id), yt_id) do |video, data, archived|
-        Import::VideoAttributesJob.perform_now(video.id, data, archived, yt_id)
+      response = VideoJob.create_video(User.find(user_id), yt_id) do |video|
+        archived = VideoJob.archival_data_for(yt_id)
+        Import::VideoAttributesJob.perform_later(video.id, archived, yt_id)
         Import::VideoThumbnailJob.perform_now(video.id, archived, yt_id)
         Import::VideoMediaJob.perform_now(video.id, archived, yt_id)
 
@@ -86,6 +91,8 @@ module Import
         video.publish
         video.save
       end
+
+      raise response[:response] if !response[:ok]
     end
   end
 end
