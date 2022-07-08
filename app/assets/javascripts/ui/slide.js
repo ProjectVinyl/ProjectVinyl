@@ -3,23 +3,30 @@ import { all } from '../jslim/dom';
 import { addDelegatedEvent } from '../jslim/events';
 
 export function slideOut(holder, keepRest) {
-  recomputeHeight(holder);
-  requestAnimationFrame(() => {
+  recomputeHeight(holder, () => {
     holder.classList.toggle('shown');
     all('.slideout.shown', el => {
-      recomputeHeight(el);
-      if (!keepRest) {
-        requestAnimationFrame(() => el.classList.toggle('shown', el == holder));
-      }
+      recomputeHeight(el, () => {
+        if (!keepRest) {
+          el.classList.toggle('shown', el == holder);
+        }
+      });
     });
   });
   return holder;
 }
 
-export function recomputeHeight(holder) {
-  const h = holder.querySelector('.group.active').offsetHeight;
-  holder.style.minHeight = `${h}px`;
-  holder.style.maxHeight = `${h + 10}px`;
+export function recomputeHeight(holder, continuation) {
+  holder.classList.add('js-computing-height');
+  requestAnimationFrame(() => {
+    const h = holder.querySelector('.group.active').offsetHeight;
+    holder.style.minHeight = `${h}px`;
+    holder.style.maxHeight = `${h + 10}px`;
+    if (continuation) continuation();
+    setTimeout(() => {
+      holder.classList.remove('js-computing-height');
+    }, 500);
+  });
 }
 
 addDelegatedEvent(document, 'click', '.slider-toggle:not(.loading)', (e, target) => {
