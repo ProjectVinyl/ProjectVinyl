@@ -265,8 +265,8 @@ class Video < ApplicationRecord
     self.framerate = Ffprobe.framerate(video_path) if !audio_only && has_video?
 
     path = audio_only && has_cover? ? cover_path : video_path
-
     self.width, self.height = Ffprobe.dimensions(path) if File.exist?(path)
+    self.save
   end
 
   def dispatch_mentions
