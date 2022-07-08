@@ -1,22 +1,16 @@
 
+.pagination {
+  text-align: center;
+}
+
 .pagination .pages {
-  border-radius: 3px;
-  border: 1px solid var(--block-shadow-color);
-  display: inline-block;
+  display: inline-flex;
+  gap: 2px;
   vertical-align: bottom;
 }
 .pagination .pages .button {
-  border: none;
-  border-radius: 0;
-}
-.pagination .pages .button:first-child {
-  border-top-left-radius: 3px;
-  border-bottom-left-radius: 3px;
-}
-.pagination .pages .button:last-child {
-  border-top-right-radius: 3px;
-  border-bottom-right-radius: 3px;
-}
-.pagination .pages .button ~ .button {
-  border-left: solid 1px var(--block-shadow-color);
+  border-radius: 10%;
+  box-shadow: none;
+  display: inline-block;
+  padding: 3px 13px;
 }
