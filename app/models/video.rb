@@ -150,16 +150,16 @@ class Video < ApplicationRecord
   end
 
   def self.thumb_for(video, user, filter)
-    video ? video.tiny_thumb(user, filter) : '/images/default-cover-g.png'
+    video ? video.tiny_thumb(user, filter) : '/images/default-cover-g.svg'
   end
 
   def thumb
-    hidden ? '/images/default-cover-g.png' : cover
+    hidden ? '/images/default-cover-g.svg' : cover
   end
 
   def tiny_thumb(user, filter)
-    return '/images/default-cover-small-g.png' if (hidden && (!user || user_id != user.id))
-    return filter.spoiler_image(self, '/images/default-cover-small-g.png') if filter.video_spoilered?(self)
+    return '/images/default-cover-g.svg' if (hidden && (!user || user_id != user.id))
+    return filter.spoiler_image(self, '/images/default-cover-g.svg') if filter.video_spoilered?(self)
     tiny_cover
   end
 

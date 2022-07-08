@@ -8,7 +8,7 @@
 		= csrf_meta_tags
 	%body.embed
 		- if !@video || @video.hidden
-			.video.unplayable#video(style="#{format_bg '/images/default-cover.png'};background-size:cover;")
+			.video.unplayable#video(style="#{format_bg '/images/default-cover-g.svg'};background-size:cover;")
 				.player
 					%span.pause.resize-holder
 						%h1.resize-target

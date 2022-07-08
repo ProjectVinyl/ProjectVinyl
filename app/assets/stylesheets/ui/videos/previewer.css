@@ -23,7 +23,7 @@
 
   --frame-x: 0;
   --frame-y: 0;
-  --static-frame: url(/images/default-cover-smaller-g.png);
+  --static-frame: url(/images/default-cover-g.svg);
   --tiled-frame: url('');
   background-size: 2000%,contain;
   background-image: var(--tiled-frame), var(--static-frame);
