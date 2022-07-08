@@ -15,9 +15,7 @@
 }
 .split-button.button > button,
 .split-button.button > .button {
-  border-radius: 0;
   border-width: 0px;
-  border-right-width: 1px;
 }
 
 .split-button.button {
@@ -33,10 +31,6 @@
 .split-button.button > *:last-child {
   padding-right: var(--button-horizontal-padding);
   border-right-width: 0;
-}
-.split-button.button > *:not(button, .button, .pop-out) + button,
-.split-button.button > *:not(button, .button, .pop-out) + .button {
-  border-left-width: 1px;
 }
 
 .split-button.button > .pop-out {

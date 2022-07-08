@@ -14,13 +14,40 @@
   white-space: nowrap;
 }
 
+.drop-down-holder.popper .drop-down {
+  transform: translateY(12px) translateX(-50%) !important;
+}
+
+.drop-down-holder.popper::before,
+.drop-down-holder.popper::after {
+  transform: translateY(12px);
+  visibility: hidden;
+  opacity: 0;
+}
+
 li:hover > .drop-down,
 li:hover > .drop-down-parent > .drop-down,
 .drop-down-holder:hover .drop-down,
-.drop-down-holder.hover .drop-down {
-  transition: opacity 0.25s ease, visibility 0.25s ease;
+.drop-down-holder.hover .drop-down,
+.drop-down-holder.popper:hover::before,
+.drop-down-holder.popper:hover::after,
+.drop-down-holder.popper.hover::before,
+.drop-down-holder.popper.hover::after {
+  transition:
+    opacity 0.25s ease 0.25s,
+    visibility 0.25s ease 0.25s,
+    transform 0.25s ease 0.25s;
   visibility: visible;
   opacity: 1;
+}
+
+.drop-down-holder.popper:hover .drop-down,
+.drop-down-holder.popper.hover .drop-down,
+.drop-down-holder.popper:hover::before,
+.drop-down-holder.popper:hover::after,
+.drop-down-holder.popper.hover::before,
+.drop-down-holder.popper.hover::after {
+  transform: translateY(0px) translateX(-50%) !important;
 }
 
 .drop-down.pop-out {
@@ -36,4 +63,5 @@ li:hover > .drop-down-parent > .drop-down,
   position: absolute;
   top: 0;
   left: 100%;
+  transform: none;
 }

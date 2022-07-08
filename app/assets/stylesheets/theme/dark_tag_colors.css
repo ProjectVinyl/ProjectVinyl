@@ -1,21 +1,25 @@
 .tag[data-namespace="artist"] {
-  --button-background: #363e04 !important;
-  --button-foreground: #a0d92e !important;
+  --button-background: #464e15 !important;
+  --button-foreground: #6e8e2f !important;
   --button-border-color: #57751a !important;
+  --button-top-color: #3d5116 !important;
 }
 .tag[data-namespace="genre"] {
   --button-background: #383e86 !important;
   --button-foreground: #8b92df !important;
+  --button-top-color: #404796 !important
 }
 .tag[data-namespace="oc"] {
   --button-background: #1e3748 !important;
   --button-foreground: #529fd2 !important;
   --button-border-color: #4c90bd !important;
+  --button-top-color: #324b5b !important
 }
 .tag[data-namespace="spoiler"] {
   --button-background: #997868 !important;
   --button-foreground: #fbd2be !important;
   --button-border-color: #ceb1a3 !important;
+  --button-top-color: #7a6d67 !important;
 }
 .tag[data-namespace="character"] {
   --button-background: #643a5d !important;
@@ -23,9 +27,10 @@
   --button-border-color: #4aa3b7 !important;
 }
 .tag[data-namespace="rating"] {
-  --button-background: #26aa39 !important;
-  --button-foreground: #f9ec41 !important;
+  --button-background: #297f35 !important;
+  --button-foreground: #c3ba46 !important;
   --button-border-color: #f9ec41 !important;
+  --button-top-color: #a59d33 !important;
 }
 .tag[data-namespace="warning"],
 .tag[data-slug="artist needed"], .tag[data-slug="source needed"] {

@@ -14,7 +14,7 @@ button, .button, input[type=submit], .tag, .foobar {
   --button-foreground-active: #222;
   --button-foreground-selected: var(--button-foreground-active);
   
-  --button-rounding: 3px;
+  --button-rounding: 4px;
   --button-vertical-padding: 5px;
   --button-horizontal-padding: 15px;
   
@@ -25,7 +25,6 @@ button, .button, input[type=submit], .tag, .foobar {
   border-bottom-color: var(--button-bottom-color);
   border-top-color: var(--button-top-color);
   border-radius: var(--button-rounding);
-  box-shadow: 0 1px 0 var(--button-shine-color) inset;
   text-shadow: 1px 1px var(--button-shadow-color);
   text-decoration: none;
   color: var(--button-foreground) !important;

@@ -13,6 +13,8 @@
   margin: 0 0 0 2px;
 }
 
+.drop-down-holder.popper::before,
+.drop-down-holder.popper::after,
 .pop-out-shown::before,
 .pop-out-shown::after {
   content: '';
@@ -25,10 +27,12 @@
   z-index: 999;
 }
 
+.drop-down-holder.popper::before,
 .pop-out-shown::before {
   margin-left: -12px;
   border-bottom: 12px solid var(--popper-border-color);
 }
+.drop-down-holder.popper::after,
 .pop-out-shown::after {
   margin-left: -12px;
   margin-bottom: -1px;

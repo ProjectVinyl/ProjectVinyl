@@ -19,7 +19,7 @@
 .popper .pop-out > * {
   display: block;
   cursor: pointer;
-  padding: 10px;
+  padding: 5px;
   transition: background 0.1s ease;
 }
 .popper .pop-out > * .icon {

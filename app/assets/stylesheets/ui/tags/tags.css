@@ -5,17 +5,18 @@
 }
 
 .tag {
-  --button-shadow-color: rgba(255,255,255,0.3);
-  --button-foreground: #000;
+  --button-foreground: #343232;
+  --button-border-color: var(--button-foreground);
+  --button-bottom-color: var(--button-top-color);
 
   display: inline-flex;
   align-items: center;
   white-space: nowrap;
   margin: 2px;
   padding: 5px;
-  border-radius: 5px;
-  
-  border-color: var(--button-border-color);
+  border-radius: 15px;
+  text-shadow: none;
+  border: none;
 }
 .tag.source-link {
   display: flex;
@@ -35,6 +36,9 @@
   margin: -5px;
   margin-left: 5px;
   flex-grow: 0;
+  border-radius: inherit;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
 }
 .tag m {
   flex-grow: 1;
@@ -54,11 +58,8 @@
 
 .tag .pop-out {
   margin-top: 0;
-  left: 0;
-  min-width: 100%;
-  max-width: auto !important;
-  width: auto !important;
-  border-radius: 0 0 5px 5px;
+  width: 130px !important;
+  min-width: 0;
 }
 
 .tag span.count {

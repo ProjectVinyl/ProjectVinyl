@@ -16,7 +16,8 @@
   visibility: hidden;
   position: absolute;
   cursor: initial;
-  left: -30px;
+  left: 50%;
+  transform: translate(-50%);
   top: 100%;
   z-index: 999;
   width: 100%;

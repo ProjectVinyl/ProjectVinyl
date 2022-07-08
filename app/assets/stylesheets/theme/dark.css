@@ -125,7 +125,7 @@ label.focus .content {
 .thread-list .items .thread:hover {
   background: rgb(30, 30, 30);
 }
-button, .button, input[type="submit"], .tag, .foobar {
+button, .button, input[type="submit"], .foobar {
   --button-background: #3b4142;
   --button-background-hover: #4f4c4c;
   --button-background-selected: #242424;
@@ -137,6 +137,19 @@ button, .button, input[type="submit"], .tag, .foobar {
   --button-foreground-hover: #eee;
   --button-foreground-active: #ccc;
   --button-shadow-color: #313131;
+}
+.tag {
+  --button-background: #3b4142;
+  --button-background-hover: #4f4c4c;
+  --button-background-selected: #242424;
+  --button-background-active: #3c3939;
+  --button-top-color: #555;
+  --button-foreground: #eee;
+  --button-foreground-hover: #eee;
+  --button-foreground-active: #ccc;
+  --button-shadow-color: #313131;
+
+  --button-border-color: #999;
 }
 .actions .star.liked, button.yellow, .button.yellow, input.yellow[type="submit"] {
   --button-border-color: #8c8c15;
@@ -162,7 +175,7 @@ button, .button, input[type="submit"], .tag, .foobar {
 }
 
 .drop-down, .popper, .meta-toolbar {
-  --popper-background: var(--input-background);
+  --popper-background: #272424;
   --popper-border-color: #464444;
   --popper-border-top-color: #4a4949;
   --popper-border-bottom-color: #4a4949;
