@@ -107,7 +107,7 @@ class MultiFileEncoder
   end
 
   def self.move_file(from, to)
-    FileUtils.remove_entry to
+    FileUtils.remove_entry to if to.exist?
     FileUtils.mv from, to
   end
 end
