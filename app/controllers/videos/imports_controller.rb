@@ -31,14 +31,14 @@ module Videos
 
       if (@source = ExternalSource.youtube.where(key: yt_id).first)
         return render json: {
-          error: 'Item already exists'
+          error: "Video already exists at: #{url_for(@source.video)}"
         } if @source.video
       end
 
-      if params[:order] == 'Post Now'
-        #Import::VideoJob.perform_later(current_user.id, yt_id)
+      if params[:order].to_i == 0
+        Import::VideoJob.perform_later(current_user.id, yt_id)
         return render json: {
-          info: 'Thank you! Video will be imported shortly'
+          info: 'Thank you! Your video will appear shortly.'
         }
       end
 
