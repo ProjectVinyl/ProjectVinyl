@@ -1,4 +1,3 @@
-import { all } from '../jslim/dom';
 import { addDelegatedEvent } from '../jslim/events';
 import { checkFormPrerequisits } from '../components/forms/form';
 
@@ -21,7 +20,7 @@ function slideAcross(me, direction) {
   
   requestAnimationFrame(() => {
     form.style.maxHeight = form.style.minHeight = `${to.offsetHeight}px`;
-    all(form, '.group', el => el.style.transform = `translate(-${100 * form.dataset.offset}%,0)`);
+    form.querySelectorAll('.group').forEach(el => el.style.transform = `translate(-${100 * form.dataset.offset}%,0)`);
     setTimeout(() => {
       form.classList.remove('animating');
       form.style.maxHeight = '';

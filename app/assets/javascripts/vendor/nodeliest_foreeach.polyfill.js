@@ -1,0 +1,35 @@
+// https://github.com/zloirock/core-js#iterable-dom-collections
+(function (root) {
+  [
+    root.CSSRuleList,
+    root.CSSStyleDeclaration,
+    root.CSSValueList,
+    root.ClientRectList,
+    root.DOMRectList,
+    root.DOMStringList,
+    root.DataTransferItemList,
+    root.FileList,
+    root.HTMLAllCollection,
+    root.HTMLCollection,
+    root.HTMLFormElement,
+    root.HTMLSelectElement,
+    root.MediaList,
+    root.MimeTypeArray,
+    root.NamedNodeMap,
+    root.PaintRequestList,
+    root.Plugin,
+    root.PluginArray,
+    root.SVGLengthList,
+    root.SVGNumberList,
+    root.SVGPathSegList,
+    root.SVGPointList,
+    root.SVGStringList,
+    root.SVGTransformList,
+    root.SourceBufferList,
+    root.StyleSheetList,
+    root.TextTrackCueList,
+    root.TextTrackList,
+    root.TouchList,
+  ].filter(type => type && !type.prototype.forEach)
+   .forEach(type => type.prototype.forEach = Array.prototype.forEach);
+})(window);

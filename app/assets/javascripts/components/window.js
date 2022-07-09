@@ -2,7 +2,7 @@
  * Windows
  */
 import { addDelegatedEvent, bindEvent } from '../jslim/events';
-import { all, nodeFromHTML } from '../jslim/dom';
+import { nodeFromHTML } from '../jslim/dom';
 import { Key } from '../utils/key';
 import { initDraggable, move } from './draggable';
 
@@ -25,7 +25,7 @@ function createPopupContent(params) {
 }
 
 function focus(dom) {
-  all(document, '.popup-container.focus', a => a.classList.remove('focus'));
+  document.querySelectorAll('.popup-container.focus').forEach(a => a.classList.remove('focus'));
   requestAnimationFrame(() => {
     dom.classList.remove('hidden');
     dom.classList.add('focus');

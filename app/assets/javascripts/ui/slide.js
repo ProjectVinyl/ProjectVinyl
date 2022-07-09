@@ -1,11 +1,10 @@
 import { ajax } from '../utils/ajax';
-import { all } from '../jslim/dom';
 import { addDelegatedEvent } from '../jslim/events';
 
 export function slideOut(holder, keepRest) {
   recomputeHeight(holder, () => {
     holder.classList.toggle('shown');
-    all('.slideout.shown', el => {
+    document.querySelectorAll('.slideout.shown').forEach(el => {
       recomputeHeight(el, () => {
         if (!keepRest) {
           el.classList.toggle('shown', el == holder);

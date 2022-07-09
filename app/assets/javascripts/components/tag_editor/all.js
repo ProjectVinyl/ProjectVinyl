@@ -1,4 +1,3 @@
-import { all } from '../../jslim/dom';
 import { tagSet } from './tag_set';
 import { removeTag } from './tag';
 import { save } from './save_handler';
@@ -47,7 +46,7 @@ function relative(el, parent, selector) {
 }
 
 function initEditors() {
-  all('.tag-editor', getTagEditor);
+  document.querySelectorAll('.tag-editor').forEach(getTagEditor);
 }
 
 ready(initEditors);

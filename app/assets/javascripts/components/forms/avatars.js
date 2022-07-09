@@ -1,5 +1,4 @@
 import { addDelegatedEvent } from '../../jslim/events';
-import { all } from '../../jslim/dom';
 
 function getAvatarPreviewUrl(target) {
   const input = target.querySelector('.avatar.file-select input');
@@ -18,5 +17,5 @@ addDelegatedEvent(document, 'ajax:complete', 'form.js-avatar-select', (e, target
 
   target.querySelector('.preview').style.backgroundImage = src;
 
-  all('#login .avatar-wrapper.small span', el => el.style.backgroundImage = src);
+  document.querySelectorAll('#login .avatar-wrapper.small span').forEach(el => el.style.backgroundImage = src);
 });

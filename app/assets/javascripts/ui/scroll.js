@@ -1,4 +1,4 @@
-import { all, offset, subtractOffsets } from '../jslim/dom';
+import { offset, subtractOffsets } from '../jslim/dom';
 import { ready } from '../jslim/events';
 import { ease } from '../utils/math';
 
@@ -30,7 +30,7 @@ export function scrollTo(me, container) {
   }), container, 250);
 }
 
-ready(() => all('.scroll-container', el => {
+ready(() => document.querySelectorAll('.scroll-container').forEach(el => {
   const target = el.querySelector('.scroll-focus');
   if (target) scrollTo(target, el);
   if (el.dataset.documentScrollY) {

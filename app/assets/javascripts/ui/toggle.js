@@ -1,5 +1,4 @@
 import { ajax } from '../utils/ajax';
-import { all } from '../jslim/dom';
 import { addDelegatedEvent } from '../jslim/events';
 
 function toggle(e, sender, options, callback) {
@@ -39,7 +38,7 @@ function updateIcon(element, icon) {
 addDelegatedEvent(document, 'click', '.action.toggle', (e, target) => {
   if (e.which === 1 || e.button === 0) toggle(e, target, target, json => {
     if (target.dataset.family) {
-      return all(`.action.toggle[data-family="${target.dataset.family}"][data-id="${target.dataset.id}"]`, a => {
+      return document.querySelectorAll(`.action.toggle[data-family="${target.dataset.family}"][data-id="${target.dataset.id}"]`).forEach(a => {
         updateCheck(a, json[a.dataset.descriminator]);
       });
     }
@@ -53,6 +52,6 @@ addDelegatedEvent(document, 'click', '.action.toggle', (e, target) => {
 
 addDelegatedEvent(document, 'click', '.action.multi-toggle [data-item]', (e, target) => {
   if (e.which === 1 || e.button === 0) toggle(e, target, target.closest('.action.multi-toggle'), (json, options) => {
-    all(options, '[data-item]', a => updateCheck(a, json[a.dataset.descriminator]));
+    options.querySelectorAll('[data-item]').forEach(a => updateCheck(a, json[a.dataset.descriminator]));
   });
 });

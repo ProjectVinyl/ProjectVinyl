@@ -1,5 +1,4 @@
 import { ready, addDelegatedEvent } from '../../jslim/events';
-import { all } from '../../jslim/dom';
 import { UploadQueue } from './queue';
 import { initProgressor } from './progress_bar_callback';
 import { getTagEditor } from '../tag_editor/all';
@@ -77,7 +76,7 @@ function getAllIssues(form) {
   
   const tags = [];
   
-  all(form, '.tag-editor', editor => {
+  form.querySelectorAll('.tag-editor').forEach(editor => {
     getTagEditor(editor).tags.baked().forEach(tag => {
       if (tags.indexOf(tag) === -1) {
         tags.push(tag);

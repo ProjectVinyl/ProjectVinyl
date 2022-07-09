@@ -7,7 +7,6 @@ import { ContextMenu } from '../../ui/contextmenu';
 import { clamp } from '../../utils/math';
 import { errorMessage, errorPresent } from '../../utils/videos';
 import { formatFuzzyBigNumber } from '../../utils/numbers';
-import { all } from '../../jslim/dom';
 import { ready } from '../../jslim/events';
 import { cookies } from '../../utils/cookies';
 import { TapToggler } from '../taptoggle';
@@ -248,7 +247,7 @@ Player.prototype = {
 
     if (!this.nonpersistent && this.dom.dataset.state !== 'paused') {
       ajax.put(`videos/${this.params.id}/play_count`).json(json => {
-        all('.js-play-counter', counter => {
+        document.querySelectorAll('.js-play-counter').forEach(counter => {
           counter.innerText = `${formatFuzzyBigNumber(json.count)} views`;
         });
       });
@@ -346,7 +345,7 @@ Player.prototype = {
   }
 };
 
-ready(() => all('.video', v => {
+ready(() => document.querySelectorAll('.video').forEach(v => {
   if (!v.dataset.pending && !v.classList.contains('unplayable')) {
     new Player().constructor(v);
   }

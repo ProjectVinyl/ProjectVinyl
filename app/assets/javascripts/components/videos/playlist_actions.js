@@ -3,7 +3,6 @@ import { onPlaylistNavigate } from './playlist';
 import { cookies } from '../../utils/cookies';
 import { addDelegatedEvent } from '../../jslim/events';
 import { ajax } from '../../utils/ajax';
-import { all } from '../../jslim/dom';
 
 export function moveNext(player) {
   const item = selectNextItem();
@@ -53,7 +52,7 @@ function getRandomItem() {
 
 function clearSeen() {
   cookies.set('shuffle_past_videos', '{}', {session: true});
-  all('.playlist .row.seen', a => a.classList.remove('seen'));
+  document.querySelectorAll('.playlist .row.seen').forEach(a => a.classList.remove('seen'));
 }
 function getLoopPlaylist() {
   return cookies.get('loop') == '1';

@@ -1,4 +1,4 @@
-import { all, offset } from '../jslim/dom';
+import { offset } from '../jslim/dom';
 import { bindEvent } from '../jslim/events';
 
 export function ContextMenu(dom, container, items) {
@@ -70,7 +70,7 @@ ContextMenu.prototype = {
 };
 
 function hideAll() {
-  all('.contextmenu', p => p.classList.add('hidden'));
+  document.querySelectorAll('.contextmenu').forEach(p => p.classList.add('hidden'));
 }
 
 bindEvent(window, 'resize', hideAll);

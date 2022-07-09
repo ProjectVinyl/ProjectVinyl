@@ -1,5 +1,4 @@
 import { ready, bindEvent } from '../jslim/events';
-import { all } from '../jslim/dom';
 import { linearInterpolate, clamp } from '../utils/math';
 
 function sizeFont(el, targetWidth) {
@@ -49,7 +48,7 @@ export function resizeFont(el) {
 }
 
 function fixFonts() {
-  all('h1.resize-target', resizeFont);
+  document.querySelectorAll('h1.resize-target').forEach(resizeFont);
 }
 
 bindEvent(window, 'resize', fixFonts);

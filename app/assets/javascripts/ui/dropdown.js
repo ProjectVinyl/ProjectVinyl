@@ -1,8 +1,8 @@
-import { all, offset } from '../jslim/dom';
+import { offset } from '../jslim/dom';
 import { addDelegatedEvent, halt, bindEvent } from '../jslim/events';
 
 function closeAllPoppers() {
-  all('.pop-out-shown', a => {
+  document.querySelectorAll('.pop-out-shown').forEach(a => {
     if (!a.querySelector('*:hover')) {
       a.classList.remove('pop-out-shown');
     }

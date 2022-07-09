@@ -1,5 +1,4 @@
 import { bindEvent } from '../../jslim/events';
-import { all } from '../../jslim/dom';
 
 function totalOuterWidth(element) {
   const style = window.getComputedStyle(element);
@@ -34,13 +33,13 @@ export function alignLists() {
 }
 
 function calculateAlignments() {
-  all('ul.horizontal:not([data-aligned="false"])', ul => {
+  document.querySelectorAll('ul.horizontal:not([data-aligned="false"])').forEach(ul => {
     const columnCount = getPreferredColumnCount(ul);
     if (!columnCount) {
       return;
     }
 
-    all(ul, '.virtual:not(.keep)', li => li.parentNode.removeChild(li));
+    ul.querySelectorAll('.virtual:not(.keep)').forEach(li => li.remove());
 
     let itemsLastRow = ul.children.length;
     if (!ul.classList.contains('latest')) {

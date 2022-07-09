@@ -1,7 +1,6 @@
 /**
   * Popup usercards because fancy
   */
-import { all } from '../jslim/dom';
 import { addDelegatedEvent } from '../jslim/events';
 import { ajax } from '../utils/ajax';
 
@@ -15,7 +14,7 @@ function openUsercard(sender, usercard) {
 }
 
 function closeUsercard() {
-  all('.user-link .hovercard.shown', a => a.classList.remove('shown'));
+  document.querySelectorAll('.user-link .hovercard.shown').forEach(a => a.classList.remove('shown'));
 }
 
 addDelegatedEvent(document, 'mouseout', '.user-link', closeUsercard);

@@ -3,7 +3,7 @@ import { repaintPagination } from './paginator';
 import { popupConfirm, popupError } from './popup';
 import { scrollTo } from '../ui/scroll';
 import { ready, bindEvent } from '../jslim/events';
-import { all, decodeEntities } from '../jslim/dom';
+import { decodeEntities } from '../jslim/dom';
 import { insertTags } from '../ui/editable/bbcode';
 import { makeForm, makeInput } from '../ujs/method';
 import { sendForm } from '../utils/xhr';
@@ -64,7 +64,7 @@ function removeComment(sender) {
 
 function scrollToAndHighlightElement(comment) {
   if (!comment) return;
-  all('.comment.highlight', a => a.classList.remove('highlight'));
+  document.querySelectorAll('.comment.highlight').forEach(a => a.classList.remove('highlight'));
   scrollTo(comment);
   comment.classList.add('highlight');
   return true;
@@ -180,5 +180,5 @@ ready(() => {
   if (document.location.hash.indexOf('#comment_') == 0) {
     lookupComment(document.location.hash.split('_')[1]);
   }
-  all('.post-submitter', i => i.classList.remove('disable'));
+  document.querySelectorAll('.post-submitter').forEach(i => i.classList.remove('disable'));
 });

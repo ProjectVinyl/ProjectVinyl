@@ -1,5 +1,5 @@
 import { addDelegatedEvent, ready , bindEvent } from '../jslim/events';
-import { offset, all } from '../jslim/dom';
+import { offset } from '../jslim/dom';
 import { clamp } from '../utils/math';
 
 export function move(sender, x, y) {
@@ -37,7 +37,7 @@ export function initDraggable(sender, target) {
 }
 
 bindEvent(window, 'resize', () => {
-  all('.ui-draggable', el => {
+  document.querySelectorAll('.ui-draggable').forEach(el => {
     el.style.top = el.style.left = '0px'; // reposition element for size calculations
     setPos(el, el.prefX, el.prefY); // try to get back to where the user left it (or as close as possible)
   });

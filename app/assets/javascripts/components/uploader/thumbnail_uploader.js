@@ -1,5 +1,4 @@
 import { addDelegatedEvent } from '../../jslim/events';
-import { all } from '../../jslim/dom';
 import { validateVideoForm } from './video_form_validations';
 import { UploadQueue } from './queue';
 import { ofAll, initProgressor } from './progress_bar_callback';
@@ -11,7 +10,7 @@ addDelegatedEvent(document, 'frame:tab_created', '#uploader_frame', e => {
   const detailsForm = el.querySelector('.details-form');
 
   tab.querySelector('i.fa-undo').addEventListener('click', () => {
-    all(el, '.thumbnail-form', form => {
+    el.querySelectorAll('.thumbnail-form').forEach(form => {
       form.classList.remove('uploading', 'error', 'pending');
     });
   });

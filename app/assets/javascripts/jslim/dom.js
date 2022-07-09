@@ -1,4 +1,3 @@
-
 const div = document.createElement('DIV');
 function pull(input, push) {
   div.innerHTML = input;
@@ -32,13 +31,4 @@ export function offset(element) {
 
 export function subtractOffsets(offOne, offTwo) {
   return {top: offOne.top - offTwo.top, left: offOne.left - offTwo.left};
-}
-
-export function each(arrLike, func, thisArg) {
-  Array.prototype.forEach.call(arrLike, func, thisArg);
-}
-
-export function all(el, selector, func, thisArg) {
-  if (typeof el == 'string') return all(document, el, selector, func);
-  return each((el || document).querySelectorAll(selector), func, thisArg);
 }

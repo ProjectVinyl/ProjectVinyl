@@ -1,7 +1,7 @@
 import { ajax } from '../utils/ajax';
 import { clamp } from '../utils/math';
 import { once, addDelegatedEvent } from '../jslim/events';
-import { offset, each } from '../jslim/dom';
+import { offset } from '../jslim/dom';
 import { stopShoving, shove } from './shove';
 import { scrollContext } from './reflow';
 import { Key } from '../utils/key';
@@ -24,7 +24,7 @@ function grab(container, item, ev) {
 
   floater.classList.add('floater');
 
-  each(item.children, (a, i) => floater.children[i].style.width = `${a.clientWidth}px`);
+  item.children.forEach((a, i) => floater.children[i].style.width = `${a.clientWidth}px`);
 
   item.classList.add('grabbed');
   container.appendChild(floater);

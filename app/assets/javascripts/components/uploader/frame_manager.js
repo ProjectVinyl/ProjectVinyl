@@ -1,4 +1,4 @@
-import { all, nodeFromHTML } from '../../jslim/dom';
+import { nodeFromHTML } from '../../jslim/dom';
 import { ready, addDelegatedEvent, dispatchEvent } from '../../jslim/events';
 import { fillTemplate } from '../../utils/template';
 import { focusTab } from '../../ui/tabsets/tabset';
@@ -72,4 +72,4 @@ function setupUploaderFrame(frame) {
   }
 }
 
-ready(() => all('#uploader_frame', setupUploaderFrame));
+ready(() => document.querySelectorAll('#uploader_frame').forEach(setupUploaderFrame));
