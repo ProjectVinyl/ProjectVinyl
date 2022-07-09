@@ -1,5 +1,4 @@
 import { addDelegatedEvent, ready , bindEvent } from '../jslim/events';
-import { offset } from '../jslim/dom';
 import { clamp } from '../utils/math';
 
 export function move(sender, x, y) {
@@ -20,7 +19,7 @@ export function initDraggable(sender, target) {
   addDelegatedEvent(sender, 'mousedown', target, start => {
     start.preventDefault(); // prevent text selection
     
-    const off  = offset(sender);
+    const off  = sender.getBoundingClientRect();
     const offX = off.left - start.pageX;
     const offY = off.top - start.pageY;
     
