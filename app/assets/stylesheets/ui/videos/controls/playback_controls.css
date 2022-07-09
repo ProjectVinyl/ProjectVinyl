@@ -36,38 +36,6 @@
   pointer-events: none;
 }
 
-.video[data-state=playing] .playback-controls,
-.video[data-state=paused] .playback-controls,
-.video[data-state=error] .playback-controls {
-  visibility: visible;
-}
-
-.video[data-state=paused] .playback-controls,
-.video[data-state=error] .playback-controls {
-  opacity: 1;
-}
-
-.video:hover .playback-controls, 
-.video.hover .playback-controls,
-.video:focus-within .playback-controls,
-.video.audio-only .playback-controls,
-.video .playback-controls:hover,
-.video .playback-controls:focus-within {
-  opacity: 1;
-  visibility: visible;
-  --hide-delay: 0s;
-}
-
-.video[data-state=stopped] .playback-controls,
-.video[data-state=playing][data-hide-controls="1"] .playback-controls {
-  opacity: 0;
-  visibility: hidden;
-}
-
-.video[data-state=playing][data-hide-controls="1"] .playing {
-  cursor: none;
-}
-
 .playback-controls ul {
   display: flex;
   align-items: center;
@@ -81,4 +49,27 @@
 .playback-controls li {
   display: flex;
   align-items: center;
+}
+
+.video[data-state=playing]:hover .playback-controls, 
+.video[data-state=playing].hover .playback-controls,
+.video[data-state=playing]:focus-within .playback-controls,
+.video[data-state=playing] .playback-controls:hover,
+.video[data-state=playing] .playback-controls:focus-within {
+  opacity: 1;
+  visibility: visible;
+  --hide-delay: 0s;
+}
+
+.video.audio-only .playback-controls,
+.video[data-state=paused] .playback-controls,
+.video[data-state=error] .playback-controls,
+.video[data-state=stopped] .playback-controls {
+  opacity: 1;
+  visibility: visible;
+}
+
+.video[data-state=playing][data-hide-controls="1"] .playback-controls {
+  opacity: 0 !important;
+  visibility: hidden !important;
 }

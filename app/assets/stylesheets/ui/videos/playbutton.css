@@ -1,26 +1,20 @@
-.video .player h1,
 .video .player::after {
+  --play-button-transition-speed: 0.25s;
+  transform: scale(calc(var(--play-button-base-scale-factor, 1) * var(--play-button-scale-factor, 1)));
   transition:
-    opacity 0.25s linear,
-    top 0.25s linear,
-    left 0.25s linear,
-    transform 0.25s ease;
-}
-.video .player.playing::after {
-  transition:
-    opacity 0.125s linear,
-    transform 0.25s ease;
-}
-
-.video:not(.unplayable) .player::after {
+    visibility var(--play-button-transition-speed) ease,
+    opacity var(--play-button-transition-speed) ease,
+    transform var(--play-button-transition-speed) ease;
+    
   cursor: pointer;
   content: "\f04b";
   display: block;
+  visibility: var(--play-button-visibility, visible);
   position: absolute;
   top: 50%;
   left: 50%;
-  border-radius: 100%;
-  background: #b00;
+  border-radius: 30%;
+  background: #b11;
   color: #fff;
   width: 100px;
   height: 100px;
@@ -30,33 +24,38 @@
   font-size: 4em;
   font-family: 'FontAwesome';
   text-indent: 10px;
-  opacity: 0.6;
-}
-.video .player:hover h1,
-.video .player:hover::after {
-  opacity: 0.99;
+  opacity: var(--play-button-opacity, 0.8);
 }
 
-.video[data-state=error] .player::after,
-.video[data-state=error] .player .suspend,
-.video[data-state=paused]:not(.unplayable) .player::after {
-  display: none;
-}
 .video[data-state=stopped]:not(.unplayable) .player::after {
   content: "\f01e";
   text-indent: 0;
 }
 
-.video[data-state=playing]:not(.unplayable) .player::after {
-  cursor: default;
-  transform: scale(0.25);
-  top: 50px;
-  left: 50px;
-  opacity: 0;
+@media(max-width: 500px) {
+  .video:not(.unplayable) {
+    --play-button-base-scale-factor: 0.65;
+  }
 }
 
-@media(max-width: 500px) {
-  .video:not(.unplayable) .player::after {
-    transform: scale(0.65);
-  }
+.video .player:hover {
+  --play-button-opacity: 0.99;
+  --play-button-scale-factor: 1.3;
+}
+
+.video[data-state=error] .player,
+.video[data-state=error] .player.suspend,
+.video[data-state=paused]:not(.unplayable),
+.video[data-state=playing]:not(.unplayable) {
+  --play-button-visibility: hidden;
+  --play-button-opacity: 0;
+  --play-button-base-scale-factor: 0;
+}
+
+.video .player h1 {
+  transition:
+    opacity 0.25s linear,
+    top 0.25s linear,
+    left 0.25s linear,
+    transform 0.25s ease;
 }
