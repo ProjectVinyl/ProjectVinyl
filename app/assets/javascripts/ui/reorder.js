@@ -7,7 +7,7 @@ import { scrollContext } from './reflow';
 import { Key } from '../utils/key';
 
 function saveOrdering(container, item) {
-  each(container.children, (a, i) => a.dataset.index = (i - 1));
+  container.children.forEach((a, i) => a.dataset.index = (i - 1));
   ajaxPatch(`${container.dataset.target}/${item.dataset.id}`, {
     index: item.dataset.index
   });
