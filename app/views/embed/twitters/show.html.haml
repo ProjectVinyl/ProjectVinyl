@@ -3,11 +3,13 @@
 	%head
 		%meta(http-equiv="Content-type" content="text/html; charset=utf-8")
 		%script#twitter-wjs(async="true" src="//platform.twitter.com/widgets.js")
-		%style
+		= stylesheet_link_tag '/assets/twitter.css', id: 'timeline-styling'
+		:css
 			html, body {margin: 0;padding: 0;background: transparent;}
-			\.embed > a {text-decoration: none;}
+			.embed > a {text-decoration: none;}
 	%body.embed
 		%a.twitter-timeline(href="//twitter.com/Project_Vinyl" data-widget-id="733733333084086272"
 				data-theme="#{current_theme_name}"
 				data-chrome="nofooter noborders noheader transparent noscrollbars")
 			Tweets by @Project_Vinyl
+	= javascript_include_tag '/assets/embed/twitter.js'

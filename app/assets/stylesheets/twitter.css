@@ -1,0 +1,12 @@
+.timeline-Viewport {
+  width: auto !important;
+  scrollbar-width:thin;
+  scrollbar-color: #ccc5 #ccc1;
+}
+.timeline-Viewport:not(:focus, :hover) {
+  scrollbar-color:transparent transparent;
+}
+
+button {
+  border: none !important;
+}
