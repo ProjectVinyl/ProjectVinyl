@@ -38,7 +38,11 @@ export function registerEvents(player, el) {
             return player.playlist.classList.remove('visible');
           }
 
-          triggerDrop(player.waterdrop, player.togglePlayback() ? 'pause' : 'play');
+          const shouldTriggerDrop = player.dom.dataset.state != 'ready' && player.dom.dataset.state != 'stopped';
+          const newState = player.togglePlayback() ? 'pause' : 'play';
+          if (shouldTriggerDrop) {
+            triggerDrop(player.waterdrop, newState);
+          }
         }
       }
     },
