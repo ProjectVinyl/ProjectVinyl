@@ -1,4 +1,4 @@
-import { ajax } from '../utils/ajax';
+import { ajaxPatch } from '../utils/ajax';
 import { clamp } from '../utils/math';
 import { once, addDelegatedEvent } from '../jslim/events';
 import { offset } from '../jslim/dom';
@@ -8,7 +8,7 @@ import { Key } from '../utils/key';
 
 function saveOrdering(container, item) {
   each(container.children, (a, i) => a.dataset.index = (i - 1));
-  ajax.patch(`${container.dataset.target}/${item.dataset.id}`, {
+  ajaxPatch(`${container.dataset.target}/${item.dataset.id}`, {
     index: item.dataset.index
   });
 }

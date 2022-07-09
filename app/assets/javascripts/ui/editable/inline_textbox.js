@@ -1,4 +1,4 @@
-import { ajax } from '../../utils/ajax';
+import { ajaxPatch } from '../../utils/ajax';
 import { addDelegatedEvent, bindEvent } from '../../jslim/events';
 
 let active = null;
@@ -81,7 +81,7 @@ function toggleEdit(e, holder, content, textarea) {
   
   if (holder.dataset.id) path += `/${holder.dataset.id}`;
   
-  ajax.patch(path, {
+  ajaxPatch(path, {
     field: holder.dataset.member, value: holder.querySelector('.input').value
   }).json(json => {
     content.innerHTML = json.content;

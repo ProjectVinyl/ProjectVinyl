@@ -1,5 +1,5 @@
 import { getAppKey } from '../data/all';
-import { ajax } from '../utils/ajax';
+import { ajaxPost } from '../utils/ajax';
 
 let workerStatus = 0;
 
@@ -56,7 +56,7 @@ export function deregisterWorker(callback) {
     alterSubscription((worker, sub) => {
       if (!sub) return;
 
-      sub.unsubscribe().then(() => ajax.post('/services/deregister', subParams(sub)).text(() => {
+      sub.unsubscribe().then(() => ajaxPost('/services/deregister', subParams(sub)).text(() => {
         console.log('Service Stopped');
         workerStatus = STOPPED;
         if (callback) {
@@ -77,7 +77,7 @@ export function registerWorker(callback, readyCallback) {
 
       worker.pushManager.subscribe({
         userVisibleOnly: true, applicationServerKey: vapid_public_key
-      }).then(sub => ajax.post('/services/register', subParams(sub)).text(() => {
+      }).then(sub => ajaxPost('/services/register', subParams(sub)).text(() => {
         console.log('Service Ready');
         workerStatus = STARTED;
 

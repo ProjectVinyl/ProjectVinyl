@@ -1,4 +1,4 @@
-import { ajax } from '../utils/ajax';
+import { ajaxDelete } from '../utils/ajax';
 import { repaintPagination } from '../components/paginator';
 import { addDelegatedEvent, halt } from '../jslim/events';
 
@@ -9,12 +9,12 @@ addDelegatedEvent(document, 'click', '.removeable .remove', function(e) {
   const me = this.closest('.removeable');
 
   if (me.classList.contains('repaintable')) {
-    ajax.delete(`${me.dataset.target}/${me.dataset.id}`).json(json => repaintPagination(me.closest('.paginator'), json));
+    ajaxDelete(`${me.dataset.target}/${me.dataset.id}`).json(json => repaintPagination(me.closest('.paginator'), json));
     return;
   }
 
   if (me.dataset.target) {
-    ajax.delete(`${me.dataset.target}/${me.dataset.id}`).text(() => remove(me));
+    ajaxDelete(`${me.dataset.target}/${me.dataset.id}`).text(() => remove(me));
   } else {
     remove(me);
   }

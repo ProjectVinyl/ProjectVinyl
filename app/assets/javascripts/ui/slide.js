@@ -1,4 +1,4 @@
-import { ajax } from '../utils/ajax';
+import { ajaxGet } from '../utils/ajax';
 import { addDelegatedEvent } from '../jslim/events';
 
 export function slideOut(holder, keepRest) {
@@ -36,7 +36,7 @@ addDelegatedEvent(document, 'click', '.slider-toggle:not(.loading)', (e, target)
   
   if (target.classList.contains('loadable')) {
     target.classList.add('loading');
-    ajax.get(target.dataset.url).json(json => {
+    ajaxGet(target.dataset.url).json(json => {
       target.classList.remove('loading');
       target.classList.remove('loadable');
       holder.innerHTML = json.content;

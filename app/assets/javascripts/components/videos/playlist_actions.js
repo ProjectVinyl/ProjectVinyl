@@ -2,7 +2,7 @@ import { fullscreenPlayer } from './fullscreen';
 import { onPlaylistNavigate } from './playlist';
 import { cookies } from '../../utils/cookies';
 import { addDelegatedEvent } from '../../jslim/events';
-import { ajax } from '../../utils/ajax';
+import { ajaxGet } from '../../utils/ajax';
 
 export function moveNext(player) {
   const item = selectNextItem();
@@ -16,7 +16,7 @@ export function moveNext(player) {
 }
 
 export function navTo(player, button) {
-  ajax.get(`videos/${button.dataset.videoId}.json?list=${button.dataset.albumId}`).json(json => {
+  ajaxGet(`videos/${button.dataset.videoId}.json?list=${button.dataset.albumId}`).json(json => {
     onPlaylistNavigate(player, button, json);
   });
 }

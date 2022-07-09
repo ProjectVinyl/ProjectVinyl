@@ -1,5 +1,5 @@
 import { ready } from '../jslim/events';
-import { ajax } from '../utils/ajax';
+import { ajaxGet } from '../utils/ajax';
 import { scrollContext } from './reflow';
 
 export function throttleFunc(func, ms) {
@@ -22,7 +22,7 @@ function scrollListener(target, ref, position, test, data) {
 
     blocked = true;
     target.classList.add('loading-' + position);
-    ajax.get(path, {
+    ajaxGet(path, {
       offset: 50,
       path: target.dataset.path,
       end: target.dataset.end,

@@ -1,5 +1,5 @@
 import { addDelegatedEvent, dispatchEvent } from '../../jslim/events';
-import { ajax } from '../../utils/ajax';
+import { ajaxPost } from '../../utils/ajax';
 
 addDelegatedEvent(document, 'ajax:complete', 'form.js-video-import', (e, target) => {
 
@@ -22,7 +22,7 @@ addDelegatedEvent(document, 'change', 'form.js-video-import input[name=url]', (e
     return;
   }
 
-  ajax.post(`${target.form.getAttribute('action').split('?')[0]}.json`, {
+  ajaxPost(`${target.form.getAttribute('action').split('?')[0]}.json`, {
     _intent: 'check',
     url: target.value
   }).json(data => {

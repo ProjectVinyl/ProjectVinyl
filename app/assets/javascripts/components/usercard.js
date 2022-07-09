@@ -2,7 +2,7 @@
   * Popup usercards because fancy
   */
 import { addDelegatedEvent } from '../jslim/events';
-import { ajax } from '../utils/ajax';
+import { ajaxGet } from '../utils/ajax';
 
 function openUsercard(sender, usercard) {
   const newUsercard = usercard.cloneNode(true);
@@ -31,7 +31,7 @@ addDelegatedEvent(document, 'mouseover', '.user-link', function(e) {
   this.insertAdjacentHTML('beforeend', `<div class="hovercard" data-id="${id}"></div>`);
   usercard = this.lastChild;
   
-  ajax.get(`/users/${id}/hovercard`).text(text => {
+  ajaxGet(`/users/${id}/hovercard`).text(text => {
     usercard.innerHTML = text;
     usercard.classList.add('shown');
   });

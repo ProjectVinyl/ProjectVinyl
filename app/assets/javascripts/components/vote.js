@@ -1,5 +1,5 @@
 import { addDelegatedEvent } from '../jslim/events';
-import { ajax } from '../utils/ajax';
+import { ajaxPut } from '../utils/ajax';
 import { formatNumber, MAX_DISPLAYED_VALUE } from '../utils/numbers';
 
 function count(me, offset, save) {
@@ -44,7 +44,7 @@ function count(me, offset, save) {
 }
 
 function save(sender, data) {
-  return ajax.put(sender.dataset.action, data);
+  return ajaxPut(sender.dataset.action, data);
 }
 
 addDelegatedEvent(document, 'click', '.action.like, .action.dislike, .action.star', (e, target) => {

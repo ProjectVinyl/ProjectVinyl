@@ -1,4 +1,4 @@
-import { ajax } from '../utils/ajax';
+import { ajaxGet } from '../utils/ajax';
 import { addDelegatedEvent } from '../jslim/events';
 
 addDelegatedEvent(document, 'lookup:complete', '.auto-lookup', (e, target) => {
@@ -40,7 +40,7 @@ addDelegatedEvent(document, 'focusin', '.auto-lookup:not(.loaded) input', (e, in
       const value = input.value.trim();
       if (value.length && value !== lastValue) {
         lastValue = value;
-        ajax.get(container.dataset.action, {
+        ajaxGet(container.dataset.action, {
           q: value, validate: input.classList.contains('validate')
         }).json(json => {
           results = json.results;

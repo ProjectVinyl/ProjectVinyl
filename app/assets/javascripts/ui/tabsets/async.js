@@ -1,4 +1,4 @@
-import { ajax } from '../../utils/ajax';
+import { ajaxGet } from '../../utils/ajax';
 import { addDelegatedEvent } from '../../jslim/events';
 import { pushUrl } from '../../utils/history';
 
@@ -17,7 +17,7 @@ addDelegatedEvent(document, 'click', '.tab-set.async a.button:not([data-disabled
   holder.classList.add('waiting');
 
   pushUrl(url);
-  ajax.get(`${url}/tabs.json`, { page: this.dataset.page || 0 }).json(json => {
+  ajaxGet(`${url}/tabs.json`, { page: this.dataset.page || 0 }).json(json => {
     holder.innerHTML = json.content;
     holder.classList.remove('waiting');
   });

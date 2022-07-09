@@ -1,4 +1,4 @@
-import { ajax } from '../utils/ajax';
+import { ajaxGet } from '../utils/ajax';
 import { QueryParameters } from '../utils/queryparameters';
 import { bindEvent, addDelegatedEvent, dispatchEvent } from '../jslim/events';
 
@@ -11,7 +11,7 @@ function requestPage(context, page, force) {
   
   context.classList.add('waiting');
 
-  ajax.get(`${context.dataset.type}.json?order=${context.dataset.order}&page=${page}${context.dataset.args ? `&${context.dataset.args}` : ''}`).json(json => {
+  ajaxGet(`${context.dataset.type}.json?order=${context.dataset.order}&page=${page}${context.dataset.args ? `&${context.dataset.args}` : ''}`).json(json => {
     repaintPagination(context, json);
   });
 }

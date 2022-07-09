@@ -1,4 +1,4 @@
-import { ajax } from '../../utils/ajax';
+import { ajaxGet } from '../../utils/ajax';
 import { addDelegatedEvent } from '../../jslim/events';
 
 addDelegatedEvent(document, 'toggle', '.previewable', (e, target) => {
@@ -6,7 +6,7 @@ addDelegatedEvent(document, 'toggle', '.previewable', (e, target) => {
   if (target.classList.contains('loading')) return;
   target.classList.add('loading');
   
-  ajax.get('/api/html', { content: target.querySelector('textarea, input').value}).json(json => {
+  ajaxGet('/api/html', { content: target.querySelector('textarea, input').value}).json(json => {
     const preview = target.parentNode.querySelector('.preview');
     preview.innerHTML = json.html;
     target.classList.remove('loading');

@@ -1,7 +1,7 @@
 /*
  * Initialises basic video playback functionality.
  */
-import { ajax } from '../../utils/ajax';
+import { ajaxPut } from '../../utils/ajax';
 import { scrollTo } from '../../ui/scroll';
 import { ContextMenu } from '../../ui/contextmenu';
 import { clamp } from '../../utils/math';
@@ -246,7 +246,7 @@ Player.prototype = {
     video.play();
 
     if (!this.nonpersistent && this.dom.dataset.state !== 'paused') {
-      ajax.put(`videos/${this.params.id}/play_count`).json(json => {
+      ajaxPut(`videos/${this.params.id}/play_count`).json(json => {
         document.querySelectorAll('.js-play-counter').forEach(counter => {
           counter.innerText = `${formatFuzzyBigNumber(json.count)} views`;
         });

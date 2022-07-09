@@ -1,4 +1,4 @@
-import { ajax } from '../utils/ajax';
+import { ajaxPut } from '../utils/ajax';
 import { addDelegatedEvent } from '../jslim/events';
 
 function toggle(e, sender, options, callback) {
@@ -15,7 +15,7 @@ function toggle(e, sender, options, callback) {
     updateIcon(sender, loadingIcon);
   }
 
-  ajax.put(path, data).json(json => callback(json, options));
+  ajaxPut(path, data).json(json => callback(json, options));
 }
 
 function getIcon(element, state) {

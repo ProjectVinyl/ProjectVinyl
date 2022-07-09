@@ -1,4 +1,4 @@
-import { ajax } from '../utils/ajax';
+import { ajaxGet } from '../utils/ajax';
 import { addDelegatedEvent } from '../jslim/events';
 
 addDelegatedEvent(document, 'click', '.load-more button', (e, button) => {
@@ -8,7 +8,7 @@ addDelegatedEvent(document, 'click', '.load-more button', (e, button) => {
   const target = document.getElementById(button.dataset.target);
   
   button.classList.add('working');
-  ajax.get(button.dataset.url, {page: page}).json(json => {
+  ajaxGet(button.dataset.url, {page: page}).json(json => {
     button.classList.remove('working');
     
     if (json.page == page) {

@@ -1,7 +1,7 @@
 /**
  * External forms.
  */
-import { ajax} from '../../utils/ajax';
+import { ajaxGet } from '../../utils/ajax';
 import { createWindow } from '../window';
 import { popupError } from '../popup';
 import { addDelegatedEvent } from '../../jslim/events';
@@ -45,7 +45,7 @@ function createExternalForm(url, title, icon, maxWidth, thin) {
   if (thin) win.dom.classList.add('thin');
   if (maxWidth) win.content.style.maxWidth = maxWidth;
   
-  ajax.get(url).text(html => {
+  ajaxGet(url).text(html => {
     win.setContent(html);
     win.center();
     document.dispatchEvent(new CustomEvent('ajax:externalform'), { cancelable: true });

@@ -1,4 +1,4 @@
-import { ajax } from '../utils/ajax';
+import { ajaxGet, ajaxDelete, ajaxPatch } from '../utils/ajax';
 import { repaintPagination } from './paginator';
 import { popupConfirm, popupError } from './popup';
 import { scrollTo } from '../ui/scroll';
@@ -41,7 +41,7 @@ function postComment(sender) {
 
 function removeComment(sender) {
   popupConfirm("Are you sure you want to continue?", sender.dataset.title).setOnAccept(() => {
-    ajax.delete(sender.getAttribute('href')).json(json => {
+    ajaxDelete(sender.getAttribute('href')).json(json => {
       const el = sender.closest('.comment');
       
       el.style.height = `${el.offsetHeight}px`;
@@ -78,7 +78,7 @@ function lookupComment(commentId) {
   if (scrollToAndHighlight(commentId)) return;
   
   const pagination = document.querySelector('.comments').parentNode;
-  ajax.get(pagination.dataset.type, `comment=${commentId}&${pagination.dataset.args}`).json(json => {
+  ajaxGet(pagination.dataset.type, `comment=${commentId}&${pagination.dataset.args}`).json(json => {
     repaintPagination(pagination, json);
     scrollToAndHighlight(commentId);
   });
@@ -86,7 +86,7 @@ function lookupComment(commentId) {
 
 function editComment(sender) {
   sender = sender.closest('.content');
-  ajax.patch(`/comments/${sender.dataset.id}`, {
+  ajaxPatch(`/comments/${sender.dataset.id}`, {
     comment: sender.querySelector('textarea, input.comment-content').value
   }).json(json => {
     sender.querySelector('.preview').innerHTML = json.content;
@@ -119,7 +119,7 @@ function findComment(sender) {
     return focusComment(container, commentEl);
   }
   
-  ajax.get('find/comments', {
+  ajaxGet('find/comments', {
     id: sender.dataset.id || parseInt(comment.split('_')[1], 36)
   }).text(html => {
     container = moveInlineComment(sender, container, 'HTML', html);

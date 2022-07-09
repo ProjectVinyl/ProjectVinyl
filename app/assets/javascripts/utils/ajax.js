@@ -34,10 +34,18 @@ function request(method, resource, data) {
   return promise;
 }
 
-export const ajax = {
-  get: (resource, data) => request('GET', resource, data),
-  post: (resource, data) => request('POST', resource, data),
-  put: (resource, data) => request('PUT', resource, data),
-  patch: (resource, data) => request('PATCH', resource, data),
-  delete: resource => request('DELETE', resource)
-};
+export function ajaxGet(resource, data) {
+  return request('GET', resource, data);
+}
+export function ajaxPost(resource, data) {
+  return request('POST', resource, data);
+}
+export function ajaxPut(resource, data) {
+  return request('PUT', resource, data);
+}
+export function ajaxDelete(resource) {
+  return request('DELETE', resource);
+}
+export function ajaxPatch(resource, data) {
+  return request('PATCH', resource, data);
+}
