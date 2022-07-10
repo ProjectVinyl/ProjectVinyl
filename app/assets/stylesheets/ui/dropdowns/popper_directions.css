@@ -20,12 +20,10 @@
 .popper.pop-left .pop-out {
   right: 0;
   left: auto;
+  transform: translateX(0);
 }
 .popper.pop-right .pop-out {
   left: 0;
   right: auto;
-}
-.popper.pop-center .pop-out {
-  left: -100px;
-  right: auto;
+  transform: translateX(0);
 }

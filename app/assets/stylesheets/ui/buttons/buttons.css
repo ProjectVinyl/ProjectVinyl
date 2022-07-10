@@ -62,7 +62,7 @@ button:focus, .button:focus, input[type=submit]:focus {
   color: var(--button-foreground-hover) !important;
 }
 
-button.selected, .button.selected, input[type=submit].selected {
+button.selected:not(.disable), .button.selected:not(.disable), input[type=submit].selected:not(.disable) {
    background: var(--button-background-selected);
    color: var(--button-foreground-selected) !important;
 }

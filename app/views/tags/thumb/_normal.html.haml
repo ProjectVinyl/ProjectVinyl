@@ -1,4 +1,4 @@
-%li.tag.drop-down-holder.popper{class: "tag", "data-namespace": normal.namespace.present? && normal.namespace, "data-slug": normal.name}>
+%li.tag.class{class: user_signed_in? && "drop-down-holder popper", "data-namespace": normal.namespace.present? && normal.namespace, "data-slug": normal.name}>
 	%a{href: normal.link}
 		%span= normal.name
 	- if user_signed_in?

@@ -27,7 +27,7 @@
   color: var(--button-foreground);
   font-weight: initial;
   letter-spacing: 0.06em;
-  flex-grow: 0;
+  flex-grow: 1;
 }
 .tag .counter {
   background: rgba(0, 0, 0, 0.09);

@@ -7,6 +7,7 @@ ul.horizontal.tag-list .tag {
   flex-basis: 15%;
   height: min-content;
   width: min-content;
+  max-width: min-content;
 }
 ul.horizontal.tag-list .tag m {
   flex-grow: 1;
