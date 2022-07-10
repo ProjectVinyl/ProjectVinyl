@@ -4,7 +4,7 @@ module Forum
       return render_error_file 404, params[:format] == 'json' if !(@board = Board.find_board(params[:id]))
 
       @path_type = 'forum'
-      @threads = Pagination.paginate(@board.threads, params[:page].to_i, 50, false)
+      @threads = Pagination.paginate(@board.threads, params[:page].to_i, 50, params[:order].to_i == 1)
       @modifications_allowed = user_signed_in? && current_user.is_contributor?
 
       render_paginated @threads, partial: 'forum/threads/thumb', as: :json if params[:format] == 'json'
@@ -16,7 +16,7 @@ module Forum
         stack: [],
         title: "Forum"
       }
-      @boards = Pagination.paginate(Board.sorted, params[:page].to_i, 10, false)
+      @boards = Pagination.paginate(Board.sorted, params[:page].to_i, 10, params[:order].to_i == 1)
       render_paginated @boards, partial: 'thumb', as: :json  if params[:format] == 'json'
     end
 
