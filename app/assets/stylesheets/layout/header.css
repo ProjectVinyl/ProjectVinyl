@@ -38,6 +38,7 @@
 
 .header .drop-down {
   height: initial;
+  background: var(--popper-background, inherit);
 }
 
 .header .drop-down,
