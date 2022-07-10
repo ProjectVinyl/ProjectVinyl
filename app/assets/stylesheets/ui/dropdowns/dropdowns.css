@@ -17,7 +17,6 @@
   position: absolute;
   top: 0;
   left: 100%;
-  transform: none;
 }
 
 .drop-down-holder.popper .drop-down,
