@@ -1,9 +1,4 @@
-/*
- * Initialises basic video playback functionality.
- */
 import { cookies } from '../../utils/cookies';
-import { ready } from '../../jslim/events';
-import { all } from '../../jslim/dom';
 
 export function getWatchTime(videoId) {
   const time = cookies.get(`watch_time_${videoId}`, 0);
