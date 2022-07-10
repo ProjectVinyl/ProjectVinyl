@@ -24,7 +24,7 @@ addDelegatedEvent(document, 'frame:tab_created', '#uploader_frame', e => {
         }
 
         if (data.ref) {
-          el.innerHTML = `Uploading Complete. You can see your new video over <a target="_blank" href="${data.ref}">here</a>.`;
+          el.innerHTML = data.ref;
         }
       }
     }]);

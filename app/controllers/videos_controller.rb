@@ -244,7 +244,7 @@ class VideosController < Videos::BaseVideosController
     return redirect_to action: :show, id: @video.id if params[:format] != 'json'
     render json: {
       success: true,
-      ref: params[:_intent] == 'publish' && was_draft && @video.ref
+      ref: params[:_intent] == 'publish' && was_draft && render_to_string(partial: '/videos/form/upload_complete_response', formats: :html)
     }
   end
 
