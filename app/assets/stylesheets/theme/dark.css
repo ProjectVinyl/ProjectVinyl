@@ -85,7 +85,7 @@ html, body {
 }
 
 .comment {
-  --comment-background: rgb(17, 17, 15);
+  --comment-background: #1b1b1b;
   --comment-border-color: #262626;
   --comment-background-color: rgb(36, 27, 27);
   --comment-text-shadow-color: rgba(0, 0, 0, 0.8);
@@ -124,6 +124,9 @@ label.focus .content {
 }
 .thread-list .items .thread:hover {
   background: rgb(30, 30, 30);
+}
+.thread-list .items .thread.unread {
+  background: #464f46;
 }
 button, .button, input[type="submit"], .foobar {
   --button-background: #3b4142;
@@ -265,4 +268,9 @@ hr {
 #upload .playback-controls {
   --bob-highlight: #590808;
   --bob-outline: #524c4c;
+}
+
+.spoiler {
+  background: #000;
+  color: #000;
 }

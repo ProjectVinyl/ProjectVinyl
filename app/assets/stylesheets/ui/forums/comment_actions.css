@@ -1,35 +1,22 @@
 .comment .comment-actions {
+  display: flex;
+  gap: 4px;
   float: right;
+  margin-top: -3px;
 }
 
-.comment .comment-actions > * {
-  margin-left: 10px;
-  box-shadow: none;
-  font-size: 1.1em;
-}
-
-.comment .reply-comment {
-  cursor: pointer;
+.comment .comment-actions .button {
+  padding: 3px 5px;
 }
 
 .comment .content .like {
-  border: none;
-  background: none;
-  padding: 0;
-  margin: 0;
-
-  --button-foreground: var(--default-link-color);
   --button-foreground-hover: #72c733;
-  --button-foreground-active: #2362ef;
+  --button-foreground-active: var(--button-foreground-hover);
 }
-.comment .content .like.liked,
-.comment .content .like.liked:hover,
-.comment .content .like.liked:active {
-  border: none;
-  background: none;
-  text-shadow: none;
-  box-shadow: none;
+.comment .content .like:not([data-count="0"])::before {
+  content: attr(data-count);
 }
+
 .comment .content .like.liked {
   --button-foreground: var(--button-foreground-active);
 }

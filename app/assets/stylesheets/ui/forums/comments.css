@@ -32,6 +32,7 @@ label.focus .content {
 .comment .name {
   border-bottom: solid 1px var(--divider-color);
   margin-bottom: 10px;
+  padding-bottom: 7px;
 }
 .comment .name a {
   text-decoration: none;
@@ -50,9 +51,7 @@ label.focus .content {
   position: relative;
   padding: 10px;
   margin-left: 70px;
-  border: 1px solid var(--comment-border-color);
   border-radius: 5px !important;
-  box-shadow: 0 0 12px rgba(0, 0, 0, 0.07) inset;
   background: var(--comment-background);
   text-shadow: 1px 1px var(--comment-text-shadow-color);
   vertical-align: middle;
@@ -65,15 +64,6 @@ label.focus .content {
   box-shadow: 0 0 12px rgba(0, 0, 255, 0.07) inset,
               0 0 15px -3px rgba(0, 0, 255, 0.3);
 }
-.comment .content::before {
-  content: '';
-  display: block;
-  position: absolute;
-  top: 20px;
-  left: -20px;
-  border: solid 10px;
-  border-color: transparent var(--comment-border-color) transparent transparent;
-}
 .comment .content::after {
   content: '';
   display: block;
@@ -84,13 +74,13 @@ label.focus .content {
   transition: border-color 0.5s ease;
   border-color: transparent var(--comment-background) transparent transparent;
 }
-.comment.basic > .content::before, .comment.basic > .content::after {
+.comment.basic > .content::after {
   display: none;
 }
 
 
 @media(max-width: 400px) {
-  .comment .bio, .comment .content::before, .comment .content::after {
+  .comment .bio, .comment .content::after {
     display: none;
   }
   .comment .content {

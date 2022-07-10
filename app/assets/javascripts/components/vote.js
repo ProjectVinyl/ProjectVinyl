@@ -5,17 +5,13 @@ import { formatNumber, MAX_DISPLAYED_VALUE } from '../utils/numbers';
 function count(me, offset, save) {
   me.classList.toggle('liked', offset > 0);
   
-  let count = me.querySelector('.count');
-
-  if (!count) {
-    count = me.querySelector('span');
-    count.innerHTML = '<span class="count"></span>';
-    count = count.firstChild;
-  }
+  const count = me.querySelector('.count');
 
   const updateUI = state => {
     me.dataset.count = state.count;
-    count.innerText = formatNumber(state.count, MAX_DISPLAYED_VALUE);
+    if (count) {
+      count.innerText = formatNumber(state.count, MAX_DISPLAYED_VALUE);
+    }
 
     const score = me.parentNode.querySelector('.score');
 
