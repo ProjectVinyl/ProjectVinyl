@@ -1,7 +1,5 @@
 #emoticons {
   max-height: initial;
-  left: -130px;
-  overflow-x: hidden;
   padding: 10px;
   text-align: center;
   white-space: initial;
@@ -34,4 +32,23 @@ img.emoticon {
   margin: 0 -5px 0 0;
   padding: 0 1px 0 1px;
   vertical-align: middle;
+}
+
+#emoticons .emote:hover {
+  transform: rotate(15deg);
+  filter: blur(0);
+}
+
+.emote {
+  margin-left: -4px;
+  margin-top: -2px;
+  display: block;
+  width: 34px;
+  height: 32px;
+  background: url(/emoticons/all.png);
+  font-size: 0;
+  vertical-align: bottom;
+}
+i.emote {
+  display: inline-block;
 }
