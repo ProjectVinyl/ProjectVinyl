@@ -22,7 +22,7 @@ module Inbox
     end
 
     def paginate_for_type(type)
-      Pagination.paginate(page_for_type(type), params[:page].to_i, 50, false)
+      Pagination.paginate(page_for_type(type), params[:page].to_i, 50, params[:order].to_i == 1)
     end
   end
 end

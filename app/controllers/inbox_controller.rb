@@ -1,5 +1,6 @@
 class InboxController < Inbox::BaseInboxController
   def show
+    @order = params[:order].to_i
     @type = params[:type] || 'new'
     @result = paginate_for_type(@type)
     @counts = tab_changes
