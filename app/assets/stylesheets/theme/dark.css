@@ -262,3 +262,7 @@ hr {
 #upload {
   --hover-shadow: #000;
 }
+#upload .playback-controls {
+  --bob-highlight: #590808;
+  --bob-outline: #524c4c;
+}

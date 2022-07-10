@@ -6,6 +6,7 @@
 
 .tag {
   --button-foreground: #343232;
+  --button-background: #fff;
   --button-border-color: var(--button-foreground);
   --button-bottom-color: var(--button-top-color);
 
