@@ -11,6 +11,7 @@ import { ready } from '../../jslim/events';
 import { cookies } from '../../utils/cookies';
 import { TapToggler } from '../taptoggle';
 import { setFullscreen } from './fullscreen';
+import { touchSlider } from '../slider_transitive';
 import { PlayerControls } from './controls';
 import { setupNoise } from './noise';
 import { attachMessageListener } from './itc';
@@ -313,11 +314,11 @@ Player.prototype = {
       if (time) {
         this.video.currentTime += time;
         this.track(this.video.currentTime, this.getDuration());
-        this.controls.track.touch();
+        touchSlider(this.controls.track);
       }
       if (volume) {
         this.volume(this.video.volume + volume, this.video.muted);
-        this.controls.volume.slider.touch();
+        touchSlider(this.controls.volume.slider);
       }
     }
   },

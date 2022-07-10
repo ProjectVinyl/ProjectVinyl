@@ -1,48 +1,42 @@
 /*
  * Enables functionality for a draggable slider control.
  */
+import { addDelegatedEvent, dispatchEvent } from '../jslim/events';
+import { clampPercentage } from '../utils/math';
 
-function iterateEvents(mode, ender, change) {
-  ['mouseup', 'touchend', 'touchcancel'].forEach(t => document[mode + 'EventListener'](t, ender));
-  ['mousemove', 'touchmove'            ].forEach(t => document[mode + 'EventListener'](t, change));
+function grabSlider(event, target) {
+  function toggleBinding(mode) {
+    ['mouseup', 'touchend', 'touchcancel'].forEach(t => document[mode + 'EventListener'](t, ender));
+    ['mousemove', 'touchmove' ].forEach(t => document[mode + 'EventListener'](t, changer));
+  }
+
+  target = target.closest('.slider-control');
+  dispatchEvent('slider:grab', getPercentage(target, event), target);
+  target.classList.add('interacting');
+
+  const changer = ev => jumpSlider(ev, target);
+  const ender = ev => {
+    target.classList.remove('interacting');
+    toggleBinding('remove');
+    dispatchEvent('slider:release', getPercentage(target, ev), target);
+  };
+  toggleBinding('add');
 }
 
-export function Slider(dom, jump, grab) {
-  const grabCallback = (change, end) => {
-    const ender = () => {
-      dom.classList.remove('interacting');
-      iterateEvents('remove', ender, change);
-      end();
-    };
+function jumpSlider(event, target) {
+  target = target.closest('.slider-control');
+  dispatchEvent('slider:jump', getPercentage(target, event), target);
+}
 
-    dom.classList.add('interacting');
-    iterateEvents('add', ender, change);
-  };
-  const grabEvent = ev => {
-    grab(ev, grabCallback);
-    ev.preventDefault();
-  };
-  
-  dom.bob = dom.querySelector('.bob');
-  dom.fill = dom.querySelector('.fill');
-
-  dom.addEventListener('click', jump);
-  dom.bob.addEventListener('mousedown', grabEvent);
-  dom.bob.addEventListener('touchstart', grabEvent);
-  dom.touch = () => {
-    dom.dispatchEvent(new CustomEvent("transitive", {bubbles: true}));
+export function getPercentage(el, ev) {
+  const rect = el.getBoundingClientRect();
+  const touch = (ev.touches || [])[0] || {pageX: 0, pageY: 0};
+  return {
+    x: clampPercentage((ev.pageX || touch.pageX || 0) - rect.left - window.pageXOffset, el.clientWidth),
+    y: clampPercentage(el.clientHeight - ((ev.pageY || touch.pageY || 0) - rect.top - window.pageYOffset), el.clientHeight)
   };
 }
 
-export function SliderSensitive(dom) {
-  let interactingTimeout;
-  dom.addEventListener('transitive', () => {
-    dom.classList.add('hover');
-    if (interactingTimeout) {
-      interactingTimeout = clearTimeout(interactingTimeout);
-    }
-    interactingTimeout = setTimeout(() => {
-      dom.classList.remove('hover');
-    }, 500);
-  });
-}
+addDelegatedEvent(document, 'click', '.slider-control', jumpSlider);
+addDelegatedEvent(document, 'mousedown', '.slider-control .bob', grabSlider);
+addDelegatedEvent(document, 'touchstart', '.slider-control .bob', grabSlider);

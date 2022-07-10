@@ -2,37 +2,9 @@ import { isFullscreen } from '../../utils/fullscreen';
 import { addDelegatedEvent, bindEvent, halt } from '../../jslim/events';
 import { TapToggler } from '../taptoggle';
 import { toHMS } from '../../utils/duration';
-import { Slider, SliderSensitive } from '../slider';
+import { getPercentage } from '../slider';
 import { createMiniTile } from './minitile';
 import { clampPercentage } from '../../utils/math';
-
-function evToProgress(track, ev) {
-  const width = track.clientWidth;
-  if (width === 0) return -1;
-
-  let x = ev.pageX;
-  if (!x && ev.touches) {
-    x = ev.touches[0].pageX || 0;
-  }
-
-  x -= track.getBoundingClientRect().left + window.pageXOffset;
-
-  return clampPercentage(x, width);
-}
-
-function evToVolume(volume, ev) {
-  const height = volume.slider.clientHeight;
-  if (height === 0) return -1;
-
-  let y = ev.pageY;
-  if (!y && ev.touches) {
-    y = ev.touches[0].pageY || 0;
-  }
-
-  y -= volume.slider.getBoundingClientRect().top + window.pageYOffset;
-
-  return clampPercentage(height - y, height);
-}
 
 function didBufferChange(old, neu) {
   return !old
@@ -90,56 +62,44 @@ export function PlayerControls(player, dom) {
   this.preview = createMiniTile(player);
   this.preview.draw(0);
 
-  Slider(this.track, ev => {
-    if (!player.contextmenu.hide(ev)) {
-      if (!player.video) player.play();
-      const progress = evToProgress(this.track, ev);
-      if (ev.touches) {
-        drawPreview(this, progress);
-      }
-      player.jump(progress);
-    }
-  }, (ev, next) => {
+  addDelegatedEvent(this.dom, 'slider:grab', '.track', ev => {
     if (!player.contextmenu.hide(ev)) {
       player.dom.classList.add('tracking');
-      next(ev => {
-        const progress = evToProgress(this.track, ev);
-        drawPreview(this, progress);
-        player.jump(progress);
-      }, () => {
-        requestAnimationFrame(() => player.dom.classList.remove('tracking'));
-      });
     }
   });
-
-  new TapToggler(this.volume);
-
-  Slider(this.volume.slider, ev => {
-    if (!player.contextmenu.hide(ev)) {
-      const volume = evToVolume(this.volume, ev);
-      if (volume >= 0) player.volume(volume);
-    }
-    halt(ev);
-  }, (ev, next) => {
-    if (!player.contextmenu.hide(ev)) {
-      player.dom.classList.add('voluming');
-      next(ev => {
-        const volume = evToVolume(this.volume, ev);
-        if (volume >= 0) player.volume(volume);
-      }, () => {
-        requestAnimationFrame(() => player.dom.classList.remove('voluming'));
-      });
-    }
-    halt(ev);
+  addDelegatedEvent(this.dom, 'slider:release', '.track', ev => {
+    player.dom.classList.remove('tracking');
   });
-  SliderSensitive(this.volume);
-  SliderSensitive(player.dom);
-
+  addDelegatedEvent(this.dom, 'slider:jump', '.track', ev => {
+    if (!player.contextmenu.hide(ev)) {
+      if (!player.video) player.play();
+      drawPreview(this, ev.detail.data.x);
+      player.jump(ev.detail.data.x);
+    }
+  });
   addDelegatedEvent(dom, 'mousemove', '.track', ev => {
-    const progress = evToProgress(this.track, ev);
+    const progress = getPercentage(this.track, ev).x;
     drawPreview(this, progress);
     this.track.style.setProperty('--track-cursor', progress);
   });
+  new TapToggler(this.volume);
+
+  addDelegatedEvent(this.dom, 'slider:grab', '.volume .slider', ev => {
+    if (!player.contextmenu.hide(ev)) {
+      player.dom.classList.add('voluming');
+    }
+  });
+  addDelegatedEvent(this.dom, 'slider:release', '.volume .slider', ev => {
+    player.dom.classList.remove('voluming');
+  });
+  addDelegatedEvent(this.dom, 'slider:jump', '.volume .slider', ev => {
+    if (!player.contextmenu.hide(ev)) {
+      if (ev.detail.data.y >= 0) {
+        player.volume(ev.detail.data.y);
+      }
+    }
+  });
+
   addDelegatedEvent(dom, 'focusin', '.track', ev => {
     drawPreview(this, player.getProgress());
   });
@@ -173,7 +133,9 @@ export function PlayerControls(player, dom) {
       ev.target.click();
     }
   });
-  bindEvent(dom, 'click', halt);
+  bindEvent(dom, 'click', ev => {
+    ev.preventDefault();
+  });
 }
 PlayerControls.prototype = {
   hide() {

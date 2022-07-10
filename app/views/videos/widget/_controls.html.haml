@@ -9,11 +9,11 @@
 			%span.indicator(tabindex="-1" title="Play")= fa :pause
 		%li.icon.volume(tabindex="0")
 			%span.indicator(tabindex="-1" title="Toggle Mute")= fa :volume_up
-			.slider(tabindex="-1")
+			.slider.slider-control(tabindex="-1")
 				.bars.load
 					%span.fill
 				%span.bob
-		%li.track(tabindex="0")
+		%li.track.slider-control(tabindex="0")
 			.bars.load(tabindex="-1")
 			.bars(tabindex="-1")
 				%span.fill

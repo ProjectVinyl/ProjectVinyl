@@ -14,7 +14,7 @@ export function registerEvents(player, el) {
 
   bindAll(el, {
     click: ev => {
-      if (ev.button !== 0) {
+      if (ev.button !== 0 || ev.defaultPrevented) {
         return;
       }
 
