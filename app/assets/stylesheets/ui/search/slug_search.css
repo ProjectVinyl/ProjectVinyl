@@ -2,29 +2,25 @@
   display: flex;
   flex-direction: row;
   padding-bottom: 10px;
-  align-items: baseline;
+  align-items: center;
   flex-wrap: wrap;
-  margin: -5px;
   white-space: nowrap;
+  gap: 7px;
 }
 #slug-search > span > *,
 #slug-search > * {
   flex-grow: 1;
-  margin: 5px;
+  margin: 0;
 }
 #slug-search > span {
   max-width: 100%;
   display: flex;
   flex-wrap: wrap;
-  margin: 0;
+  gap: 7px;
 }
 #slug-search input[type="search"] {
   flex-grow: 3;
   min-width: 50%;
-}
-#slug-search input,
-#slug-search button {
-  height: 40px;
 }
 #slug-search label {
   flex-grow: 2;

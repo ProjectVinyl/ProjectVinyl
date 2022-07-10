@@ -1,5 +1,6 @@
 label.options {
   display: flex;
+  height: 37.6px;
   border: 1px solid var(--input-border);
   margin: .625rem 0;
   color: var(--input-foreground-color);
@@ -7,6 +8,7 @@ label.options {
   border-radius: var(--input-radius);
   min-width: 200px;
   transition: background 0.125s ease;
+  align-items: stretch;
 }
 
 label.options.focus {
@@ -16,7 +18,7 @@ label.options.focus {
 label.options span {
   max-width: 120px;
   min-width: 90px;
-  padding: 10px !important;
+  padding: 8px !important;
   background: var(--label-focus-color);
   color: var(--input-foreground-color) !important;
   border-right: 1px solid var(--block-border-color);
@@ -37,7 +39,7 @@ label.options select {
   border: none;
   background: inherit;
   color: inherit;
-  padding: 11px;
+  padding: 8px;
 }
 .search-options input {
   width: 100%;
