@@ -130,7 +130,7 @@ class Comment < ApplicationRecord
 
     comment_thread.owner.compute_hotness if comment_thread.video?
 
-    self.likes_count
+    likes.count
   end
   
   def link
