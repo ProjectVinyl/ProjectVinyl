@@ -11,7 +11,7 @@ import { ready } from '../../jslim/events';
 import { cookies } from '../../utils/cookies';
 import { TapToggler } from '../taptoggle';
 import { setFullscreen } from './fullscreen';
-import { PlayerControls } from './playercontrols';
+import { PlayerControls } from './controls';
 import { setupNoise } from './noise';
 import { attachMessageListener } from './itc';
 import { createVideoElement, addSource } from './video_element';
@@ -345,8 +345,6 @@ Player.prototype = {
   }
 };
 
-ready(() => document.querySelectorAll('.video').forEach(v => {
-  if (!v.dataset.pending && !v.classList.contains('unplayable')) {
-    new Player().constructor(v);
-  }
+ready(() => document.querySelectorAll('.video:not([data-pending], .unplayable)').forEach(v => {
+  new Player().constructor(v);
 }));

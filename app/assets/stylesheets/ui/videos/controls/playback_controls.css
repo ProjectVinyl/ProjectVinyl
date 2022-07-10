@@ -14,7 +14,8 @@
   color: var(--controls-foreground);
 }
 .video .playback-controls {
-  --hide-delay: 3s;
+  --default-hide-delay: 5s;
+  --hide-delay: var(--default-hide-delay);
   visibility: hidden;
   position: absolute;
   opacity: 0;
@@ -69,7 +70,10 @@
   visibility: visible;
 }
 
-.video[data-state=playing][data-hide-controls="1"] .playback-controls {
+.video[data-state=playing][data-idle=true] {
+  cursor: none;
+}
+.video[data-state=playing][data-idle=true] .playback-controls {
   opacity: 0 !important;
   visibility: hidden !important;
 }
