@@ -1,23 +1,24 @@
 - query_hash = request.query_parameters.except(:page)
 %span.pages
-	- if page > 1
-		- query_hash[id] = 0
-		%a.button(data-page-to="0" href="?#{query_hash.to_query}")>
-			%i.fa.fa-ahalfx.fa-angle-double-left
-	- query_hash[id] = page - 1
-	%a.button(data-page-to="#{page - 1}" href="?#{query_hash.to_query}"){class: page <= 0 && "disable"}>
-		%i.fa.fa-ahalfx.fa-angle-left
-	- ([page - 4, 0].max..[page + 4, pages].min).each do |i|
-		- query_hash[id] = i
-		%a.button{class: i == page && "selected disable", "data-page-to": i, href: "?#{query_hash.to_query}"}>
-			= i + 1
-	- query_hash[id] = page
-	%a.button(data-page-to="#{page + 1}" href="?#{query_hash.to_query}"){class: page >= pages && "disable"}>
-		%i.fa.fa-ahalfx.fa-angle-right
-	- if page < pages - 1
-		- query_hash[id] = -1
-		%a.button(data-page-to="-1" href="?#{query_hash.to_query}")>
-			%i.fa.fa-ahalfx.fa-angle-double-right
+	- if pages > 1
+		- if page > 1
+			- query_hash[id] = 0
+			%a.button(data-page-to="0" href="?#{query_hash.to_query}")>
+				%i.fa.fa-ahalfx.fa-angle-double-left
+		- query_hash[id] = page - 1
+		%a.button(data-page-to="#{page - 1}" href="?#{query_hash.to_query}"){class: page <= 0 && "disable"}>
+			%i.fa.fa-ahalfx.fa-angle-left
+		- ([page - 4, 0].max..[page + 4, pages].min).each do |i|
+			- query_hash[id] = i
+			%a.button{class: i == page && "selected disable", "data-page-to": i, href: "?#{query_hash.to_query}"}>
+				= i + 1
+		- query_hash[id] = page
+		%a.button(data-page-to="#{page + 1}" href="?#{query_hash.to_query}"){class: page >= pages && "disable"}>
+			%i.fa.fa-ahalfx.fa-angle-right
+		- if page < pages - 1
+			- query_hash[id] = -1
+			%a.button(data-page-to="-1" href="?#{query_hash.to_query}")>
+				%i.fa.fa-ahalfx.fa-angle-double-right
 %span.pages.right
 	%a.button.refresh(title="Reload")
 		%i.fa.fa-refresh.progress-throbber
