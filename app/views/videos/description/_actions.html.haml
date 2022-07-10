@@ -1,5 +1,6 @@
 .actions.actions-above-content
-	= render partial: user_signed_in? ? 'videos/description/actions_logged_in' : 'videos/description/actions_logged_out'
+	= render partial: 'videos/description/rating_bar'
+	= render partial: 'videos/description/favourite_button'
 	%span.divider>
 	%a.button.blue.action.mobile-friendly(title="Comments" href="#comment_section")>
 		= fw :comments

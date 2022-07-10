@@ -1,0 +1,31 @@
+.split-button.button.like-dislike
+	- if user_signed_in?
+		%button.action.split-icon.like(title="I like this"){class: @video.upvoted? && "liked",
+												data: {count: @video.upvotes,
+															action: video_action_path(@video, id: :like),
+															id: @video.id}}>
+			= fa :thumbs_up
+			%span
+				%span.count= safe_to_display  @video.upvotes, 9999
+		.rating-bar(style="--bar-percentage:#{@video.rating_percentage}"
+							title="#{@video.rating_percentage * 100}%"
+							data-total-votes="#{@video.total_votes}")
+		%button.action.split-icon.dislike(title="I dislike this"){class: @video.downvoted? && "liked",
+													data: {count: @video.downvotes,
+																action: video_action_path(@video, id: :dislike),
+																id: @video.id}}>
+			= fa :thumbs_down
+			%span
+				%span.count= safe_to_display  @video.downvotes, 9999
+	- else
+		%a.button.action.split-icon.like(title="Sign in to like this video" target="_blank" href="#{new_user_session_path}")
+			= fa :thumbs_up
+			%span
+				%span.count= safe_to_display  @video.upvotes, 9999
+		.rating-bar(style="--bar-percentage:#{@video.rating_percentage}"
+							title="#{@video.rating_percentage * 100}%"
+							data-total-votes="#{@video.total_votes}")
+		%a.button.action.split-icon.dislike(title="Sign in to dislike this video" target="_blank" href="#{new_user_session_path}")
+			= fa :thumbs_down
+			%span
+				%span.count= safe_to_display  @video.downvotes, 9999

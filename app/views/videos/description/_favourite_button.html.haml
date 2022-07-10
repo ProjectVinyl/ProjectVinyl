@@ -1,0 +1,26 @@
+- if user_signed_in?
+	.split-button.button.popper>
+		%button.action.star.split-icon(title="Add to Favourites"){class: @video.faved?(current_user) && "liked",
+																	data: {count: @video.favourites,
+																				action: video_action_path(@video, id: :star),
+																				id: @video.id}}
+			= fa :star
+			%span
+				%span.count= safe_to_display @video.favourites, 9999
+		%ul.pop-out
+			%li.action(data-external-form="#{new_album_path initial: @video.id}" data-title="New Album")
+				%span.icon= fa :pencil
+				%span.label New Album
+			%span.divider
+			- current_user.albums.each do |album|
+				%li.action.toggle(data-target="#{video_add_path @video}" data-item="#{album.id}")
+					%span.icon
+						- if album.album_items.where(video_id: @video.id).first
+							= fa :check
+					%span.label= album.title
+		%a.button.action.split-icon.addto.pop-out-toggle Add To
+- else
+	.split-button.button>
+		%a.button.action.star.split-icon(title="Sign in to add this video to your favourites" target="_blank" href="#{new_user_session_path}")
+			= fa :star
+		%a.button.action.split-icon(target="_blank" href="#{new_user_session_path}") Add To

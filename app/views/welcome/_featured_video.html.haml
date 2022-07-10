@@ -18,22 +18,7 @@
 				views
 		.description.post-content.content.fade-away= emotify @video.description
 	.scoring.actions
-		.split-button.button.like-dislike
-			.button.action.split-icon.like{class: @featured.upvoted? && "liked",
-																		title: "Likes", data: {count: @featured.upvotes,
-																													action: video_action_path(@featured, id: :like),
-																													id: @featured.id}}<>
-				= fw :thumbs_up
-				%b.count= safe_to_display @featured.upvotes, 9999
-			.rating-bar(style="--bar-percentage:#{@video.rating_percentage}"
-								title="#{@video.rating_percentage * 100}%"
-								data-total-votes="#{@video.total_votes}")
-			.button.action.split-icon.dislike{class: @featured.downvoted? && "liked",
-																			title: "Dislikes", data: {count: @featured.downvotes,
-																																action: video_action_path(@featured, id: :dislike),
-																																id: @featured.id}}<>
-				= fw :thumbs_down
-				%b.count= safe_to_display  @featured.downvotes, 9999
+		= render partial: 'videos/description/rating_bar'
 		%a.button.blue{href: @featured.comment_thread.link + "#comment_section", title: "Comments"}<>
 			= fw :comments
 			= safe_to_display  @featured.comment_thread.total_comments, 9999
