@@ -59,7 +59,7 @@ class Pm < ApplicationRecord
           comment_thread: thread,
           new_comment: comment
         )
-        Notification.notify_recievers([receiver.id], pms, "#{sender.username} has sent you a Private Message: <b>#{thread.title}</b>", pms.location)
+        Notification.notify_receivers([receiver.id], pms, "#{sender.username} has sent you a Private Message: <b>#{thread.title}</b>", pms.location)
       end
       
       return pm
@@ -69,7 +69,7 @@ class Pm < ApplicationRecord
   def bump(sender, params, comment)
     Pm.where('state = ? AND unread = false AND comment_thread_id = ? AND NOT user_id = ?', STATE_NORMAL, self.comment_thread_id, sender.id).update_all(new_comment_id: comment.id, unread: true)
     Pm.where('state = ? AND comment_thread_id = ? AND NOT user_id = ?', STATE_NORMAL, self.comment_thread_id, sender.id).find_each do |t|
-      Notification.notify_recievers([t.user_id], self, "#{sender.username} has posted a reply to <b>#{self.comment_thread.title}</b>", t.location)
+      Notification.notify_receivers([t.user_id], self.comment_thread, "#{sender.username} has posted a reply to <b>#{self.comment_thread.title}</b>", t.location)
     end
   end
   
