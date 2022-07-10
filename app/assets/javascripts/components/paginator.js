@@ -35,6 +35,15 @@ addDelegatedEvent(document, 'click', '.pagination .button[data-page-to], .pagina
   requestPage(context, target.dataset.pageTo || context.dataset.page, target.classList.contains('refresh'));
   event.preventDefault();
 });
+addDelegatedEvent(document, 'click', '.pagination .button[data-sort', (event, target) => {
+  // Left-click only, no modifiers
+  if (event.button !== 0 || event.ctrlKey || event.shiftKey) return;
+
+  const context = target.closest('.paginator');
+  context.dataset.order = target.dataset.sort;
+  requestPage(context, context.dataset.page, true);
+  event.preventDefault();
+});
 
 bindEvent(window, 'popstate', event => {
   document.querySelectorAll('.paginator').forEach(context => requestPage(context, QueryParameters.current.getItem(context.dataset.id)));

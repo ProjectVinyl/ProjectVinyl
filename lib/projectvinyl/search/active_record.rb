@@ -112,7 +112,7 @@ module ProjectVinyl
         records
       end
 
-      def paginate(page_number, page_size, &block)
+      def paginate(page_number, page_size, ordering: nil, &block)
         __clear!
 
         offset [0, page_number].max * page_size
@@ -122,7 +122,7 @@ module ProjectVinyl
           page_number = 0
           @search = __execute! @initial
 
-          return __paginate! page_size, page_number, block if total <= page_size
+          return __paginate! page_size, page_number, ordering, block if total <= page_size
 
           page_number = (total / page_size).floor
           offset page_number * page_size
@@ -136,7 +136,7 @@ module ProjectVinyl
           @search = __execute! @initial
         end
 
-        __paginate! page_size, page_number, block
+        __paginate! page_size, page_number, ordering, block
       end
 
       private
@@ -155,9 +155,9 @@ module ProjectVinyl
         end
       end
 
-      def __paginate!(page_size, page_number, block)
+      def __paginate!(page_size, page_number, ordering, block)
         recs = block ? block.call(records) : records
-        __ready! Pagination.new(recs, page_size, (total / page_size).floor, page_number, total).excepted(self)
+        __ready! Pagination.new(recs, page_size, (total / page_size).floor, page_number, total, ordering.nil? ? @direction == :desc : ordering).excepted(self)
       end
 
       def __clear!

@@ -45,8 +45,7 @@ module Searchable
     @ascending = @order == 0
     @data = URI.encode_www_form({
       @query_term => @query,
-      :orderby => @orderby,
-      order: @order
+      :orderby => @orderby
     })
   end
 

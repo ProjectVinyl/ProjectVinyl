@@ -18,5 +18,10 @@
 		- query_hash[id] = -1
 		%a.button(data-page-to="-1" href="?#{query_hash.to_query}")>
 			%i.fa.fa-ahalfx.fa-angle-double-right
-%button.button.button-bub.right.refresh(title="Reload")
-	%i.fa.fa-refresh.fa-fw.progress-throbber
+%span.pages.right
+	%a.button.refresh(title="Reload")
+		%i.fa.fa-refresh.progress-throbber
+	%a.button.sort(title="Sort Ascending" data-sort="0"){class: order == 0 && "disable"}>
+		= fa :sort_alpha_asc
+	%a.button.sort(title="Sort Descending" data-sort="1"){class: order == 1 && "disable"}>
+		= fa :sort_alpha_desc

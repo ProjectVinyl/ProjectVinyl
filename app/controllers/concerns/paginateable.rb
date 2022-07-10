@@ -30,7 +30,10 @@ module Paginateable
 
     {
       paginate: render_to_string(partial: 'pagination/numbering', formats: [:html], locals: {
-        page: pagination.page, pages: pagination.pages, id: '{page}'
+        page: pagination.page,
+        pages: pagination.pages,
+        id: '{page}',
+        order: pagination.reverse ? 1 : 0
       }),
       content: c,
       pages: pagination.pages,

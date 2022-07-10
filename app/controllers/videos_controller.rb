@@ -285,7 +285,7 @@ class VideosController < Videos::BaseVideosController
   def aha!(records, key)
     configure_pars key
     records.sort(ProjectVinyl::Search.ordering('video', session, @orderby, @ascending))
-           .paginate(@page, 20){|recs| recs.for_thumbnails(current_user)}
+           .paginate(@page, 20, ordering: !@ascending){|recs| recs.for_thumbnails(current_user)}
   end
 
   def configure_pars(key)
