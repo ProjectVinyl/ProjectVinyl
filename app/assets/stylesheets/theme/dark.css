@@ -79,7 +79,7 @@ html, body {
 }
 
 .playlist {
-  --playlist-controls-color: #aaa;
+  --playlist-controls-color: #bbb;
   --playlist-shadow-color: #111;
   --seamless-button-hover-tint: #403f3f;
 }
@@ -155,7 +155,7 @@ button, .button, input[type="submit"], .foobar {
   --button-border-color: #8c8c15;
   --button-bottom-color: #8c8c15;
   --button-top-color: #313106;
-  --button-shadow-color: #c7c739;
+  --button-shadow-color: #878727;
   --button-background: #9f9f05;
   --button-background-hover: #b3b306;
   --button-background-active: #a8a804;

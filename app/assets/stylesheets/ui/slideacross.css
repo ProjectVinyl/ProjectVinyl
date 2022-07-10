@@ -27,6 +27,7 @@
   white-space: nowrap;
   overflow: hidden;
   vertical-align: top;
+  border-radius: var(--block-radius);
 }
 .slide-holder .slide-nav a {
   display: inline-block;

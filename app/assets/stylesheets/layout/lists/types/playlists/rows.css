@@ -9,7 +9,7 @@
   padding: 0;
 }
 .listing.compact.playlist .row:not(.selected, .grabbed) {
-  opacity: 0.6;
+  opacity: 0.9;
 }
 
 .listing.compact.playlist .items .row .title {
