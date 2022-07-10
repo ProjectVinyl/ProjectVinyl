@@ -34,6 +34,6 @@
 																																id: @featured.id}}<>
 				= fw :thumbs_down
 				%b.count= safe_to_display  @featured.downvotes, 9999
-		%a.button.blue{href: @featured.comment_thread.link, title: "Comments"}<>
+		%a.button.blue{href: @featured.comment_thread.link + "#comment_section", title: "Comments"}<>
 			= fw :comments
 			= safe_to_display  @featured.comment_thread.total_comments, 9999
