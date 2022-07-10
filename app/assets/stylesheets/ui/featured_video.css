@@ -2,17 +2,11 @@
   padding-top: var(--content-block-padding-half);
 }
 .featured .scoring {
-  display: table;
-  width: 100%;
-  border-spacing: 5px;
-  border-collapse: separate;
-  text-align: center;
+  display: flex;
   margin-top: 5px;
 }
-.featured .scoring span,
-.featured .scoring a {
-  display: table-cell;
-  min-height: 0px;
+.featured .like-dislike {
+  flex-grow: 1;
 }
 .featured .description {
   overflow: hidden;
