@@ -2,7 +2,9 @@
 	.notice Thread Locked
 - elsif !ApplicationHelper.bg_ponies && visitor.dummy?
 	.notice
-		%a(data-external-form="#{new_user_session_path}.json" data-icon="sign-in" data-title="Login" data-thin="true" href="#{new_user_session_path}")
+		%a(data-external-form="#{new_user_session_path}.json"
+			data-icon="sign-in" data-title="Login"
+			data-thin="true" href="#{new_user_session_path}")
 			Please sign in to comment
 - else
 	%form.comment.post-box
