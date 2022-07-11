@@ -14,7 +14,7 @@
   --button-foreground-active: var(--button-foreground-hover);
 }
 .comment .content .like:not([data-count="0"])::before {
-  content: attr(data-count);
+  content: attr(data-display);
 }
 
 .comment .content .like.liked {

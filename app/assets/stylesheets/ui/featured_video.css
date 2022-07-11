@@ -5,10 +5,6 @@
   display: flex;
   margin-top: 5px;
 }
-.like-dislike {
-  flex-grow: 1;
-  flex-shrink: 1;
-}
 .featured .description {
   overflow: hidden;
   max-height: 200px;

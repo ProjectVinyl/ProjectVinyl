@@ -1,0 +1,9 @@
+.like-dislike {
+  flex-grow: 1;
+  flex-shrink: 1;
+}
+
+.star[data-count]:not([data-count="0"])::after,
+.like-dislike [data-count]:not([data-count="0"])::after {
+  content: attr(data-display);
+}

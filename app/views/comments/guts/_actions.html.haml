@@ -1,6 +1,9 @@
 .comment-actions
 	- if user_signed_in?
-		.button.action.like{title: "Like", class: comment.liked? && "liked", data: {count: comment.likes_count, action: "comments/#{comment.id}/like"}}
+		.button.action.like{title: "Like Comment", class: comment.liked? && "liked", data: {
+				count: comment.likes_count,
+				display: safe_to_display(comment.likes_count, 9999),
+				action: "comments/#{comment.id}/like"}}
 			= fa :thumbs_up
 		- if !indirect
 			.button.reply-comment(title="Reply")= fa :reply
@@ -22,9 +25,9 @@
 						%span.icon= fa :warning
 						%span.label Report
 	- else
-		.button.like{title: "Likes", class: comment.liked? && "liked"}
-			- if comment.likes_count && comment.likes_count > 0
-				= comment.likes_count
+		.button.like{title: "Total Likes", class: comment.liked? && "liked", data: {
+				count: comment.likes_count,
+				display: safe_to_display(comment.likes_count, 9999)}}
 			= fa :thumbs_up
 		- if !indirect
 			.button.reply-comment(title="Reply")= fa :reply

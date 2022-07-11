@@ -2,11 +2,10 @@
 	.split-button.button.popper>
 		%button.action.star.split-icon(title="Add to Favourites"){class: @video.faved?(current_user) && "liked",
 																	data: {count: @video.favourites,
+																				display: safe_to_display(@video.favourites, 9999),
 																				action: video_action_path(@video, id: :star),
 																				id: @video.id}}
 			= fa :star
-			%span
-				%span.count= safe_to_display @video.favourites, 9999
 		%ul.pop-out
 			%li.action(data-external-form="#{new_album_path initial: @video.id}" data-title="New Album")
 				%span.icon= fa :pencil
