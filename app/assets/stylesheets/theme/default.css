@@ -16,7 +16,7 @@ html, body {
   --tooltip-background-color: rgba(28,28,28,0.9);
   --tooltip-color: #fff;
 
-  --content-background: #fff;
+  --content-background: #fdfdfd;
   --content-highlight: #fef;
   --content-unread: rgba(200,250,200,0.6);
 
@@ -35,7 +35,7 @@ html, body {
   --seamless-thumb-hover-color: #acacac3d;
   --thumb-border-radius: 5px;
 
-  --form-background: #f8f8f8;
+  --form-background: #fafafa;
   --notification-bobber-fill: #f00;
 
   --input-shadow: rgba(255, 255, 255, 0.8);
