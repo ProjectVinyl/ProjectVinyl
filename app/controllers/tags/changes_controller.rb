@@ -19,7 +19,7 @@ module Tags
       @history = @tag.tag_histories.includes(:tag, :user).order(:created_at)
       @history = params[:added] ? @history.where(added: params[:added].to_i == 1) : @history.where.not(added: nil)
 
-      @history = Pagination.paginate(@history, params[:page].to_i, 20, true)
+      @history = Pagination.paginate(@history, params[:page].to_i, 20, params[:order].to_i == 1)
 
       if params[:format] == 'json'
         return render_empty_pagination 'history/warden_derpy' if @history.count == 0
