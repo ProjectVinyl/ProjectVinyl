@@ -6,10 +6,15 @@ module External
       end
 
       if user_signed_in?
-        response = Import::VideoJob.queue_and_publish_now(current_user, params[:v])
+        if ApplicationHelper.read_only && !current_user.is_contributor?
+          flash[:info] = "Project Vinyl is in read only mode. Sorry for the inconvenience!"
+          flash[:error] = "The requested video could be found: #{params[:v]}"
+        else
+          response = Import::VideoJob.queue_and_publish_now(current_user, params[:v])
 
-        flash[:info] = response[:response]
-        return redirect_to action: :show, controller: '/videos', id: response[:id] if response[:ok]
+          flash[:info] = response[:response]
+          return redirect_to action: :show, controller: '/videos', id: response[:id] if response[:ok]
+        end
       else
         flash[:error] = "The requested video could be found: #{params[:v]}"
       end
