@@ -24,6 +24,12 @@
     background 0.25s ease,
     border-color 0.25s ease;
 }
+.slideout .group.listing.compact .row:first-child {
+  --table-inner-border: transparent;
+}
+.slideout .group.listing.compact .items {
+  border-bottom-color: transparent;
+}
 
 .listing.compact .items .row .cell {
   display: table-cell;
@@ -32,6 +38,7 @@
   line-height: 20px;
   border-top: solid 1px var(--table-inner-border);
 }
+
 
 .listing.compact .items .row .secondary {
   position: relative;

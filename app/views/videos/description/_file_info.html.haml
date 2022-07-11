@@ -1,18 +1,22 @@
 - cache(@video, expires_in: 1.week) do
 	.slideout.info.properties
-		%table.group.active
-			%tr
-				%td.label File Size
-				%td.field= "%.2f MB" % @video.file_size
-			%tr
-				%td.label File Type
-				%td.field= @video.file
-			%tr
-				%td.label Mime Type
-				%td.field= @video.mime
-			%tr
-				%td.label Duration
-				%td.field= duration @video.duration
-			%tr
-				%td.label Dimensions
-				%td.field= @video.dimensions
+		.group.active.listing.compact
+			.items
+				.row.heads
+					.cell Field
+					.cell Attribute
+				.row
+					.cell.label File Size
+					.cell.field= "%.2f MB" % @video.file_size
+				.row
+					.cell.label File Type
+					.cell.field= @video.file
+				.row
+					.cell.label Mime Type
+					.cell.field= @video.mime
+				.row
+					.cell.label Duration
+					.cell.field= duration @video.duration
+				.row
+					.cell.label Dimensions
+					.cell.field= @video.dimensions

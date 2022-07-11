@@ -1,6 +1,10 @@
 .slideout.downloads
 	.listing.compact.group.active
 		.items
+			.row.heads
+				.cell
+				.cell File Type
+				.cell Download Size
 			- @video.assets(:downloadable_media).uniq(&:ext).each do |media|
 				%a.row(download target="_blank" href="#{video_download_path @video}.#{media.ext}"){disabled: !media.path.exist?}
 					%span.cell.icon
@@ -8,5 +12,15 @@
 					%span.cell
 						= media.ext.upcase
 						= media.ext == 'mp3' ? 'Audio' : 'Video'
+					- size = media.size
 					%span.cell
-						= "%.2f MB" % media.size
+						- if size == 0
+							\-
+						- else
+							= "%.2f MB" % media.size
+					%span.cell
+						- if size == 0
+							- if media.ext == 'mkv'
+								%span.red(title="Content not available")= fw :warning
+							- else
+								%span.red(title="Content may not be available")= fw :info_circle
