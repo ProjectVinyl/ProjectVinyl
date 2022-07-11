@@ -8,7 +8,7 @@ module Videos
 
       @records = TagSubscription.get_feed_items(current_user, current_filter)
 
-      render_pagination @records, params[:page].to_i, 30, false, {
+      render_pagination @records, params[:page].to_i, 30, params[:order].to_i == 1, {
         partial: partial_for_type(:videos),
         type: :videos,
         table: 'videos/feed',
