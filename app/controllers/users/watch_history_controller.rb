@@ -8,7 +8,7 @@ module Users
         
         @records = user.watched_videos.unmerged.listable
         @records = @records.where(listing: 0) if !edits_allowed
-        @records = Pagination.paginate(@records, params[:page].to_i, 50, true)
+        @records = Pagination.paginate(@records, params[:page].to_i, 50, params[:order].to_i == 1)
 
         @label = 'Watch History'
         @table = 'watch_history'
