@@ -20,7 +20,6 @@
   z-index: 90;
 }
 
-.notices-bell.rebuff[data-count]:not([data-count="0"])::after,
-.notices-bell[data-count]:not([data-count="0"]):hover::after {
+.notices-bell.rebuff[data-count]:not([data-count="0"])::after {
   animation: 1s bobbenagain 0s 1;
 }
