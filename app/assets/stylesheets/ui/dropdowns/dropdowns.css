@@ -34,7 +34,7 @@
 }
 
 .drop-down-holder.popper .drop-down {
-  left: 100%;
+  left: calc(100% + 4px);
   top: 50%;
 }
 
