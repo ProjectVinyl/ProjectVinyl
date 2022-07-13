@@ -74,7 +74,6 @@ export function createVideoElement(sender) {
         clearTimeout(suspendTimer);
         suspendTimer = null;
       }
-      sender.setState('playing');
       sender.track(video.currentTime, sender.getDuration());
       setWatchTime(sender.params.id, video.currentTime / sender.getDuration());
     },
