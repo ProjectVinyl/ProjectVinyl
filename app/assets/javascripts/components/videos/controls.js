@@ -9,7 +9,7 @@ import { clampPercentage } from '../../utils/math';
 function didBufferChange(old, neu) {
   return !old
     || old.length != neu.length
-    || (neu.length && old.start != neu.start(0) || old.end != neu.end(neu.length - 1));
+    || (neu.length && (old.start != neu.start(0) || old.end != neu.end(neu.length - 1)));
 }
 
 function findChapter(chapters, time) {
