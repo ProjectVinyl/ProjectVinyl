@@ -1,15 +1,14 @@
 import { extendFunc } from '../../utils/misc';
 import { Player } from '../videos/player';
 
-export const TimeSelecter = extendFunc(Player, {
-  constructor(el) {
-    this.nonpersistent = true;
-    TimeSelecter.Super.constructor.call(this, el, true);
-    this.timeInput = el.querySelector('input');
-    this.contextmenu.setDisabled(true);
-    this.waterdrop = null;
-    this.volume(0, true);
-  },
+export const TimeSelecter = extendFunc(Player, function(el) {
+  this.nonpersistent = true;
+  Player.call(this, el, true);
+  this.timeInput = el.querySelector('input');
+  this.contextmenu.setDisabled(true);
+  this.waterdrop = null;
+  this.volume(0, true);
+}, {
   pause() {
     if (this.video) {
       this.video.pause();

@@ -1,10 +1,8 @@
-/*
- * Initialises basic video playback functionality.
- */
 import { bindAll } from '../../jslim/events';
 import { sendMessage } from './itc';
 import { setWatchTime } from './watch_time';
 import { moveNext } from './playlist_actions';
+import { onVideoError } from './error_handler';
 
 // Have to do this the long way to avoid caching errors in firefox
 export function addSource(video, src, type) {
@@ -29,10 +27,10 @@ export function createVideoElement(sender) {
       video.addEventListener('canplay', setTime);
     }
   }
-  
+
   const sources = video.querySelectorAll('source');
   if (sources.length) {
-    sources[sources.length - 1].addEventListener('error', e => sender.error(e, 'source'));
+    sources[sources.length - 1].addEventListener('error', e => onVideoError(sender, e, 'source'));
   }
   
   let suspendTimer = null;
@@ -44,8 +42,8 @@ export function createVideoElement(sender) {
   }
   
   bindAll(video, {
-    abort: e => sender.error(e, 'abort'),
-    error: e => sender.error(e, 'video-error'),
+    abort: e => onVideoError(sender, e, 'abort'),
+    error: e => onVideoError(sender, e, 'video-error'),
     pause: () => sender.pause(),
     play: () => {
       sender.setState('playing');

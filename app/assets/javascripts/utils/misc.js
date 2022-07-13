@@ -26,9 +26,8 @@ export function extendObj(onto, overrides) {
   return moveAcross(onto, overrides, value => value);
 }
 
-export function extendFunc(Parent, overrides) {
-  function Child() {};
-  Child.prototype = extendObj(new Parent(), overrides);
+export function extendFunc(Parent, Child, overrides) {
+  Child.prototype = extendObj(copyOfObj(Parent.prototype), overrides);
   Child.Super = Parent.prototype;
   return Child;
 }

@@ -9,9 +9,7 @@ const UPLOADING_QUEUE = new UploadQueue();
 addDelegatedEvent(document, 'frame:tab_created', '#uploader_frame', e => {
   const {el,id,initial} = e.detail.data;
 
-  const player = new TimeSelecter();
-  player.constructor(el.querySelector('.thumbnail-form.thumbnail-time-form .video'));
-
+  const player = new TimeSelecter(el.querySelector('.thumbnail-form.thumbnail-time-form .video'));
   const validationCallback = () => validateVideoForm(el.querySelector('.details-form'));
   const pickerTab = el.querySelector(`li[data-target="thumbpick_${id}"]`);
   const uploaderTab = el.querySelector(`li[data-target="thumbupload_${id}"]`);

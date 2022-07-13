@@ -5,7 +5,6 @@ import { ajaxPut } from '../../utils/ajax';
 import { scrollTo } from '../../ui/scroll';
 import { ContextMenu } from '../../ui/contextmenu';
 import { clamp } from '../../utils/math';
-import { errorMessage, errorPresent } from '../../utils/videos';
 import { formatFuzzyBigNumber } from '../../utils/numbers';
 import { ready } from '../../jslim/events';
 import { cookies } from '../../utils/cookies';
@@ -13,7 +12,6 @@ import { TapToggler } from '../taptoggle';
 import { setFullscreen } from './fullscreen';
 import { touchSlider } from '../slider_transitive';
 import { PlayerControls } from './controls';
-import { setupNoise } from './noise';
 import { attachMessageListener } from './itc';
 import { createVideoElement, addSource } from './video_element';
 import { attachFloater } from './floatingplayer';
@@ -34,7 +32,6 @@ function playerElement(sender) {
   player.error = player.querySelector('.error');
   player.error.message = player.error.querySelector('.error-message');
   player.getPlayerObj = () => sender;
-  
   return player;
 }
 
@@ -45,7 +42,7 @@ function playerHeader(sender) {
       heading.href = `/videos/${sender.params.id}-${sender.params.title}?resume=${sender.video.currentTime}`;
     }
   });
-  
+
   return heading;
 }
 
@@ -57,71 +54,70 @@ function fillRequiredParams(params, el) {
   return params;
 }
 
-export function Player() { }
+export function Player(el, standalone) {
+  this.floater = document.querySelector('.floating-player');
+
+  this.params = fillRequiredParams(JSON.parse(unescape((el.dataset.source || '{}').replace('+', ' '))), el);
+  delete el.dataset.source;
+
+  this.dom = el;
+  this.video = null;
+  this.audioOnly = this.params.type === 'audio';
+  this.volumeLevel = cookies.get('player_volume', 1);
+
+  this.suspend = el.querySelector('.suspend');
+  this.waterdrop = el.querySelector('.water-drop');
+  this.player = playerElement(this);
+  this.playlist = document.querySelector('.playlist');
+  this.heading = playerHeader(this);
+  this.controls = new PlayerControls(this, el.querySelector('.controls'));
+  this.contextmenu = new ContextMenu(el.querySelector('.contextmenu'), this.dom, {
+    'Loop': {
+      initial: this.setLoop(false),
+      callback: val => val(this.setLoop(!this.__loop))
+    },
+    'Speed': {
+      initial: this.changeSpeed(2),
+      callback: val => val(this.changeSpeed(this.__speed + 1))
+    },
+    'Play Automatically': {
+      initial: this.setAutostart(!!cookies.get('autostart')),
+      callback: val => val(this.setAutostart(!this.__autostart))
+    },
+    'Next Automatically': {
+      initial: this.setAutoplay(!!cookies.get('autoplay')),
+      display: this.params.autoplay,
+      callback: val => val(this.setAutoplay(!this.__autoplay))
+    }
+  });
+
+  attachMessageListener(this, !standalone);
+
+  if (!el.dataset.pending) {
+    this.floater = attachFloater(this);
+  }
+
+  new TapToggler(this.dom);
+
+  registerEvents(this, el);
+
+  const selected = document.querySelector('.playlist a.selected');
+  if (selected) {
+    scrollTo(selected, document.querySelector('.playlist .scroll-container'));
+  }
+
+  if (!this.params.embedded) {
+    if (this.params.resume || this.__autostart || this.__autoplay) {
+      this.play();
+    }
+  }
+
+  this.volume(this.volumeLevel, false);
+
+  el.videoPlayer = this;
+  return this;
+}
 Player.prototype = {
-  constructor(el, standalone) {
-    this.floater = document.querySelector('.floating-player');
-    
-    this.params = fillRequiredParams(JSON.parse(unescape((el.dataset.source || '{}').replace('+', ' '))), el);
-    delete el.dataset.source;
-
-    this.dom = el;
-    this.video = null;
-    this.audioOnly = this.params.type === 'audio';
-    this.volumeLevel = cookies.get('player_volume', 1);
-
-    this.suspend = el.querySelector('.suspend');
-    this.waterdrop = el.querySelector('.water-drop');
-    this.player = playerElement(this);
-    this.playlist = document.querySelector('.playlist');
-    this.heading = playerHeader(this);
-    this.controls = new PlayerControls(this, el.querySelector('.controls'));
-    this.contextmenu = new ContextMenu(el.querySelector('.contextmenu'), this.dom, {
-      'Loop': {
-        initial: this.setLoop(false),
-        callback: val => val(this.setLoop(!this.__loop))
-      },
-      'Speed': {
-        initial: this.changeSpeed(2),
-        callback: val => val(this.changeSpeed(this.__speed + 1))
-      },
-      'Play Automatically': {
-        initial: this.setAutostart(!!cookies.get('autostart')),
-        callback: val => val(this.setAutostart(!this.__autostart))
-      },
-      'Next Automatically': {
-        initial: this.setAutoplay(!!cookies.get('autoplay')),
-        display: this.params.autoplay,
-        callback: val => val(this.setAutoplay(!this.__autoplay))
-      }
-    });
-    
-    attachMessageListener(this, !standalone);
-
-    if (!el.dataset.pending) {
-      this.floater = attachFloater(this);
-    }
-
-    new TapToggler(this.dom);
-    
-    registerEvents(this, el);
-
-    const selected = document.querySelector('.playlist a.selected');
-    if (selected) {
-      scrollTo(selected, document.querySelector('.playlist .scroll-container'));
-    }
-
-    if (!this.params.embedded) {
-      if (this.params.resume || this.__autostart || this.__autoplay) {
-        this.play();
-      }
-    }
-    
-    this.volume(this.volumeLevel, false);
-
-    el.videoPlayer = this;
-    return this;
-  },
   fullscreenChanged(inFullscreen) {
     if (!inFullscreen && this.redirect) {
       if (this.video) {
@@ -227,7 +223,7 @@ Player.prototype = {
       }
       addSource(media, `/stream/${this.params.path}/${this.params.id}/source${this.params.mime[0]}`, this.params.mime[1]);
     }
-    
+
     return media;
   },
   getOrCreateVideo() {
@@ -262,23 +258,6 @@ Player.prototype = {
     this.setState('paused');
     this.suspend.classList.add('hidden');
     return true;
-  },
-  error(e, source) {
-    console.warn('Video playback failed due to error from ' + source);
-    requestAnimationFrame(() => {
-      if (errorPresent(this.video)) {
-        const message = errorMessage(this.video);
-        console.warn(message);
-
-        this.setState('error');
-        this.player.error.message.innerText = message;
-        this.suspend.classList.add('hidden');
-
-        if (!this.noise) {
-          this.noise = setupNoise(this.player.error);
-        }
-      }
-    });
   },
   setState(newState) {
     if (this.floater) {
@@ -345,6 +324,4 @@ Player.prototype = {
   }
 };
 
-ready(() => document.querySelectorAll('.video:not([data-pending], .unplayable)').forEach(v => {
-  new Player().constructor(v);
-}));
+ready(() => document.querySelectorAll('.video:not([data-pending], .unplayable)').forEach(v => new Player(v)));
