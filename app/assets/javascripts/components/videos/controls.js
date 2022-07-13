@@ -24,7 +24,8 @@ function drawPreview(controls, progress) {
   const chapter = findChapter(controls.player.params.chapters, time);
 
   controls.track.preview.style.left = (progress * 100) + '%';
-  controls.track.preview.dataset.time = `${toHMS(time)}\n${chapter.title}`;
+  controls.track.preview.dataset.time = toHMS(time);
+  controls.track.preview.dataset.chapterTitle = chapter.title;
   controls.preview.draw(time);
 }
 
