@@ -11,11 +11,7 @@ class VideoChapter < ApplicationRecord
 
   def self.read_from_node(node)
     return if node.next.nil? || !node.next.text_node?
-
     h = extract_title(node.next.inner_text)
-
-    if h.length > 0
-      yield title: h, timestamp: node.attributes[:time]
-    end
+    yield title: h, timestamp: node.attributes[:time] if h.length > 0
   end
 end

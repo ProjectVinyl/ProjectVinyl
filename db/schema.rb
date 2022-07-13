@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20220705105843) do
+ActiveRecord::Schema.define(version: 20220712154833) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -260,6 +260,21 @@ ActiveRecord::Schema.define(version: 20220705105843) do
     t.boolean "active", default: true
     t.string "message"
     t.index ["active"], name: "index_site_notices_on_active"
+  end
+
+  create_table "story_cards", force: :cascade do |t|
+    t.integer "video_id"
+    t.string "style", default: "video"
+    t.integer "left", default: 0
+    t.integer "top", default: 0
+    t.integer "width", default: 0
+    t.integer "height", default: 0
+    t.integer "start_time", default: 0
+    t.integer "end_time", default: 0
+    t.string "title"
+    t.string "metadata"
+    t.string "image"
+    t.string "url"
   end
 
   create_table "tag_histories", id: :serial, force: :cascade do |t|

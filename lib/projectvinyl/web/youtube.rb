@@ -11,7 +11,7 @@ module ProjectVinyl
       ALL_FLAGS = [
         :title, :views, :duration, :coppa, :description, :rating,
         :series, :artist, :thumbnails, :tags, :categories, :annotations,
-        :captions, :chapters, :sources
+        :captions, :chapters, :sources, :endscreen
       ].freeze
 
       def self.all_flags
@@ -21,7 +21,7 @@ module ProjectVinyl
       def self.get(url, wanted_data = {})
         id = video_id(url)
         return {error: "Not a video: #{url}" } if id.nil?
-        meta = Youtubedl.video_meta(url)
+        meta = Youtubedl.video_meta(url, include_end_screen: flag_set(wanted_data, :endscreen))
         if meta.key?(:error)
           puts "Youtube Error: #{meta[:error]}"
           meta = ThePonyArchive.video_meta(id) if !id.nil?
@@ -82,6 +82,7 @@ module ProjectVinyl
         data[:included][:captions] = meta[:automatic_captions] || [] if all || flag_set(wanted_data, :captions)
         data[:included][:chapters] = meta[:chapters] || [] if all || flag_set(wanted_data, :chapters)
         data[:included][:sources] = meta[:requested_formats] || [] if all || flag_set(wanted_data, :sources)
+        data[:included][:endscreen] = __endscreen(meta) if all || flag_set(wanted_data, :endscreen)
 
         data
       end
@@ -202,6 +203,47 @@ module ProjectVinyl
         args = params.entries.map {|entry| "#{entry[0]}=#{entry[1]}"}
 
         "#{url.split('?')[0]}?#{args.join('&')}"
+      end
+
+      def self.__endscreen(meta)
+        return [] if !meta.key?(:__endscreen)
+        meta = meta[:__endscreen] || {}
+        meta = meta[:results] || meta[:elements] || []
+        meta.map{|a| a[:endScreenVideoRenderer] || a[:endscreenElementRenderer]}
+          .filter{|a| a.present?}
+          .map(&Youtube.method(:__parse_endscreen_card))
+      end
+
+      def self.__parse_endscreen_card(card)
+        endpoint = card[:endpoint] || card[:navigationEndpoint] || {}
+        {
+          video_id: card[:videoId],
+          style: (card[:style] || 'DEFAULT').downcase.to_sym,
+          left: card[:left],
+          top: card[:top],
+          width: card[:width],
+          height: (card[:width] || 0) / (card[:aspectRatio] || 1),
+          start_time: card[:startMs],
+          end_time: card[:endMs],
+          title: (card[:title] || {})[:simpleText],
+          metadata: (card[:metadata] || {})[:simpleText],
+          image: __pick_best_thumbnail((card[:image] || card[:thumbnail] || {})[:thumbnails]),
+          url: (endpoint[:webCommandMetadata] || endpoint[:commandMetadata][:webCommandMetadata] || {})[:url]
+        }
+      end
+
+      def self.__pick_best_thumbnail(thumbnails)
+        (thumbnails || [])
+          .sort{|thumb| thumb[:width] * thumb[:height]}
+          .map{|thumb| thumb[:url]}
+          .map(&Youtube.method(:__fix_webp_thumbnail))
+          .last
+      end
+
+      def self.__fix_webp_thumbnail(url)
+        stripped = url.split('?').first
+        return url if stripped.index('/vi_webp/').nil? || !url.ends_with?('.webp')
+        url.sub('/vi_webp/', '/vi/').sub('.webp', '.jpg')
       end
     end
 

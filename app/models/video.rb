@@ -20,6 +20,7 @@ class Video < ApplicationRecord
   has_many :video_chapters, dependent: :destroy
   has_many :tags, through: :video_genres
   has_many :external_sources, dependent: :destroy
+  has_many :story_cards
 
   has_many :artist_tags, ->{ where(namespace: 'artist') }, through: :video_genres, source: :tag, class_name: 'Tag'
   has_many :rating_tags, ->{ where(namespace: 'rating') }, through: :video_genres, source: :tag, class_name: 'Tag'
