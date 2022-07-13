@@ -51,7 +51,7 @@ export function attachFloater(player) {
 
         setTimeout(() => {
           player.dom.querySelector('.control-ref').insertAdjacentElement('beforebegin', player.controls.dom);
-          player.player.media.appendChild(player.video);
+          player.dom.player.media.appendChild(player.video);
           animating = false;
         }, 700);
       }

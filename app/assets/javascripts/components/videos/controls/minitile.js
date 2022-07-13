@@ -1,4 +1,4 @@
-import { divmod } from '../../utils/math';
+import { divmod } from '../../../utils/math';
 /*
  * Creates a tiny preview of a player's video.
  */

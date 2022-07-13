@@ -11,7 +11,6 @@ function getVolumeIcon(level) {
 export function initVolumeSlider(player, dom) {
   const slider = dom.querySelector('.volume');
   slider.indicator = dom.querySelector('.volume .indicator i');
-  slider.slider = dom.querySelector('.volume .slider');
   new TapToggler(slider);
 
   addDelegatedEvent(dom, 'slider:grab', '.volume .slider', ev => {
@@ -34,13 +33,16 @@ export function initVolumeSlider(player, dom) {
     if (ev.button !== 0) return;
     if (!player.contextmenu.hide(ev)) {
       if (slider.toggler.interactable()) {
-        player.volume(player.volumeLevel, player.isMuted = !player.isMuted);
+        player.volume(player.__volume, !player.__muted);
       }
     }
   });
 
-  return volume => {
-    slider.indicator.setAttribute('class', 'fa fa-volume-' + getVolumeIcon(volume));
-    slider.style.setProperty('--volume-level', volume);
+  return {
+    slider: dom.querySelector('.volume .slider'),
+    repaint(volume) {
+      slider.indicator.setAttribute('class', 'fa fa-volume-' + getVolumeIcon(volume));
+      slider.style.setProperty('--volume-level', volume);
+    }
   };
 }

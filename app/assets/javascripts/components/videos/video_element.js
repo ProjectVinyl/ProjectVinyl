@@ -14,7 +14,7 @@ export function addSource(video, src, type) {
 
 export function createVideoElement(sender) {
   const video = sender.createMediaElement();
-  sender.player.media.appendChild(video);
+  sender.dom.player.media.appendChild(video);
 
   if (sender.params.time) {
     if (sender.isReady()) {
@@ -37,7 +37,7 @@ export function createVideoElement(sender) {
   function suspended() {
     if (!suspendTimer) suspendTimer = setTimeout(() => {
       suspendTimer = null;
-      sender.suspend.classList.remove('hidden');
+      sender.dom.suspend.classList.remove('hidden');
     }, 300);
   }
   
@@ -64,20 +64,20 @@ export function createVideoElement(sender) {
     volumechange: () => {
       sender.volume(video.volume, video.muted || video.volume === 0);
     },
-    seek: () => {
-      sender.track(video.currentTime, sender.getDuration());
-    },
+    seek: () => sender.seek(video.currentTime),
     timeupdate: () => {
       if (suspendTimer) {
         clearTimeout(suspendTimer);
         suspendTimer = null;
       }
-      sender.track(video.currentTime, sender.getDuration());
+      sender.seek(video.currentTime);
       setWatchTime(sender.params.id, video.currentTime / sender.getDuration());
+      if (sender.noise) {
+        sender.noise.destroy();
+        sender.noise = null;
+      }
     },
-    progress: () => {
-      sender.controls.repaintProgress(video);
-    }
+    progress: () => sender.controls.trackbar.updateBuffers(video)
   });
   
   return video;

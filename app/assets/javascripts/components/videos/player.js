@@ -10,12 +10,12 @@ import { ready } from '../../jslim/events';
 import { cookies } from '../../utils/cookies';
 import { TapToggler } from '../taptoggle';
 import { setFullscreen } from './fullscreen';
-import { touchSlider } from '../slider_transitive';
 import { PlayerControls } from './controls';
 import { attachMessageListener } from './itc';
 import { createVideoElement, addSource } from './video_element';
 import { attachFloater } from './floatingplayer';
 import { registerEvents } from './gestures';
+import { playerHeader, fillRequiredParams, readParams } from './parameters';
 
 const speeds = [
   {name: '0.25x', value: 0.25},
@@ -35,66 +35,84 @@ function playerElement(sender) {
   return player;
 }
 
-function playerHeader(sender) {
-  const heading = sender.dom.querySelector('h1 .title');
-  if (heading) heading.addEventListener('mouseover', () => {
-    if (sender.video && sender.video.currentTime) {
-      heading.href = `/videos/${sender.params.id}-${sender.params.title}?resume=${sender.video.currentTime}`;
-    }
-  });
-
-  return heading;
-}
-
-function fillRequiredParams(params, el) {
-  params.type = params.type || 'video';
-  params.embedded = params.embedded || !!el.closest('.featured');
-  params.mime = params.mime || ['.mp4', 'video/m4v'];
-  params.time = params.time || 0;
-  return params;
-}
-
 export function Player(el, standalone) {
-  this.floater = document.querySelector('.floating-player');
-
-  this.params = fillRequiredParams(JSON.parse(unescape((el.dataset.source || '{}').replace('+', ' '))), el);
-  delete el.dataset.source;
+  this.params = readParams(el);
 
   this.dom = el;
   this.video = null;
-  this.audioOnly = this.params.type === 'audio';
-  this.volumeLevel = cookies.get('player_volume', 1);
+  this.__audioOnly = this.params.type === 'audio';
+  this.__volume = cookies.get('player_volume', 1);
+  this.__currentTime = this.params.time || 0;
 
-  this.suspend = el.querySelector('.suspend');
-  this.waterdrop = el.querySelector('.water-drop');
-  this.player = playerElement(this);
+  this.dom.suspend = el.querySelector('.suspend');
+  this.dom.player = playerElement(this);
   this.playlist = document.querySelector('.playlist');
-  this.heading = playerHeader(this);
+  this.dom.heading = playerHeader(this);
   this.controls = new PlayerControls(this, el.querySelector('.controls'));
+
+  this.contextMenuActions = {
+    setAutostart: on => {
+      this.__autostart = on;
+      if (!this.nonpersistent) {
+        cookies.set('autostart', on);
+      }
+      return on;
+    },
+    setAutoplay: on => {
+      this.__autoplay = on;
+      if (!this.nonpersistent) {
+        cookies.set('autoplay', on);
+      }
+      if (on) {
+        this.setLoop(false);
+      }
+
+      return on;
+    },
+    setLoop: on => {
+      this.__loop = on;
+
+      if (this.video) {
+        this.video.loop = on;
+      }
+
+      return on;
+    },
+    setSpeed: speed => {
+      this.__speed = speed % speeds.length;
+      speed = speeds[this.__speed];
+
+      if (this.video) {
+        this.video.playbackRate = speed.value;
+      }
+
+      return speed.name;
+    }
+  };
   this.contextmenu = new ContextMenu(el.querySelector('.contextmenu'), this.dom, {
     'Loop': {
-      initial: this.setLoop(false),
-      callback: val => val(this.setLoop(!this.__loop))
+      initial: this.contextMenuActions.setLoop(false),
+      callback: val => val(this.contextMenuActions.setLoop(!this.__loop))
     },
     'Speed': {
-      initial: this.changeSpeed(2),
-      callback: val => val(this.changeSpeed(this.__speed + 1))
+      initial: this.contextMenuActions.setSpeed(2),
+      callback: val => val(this.contextMenuActions.setSpeed(this.__speed + 1))
     },
     'Play Automatically': {
-      initial: this.setAutostart(!!cookies.get('autostart')),
-      callback: val => val(this.setAutostart(!this.__autostart))
+      initial: this.contextMenuActions.setAutostart(!!cookies.get('autostart')),
+      callback: val => val(this.contextMenuActions.setAutostart(!this.__autostart))
     },
     'Next Automatically': {
-      initial: this.setAutoplay(!!cookies.get('autoplay')),
+      initial: this.contextMenuActions.setAutoplay(!!cookies.get('autoplay')),
       display: this.params.autoplay,
-      callback: val => val(this.setAutoplay(!this.__autoplay))
+      callback: val => val(this.contextMenuActions.setAutoplay(!this.__autoplay))
     }
   });
 
   attachMessageListener(this, !standalone);
 
   if (!el.dataset.pending) {
-    this.floater = attachFloater(this);
+    this.dom.floater = attachFloater(this);
   }
 
   new TapToggler(this.dom);
@@ -112,7 +130,7 @@ export function Player(el, standalone) {
     }
   }
 
-  this.volume(this.volumeLevel, false);
+  this.volume(this.__volume, false);
 
   el.videoPlayer = this;
   return this;
@@ -137,81 +155,35 @@ Player.prototype = {
     holder.classList.toggle('column-left', !state);
     holder.classList.toggle('full-width', state);
   },
-  changeSpeed(speed) {
-    this.__speed = speed % speeds.length;
-    speed = speeds[this.__speed];
-
-    if (this.video) {
-      this.video.playbackRate = speed.value;
-    }
-
-    return speed.name;
-  },
-  setAutoplay(on) {
-    this.__autoplay = on;
-    if (!this.nonpersistent) {
-      cookies.set('autoplay', on);
-    }
-    if (on) {
-      this.setLoop(false);
-    }
-
-    return on;
-  },
-  setAutostart(on) {
-    this.__autostart = on;
-    if (!this.nonpersistent) {
-      cookies.set('autostart', on);
-    }
-    return on;
-  },
-  setLoop(on) {
-    this.__loop = on;
-
-    if (this.video) {
-      this.video.loop = on;
-    }
-
-    return on;
-  },
   loadAttributesAndRestart(attr) {
     this.params = fillRequiredParams(attr, this.dom);
-
     this.dom.style.backgroundImage = `url('/stream/${attr.path}/${attr.id}/cover.png')`;
     this.source = null;
-    this.audioOnly = this.params.type === 'audio';
+    this.__audioOnly = this.params.type === 'audio';
 
-    if (this.heading) {
-      this.heading.innerText = this.params.title;
+    if (this.dom.heading) {
+      this.dom.heading.innerText = this.params.title;
     }
 
-    this.unload();
-    this.play();
-  },
-  load(data, isVideo) {
-    if (this.source) URL.revokeObjectURL(this.source);
-    if (!data) return;
-    this.source = URL.createObjectURL(data);
-    this.audioOnly = !isVideo;
     this.unload();
     this.play();
   },
   unload() {
     if (this.video) {
-      this.video.parentNode.removeChild(this.video);
+      this.video.remove();
       this.video = null;
     }
   },
   isReady() {
-    return this.video && this.video.readyState === 4;
+    return this.video && this.video.readyState === HTMLMediaElement.HAVE_ENOUGH_DATA;
   },
   createMediaElement() {
-    const media = document.createElement(this.audioOnly ? 'AUDIO' : 'VIDEO');
+    const media = document.createElement(this.__audioOnly ? 'AUDIO' : 'VIDEO');
 
     if (typeof this.source === 'string' && this.source.indexOf('blob') === 0) {
       media.src = this.source;
     } else {
-      if (!this.audioOnly) {
+      if (!this.__audioOnly) {
         if (this.params.mime[0] != 'mp4') {
           addSource(media, `/stream/${this.params.path}/${this.params.id}/video.mp4`, 'video/mp4');
         }
@@ -226,21 +198,17 @@ Player.prototype = {
 
     return media;
   },
-  getOrCreateVideo() {
+  play() {
     if (!this.video) {
       this.video = createVideoElement(this);
-      this.volume(this.volumeLevel, !!this.isMuted);
+      this.volume(this.__volume, !!this.__muted);
+      this.skipTo(this.__currentTime);
+      this.video.load();
+    } else if (this.video.networkState === HTMLMediaElement.NETWORK_NO_SOURCE) {
       this.video.load();
     }
-    return this.video;
-  },
-  play() {
-    const video = this.getOrCreateVideo();
 
-    if (video.networkState === HTMLMediaElement.NETWORK_NO_SOURCE) {
-      video.load();
-    }
-    video.play();
+    this.video.play();
 
     if (!this.nonpersistent && this.dom.dataset.state !== 'paused') {
       ajaxPut(`videos/${this.params.id}/play_count`).json(json => {
@@ -256,14 +224,8 @@ Player.prototype = {
     }
 
     this.setState('paused');
-    this.suspend.classList.add('hidden');
+    this.dom.suspend.classList.add('hidden');
     return true;
-  },
-  setState(newState) {
-    if (this.floater) {
-      this.floater.dataset.state = newState;
-    }
-    this.dom.dataset.state = newState;
   },
   togglePlayback() {
     if (this.dom.dataset.state == 'playing') {
@@ -271,43 +233,37 @@ Player.prototype = {
     }
     this.play();
   },
-  getProgress() {
-    return this.video ? this.video.currentTime / this.getDuration() : 0;
+  setState(newState) {
+    if (this.dom.floater) {
+      this.dom.floater.dataset.state = newState;
+    }
+    this.dom.dataset.state = newState;
+  },
+  getTime() {
+    return this.video ? this.video.currentTime : this.__currentTime;
   },
   getDuration() {
-    return this.video ? (parseFloat(this.video.duration) || 0) : this.params.duration;
+    return this.video ? (parseFloat(this.video.duration) || this.params.duration) : this.params.duration;
+  },
+  isMuted() {
+    return this.video ? this.video.muted : this.__muted;
   },
   getVolume() {
-    return this.video.muted ? 0 : this.video.volume;
+    return this.video ? this.video.volume : this.__volume;
   },
   jump(progress) {
     this.skipTo(this.getDuration() * progress);
   },
   skipTo(time) {
-    this.video.currentTime = time;
-    this.track(time, this.getDuration());
-  },
-  skip(time, volume) {
     if (this.video) {
-      if (time) {
-        this.video.currentTime += time;
-        this.track(this.video.currentTime, this.getDuration());
-        touchSlider(this.controls.track);
-      }
-      if (volume) {
-        this.volume(this.video.volume + volume, this.video.muted);
-        touchSlider(this.controls.volume.slider);
-      }
+      this.video.currentTime = time;
     }
+    this.seek(time);
   },
-  track(time, duration) {
-    this.suspend.classList.add('hidden');
-    this.controls.repaintTrackBar((time / duration) * 100);
-
-    if (this.noise) {
-      this.noise.destroy();
-      this.noise = null;
-    }
+  seek(time) {
+    this.__currentTime = time;
+    this.dom.suspend.classList.add('hidden');
+    this.controls.trackbar.seek(time);
   },
   volume(volume, muted) {
     volume = clamp(volume, 0, 1)
@@ -315,12 +271,12 @@ Player.prototype = {
       this.video.volume = volume;
       this.video.muted = muted;
     }
-    this.volumeLevel = volume;
-    this.isMuted = muted;
+    this.__volume = volume;
+    this.__muted = muted;
     if (!this.nonpersistent) {
-      cookies.set('player_volume', this.volumeLevel);
+      cookies.set('player_volume', this.__volume);
     }
-    this.controls.repaintVolumeSlider(muted ? 0 : volume);
+    this.controls.volumeSlider.repaint(muted ? 0 : volume);
   }
 };
 

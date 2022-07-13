@@ -21,5 +21,5 @@ addDelegatedEvent(document, 'click', '.load-more button', (e, button) => {
 });
 
 addDelegatedEvent(document, 'mousedown', '.mix a', (e, target) => {
-  target.href = `${target.dataset.href}&t=${document.querySelector('#video .player').getPlayerObj().video.currentTime}`;
+  target.href = `${target.dataset.href}&t=${document.querySelector('#video .player').getPlayerObj().getTime()}`;
 });

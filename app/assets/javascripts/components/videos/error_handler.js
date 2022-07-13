@@ -9,11 +9,11 @@ export function onVideoError(sender, e, source) {
       console.warn(message);
 
       sender.setState('error');
-      sender.player.error.message.innerText = message;
-      sender.suspend.classList.add('hidden');
+      sender.dom.player.error.message.innerText = message;
+      sender.dom.suspend.classList.add('hidden');
 
       if (!sender.noise) {
-        sender.noise = setupNoise(sender.player.error);
+        sender.noise = setupNoise(sender.dom.player.error);
       }
     }
   });
