@@ -5,6 +5,7 @@ import { toHMS } from '../../utils/duration';
 import { getPercentage } from '../slider';
 import { createMiniTile } from './minitile';
 import { clampPercentage } from '../../utils/math';
+import { initVolumeSlider } from './controls/volume_slider';
 
 function didBufferChange(old, neu) {
   return !old
@@ -51,10 +52,6 @@ export function PlayerControls(player, dom) {
   this.track.fill = dom.querySelector('.track .fill');
   this.track.preview = dom.querySelector('.track .previewer');
 
-  this.volume = dom.querySelector('.volume');
-  this.volume.indicator = dom.querySelector('.volume .indicator i');
-  this.volume.slider = dom.querySelector('.volume .slider');
-
   this.timer = {
     current: dom.querySelector('.timer .current'),
     total: dom.querySelector('.timer .total')
@@ -62,6 +59,8 @@ export function PlayerControls(player, dom) {
 
   this.preview = createMiniTile(player);
   this.preview.draw(0);
+
+  this.repaintVolumeSlider = initVolumeSlider(player, dom);
 
   addDelegatedEvent(this.dom, 'slider:grab', '.track', ev => {
     if (!player.contextmenu.hide(ev)) {
@@ -83,34 +82,9 @@ export function PlayerControls(player, dom) {
     drawPreview(this, progress);
     this.track.style.setProperty('--track-cursor', progress);
   });
-  new TapToggler(this.volume);
-
-  addDelegatedEvent(this.dom, 'slider:grab', '.volume .slider', ev => {
-    if (!player.contextmenu.hide(ev)) {
-      player.dom.classList.add('voluming');
-    }
-  });
-  addDelegatedEvent(this.dom, 'slider:release', '.volume .slider', ev => {
-    player.dom.classList.remove('voluming');
-  });
-  addDelegatedEvent(this.dom, 'slider:jump', '.volume .slider', ev => {
-    if (!player.contextmenu.hide(ev)) {
-      if (ev.detail.data.y >= 0) {
-        player.volume(ev.detail.data.y);
-      }
-    }
-  });
 
   addDelegatedEvent(dom, 'focusin', '.track', ev => {
     drawPreview(this, player.getProgress());
-  });
-  addDelegatedEvent(dom, 'click', '.volume', ev => {
-    if (ev.button !== 0) return;
-    if (!player.contextmenu.hide(ev)) {
-      if (this.volume.toggler.interactable()) {
-        player.volume(player.volumeLevel, player.isMuted = !player.isMuted);
-      }
-    }
   });
   addDelegatedEvent(dom, 'click', '.fullscreen', ev => {
     if (ev.button !== 0) return;
@@ -144,10 +118,6 @@ PlayerControls.prototype = {
   },
   show() {
     this.player.dom.dataset.hideControls = '0';
-  },
-  repaintVolumeSlider(volume) {
-    this.volume.indicator.setAttribute('class', 'fa fa-volume-' + getVolumeIcon(volume));
-    this.volume.style.setProperty('--volume-level', volume);
   },
   repaintTrackBar(percentFill) {
     const duration = this.player.getDuration();
