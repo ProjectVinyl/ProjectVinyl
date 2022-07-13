@@ -263,23 +263,22 @@ Player.prototype = {
     this.suspend.classList.add('hidden');
     return true;
   },
-  error(e) {
-    console.error(e);
+  error(e, source) {
+    console.warn('Video playback failed due to error from ' + source);
+    requestAnimationFrame(() => {
+      if (errorPresent(this.video)) {
+        const message = errorMessage(this.video);
+        console.warn(message);
 
-    if (errorPresent(this.video)) {
-      const message = errorMessage(this.video);
-      console.warn(message);
+        this.setState('error');
+        this.player.error.message.innerText = message;
+        this.suspend.classList.add('hidden');
 
-      this.setState('error');
-      this.player.error.message.innerText = message;
-      this.suspend.classList.add('hidden');
-
-      if (!this.noise) {
-        this.noise = setupNoise(this.player.error);
+        if (!this.noise) {
+          this.noise = setupNoise(this.player.error);
+        }
       }
-    } else {
-      this.pause();
-    }
+    });
   },
   setState(newState) {
     if (this.floater) {

@@ -22,5 +22,7 @@ export function errorMessage(video) {
 }
 
 export function errorPresent(video) {
-  return (video.error && video.error.code !== video.error.MEDIA_ERR_ABORTED) || (video.networkState === HTMLMediaElement.NETWORK_NO_SOURCE);
+  return (video.error && video.error.code !== video.error.MEDIA_ERR_ABORTED)
+      || (video.networkState === HTMLMediaElement.NETWORK_NO_SOURCE)
+      || (video.networkState === HTMLMediaElement.NETWORK_LOADING);
 }

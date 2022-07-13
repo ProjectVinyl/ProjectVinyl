@@ -35,3 +35,7 @@
 .video[data-state=error] .player .error {
   display: inline;
 }
+
+.video[data-state=error] .player .suspend {
+  display: none;
+}

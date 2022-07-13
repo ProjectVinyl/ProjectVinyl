@@ -32,7 +32,7 @@ export function createVideoElement(sender) {
   
   const sources = video.querySelectorAll('source');
   if (sources.length) {
-    sources[sources.length - 1].addEventListener('error', e => sender.error(e));
+    sources[sources.length - 1].addEventListener('error', e => sender.error(e, 'source'));
   }
   
   let suspendTimer = null;
@@ -44,7 +44,8 @@ export function createVideoElement(sender) {
   }
   
   bindAll(video, {
-    abort: e => sender.error(e), error: e => sender.error(e),
+    abort: e => sender.error(e, 'abort'),
+    error: e => sender.error(e, 'video-error'),
     pause: () => sender.pause(),
     play: () => {
       sender.setState('playing');
@@ -73,6 +74,7 @@ export function createVideoElement(sender) {
         clearTimeout(suspendTimer);
         suspendTimer = null;
       }
+      sender.setState('playing');
       sender.track(video.currentTime, sender.getDuration());
       setWatchTime(sender.params.id, video.currentTime / sender.getDuration());
     },
