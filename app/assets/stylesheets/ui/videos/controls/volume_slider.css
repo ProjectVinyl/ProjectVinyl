@@ -21,9 +21,11 @@
 }
 
 .playback-controls .volume:focus .slider,
-.playback-controls .volume:focus .slider,
+.playback-controls .volume:hover .slider,
+.playback-controls .volume.hover .slider,
 .playback-controls .volume .slider.interacting,
 .video .controls .volume:focus .slider,
+.video .controls .volume:hover .slider,
 .video .controls .volume.hover .slider,
 .video.voluming .playback-controls .volume .slider {
   opacity: 1;
