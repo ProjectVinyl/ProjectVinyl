@@ -42,20 +42,26 @@ function performShow(x, y, container, dom) {
   dom.style.top = `${y}px`;
   dom.style.left = `${x}px`;
   dom.classList.remove('hidden');
+  getFader(dom).classList.remove('hidden');
 }
 
-export function hideContextMenu(ev, sender) {
-  const dom = sender.querySelector('.contextmenu');
-  
-  if (ev.which !== 1 || dom.classList.contains('hidden')) {
-    return false;
+function getFader(dom) {
+  let fader = dom.parentNode.querySelector('.contextmenu-fader');
+  if (!fader) {
+    dom.insertAdjacentHTML('beforebegin', '<div class="contextmenu-fader hidden"></div>');
+    fader = dom.parentNode.querySelector('.contextmenu-fader');
+    fader.addEventListener('click', ev => {
+      if (ev.which !== 1) return;
+      dom.classList.add('hidden');
+      fader.classList.add('hidden');
+      halt(ev);
+    });
   }
-  dom.classList.add('hidden');
-  return true;
+  return fader;
 }
 
 export function hideAll() {
-  document.querySelectorAll('.contextmenu').forEach(p => p.classList.add('hidden'));
+  document.querySelectorAll('.contextmenu, .contextmenu-fader').forEach(p => p.classList.add('hidden'));
 }
 
 addDelegatedEvent(document, 'contextmenu', '.context-menu-parent:not([data-nocontext="true"])', (ev, sender) => {

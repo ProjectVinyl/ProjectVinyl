@@ -1,5 +1,4 @@
 import { addDelegatedEvent } from '../../../jslim/events';
-import { hideContextMenu } from '../../../ui/contextmenu';
 import { toHMS } from '../../../utils/duration';
 import { getPercentage } from '../../slider';
 import { createMiniTile } from './minitile';
@@ -33,19 +32,15 @@ export function initTrackbar(player, dom) {
   };
 
   addDelegatedEvent(dom, 'slider:grab', '.track', ev => {
-    if (!hideContextMenu(ev, player.dom)) {
-      player.dom.classList.add('tracking');
-    }
+    player.dom.classList.add('tracking');
   });
   addDelegatedEvent(dom, 'slider:release', '.track', ev => {
     player.dom.classList.remove('tracking');
   });
   addDelegatedEvent(dom, 'slider:jump', '.track', ev => {
-    if (!hideContextMenu(ev, player.dom)) {
-      if (!player.video) player.play();
-      drawPreview(ev.detail.data.x);
-      player.jump(ev.detail.data.x);
-    }
+    if (!player.video) player.play();
+    drawPreview(ev.detail.data.x);
+    player.jump(ev.detail.data.x);
   });
   addDelegatedEvent(dom, 'mousemove', '.track', ev => {
     const progress = getPercentage(track, ev).x;

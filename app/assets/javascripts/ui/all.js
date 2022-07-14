@@ -15,3 +15,4 @@ import './autocomplete';
 import './editable/all';
 import './reflow';
 import './dock';
+import './contextmenu';

@@ -5,6 +5,7 @@
  *= require ./inputs/all
  *= require ./buttons/all
  *= require ./banner/all
+ *= require ./contextmenu
  *= require ./slideouts
  *= require ./slideacross
  *= require ./paginator

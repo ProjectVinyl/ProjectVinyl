@@ -1,3 +1,4 @@
+
 import './vendor/all';
 
 import './ujs/all';

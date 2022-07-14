@@ -1,0 +1,82 @@
+.context-menu-parent {
+  position: relative;
+}
+
+.context-menu-parent .contextmenu {
+  position: absolute;
+  background: var(--video-background-color);
+  text-shadow: 0 0 2px rgba(0,0,0,.5);
+  color: #eee;
+  white-space: nowrap;
+  list-style: none;
+  border-radius: 2px;
+  margin: 0;
+  padding: 5px 0;
+  min-width: 220px;
+  opacity: 1;
+  visibility: visible;
+  display: table;
+  z-index: 300;
+  overflow-x: hidden;
+  transition: visibility .1s cubic-bezier(0,0,0.2,1),
+              opacity    .1s cubic-bezier(0,0,0.2,1);
+}
+.context-menu-parent .contextmenu-fader {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  z-index: 299;
+}
+
+.context-menu-parent .contextmenu.hidden {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.context-menu-parent .contextmenu li {
+  display: flex;
+  cursor: pointer;
+  margin: 0;
+  align-items: stretch;
+}
+.context-menu-parent .contextmenu li::before,
+.context-menu-parent .contextmenu li::after {
+  padding: 5px;
+  white-space: nowrap;
+}
+.context-menu-parent .contextmenu li::before {
+  flex-grow: 1;
+  width: 75%;
+  content: attr(data-option);
+}
+.context-menu-parent .contextmenu li::after {
+  text-align: right;
+  content: attr(data-value);
+  border-radius: 3px;
+  margin: 3px;
+  padding: 0 3px;
+  line-height: 1.7em;
+}
+.context-menu-parent .contextmenu li:not([data-value="true"], [data-value="false"])::after {
+  color: var(--video-background-color);
+  background-color: #eee;
+  font-weight: bold;
+  text-shadow: none;
+}
+.context-menu-parent .contextmenu li[data-value="true"]::after {
+  font-family: FontAwesome;
+  background-color: transparent;
+  content: "\f058";
+}
+.context-menu-parent .contextmenu li[data-value="false"]::after {
+  font-family: FontAwesome;
+  content: "\f10c";
+}
+
+
+.context-menu-parent .contextmenu li:hover {
+  background: rgba(255,255,255,0.2);
+}

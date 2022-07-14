@@ -1,5 +1,4 @@
 import { addDelegatedEvent, bindAll, halt, bindEvent } from '../../jslim/events';
-import { hideContextMenu } from '../../ui/contextmenu';
 import { Key, isNumberKey, getNumberKeyValue } from '../../utils/key';
 import { triggerDrop } from './waterdrop';
 import { fullscreenPlayer } from './fullscreen';
@@ -20,31 +19,29 @@ export function registerEvents(player, el) {
         return;
       }
 
-      if (!hideContextMenu(ev, player.dom)) {
-        let target = ev.target.closest('.items a, #playlist_next:not(.disabled), #playlist_prev:not(.disabled)');
-        if (target) {
-          halt(ev);
-          return navTo(player, target);
+      let target = ev.target.closest('.items a, #playlist_next:not(.disabled), #playlist_prev:not(.disabled)');
+      if (target) {
+        halt(ev);
+        return navTo(player, target);
+      }
+
+      if (player.playlist && ev.target.closest('.playlist-toggle')) {
+        return player.playlist.classList.toggle('visible');
+      }
+
+      if (ev.target.closest('.action, .voluming, .tracking')) {
+        return;
+      }
+
+      if (player.dom.dataset.state != 'playing' || player.dom.toggler.interactable()) {
+        if (player.playlist && player.playlist.classList.contains('visible')) {
+          return player.playlist.classList.remove('visible');
         }
 
-        if (player.playlist && ev.target.closest('.playlist-toggle')) {
-          return player.playlist.classList.toggle('visible');
-        }
-
-        if (ev.target.closest('.action, .voluming, .tracking')) {
-          return;
-        }
-
-        if (player.dom.dataset.state != 'playing' || player.dom.toggler.interactable()) {
-          if (player.playlist && player.playlist.classList.contains('visible')) {
-            return player.playlist.classList.remove('visible');
-          }
-
-          const shouldTriggerDrop = player.dom.dataset.state != 'ready' && player.dom.dataset.state != 'stopped';
-          const newState = player.togglePlayback() ? 'pause' : 'play';
-          if (shouldTriggerDrop) {
-            triggerDrop(player.dom.querySelector('.water-drop'), newState);
-          }
+        const shouldTriggerDrop = player.dom.dataset.state != 'ready' && player.dom.dataset.state != 'stopped';
+        const newState = player.togglePlayback() ? 'pause' : 'play';
+        if (shouldTriggerDrop) {
+          triggerDrop(player.dom.querySelector('.water-drop'), newState);
         }
       }
     },
