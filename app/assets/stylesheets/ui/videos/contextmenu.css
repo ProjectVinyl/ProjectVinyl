@@ -24,17 +24,21 @@
   cursor: pointer;
   margin: 0;
 }
-.video .contextmenu div {
+.video .contextmenu li::before,
+.video .contextmenu li::after {
   padding: 5px;
   display: table-cell;
   white-space: nowrap;
 }
-.video .contextmenu .value {
-  text-align: right;
-}
-.video .contextmenu .label {
+.video .contextmenu li::before {
   width: 75%;
+  content: attr(data-option);
 }
+.video .contextmenu li::after {
+  text-align: right;
+  content: attr(data-value);
+}
+
 .video .contextmenu li:hover {
   background: rgba(255,255,255,0.2);
 }

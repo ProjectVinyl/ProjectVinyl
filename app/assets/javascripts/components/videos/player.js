@@ -1,9 +1,5 @@
-/*
- * Initialises basic video playback functionality.
- */
 import { ajaxPut } from '../../utils/ajax';
 import { scrollTo } from '../../ui/scroll';
-import { ContextMenu } from '../../ui/contextmenu';
 import { clamp } from '../../utils/math';
 import { formatFuzzyBigNumber } from '../../utils/numbers';
 import { ready } from '../../jslim/events';
@@ -15,16 +11,8 @@ import { attachMessageListener } from './itc';
 import { createVideoElement, addSource } from './video_element';
 import { attachFloater } from './floatingplayer';
 import { registerEvents } from './gestures';
+import { initContextMenu } from './context_menu';
 import { playerHeader, fillRequiredParams, readParams } from './parameters';
-
-const speeds = [
-  {name: '0.25x', value: 0.25},
-  {name: '0.5x', value: 0.5},
-  {name: 'Normal', value: 1},
-  {name: '1.25x', value: 1.25},
-  {name: '1.5x', value: 1.5},
-  {name: 'Double', value: 2}
-];
 
 function playerElement(sender) {
   const player = sender.dom.querySelector('.player');
@@ -37,7 +25,6 @@ function playerElement(sender) {
 
 export function Player(el, standalone) {
   this.params = readParams(el);
-
   this.dom = el;
   this.video = null;
   this.__audioOnly = this.params.type === 'audio';
@@ -49,65 +36,7 @@ export function Player(el, standalone) {
   this.playlist = document.querySelector('.playlist');
   this.dom.heading = playerHeader(this);
   this.controls = new PlayerControls(this, el.querySelector('.controls'));
-
-  this.contextMenuActions = {
-    setAutostart: on => {
-      this.__autostart = on;
-      if (!this.nonpersistent) {
-        cookies.set('autostart', on);
-      }
-      return on;
-    },
-    setAutoplay: on => {
-      this.__autoplay = on;
-      if (!this.nonpersistent) {
-        cookies.set('autoplay', on);
-      }
-      if (on) {
-        this.setLoop(false);
-      }
-
-      return on;
-    },
-    setLoop: on => {
-      this.__loop = on;
-
-      if (this.video) {
-        this.video.loop = on;
-      }
-
-      return on;
-    },
-    setSpeed: speed => {
-      this.__speed = speed % speeds.length;
-      speed = speeds[this.__speed];
-
-      if (this.video) {
-        this.video.playbackRate = speed.value;
-      }
-
-      return speed.name;
-    }
-  };
-  this.contextmenu = new ContextMenu(el.querySelector('.contextmenu'), this.dom, {
-    'Loop': {
-      initial: this.contextMenuActions.setLoop(false),
-      callback: val => val(this.contextMenuActions.setLoop(!this.__loop))
-    },
-    'Speed': {
-      initial: this.contextMenuActions.setSpeed(2),
-      callback: val => val(this.contextMenuActions.setSpeed(this.__speed + 1))
-    },
-    'Play Automatically': {
-      initial: this.contextMenuActions.setAutostart(!!cookies.get('autostart')),
-      callback: val => val(this.contextMenuActions.setAutostart(!this.__autostart))
-    },
-    'Next Automatically': {
-      initial: this.contextMenuActions.setAutoplay(!!cookies.get('autoplay')),
-      display: this.params.autoplay,
-      callback: val => val(this.contextMenuActions.setAutoplay(!this.__autoplay))
-    }
-  });
+  this.contextMenuActions = initContextMenu(el.querySelector('.contextmenu'), this);
 
   attachMessageListener(this, !standalone);
 

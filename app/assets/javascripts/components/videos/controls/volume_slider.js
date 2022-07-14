@@ -1,4 +1,5 @@
 import { addDelegatedEvent } from '../../../jslim/events';
+import { hideContextMenu } from '../../../ui/contextmenu';
 import { TapToggler } from '../../taptoggle';
 
 function getVolumeIcon(level) {
@@ -14,7 +15,7 @@ export function initVolumeSlider(player, dom) {
   new TapToggler(slider);
 
   addDelegatedEvent(dom, 'slider:grab', '.volume .slider', ev => {
-    if (!player.contextmenu.hide(ev)) {
+    if (!hideContextMenu(ev, player.dom)) {
       player.dom.classList.add('voluming');
     }
   });
@@ -22,7 +23,7 @@ export function initVolumeSlider(player, dom) {
     player.dom.classList.remove('voluming');
   });
   addDelegatedEvent(dom, 'slider:jump', '.volume .slider', ev => {
-    if (!player.contextmenu.hide(ev)) {
+    if (!hideContextMenu(ev, player.dom)) {
       if (ev.detail.data.y >= 0) {
         player.volume(ev.detail.data.y);
       }
@@ -31,7 +32,7 @@ export function initVolumeSlider(player, dom) {
 
   addDelegatedEvent(dom, 'click', '.volume', ev => {
     if (ev.button !== 0) return;
-    if (!player.contextmenu.hide(ev)) {
+    if (!hideContextMenu(ev, player.dom)) {
       if (slider.toggler.interactable()) {
         player.volume(player.__volume, !player.__muted);
       }

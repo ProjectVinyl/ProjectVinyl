@@ -1,77 +1,82 @@
 import { offset } from '../jslim/dom';
-import { bindEvent } from '../jslim/events';
+import { addDelegatedEvent, bindEvent, halt, dispatchEvent } from '../jslim/events';
 
-export function ContextMenu(dom, container, items) {
-  this.dom = dom;
-  this.container = container || document.body;
-  this.container.addEventListener('contextmenu', e => this.show(e));
+function buildMenu(dom, items) {
+  const keys = Object.keys(items);
+
+  keys.forEach(key => {
+    const label = dom.querySelector(`[data-option="${key}"] .value`);
+    if (label) {
+      items[key].initial(newValue => {
+        label.innerHTML = s === true ? '<i class="fa fa-check"></i>' : (s || '');
+      });
+    }
+  });
   
-  if (items) {
-    Object.keys(items).forEach(key => {
-      const item = items[key];
-      if (item.display !== false) {
-        this.addItem(key, item.initial, item.callback);
-      }
-    });
-  }
+  dom.querySelectorAll('[data-option]').forEach(option => {
+    const item = items[option.dataset.option];
+    option.dataset.value = item ? item.initial : '';
+  });
+
+  addDelegatedEvent(dom, 'click', '[data-option]', (e, target) => {
+    const item = items[target.dataset.option];
+    if (item) {
+      target.dataset.value = item.callback();
+    }
+    halt(e);
+  });
 }
-ContextMenu.prototype = {
-  addItem(title, initial, callback) {
-    this.dom.insertAdjacentHTML('beforeend', `<li><div class="label">${title}</div><div class="value"></div></li>`);
-    this.dom.lastChild.addEventListener('click', e => {
-      callback(val);
-      e.preventDefault();
-      e.stopPropagation();
-    });
-    
-    const item = this.dom.lastChild.querySelector('.value');
-    
-    function val(s) {
-      item.innerHTML = s === true ? '<i class="fa fa-check"></i>' : (s || '');
-      return s;
-    }
-    
-    val(initial);
-  },
-  setDisabled(disabled) {
-    this.disabled = disabled;
-  },
-  show(ev) {
-    if (this.disabled) {
-      return;
-    }
 
-    ev.preventDefault();
-    
-    let x = ev.clientX, y = ev.clientY;
-    
-    if (x + this.dom.offsetWidth >= document.body.clientWidth) {
-      x = document.body.clientWidth - this.dom.offsetWidth;
-    }
-    if (y + this.dom.offsetHeight >= document.body.clientHeight) {
-      y = document.body.clientHeight - this.dom.offsetHeight;
-    }
-    
-    const off = offset(this.container);
-    x += document.scrollingElement.scrollLeft - off.left;
-    y += document.scrollingElement.scrollTop - off.top;
-    
-    this.dom.style.top = `${y}px`;
-    this.dom.style.left = `${x}px`;
-    this.dom.classList.remove('hidden');
-  },
-  hide(ev) {
-    if (ev.which !== 1 || this.dom.classList.contains('hidden')) {
-      return;
-    }
-    this.dom.classList.add('hidden');
-    return true;
+function performShow(x, y, container, dom) {
+  if (x + dom.offsetWidth >= document.body.clientWidth) {
+    x = document.body.clientWidth - dom.offsetWidth;
   }
-};
+  if (y + dom.offsetHeight >= document.body.clientHeight) {
+    y = document.body.clientHeight - dom.offsetHeight;
+  }
+  
+  const off = offset(container);
+  x += document.scrollingElement.scrollLeft - off.left;
+  y += document.scrollingElement.scrollTop - off.top;
+  
+  dom.style.top = `${y}px`;
+  dom.style.left = `${x}px`;
+  dom.classList.remove('hidden');
+}
 
-function hideAll() {
+export function hideContextMenu(ev, sender) {
+  const dom = sender.querySelector('.contextmenu');
+  
+  if (ev.which !== 1 || dom.classList.contains('hidden')) {
+    return false;
+  }
+  dom.classList.add('hidden');
+  return true;
+}
+
+export function hideAll() {
   document.querySelectorAll('.contextmenu').forEach(p => p.classList.add('hidden'));
 }
+
+addDelegatedEvent(document, 'contextmenu', '.context-menu-parent:not([data-nocontext="true"])', (ev, sender) => {
+  const dom = sender.querySelector('.contextmenu');
+  const x = ev.clientX;
+  const y = ev.clientY;
+
+  ev.preventDefault();
+
+  if (dom.dataset.initialized !== 'true') {
+    dom.dataset.initialized = true;
+    dispatchEvent('contextmenu:shown', {
+      buildMenu(items) {
+        buildMenu(dom, items);
+        performShow(x, y, sender, dom);
+      }
+    }, dom);
+  } else {
+    performShow(x, y, sender, dom);
+  }
+});
 
 bindEvent(window, 'resize', hideAll);
 bindEvent(window, 'blur', hideAll);

@@ -1,3 +1,3 @@
 - cover = user_signed_in? && current_user.is_contributor? ? @video.cover : @video.thumb
-.video#video(data-state="ready"){style: format_bg(cover, {"--aspect-ratio": @video.aspect }), data: @video.widget_header(@time, @resume, embed, @album)}
+.video.context-menu-parent#video(data-state="ready"){style: format_bg(cover, {"--aspect-ratio": @video.aspect }), data: @video.widget_header(@time, @resume, embed, @album)}
 	= render 'videos/widget/content', embed: embed

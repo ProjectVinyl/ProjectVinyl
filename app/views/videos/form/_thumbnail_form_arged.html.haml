@@ -17,7 +17,7 @@
 								%td
 									= f.button class: "action right green", name: :save, disabled: true do
 										Apply Thumbnail Change
-				.video#video{style: thumbnail,
+				.video.context-menu-parent#video(data-nocontext="true"){style: thumbnail,
 						data: video.thumb_picker_header}
 					= render 'videos/widget/slim'
 				.progressor

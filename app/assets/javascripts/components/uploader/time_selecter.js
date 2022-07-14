@@ -6,7 +6,6 @@ export const TimeSelecter = extendFunc(Player, function(el) {
   this.nonpersistent = true;
   Player.call(this, el, true);
   this.timeInput = el.querySelector('input');
-  this.contextmenu.setDisabled(true);
   this.volume(0, true);
 }, {
   pause() {

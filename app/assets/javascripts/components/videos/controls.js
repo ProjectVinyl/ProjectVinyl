@@ -1,4 +1,5 @@
 import { isFullscreen } from '../../utils/fullscreen';
+import { hideContextMenu } from '../../ui/contextmenu';
 import { addDelegatedEvent, bindEvent, halt } from '../../jslim/events';
 import { initVolumeSlider } from './controls/volume_slider';
 import { initTrackbar } from './controls/trackbar';
@@ -15,14 +16,14 @@ export function PlayerControls(player, dom) {
 
   addDelegatedEvent(dom, 'click', '.fullscreen', ev => {
     if (ev.button !== 0) return;
-    if (!player.contextmenu.hide(ev)) {
+    if (!hideContextMenu(ev, player.dom)) {
       player.fullscreen(!isFullscreen());
       halt(ev);
     }
   });
   addDelegatedEvent(dom, 'click', '.maximise', ev => {
     if (ev.button !== 0) return;
-    if (!player.contextmenu.hide(ev)) {
+    if (!hideContextMenu(ev, player.dom)) {
       player.maximise();
     }
   });

@@ -21,5 +21,9 @@
 = render 'videos/widget/controls'
 %span.control-ref.hidden
 %ul.contextmenu.transitional.hidden
+	%li(data-option="Loop")
+	%li(data-option="Speed")
+	%li(data-option="Play Automatically")
+	%li(data-option="Next Automatically")
 - if embed
 	= render 'videos/widget/embed_content'

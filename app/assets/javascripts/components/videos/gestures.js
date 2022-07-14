@@ -1,4 +1,5 @@
 import { addDelegatedEvent, bindAll, halt, bindEvent } from '../../jslim/events';
+import { hideContextMenu } from '../../ui/contextmenu';
 import { Key, isNumberKey, getNumberKeyValue } from '../../utils/key';
 import { triggerDrop } from './waterdrop';
 import { fullscreenPlayer } from './fullscreen';
@@ -19,7 +20,7 @@ export function registerEvents(player, el) {
         return;
       }
 
-      if (!player.contextmenu.hide(ev)) {
+      if (!hideContextMenu(ev, player.dom)) {
         let target = ev.target.closest('.items a, #playlist_next:not(.disabled), #playlist_prev:not(.disabled)');
         if (target) {
           halt(ev);
