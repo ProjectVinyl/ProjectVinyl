@@ -58,11 +58,11 @@ export function initContextMenu(el, player) {
       initial: actions.setSpeed(2),
       callback: () => actions.setSpeed(player.__speed + 1)
     },
-    'Play Automatically': {
+    'Auto Play': {
       initial: actions.setAutostart(!!cookies.get('autostart')),
       callback: () => actions.setAutostart(!player.__autostart)
     },
-    'Next Automatically': {
+    'Auto Next': {
       initial: actions.setAutoplay(!!cookies.get('autoplay')),
       display: player.params.autoplay,
       callback: ()  => actions.setAutoplay(!player.__autoplay)

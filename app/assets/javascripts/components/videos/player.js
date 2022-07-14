@@ -53,10 +53,8 @@ export function Player(el, standalone) {
     scrollTo(selected, document.querySelector('.playlist .scroll-container'));
   }
 
-  if (!this.params.embedded) {
-    if (this.params.resume || this.__autostart || this.__autoplay) {
-      this.play();
-    }
+  if (!this.params.embedded && this.__autostart) {
+    this.play();
   }
 
   this.volume(this.__volume, false);
