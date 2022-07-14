@@ -11,6 +11,8 @@ addDelegatedEvent(document, 'contextmenu', '.context-menu-parent:not([data-nocon
   if (dom.dataset.initialized !== 'true') {
     dom.dataset.initialized = true;
     addDelegatedEvent(dom, 'click', '[data-option]', (e, target) => {
+      halt(e);
+
       const item = dom.items ? dom.items[target.dataset.option] : null;
       if (item) {
         item.onChange = value => {
@@ -18,7 +20,6 @@ addDelegatedEvent(document, 'contextmenu', '.context-menu-parent:not([data-nocon
         };
         item.setter(item.incrementer(item.getter()));
       }
-      halt(e);
     });
 
     dispatchEvent('contextmenu:shown', {
