@@ -2,7 +2,7 @@
 	.message_content
 		%label.options
 			= f.text_field :url, placeholder: 'Video URL'
-			%select(name="order")= sensible_option_for_select ['Post Now', 'Open As Draft'], 0
+			%select(name="order")= sensible_option_for_select ['Post Now', 'Create Draft'], 0
 		.red
 			= fa :info
 			Links supported: youtube.com/watch?v=ID, youtu.be/ID, youtube.com/shorts/ID
