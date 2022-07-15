@@ -12,6 +12,7 @@
   height: 0 !important;
   position: relative;
   border-radius: inherit;
+  user-select: none;
 }
 
 .video:fullscreen {
