@@ -40,15 +40,26 @@ img.emoticon {
 }
 
 .emote {
+  --x-size: 34px;
+  --y-size: calc(var(--x-size) - 2px);
+  --x: 0;
+  --y: 0;
   margin-left: -4px;
   margin-top: -2px;
   display: block;
-  width: 34px;
-  height: 32px;
+  width: var(--x-size);
+  height: var(--y-size);
   background: url(/emoticons/all.png);
+  background-position-x: calc(var(--x) * var(--x-size) * -1);
+  background-position-y: calc(var(--y) * var(--y-size) * -1);
+  background-size: calc(var(--x-size) * 7) auto;
   font-size: 0;
   vertical-align: bottom;
 }
 i.emote {
   display: inline-block;
+}
+
+.notice .emote {
+  --x-size: 23px;
 }
