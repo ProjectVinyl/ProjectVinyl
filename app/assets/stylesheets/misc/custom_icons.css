@@ -12,5 +12,20 @@ i.fa.fa-restore {
 
 i.fa.fa-volume-mid {
   background-image: url("../fonts/vol-mid-icon.svg");
-  width: 16px;
+  background-position-y: 3px;
+  background-position-x: 0;
+  background-size: 16.5px auto;
+  width: 18px;
+}
+i.fa.fa-volume-mid::before {
+  content: "\f028";
+  opacity: 0;
+}
+
+.fa.fa-volume-off::after {
+  content: "\f00d";
+  font-size: 0.5em;
+  vertical-align: middle;
+  padding-bottom: 4px;
+  padding-left: 2px;
 }
