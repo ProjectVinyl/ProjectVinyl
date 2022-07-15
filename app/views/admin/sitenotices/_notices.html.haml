@@ -3,11 +3,13 @@
 		= value
 		%span.actions.right
 			%a.remove.right.red(title="Remove")= fa :close
-- cache(SiteNotice.cache_key_with_user(current_user), expires_in: 1.minute) do
+- cache(SiteNotice.cache_key_with_user(current_user) + cookies[:last_dismissal].to_s, expires_in: 1.minute) do
 	- SiteNotice.where(active: true).each do |notice|
-		%p.notice.site-notice.removeable
-			%span= emotify notice.message
-			%span.actions.right
-				- if user_signed_in? && current_user.is_contributor?
-					%a.green{href: admin_sitenotices_path}(title="Edit")= fa :pencil
-				%a.remove.red(title="Remove")= fa :close
+		- dismissal_time = cookies["dismissed_#{notice.id}".to_sym].to_i
+		- if dismissal_time == 0 || dismissal_time < (notice.updated_at.to_f * 1000).to_i
+			%p.notice.site-notice.removeable(data-persistent-id="#{notice.id}")
+				%span= emotify notice.message
+				%span.actions.right
+					- if user_signed_in? && current_user.is_contributor?
+						%a.green{href: admin_sitenotices_path}(title="Edit")= fa :pencil
+					%a.remove.red(title="Remove")= fa :close

@@ -1,7 +1,7 @@
 import { tryUnmarshal } from './misc';
 
-const DAYS = 24 * 60 * 60 * 1000;
-const COOKIE_MAX_AGE = 30 * DAYS;
+export const DAYS = 24 * 60 * 60 * 1000;
+export const COOKIE_MAX_AGE = 30 * DAYS;
 
 function extractCookieValue(key) {
   let cook = document.cookie;
@@ -32,8 +32,6 @@ export const cookies = {
       age = 'Session';
     }
 
-    let base = `${key}=${value}; max-age=${age}; `;
-
-    document.cookie = `${base}path=${path};`;
+    document.cookie = `${key}=${value}; max-age=${age}; path=${path};`;
   }
 };

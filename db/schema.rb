@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20220712154833) do
+ActiveRecord::Schema.define(version: 20220715201620) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -259,6 +259,8 @@ ActiveRecord::Schema.define(version: 20220712154833) do
   create_table "site_notices", force: :cascade do |t|
     t.boolean "active", default: true
     t.string "message"
+    t.datetime "created_at", default: "2022-07-15 20:18:21", null: false
+    t.datetime "updated_at", default: "2022-07-15 20:18:21", null: false
     t.index ["active"], name: "index_site_notices_on_active"
   end
 
