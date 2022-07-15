@@ -6,13 +6,6 @@
   visibility: visible !important;
 }
 
-.popper input + .pop-out {
-  left: -2px;
-}
-.popper input + .pop-out {
-  margin: 0 0 0 2px;
-}
-
 .drop-down-holder.popper::before,
 .drop-down-holder.popper::after,
 .pop-out-shown::before,
