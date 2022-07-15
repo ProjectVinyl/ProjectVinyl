@@ -25,7 +25,11 @@ module Videos
 
         render json: {
           sources: video.external_sources.jsons,
-          results: video.tags.order(:name).jsons(current_user)
+          tags: video.tags.order(:name).jsons(current_user),
+          html: {
+            sources: render_to_string(partial: 'external_sources/thumb/normal', collection: video.external_sources.pluck(:url), formats: :html),
+            tags: render_to_string(partial: 'tags/thumb/normal', collection: video.tags.order(:name), formats: :html)
+          }
         }
       end
     end

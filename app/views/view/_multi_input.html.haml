@@ -9,5 +9,3 @@
 			%ul.search-results.pop-out
 	.js-data-store(style="display:none")= raw data.to_json
 	.js-tag-template(style="display:none")= render "#{type}/editor/tag"
-	- if display
-		.js-display-template(style="display:none")= render "#{type}/editor/preview"

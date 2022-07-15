@@ -20,13 +20,7 @@ function TagEditor(el) {
   this.textarea.value = this.tags.join(',');
 
   this.list = el.querySelector('ul.tags');
-  this.norm = relative(el, '.post-tags', '.normal.tags');
-
   this.tagTemplate = el.querySelector('.js-tag-template').innerHTML;
-  if (this.norm) {
-    const displayEL = el.querySelector('.js-display-template');
-    this.displayTemplate = displayEL ? displayEL.innerHTML : '';
-  }
 
   addDelegatedEvent(el, 'click', 'i.remove', (e, target) => {
     removeTag(this, target.parentNode);
@@ -38,11 +32,6 @@ function TagEditor(el) {
     this.tags = tagSet(tags);
     save(this);
   };
-}
-
-function relative(el, parent, selector) {
-  el = el.closest(parent);
-  return el ? el.querySelector(selector) : el;
 }
 
 function initEditors() {

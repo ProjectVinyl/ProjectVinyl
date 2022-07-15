@@ -1,7 +1,7 @@
 import { recomputeHeight } from '../ui/slide';
 import { ready, addDelegatedEvent } from '../jslim/events';
 
-const shares = {
+const SHARES = {
   facebook: 'http://www.facebook.com/sharer/sharer.php?href={url}',
   twitter: 'https://twitter.com/intent/tweet?url={url}&via=ProjectVinyl&related=ProjectVInyl,Brony,Music',
   googleplus: 'https://plus.google.com/u/0/share?url={url}&hl=en-GB&caption={title}',
@@ -21,7 +21,7 @@ function popOpen(url, title, props) {
 addDelegatedEvent(document, 'click', '.share-buttons button', function(e) {
   // Left-click only
   if (e.which != 1 && e.button !== 0) return;
-  let ref = shares[this.dataset.type];
+  let ref = SHARES[this.dataset.type];
   if (ref) {
     ref = ref.replace(/{url}/g, encodeURIComponent(document.location.href));
     ref = ref.replace(/{title}/g, encodeURIComponent(this.parentNode.dataset.caption));
