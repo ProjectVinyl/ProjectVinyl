@@ -3,6 +3,7 @@
   width: 20px;
   height: 23px;
   cursor: pointer;
+  border-radius: 12px;
 }
 .playback-controls .icon .indicator {
   color: var(--controls-foreground);
