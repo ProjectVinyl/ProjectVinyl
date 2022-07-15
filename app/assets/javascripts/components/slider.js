@@ -14,13 +14,19 @@ function grabSlider(event, target) {
   dispatchEvent('slider:grab', getPercentage(target, event), target);
   target.classList.add('interacting');
 
+  const captureClick = ev => ev.preventDefault();
   const changer = ev => jumpSlider(ev, target);
   const ender = ev => {
     target.classList.remove('interacting');
     toggleBinding('remove');
     dispatchEvent('slider:release', getPercentage(target, ev), target);
+    requestAnimationFrame(() => {
+      window.removeEventListener('click', captureClick, true);
+    });
   };
   toggleBinding('add');
+
+  window.addEventListener('click', captureClick, true);
 }
 
 function jumpSlider(event, target) {
