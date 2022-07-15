@@ -16,7 +16,7 @@
 	- drafts.each_with_index do |draft, index|
 		= render partial: 'videos/form/uploader_frame_content', locals: {video: draft, tab_id: index}
 .page.resize-holder.column-right.right
-	%a.seamless-button(data-external-form="/videos/import/new" data-title="Import Video" data-width="500px")
+	%a.seamless-button(data-intention-target="import" data-external-form="/videos/import/new" data-title="Import Video" data-width="500px")
 		.icon= fa :reply
 		Import From URL
 
