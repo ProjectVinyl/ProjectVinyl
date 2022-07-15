@@ -30,7 +30,7 @@ function redrawBar(me) {
 }
 
 addDelegatedEvent(document, 'click', '.action.like, .action.dislike, .action.star', (e, target) => {
-  if (e.button) return;
+  if (e.button || e.defaultPrevented) return;
 
   if (!target.classList.contains('liked')) {
     const other = target.parentNode.querySelector('.liked');

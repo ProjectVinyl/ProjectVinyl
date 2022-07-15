@@ -35,8 +35,12 @@ function updateIcon(element, icon) {
   element.querySelector('.icon').innerHTML = icon.length ? `<i class="fa fa-${icon}"></i>` : '';
 }
 
+function eventActive(e) {
+  return (e.which === 1 || e.button === 0) && !e.defaultPrevented;
+}
+
 addDelegatedEvent(document, 'click', '.action.toggle', (e, target) => {
-  if (e.which === 1 || e.button === 0) toggle(e, target, target, json => {
+  if (eventActive(e)) toggle(e, target, target, json => {
     if (target.dataset.family) {
       return document.querySelectorAll(`.action.toggle[data-family="${target.dataset.family}"][data-id="${target.dataset.id}"]`).forEach(a => {
         updateCheck(a, json[a.dataset.descriminator]);
@@ -51,7 +55,7 @@ addDelegatedEvent(document, 'click', '.action.toggle', (e, target) => {
 });
 
 addDelegatedEvent(document, 'click', '.action.multi-toggle [data-item]', (e, target) => {
-  if (e.which === 1 || e.button === 0) toggle(e, target, target.closest('.action.multi-toggle'), (json, options) => {
+  if (eventActive(e)) toggle(e, target, target.closest('.action.multi-toggle'), (json, options) => {
     options.querySelectorAll('[data-item]').forEach(a => updateCheck(a, json[a.dataset.descriminator]));
   });
 });

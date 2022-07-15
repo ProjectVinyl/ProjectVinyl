@@ -42,7 +42,7 @@ function adjustFloyoutDirection(target) {
 }
 
 addDelegatedEvent(document, 'click', '.popper .pop-out-toggle, .popper.pop-out-toggle', (e, target) => {
-  if (e.which != 1) return;
+  if (e.which != 1 || e.defaultPrevented) return;
   e.preventDefault();
   togglePopper(target.closest('.popper'));
 });

@@ -1,7 +1,7 @@
 import { addDelegatedEvent } from '../jslim/events';
 
 addDelegatedEvent(document, 'click', '.state-set', (e, target) => {
-  if (e.which != 1 && e.button != 0) return;
+  if ((e.which != 1 && e.button != 0) || e.defaultPrevented) return;
   e.preventDefault();
   
   target.classList.toggle('toggled');

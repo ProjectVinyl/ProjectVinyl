@@ -1,7 +1,7 @@
 import { addDelegatedEvent } from '../jslim/events';
 
 addDelegatedEvent(document, 'click', '.state-toggle', (e, target) => {
-  if (e.target.tagName == 'INPUT' || (e.which != 1 && e.button != 0)) return;
+  if (e.target.tagName == 'INPUT' || (e.which != 1 && e.button != 0) || e.defaultPrevented) return;
   if (target.dataset.bubble !== 'true') {
     e.preventDefault();
   }

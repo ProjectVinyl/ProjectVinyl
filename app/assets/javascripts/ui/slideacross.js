@@ -29,17 +29,18 @@ function slideAcross(me, direction) {
 }
 
 addDelegatedEvent(document, 'click', '.slide-holder form input[data-to]', (e, target) => {
+  if (e.button !== 0 || e.defaultPrevented) return;
   if (!checkFormPrerequisits(target.closest('.group'))) return;
   const required = target.closest('.group').querySelectorAll('input[data-required]');
   slideAcross(target, 1);
 });
 
 addDelegatedEvent(document, 'click', '.slide-holder .goto.slide-right', (e, target) => {
-  if (e.button !== 0) return;
+  if (e.button !== 0 || e.defaultPrevented) return;
   if (target.closest('form') && !checkFormPrerequisits(target.closest('.group'))) return; 
   slideAcross(target, 1);
 });
 
 addDelegatedEvent(document, 'click', '.slide-holder .goto.slide-left', (e, target) => {
-  if (e.button === 0) slideAcross(target, -1);
+  if (e.button === 0 || e.defaultPrevented) slideAcross(target, -1);
 });

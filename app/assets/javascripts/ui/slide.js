@@ -29,7 +29,7 @@ export function recomputeHeight(holder, continuation) {
 }
 
 addDelegatedEvent(document, 'click', '.slider-toggle:not(.loading)', (e, target) => {
-  if (e.button !== 0) return;
+  if (e.button !== 0 || e.defaultPrevented) return;
 
   const holder = document.querySelector(target.dataset.target);
   const keepRest = e.ctrlKey;
