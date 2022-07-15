@@ -49,3 +49,4 @@ addDelegatedEvent(document, 'click', '.slider-toggle:not(.loading)', (e, target)
 });
 
 addDelegatedEvent(document, 'toggle', '.slideout', (e, target) => recomputeHeight(target));
+addDelegatedEvent(document, 'ajax:complete', '.slideout', (e, target) => recomputeHeight(target));
