@@ -4,11 +4,27 @@
 }
 .donate [data-message] {
   position: relative;
-  background: url('../images/index.gif') center / 100%;
+  background: url('../images/sellout/aj.gif') center / 100%;
   padding-bottom: 100%;
   image-rendering: crisp-edges;
   border-radius: var(--thumb-border-radius);
 }
+.donate[data-sellout-variant="derpy"] [data-message] {
+  background: url('../images/sellout/derpy.gif') center / 100%;
+}
+.donate[data-sellout-variant="tpa"] [data-message] {
+  background: url('../images/sellout/tpa.jpg') center / 100%;
+}
+.donate[data-sellout-variant="scoots"] [data-message] {
+  background: url('../images/sellout/scoots.gif') center / 100%;
+}
+.donate[data-sellout-variant="boppy"] [data-message] {
+  background: url('../images/sellout/boppy.gif') center / 100%;
+}
+.donate.wide-donate[data-sellout-variant="boppy"] [data-message] {
+  background-position-y: bottom -58px;
+}
+
 .donate [data-message]::after {
   transition: opacity 0.5s ease, right 0.5s ease;
   opacity: 0;
@@ -20,7 +36,7 @@
   padding: 5px;
   background: rgba(255,255,255,0.3);
   color: #555;
-  content: 'Pssst, hey. Hey you. ' attr(data-message);
+  content: attr(data-message);
   text-decoration: none;
 }
 .donate [data-message]:hover::after {

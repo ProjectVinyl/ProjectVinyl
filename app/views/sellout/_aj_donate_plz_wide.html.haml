@@ -1,6 +1,5 @@
-﻿.page.column-left.fixed-right-column.donate.thin-donate.wide-donate
+﻿- sellout = random_sellout
+.page.column-left.fixed-right-column.donate.thin-donate.wide-donate(data-sellout-variant="#{sellout[:key]}")
 	%a(href="#{donate_path}" data-external-form="#{donate_path}.json" data-title="Donate to Project Vinyl" data-icon="paypal" data-max-width="500px")
-		%div(data-message="Did you know that Project Vinyl is a community effort? We don't make any money off of this. But servers don't run on apples...")
-	.source
-		Image by
-		%a.source(href="//derpibooru.org/549114") zztfox
+		%div(data-message="#{pick_one sellout[:messages]}")
+	%a.source(href="#{sellout[:attribution][:source]}")= sellout[:attribution][:text]

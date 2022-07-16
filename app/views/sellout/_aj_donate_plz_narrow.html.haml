@@ -1,8 +1,7 @@
-﻿%section.page.full-width.donate
+﻿- sellout = random_sellout
+%section.page.full-width.donate(data-sellout-variant="#{sellout[:key]}")
 	%h1
 		%a{href: donate_path} Donate
 	%a(href="#{donate_path}" data-external-form="#{donate_path}.json" data-title="Donate to Project Vinyl" data-icon="paypal" data-max-width="500px")
-		%div(data-message="If you like what you see, maybe you should consider donating to keep this site running? kthanks.")
-	.source
-		Image by
-		%a.source(href="//derpibooru.org/549114") zztfox
+		%div(data-message="#{pick_one sellout[:messages]}")
+	%a.source(href="#{sellout[:attribution][:source]}")= sellout[:attribution][:text]

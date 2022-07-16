@@ -5,6 +5,7 @@ module ApplicationHelper
   include FiltersHelper, VideoCacheHelper
   include ThemesHelper
   include PlaylistHelper
+  include SelloutHelper
   
 
   def self.read_only
