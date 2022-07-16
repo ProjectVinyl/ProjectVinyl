@@ -148,7 +148,7 @@ class Comment < ApplicationRecord
         }
     })
   end
-  private
+
   def send_reply_tos(items)
     CommentReply.where(parent_id: self.id).delete_all
     items = items.uniq
