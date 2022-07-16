@@ -1,4 +1,4 @@
-.video .player::after {
+.video:not(.unplayable) .player::after {
   --play-button-transition-speed: 0.25s;
   transform: scale(calc(var(--play-button-base-scale-factor, 1) * var(--play-button-scale-factor, 1)));
   transition:
