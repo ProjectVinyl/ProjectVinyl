@@ -6,9 +6,9 @@
 			%ul.tags= render partial: 'tags/thumb/normal', collection: @tags
 			%hr/
 			- @sources = @video.external_sources.pluck(:url)
-			- if !@sources.empty?
-				%b Sources
-				%ol.video-sources
+			%b Sources
+			%ol.video-sources
+				- if !@sources.empty?
 					- @sources.each_with_index do |url, i|
 						%li.date
 							%a{href: url}= url
