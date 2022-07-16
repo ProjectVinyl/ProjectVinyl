@@ -14,6 +14,10 @@
   transform: scale(0.8);
 }
 
+.comment .bio .user-link {
+  display: inline-block;
+}
+
 .comment .artist-bio .thumb {
   --thumb-width: 190px;
   width: var(--thumb-width);

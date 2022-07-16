@@ -1,19 +1,28 @@
 .hovercard {
   position: absolute;
-  transition: transform 0.5s ease;
-  transform-origin: 0 0;
-  transform: scale(0,0);
-  top: 50%;
-  left: 50%;
+  visibility: hidden;
+  opacity: 0;
+  transform: scaleY(0);
+  transform-origin: left 30px;
+  transition:
+    opacity 0.25s ease,
+    visibility 0.25s ease,
+    transform 0.25s ease;
   z-index: 200;
-  margin: -20px;
   font-style: initial;
   font-size: 13px;
-  
+  top: calc(50% - 30px);
+  left: 100%;
   --gradient-light: #fff;
   --gradient-dark: #f5f5ff;
   --gradient-middle: #f8f8ff;
 }
+.hovercard.shown {
+  transform: scaleY(1);
+  visibility: visible;
+  opacity: 1;
+}
+
 .post .hovercard .avatar-wrapper {
   float: none;
   margin: 0px;
@@ -31,10 +40,6 @@
     var(--gradient-light) 75%,
     var(--gradient-middle) 100%
   );
-}
-
-.hovercard.shown {
-  transform: scale(1,1);
 }
 
 .listing.compact .hovercard span {
