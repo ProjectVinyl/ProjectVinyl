@@ -1,0 +1,26 @@
+.notifier-notification {
+  position: absolute;
+  top: 100%;
+  left: 12px;
+  background: var(--video-background-color);
+  padding: 15px 20px;
+  border-radius: var(--block-radius);
+  margin: 0;
+  min-width: 200px;
+  text-align: left;
+  overflow: hidden;
+  max-width: 500px;
+  /*! scrollbar-width: thin; */
+  text-overflow: ellipsis;
+  pointer-events: none;
+  opacity: 1;
+  visibility: visible;
+  
+  transition: transform 0.5s ease;
+  transform: translateY(calc(-100% - 12px));
+}
+.notifier-notification.hidden {
+  opacity: 1;
+  visibility: visible !important;
+  transform: translateY(0);
+}

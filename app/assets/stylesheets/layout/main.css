@@ -1,6 +1,7 @@
 html, body {
   --site-width: 85vw;
   background: var(--site-background);
+  overflow: hidden;
 }
 @media(max-width: 630px) {
   html, body {

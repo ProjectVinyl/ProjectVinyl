@@ -29,4 +29,5 @@
  *= require ./profile_background
  *= require ./seamless_button
  *= require ./votes
+ *= require ./notifier
  */
