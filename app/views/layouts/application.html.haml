@@ -19,61 +19,61 @@
 					--site-banner: #{content_for(:custom_banner)};
 					--custom-background: #{content_for(:custom_banner).split(' ').first.html_safe};
 				}
-%body{class: !user_signed_in? && "logged-out"}
-	.context-3d.no-3d.dock-holder
-		.dock-shadow
-		= render 'layouts/banner/banner'
-		= render partial: "layouts/nav"
-		.layer-foreground.body
-			%main.wrapper{class: content_for?(:wrapper) && content_for(:wrapper)}
-				= render "admin/sitenotices/notices"
-				- if @crumb
-					= render 'view/breadcrumb', @crumb
-				= yield
-			%footer
-				.logo
-					.sparkline
-						%a(title="Home" href="/") projectvinyl.net
-				.blocks
-					.block.r
-						%h3 Stats
-						%ol
-							%li= render partial: 'layouts/revision'
-							%li
-								Page generated in 
-								%i= load_time.round(3)
-								seconds
-							%li
-								%i= number_with_delimiter User.online.count
-								users online
-							%li
-								= number_with_delimiter Ahoy::Visit.today.count
-								hits today
-								= number_with_delimiter Ahoy::Visit.yesterday.count
-								hits yesterday
-					.block.g
-						%h3 Navigation
-						%ul
-							%li
-								%a{href: staff_path} Staff
-							%li
-								%a{href: policy_path} Policy & Copyright
-							%li
-								%a{href: donate_path} Donations
-					.block.b
-						%h3 Support Us
-						%ol
-							%li
-								= precede '©' do
-									= Time.current.year
-								Project Vinyl Foundation
-							%li
-								Proud members of 
-								%a.tpa(href="http://www.theponyarchive.com/") The Pony Archive
-							%li
-								MLP: Friendship is Magic® - © 2018 Hasbro Inc.®
-								%br
-								Project Vinyl is in no way affiliated with or endorsed by Hasbro Inc.® 
-	.floating-player.hiding
-		.player
-	.fades
+	%body{class: !user_signed_in? && "logged-out"}
+		.context-3d.no-3d.dock-holder
+			.dock-shadow
+			= render 'layouts/banner/banner'
+			= render partial: "layouts/nav"
+			.layer-foreground.body
+				%main.wrapper{class: content_for?(:wrapper) && content_for(:wrapper)}
+					= render "admin/sitenotices/notices"
+					- if @crumb
+						= render 'view/breadcrumb', @crumb
+					= yield
+				%footer
+					.logo
+						.sparkline
+							%a(title="Home" href="/") projectvinyl.net
+					.blocks
+						.block.r
+							%h3 Stats
+							%ol
+								%li= render partial: 'layouts/revision'
+								%li
+									Page generated in
+									%i= load_time.round(3)
+									seconds
+								%li
+									%i= number_with_delimiter User.online.count
+									users online
+								%li
+									= number_with_delimiter Ahoy::Visit.today.count
+									hits today
+									= number_with_delimiter Ahoy::Visit.yesterday.count
+									hits yesterday
+						.block.g
+							%h3 Navigation
+							%ul
+								%li
+									%a{href: staff_path} Staff
+								%li
+									%a{href: policy_path} Policy & Copyright
+								%li
+									%a{href: donate_path} Donations
+						.block.b
+							%h3 Support Us
+							%ol
+								%li
+									= precede '©' do
+										= Time.current.year
+									Project Vinyl Foundation
+								%li
+									Proud members of
+									%a.tpa(href="http://www.theponyarchive.com/") The Pony Archive
+								%li
+									MLP: Friendship is Magic® - © 2018 Hasbro Inc.®
+									%br
+									Project Vinyl is in no way affiliated with or endorsed by Hasbro Inc.®
+		.floating-player.hiding
+			.player
+		.fades
