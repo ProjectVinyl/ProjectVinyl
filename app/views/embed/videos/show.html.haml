@@ -7,12 +7,12 @@
 		= javascript_include_tag "application"
 		= csrf_meta_tags
 	%body.embed
-		- if !@video || @video.hidden
+		- if !@video || (@video.unlisted? && !@video.visible_to?(current_user))
 			.video.unplayable#video(style="#{format_bg '/images/default-cover-g.svg'};background-size:cover;")
 				.player
 					%span.pause.resize-holder
 						%h1.resize-target
 							%a
-								%span.title= @video ? "Hidden Video" : "Video Not Found"
+								%span.title= @video ? "Private Video" : "Video Not Found"
 		- else
 			= render partial: "videos/widget/full", locals: {embed: true}
