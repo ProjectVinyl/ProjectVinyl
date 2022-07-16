@@ -9,7 +9,7 @@ module ProjectVinyl
         INITIAL_STATE = -1
         TAG_NODE = 0
         TAG_CONTENT = 1
-        
+
         def self.parse(text, open, close)
           result = Node.new(nil, 'Document')
           parse_document(result, open + result.tag_name + close + text + open + '/' + result.tag_name + close, open, close)

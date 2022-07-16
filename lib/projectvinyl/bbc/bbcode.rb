@@ -40,7 +40,7 @@ module ProjectVinyl
           next tag.attributes[:href] if tag.attributes[:data_link] == '1'
           next ">>#{tag.attributes[:href].sub('#comment_', '')}" if tag.attributes[:data_link] == '2'
         end
-        
+
         "[url=#{tag.attributes[:href]}]#{tag.inner_bbc}[/url]"
       end
       TagGenerator.register(:bbc, [:div]) do |tag|
@@ -65,7 +65,7 @@ module ProjectVinyl
       TagGenerator.register(:bbc, [:timestamp]) do |tag|
         tag.inner_bbc
       end
-      
+
       TagGenerator.register(:html, [:b,:i,:u,:s,:sup,:sub,:hr]) do |tag|
         "<#{tag.tag_name}>#{tag.inner_html}</#{tag.tag_name}>"
       end
@@ -118,7 +118,7 @@ module ProjectVinyl
       def self.from_html(html)
         Parser::NodeDocumentParser.parse(html, '<', '>')
       end
-      
+
       def self.from_bbc(bbc)
         Parser::NodeDocumentParser.parse(bbc, '[', ']')
       end

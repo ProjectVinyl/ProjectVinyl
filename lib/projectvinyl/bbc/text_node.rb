@@ -5,17 +5,14 @@ module ProjectVinyl
 
       def self.truncate_link(url)
         url = url.gsub(/^(http[s]*:)*[\/]+/, '')
-        if url.length > 25
-          return url[0...22] + '...'
-        end
-
+        return url[0...22] + '...' if url.length > 25
         url
       end
 
       def initialize(text)
         @inner_text = text
       end
-      
+
       def append_text(text)
         @inner_text += text
       end

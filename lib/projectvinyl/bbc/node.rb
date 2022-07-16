@@ -92,7 +92,6 @@ module ProjectVinyl
         trace << tag_name.to_sym if !trace.include?(tag_name.to_sym)
 
         return @resolver if !@resolver.nil?
-
         return fallback if @parent.nil?
 
         @parent.resolver(trace, fallback)
@@ -124,17 +123,14 @@ module ProjectVinyl
       end
 
       def depth
-        if @parent.nil?
-          return 0
-        end
-
+        return 0 if @parent.nil?
         @parent.depth + 1
       end
 
       def even
         depth % 2 == 0
       end
-      
+
       def text_node?
         false
       end
@@ -150,12 +146,12 @@ module ProjectVinyl
       def to_json
         { html: outer_html, bbc: outer_bbc }
       end
-      
+
       private
       def __append_child(node)
         @children.last.next = node if @children.length > 0
         @children << node
-        
+
         node
       end
     end

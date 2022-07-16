@@ -58,15 +58,15 @@ module ProjectVinyl
         redheartgasp
         zecora
       ].freeze
-      
+
       def self.is_defined_emote(emote)
         !all.index(emote).nil?
       end
-      
+
       def self.all
         Emoticons
       end
-      
+
       def self.emoticon_tag(name)
         "<i class=\"emote\" data-emote=\"#{name}\">:#{name}:</i>"
       end
