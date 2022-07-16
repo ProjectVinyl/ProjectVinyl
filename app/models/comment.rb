@@ -3,19 +3,19 @@ class Comment < ApplicationRecord
   include Indirected
   include Statable
   include UserCachable
-  
+
   belongs_to :comment_thread, touch: true
-  
+
   has_many :comment_replies, dependent: :destroy
   has_many :mentions, class_name: "CommentReply", foreign_key: "comment_id"
   has_many :likes, class_name: "CommentVote", foreign_key: "comment_id"
-  
+
   scope :decorated, -> { includes(:likes, :direct_user, :mentions) }
   scope :with_owner, -> { includes(comment_thread: [:owner]) }
   scope :visible, -> {
     joins(:comment_thread).where("comments.hidden = false AND comment_threads.owner_type != 'Report' AND comment_threads.owner_type != 'Pm'")
   }
-  scope :with_likes, ->(user) { 
+  scope :with_likes, ->(user) {
     if !user.nil?
       return joins("LEFT JOIN comment_votes ON comment_votes.comment_id = comments.id AND comment_votes.user_id = #{user.id}")
         .select('comments.*, comment_votes.user_id AS is_liked_flag')
@@ -31,21 +31,21 @@ class Comment < ApplicationRecord
   def liked?
     (respond_to? :is_liked_flag) && is_liked_flag
   end
-  
+
   scope :encode_open_id, ->(i) { i.to_s(36) }
   scope :decode_open_id, ->(s) { s.to_i(36) }
-  
+
   def update_comment(bbc)
     self.bbc_content = bbc
     bbc = Comment.parse_bbc_with_replies_and_mentions(bbc, self.comment_thread)
 
     self.save
     self.send_reply_tos(bbc[:replies])
-    Comment.send_mentions(bbc[:mentions], self.comment_thread, self.comment_thread.title, self.comment_thread.location)
-    
+    send_mention_notification(bbc[:mentions])
+
     bbc[:html]
   end
-  
+
   def self.parse_bbc_with_replies_and_mentions(bbc, sender)
     mentions = []
     replies = []
@@ -61,7 +61,7 @@ class Comment < ApplicationRecord
           next "<a class=\"user-link\" data-id=\"#{user.id}\" href=\"#{user.link}\">#{user.username}</a>"
         end
       end
-      
+
       if tag_name == :reply && !trace.include?(:q)
         replies << Comment.decode_open_id(tag.inner_text)
       end
@@ -74,7 +74,7 @@ class Comment < ApplicationRecord
 
       fallback.call
     end
-    
+
     return {
       html: nodes.outer_html,
       mentions: mentions,
@@ -82,31 +82,7 @@ class Comment < ApplicationRecord
       chapters: chapters.values
     }
   end
-  
-  def send_reply_tos(items)
-    CommentReply.where(parent_id: self.id).delete_all
-    items = items.uniq
-    if !items.empty?
-      receivers = []
-      replied_to = (Comment.where('id IN (?) AND comment_thread_id = ?', items, self.comment_thread_id).map do |i|
-        receivers << i.user_id
-        "(#{i.id},#{self.id})"
-      end).join(', ')
-      receivers = receivers.uniq - [self.user_id]
-      if !replied_to.empty?
-        Notification.notify_receivers(receivers, self,
-          "#{self.user.username} has <b>replied</b> to your comment on <b>#{self.comment_thread.title}</b>",
-          self.comment_thread.location)
-        ApplicationRecord.connection.execute("INSERT INTO comment_replies (comment_id, parent_id) VALUES #{replied_to}")
-      end
-    end
-  end
-  
-  def self.send_mentions(receivers, sender, title, location)
-    receivers = receivers.uniq - [sender.user_id]
-    Notification.notify_receivers(receivers, sender, "You have been <b>mentioned</b> on <b>#{title}</b>", location)
-  end
-  
+
   def get_open_id
     Comment.encode_open_id(self.id)
   end
@@ -115,7 +91,7 @@ class Comment < ApplicationRecord
     position = Comment.where("comment_thread_id = ? AND #{order} #{reverse ? '>' : '<'}= ?", self.comment_thread_id, self.send(order)).count
     (position.to_f / per_page).ceil
   end
-  
+
   def upvote(user, incr)
     incr = incr.to_i
     vote = likes.where(user_id: user.id).first
@@ -132,23 +108,61 @@ class Comment < ApplicationRecord
 
     likes.count
   end
-  
+
   def link
     "#{comment_thread.location}#comment_#{get_open_id}"
   end
-  
-  def icon
-    user.avatar
-  end
-  
-  def preview
-    BbcodeHelper.emotify bbc_content
-  end
-  
+
   def report(sender_id, params)
     Report.generate_report(
       reportable: self,
       user_id: sender_id
     )
   end
+
+  def preview
+    BbcodeHelper.emotify bbc_content
+  end
+
+  def send_mention_notification(receivers)
+
+    if comment_thread.video?
+      message = "#{user.username} <b>mentioned</b> you in their comment on <b>#{comment_thread.title}</b>"
+    else
+      message = "#{user.username} <b>mentioned</b> you in <b>#{comment_thread.title}</b>"
+    end
+
+    Notification.send_to(
+      (receivers.uniq - [user_id]),
+      notification_params: {
+        message: message,
+        location: link,
+        originator: self
+      },
+      toast_params: {
+        title: "@#{user.username} mentioned you",
+        params: {
+          badge: '/favicon.ico',
+          icon: user.avatar,
+          body: preview
+        }
+    })
+  end
+  private
+  def send_reply_tos(items)
+    CommentReply.where(parent_id: self.id).delete_all
+    items = items.uniq
+    if !items.empty?
+      receivers = []
+      replied_to = (Comment.where('id IN (?) AND comment_thread_id = ?', items, self.comment_thread_id).map do |i|
+        receivers << i.user_id
+        "(#{i.id},#{self.id})"
+      end).join(', ')
+      if !replied_to.empty?
+        CommentReply.notify_recipients(receivers, self)
+        ApplicationRecord.connection.execute("INSERT INTO comment_replies (comment_id, parent_id) VALUES #{replied_to}")
+      end
+    end
+  end
+
 end

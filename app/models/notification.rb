@@ -15,37 +15,29 @@ class Notification < ApplicationRecord
     "#{owner_type}_#{owner_id}"
   end
 
-  def self.notify_admins(sender, message, source)
-    Notification.notify_receivers(User.where('role > 1').pluck(:id), sender, message, source, false)
+  def self.send_to_admins(notification_params:, toast_params:)
+    send_to(User.where('role > 1').pluck(:id),
+      notification_params: notification_params,
+      toast_params: toast_params,
+      delete: false
+    )
   end
 
-  def self.notify_receivers_without_delete(receivers, sender, message, source)
-    Notification.notify_receivers(receivers, sender, message, source, false)
-  end
-
-  def self.notify_receivers(receivers, sender, message, source, del = true)
-    Notification.where(owner: sender).where('user_id IN (?)', receivers).delete_all if del
-    Notification.create(receivers.uniq.map{ |receiver| __create_params(receiver, message, source, sender) })
-
+  def self.send_to(*receivers, notification_params:, toast_params:, delete: true)
+    receivers = receivers.flatten
+    Notification.where(owner: notification_params[:originator]).where('user_id IN (?)', receivers).delete_all if delete
+    Notification.create(receivers.uniq.map{ |receiver| __create_params(receiver, notification_params) })
     User.where('id IN (?)', receivers).update_all('notification_count = (SELECT COUNT(*) FROM notifications WHERE user_id = users.id AND unread = true)')
-
-    NotificationReceiver.push_notifications(receivers, {
-      title: message,
-      params: {
-        badge: '/favicon.ico',
-        icon: sender.icon,
-        body: sender.preview
-      }
-    })
+    NotificationReceiver.push_notifications(receivers, toast_params)
   end
 
   private
-  def self.__create_params(receiver, message, source, owner)
+  def self.__create_params(receiver, message:, location:, originator:)
     {
       user_id: receiver,
       message: message,
-      source: source,
-      owner: owner,
+      source: location,
+      owner: originator,
       unread: true
     }
   end

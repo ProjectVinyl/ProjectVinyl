@@ -202,6 +202,24 @@ class User < ApplicationRecord
     false
   end
 
+  def notify_subscribers(upload)
+    Notification.send_to(
+      (receivers.uniq - [id]),
+      notification_params: {
+        message: "#{username} has just <b>uploaded</b> a new video!",
+        location: upload.link,
+        originator: upload
+      },
+      toast_params: {
+        title: "@#{user.username} uploaded a new video",
+        params: {
+          badge: '/favicon.ico',
+          icon: upload.thumb,
+          body: BbcodeHelper.emotify(upload.title)
+        }
+    })
+  end
+
   private
   def seed_profile
     ProfileModule.seed(self)

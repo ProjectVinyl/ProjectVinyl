@@ -1,10 +1,10 @@
 module Duplicateable
   extend ActiveSupport::Concern
-  
+
   included do
     belongs_to :duplicate, class_name: "Video", foreign_key: "duplicate_id"
   end
-  
+
   def merge(user, other)
     do_unmerge
 
@@ -21,21 +21,20 @@ module Duplicateable
       drop_tags(mytags)
     end
 
-    receivers = comment_thread.comments.pluck(:user_id) | [user_id]
-    Notification.notify_receivers_without_delete(receivers, comment_thread, merge_message(user, other), other.comment_thread.location)
+    __send_merge_notification!(user, other)
     save
     self
   end
-  
+
   def unmerge
     save if do_unmerge
   end
-  
+
   protected
   def merge_message(user, other)
     "#{user.username} has merged <b>#{title}</b> into <b>#{other.title}</b>"
   end
-  
+
   def do_unmerge
     if duplicate_id
       if other = Video.where(id: duplicate_id).first
@@ -47,5 +46,25 @@ module Duplicateable
       return true
     end
     false
+  end
+
+  private
+  def __send_merge_notification!(user, other)
+    message = merge_message(user, other)
+    Notification.send_to(
+      (comment_thread.comments.pluck(:user_id) | [user_id]),
+      notification_params: {
+        message: message,
+        location: comment_thread.location,
+        originator: comment_thread
+      },
+      toast_params: {
+        title: "#{comment_thread.title} has been merged",
+        params: {
+          badge: '/favicon.ico',
+          icon: comment_thread.icon,
+          body: message
+        }
+    })
   end
 end

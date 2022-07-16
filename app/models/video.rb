@@ -104,16 +104,13 @@ class Video < ApplicationRecord
     self.save
     self.update_index(defer: false)
   end
-  
+
   def publish
     self.draft = false
     self.hidden = false
 
     return if listing != 0
-    artist_tag = user.tag
-    return if !artist_tag
-    return if comment_thread.nil?
-    Notification.notify_receivers(artist_tag.subscribers.pluck(:id), comment_thread, "#{user.username} has just uploaded a new video.", link)
+    user.notify_subscribers(self) if !user.nil? && !user.dummy?
   end
 
   def upload_media(media, checksum)
@@ -269,6 +266,43 @@ class Video < ApplicationRecord
     self.width, self.height = Ffprobe.dimensions(path) if File.exist?(path)
   end
 
+  def bump(sender, params, comment)
+    Notification.send_to(
+      (comment_thread.thread_subscriptions.pluck(:user_id) - [sender.id]),
+      notification_params: {
+        message: "#{sender.username} has <b>commented</b> on <b>#{title}</b>",
+        location: ref,
+        originator: comment_thread
+      },
+      toast_params: {
+        title: "@#{user.username} commented",
+        params: {
+          badge: '/favicon.ico',
+          icon: thumb,
+          body: comment.preview
+        }
+      })
+  end
+
+  def send_mention_notification(receivers)
+    Notification.send_to(
+      (receivers.uniq - [user_id]),
+      notification_params: {
+        message: "#{user.username} <b>mentioned</b> you in <b>#{title}</b>",
+        location: ref,
+        originator: comment_thread
+      },
+      toast_params: {
+        title: "@#{user.username} mentioned you",
+        params: {
+          badge: '/favicon.ico',
+          icon: thumb,
+          body: BbcodeHelper.emotify(description)
+        }
+    })
+  end
+
+  private
   def dispatch_mentions
     if !(sender = comment_thread)
       sender = CommentThread.new({
@@ -278,13 +312,12 @@ class Video < ApplicationRecord
       })
     end
     text = Comment.parse_bbc_with_replies_and_mentions(description, sender)
-    Comment.send_mentions(text[:mentions], sender, title, ref)
+    send_mention_notification(text[:mentions])
 
     video_chapters.destroy_all
     video_chapters.create(text[:chapters])
   end
 
-  private
   def video_file_name(key)
     "source#{file || '.mp4'}"
   end

@@ -10,10 +10,10 @@ class Pm < ApplicationRecord
   belongs_to :new_comment, class_name: 'Comment'
 
   conditional_counter_cache :user, :unread_pms, :is_unread, :message_count
-  
+
   STATE_NORMAL = 0
   STATE_DELETED = 1
-  
+
   scope :find_for_user, ->(id, user) { includes(:comment_thread, :new_comment).where(id: id, user_id: user.id).first }
   scope :find_for_tab_counter, ->(type, user) {
     listing_selector = where(user_id: user.id, state: type == 'deleted' ? STATE_DELETED : STATE_NORMAL)
@@ -22,7 +22,7 @@ class Pm < ApplicationRecord
     return listing_selector.where(unread: true) if type == 'new'
     listing_selector
   }
-  
+
   scope :find_for_tab, ->(type, user) {
     joins("LEFT JOIN comment_threads ON comment_threads.id = pms.comment_thread_id AND comment_threads.owner_type = 'Pm'")
       .select('pms.*').includes(:comment_thread, :sender, new_comment: [:direct_user])
@@ -47,9 +47,9 @@ class Pm < ApplicationRecord
       comment.update_comment(message)
       pm.new_comment_id = comment.id
       pm.save
-      
+
       receivers = receivers - [sender]
-      
+
       recievers.each do |receiver|
         pms = Pm.create(
           user: receiver,
@@ -59,9 +59,9 @@ class Pm < ApplicationRecord
           comment_thread: thread,
           new_comment: comment
         )
-        Notification.notify_receivers([receiver.id], pms, "#{sender.username} has sent you a Private Message: <b>#{thread.title}</b>", pms.location)
+        pms.send_delivery_notification([receiver.id])
       end
-      
+
       return pm
     end
   end
@@ -69,10 +69,10 @@ class Pm < ApplicationRecord
   def bump(sender, params, comment)
     Pm.where('state = ? AND unread = false AND comment_thread_id = ? AND NOT user_id = ?', STATE_NORMAL, self.comment_thread_id, sender.id).update_all(new_comment_id: comment.id, unread: true)
     Pm.where('state = ? AND comment_thread_id = ? AND NOT user_id = ?', STATE_NORMAL, self.comment_thread_id, sender.id).find_each do |t|
-      Notification.notify_receivers([t.user_id], self.comment_thread, "#{sender.username} has posted a reply to <b>#{self.comment_thread.title}</b>", t.location)
+      t.send_reply_notification(comment, self.comment_thread)
     end
   end
-  
+
   def get_tab_type(user)
     if self.state == STATE_NORMAL
       return self.sender_id == user.id ? 'sent' : 'received'
@@ -90,7 +90,7 @@ class Pm < ApplicationRecord
     end
     link
   end
-  
+
   def link
     "/messages/#{self.id}"
   end
@@ -103,5 +103,41 @@ class Pm < ApplicationRecord
       self.state = STATE_NORMAL
     end
     self.save
+  end
+
+  def send_reply_notification(reply, thread)
+    Notification.send_to(
+      [user_id],
+      notification_params: {
+        message: "#{reply.user.username} has posted a reply to your Private Message",
+        location: location,
+        originator: thread
+      },
+      toast_params: {
+        title: "@#{reply.user.username} replied to your message",
+        params: {
+          badge: '/favicon.ico',
+          icon: reply.user.avatar,
+          body: reply.preview
+        }
+    })
+  end
+
+  def send_delivery_notification(receivers)
+    Notification.send_to(
+      (receivers.uniq - [user_id]),
+      notification_params: {
+        message: "#{sender.username} has sent you a Private Message: <b>#{comment_thread.title}</b>",
+        location: location,
+        originator: self
+      },
+      toast_params: {
+        title: "@#{user.username} send you a Private Message",
+        params: {
+          badge: '/favicon.ico',
+          icon: user.avatar,
+          body: comment_thread.title
+        }
+    })
   end
 end

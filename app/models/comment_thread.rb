@@ -10,19 +10,19 @@ class CommentThread < ApplicationRecord
   belongs_to :owner, polymorphic: true
 
   def private_message?
-    self.owner_type == 'Pm'
+    owner_type == 'Pm'
   end
 
   def video?
-    self.owner_type == 'Video'
+    owner_type == 'Video'
   end
 
   def board?
-    self.owner_type == 'Board'
+    owner_type == 'Board'
   end
 
   def contributing?(user)
-    !private_message? || (Pm.where('comment_thread_id = ? AND (sender_id = ? OR receiver_id = ?)', self.id, user.id, user.id).count > 0)
+    !private_message? || (Pm.where('comment_thread_id = ? AND (sender_id = ? OR receiver_id = ?)', id, user.id, user.id).count > 0)
   end
 
   def last_comment
@@ -32,9 +32,7 @@ class CommentThread < ApplicationRecord
   def get_comments(user)
     Rails.cache.fetch(cache_key_with_user(user), expires_in: 1.hour) do
       result = comments.includes(direct_user: [user_badges: [:badge]]).includes(:mentions).order(:created_at)
-      if user && (user == true || user.is_contributor?)
-        return result
-      end
+      return result if user && (user == true || user.is_contributor?)
       result.where(hidden: false)
     end
   end
@@ -44,65 +42,70 @@ class CommentThread < ApplicationRecord
   end
 
   def link
-    if self.board? && !self.owner.nil?
-      return "/#{self.owner.short_name}/#{self.id}-#{self.safe_title}"
-    end
-    "/forum/threads/#{self.id}-#{self.safe_title}"
+    return "/#{owner.short_name}/#{id}-#{safe_title}" if board? && !owner.nil?
+    "/forum/threads/#{id}-#{safe_title}"
   end
 
   def location
-    return owner.location if self.private_message?
-    return owner.link if self.video?
-    return link if !self.owner
+    return owner.location if private_message?
+    return owner.link if video?
+    return link if !owner
 
-    "#{owner.link}/#{self.id}-#{self.safe_title}"
+    "#{owner.link}/#{id}-#{safe_title}"
   end
 
   def icon
-    return self.owner.thumb if self.video?
+    return owner.thumb if video?
     user.avatar
   end
 
   def preview
-    return self.owner.title if self.video?
+    return owner.description if video?
     last_comment.preview
   end
 
   def subscribed?(user)
-    user && (self.thread_subscriptions.where(user_id: user_id).count > 0)
+    user && (thread_subscriptions.where(user_id: user_id).count > 0)
   end
 
   def subscribe(user)
-    self.thread_subscriptions.create(user_id: user_id)
+    thread_subscriptions.create(user_id: user_id)
   end
 
   def unsubscribe(user)
-    self.thread_subscriptions.where(user_id: user_id).destroy_all
+    thread_subscriptions.where(user_id: user_id).destroy_all
   end
 
   def toggle_subscribe(user)
     return false if !user
 
-    if self.subscribed?(user)
-      self.unsubscribe(user)
+    if subscribed?(user)
+      unsubscribe(user)
       return false
     end
-    self.subscribe(user)
+    subscribe(user)
     true
   end
 
   def bump(sender, params, comment)
-    if self.owner_type == 'Pm'
-      return self.owner.bump(sender, params, comment)
-    end
+    return owner.bump(sender, params, comment) if private_message?
+    subscribe(sender) if !sender.dummy? && sender.subscribe_on_reply? && !subscribed?(sender)
+    return owner.bump(sender, params, comment) if video?
 
-    if !sender.dummy? && sender.subscribe_on_reply? && !self.subscribed?(sender)
-      self.subscribe(sender)
-    end
-
-    receivers = self.thread_subscriptions.pluck(:user_id) - [sender.id]
-
-    Notification.notify_receivers(receivers, self,
-      "#{sender.username} has posted a reply to <b>#{self.title}</b>", self.location)
+    Notification.send_to(
+      (thread_subscriptions.pluck(:user_id) - [sender.id]),
+      notification_params: {
+        message: "#{sender.username} has posted a reply to <b>#{title}</b>",
+        location: location,
+        originator: self
+      },
+      toast_params: {
+        title: "@#{user.username} replied to <b>#{title}</b>",
+        params: {
+          badge: '/favicon.ico',
+          icon: user.avatar,
+          body: comment.preview
+        }
+      })
   end
 end

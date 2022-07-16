@@ -9,9 +9,9 @@ class Report < ApplicationRecord
 	scope :open, -> { where(resolved: nil) }
 	scope :closed, -> { where(resolved: false) }
 	scope :solved, -> { where(resolved: true) }
-	
+
 	scope :change_status, ->(status) { update_all(resolved: STATE_TO_STATUS[status][1]) }
-	
+
 	STATE_TO_STATUS = {
 		open: [:reopened, nil],
 		close: [:closed, false],
@@ -32,13 +32,13 @@ class Report < ApplicationRecord
 	end
 
 	def self.generate_report!(title, message, params)
-		Report.create_report!(title, params).notify_admins(message)
+		Report.create_report!(title, params).send_update_notification(message)
 	end
 
 	def self.report_on(title, message, params)
 		report = Report.create_report!(title, params)
 		yield(report)
-		report.notify_admins(message)
+		report.send_update_notification(message)
 	end
 
 	def self.create_report!(title, params)
@@ -50,11 +50,6 @@ class Report < ApplicationRecord
 		report
 	end
 
-	def notify_admins(message)
-		self.save!
-		Notification.notify_admins(self, message, self.comment_thread.location)
-	end
-
 	def note
 		other
 	end
@@ -64,7 +59,7 @@ class Report < ApplicationRecord
 	end
 
 	def link
-		"/admin/reports/#{self.id}"
+		"/admin/reports/#{id}"
 	end
 
 	def write(msg)
@@ -72,7 +67,7 @@ class Report < ApplicationRecord
 	end
 
 	def status
-		self.resolved.nil? ? "Open" : self.resolved ? "Resolved" : "Closed"
+		resolved.nil? ? "Open" : resolved ? "Resolved" : "Closed"
 	end
 
 	def source_label
@@ -82,23 +77,41 @@ class Report < ApplicationRecord
 	def open?
 		self.resolved.nil?
 	end
-	
+
 	def icon
 		'/favicon.ico'
 	end
-	
+
 	def preview
 		comment_thread.title
 	end
-	
+
 	def change_status(sender, state)
 		status = STATE_TO_STATUS[state]
-		
+
 		if self.resolved != status[1]
 			self.resolved = status[1]
-			self.notify_admins("Report <b>#{comment_thread.title}</b> has been #{status[0]}")
+			send_update_notification("Report <b>#{comment_thread.title}</b> has been #{status[0]}")
 		end
-		
+
 		self.resolved
+	end
+
+	def send_update_notification(message)
+		save!
+    Notification.send_to_admins(
+      notification_params: {
+        message: message,
+        location: link,
+        originator: comment_thread
+      },
+      toast_params: {
+        title: 'Update from report',
+        params: {
+          badge: '/favicon.ico',
+          icon: '/favicon.ico',
+          body: message
+        }
+    })
 	end
 end
