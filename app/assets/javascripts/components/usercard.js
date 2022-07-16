@@ -4,35 +4,64 @@
 import { addDelegatedEvent } from '../jslim/events';
 import { ajaxGet } from '../utils/ajax';
 
-function openUsercard(sender, usercard) {
-  const newUsercard = usercard.cloneNode(true);
-  sender.appendChild(newUsercard);
-  requestAnimationFrame(() => newUsercard.classList.add('shown'));
-  setTimeout(() => {
-    if (usercard.parentNode) usercard.parentNode.removeChild(usercard);
-  }, 500);
+const INITIAL_CONTENT = `<li class="bio"><i class="fa fa-circle-o-notch fa-spin"></i></li>`;
+const FAILED_CONTENT = `<li class="bio"><i class="fa red fa-warning"></i></div>`;
+const loadedCards = {};
+
+function loadCard(id) {
+  if (!loadedCards[id]) {
+    let pendingElement;
+    ajaxGet(`/users/${id}/hovercard`).text(html => {
+      if (pendingElement) {
+        showCard(pendingElement, html);
+      }
+
+      loadedCards[id] = el => showCard(getCard(el), html);
+    }).catch(() => {
+      loadedCards[id] = null;
+      if (pendingElement) {
+        showCard(pendingElement, FAILED_CONTENT);
+        pendingElement.classList.add('failed');
+      }
+    });
+
+    loadedCards[id] = el => pendingElement = getCard(el);
+  }
+  
+  return loadedCards[id];
 }
 
-function closeUsercard() {
-  document.querySelectorAll('.user-link .hovercard.shown').forEach(a => a.classList.remove('shown'));
+function getCard(parent) {
+  let card = parent.querySelector('.hovercard');
+  if (!card) {
+    parent.insertAdjacentHTML('beforeend', `<div class="hovercard loading transitional hidden">${INITIAL_CONTENT}</div>`);
+    card = parent.lastChild;
+    requestAnimationFrame(() => card.classList.remove('hidden'));
+  }
+  
+  if (card.classList.contains('failed')) {
+    card.classList.remove('failed');
+    card.classList.add('loading');
+    card.innerHTML = INITIAL_CONTENT;
+  }
+  
+  return card;
 }
 
-addDelegatedEvent(document, 'mouseout', '.user-link', closeUsercard);
-addDelegatedEvent(document, 'mouseover', '.user-link', function(e) {
+function showCard(card, content) {
+  card.innerHTML = content;
+  card.classList.toggle('loading', content == FAILED_CONTENT);
+}
+
+function triggerCard(e, target) {
   if (e.target.closest('.user-link-ignore')) return;
-  closeUsercard();
-  
-  const id = parseInt(this.dataset.id) || 0;
-  if (id <= 0) return;
-  
-  let usercard = document.querySelector(`.hovercard[data-id="${id}"]`);
-  if (usercard) return openUsercard(this, usercard);
-  
-  this.insertAdjacentHTML('beforeend', `<div class="hovercard" data-id="${id}"></div>`);
-  usercard = this.lastChild;
-  
-  ajaxGet(`/users/${id}/hovercard`).text(text => {
-    usercard.innerHTML = text;
-    usercard.classList.add('shown');
-  });
-});
+  const id = parseInt(target.dataset.id) || 0;
+  if (id > 0) {
+    loadCard(id)(target);
+  }
+  e.preventDefault();
+}
+
+addDelegatedEvent(document, 'mouseover', '.user-link', triggerCard);
+addDelegatedEvent(document, 'touchstart', '.user-link', triggerCard);
+addDelegatedEvent(document, 'focus', '.user-link', triggerCard);

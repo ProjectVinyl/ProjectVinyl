@@ -17,10 +17,16 @@
   --gradient-dark: #f5f5ff;
   --gradient-middle: #f8f8ff;
 }
-.hovercard.shown {
+.user-link:focus .hovercard:not(.hidden),
+.user-link:focus-within .hovercard:not(.hidden),
+.user-link:hover .hovercard:not(.hidden) {
   transform: scaleY(1);
   visibility: visible;
   opacity: 1;
+}
+.hovercard.loading .bio {
+  min-height: 0;
+  transition: min-height 0.25s ease;
 }
 
 .post .hovercard .avatar-wrapper {
