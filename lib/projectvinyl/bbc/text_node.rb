@@ -26,7 +26,7 @@ module ProjectVinyl
       end
 
       def inner_text
-        CGI::escapeHTML @inner_text
+        CGI::escapeHTML CGI.unescapeHTML(@inner_text)
       end
 
       def inner(type)
