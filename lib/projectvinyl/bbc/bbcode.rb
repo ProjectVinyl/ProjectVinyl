@@ -76,10 +76,10 @@ module ProjectVinyl
         "<blockquote#{!tag.even ? ' class="even"' : ''}#{tag.attributes.only(:who, :when).to_html}>#{tag.inner_html}</blockquote>"
       end
       TagGenerator.register(:html, [:url]) do |tag|
-        "<a rel=\"nofollow\" href=\"#{tag.equals_par  || tag.inner_text}\">#{tag.inner_html}</a>"
+        "<a rel=\"noopener ugc nofollow\" href=\"#{tag.equals_par  || tag.inner_text}\">#{tag.inner_html}</a>"
       end
       TagGenerator.register(:html, [:a]) do |tag|
-        "<#{tag.tag_name} rel=\"nofollow\"#{tag.attributes.only(:href).to_html}>#{tag.inner_html}</#{tag.tag_name}>"
+        "<#{tag.tag_name} rel=\"noopener ugc nofollow\"#{tag.attributes.only(:href).to_html}>#{tag.inner_html}</#{tag.tag_name}>"
       end
       TagGenerator.register(:html, [:br]) do |tag|
         "<#{tag.tag_name} />#{tag.inner_html}"
