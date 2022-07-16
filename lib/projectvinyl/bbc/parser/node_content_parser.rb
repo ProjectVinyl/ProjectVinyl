@@ -30,7 +30,14 @@ module ProjectVinyl
             return ['', timestamp_handled] if timestamp_handled != false
           end
 
-          return ['', NodeDocumentParser.parse_document(node.append_text(text).append_node, content[index..content.length], open, close)] if content[index] == open
+          if content[index] == open
+            # Glob invalid characters
+            while index < content.length && !/[a-z0-9]/.match?(content[index + 1])
+              text << content[index]
+              index += 1
+            end
+            return ['', NodeDocumentParser.parse_document(node.append_text(text).append_node, content[index..content.length], open, close)]
+          end
 
           return [text, false]
         end
