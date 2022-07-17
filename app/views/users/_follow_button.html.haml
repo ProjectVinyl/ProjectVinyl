@@ -1,0 +1,11 @@
+- if user_signed_in? && follow_button.tag.present?
+	- watching = current_user.watches?(follow_button.tag.actual.id)
+	%button.action.state-toggle.toggle(data-action="actions/watch"
+		data-descriminator="watch" data-family="tag-flags"
+		data-id="#{follow_button.tag.id}" data-target="tags"
+		data-checked-icon="eye-slash" data-unchecked-icon="eye"
+		data-state="blue"
+		data-parent="button"){ class: watching && "blue"}
+		%span.icon= fa(watching ? :eye_slash : :eye)
+		%span.on Following
+		%span.off Follow

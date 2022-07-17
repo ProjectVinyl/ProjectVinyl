@@ -47,7 +47,8 @@ class User < ApplicationRecord
   has_many :api_tokens, dependent: :destroy
   has_many :tag_subscriptions, dependent: :destroy
 
-  has_many :watched_tags, through: :tag_subscriptions, class_name: "Tag", source: "tag"
+  has_many :watched_tags, through: :tag_subscriptions, class_name: "Tag", source: :tag
+  has_many :subscriptions, through: :watched_tags, class_name: 'User', source: :users
 
   belongs_to :album, foreign_key: "star_id"
   has_many :album_items, through: :album

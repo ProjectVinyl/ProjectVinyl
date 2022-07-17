@@ -4,6 +4,9 @@
 		%br
 		%a.name{class: @user.banned? && "banned", href: @user.link}
 			= @user.username
+	%h1
+		= render partial: 'users/follow_button', locals: {follow_button: @user}
+	%br
 	%h1.title
 		= render 'forum/badges/badges', user: @user
 	%span.registered.right

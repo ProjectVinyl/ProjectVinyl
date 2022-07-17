@@ -31,4 +31,4 @@
 	- @all.group_by(&:period).each do |week, n|
 		= render 'section', collection: n, label: week, filter: n.first.period_search_range, order: 0
 	- if @feed && @feed.length > 0
-		= render 'videos/feeds/show'
+		= render 'videos/feeds/welcome'

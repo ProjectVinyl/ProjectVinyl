@@ -1,5 +1,11 @@
 module Videos
   class FeedsController < ApplicationController
+    include Searchable
+
+    configure_ordering [ :date, :rating, [:wilson_score, :wilson_lower_bound], :heat, :length, :random, :relevance ],
+      search_action: :search_index_path,
+      only: [ :show ]
+
     def show
       return redirect_to action: "index", controller: "welcome" if !user_signed_in?
 
@@ -7,12 +13,16 @@ module Videos
       current_user.save
 
       @records = TagSubscription.feed_items(current_user, current_filter)
+      @records = Pagination.paginate(@records, params[:page].to_i, 30, params[:order].to_i == 1)
+      @watched_tags = current_user.watched_tags
+      @watched_users = current_user.subscriptions
 
-      render_pagination @records, params[:page].to_i, 30, params[:order].to_i == 1, {
-        partial: partial_for_type(:videos),
-        type: :videos,
-        table: 'videos/feed',
-        label: 'Feed'
+      render_paginated @records, {
+        is_admin: false,
+        resource: 'feed',
+        table: 'videos',
+        label: 'Video',
+        template: 'videos/feeds/show'
       }
     end
 

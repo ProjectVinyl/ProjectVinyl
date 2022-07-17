@@ -1,0 +1,31 @@
+- title "#{current_user.username}'s Subscriptions"
+%section.page.full-width
+	- watched_tags_count = @watched_tags.count
+	%h1
+		Watched Tags
+		= surround '(', ')' do
+			= watched_tags_count
+	%br
+	.tag-list
+		- if watched_tags_count == 0
+			%p
+				%b You're not following any tags.
+				%br
+				Click "watch" on a tag that you would like to follow to have it's content appear
+				here and on the home page.
+		- else
+			= render partial: 'tags/thumb/normal', collection: @watched_tags
+	%hr
+	%h1 Recently Posted Videos
+	- if items.count > 0
+		= render layout: 'pagination/paginated', locals: { type: type, paginated: items, id: :page } do
+			%section.search-result
+				%ul.horizontal{id: table, class: "#{label.underscore}-list"}
+					= render partial: partial, collection: items.records
+	- else
+		= render 'videos/feeds/mail_derpy'
+	%h1 Subscriptions
+	- if @watched_users.count > 0
+		%section.search-result
+			%ul.horizontal{id: 'users', class: "user-list latest"}
+				= render partial: 'users/thumb/normal', collection: @watched_users

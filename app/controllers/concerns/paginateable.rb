@@ -13,7 +13,7 @@ module Paginateable
 
   def render_paginated(pagination, locals = {})
     locals[:partial] = partial_for_type(locals[:table], locals[:is_admin]) if !locals.key?(:partial)
-    locals[:type] = "#{locals[:scope] ? locals[:scope].to_s + "/" : ""}#{locals[:table]}"
+    locals[:type] = "#{locals[:scope] ? locals[:scope].to_s + "/" : ""}#{locals[:table]}#{locals[:resource] ? '/' + locals[:resource].to_s : ''}"
     locals[:items] = pagination
 
     return render json: pagination_json_for_render(pagination, locals) if locals[:as] == :json || params[:format] == 'json'
