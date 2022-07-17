@@ -6,6 +6,4 @@
 				- if paginated.count > 0
 					= render partial: 'inbox/pm/thumb', collection: paginated.records
 				- else
-					.mail_derpy
-						.derpy
-						%div Nu-uh, no messages here
+					= render partial: 'inbox/pm/mailderpy'
