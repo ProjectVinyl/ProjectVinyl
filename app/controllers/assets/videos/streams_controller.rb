@@ -17,7 +17,7 @@ module Assets
         mime = Mimes.mime('.' + params[:format])
         return render status: :bad_request, plain: "Bad Request" if !valid_media_mime?(mime)
 
-        file = get_file(video, params[:format], mime)
+        file = locate_matching_file(video, params[:format], mime)
         return serve_direct(file, mime) if file.exist?
 
         send_file_headers!(
@@ -41,7 +41,7 @@ module Assets
         end
       end
 
-      def get_file(video, format, mime)
+      def locate_matching_file(video, format, mime)
         return video.video_path if video.file == '.' + format
         return video.webm_path if format == 'webm'
         return video.audio_path if format == 'mp3'

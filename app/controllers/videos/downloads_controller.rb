@@ -18,7 +18,7 @@ module Videos
 
       sent_file_name = "#{@video.id}_#{@video.title}_by_#{@video.artist_tags.to_tag_string}.#{params[:format]}"
 
-      file = get_file(@video, params[:format], mime)
+      file = locate_matching_file(@video, params[:format], mime)
       if file.exist?
         response.headers['Content-Length'] = file.size.to_s
         return send_file(file,
@@ -45,7 +45,7 @@ module Videos
     end
 
     private
-    def get_file(video, format, mime)
+    def locate_matching_file(video, format, mime)
       return video.video_path if video.file == '.' + format
       return video.webm_path if format == 'webm'
       return video.audio_path if format == 'mp3'
