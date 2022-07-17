@@ -3,6 +3,7 @@ class Comment < ApplicationRecord
   include Indirected
   include Statable
   include UserCachable
+  include OpenIdentifier
 
   belongs_to :comment_thread, touch: true
 
@@ -21,8 +22,6 @@ class Comment < ApplicationRecord
   }
   scope :of_type, ->(owner_type) { visible.where("comment_threads.owner_type = ?", owner_type) }
   scope :with_threads, ->(owner_type) { visible.includes(:direct_user, :comment_thread).of_type(owner_type) }
-  scope :encode_open_id, ->(i) { i.to_s(36) }
-  scope :decode_open_id, ->(s) { s.to_i(36) }
 
   after_save :dispatch_mentions, if: :saved_change_to_bbc_content?
   after_create :bump_thread
@@ -57,14 +56,6 @@ class Comment < ApplicationRecord
 
   def liked?
     (respond_to? :is_liked_flag) && is_liked_flag
-  end
-
-  def get_open_id
-    oid
-  end
-
-  def oid
-    Comment.encode_open_id(id)
   end
 
   def page(order = :id, per_page = 30, reverse = false)

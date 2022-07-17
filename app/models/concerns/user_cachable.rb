@@ -20,6 +20,6 @@ module UserCachable
   end
 
   def cache_key_with_user(user, *rest)
-    "#{cache_key_with_version}_#{UserCachable.user_role_suffex(user)}_#{rest.join('_')}"
+    "#{cache_key}_#{UserCachable.user_role_suffex(user)}_#{rest.join('_')}"
   end
 end

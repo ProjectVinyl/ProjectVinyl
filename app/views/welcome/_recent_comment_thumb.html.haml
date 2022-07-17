@@ -6,7 +6,7 @@
 		%div
 			%a{href: recent_comment_thumb.link}
 				= precede '#' do
-					= recent_comment_thumb.get_open_id
+					= recent_comment_thumb.oid
 			by 
 			- if recent_comment_thumb.anonymous?
 				%b= recent_comment_thumb.user.username

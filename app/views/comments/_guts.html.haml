@@ -1,5 +1,5 @@
 = render "comments/guts/#{indirect ? 'indirect_' : ''}bio", comment: comment
-.content{"data-id": comment.id, "data-o-id": comment.get_open_id, "data-comment": comment.bbc_content}
+.content{"data-id": comment.id, "data-o-id": comment.oid, "data-comment": comment.bbc_content}
 	= render 'comments/guts/actions', comment: comment, indirect: indirect
 	= render 'comments/guts/name', comment: comment, indirect: indirect
 

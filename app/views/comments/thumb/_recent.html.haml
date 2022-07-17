@@ -10,7 +10,7 @@
 		%div
 			%a{href: recent.link}
 				= precede '#' do
-					= recent.get_open_id
+					= recent.oid
 			by 
 			- if recent.anonymous?
 				%b= recent.user.username
