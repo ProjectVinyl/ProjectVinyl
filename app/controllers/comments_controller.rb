@@ -31,7 +31,7 @@ class CommentsController < Comments::BaseCommentsController
       comment.bbc_content = params[:content]
       comment.save
       render json: {
-				content: comment.preview
+				content: comment.html_content
       }
     end
   end

@@ -78,14 +78,6 @@ class Report < ApplicationRecord
 		self.resolved.nil?
 	end
 
-	def icon
-		'/favicon.ico'
-	end
-
-	def preview
-		comment_thread.title
-	end
-
 	def change_status(sender, state)
 		status = STATE_TO_STATUS[state]
 

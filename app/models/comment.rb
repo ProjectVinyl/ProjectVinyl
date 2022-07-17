@@ -91,7 +91,7 @@ class Comment < ApplicationRecord
     )
   end
 
-  def preview
+  def html_content
     BbcodeHelper.emotify bbc_content
   end
 
@@ -99,7 +99,7 @@ class Comment < ApplicationRecord
     {
       badge: '/favicon.ico',
       icon: user.avatar,
-      body: preview
+      body: BbcodeHelper.textify(bbc_content)
     }
   end
 

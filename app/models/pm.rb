@@ -116,11 +116,7 @@ class Pm < ApplicationRecord
       },
       toast_params: {
         title: "@#{reply.user.username} replied to your message",
-        params: {
-          badge: '/favicon.ico',
-          icon: reply.user.avatar,
-          body: reply.preview
-        }
+        params: reply.toast_params
     })
   end
 

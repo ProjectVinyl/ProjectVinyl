@@ -59,11 +59,6 @@ class CommentThread < ApplicationRecord
     user.avatar
   end
 
-  def preview
-    return owner.description if video?
-    last_comment.preview
-  end
-
   def subscribed?(user)
     user && (thread_subscriptions.where(user_id: user_id).count > 0)
   end
