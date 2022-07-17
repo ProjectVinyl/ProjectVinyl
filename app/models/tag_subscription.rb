@@ -12,7 +12,7 @@ class TagSubscription < ApplicationRecord
     update_users(false, dropped, preserved_recievers)
   end
 
-  def self.get_feed_items(user, current_filter)
+  def self.feed_items(user, current_filter)
     tag_ids = user.tag_subscriptions.expanded_tags
     tags = Tag.where('id IN (?)', tag_ids).actual_names
 

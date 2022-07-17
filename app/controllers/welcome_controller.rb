@@ -61,6 +61,6 @@ class WelcomeController < ApplicationController
               .records
               .for_thumbnails(current_user)
               .first
-    @feed = TagSubscription.get_feed_items(current_user, current_filter).limit(15) if user_signed_in?
+    @feed = TagSubscription.feed_items(current_user, current_filter).limit(15) if user_signed_in?
   end
 end

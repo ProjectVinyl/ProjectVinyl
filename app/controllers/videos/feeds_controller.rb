@@ -6,7 +6,7 @@ module Videos
       current_user.feed_count = 0
       current_user.save
 
-      @records = TagSubscription.get_feed_items(current_user, current_filter)
+      @records = TagSubscription.feed_items(current_user, current_filter)
 
       render_pagination @records, params[:page].to_i, 30, params[:order].to_i == 1, {
         partial: partial_for_type(:videos),
