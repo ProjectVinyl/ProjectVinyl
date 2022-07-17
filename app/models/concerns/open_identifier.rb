@@ -2,7 +2,7 @@ module OpenIdentifier
   extend ActiveSupport::Concern
 
   included do
-    scope :encode_open_id, ->(i) { i.to_s(36) }
+    scope :encode_open_id, ->(i) { i.to_s(36).rjust(6, '0') }
     scope :decode_open_id, ->(s) { s.to_i(36) }
   end
 
