@@ -14,11 +14,6 @@ module Heated
     downvotes
   end
 
-  def get_computed_score
-    compute_score if score.nil?
-    score
-  end
-
   def compute_hotness(defer = true)
     touch(:boosted_at)
     self.heat = __boost_multiplier

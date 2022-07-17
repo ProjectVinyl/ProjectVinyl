@@ -74,13 +74,6 @@ class Pm < ApplicationRecord
       .find_each{|t| t.send_reply_notification(comment) }
   end
 
-  def get_tab_type(user)
-    if self.state == STATE_NORMAL
-      return self.sender_id == user.id ? 'sent' : 'received'
-    end
-    'deleted'
-  end
-
   def last_comment
     new_comment
   end
