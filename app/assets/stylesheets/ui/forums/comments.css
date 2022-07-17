@@ -112,13 +112,17 @@ label.focus .content {
   position: relative;
 }
 .comment .content.posting .posting-spinner {
-  display: inline;
-  width: 100%;
+  display: inline-block !important;
   position: absolute;
-  top: 30%;
-  left: 0;
+  top: 50%;
+  left: 50%;
+  transform: translateX(-50%) translateY(-50%);
 }
-.comment .content.posting button.green span {
+.comment .content.posting .button.green {
+  opacity: 0.8;
+  pointer-events: none;
+}
+.comment .content.posting .button.green span {
   opacity: 0;
 }
 

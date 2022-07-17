@@ -27,7 +27,8 @@
 					.button.green.split-button.popper
 						.post-submitter.disable(type="button" data-thread-id="#{@thread.id}" data-order="#{@order}" data-url="#{comments_path}" data-anonymous="0")>
 							%span Post Comment
-							%i.posting-spinner.fa.fw.fa-spinner.fa-spin
+							.posting-spinner
+								%i.fa.fw.fa-spinner.fa-spin
 						.divider
 						%ul.pop-out
 							%li.action.post-submitter.disable(data-thread-id="#{@thread.id}" data-order="#{@order}" data-url="#{comments_path}" data-anonymous="1")>
