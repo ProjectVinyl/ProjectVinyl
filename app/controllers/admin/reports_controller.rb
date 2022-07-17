@@ -15,8 +15,7 @@ module Admin
       
       @thread = @report.comment_thread
       @order = '0'
-      
-      @comments = Pagination.paginate(@thread.get_comments(true), (params[:page] || -1).to_i, 10, false)
+      @comments = @thread.pagination(current_user, page: (params[:page] || -1).to_i, user_is_contributor: true)
       @reportable = @report.reportable
       @user = @report.user
       @crumb = {

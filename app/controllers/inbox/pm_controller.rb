@@ -12,7 +12,7 @@ module Inbox
       
       @order = params[:order].to_i
       @thread = @pm.comment_thread
-      @comments = Pagination.paginate(@thread.get_comments(current_user), (params[:page] || -1).to_i, 10, @order == 1)
+      @comments = @thread.pagination(current_user, page: (params[:page] || -1).to_i, reverse: @order == 1)
       @crumb = {
         stack: [
           { link: "/inbox", title: "Messages" }

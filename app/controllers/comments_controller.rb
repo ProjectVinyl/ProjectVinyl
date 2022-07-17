@@ -17,8 +17,7 @@ class CommentsController < Comments::BaseCommentsController
     )
 
     @reverse = params[:order] == '1'
-    @records = @thread.get_comments(current_user).with_likes(current_user)
-    @records = Pagination.paginate(@records, @reverse ? 0 : -1, 10, @reverse)
+    @records = @thread.pagination(current_user, page: (params[:page] || -1).to_i, reverse: @reverse)
 
     @json = pagination_json_for_render @records, partial: 'comments/comment', indirect: false
     @json[:focus] = comment.oid

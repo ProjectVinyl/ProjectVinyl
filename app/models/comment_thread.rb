@@ -29,12 +29,21 @@ class CommentThread < ApplicationRecord
     @last_comment || @last_comment = comments.order(:created_at, :updated_at).reverse_order.limit(1).first
   end
 
-  def get_comments(user)
-    Rails.cache.fetch(cache_key_with_user(user), expires_in: 1.hour) do
-      result = comments.includes(direct_user: [user_badges: [:badge]]).includes(:mentions).order(:created_at)
-      return result if user && (user == true || user.is_contributor?)
-      result.where(hidden: false)
+  def pagination(current_user, page: -1, reverse: false, page_size: 10, user_is_contributor: false, expires_in: 1.hour)
+    Rails.cache.fetch(cache_key_with_user(user, page, reverse, page_size, user_is_contributor), expires_in: expires_in) do
+      Pagination.paginate(comments_for_pagination(current_user, user_is_contributor: user_is_contributor),
+        page, page_size, reverse
+      )
     end
+  end
+
+  def comments_for_pagination(current_user, user_is_contributor: false)
+    result = comments
+            .includes(direct_user: [user_badges: [:badge]])
+            .includes(:mentions)
+            .order(:created_at)
+    return result.with_likes(current_user) if user && (user_is_contributor || user.is_contributor?)
+    result.where(hidden: false).with_likes(current_user)
   end
 
   def description

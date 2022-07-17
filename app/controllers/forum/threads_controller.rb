@@ -24,10 +24,7 @@ module Forum
       
       @order = params[:order] == '1'
       @modifications_allowed = user_signed_in? && (current_user.id == @thread.user_id || current_user.is_contributor?)
-      @comments = Pagination.paginate(
-        @thread.get_comments(current_user)
-               .with_likes(current_user),
-        @page, 10, @order)
+      @comments = @thread.pagination(current_user, page: @page, reverse: @order)
       
       render_paginated @comments, partial: 'comments/comment', as: :json, indirect: false if params[:format] == 'json'
     end
