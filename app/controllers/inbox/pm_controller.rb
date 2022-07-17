@@ -34,7 +34,7 @@ module Inbox
     def create
       return redirect_to action: :index, controller: :welcome if !user_signed_in?
 
-      recipients = User.get_as_recipients(params[:thread][:recipient])
+      recipients = User.as_recipients(params[:thread][:recipient])
 
       return redirect_to action: :index, controller: :welcome if recipients.length == 0
 

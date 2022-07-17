@@ -65,7 +65,7 @@ class User < ApplicationRecord
   scope :by_name_or_id, ->(id) { where('id::text = ? OR username = ?', id, id).first }
   scope :with_badges, -> { includes(user_badges: [:badge]) }
   scope :find_matching_users, ->(term) { where('username LIKE ?', "#{term}%").order(:username).limit(10).map(&:to_json) }
-  scope :get_as_recipients, ->(users_string) { where('username IN (?)', users_string.split(',').map {|a| a.strip}.uniq) }
+  scope :as_recipients, ->(users_string) { where('username IN (?)', users_string.split(',').map {|a| a.strip}.uniq) }
 
   validates :username, presence: true, uniqueness: {
     case_sensitive: false

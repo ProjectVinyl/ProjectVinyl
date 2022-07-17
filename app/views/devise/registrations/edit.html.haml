@@ -1,6 +1,6 @@
 - title "Settings"
 - lim "900px"
-- can_api = @user == current_user && @token = ApiToken.get_token(@user)
+- can_api = @user == current_user && @token = ApiToken.for_user(@user)
 %section.page.full-width.properties.tab-set
 	%ul.tab-set.tabs
 		%li.button{@tab_selection_hash[:profile]}(data-target="profile") Profile
