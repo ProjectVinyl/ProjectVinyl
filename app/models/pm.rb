@@ -43,8 +43,7 @@ class Pm < ApplicationRecord
         owner: pm,
         total_comments: 1
       )
-      comment = thread.comments.create(user_id: sender.id)
-      comment.update_comment(message)
+      comment = thread.comments.create(user_id: sender.id, bbc_content: message)
       pm.new_comment_id = comment.id
       pm.save
 
@@ -59,18 +58,20 @@ class Pm < ApplicationRecord
           comment_thread: thread,
           new_comment: comment
         )
-        pms.send_delivery_notification([receiver.id])
+        pms.send_delivery_notification
       end
 
       return pm
     end
   end
 
-  def bump(sender, params, comment)
-    Pm.where('state = ? AND unread = false AND comment_thread_id = ? AND NOT user_id = ?', STATE_NORMAL, self.comment_thread_id, sender.id).update_all(new_comment_id: comment.id, unread: true)
-    Pm.where('state = ? AND comment_thread_id = ? AND NOT user_id = ?', STATE_NORMAL, self.comment_thread_id, sender.id).find_each do |t|
-      t.send_reply_notification(comment, self.comment_thread)
-    end
+  def comment_posted(comment)
+    Pm.where(state: STATE_NORMAL, unread: false, comment_thread_id: comment_thread_id)
+      .where.not(user_id: comment.user_id)
+      .update_all(new_comment_id: comment.id, unread: true)
+    Pm.where(state: STATE_NORMAL, comment_thread_id: comment_thread_id)
+      .where.not(user_id: comment.user_id)
+      .find_each{|t| t.send_reply_notification(comment) }
   end
 
   def get_tab_type(user)
@@ -105,13 +106,13 @@ class Pm < ApplicationRecord
     self.save
   end
 
-  def send_reply_notification(reply, thread)
+  def send_reply_notification(reply)
     Notification.send_to(
-      [user_id],
+      [user_id, sender_id],
       notification_params: {
         message: "#{reply.user.username} has posted a reply to your Private Message",
         location: location,
-        originator: thread
+        originator: comment_thread
       },
       toast_params: {
         title: "@#{reply.user.username} replied to your message",
@@ -123,9 +124,9 @@ class Pm < ApplicationRecord
     })
   end
 
-  def send_delivery_notification(receivers)
+  def send_delivery_notification
     Notification.send_to(
-      (receivers.uniq - [user_id]),
+      [receiver_id] - [sender_id],
       notification_params: {
         message: "#{sender.username} has sent you a Private Message: <b>#{comment_thread.title}</b>",
         location: location,

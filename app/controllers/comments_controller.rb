@@ -12,20 +12,14 @@ class CommentsController < Comments::BaseCommentsController
     comment = @thread.comments.create(
       user_id: anonymous_user_id,
       o_comment_thread_id: @thread.id,
-      anonymous_id: params[:anonymous] == '1' ? UserAnon.anon_id(session) : 0
+      anonymous_id: params[:anonymous] == '1' ? UserAnon.anon_id(session) : 0,
+      bbc_content: params[:comment]
     )
 
-    @thread.total_comments = @thread.comments.count
-    @thread.save
-    comment.update_comment(params[:comment])
-    
-    @thread.owner.compute_hotness.save if @thread.owner_type == 'Video'
-    @thread.bump(user, params, comment)
-    
     @reverse = params[:order] == '1'
     @records = @thread.get_comments(current_user).with_likes(current_user)
     @records = Pagination.paginate(@records, @reverse ? 0 : -1, 10, @reverse)
-    
+
     @json = pagination_json_for_render @records, partial: 'comments/comment', indirect: false
     @json[:focus] = comment.get_open_id
 
@@ -34,8 +28,10 @@ class CommentsController < Comments::BaseCommentsController
   
   def update
     check_then do |comment|
+      comment.bbc_content = params[:content]
+      comment.save
       render json: {
-				content: comment.update_comment(params[:comment])
+				content: comment.preview
       }
     end
   end

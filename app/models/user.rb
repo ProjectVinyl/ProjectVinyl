@@ -53,6 +53,8 @@ class User < ApplicationRecord
   has_many :album_items, through: :album
   belongs_to :tag
 
+  has_many :subscribers, through: :tag, class_name: 'User', source: :subscribers
+
   tag_relation :artist_genres
 
   asset_root :avatar
@@ -202,21 +204,19 @@ class User < ApplicationRecord
     false
   end
 
-  def notify_subscribers(upload)
+  def notify_subscribers(upload, receivers: nil)
+    receivers = (subscribers.pluck(:id) - [id]) if tag.present? && receivers.nil?
+    return if receivers.blank?
     Notification.send_to(
-      (receivers.uniq - [id]),
+      receivers,
       notification_params: {
         message: "#{username} has just <b>uploaded</b> a new video!",
         location: upload.link,
         originator: upload
       },
       toast_params: {
-        title: "@#{user.username} uploaded a new video",
-        params: {
-          badge: '/favicon.ico',
-          icon: upload.thumb,
-          body: BbcodeHelper.emotify(upload.title)
-        }
+        title: "@#{username} uploaded a new video",
+        params: upload.toast_params
     })
   end
 

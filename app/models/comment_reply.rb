@@ -2,7 +2,7 @@ class CommentReply < ApplicationRecord
   belongs_to :parent, class_name: "Comment"
   belongs_to :comment
 
-  def notify_recipients(receivers, comment)
+  def self.notify_recipients(receivers, comment)
     Notification.send_to(
       (receivers.uniq - [comment.user_id]),
       notification_params: {
@@ -12,11 +12,7 @@ class CommentReply < ApplicationRecord
       },
       toast_params: {
         title: "@#{comment.user.username} replied",
-        params: {
-          badge: '/favicon.ico',
-          icon: comment.user.avatar,
-          body: comment.preview
-        }
+        params: comment.toast_params
     })
   end
 end

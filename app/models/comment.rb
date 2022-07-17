@@ -12,39 +12,20 @@ class Comment < ApplicationRecord
 
   scope :decorated, -> { includes(:likes, :direct_user, :mentions) }
   scope :with_owner, -> { includes(comment_thread: [:owner]) }
-  scope :visible, -> {
-    joins(:comment_thread).where("comments.hidden = false AND comment_threads.owner_type != 'Report' AND comment_threads.owner_type != 'Pm'")
-  }
+  scope :visible, -> { joins(:comment_thread).where("comments.hidden = false AND NOT comment_threads.owner_type IN ('Report', 'Pm')") }
   scope :with_likes, ->(user) {
-    if !user.nil?
+    if user.present?
       return joins("LEFT JOIN comment_votes ON comment_votes.comment_id = comments.id AND comment_votes.user_id = #{user.id}")
         .select('comments.*, comment_votes.user_id AS is_liked_flag')
     end
   }
-  scope :of_type, ->(owner_type) {
-    visible.where("comment_threads.owner_type = ?", owner_type)
-  }
-  scope :with_threads, ->(owner_type) {
-    visible.includes(:direct_user, :comment_thread).of_type(owner_type)
-  }
-
-  def liked?
-    (respond_to? :is_liked_flag) && is_liked_flag
-  end
-
+  scope :of_type, ->(owner_type) { visible.where("comment_threads.owner_type = ?", owner_type) }
+  scope :with_threads, ->(owner_type) { visible.includes(:direct_user, :comment_thread).of_type(owner_type) }
   scope :encode_open_id, ->(i) { i.to_s(36) }
   scope :decode_open_id, ->(s) { s.to_i(36) }
 
-  def update_comment(bbc)
-    self.bbc_content = bbc
-    bbc = Comment.parse_bbc_with_replies_and_mentions(bbc, self.comment_thread)
-
-    self.save
-    self.send_reply_tos(bbc[:replies])
-    send_mention_notification(bbc[:mentions])
-
-    bbc[:html]
-  end
+  after_save :dispatch_mentions, if: :saved_change_to_bbc_content?
+  after_create :bump_thread
 
   def self.parse_bbc_with_replies_and_mentions(bbc, sender)
     mentions = []
@@ -55,22 +36,13 @@ class Comment < ApplicationRecord
     nodes.set_resolver do |trace, tag_name, tag, fallback|
       if tag_name == :at
         if user = User.find_for_mention(tag.inner_text)
-          if !trace.include?(:q) && (!sender.private_message? || sender.contributing?(user))
-            mentions << user.id
-          end
+          mentions << user.id if !trace.include?(:q) && (!sender.private_message? || sender.contributing?(user))
           next "<a class=\"user-link\" data-id=\"#{user.id}\" href=\"#{user.link}\">#{user.username}</a>"
         end
       end
 
-      if tag_name == :reply && !trace.include?(:q)
-        replies << Comment.decode_open_id(tag.inner_text)
-      end
-
-      if tag_name == :timestamp
-        VideoChapter.read_from_node(tag) do |chapter|
-          chapters[chapter[:timestamp]] = chapter
-        end
-      end
+      replies << Comment.decode_open_id(tag.inner_text) if tag_name == :reply && !trace.include?(:q)
+      VideoChapter.read_from_node(tag){ |chapter| chapters[chapter[:timestamp]] = chapter } if tag_name == :timestamp
 
       fallback.call
     end
@@ -83,12 +55,20 @@ class Comment < ApplicationRecord
     }
   end
 
+  def liked?
+    (respond_to? :is_liked_flag) && is_liked_flag
+  end
+
   def get_open_id
-    Comment.encode_open_id(self.id)
+    oid
+  end
+
+  def oid
+    Comment.encode_open_id(id)
   end
 
   def page(order = :id, per_page = 30, reverse = false)
-    position = Comment.where("comment_thread_id = ? AND #{order} #{reverse ? '>' : '<'}= ?", self.comment_thread_id, self.send(order)).count
+    position = Comment.where("comment_thread_id = ? AND #{order} #{reverse ? '>' : '<'}= ?", comment_thread_id, send(order)).count
     (position.to_f / per_page).ceil
   end
 
@@ -110,7 +90,7 @@ class Comment < ApplicationRecord
   end
 
   def link
-    "#{comment_thread.location}#comment_#{get_open_id}"
+    "#{comment_thread.location}#comment_#{oid}"
   end
 
   def report(sender_id, params)
@@ -122,6 +102,14 @@ class Comment < ApplicationRecord
 
   def preview
     BbcodeHelper.emotify bbc_content
+  end
+
+  def toast_params
+    {
+      badge: '/favicon.ico',
+      icon: user.avatar,
+      body: preview
+    }
   end
 
   def send_mention_notification(receivers)
@@ -141,22 +129,18 @@ class Comment < ApplicationRecord
       },
       toast_params: {
         title: "@#{user.username} mentioned you",
-        params: {
-          badge: '/favicon.ico',
-          icon: user.avatar,
-          body: preview
-        }
+        params: toast_params
     })
   end
 
-  def send_reply_tos(items)
-    CommentReply.where(parent_id: self.id).delete_all
+  def send_reply_notification(items)
+    CommentReply.where(parent_id: id).delete_all
     items = items.uniq
     if !items.empty?
       receivers = []
-      replied_to = (Comment.where('id IN (?) AND comment_thread_id = ?', items, self.comment_thread_id).map do |i|
+      replied_to = (Comment.where('id IN (?) AND comment_thread_id = ?', items, comment_thread_id).map do |i|
         receivers << i.user_id
-        "(#{i.id},#{self.id})"
+        "(#{i.id},#{id})"
       end).join(', ')
       if !replied_to.empty?
         CommentReply.notify_recipients(receivers, self)
@@ -165,4 +149,16 @@ class Comment < ApplicationRecord
     end
   end
 
+  private
+  def dispatch_mentions
+    bbc = Comment.parse_bbc_with_replies_and_mentions(bbc_content, comment_thread)
+    send_reply_notification(bbc[:replies])
+    send_mention_notification(bbc[:mentions])
+  end
+
+  def bump_thread
+    comment_thread.total_comments = comment_thread.comments.count
+    comment_thread.save
+    comment_thread.comment_posted(self)
+  end
 end

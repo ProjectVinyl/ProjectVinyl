@@ -87,25 +87,23 @@ class CommentThread < ApplicationRecord
     true
   end
 
-  def bump(sender, params, comment)
-    return owner.bump(sender, params, comment) if private_message?
-    subscribe(sender) if !sender.dummy? && sender.subscribe_on_reply? && !subscribed?(sender)
-    return owner.bump(sender, params, comment) if video?
+  def comment_posted(comment)
+    subscribe(comment.user) if !private_message? && !comment.user.dummy? && comment.user.subscribe_on_reply? && !subscribed?(comment.user)
+    return owner.comment_posted(comment) if owner.respond_to?(:comment_posted)
+    send_reply_notification(comment)
+  end
 
+  def send_reply_notification(comment)
     Notification.send_to(
-      (thread_subscriptions.pluck(:user_id) - [sender.id]),
+      (thread_subscriptions.pluck(:user_id) - [comment.user_id]),
       notification_params: {
-        message: "#{sender.username} has posted a reply to <b>#{title}</b>",
+        message: "#{comment.user.username} has posted a reply to <b>#{title}</b>",
         location: location,
         originator: self
       },
       toast_params: {
-        title: "@#{user.username} replied to <b>#{title}</b>",
-        params: {
-          badge: '/favicon.ico',
-          icon: user.avatar,
-          body: comment.preview
-        }
+        title: "@#{comment.user.username} posted on <b>#{title}</b>",
+        params: comment.toast_params
       })
   end
 end

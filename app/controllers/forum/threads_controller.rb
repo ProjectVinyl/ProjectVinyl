@@ -47,8 +47,7 @@ module Forum
           owner_type: 'Board',
           owner_id: params[:thread][:owner_id]
         )
-        comment = thread.comments.create(user_id: current_user.id)
-        comment.update_comment(params[:thread][:description])
+        comment = thread.comments.create(user_id: current_user.id, bbc_content: params[:thread][:description])
         thread.subscribe(current_user) if current_user.subscribe_on_thread?
 
         return redirect_to action: :show, id: thread.id

@@ -266,22 +266,28 @@ class Video < ApplicationRecord
     self.width, self.height = Ffprobe.dimensions(path) if File.exist?(path)
   end
 
-  def bump(sender, params, comment)
+  def comment_posted(comment)
+    compute_hotness
+    save
     Notification.send_to(
-      (comment_thread.thread_subscriptions.pluck(:user_id) - [sender.id]),
+      (comment_thread.thread_subscriptions.pluck(:user_id) - [comment.user_id]),
       notification_params: {
-        message: "#{sender.username} has <b>commented</b> on <b>#{title}</b>",
+        message: "#{comment.user.username} has <b>commented</b> on <b>#{title}</b>",
         location: ref,
         originator: comment_thread
       },
       toast_params: {
-        title: "@#{user.username} commented",
-        params: {
-          badge: '/favicon.ico',
-          icon: thumb,
-          body: comment.preview
-        }
+        title: "@#{user.username} commented on #{title}",
+        params: comment.toast_params
       })
+  end
+
+  def toast_params
+    {
+      badge: '/favicon.ico',
+      icon: thumb,
+      body: BbcodeHelper.emotify(title) + ':' + BbcodeHelper.emotify(description)
+    }
   end
 
   def send_mention_notification(receivers)
@@ -294,12 +300,8 @@ class Video < ApplicationRecord
       },
       toast_params: {
         title: "@#{user.username} mentioned you",
-        params: {
-          badge: '/favicon.ico',
-          icon: thumb,
-          body: BbcodeHelper.emotify(description)
-        }
-    })
+        params: toast_params
+      })
   end
 
   private
