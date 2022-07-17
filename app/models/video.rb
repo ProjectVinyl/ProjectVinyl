@@ -286,7 +286,7 @@ class Video < ApplicationRecord
     {
       badge: '/favicon.ico',
       icon: thumb,
-      body: BbcodeHelper.emotify(title) + ':' + BbcodeHelper.emotify(description)
+      body: BbcodeHelper.textify(title) + ':' + BbcodeHelper.textify(description)
     }
   end
 
