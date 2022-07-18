@@ -5,6 +5,7 @@
  *= require ./error
  *= require ./previewer
  *= require ./controls/all
+ *= require ./story_cards
  *= require ./suspend
  *= require ./embed_actions
  *= require ./uploading
