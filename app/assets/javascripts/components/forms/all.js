@@ -1,7 +1,8 @@
 import './file_select';
 import './drag_target';
 import './labels';
-import './form';
+import './external_form';
+import './auto_submit';
 import './banners';
 import './videos';
 import './reports';

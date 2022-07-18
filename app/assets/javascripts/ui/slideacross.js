@@ -1,5 +1,5 @@
 import { addDelegatedEvent } from '../jslim/events';
-import { checkFormPrerequisits } from '../components/forms/form';
+import { checkFormPrerequisits } from '../utils/input_validation';
 
 function slideAcross(me, direction) {
   const form = me.closest('.slide-group');

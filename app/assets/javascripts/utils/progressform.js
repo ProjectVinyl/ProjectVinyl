@@ -2,7 +2,7 @@ import { addDelegatedEvent } from '../jslim/events';
 import { sendForm } from './xhr';
 import { triggerAjaxComplete } from './ajax';
 import { round } from '../utils/math';
-import { createWindow } from '../components/window';
+import { popupError } from '../components/popup';
 
 export function uploadForm(form, callbacks, e) {
   if (e) e.preventDefault();
@@ -60,10 +60,7 @@ export const defaultCallbacks = {
   },
   error: (error, message, percentage) => {
     if (error.length > 200) {
-      createWindow({
-        title: 'Error',
-        content: error
-      });
+      popupError(error);
     } else if (message) {
       message.innerText = error;
       message.style.setProperty('--content-offset', `calc(${percentage}% - ${message.offsetWidth / 2}px)`);

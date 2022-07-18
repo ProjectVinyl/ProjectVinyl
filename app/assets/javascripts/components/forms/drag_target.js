@@ -1,6 +1,3 @@
-/**
- * Drag targets.
- */
 import { delegateAll } from '../../jslim/events';
 
 function enterDrag() {
