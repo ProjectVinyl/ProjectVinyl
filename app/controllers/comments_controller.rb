@@ -27,7 +27,7 @@ class CommentsController < Comments::BaseCommentsController
   
   def update
     check_then do |comment|
-      comment.bbc_content = params[:content]
+      comment.bbc_content = params[:comment]
       comment.save
       render json: {
 				content: comment.html_content
