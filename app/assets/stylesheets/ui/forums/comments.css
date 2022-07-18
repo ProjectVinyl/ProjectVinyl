@@ -78,6 +78,9 @@ label.focus .content {
   display: none;
 }
 
+.comment .content.previewable:not(.editing) .toolbar {
+  display: none;
+}
 
 @media(max-width: 400px) {
   .comment .bio, .comment .content::after {

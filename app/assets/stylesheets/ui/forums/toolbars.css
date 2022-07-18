@@ -1,5 +1,6 @@
 .toolbar {
   --toolbar-border-color: #ccc;
+  --bubble-color: transparent;
   --divider-color: var(--toolbar-border-color);
   display: flex;
   border-bottom: solid 1px var(--toolbar-border-color);
