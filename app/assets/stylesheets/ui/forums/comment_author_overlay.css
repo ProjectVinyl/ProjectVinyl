@@ -1,14 +1,14 @@
 
-.comment .bio {
+.comment > .bio {
   float: left;
   padding-right: 20px;
   position: relative;
 }
-.comment .bio:hover {
+.comment > .bio:hover {
   z-index: 90;
 }
 
-.comment .bio .author-overlay,
+.comment > .bio .author-overlay,
 .comment .artist-bio .thumb {
   transition: transform 0.3s ease;
   transform: scale(0.8);
