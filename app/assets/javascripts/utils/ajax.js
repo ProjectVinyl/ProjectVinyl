@@ -6,13 +6,6 @@ import { notifyException } from '../components/notifier';
 import { csrfHeaders } from '../ujs/csrf';
 import { QueryParameters } from './queryparameters';
 
-export function handleError(response) {
-  if (!response.ok) {
-    throw new Error('Received error from server');
-  }
-  return response;
-}
-
 export function triggerAjaxComplete(data, sender) {
   return dispatchEvent('ajax:complete', data, sender);
 }
@@ -28,7 +21,10 @@ function request(method, resource, data) {
   }
   resource = `/${resource.replace(/^[\/]*/g, '')}`;
 
-  const promise = fetch(resource, params).catch(err => notifyException('Connection Error', `${method} ${resource}\n\n${err}`)).then(handleError);
+  const promise = fetch(resource, params).catch(err => notifyException('Connection Error', `${method} ${resource}\n\n${err}`)).then(response => {
+    if (!response.ok) throw new Error('Received error from server');
+    return response;
+  });
   promise.text = callback => promise.then(r => r.text()).then(triggerAjaxComplete).then(callback);
   promise.json = callback => promise.then(r => r.json()).then(triggerAjaxComplete).then(callback);
   return promise;
