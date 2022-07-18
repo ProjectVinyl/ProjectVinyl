@@ -32,7 +32,6 @@
   transition: background 0.5s ease;
   text-decoration: none;
   background: var(--bubble-color);
-  box-shadow: 0 0 3px 3px rgba(255, 255, 255, 0.05) inset;
 }
 .bubble-link:hover {
   background: var(--bubble-hover-color);

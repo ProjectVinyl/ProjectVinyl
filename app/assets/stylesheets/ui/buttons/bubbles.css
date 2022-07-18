@@ -8,7 +8,7 @@
   height: 37px;
   text-align: center;
   
-  --button-background: none;
+  --button-background: var(--bubble-color);
   --button-background-hover: var(--bubble-background-hover);
   --button-background-active: var(--bubble-background-active);
 }
