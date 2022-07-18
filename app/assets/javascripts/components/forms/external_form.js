@@ -3,7 +3,7 @@
  */
 import { ajaxGet } from '../../utils/ajax';
 import { createWindow } from '../window';
-import { moveToCenter } from '../draggable';
+import { moveToCenter } from '../../ui/draggable';
 import { addDelegatedEvent } from '../../jslim/events';
 
 function createExternalForm(target) {

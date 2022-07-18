@@ -16,3 +16,4 @@ import './editable/all';
 import './reflow';
 import './dock';
 import './contextmenu';
+import './draggable';

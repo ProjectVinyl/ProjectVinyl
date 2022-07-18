@@ -4,7 +4,7 @@
 import { addDelegatedEvent, bindEvent } from '../jslim/events';
 import { nodeFromHTML } from '../jslim/dom';
 import { Key } from '../utils/key';
-import { moveToCenter } from './draggable';
+import { moveToCenter } from '../ui/draggable';
 
 function createPopupContent(params) {
   return nodeFromHTML(`<div class="popup-container focus transitional hidden ui-draggable error-shakeable">
