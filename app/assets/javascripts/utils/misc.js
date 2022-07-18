@@ -9,10 +9,6 @@ export function tryUnmarshal(data, fallback) {
   return fallback === undefined ? data : fallback;
 }
 
-export function stopPropa(ev) {
-  ev.stopPropagation();
-}
-
 function moveAcross(to, from, func) {
   Object.keys(from).forEach(key => to[key] = func(from[key]));
   return to;
