@@ -1,3 +1,4 @@
+.video .story-cards-root,
 .video .story-cards,
 .video .story-cards .shade {
   position: absolute;
@@ -5,16 +6,23 @@
   left: 0;
   width: 100%;
   height: 100%;
-  z-index: 0;
+}
+.video .story-cards-root {
   overflow: hidden;
 }
-.video[data-state="ready"] .story-cards {
+
+.video .story-cards {
+  left: calc((100% - var(--player-width)) / 2);
+  width: var(--player-width);
+}
+.video[data-state="ready"] .story-cards-root {
   display: none;
 }
 
 .video .story-cards .shade {
   transition: background 1s ease;
   background: transparent;
+  left: var(--player-inset);
 }
 
 .video .story-cards .card {

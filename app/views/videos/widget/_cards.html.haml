@@ -1,14 +1,14 @@
-
-.story-cards.ui-draggable-context
-	%a.card.tile.ui-draggable(style="--x:15%;--y:25%;--h:50%;" data-style="video" href="/92")
-		.drag-handle
-			= render partial: 'videos/thumb/img', locals: { video: @video, spoilered: false }
-		.overlay-element.bottom.right 02:52
-		.overlay-element.top.left Loves In Bloom  Protocat Remix
-	.card.ui-draggable(style="--x:50%;--y:25%;--w:25%;--h:25%;" data-style="channel")
-		= render partial: 'users/avatar/avatar', locals: { user: current_user }
-		.content.drag-handle
-			.card-details
-				.name= current_user.username
-				.description= current_user.bio
-	.shade
+.story-cards-root
+	.story-cards.ui-draggable-context
+		%a.card.tile.ui-draggable(style="--x:15%;--y:25%;--h:50%;" data-style="video" href="/92")
+			.drag-handle
+				= render partial: 'videos/thumb/img', locals: { video: @video, spoilered: false }
+			.overlay-element.bottom.right 02:52
+			.overlay-element.top.left Loves In Bloom  Protocat Remix
+		.card.ui-draggable(style="--x:50%;--y:25%;--w:25%;--h:25%;" data-style="channel")
+			= render partial: 'users/avatar/avatar', locals: { user: current_user }
+			.content.drag-handle
+				.card-details
+					.name= current_user.username
+					.description= current_user.bio
+		.shade
