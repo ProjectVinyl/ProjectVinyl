@@ -13,6 +13,7 @@
 			= @query
 = yield
 - if @tags && @tags.length > 0
+	%hr
 	= render 'tags/set', tags: @tags
 - if c > 0
 	= render layout: 'pagination/paginated', locals: { type: 'search', paginated: @results, id: "page"} do
