@@ -32,6 +32,7 @@
   overflow: hidden;
 
   --tile-overlay-background: rgba(0, 0, 0, 0.3);
+  --content-background: #fff;
 }
 
 .video .story-cards .card:hover ~ .shade {

@@ -16,6 +16,7 @@
   --gradient-light: #fff;
   --gradient-dark: #f5f5ff;
   --gradient-middle: #f8f8ff;
+  --content-background: var(--gradient-dark);
 }
 .user-link:focus .hovercard:not(.hidden),
 .user-link:focus-within .hovercard:not(.hidden),
