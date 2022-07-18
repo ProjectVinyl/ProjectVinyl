@@ -3,9 +3,9 @@
 	%button.action.state-toggle.toggle(data-action="actions/watch"
 		data-descriminator="watch" data-family="tag-flags"
 		data-id="#{follow_button.tag.id}" data-target="tags"
-		data-checked-icon="eye-slash" data-unchecked-icon="eye"
+		data-checked-icon="eye" data-unchecked-icon="eye-slash"
 		data-state="blue"
-		data-parent="button"){ class: watching && "blue"}
-		%span.icon= fa(watching ? :eye_slash : :eye)
+		data-parent="button"){ class: watching && "toggled blue"}
+		%span.icon= fa(watching ? :eye : :eye_slash)
 		%span.on Following
 		%span.off Follow
