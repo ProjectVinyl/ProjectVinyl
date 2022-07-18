@@ -13,7 +13,7 @@
   background: url('../images/sellout/derpy.gif') center / 100%;
 }
 .donate[data-sellout-variant="tpa"] [data-message] {
-  background: url('../images/sellout/tpa.jpg') center / 100%;
+  background: url('../images/sellout/tpa.png') center / 100%;
 }
 .donate[data-sellout-variant="scoots"] [data-message] {
   background: url('../images/sellout/scoots.gif') center / 100%;
