@@ -25,7 +25,8 @@ module Forum
       @order = params[:order] == '1'
       @modifications_allowed = user_signed_in? && (current_user.id == @thread.user_id || current_user.is_contributor?)
       @comments = @thread.pagination(current_user, page: @page, reverse: @order)
-      
+
+      return render_empty_pagination 'comments/empty_set' if params[:format] == 'json' && @comments.count == 0
       render_paginated @comments, partial: 'comments/comment', as: :json, indirect: false if params[:format] == 'json'
     end
     

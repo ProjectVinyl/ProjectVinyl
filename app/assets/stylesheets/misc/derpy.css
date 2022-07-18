@@ -1,18 +1,18 @@
-.mail_derpy, .warden_derpy {
+.derpy {
   text-align: center;
   padding-top: 100px;
   padding-bottom: 100px;
   border: none;
 }
 
-.derpy {
+.derpy .derp {
   height: 200px;
 }
 
-.mail_derpy .derpy {
+.derpy .derp.variant_1 {
   background: url(/images/mail_1.svg) center/contain no-repeat;
 }
 
-.warden_derpy .derpy {
-  background: url(/images/derpy.png) center/contain no-repeat;
+.derpy .derp.variant_2 {
+  background: url(/images/mail_2.svg) center/contain no-repeat;
 }

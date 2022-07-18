@@ -1,14 +1,13 @@
 ﻿%h1 Showing- Uh, oh!
 = yield
-.warden_derpy
-	.derpy
+.derpy
+	.derp{class: (@results.lexer_error? || @results.input_error? ? "variant_2" : "variant_1") }
 	%div
 	- if @results.lexer_error?
 		You searched for
 		= surround '"' do
 			= @query
 		but I don't know what that means.
-		= emoticon_tag "applecry"
 	- elsif @results.input_error?
 		Did I do somethin' wrœñ¿6?
 	- else

@@ -23,11 +23,11 @@
 				%ul.horizontal{id: table, class: "#{label.underscore}-list"}
 					= render partial: partial, collection: items.records
 	- else
-		= render partial: 'videos/feeds/mail_derpy', locals: { message: pick_one(['Sorry, your feed is empty. :(', "Nothing here but us derp", "I don't see anything here but I'll keep looking!"]) }
+		= render partial: 'videos/feeds/mail_derpy', locals: { message: pick_one(empty_video_feed_messages) }
 	%h1 Subscriptions
 	- if @watched_users.count > 0
 		%section.search-result
 			%ul.horizontal{id: 'users', class: "user-list latest"}
 				= render partial: 'users/thumb/normal', collection: @watched_users
 	- else
-		= render partial: 'videos/feeds/mail_derpy', locals: { message: pick_one(["I don't see anything here but I'll keep looking!", "Follow a user with a tag and you will see them here"]) }
+		= render partial: 'videos/feeds/mail_derpy', locals: { message: pick_one(empty_subscription_messages) }

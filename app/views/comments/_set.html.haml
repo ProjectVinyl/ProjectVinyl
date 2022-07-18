@@ -1,4 +1,7 @@
 - if thread.length > 0
 	= render partial: 'comments/comment', collection: thread, locals: { level: 0, indirect: indirect }
 - else
-	.center No comments
+	- if @was_search
+		= render partial: 'pagination/warden_derpy'
+	- else
+		.center No Comments

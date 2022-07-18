@@ -14,7 +14,9 @@ module Forum
       @q = @q.where('comment_threads.owner_id = ?', @category) if @category > 0
 
       @results = Pagination.paginate(@q, params[:page].to_i, 20, params[:order] != '1')
+      @was_search = true
       
+      return render_empty_pagination 'pagination/warden_derpy' if params[:format] == 'json' && @results.count == 0
       render_paginated @results, partial: 'comments/comment', as: :json, indirect: true if params[:format] == 'json'
     end
   end
