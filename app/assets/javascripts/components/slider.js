@@ -3,6 +3,7 @@
  */
 import { addDelegatedEvent, dispatchEvent } from '../jslim/events';
 import { clampPercentage } from '../utils/math';
+import { captureClicks } from '../utils/event_capturing';
 
 function grabSlider(event, target) {
   function toggleBinding(mode) {
@@ -16,17 +17,14 @@ function grabSlider(event, target) {
 
   const captureClick = ev => ev.preventDefault();
   const changer = ev => jumpSlider(ev, target);
+  const releaseClick = captureClicks();
   const ender = ev => {
     target.classList.remove('interacting');
     toggleBinding('remove');
     dispatchEvent('slider:release', getPercentage(target, ev), target);
-    requestAnimationFrame(() => {
-      window.removeEventListener('click', captureClick, true);
-    });
+    releaseClick();
   };
   toggleBinding('add');
-
-  window.addEventListener('click', captureClick, true);
 }
 
 function jumpSlider(event, target) {

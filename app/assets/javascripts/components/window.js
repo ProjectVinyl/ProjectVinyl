@@ -4,12 +4,12 @@
 import { addDelegatedEvent, bindEvent } from '../jslim/events';
 import { nodeFromHTML } from '../jslim/dom';
 import { Key } from '../utils/key';
-import { initDraggable, move } from './draggable';
+import { moveToCenter } from './draggable';
 
 function createPopupContent(params) {
   return nodeFromHTML(`<div class="popup-container focus transitional hidden ui-draggable error-shakeable">
     <div class="popup">
-      <h1 class="popup-header">
+      <h1 class="popup-header drag-handle">
         <i class="fa fa-${params.icon}"></i>
         ${params.title}
         <a class="close" data-resolve="false">
@@ -57,7 +57,6 @@ function PopupWindow(dom) {
   this.dom.addEventListener('resolve', e => {
     resolve(this, e.detail.data.resolution === 'true');
   });
-  initDraggable(this.dom, 'h1.popup-header');
   this.show();
 }
 PopupWindow.prototype = {
@@ -66,7 +65,7 @@ PopupWindow.prototype = {
     document.querySelector('.fades').insertAdjacentElement('beforebegin', this.dom);
     requestAnimationFrame(() => {
       focus(this.dom);
-      this.center();
+      moveToCenter(this.dom);
     });
   },
   setContent(content) {
@@ -74,11 +73,6 @@ PopupWindow.prototype = {
   },
   setOnAccept(func) {
     this.accept = func;
-  },
-  center() {
-    const x = (document.body.offsetWidth - this.dom.offsetWidth) / 2;
-    const y = (document.body.offsetHeight - this.dom.offsetHeight) / 2;
-    move(this.dom, x, y);
   }
 }
 
