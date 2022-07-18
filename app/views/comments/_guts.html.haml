@@ -8,4 +8,5 @@
 		%textarea.comment-content(name="comment_#{comment.id}")= raw comment.bbc_content
 		%hr/
 		.actions
-			%button.green.edit-comment-submit> Edit Comment
+			%button.green.edit-comment-submit Edit Comment
+			%button.edit-comment.state-toggle(type="button" data-state="editing" data-parent=".content") Cancel
