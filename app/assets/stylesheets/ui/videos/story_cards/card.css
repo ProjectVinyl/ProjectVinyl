@@ -1,0 +1,13 @@
+.video .story-cards .card {
+  position: absolute;
+  top: var(--y);
+  left: var(--x);
+  z-index: 78;
+  opacity: 1;
+  transition: opacity 1s ease;
+
+  --tile-overlay-background: rgba(0, 0, 0, 0.3);
+  --content-background: #fff;
+  --content-padding: 10px;
+  --image-size: calc(100% - (var(--content-padding) * 2));
+}

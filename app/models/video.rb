@@ -210,6 +210,7 @@ class Video < ApplicationRecord
     {
       tab: :thumbpick,
       pending: 1,
+      nocontext: true,
       source: CGI::escape(widget_parameters(0, false, false, nil).to_json).gsub('+', '%20')
     }
   end

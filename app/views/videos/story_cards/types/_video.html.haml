@@ -1,0 +1,6 @@
+%a.card.tile.ui-draggable{ href: content.url, style: video.dimensions, data: video.widget_parameters }
+	.drag-handle
+		%img(loading="lazy"){ src: content.image,
+			data: { fallback: { src: "/images/default-cover.svg" } } }
+	.overlay-element.bottom.right= content.metadata
+	.overlay-element.top.left= content.title

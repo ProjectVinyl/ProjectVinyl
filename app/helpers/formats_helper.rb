@@ -15,13 +15,17 @@ module FormatsHelper
   end
 
   def duration(length, allow_zero: false)
-    return '--:--' if !allow_zero && length == 0
-    Ffmpeg.to_h_m_s(length, cut_leading_zero_hours: true)
+    FormatsHelper.duration(length, allow_zero: allow_zero)
   end
 
   def safe_to_display(num, max)
     num ||= 0
     return number_with_delimiter(max) + '+' if num > max
     number_with_delimiter num
+  end
+  
+  def self.duration(length, allow_zero: false)
+    return '--:--' if !allow_zero && length == 0
+    Ffmpeg.to_h_m_s(length, cut_leading_zero_hours: true)
   end
 end

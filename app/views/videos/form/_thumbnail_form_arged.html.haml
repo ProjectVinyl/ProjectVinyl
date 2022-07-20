@@ -17,9 +17,9 @@
 								%td
 									= f.button class: "action right green", name: :save, disabled: true do
 										Apply Thumbnail Change
-				.video.context-menu-parent#video(data-nocontext="true"){style: thumbnail,
-						data: video.thumb_picker_header}
-					= render 'videos/widget/slim'
+				.video.context-menu-parent#video{style: thumbnail, data: video.thumb_picker_header}
+					= render 'videos/widget/content', embed: false, include_cards: false
+					%input.playlist#time(type="hidden" name="video[time]" value="-1")
 				.progressor
 					.message Uploading...
 					.progress

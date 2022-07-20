@@ -108,6 +108,10 @@
 									= f.button class: "action red", name: :discard, data: {'form-method': :delete, confirm: '', title: 'Discard Draft'} do
 										= fa :trash_o
 								%span.spacer
+								= f.button class: "action", type: :button, data: {external_form: video.id.nil? ? videos_path : video_story_card_path(@video),
+										intention_target: 'endscreen', title: 'Edit Story Cards'} do
+									= fa :pencil_square_o
+									Edit Endscreen
 								- if allow_reupload
 									= f.button class: "action", name: :change_video, type: :button do
 										= fa :exchange

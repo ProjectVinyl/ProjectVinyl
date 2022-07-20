@@ -36,7 +36,7 @@ function remove(me, recurse) {
 
   if (!recurse) {
     container.dispatchEvent(new CustomEvent('removed', {
-      data: {target: me},
+      detail: {target: me},
       bubbles: true,
       cancellable: true
     }));

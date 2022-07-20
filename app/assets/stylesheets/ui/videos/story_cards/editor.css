@@ -1,0 +1,50 @@
+.card-editor {
+  display: flex;
+  padding: 10px;
+  gap: 10px;
+  width: 100vh;
+  min-width: 70vw;
+  max-width: 90vw;
+  min-height: 50vh;
+  max-height: 80vh;
+}
+
+.card-editor .cards {
+  display: flex;
+  flex-basis: 40%;
+  flex-grow: 1;
+  flex-direction: column;
+  padding: 10px;
+  background: var(--block-hover-color);
+  border-radius: var(--page-radius);
+}
+
+.card-editor .cards .card-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 0;
+  margin: 0;
+  flex-grow: 1;
+  overflow-y: scroll;
+  scrollbar-width: thin;
+  list-style: none;
+  background: var(--block-hover-color);
+}
+
+.card-editor .cards .card-list .card {
+  width: 100%;
+  padding: 10px;
+  border-radius: 10px;
+  flex-shrink: 0;
+  overflow: hidden;
+  border: solid 1px var(--block-border-color);
+  background: var(--bubble-hover-color);
+}
+
+.card-editor .preview-container {
+  display: flex;
+  flex-grow: 1;
+  align-items: center;
+  flex-basis: 50%;
+}

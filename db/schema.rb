@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20220715201620) do
+ActiveRecord::Schema.define(version: 20220720074814) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -277,6 +277,9 @@ ActiveRecord::Schema.define(version: 20220715201620) do
     t.string "metadata"
     t.string "image"
     t.string "url"
+    t.string "content_type"
+    t.bigint "content_id"
+    t.index ["content_type", "content_id"], name: "index_story_cards_on_content_type_and_content_id"
   end
 
   create_table "tag_histories", id: :serial, force: :cascade do |t|

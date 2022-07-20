@@ -55,6 +55,7 @@ Rails.application.routes.draw do
       resource :details, :description, :play_count, only: [:update]
       resource :download, only: [:show]
       resource :add, only: [:show, :update]
+      resource :story_card, only: [:show, :update]
     end
   end
 

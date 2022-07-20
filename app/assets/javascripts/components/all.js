@@ -1,6 +1,7 @@
 import './comments';
 import './forms/all';
 import './videos/all';
+import './card_editor/all';
 import './uploader/all';
 import './share';
 import './usercard';

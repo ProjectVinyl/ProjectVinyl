@@ -1,0 +1,24 @@
+%li.card.properties.removeable{ data: { card_id: card.id } }
+	= f.hidden_field "cards[][video_id]", value: card.video_id
+	= f.hidden_field "cards[][style]", value: card.style
+	= f.hidden_field "cards[][top]", value: card.top
+	= f.hidden_field "cards[][left]", value: card.left
+	= f.hidden_field "cards[][width]", value: card.width
+	= f.hidden_field "cards[][height]", value: card.height
+	%h3
+		User Card
+		%span.right.close
+			%a.remove.red(title="Remove")
+				%i.fa.fa-times.remove
+	%label.options
+		%span User
+		= f.hidden_field "cards[][content_type]", value: card.content_type
+		%select(name="video[cards[][content_id]]" id="video_cards__content_id" value="#{card.content_id}")
+			%optgroup(label="Current")
+				= options_for_select([ [ card.content.username, card.content_id ] ])
+			%optgroup(label="Other Users")
+				= options_from_collection_for_select(User.all.limit(10), :id, :username)
+	%label.options
+		%span Time Range
+		= f.number_field "cards[][start_time]", min: 0, max: @video.duration, class: 'time-input', value: card.start_time
+		= f.number_field "cards[][end_time]", min: 0, max: @video.duration, class: 'time-input', value: card.end_time

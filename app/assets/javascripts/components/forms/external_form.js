@@ -4,7 +4,7 @@
 import { ajaxGet } from '../../utils/ajax';
 import { createWindow } from '../window';
 import { moveToCenter } from '../../ui/draggable';
-import { addDelegatedEvent } from '../../jslim/events';
+import { addDelegatedEvent, dispatchEvent } from '../../jslim/events';
 
 function createExternalForm(target) {
   const win = createWindow({
@@ -21,7 +21,9 @@ function createExternalForm(target) {
   ajaxGet(target.dataset.externalForm).text(html => {
     win.setContent(html);
     moveToCenter(win.dom);
-    document.dispatchEvent(new CustomEvent('ajax:externalform'), { cancelable: true });
+    dispatchEvent('ajax:externalform', {
+      button: target
+    }, win.dom);
   });
 
   return win;

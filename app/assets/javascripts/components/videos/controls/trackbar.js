@@ -96,7 +96,7 @@ export function initTrackbar(player, dom) {
       timer.total.innerText = toHMS(duration)
       track.style.setProperty('--track-progress', (time / duration) * 100);
 
-      if (didBufferChange(buffer, player.video.buffered)) {
+      if (player.video && didBufferChange(buffer, player.video.buffered)) {
         updateBuffers(player.video);
       }
 

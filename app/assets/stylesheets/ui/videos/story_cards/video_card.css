@@ -1,0 +1,8 @@
+.video .story-cards .card[data-style="video"] {
+  background: black;
+  height: var(--h);
+  width: var(--w, var(--h));
+  border: solid 1px;
+  overflow: hidden;
+  box-shadow: 0 0 7px #000;
+}

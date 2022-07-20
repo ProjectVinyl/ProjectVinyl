@@ -1,0 +1,8 @@
+.card.ui-draggable{ style: channel.dimensions, data: channel.widget_parameters }
+	.content.drag-handle
+		.card-details
+			%a.name{href: content.url}= content.title
+			.description= content.metadata
+	.avatar-wrapper
+		.avatar
+			%span{style: format_bg(content.image)}
