@@ -10,6 +10,7 @@
 	= f.hidden_field "cards[][start_time]", class: 'time-input', value: card.start_time
 	= f.hidden_field "cards[][end_time]", class: 'time-input', value: card.end_time
 	%h3
+		%span.handle= fa :ellipsis_v
 		Custom Card
 		%span.right.close
 			%a.remove.red(title="Remove")

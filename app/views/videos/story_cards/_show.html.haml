@@ -1,24 +1,29 @@
-.js-video-card-editor
-	= form_for(@video, url: video_story_card_path(@video), html: {method: :patch}) do |f|
-		.card-editor
-			.cards
-				%ul.card-list= render partial: "videos/story_cards/form", collection: @cards, locals: { f: f}
-				%hr
-				.toolbar.actions
-					%span.spacer
-					= f.button "Add Video Card", type: :button, data: { card_type: :video } do
+= form_for(@video, url: video_story_card_path(@video), html: {class: 'async js-video-card-editor', method: :patch}) do |f|
+	.card-editor
+		.cards
+			.toolbar.actions
+				%span.spacer
+				.split-button.popper>
+					%button.action.options.pop-out-toggle(title="Add Card...")
 						= fa :plus
-						Add Video Card
-					= f.button "Add Channel Card", type: :button, data: { card_type: :user } do
-						= fa :plus
-						Add Channel Card
-					= f.button "Add Custom Card", type: :button, data: { card_type: :custom } do
-						= fa :plus
-						Add Custom Card
-			.preview-container
-				.video.context-menu-parent#video(data-nocontext="true"){style: format_bg(@video.cover),
-						data: @video.thumb_picker_header}
-					= render 'videos/widget/content', embed: false, include_cards: true
-		.foot
-			= f.submit "Save", class: "green confirm"
-			%button.right.cancel{type: :button, "data-resolve": "false"} Cancel
+						Add Card
+					%ul.pop-out
+						%a.action(data-card-type="video")
+							%span.icon= fw :play
+							%span.label Video
+						%a.action(data-card-type="user")
+							%span.icon= fw :user
+							%span.label User
+			%ul.card-list.reorderable= render partial: "videos/story_cards/form", collection: @cards, locals: { f: f}
+			%hr
+		.preview-container
+			.video.context-menu-parent#video(data-nocontext="true"){style: format_bg(@video.cover),
+					data: @video.thumb_picker_header}
+				= render 'videos/widget/content', embed: false, include_cards: true
+	.foot
+		.progressor
+			.message Saving
+			.progress
+				.fill
+		= f.submit "Save", class: "green confirm"
+		%button.right.cancel{type: :button, "data-resolve": "false"} Cancel
