@@ -50,6 +50,8 @@ module ProjectVinyl
         return yield
       rescue Elasticsearch::Transport::Transport::Errors::ServiceUnavailable => e
         excepted! e, v
+      rescue Elasticsearch::Transport::Transport::Errors::NotFound => e
+        excepted! e, v
       rescue Elasticsearch::Transport::Transport::Errors::BadRequest => e
         excepted! e, v
       rescue Faraday::ConnectionFailed => e
