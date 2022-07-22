@@ -6,6 +6,7 @@ module ProjectVinyl
   module Bbc
     class Node
       URL_HANDLING_TAGS = %w[a url img embed].freeze
+      SELF_CLOSING_TAGS = %w[br hr link meta input img].freeze
 
       def initialize(parent, name = '')
         @tag_name = name
@@ -57,7 +58,7 @@ module ProjectVinyl
       end
 
       def tag_name=(tag)
-        @tag_name = tag.split('=')[0].strip
+        @tag_name = (tag.split('=')[0] || 'div').strip
         @tag_name = '' if @tag_name.gsub(/[^a-zA-Z0-9]/, '') != @tag_name
       end
 
@@ -74,6 +75,7 @@ module ProjectVinyl
       end
 
       def inner(type)
+        return '' if tag_name == 'script'
         ans = (@children.map {|child|child.outer(type)}).join
         return ans if type != :html
         ans.strip.gsub(/\n/, '<br>')
@@ -81,6 +83,15 @@ module ProjectVinyl
 
       def outer(type)
         return inner_text if type == :text
+        if type == :raw
+          return '' if tag_name == 'script' || tag_name == 'style'
+          html = "<#{tag_name}#{attributes.to_html}"
+          html += " class=\"#{classes.join(' ')}\"" if !classes.empty?
+          return html + ' />' if self_closed?
+          html += ">#{inner(type)}"
+          html += "</#{tag_name}>"
+          return html
+        end
         TagGenerator.generate(self, type)
       end
 
@@ -136,7 +147,7 @@ module ProjectVinyl
       end
 
       def self_closed?
-        tag_name == 'br'
+        SELF_CLOSING_TAGS.include?(tag_name)
       end
 
       def handles_urls?
@@ -145,6 +156,16 @@ module ProjectVinyl
 
       def to_json
         { html: outer_html, bbc: outer_bbc }
+      end
+
+      def closing?(content, index, open, close)
+        tag = "#{open}/#{tag_name}#{close}"
+        return [true, tag.length] if content.index(tag) == index
+        if !parent.nil?
+          p = parent.closing?(content, index, open, close)
+          return [p[0], 0]
+        end
+        [false, 0]
       end
 
       private

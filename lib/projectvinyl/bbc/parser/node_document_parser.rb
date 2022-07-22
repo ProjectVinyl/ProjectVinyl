@@ -1,6 +1,7 @@
 require 'projectvinyl/bbc/parser/node_attribute_parser'
 require 'projectvinyl/bbc/parser/node_content_parser'
 require 'projectvinyl/bbc/node'
+require 'projectvinyl/bbc/parser/helpers'
 
 module ProjectVinyl
   module Bbc
@@ -29,20 +30,20 @@ module ProjectVinyl
             if state == TAG_CONTENT
               # Self-terminating tags
               if node.self_closed?
-                index += 1 if content[index] == '/' || content[index] == close
+                index += 1 while content[index].blank?
+                index += 2 if Helpers.head_matches?(content, index, "/#{close}")
 
-                return content[index..content.length]
+                return Helpers.rest(content, index)
               end
 
               # Tags without content
-              return content[3..content.length] if content.index("/#{close}") == 0
+              return content[3..content.length] if Helpers.head_matches?(content, index, "/#{close}")
 
-              tag = "#{open}/#{node.tag_name}#{close}"
-
+              must_close, close_at = node.closing?(content, index, open, close)
               # End of tag
-              if content.index(tag) == index
+              if must_close
                 node.append_text(text)
-                return content[(index + tag.length)..content.length]
+                return Helpers.rest(content, index + close_at)
               end
 
               result = false
@@ -95,7 +96,7 @@ module ProjectVinyl
           end
 
           node.append_text(text)
-          return content[(index + 1)..content.length]
+          return Helpers.rest(content, index + 1)
         end
       end
     end

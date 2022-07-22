@@ -1,7 +1,10 @@
+require 'projectvinyl/bbc/parser/helpers'
+
 module ProjectVinyl
   module Bbc
     module Parser
       class NodeAttributeParser
+        JS_ATTR_REG = /^on[a-z]+$/i.freeze
 
         def self.parse_equals_par(node, content, close)
           index = -1
@@ -30,10 +33,7 @@ module ProjectVinyl
             par << content[index]
           end
 
-          if par.length > 0
-            node.equals_par = par
-          end
-
+          node.equals_par = par if par.length > 0
           return content[index..content.length]
         end
 
@@ -48,12 +48,11 @@ module ProjectVinyl
             index += 1
 
             if !in_value || quote.nil?
-              return content[index..content.length] if content[index] == '/' && index < content.length - 1 && content[index + 1] == close
+              return Helpers.rest(content, index) if Helpers.head_matches?(content, index, "/#{close}")
 
               if content[index] == close
-                node.set_attribute(name, value) if name.length > 0
-
-                return content[(index + 1)..content.length]
+                node.set_attribute(name, value) if attribute_name_valid? name
+                return Helpers.rest(content, index + 1)
               end
             end
 
@@ -72,7 +71,7 @@ module ProjectVinyl
                 end
 
                 if content[index] == ' '
-                  node.set_attribute(name, value)
+                  node.set_attribute(name, value) if attribute_name_valid? name
                   name = ''
                   value = ''
                   in_value = false
@@ -80,7 +79,7 @@ module ProjectVinyl
                 end
               elsif content[index] == quote
                 quote = nil
-                node.set_attribute(name, value)
+                node.set_attribute(name, value) if attribute_name_valid? name
                 name = ''
                 value = ''
                 in_value = false
@@ -91,7 +90,11 @@ module ProjectVinyl
             end
           end
 
-          return content[(index + 1)..content.length]
+          return Helpers.rest(content, index + 1)
+        end
+        
+        def self.attribute_name_valid?(name)
+          !name.blank? && !JS_ATTR_REG.match?(name.strip)
         end
       end
     end
