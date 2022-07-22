@@ -50,7 +50,7 @@ module ProjectVinyl
         channel = document.getElementsByTagName('a').filter{|a| a.classes.include?('greenlink')}.first
         channel = channel.inner_text if channel.present?
 
-        body = document.getElementsByTagName('table')[5]
+        body = document.getElementsByTagName('table')[2]
 
         output = body.inner_html.split('Description:')[1].split('removemyvideo.php')[0].gsub('\t', '')
         document = ProjectVinyl::Bbc::Bbcode.from_html(output).inner_bbc

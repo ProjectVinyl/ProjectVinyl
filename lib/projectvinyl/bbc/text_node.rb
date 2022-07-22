@@ -1,8 +1,10 @@
-require 'projectvinyl/bbc/nodelike'
+require 'projectvinyl/bbc/concerns/nodelike'
 
 module ProjectVinyl
   module Bbc
     class TextNode
+      include Nodelike
+
       def self.truncate_link(url)
         url = url.gsub(/^(http[s]*:)*[\/]+/, '')
         return url[0...22] + '...' if url.length > 25

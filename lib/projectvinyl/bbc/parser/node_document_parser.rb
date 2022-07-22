@@ -1,6 +1,7 @@
 require 'projectvinyl/bbc/parser/node_attribute_parser'
 require 'projectvinyl/bbc/parser/node_content_parser'
 require 'projectvinyl/bbc/node'
+require 'projectvinyl/bbc/document'
 require 'projectvinyl/bbc/parser/helpers'
 
 module ProjectVinyl
@@ -12,7 +13,7 @@ module ProjectVinyl
         TAG_CONTENT = 1
 
         def self.parse(text, open, close)
-          result = Node.new(nil, 'Document')
+          result = Document.new('Document')
           parse_document(result, open + result.tag_name + close + text + open + '/' + result.tag_name + close, open, close)
           return result
         end

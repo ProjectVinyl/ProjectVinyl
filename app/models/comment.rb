@@ -31,8 +31,8 @@ class Comment < ApplicationRecord
     replies = []
     chapters = {}
 
-    nodes = ProjectVinyl::Bbc::Bbcode.from_bbc(bbc)
-    nodes.set_resolver do |trace, tag_name, tag, fallback|
+    document = ProjectVinyl::Bbc::Bbcode.from_bbc(bbc)
+    document.set_resolver do |trace, tag_name, tag, fallback|
       if tag_name == :at
         if user = User.find_for_mention(tag.inner_text)
           mentions << user.id if !trace.include?(:q) && (!sender.private_message? || sender.contributing?(user))
@@ -47,7 +47,7 @@ class Comment < ApplicationRecord
     end
 
     return {
-      html: nodes.outer_html,
+      html: document.outer_html,
       mentions: mentions,
       replies: replies,
       chapters: chapters.values

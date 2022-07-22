@@ -26,9 +26,9 @@ module BbcodeHelper
 
   def self.render_bbcode_content(text)
     Rails.logger.info('Rendering bbcode content')
-    nodes = ProjectVinyl::Bbc::Bbcode.from_bbc(text)
+    document = ProjectVinyl::Bbc::Bbcode.from_bbc(text)
 
-    nodes.set_resolver do |trace, tag_name, tag, fallback|
+    document.set_resolver do |trace, tag_name, tag, fallback|
       if tag_name == :at
         if user = User.find_for_mention(tag.inner_text)
           next "<a class=\"user-link\" data-id=\"#{user.id}\" href=\"#{user.link}\">#{user.username}</a>"
@@ -38,7 +38,7 @@ module BbcodeHelper
       fallback.call
     end
 
-    nodes
+    document
   end
 
   def emotify(text)
