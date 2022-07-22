@@ -1,12 +1,19 @@
 require 'projectvinyl/bbc/tag_generator'
 require 'projectvinyl/bbc/text_node'
 require 'projectvinyl/bbc/attributes'
+require 'projectvinyl/bbc/nodelike'
 
 module ProjectVinyl
   module Bbc
     class Node
-      URL_HANDLING_TAGS = %w[a url img embed].freeze
-      SELF_CLOSING_TAGS = %w[br hr link meta input img].freeze
+      include Nodelike
+
+      attr_reader :equals_par
+      attr_reader :tag_name
+      attr_reader :parent
+      attr_reader :classes
+      attr_reader :attributes
+      attr_reader :children
 
       def initialize(parent, name = '')
         @tag_name = name
@@ -15,14 +22,6 @@ module ProjectVinyl
         @classes = []
         @parent = parent
       end
-
-      attr_reader :equals_par
-      attr_reader :tag_name
-      attr_reader :parent
-      attr_accessor :next
-      attr_reader :classes
-      attr_reader :attributes
-      attr_reader :children
 
       def inner_text=(text)
         @children = []
@@ -113,45 +112,13 @@ module ProjectVinyl
         resolver(trace, fallback).call(trace, self.tag_name.to_sym, self, fallback)
       end
 
-      def inner_text
-        inner(:text)
-      end
-
-      def inner_html
-        inner(:html)
-      end
-
-      def inner_bbc
-        inner(:bbc)
-      end
-
-      def outer_html
-        outer(:html)
-      end
-
-      def outer_bbc
-        outer(:bbc)
+      def text_node?
+        false
       end
 
       def depth
         return 0 if @parent.nil?
         @parent.depth + 1
-      end
-
-      def even
-        depth % 2 == 0
-      end
-
-      def text_node?
-        false
-      end
-
-      def self_closed?
-        SELF_CLOSING_TAGS.include?(tag_name)
-      end
-
-      def handles_urls?
-        URL_HANDLING_TAGS.include?(tag_name)
       end
 
       def to_json

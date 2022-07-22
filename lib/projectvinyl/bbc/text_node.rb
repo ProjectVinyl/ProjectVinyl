@@ -1,8 +1,8 @@
+require 'projectvinyl/bbc/nodelike'
+
 module ProjectVinyl
   module Bbc
     class TextNode
-      attr_accessor :next
-
       def self.truncate_link(url)
         url = url.gsub(/^(http[s]*:)*[\/]+/, '')
         return url[0...22] + '...' if url.length > 25
@@ -25,24 +25,16 @@ module ProjectVinyl
         true
       end
 
-      def inner_text
-        CGI::escapeHTML CGI.unescapeHTML(@inner_text)
-      end
-
       def inner(type)
         outer(type)
       end
 
       def outer(type)
-        inner_text
+        CGI::escapeHTML CGI.unescapeHTML(@inner_text)
       end
 
-      def outer_html
-        outer(:html)
-      end
-
-      def outer_bbc
-        outer(:bbc)
+      def depth
+        0
       end
     end
   end
