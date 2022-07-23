@@ -2,7 +2,7 @@ module ProjectVinyl
   module Bbc
     module Nodelike
       URL_HANDLING_TAGS = %w[a url img embed].freeze
-      SELF_CLOSING_TAGS = %w[br hr link meta input img].freeze
+      SELF_CLOSING_TAGS = %w[br hr link meta input].freeze
 
       attr_accessor :next
 
