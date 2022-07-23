@@ -50,8 +50,8 @@ module ProjectVinyl
         return '' if tag_name == 'script' || tag_name == 'style'
         return inner_text if type == :text
         if type == :raw
+          attributes[:class] = classes.join(' ') if !classes.empty?
           html = "<#{tag_name}#{attributes.to_html}"
-          html += " class=\"#{classes.join(' ')}\"" if !classes.empty?
           return html + ' />' if self_closed?
           html += ">#{inner(type)}"
           html += "</#{tag_name}>"

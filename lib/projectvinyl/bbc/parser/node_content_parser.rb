@@ -4,7 +4,7 @@ require 'projectvinyl/bbc/parser/helpers'
 module ProjectVinyl
   module Bbc
     module Parser
-      class NodeContentParser
+      module NodeContentParser
 
         def self.parse(node, content, text, index, open, close)
           # Convert line breaks to <br> tags
@@ -28,20 +28,6 @@ module ProjectVinyl
             timestamp_handled = try_parse_timestamp(node, content[index..content.length], text)
 
             return ['', timestamp_handled] if timestamp_handled != false
-          end
-
-          if content[index] == open
-            # Glob invalid characters
-            if !/[ a-z0-9\/]/.match?(content[index + 1])
-              while index < content.length && !/[a-z0-9\/]/.match?(content[index + 1])
-                text << content[index]
-                index += 1
-              end
-
-              return [text, Helpers.rest(content, index + 1)]
-            end
-
-            return ['', NodeDocumentParser.parse_document(node.append_text(text).append_node, Helpers.rest(content, index), open, close)]
           end
 
           return [text, false]

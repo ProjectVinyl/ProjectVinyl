@@ -7,97 +7,105 @@ require 'projectvinyl/bbc/parser/helpers'
 module ProjectVinyl
   module Bbc
     module Parser
-      class NodeDocumentParser
+      module NodeDocumentParser
         INITIAL_STATE = -1
         TAG_NODE = 0
         TAG_CONTENT = 1
 
         def self.parse(text, open, close)
-          result = Document.new('Document')
-          parse_document(result, open + result.tag_name + close + text + open + '/' + result.tag_name + close, open, close)
-          return result
+          document = Document.new('Document')
+          parse_node_inner(document, document, text, open, close)
+          document
         end
 
-        def self.parse_document(node, content, open, close)
+        def self.parse_node_inner(parent_node, content_node, content, open, close)
           index = -1
-          state = INITIAL_STATE
-          name = ''
           text = ''
-          quote = nil
 
-          while (index < content.length - 1)
+          while index < (content.length - 1)
             index += 1
 
-            if state == TAG_CONTENT
-              # Self-terminating tags
-              if node.self_closed?
-                index += 1 while content[index].blank?
-                index += 2 if Helpers.head_matches?(content, index, "/#{close}")
+            must_close, close_at = parent_node.closing?(content, index, open, close)
+            # End of tag
+            if must_close
+              index += close_at
+              break
+            end
 
-                return Helpers.rest(content, index)
-              end
+            if Helpers.head_matches?(content, index, "#{open}#{open}") ||
+              Helpers.head_matches?(content, index, "#{close}#{close}#{close}") ||
+              Helpers.head_matches?(content, index, "#{close}#{close}#{open}") ||
+              Helpers.head_matches?(content, index, "#{open}#{close}")
+              text += content[index]
+              next
+            end
 
-              # Tags without content
-              return content[3..content.length] if Helpers.head_matches?(content, index, "/#{close}")
-
-              must_close, close_at = node.closing?(content, index, open, close)
-              # End of tag
-              if must_close
-                node.append_text(text)
-                return Helpers.rest(content, index + close_at)
-              end
-
-              result = false
-              text,result = NodeContentParser.parse(node, content, text, index, open, close)
-
-              if result != false
-                content = result
-                index = -1
-                next
-              end
-
+            if content[index] == open
+              # text<name...
+              # -- -|
+              content_node.append_text(text)
+              text = ''
+              content, index = parse_node_outer(content_node, Helpers.rest(content, index + 1), open, close), -1
+              next
+            else
               # Just append and move to the next one
-              text << content[index]
-            end
+              # text << content[index]
+              handled = false
+              text,handled = NodeContentParser.parse(content_node, content, text, index, open, close)
 
-            if state == TAG_NODE
-              if !quote.nil?
-                if content[index] == quote
-                  quote = nil
-                  next
-                end
-
-                name << content[index]
+              if handled != false
+                content,index = handled,-1
                 next
-              end
-
-              if content[index] == '"' || content[index] == "'"
-                quote = content[index]
-                next
-              end
-
-              if name.length > 0 && content[index] == '='
-                content = NodeAttributeParser.parse_equals_par(node, content[(index + 1)..content.length], close)
-                index = -1
-              elsif name.length > 0 && (content[index] == close || content[index] == '/' || content[index] == ' ')
-                node.tag_name = name
-
-                if content[index] == ' '
-                  content = NodeAttributeParser.parse(node, content[(index + 1)..content.length], close)
-                  index = -1
-                end
-
-                state = TAG_CONTENT
               else
-                name << content[index]
+                text += content[index]
               end
             end
-
-            state = TAG_NODE if state == INITIAL_STATE && content[index] == open
           end
 
-          node.append_text(text)
-          return Helpers.rest(content, index + 1)
+          content_node.append_text(text)
+          return Helpers.rest(content, index)
+        end
+
+        def self.parse_node_outer(parent_node, content, open, close)
+          name = ''
+          index = -1
+
+          while index < (content.length - 1)
+            index += 1
+
+            if name.length > 0 && (
+                content[index] == '=' || content[index] == close || content[index] == ' ' || content[index] == '/'
+              )
+              if name.strip != name || name.gsub(/[^a-zA-Z0-9]/, '') != name
+                puts "Invalid tag name '#{name}'"
+                return "&lt;" + content
+              end
+
+              # <name>... or <name ... or <name />
+              # -----|       -----|       ------|
+              child_node = parent_node.append_node(name)
+              # <name=...
+              # -----|
+              content, index = NodeAttributeParser.parse_equals_par(child_node, Helpers.rest(content, index + 1), close), 0 if content[index] == '='
+              # <name attr="1"...
+              # -----|
+              content, index = NodeAttributeParser.parse(child_node, Helpers.rest(content, index), close), 0 if content[[0, index].max] == ' '
+              # <name />... or <name>
+              # ------|        -----|
+
+              if Helpers.head_matches?(content, index, "/#{close}")
+                index += close.length
+                return Helpers.rest(content, index + 1)
+              end
+              content_node = (child_node.self_closed? ? parent_node : child_node)
+              content, index = parse_node_inner(child_node, content_node, Helpers.rest(content, index + 1), open, close), -1
+              return Helpers.rest(content, index + 1)
+            else
+              name << content[index]
+            end
+          end
+
+          content
         end
       end
     end

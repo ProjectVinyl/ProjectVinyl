@@ -18,10 +18,6 @@ module ProjectVinyl
         @children = []
       end
 
-      def tag_name=(tag)
-        # noop for the document
-      end
-
       def set_resolver(&block)
         @resolver = block
       end
@@ -32,10 +28,6 @@ module ProjectVinyl
 
       def depth
         0
-      end
-
-      def outer(type)
-        inner(type)
       end
 
       def closing?(content, index, open, close)

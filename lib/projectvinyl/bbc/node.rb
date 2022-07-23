@@ -26,11 +26,6 @@ module ProjectVinyl
         @parent = parent
       end
 
-      def tag_name=(tag)
-        @tag_name = (tag.split('=')[0] || 'div').strip
-        @tag_name = '' if @tag_name.gsub(/[^a-zA-Z0-9]/, '') != @tag_name
-      end
-
       def equals_par=(par)
         @equals_par = par
       end
