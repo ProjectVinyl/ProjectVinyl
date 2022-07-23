@@ -50,8 +50,11 @@ module ProjectVinyl
         return '' if tag_name == 'script' || tag_name == 'style'
         return inner_text if type == :text
         if type == :raw
-          attributes[:class] = classes.join(' ') if !classes.empty?
-          html = "<#{tag_name}#{attributes.to_html}"
+          html = "<#{tag_name}"
+          if respond_to?(:classes) && respond_to?(:attributes)
+            attributes[:class] = classes.join(' ') if !classes.empty?
+            html += attributes.to_html
+          end
           return html + ' />' if self_closed?
           html += ">#{inner(type)}"
           html += "</#{tag_name}>"
@@ -62,7 +65,6 @@ module ProjectVinyl
 
       private
       def __append_child(node)
-        children.last.next = node if @children.length > 0
         children << node
 
         node

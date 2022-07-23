@@ -13,7 +13,7 @@ module ProjectVinyl
         TAG_CONTENT = 1
 
         def self.parse(text, open, close)
-          document = Document.new('Document')
+          document = Document.new
           parse_node_inner(document, document, text, open, close)
           document
         end

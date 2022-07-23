@@ -13,8 +13,8 @@ module ProjectVinyl
 
       attr_reader :tag_name
 
-      def initialize(name = '')
-        @tag_name = name
+      def initialize
+        @tag_name = 'Document'
         @children = []
       end
 
@@ -34,6 +34,14 @@ module ProjectVinyl
         tag = "#{open}/#{tag_name}#{close}"
         return [true, tag.length] if content.index(tag) == index
         [false, 0]
+      end
+
+      def to_s
+        "DOCUMENT({#{children}})"
+      end
+
+      def inspect
+        "DOCUMENT{#{children}}"
       end
     end
   end

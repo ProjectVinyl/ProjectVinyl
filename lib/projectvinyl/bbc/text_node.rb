@@ -38,6 +38,14 @@ module ProjectVinyl
       def depth
         0
       end
+
+      def to_s
+        "TEXT_NODE{#{inner_text}}"
+      end
+
+      def inspect
+        "TEXT_NODE{#{inner_text}}"
+      end
     end
   end
 end

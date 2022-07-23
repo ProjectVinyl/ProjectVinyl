@@ -52,9 +52,9 @@ module ProjectVinyl
 
         body = document.getElementsByTagName('table')[2]
 
-        output = body.inner_html.split('Description:')[1].split('removemyvideo.php')[0].gsub('\t', '')
-        document = ProjectVinyl::Bbc::Bbcode.from_html(output).inner_bbc
-        document = document.gsub('[url=][/url]', '').strip
+        output = body.inner_html.split('Description:')[1].split('removemyvideo.php')[0].gsub("\t", '').gsub("\r", '')
+        document = ProjectVinyl::Bbc::Bbcode.from_html("<b>" + output).inner_bbc.gsub('[b][/b]', '')
+        document = document.gsub('[url=https://unlistedvideos.com/][/url]', '').strip
         document = ProjectVinyl::Bbc::Bbcode.from_bbc(document)
 
         {

@@ -1,7 +1,7 @@
 default: &default
   adapter: postgresql
   encoding: unicode
-  host: 172.23.64.1
+  host: localhost
   pool: 3
 
 development:

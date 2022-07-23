@@ -56,6 +56,14 @@ module ProjectVinyl
         end
         [false, 0]
       end
+
+      def to_s
+        "Node::#{tag_name}(#{attributes.to_html})#{children}"
+      end
+
+      def inspect
+        "Node::#{tag_name}(#{attributes.to_html})#{children}"
+      end
     end
   end
 end

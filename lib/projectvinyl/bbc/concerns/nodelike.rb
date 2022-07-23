@@ -4,8 +4,6 @@ module ProjectVinyl
       URL_HANDLING_TAGS = %w[a url img embed].freeze
       SELF_CLOSING_TAGS = %w[br hr link meta input].freeze
 
-      attr_accessor :next
-
       def inner_text=(text)
         @children = []
         self.append_text(text)
