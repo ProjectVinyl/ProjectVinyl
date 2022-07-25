@@ -14,7 +14,7 @@ module Forums
       @path_type = 'forums'
       @crumb = {
         stack: [],
-        title: "Forum"
+        title: "Forums"
       }
       @boards = Pagination.paginate(Board.sorted, params[:page].to_i, 10, params[:order].to_i == 1)
       render_paginated @boards, partial: 'thumb', as: :json  if params[:format] == 'json'
