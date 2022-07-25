@@ -1,7 +1,7 @@
 module Forum
   class BoardsController < ApplicationController
     def show
-      return render_error_file 404, params[:format] == 'json' if !(@board = Board.find_board(params[:id]))
+      return render_status_page :not_found if !(@board = Board.find_board(params[:id]))
 
       @path_type = 'forum'
       @threads = Pagination.paginate(@board.threads, params[:page].to_i, 50, params[:order].to_i == 1)

@@ -14,10 +14,7 @@ module Admin
       end
 
       def update
-        if !current_user.is_contributor?
-          return head :unauthorized if params[:format] == 'json'
-          return render file: '/public/403.html', layout: false
-        end
+        return render_status_page :unauthorized if !current_user.is_contributor?
 
         redirect_to action: :index
 

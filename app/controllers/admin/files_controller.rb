@@ -10,24 +10,21 @@ module Admin
     def index
       json = params[:format] == 'json'
 
-      return render_error_file 403, json if !user_signed_in? || !current_user.is_contributor?
+      return render_status_page :forbidden if !user_signed_in? || !current_user.is_contributor?
 
       load_location
 
-      return render_error_file 403, json if !ALLOW_ROOTS.include?(@location[0]) && @location.length > 1 && !ALLOW_DIRS.include?(@location[1])
+      return render_status_page :forbidden if !ALLOW_ROOTS.include?(@location[0]) && @location.length > 1 && !ALLOW_DIRS.include?(@location[1])
 
       begin
         @public = ProjectVinyl::Storage::VideoDirectory.entries(@path).limit(50)
+
         if params[:start] && (!json || params[:position] == 'after')
-          if !@public.buffer_before(params[:start], params[:offset]) && json
-            return render json: {}
-          end
+          return render json: {} if !@public.buffer_before(params[:start], params[:offset]) && json
         end
 
         if params[:end] && params[:position] == 'before'
-          if !@public.buffer_after(params[:end], params[:offset]) && json
-            return render json: {}
-          end
+          return render json: {} if !@public.buffer_after(params[:end], params[:offset]) && json
         end
 
         if FILTERED_ROOTS.include?(@path)
@@ -40,7 +37,7 @@ module Admin
         add_resolver
 
       rescue Exception => e
-        return render_error_file 404, json
+        return render_status_page :not_found
       end
 
       if json

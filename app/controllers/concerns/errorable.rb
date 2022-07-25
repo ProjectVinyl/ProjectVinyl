@@ -1,47 +1,39 @@
 module Errorable
   extend ActiveSupport::Concern
 
-  NotAuthorized = Class.new(StandardError)
-
-  included do
-    rescue_from NotAuthorized do |exception|
-      render file: 'public/401', status: :unauthorized, layout: false
-    end
-  end
-
-  def render_error(pars)
-    render 'layouts/error', locals: pars
-  end
-
-  def render_error_file(code, ajax)
-    return head code if ajax
-    render file: "/public/#{code}", status: code, layout: false
-  end
-
   def render_access_denied
     render_error(
       title: "Access Denied",
-      description: "You can't do that right now."
+      description: "You can't do that right now.",
+      status: :unauthorized
     )
   end
 
-  def error(title, message)
+  def render_error(pars, status: :ok)
+    render 'layouts/error', locals: pars, status: status
+  end
+
+  def render_status_page(status)
     respond_to do |format|
-      format.json { render plain: "#{title}:#{message}", status: :unauthorized }
-      format.any { render_error title: title, description: message }
+      format.json { head status }
+      format.html { render file: "/public/error_#{status_code_of(status)}", status: status, layout: false }
+      format.xml { render file: "/public/error_#{status_code_of(status)}", status: status, layout: false }
+      format.any { render plain: status, status: status }
     end
   end
 
-  def check_error(async, condition, title, message)
-    error(async, title, message) if condition
-    return condition
+  def error(title, message, status = :unauthorized)
+    respond_to do |format|
+      format.json { render json: { error: "#{title}:#{message}", success: false }, status: status }
+      format.html { render_error title: title, description: message, status: status }
+      format.xml { render_error title: title, description: message, status: status }
+      format.any { render plain: "#{title}:#{message}", status: status }
+    end
   end
 
-  def not_found
-    raise ActionController::RoutingError.new('Not Found')
-  end
-
-  def forbidden
-    raise NotAuthorized
+  private
+  def status_code_of(symbol)
+    return symbol if 1.is_a?(symbol.class)
+    Rack::Utils::SYMBOL_TO_STATUS_CODE[symbol.to_sym]
   end
 end

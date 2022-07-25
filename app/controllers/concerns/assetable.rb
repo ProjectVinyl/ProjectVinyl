@@ -6,7 +6,7 @@ module Assetable
 
   def serve_direct(file, mime, fallback: nil)
     return redirect_to fallback if !File.exist?(file) && !fallback.nil?
-    return not_found if !File.exist?(file)
+    return head :not_found if !File.exist?(file)
 
     response.headers['Content-Length'] = File.size(file).to_s
     send_file file.to_s, {
@@ -24,12 +24,12 @@ module Assetable
 
     file = Rails.application.assets_manifest.assets[asset]
 
-    not_found if !file
+    return head :not_found if !file
 
     file = File.join(Rails.application.assets_manifest.dir, file)
     serve_direct(file, mime)
   end
-  
+
   def valid_media_mime?(mime)
     !mime.nil? && !['audio', 'video'].index(mime.split('/').first).nil?
   end
