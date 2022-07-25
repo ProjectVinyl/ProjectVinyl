@@ -21,7 +21,7 @@ module Videos
         is_admin: false,
         resource: 'feed',
         table: 'videos',
-        label: 'Video',
+        label: "#{current_user.username}'s Subscriptions",
         template: 'videos/feeds/show'
       }
     end
