@@ -1,0 +1,8 @@
+- if user_signed_in?
+	- @subscribed = @thread.subscribed?(current_user)
+	%button.action.button.button-bub.subscribe.right.toggle{title: @subscribed ? "Unsubscribe" : "Subscribe",
+		data: { target: forums_thread_subscribe_path(@thread),
+				unchecked_icon: "bell-slash",
+				unchecked_title: "Unsubscribed",
+				checked_title: "Unsubscribe"} }
+		%span.icon= fa @subscribed ? :check : :bell

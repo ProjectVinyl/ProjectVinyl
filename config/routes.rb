@@ -107,8 +107,7 @@ Rails.application.routes.draw do
   resources :filters
 
   # Forums #
-  resources :forum, only: [:index, :new, :create, :edit, :update, :destroy], controller: :boards, module: :forum
-  namespace :forum do
+  namespace :forums do
     resources :badges, only: [:index]
     resources :search, only: [:index]
 
@@ -116,6 +115,10 @@ Rails.application.routes.draw do
     resources :threads, only: [:new, :create, :update, :show] do
       resource :subscribe, only: [:update]
     end
+  end
+
+  resources :forums, only: [:index, :show, :new, :create, :edit, :update, :destroy], controller: :boards, module: :forums do
+    get '/:id', action: :show, controller: :threads, constraints: { id: /([0-9]+)/ }
   end
 
   # Comments #
@@ -235,8 +238,6 @@ Rails.application.routes.draw do
   # Short links #
   get 'profile/:id' => 'users#show', constraints: { id: /([0-9]+).*/ }#*/
   get '/:id(-:safe_title)' => 'videos#show', constraints: { id: /([0-9]+)/ }
-  get '/:id' => 'forum/boards#show'
-  get '/:board_name/:id' => 'forum/threads#show'
 
   # Home #
   root 'welcome#index'

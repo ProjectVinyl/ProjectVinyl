@@ -1,7 +1,14 @@
-module Forum
+module Forums
   class ThreadsController < ApplicationController
     def show
-      @path_type = 'forum'
+      if params[:board_name].present? && Board.find_board(params[:board_name]).nil?
+        return render_error(
+          title: 'Nothing to see here!',
+          description: "Either the thread does not exist or you don't have the necessary permissions to see it."
+        ) 
+      end
+
+      @path_type = 'forums'
       @thread = CommentThread.where(id: params[:thread_id] || params[:id]).first
       
       if !@thread || !@thread.contributing?(current_user)

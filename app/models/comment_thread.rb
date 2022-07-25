@@ -51,8 +51,8 @@ class CommentThread < ApplicationRecord
   end
 
   def link
-    return "/#{owner.short_name}/#{id}-#{safe_title}" if board? && !owner.nil?
-    "/forum/threads/#{id}-#{safe_title}"
+    return "/forums/#{owner.short_name}/#{id}" if board? && !owner.nil?
+    "/forums/threads/#{id}-#{safe_title}"
   end
 
   def location

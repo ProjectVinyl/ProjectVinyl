@@ -2,7 +2,7 @@
 	Comments
 	= surround '(', ')' do
 		= fuzzy_big_number_with_delimiter @comments.count
-	= render 'forum/threads/watch_options'
+	= render 'forums/threads/watch_options'
 = render 'comments/new'
 %hr/
-= render 'forum/threads/comments'
+= render 'forums/threads/comments'

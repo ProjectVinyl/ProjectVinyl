@@ -2,7 +2,7 @@
 %h1.title.breadcrumb
 	%a{href: root_path} Home
 	= fa :chevron_right
-	%a{href: forum_index_path} Forum
+	%a{href: forums_path} Forums
 	= fa :chevron_right
 	- if @modifications_allowed
 		%span.editable.short.inline.title{data: {target: forum_path(@board), member: :title}}
@@ -19,11 +19,11 @@
 			%button.action.mobile-friendly.green(data-external-form="#{edit_forum_path @board}" data-title="Edit Categoty" type="button")>
 				= fa :plus
 				%span Edit Category
-		%button.action.mobile-friendly.green(data-external-form="#{new_forum_thread_path(board: @board.id)}" data-title="New Topic" type="button")>
+		%button.action.mobile-friendly.green(data-external-form="#{new_forums_thread_path(board: @board.id)}" data-title="New Topic" type="button")>
 			= fa :plus
 			%span New Topic
 	.spacer
-	%a.button.blue.mobile-friendly{href: forum_search_index_path(board: @board.id)}>
+	%a.button.blue.mobile-friendly{href: forums_search_index_path(board: @board.id)}>
 		= fa :search
 		%span Find Posts
 %hr/
@@ -37,4 +37,4 @@
 	= render layout: 'pagination/paginated', locals: {type: @board.link, paginated: @threads, id: "page"} do
 		%section.search-result
 			.listing.thread-list
-				%ul.items= render partial: 'forum/threads/thumb', collection: @threads.records
+				%ul.items= render partial: 'forums/threads/thumb', collection: @threads.records

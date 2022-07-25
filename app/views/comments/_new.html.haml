@@ -16,7 +16,7 @@
 				.name
 					%a{class: !visitor.dummy? && "user-link", "data-id": visitor.id, href: visitor.link}= visitor.username
 					- if user_signed_in?
-						= render 'forum/badges/badges', user: current_user
+						= render 'forums/badges/badges', user: current_user
 				= render "comments/edit_toolbar"
 				.comment-content.preview
 				%textarea.comment-content(required="true" name="comment")

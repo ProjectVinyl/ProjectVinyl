@@ -29,7 +29,7 @@ module Admin
 
         @thread.destroy
 
-        redirect_to action: :show, controller: 'forum/boards', id: @thread.owner.short_name
+        redirect_to action: :show, controller: 'forums/boards', id: @thread.owner.short_name
       end
     end
   end

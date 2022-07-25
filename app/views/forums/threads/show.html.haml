@@ -1,7 +1,7 @@
 - lim '900px'
 - title "#{@thread.title} - Forum"
 = render layout: 'view/advanced_breadcrumb',
-					locals: {stack: [{link: forum_index_path, title: 'Forum'},
+					locals: {stack: [{link: forums_path, title: 'Forums'},
 													{link: @thread.owner.link, title: @thread.owner.title}]} do
 	- if @thread.locked
 		%i.fa.fa-lock(title="Thread Locked")

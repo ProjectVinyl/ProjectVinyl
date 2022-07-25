@@ -1,17 +1,17 @@
-module Forum
+module Forums
   class BoardsController < ApplicationController
     def show
       return render_status_page :not_found if !(@board = Board.find_board(params[:id]))
 
-      @path_type = 'forum'
+      @path_type = 'forums'
       @threads = Pagination.paginate(@board.threads, params[:page].to_i, 50, params[:order].to_i == 1)
       @modifications_allowed = user_signed_in? && current_user.is_contributor?
 
-      render_paginated @threads, partial: 'forum/threads/thumb', as: :json if params[:format] == 'json'
+      render_paginated @threads, partial: 'forums/threads/thumb', as: :json if params[:format] == 'json'
     end
 
     def index
-      @path_type = 'forum'
+      @path_type = 'forums'
       @crumb = {
         stack: [],
         title: "Forum"
@@ -22,7 +22,7 @@ module Forum
 
     def new
       @board = Board.new
-      render partial: 'new', locals: {url: forum_index_path, method: :post}
+      render partial: 'new', locals: {url: forums_index_path, method: :post}
     end
 
     def create

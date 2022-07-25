@@ -1,5 +1,8 @@
 - title "Private Messages"
-%h1.title.breadcrumb Private Messages
+%h1.title.breadcrumb
+	%a{href: root_path} Home
+	= fa :chevron_right
+	Private Messages
 .actions
 	%button.action.green.right(data-external-form="#{new_message_path}" data-title="New PM" type="button")
 		= fa :plus

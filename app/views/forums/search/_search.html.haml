@@ -1,10 +1,10 @@
 ﻿%section
 	%h1.resize-target
 		%a Forum Search
-	%form.search-options#big-search(action="#{forum_search_index_path}" method="get")
-		.field
+	%form.search-options#big-search(action="#{forums_search_index_path}" method="get")
+		%label.options
 			%input.full-width(type="text" name="title_query" placeholder="Thread Title" value="#{@title_query}")
-		.field.popper.auto-lookup.validate(data-action="#{find_users_path}")
+		%label.options.popper.auto-lookup.validate(data-action="#{find_users_path}")
 			%input.full-width(type="text" name="poster_query" placeholder="Poster" value="#{@poster_query}" autocomplete="off")
 			%ul.pop-out
 		.field

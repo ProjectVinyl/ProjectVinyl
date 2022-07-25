@@ -1,0 +1,3 @@
+= render layout: 'pagination/paginated', locals: {type: forums_thread_path(@thread), order: @order, paginated: @comments, id: "page"} do
+	%ul.comments.comment-list(id="thread-#{@thread.id}")
+		= render 'comments/set', thread: @comments.records, indirect: false
