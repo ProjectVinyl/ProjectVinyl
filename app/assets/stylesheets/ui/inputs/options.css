@@ -44,3 +44,13 @@ label.options select {
 .search-options input {
   width: 100%;
 }
+
+label.options select {
+  -moz-appearance: none;
+  -webkit-appearance: none;
+  appearance: none;
+  background: url('/images/arrow.svg') no-repeat right 10px center/auto 1em;
+}
+label.options select option {
+  background: var(--label-focus-color);
+}

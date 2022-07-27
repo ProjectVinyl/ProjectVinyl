@@ -31,11 +31,11 @@
   transition: none;
 }
 .banner-overlay .overlay-element > :hover {
-  background: var(--header-overlay-fill);
+  background-color: var(--header-overlay-fill);
   transition: none;
 }
 .banner-overlay .overlay-element > :focus,
 .banner-overlay .overlay-element > :active {
-  background: var(--header-overlay-element-focus-fill);
+  background-color: var(--header-overlay-element-focus-fill);
   transition: none;
 }
