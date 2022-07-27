@@ -7,7 +7,7 @@ module Searchable
   included do
     def self.configure_ordering(orders = [], params = {})
       sa = params[:search_action] || ''
-      qt = params[:query_term] || 'qt'
+      qt = params[:query_term] || 'q'
 
       labels_syms = orders.map {|a| [].is_a?(a.class) ? a[0] : a}
       orders = {
@@ -32,7 +32,7 @@ module Searchable
     @ordering = orders
     @ordering_labels = @ordering[:labels]
     @sa = params[:search_action] || ''
-    @qt = params[:query_term] || 'qt'
+    @qt = params[:query_term] || 'q'
     @sa = self.send(@sa) if !''.is_a?(@sa.class)
   end
 

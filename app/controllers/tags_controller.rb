@@ -1,8 +1,8 @@
 class TagsController < ApplicationController
   include Searchable
 
-  configure_ordering [ :name ], query_term: 'qt', only: [:index]
-  configure_ordering [ :date, :rating, [:wilson_score, :wilson_lower_bound], :heat, :length, :random, :relevance ], query_term: 'q', search_action: :search_index_path, only: [:show]
+  configure_ordering [ :name ], only: [:index]
+  configure_ordering [ :date, :rating, [:wilson_score, :wilson_lower_bound], :heat, :length, :random, :relevance ], search_action: :search_index_path, only: [:show]
 
   def show
     name = params[:id].downcase

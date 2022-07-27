@@ -1,4 +1,6 @@
 %form#search.overlay-element(action="#{search_index_path}" method="get")
 	%input#search_small(name="q" type="search" placeholder="Search" value="#{query}" title="Separate terms with ',' supports '|' for optional terms and '-' for negation. Use 'title:sss' to search by a specific field.")
+	%select#search_type(name="type")
+		= options_for_select([['Video Title', 1], ['Video Metadata', 2], ['Album Title', 3], ['User Name', 4], ['Tag Name', 5]], @search_type.to_i)
 	%button(type="submit" title="Search")= fa :search
 	%a(title="Syntax Help"){href: search_syntax_path}= fa :question

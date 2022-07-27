@@ -1,9 +1,16 @@
 class SearchController < ApplicationController
   include Searchable
 
-  configure_ordering [ :date, :rating, [:wilson_score, :wilson_lower_bound], :heat, :length, :random, :relevance ], query_term: 'q', only: [ :index ]
+  configure_ordering [ :date, :rating, [:wilson_score, :wilson_lower_bound], :heat, :length, :random, :relevance ], only: [ :index ]
 
   def index
+    @search_type = params[:type].to_i
+    params[@qt] = "title:\"#{params[@qt]}\"" if @search_type == 1
+    #                              continue if @search_type == 2
+    return redirect_to controller: :albums, @qt => params[@qt] if @search_type == 3
+    return redirect_to controller: :users, @qt => params[@qt] if @search_type == 4
+    return redirect_to controller: :tags, @qt => params[@qt] if @search_type == 5
+
     @path_type = 'videos'
     read_search_params(params)
     @partial = partial_for_type(:videos)
