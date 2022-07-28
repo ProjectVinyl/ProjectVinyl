@@ -10,8 +10,10 @@ module ProjectVinyl
       VIDEO_EXTENSIONS = %w[.mp4 .webm .mkv .mp3].freeze
       SEARCH_PATHS = [
         '/youtube/*$CHANNEL',
+        '/owlowiscious/youtube/*$CHANNEL',
         '/eqd_yt',
         '/quickchive',
+        '/owlowiscious/quickchive',
         '/quickchive/eqd_yt',
         '/quickchive/archivelist',
         '/quickchive/$ARTIST'
