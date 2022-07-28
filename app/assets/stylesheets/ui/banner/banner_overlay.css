@@ -6,7 +6,8 @@
   display: flex;
   white-space: nowrap;
   gap: var(--overlay-gap);
-  flex-direction: row-reverse;
+  flex-direction: row;
+  justify-content: end;
 
   --overlay-font-size: 1.125em;
   --overlay-color: var(--header-overlay-element-fill);

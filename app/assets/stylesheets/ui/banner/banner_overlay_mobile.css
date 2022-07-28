@@ -6,6 +6,8 @@
   .banner-overlay #search {
     flex-grow: 1;
   }
+  
+
   body {
     --banner-height: 120px !important;
   }

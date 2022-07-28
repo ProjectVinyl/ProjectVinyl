@@ -1,12 +1,12 @@
 ﻿%header.header.banner-overlay
+	#dock-toggle.overlay-element.sharp-left
+		%button= fa :bars
+	= render partial: "search/small_search"
+	= render partial: "layouts/banner/filter_dropdown"
 	- if user_signed_in?
 		= render partial: 'layouts/banner/signed_in_controls'
 	- else
 		= render partial: 'layouts/banner/signed_out_controls'
-	= render partial: "layouts/banner/filter_dropdown"
-	= render partial: "search/small_search"
-	#dock-toggle.overlay-element.sharp-left
-		%button= fa :bars
 .layer-background#banner
 	.banner-background.far
 	%span.title.near.mobile-hidden

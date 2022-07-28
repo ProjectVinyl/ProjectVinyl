@@ -3,6 +3,7 @@
   z-index: 20;
   overflow: hidden;
   background: var(--overlay-color);
+  min-width: min-content;
   height: calc(var(--overlay-height) / var(--overlay-rows));
   border-radius: 0 0 var(--overlay-rounding) var(--overlay-rounding);
 }

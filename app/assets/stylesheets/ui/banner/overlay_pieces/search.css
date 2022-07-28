@@ -1,8 +1,26 @@
 #search {
-  width: min-content;
-  min-width: 30vw;
+  min-width: 0;
+  flex-basis: 30vw;
   display: flex;
+  transition: flex-basis 0.5s ease;
 }
 #search input {
   flex-grow: 1;
+  width: 0;
+  flex-basis: 10vw;
+}
+#search:focus-within {
+  flex-basis: 60vw;
+}
+
+@media(min-width: 646px) and (max-width:800px) {
+  .overlay-element {
+    transition:
+      min-width 0.5s ease,
+      flex-basis 0.5s ease;
+  }
+  #search:focus-within ~ .overlay-element {
+    min-width: 0;
+    flex-basis: 0;
+  }
 }
