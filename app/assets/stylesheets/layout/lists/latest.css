@@ -9,6 +9,7 @@
 
   ul.horizontal.latest:not(:focus, :hover) {
     scrollbar-color: transparent transparent;
+    --webkit-scrollbar-opacity: 0;
   }
   ul.horizontal.latest .virtual:last-child {
     min-width: 0;

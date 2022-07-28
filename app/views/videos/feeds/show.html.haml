@@ -27,7 +27,7 @@
 	%h1 Subscriptions
 	- if @watched_users.count > 0
 		%section.search-result
-			%ul.horizontal{id: 'users', class: "user-list latest"}
+			%ul.horizontal.latest.thin-scrollbar.user-list#users
 				= render partial: 'users/thumb/normal', collection: @watched_users
 	- else
 		= render partial: 'videos/feeds/mail_derpy', locals: { message: pick_one(empty_subscription_messages) }

@@ -1,0 +1,31 @@
+
+.thin-scrollbar {
+  scrollbar-width: thin;
+  --webkit-scrollbar-color: 0;
+  --webkit-scrollbar-width: 7px;
+}
+.thin-scrollbar:hover::-webkit-scrollbar-thumb {
+  --webkit-scrollbar-opacity: 0.5;
+}
+
+/*Non-standard for Chrome browsers*/
+.thin-scrollbar::-webkit-scrollbar {
+  height: var(--webkit-scrollbar-width, initial);
+  width: var(--webkit-scrollbar-width, initial);
+}
+.thin-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(
+    var(--webkit-scrollbar-color, 100),
+    var(--webkit-scrollbar-color, 100),
+    var(--webkit-scrollbar-color, 100),
+    var(--webkit-scrollbar-opacity, 0.3)
+  );
+}
+
+.thin-scrollbar::-webkit-scrollbar-thumb:hover {
+  --webkit-scrollbar-opacity: 0.6;
+}
+.thin-scrollbar::-webkit-scrollbar-thumb:active {
+  --webkit-scrollbar-opacity: 0.7;
+}
+/*End non-standard for Chrome browsers*/

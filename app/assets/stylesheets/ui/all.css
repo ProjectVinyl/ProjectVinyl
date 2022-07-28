@@ -17,6 +17,7 @@
  *= require ./featured_video
  *= require ./donate
  *= require ./tpa
+ *= require ./thin_scrollbars
  *= require ./file_color_code
  *= require ./notices
  *= require ./reorderable

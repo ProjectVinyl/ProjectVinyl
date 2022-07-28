@@ -14,7 +14,7 @@
 						%a.action(data-card-type="user")
 							%span.icon= fw :user
 							%span.label User
-			%ul.card-list.reorderable= render partial: "videos/story_cards/form", collection: @cards, locals: { f: f}
+			%ul.card-list.reorderable.thin-scrollbar= render partial: "videos/story_cards/form", collection: @cards, locals: { f: f}
 			%hr
 		.preview-container
 			.video.context-menu-parent#video(data-nocontext="true"){style: format_bg(@video.cover),

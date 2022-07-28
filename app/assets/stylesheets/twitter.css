@@ -1,6 +1,6 @@
 .timeline-Viewport {
   width: auto !important;
-  scrollbar-width:thin;
+  scrollbar-width: thin;
   scrollbar-color: #ccc5 #ccc1;
 }
 .timeline-Viewport:not(:focus, :hover) {

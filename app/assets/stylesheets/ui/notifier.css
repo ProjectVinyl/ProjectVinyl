@@ -10,7 +10,6 @@
   text-align: left;
   overflow: hidden;
   max-width: 500px;
-  /*! scrollbar-width: thin; */
   text-overflow: ellipsis;
   pointer-events: none;
   opacity: 1;
