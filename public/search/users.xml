@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<OpenSearchDescription xmlns="http://a9.com/-/spec/opensearch/1.1/">
+  <ShortName>Project Vinyl</ShortName>
+  <Description>User search</Description>
+  <InputEncoding>UTF-8</InputEncoding>
+  <Image width="160" height="160" type="image/png">https://www.projectvinyl.net/images/favicon.png</Image>
+  <Image width="16" height="16" type="image/x-icon">https://www.projectvinyl.net/favicon.ico</Image>
+  <Url type="text/html" method="get" template="https://www.projectvinyl.net/users">
+    <Param name="q" value="{searchTerms}"/>
+  </Url>
+  <Url type="application/opensearchdescription+xml" rel="self" template="https://www.projectvinyl.net/search/users.xml" />
+</OpenSearchDescription>

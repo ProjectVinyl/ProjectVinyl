@@ -2,7 +2,10 @@
 %html(lang="en")
 	%head
 		= render 'layouts/metadata/all'
-		%link(rel="search" type="application/opensearchdescription+xml" title="Project Vinyl" href="/search/videos.xml")
+		%link(rel="search" type="application/opensearchdescription+xml" title="Project Vinyl - Albums" href="/search/albums.xml")
+		%link(rel="search" type="application/opensearchdescription+xml" title="Project Vinyl - Tags" href="/search/tags.xml")
+		%link(rel="search" type="application/opensearchdescription+xml" title="Project Vinyl - Users" href="/search/users.xml")
+		%link(rel="search" type="application/opensearchdescription+xml" title="Project Vinyl - Videos" href="/search/videos.xml")
 		- if user_signed_in?
 			%meta(name="current_user" content="#{({ id: current_user.id }).to_json}")
 		%meta(name="vapid_public_key" content="#{Base64.urlsafe_decode64(Rails.application.secrets.vapid_public_key).bytes}")
