@@ -3,7 +3,7 @@
   -moz-appearance: none;
   -webkit-appearance: none;
   appearance: none;
-  background: url('/images/arrow.svg') no-repeat right 10px center/auto 1em;
+  background: url('data:image/svg+xml,<svg width="2.957mm" height="2.5998mm" version="1.1" viewBox="0 0 2.957 2.5998" xmlns="http://www.w3.org/2000/svg"><path d="m0.20931 0 1.2885 2.5998 1.2499-2.5998z" fill="%23337287" fill-rule="evenodd" stroke-width=".051292"/></svg>') no-repeat right 10px center/auto 1em;
 }
 .header .overlay-element select optgroup,
 .header .overlay-element select option {

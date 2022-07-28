@@ -225,9 +225,17 @@ label.check-box:hover {
   --block-border-color: #222121: 
 }
 
+label.options select {
+  background-image: url('data:image/svg+xml,<svg width="2.957mm" height="2.5998mm" version="1.1" viewBox="0 0 2.957 2.5998" xmlns="http://www.w3.org/2000/svg"><path d="m0.20931 0 1.2885 2.5998 1.2499-2.5998z" fill="%23fff" opacity="0.3" fill-rule="evenodd" stroke-width=".051292"/></svg>');
+}
 .checkerboard {
   background-image: url('data:image/svg+xml,<svg%20width="20"%20height="20"%20xmlns="http://www.w3.org/2000/svg"><g%20fill="%23111"%20opacity="1"><rect%20width="10"%20height="10"/><rect%20width="10"%20height="10"%20x="10"%20y="10"/></g></svg>');
 }
+.header .overlay-element select {
+  background-image: url('data:image/svg+xml,<svg width="2.957mm" height="2.5998mm" version="1.1" viewBox="0 0 2.957 2.5998" xmlns="http://www.w3.org/2000/svg"><path d="m0.20931 0 1.2885 2.5998 1.2499-2.5998z" fill="%2309c1ff" fill-rule="evenodd" stroke-width=".051292"/></svg>');
+}
+
+
 .stats {
   --bar-border-base-color: #333;
 }
