@@ -115,6 +115,7 @@ footer .sparkline {
   display: inline-block;
   line-height: 1em;
   background-clip: text;
+  -webkit-background-clip: text;
   text-shadow: none !important;
 }
 footer .sparkline a {
