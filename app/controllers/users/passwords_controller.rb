@@ -6,7 +6,6 @@ class Users::PasswordsController < Devise::PasswordsController
     unless verify_recaptcha
       set_start_time
       self.resource = resource_class.new
-      resource.validate
       respond_with_navigational(resource) { render :new }
     end
   end
