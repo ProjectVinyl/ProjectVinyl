@@ -60,7 +60,7 @@ class CommentThread < ApplicationRecord
     return owner.link if video?
     return link if !owner
 
-    "#{owner.link}/#{id}-#{safe_title}"
+    "#{owner.link}/#{id}"
   end
 
   def icon
