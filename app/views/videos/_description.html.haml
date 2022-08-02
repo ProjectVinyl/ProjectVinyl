@@ -1,4 +1,4 @@
-= cache(@video, 1.hour) do
+= cache(@video, expires_in: 1.hour) do
 	%section.page.slim.seamless.column-left.fixed-right-column
 		= render partial: 'videos/description/system_messages'
 		.post.description.resize-holder
