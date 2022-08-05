@@ -3,7 +3,7 @@
 	%head
 		%meta(http-equiv="Content-type" content="text/html; charset=utf-8")
 		%script#twitter-wjs(async="true" src="//platform.twitter.com/widgets.js")
-		= stylesheet_link_tag '/assets/twitter.css', id: 'timeline-styling'
+		= stylesheet_link_tag 'twitter', id: 'timeline-styling'
 		:css
 			html, body {margin: 0;padding: 0;background: transparent;}
 			.embed > a {text-decoration: none;}
@@ -12,4 +12,4 @@
 				data-theme="#{current_theme_name}"
 				data-chrome="nofooter noborders noheader transparent noscrollbars")
 			Tweets by @Project_Vinyl
-	= javascript_include_tag '/assets/embed/twitter.js'
+	= javascript_include_tag 'twitter'
