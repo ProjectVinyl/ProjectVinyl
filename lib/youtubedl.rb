@@ -6,7 +6,7 @@ class Youtubedl
     temp_dir = Rails.root.join("tmp/youtubedl/#{src.gsub(/[^a-zA-Z_-]/, '-')}")
     FileUtils.mkdir_p temp_dir
     json = Dir.chdir(temp_dir) do
-      stdout, error_str, status = Open3.capture3('yt-dlp', src, '--dump-json', '--write-pages')
+      stdout, error_str, status = Open3.capture3('/home/ubuntu/.local/bin/yt-dlp', src, '--dump-json', '--write-pages')
       return {error: error_str} if !error_str.empty?
 
       Open3.capture3('curl', src, '-o', 'curled.dump') if include_end_screen
