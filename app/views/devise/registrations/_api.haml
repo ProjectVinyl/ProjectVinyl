@@ -104,37 +104,63 @@
 					title -
 					%span The video's title as displayed on the front-end
 				%li
-					description -
-					%span The video's description, presented as both html and bbcode versions
-				%li
-					artist -
-					%span
-						Appends information pertaining to the youtube channel owning the video.
-						Will include the channel's name, id, and url
-				%li
-					thumbnail -
-					%span Links to the video' thumnbail
-				%li
-					iframe -
-					%span Appends html for the equivalent iframe for embedding the video.
-				%li
-					tags
-					%span Appends all of the tabs (topic names) applied to the video
-				%li
-					coppa -
-					%span A boolean indicating whether the video is child-safe
-				%li
 					views -
 					%span The number of views the video ha obtained
+				%li
+					duration -
+					%span
+						The video's length in seconds.
+				%li
+					coppa -
+					%span
+						Age rating information and a flag to indicate whether the video has been marked as "Made for Kids"
+						ad determined by YouTube.
+						%b
+							Disclaimer: Content marked as "Made for Kids" may not actually be child-friendly.
+							This should not be used when determining age-appropriateness.
+				%li
+					description -
+					%span The video's description, presented as both html and bbcode versions
 				%li
 					rating -
 					%span
 						An object describing the video's rating.
 						Will include the average (5-star) rating, number of likes, and number of dislikes.
 				%li
-					duration -
+					series -
+					%span Include series information if the video is part of a series.
+				%li
+					artist -
 					%span
-						The video's length in seconds.
+						Appends information pertaining to the youtube channel owning the video.
+						Will include the channel's name, id, and url
+				%li
+					thumbnails -
+					%span Links to the video' thumnbail
+				%li
+					tags -
+					%span Appends all of the tabs (topic names) applied to the video
+				%li
+					categories -
+					%span The public categories the video was uploaded under. E.g gaming.
+				%li
+					annotations -
+					%span Annotations if available
+				%li
+					captions -
+					%span Captions if available
+				%li
+					chapters -
+					%span Chapter titles and timestamps if available, as provided by YouTube.
+				%li
+					sources -
+					%span Video download links (may not work)
+				%li
+					endscreen -
+					%span Video endcards, featured videos, channels, etc.
+				%li
+					iframe -
+					%span Appends html for the equivalent iframe for embedding the video.
 .notice
 	OEmbed is also supported!
 %table
