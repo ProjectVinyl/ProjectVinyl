@@ -19,6 +19,7 @@
 		.description.post-content.content.fade-away= emotify @video.description
 	.scoring.actions
 		= render partial: 'videos/description/rating_bar'
+		%span.spacer
 		%a.button.blue{href: @featured.comment_thread.link + "#comment_section", title: "Comments"}<>
 			= fw :comments
 			= safe_to_display  @featured.comment_thread.total_comments, 9999

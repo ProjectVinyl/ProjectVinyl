@@ -1,6 +1,7 @@
 .like-dislike {
   flex-grow: 1;
   flex-shrink: 1;
+  max-width: 230px;
 }
 
 .star[data-count]:not([data-count="0"])::after,
