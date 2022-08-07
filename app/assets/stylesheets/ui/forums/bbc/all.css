@@ -5,4 +5,6 @@
  *= require ./imgs
  *= require ./codeblocks
  *= require ./timestamps
+ *= require ./headers
+ *= require ./sizes
  */

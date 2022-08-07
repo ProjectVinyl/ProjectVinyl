@@ -9,7 +9,7 @@ module ProjectVinyl
       TagGenerator.register(:bbc, [:br]){|tag| "\n#{tag.inner_bbc}" }
       TagGenerator.register(:bbc, [:hr]){|tag| "[hr]#{tag.inner_bbc}" }
       TagGenerator.register(:bbc, [:timestamp]){|tag| tag.inner_bbc }
-      TagGenerator.register(:bbc, [:b,:u,:s,:sup,:sub,:spoiler]){|tag| "[#{tag.tag_name}]#{tag.inner_bbc}[/#{tag.tag_name}]" }
+      TagGenerator.register(:bbc, [:b,:u,:s,:sup,:sub,:spoiler,:h1,:h2,:h3,:h4]){|tag| "[#{tag.tag_name}]#{tag.inner_bbc}[/#{tag.tag_name}]" }
       TagGenerator.register(:bbc, [:div]){|tag| tag.classes.include?('spoiler') ? "[spoiler]#{tag.inner_bbc}[/spoiler]" : tag.inner_bbc }
       TagGenerator.register(:bbc, [:img]){|tag| "[img#{tag.attributes.only(:alt, :title).to_html}]#{tag.attributes[:src]}[/img]#{tag.inner_bbc}" }
       TagGenerator.register(:bbc, [:emote]){|tag| ":#{tag.inner_text}:" }
@@ -39,6 +39,7 @@ module ProjectVinyl
       end
 
       TagGenerator.register(:html, [:b,:i,:u,:s,:sup,:sub,:hr]){|tag| "<#{tag.tag_name}>#{tag.inner_html}</#{tag.tag_name}>" }
+      TagGenerator.register(:html, [:h1,:h2,:h3,:h4]){|tag| "<#{tag.tag_name} class=\"bbc-header\">#{tag.inner_html}</#{tag.tag_name}>" }
       TagGenerator.register(:html, [:icon]){|tag| "<i class=\"fa fa-fw fa-#{tag.inner_text.split(/[^a-zA-Z0-9]/)[0]}\"></#{tag.tag_name}>" }
       TagGenerator.register(:html, [:q]){|tag| "<blockquote#{!tag.even ? ' class="even"' : ''}#{tag.attributes.only(:who, :when).to_html}>#{tag.inner_html}</blockquote>" }
       TagGenerator.register(:html, [:url]){|tag| "<a rel=\"noopener ugc nofollow\" href=\"#{tag.equals_par  || tag.inner_text}\">#{tag.inner_html}</a>" }

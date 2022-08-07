@@ -1,0 +1,10 @@
+
+<% (1..20).step(1) do |i| %>
+span[data-size="<%= i %>"] {
+	font-size: <%= 1 + (i.to_f / 20) %>em;
+}
+<% end %>
+
+span[data-size] span[data-size] {
+  font-size: 1em;
+}
