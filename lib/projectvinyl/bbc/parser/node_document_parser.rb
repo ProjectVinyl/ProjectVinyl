@@ -32,10 +32,8 @@ module ProjectVinyl
               break
             end
 
-            if Helpers.head_matches?(content, index, "#{open}#{open}") ||
-              Helpers.head_matches?(content, index, "#{close}#{close}#{close}") ||
-              Helpers.head_matches?(content, index, "#{close}#{close}#{open}") ||
-              Helpers.head_matches?(content, index, "#{open}#{close}")
+            # Illegal combinations - pass them through and render as escaped literals
+            if Helpers.head_matches_any?(content, index, ["#{open}#{open}", "#{close}#{close}#{close}", "#{close}#{close}#{open}", "#{open}#{close}"])
               text += content[index]
               next
             end
@@ -73,14 +71,8 @@ module ProjectVinyl
           while index < (content.length - 1)
             index += 1
 
-            if name.length > 0 && (
-                content[index] == '=' || content[index] == close || content[index] == ' ' || content[index] == '/'
-              )
-              if name.strip != name || name.gsub(/[^a-zA-Z0-9]/, '') != name
-                puts "Invalid tag name '#{name}'"
-                return "&lt;" + content
-              end
-
+            if name.length > 0 && Helpers.at_any?(content, index, ['=', close, ' ', '/'])
+              return "&lt;" + content if name.strip != name || name.gsub(/[^a-zA-Z0-9]/, '') != name
               # <name>... or <name ... or <name />
               # -----|       -----|       ------|
               child_node = parent_node.append_node(name)
@@ -93,10 +85,8 @@ module ProjectVinyl
               # <name />... or <name>
               # ------|        -----|
 
-              if Helpers.head_matches?(content, index, "/#{close}")
-                index += close.length
-                return Helpers.rest(content, index + 1)
-              end
+              return Helpers.rest(content, index + close.length + 1) if Helpers.head_matches?(content, index, "/#{close}")
+
               content_node = (child_node.self_closed? ? parent_node : child_node)
               content, index = parse_node_inner(child_node, content_node, Helpers.rest(content, index + 1), open, close), -1
               return Helpers.rest(content, index + 1)

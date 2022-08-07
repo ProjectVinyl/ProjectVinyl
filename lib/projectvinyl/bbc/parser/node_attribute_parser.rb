@@ -20,7 +20,7 @@ module ProjectVinyl
             break if Helpers.head_matches?(content, index, "/#{close}")
             break if content[index] == close
 
-            if content[index] == '=' || content[index] == ' '
+            if Helpers.at_any?(content, index, ['=', ' '])
               next if name.blank?
               ( content, value ),index = read_quoted_value(Helpers.rest(content, index + 1), close), -1
               node.set_attribute(name, value) if attribute_name_valid? name
@@ -61,7 +61,7 @@ module ProjectVinyl
                 next
               end
 
-              break if content[index] == ' ' || content[index] == close
+              break if Helpers.at_any?(content, index, [' ', close])
             elsif content[index] == quote
               index += 1
               break

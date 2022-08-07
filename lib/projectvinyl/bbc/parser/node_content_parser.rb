@@ -5,21 +5,15 @@ module ProjectVinyl
   module Bbc
     module Parser
       module NodeContentParser
-
         def self.parse(node, content, text, index, open, close)
           # Convert line breaks to <br> tags
-          return parse_line_break(node, content[index..content.length], text) if Helpers.at_line_break?(content, index)
+          return ['', parse_line_break(node, content[index..content.length], text)] if Helpers.at_line_break?(content, index)
+          return ['', parse_url(node, content[index..content.length], text, open, close)] if !node.handles_urls? && Helpers.head_matches_any?(content, index, ['https:', 'http:'])
+          return ['', parse_reply_tag(node, content[index..content.length], text)] if Helpers.head_matches_any?(content, index, ['&gt;&gt;', '>>'])
 
-          found_url = !node.handles_urls? && (content.index('https:') == index || content.index('http:') == index)
+          if (index == 0 || content[index - 1].strip == '' || content[index - 1] == close)
+            return ['', parse_mention(node, content[(index + 1)..content.length], text)] if content[index] == '@'
 
-          return ['', parse_url(node, content[index..content.length], text, open, close)] if found_url
-          return ['', parse_reply_tag(node, content[index..content.length], text)] if Helpers.head_matches?(content, index, '&gt;&gt;') || Helpers.head_matches?(content, index, '>>')
-
-          has_space_before = (index == 0 || content[index - 1].strip == '' || content[index - 1] == close)
-
-          return ['', parse_mention(node, content[(index + 1)..content.length], text)] if has_space_before && content[index] == '@'
-
-          if has_space_before
             if content[index] == ':'
               emote_handled = try_parse_emoticon(node, content[index..content.length], text)
               return ['', emote_handled] if emote_handled != false
@@ -33,6 +27,7 @@ module ProjectVinyl
           return [text, false]
         end
 
+        private
         def self.parse_line_break(node, content, text)
           node.append_text(text).append_node('br')
           content.gsub(/^[\r\n]+/, '')

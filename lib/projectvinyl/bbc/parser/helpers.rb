@@ -14,6 +14,14 @@ module ProjectVinyl
           content.index(expect, index) == index
         end
 
+        def self.head_matches_any?(content, index, expecteds)
+          expecteds.any? { |i| head_matches?(content, index, i) }
+        end
+
+        def self.at_any?(content, index, expecteds)
+          expecteds.any? { |i| content[index] == i }
+        end
+
         def self.rest(content, index)
           content[index..content.length] || ''
         end
