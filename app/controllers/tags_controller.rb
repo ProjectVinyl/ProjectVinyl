@@ -1,7 +1,7 @@
 class TagsController < ApplicationController
   include Searchable
 
-  configure_ordering [ :name ], only: [:index]
+  configure_ordering [ :name, :video_count, :user_count ], only: [:index]
   configure_ordering [ :date, :rating, [:wilson_score, :wilson_lower_bound], :heat, :length, :random, :relevance ], search_action: :search_index_path, only: [:show]
 
   def show
@@ -52,7 +52,7 @@ class TagsController < ApplicationController
   end
 
   def index
-    read_search_params params
+    read_search_params params, default_order: 1, default_order_by: 1
 
     if filtered?
       @records = ProjectVinyl::Search::ActiveRecord.new(Tag)
@@ -61,7 +61,7 @@ class TagsController < ApplicationController
       @records = @records.reverse_order if !@ascending
       @records = @records.paginate(@page, 100){|recs| recs.includes(:videos, :tag_type)}
     else
-      @records = Pagination.paginate(Tag.includes(:videos, :tag_type).where(alias_id: nil), @page, 100, !@ascending)
+      @records = Pagination.paginate(Tag.includes(:videos, :tag_type).where(alias_id: nil).order(order_field), @page, 100, !@ascending)
     end
 
     render_paginated @records, {
