@@ -1,4 +1,6 @@
 ul.horizontal.tag-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
   overflow: visible;
 }
 ul.horizontal.tag-list .tag {
