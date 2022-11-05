@@ -41,7 +41,7 @@ module ProjectVinyl
         frame_ancestors: [ 'self' ],
         worker_src: [ 'self', 'https://www.youtube.com' ],
         child_src: [ 'self', 'https://www.youtube.com', 'https://platform.twitter.com/' ],
-        frame_src: [ 'self', 'https://www.youtube.com', 'https://platform.twitter.com/' ],
+        frame_src: [ 'self', 'https://www.youtube.com', 'https://platform.twitter.com/', 'https://syndication.twitter.com/' ],
         media_src: [ 'self', 'blob:' ],
         img_src: [ '*', 'blob:', 'data:' ],
         script_src: [ 'self', 'unsafe-inline', 'http://platform.twitter.com/', 'http://196.25.211.41/', 'https://cdn.syndication.twimg.com/' ],
