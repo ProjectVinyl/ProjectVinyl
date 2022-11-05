@@ -40,12 +40,12 @@ export function Player(el, standalone) {
 
   attachMessageListener(this, !standalone);
 
+  if (!this.dom.closest('.featured') && navigation && navigation.scrollIntoView) {
+    navigation.scrollIntoView()
+  }
+
   if (!el.dataset.pending) {
     this.dom.floater = attachFloater(this);
-
-    if (navigation && navigation.scrollIntoView) {
-      navigation.scrollIntoView()
-    }
   }
 
   new TapToggler(this.dom);
