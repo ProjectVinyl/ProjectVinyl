@@ -1,5 +1,5 @@
 html, body {
-  --site-width: 85vw;
+  --site-width: 90vw;
   background: var(--site-background);
   overflow: hidden;
 }
