@@ -5,6 +5,7 @@
  *= require ./inputs/all
  *= require ./buttons/all
  *= require ./banner/all
+ *= require ./channel_bio
  *= require ./contextmenu
  *= require ./slideouts
  *= require ./slideacross

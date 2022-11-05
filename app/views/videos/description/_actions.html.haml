@@ -1,7 +1,8 @@
 .actions.actions-above-content
+	= render partial: 'videos/description/channel_block'
+	%span.spacer
 	= render partial: 'videos/description/rating_bar'
 	= render partial: 'videos/description/favourite_button'
-	%span.spacer
 	%a.button.blue.action.mobile-friendly(title="Comments" href="#comment_section")>
 		= fw :comments
 		= fuzzy_big_number_with_delimiter @comments.count

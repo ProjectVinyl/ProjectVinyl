@@ -1,0 +1,13 @@
+%h3.channel-bio.bio
+	%a.link{class: "user-link", "data-id": @user.id, href: @user.link}
+		= render 'users/avatar/small', user: @user
+	.uploader-name
+		%a.link{class: "user-link", "data-id": @user.id, href: @user.link}= @user.username
+		%span
+			- if @video.premiered_at
+				= find_and_preserve "<span title=\"Premiered: #{localise_ftime(@video.premiered_at)}\n Uploaded: #{localise_ftime(@video.created_at)}\">#{localise_short_date @video.premiered_at}</span>"
+			- else
+				%span(title="Uploaded: #{localise_ftime(@video.created_at)}")= localise_short_date @video.created_at
+			•
+			= fuzzy_big_number_with_delimiter @video.play_count
+			views
