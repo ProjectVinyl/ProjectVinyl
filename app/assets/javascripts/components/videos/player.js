@@ -38,6 +38,10 @@ export function Player(el, standalone) {
   this.controls = new PlayerControls(this, el.querySelector('.controls'));
   this.contextMenuActions = initContextMenu(el.querySelector('.contextmenu'), this);
 
+  if (navigation && navigation.scrollIntoView) {
+    navigation.scrollIntoView()
+  }
+
   attachMessageListener(this, !standalone);
 
   if (!el.dataset.pending) {
