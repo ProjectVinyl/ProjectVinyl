@@ -12,8 +12,10 @@ export function asTag(ans) {
     slug: ans.replace(`${namespace}:`, ''),
     namespace,
     members: -1,
-    flags: '',
-    link: ans
+    link: ans,
+    watching: false,
+    spoilered: false,
+    hidden: false
   };
 }
 

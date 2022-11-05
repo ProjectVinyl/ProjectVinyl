@@ -25,6 +25,7 @@
 .popper .pop-out > * .icon {
   display: inline-block;
   width: 30px;
+  vertical-align: middle;
 }
 
 .drop-down li a {

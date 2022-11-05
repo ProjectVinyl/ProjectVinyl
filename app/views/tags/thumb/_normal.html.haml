@@ -1,8 +1,9 @@
-%li.tag.class{class: user_signed_in? && "drop-down-holder popper", "data-namespace": normal.namespace.present? && normal.namespace, "data-slug": normal.name}>
+%li.tag.class{class: user_signed_in? && "drop-down-holder popper",
+		data: normal.widget_parameters(current_user)
+	}>
 	%a{href: normal.link}
 		%span= normal.name
-	- if user_signed_in?
-		= render 'tags/flags', tag: normal
+	= render partial: 'tags/flags'
 	%span.counter= number_with_delimiter normal.members
 	- if user_signed_in?
 		%ul.drop-down.pop-out

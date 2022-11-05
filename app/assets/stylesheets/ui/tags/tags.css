@@ -11,10 +11,12 @@
   --button-bottom-color: var(--button-top-color);
 
   display: inline-flex;
+  gap: 6px;
   align-items: center;
   white-space: nowrap;
   margin: 2px;
   padding: 5px;
+  padding-left: 10px;
   border-radius: 15px;
   text-shadow: none;
   border: none;
@@ -25,7 +27,7 @@
 
 .tag a, .tag span {
   text-decoration: none;
-  color: var(--button-foreground);
+  color: inherit;
   font-weight: initial;
   letter-spacing: 0.06em;
   flex-grow: 1;
@@ -43,9 +45,6 @@
   border-radius: inherit;
   border-top-left-radius: 0;
   border-bottom-left-radius: 0;
-}
-.tag m {
-  flex-grow: 1;
 }
 
 .tags.artist-tags {

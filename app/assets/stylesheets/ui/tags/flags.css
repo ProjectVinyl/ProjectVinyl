@@ -1,0 +1,17 @@
+.tag m {
+  flex-grow: 1;
+  gap: 6px;
+}
+
+.tag m span {
+  display: none;
+}
+.tag[data-watching="true"] m .watch {
+  display: initial;
+}
+.tag[data-spoilered="true"] m .spoil {
+  display: initial;
+}
+.tag[data-hidden="true"] m .hide {
+  display: initial;
+}

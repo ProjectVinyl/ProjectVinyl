@@ -121,17 +121,20 @@ class Tag < ApplicationRecord
       members: members,
       slug: slug,
       link: slug,
-      flags: flags(sender)
+			watching: (!sender.nil? && sender.watches?(actual.id)).to_s,
+			hidden: (!sender.nil? && sender.hides?(actual.id)).to_s,
+			spoilered: (!sender.nil? && sender.spoilers?(actual.id)).to_s
     }
   end
 
-  def flags(sender=nil)
-    return '' if sender.nil?
-
-    answer = [sender.watches?(actual.id) ? '-' : '+']
-    answer << 'H' if sender.hides?(actual.id)
-    answer << 'S' if sender.spoilers?(actual.id)
-    answer.join(' ')
+  def widget_parameters(sender)
+    {
+			namespace: namespace.present? && namespace,
+			slug: name,
+			watching: (!sender.nil? && sender.watches?(actual.id)).to_s,
+			hidden: (!sender.nil? && sender.hides?(actual.id)).to_s,
+			spoilered: (!sender.nil? && sender.spoilers?(actual.id)).to_s
+		}
   end
 
   def validate_name_and_reindex
