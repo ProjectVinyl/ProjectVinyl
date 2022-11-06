@@ -21,7 +21,7 @@ body {
   height: var(--banner-logo-height);
   max-width: 100%;
   overflow: hidden;
-  padding: 20px;
+  padding: 10px;
   opacity: 0.65;
   float: left;
 }
