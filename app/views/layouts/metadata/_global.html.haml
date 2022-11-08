@@ -13,3 +13,6 @@
 %meta(name="twitter:app:name:ipad" content="#{site_name}")
 
 %meta(name="attribution" content="Alloy/")
+
+- if Rails.env.development?
+	%meta(name="environment" content="development")
