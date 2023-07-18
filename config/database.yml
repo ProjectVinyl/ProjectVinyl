@@ -16,5 +16,5 @@ test:
 
 production:
   <<: *default
-  password: <%= File.read("~/.dbpass") rescue nil %>
+  password: <%= File.read("../.dbpass") rescue nil %>
   database: projectvinyl
