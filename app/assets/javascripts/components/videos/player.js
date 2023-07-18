@@ -40,8 +40,9 @@ export function Player(el, standalone) {
 
   attachMessageListener(this, !standalone);
 
+  const navigation = document.getElementById('navigation');
   if (!this.dom.closest('.featured') && navigation && navigation.scrollIntoView) {
-    navigation.scrollIntoView()
+    navigation.scrollIntoView();
   }
 
   if (!el.dataset.pending) {
