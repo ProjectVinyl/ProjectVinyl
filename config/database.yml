@@ -6,12 +6,15 @@ default: &default
 
 development:
   <<: *default
+  password: fb17100e7cb0439782165cd3c2c7e934
   database: projectvinyl_development
 
 test:
   <<: *default
+  password: fb17100e7cb0439782165cd3c2c7e934
   database: projectvinyl_test
 
 production:
   <<: *default
+  password: <%= File.read("~/.dbpass") rescue nil %>
   database: projectvinyl
