@@ -59,7 +59,9 @@ export function Player(el, standalone) {
     scrollTo(selected, document.querySelector('.playlist .scroll-container'));
   }
 
-  if ((!this.params.embedded && this.__autostart) || QueryParameters.current.autoplay == '1') {
+  if ((!this.params.embedded && this.__autostart)
+    || QueryParameters.current.values.autoplay == '1'
+    || QueryParameters.current.values.auto_play == '1') {
     this.play();
   }
 
