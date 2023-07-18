@@ -1,5 +1,5 @@
 # set path to application
-app_dir = "/home/ubuntu/ProjectVinyl"
+app_dir = "/home/projectvinyl/ProjectVinyl"
 working_directory app_dir
 
 # Set unicorn options
