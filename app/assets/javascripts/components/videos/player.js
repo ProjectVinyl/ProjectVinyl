@@ -13,7 +13,7 @@ import { attachFloater } from './floatingplayer';
 import { registerEvents } from './gestures';
 import { initContextMenu } from './context_menu';
 import { playerHeader, fillRequiredParams, readParams } from './parameters';
-import { QueryParameters } from '../../queryparameters';
+import { QueryParameters } from '../../utils/queryparameters';
 
 function playerElement(sender) {
   const player = sender.dom.querySelector('.player');
