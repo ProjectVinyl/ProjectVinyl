@@ -31,7 +31,6 @@ function extractTimeUnit(duration, modulus) {
 
 // converts a time integer to hh:mm:ss format
 export function toHMS(timeframe, delimiter) {
-  console.log(`toHMS(${timeframe}`);
   const times = [];
   timeframe = Math.floor(timeframe || 0);
   while (timeframe >= 60) {
