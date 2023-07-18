@@ -13,6 +13,7 @@ import { attachFloater } from './floatingplayer';
 import { registerEvents } from './gestures';
 import { initContextMenu } from './context_menu';
 import { playerHeader, fillRequiredParams, readParams } from './parameters';
+import { QueryParameters } from '../../queryparameters';
 
 function playerElement(sender) {
   const player = sender.dom.querySelector('.player');
@@ -58,7 +59,7 @@ export function Player(el, standalone) {
     scrollTo(selected, document.querySelector('.playlist .scroll-container'));
   }
 
-  if (!this.params.embedded && this.__autostart) {
+  if ((!this.params.embedded && this.__autostart) || QueryParameters.current.autoplay == '1') {
     this.play();
   }
 
