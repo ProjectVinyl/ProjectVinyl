@@ -1,0 +1,101 @@
+# /bin/bash
+#
+# This is a production setup script for project vinyl. To be run after the normal ./setup.
+# This adds the production-ready elements needed then starts the server
+#
+# It performs the following operations:
+#  - Installs application secrets
+#  - Create and seed or restore database
+#  - Install and configure nginx
+#  - Enable and start bundled services
+#  - Set-up logrotate
+#  - Precompile assets
+#  - Launch Project Vinyl on localhost
+#
+# Environment Parameters:
+#   PV_USER            the user that the site will be running as (must exist)
+#   DB_BACKUP_NAME     (production) Filename of a database backup to restore. Must be in the same directory.
+#   CHECKOUT_LOCATION  (production) Location to check out the repository in. Defaults to $PV_USER's home directory
+
+# Environmet & Prerequisite
+  cd ~
+  # WHO AM I!?? WHERE AM I!? WHO ARE YOU!?
+    WORKING_DIR=$($PWD)
+    if [ -z $PV_USER ]; then PV_USER=$(whoami); fi
+    if [ -z $DB_BACKUP_NAME ]; then DB_BACKUP_NAME=projectvinyl_db_2023_02_01; fi
+    SUDO_CM=sudo
+    if [ "$(whoami)" = "root" ]; then SUDO_CM=''; fi
+    if [ "$PV_USER" = "root" ]; then PV_USER=projectvinyl; fi
+    if [ -z $CHECKOUT_LOCATION ]; then CHECKOUT_LOCATION=/home/$($PV_USER)
+
+# Secrets
+  if [ -f "./exportsecrets" ]; then su $PV_USER -c ./exportsecrets; fi
+
+# Database
+  echo Please update /etc/postgresql/12/main/pg_hba.conf to allow password authentication.
+  echo Change:
+  echo "    local   all             all                                     peer"
+  echo to
+  echo "    local   all             all                                     md5"
+  read -p "Press any key to continue." c
+
+      # It's not md5 by default and that's stupid
+  # Create database user and set password
+  echo "CREATE USER $PV_USER; ALTER USER projectvinyl PASSWORD '$(<.dbpass)'; CREATE DATABASE projectvinyl OWNER $PV_USER;" > $SUDO_CM -u postgres psql -
+  if [ -f "$PV_USER $DB_BACKUP_NAME.tar" ]; then
+    pg_restore -U $PV_USER $DB_BACKUP_NAME.tar -d projectvinyl --no-owner
+  else
+    su $PV_USER -c "cd $CHECKOUT_LOCATION/ProjectVinyl; RAILS_ENV=production rails db:create; RAILS_ENV=production rails db:seed"
+  fi
+
+# Services
+  # Nginx
+    $SUDO_CM apt-get install nginx
+    $SUDO_CM systemctl enable nginx.service
+    $SUDO_CM mv /etc/nginx/sites-available/default /etc/nginx/sites-available/default-original
+    $SUDO_CM cat > /etc/nginx/sites-available/default << EOF
+upstream derpy_upstream {
+  server localhost:8080 fail_timeout=0;
+}
+
+server {
+  # ...
+  listen 80;
+  root $CHECKOUT_LOCATION/ProjectVinyl/public;
+
+  location / {
+    try_files $uri @proxy;
+  }
+
+  location @proxy {
+    proxy_pass  http://derpy_upstream;
+    proxy_redirect     off;
+    proxy_set_header   Host             $host:$server_port;
+    proxy_set_header   X-Real-IP        $remote_addr;
+    proxy_set_header   X-Forwarded-For  $proxy_add_x_forwarded_for;
+  }
+}
+EOF
+    $SUDO_CM systemctl restart nginx.service
+
+  # PV specific services and workers
+    ($SUDO_CM ln -s $WORKING_DIR/services /etc/systemd/system; systemctl enable *)
+
+  # Logrotate
+    $SUDO_CM cat > /etc/logrotate.d/project-vinyl << EOF
+$CHECKOUT_LOCATION/ProjectVinyl/log/*.log {
+      weekly
+      copytruncate
+      missingok
+      rotate 12
+      compress
+      notifempty
+}
+EOF
+
+# Precompile assets
+  su $PV_USER -c "cd $CHECKOUT_LOCATION/ProjectVinyl; bundle exec rails assets:precompile"
+
+# Start
+  systemctl daemon-reload
+  systemctl restart unicorn.service

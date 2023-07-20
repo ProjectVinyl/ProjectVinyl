@@ -1,0 +1,72 @@
+# /bin/bash
+# This is a setup script for project vinyl
+# It performs the following operations:
+#  - Configure environment
+#  - Install and configure postgres
+#  - Install and configure elasticsearch
+#  - Install and configure ruby and redis
+#
+# You can start in development mode by running `foreman start`
+# or to set up a production mode use setup_production after running this script
+#
+# Environment Parameters:
+#   PV_USER            the user that the site will be running as (must exist)
+#   CHECKOUT_LOCATION  Location where the repository is checked out. Defaults to $PV_USER's home directory
+
+# Environmet & Prerequisite
+  cd ~
+  # WHO AM I!?? WHERE AM I!? WHO ARE YOU!?
+    WORKING_DIR=$($PWD)
+    if [ -z $PV_USER ]; then PV_USER=$(whoami); fi
+    SUDO_CM=sudo
+    if [ "$(whoami)" = "root" ]; then SUDO_CM=''; fi
+    if [ "$PV_USER" = "root" ]; then PV_USER=projectvinyl; fi
+    if [ -z $CHECKOUT_LOCATION ]; then CHECKOUT_LOCATION=/home/$($PV_USER)
+
+  # AND WHAT IS THAT!??!
+    $SUDO_CM apt-get update
+    $SUDO_CM apt install -y curl apt-transport-https wget gpg git build-essential \
+                            rbenv python3-pip ffmpeg nodejs libpq-dev redis-server openjdk-8-jre
+
+# Postgres
+    if [ "$(which lsb_release)" = "" ]; then LSB_RELEAS=jammy; else LSB_RELEAS=lsb_release -cs; fi
+    curl -fsSL https://www.postgresql.org/media/keys/ACCC4CF8.asc|$SUDO_CM gpg --dearmor -o /etc/apt/trusted.gpg.d/postgresql.gpg
+    echo "deb http://apt.postgresql.org/pub/repos/apt/ $LSB_RELEAS-pgdg main" |$SUDO_CM tee /etc/apt/sources.list.d/pgdg.list
+    $SUDO_CM apt-get update
+    # TODO: Installing postgres in a docker forces you to select a country/timezone.
+    #       I don't know why it does this but you can't proceed past this point without it
+    $SUDO_CM apt install -y postgresql-12
+    $SUDO_CM systemctl enable postgresql
+    $SUDO_CM systemctl start postgresql
+
+# Elasticsearch
+    wget -qO - https://artifacts.elastic.co/GPG-KEY-elasticsearch | $SUDO_CM apt-key add -
+    echo "deb https://artifacts.elastic.co/packages/6.x/apt stable main" |$SUDO_CM tee /etc/apt/sources.list.d/elastic-6.x.list
+    $SUDO_CM apt-get update
+    $SUDO_CM apt install -y elasticsearch
+    $SUDO_CM systemctl enable elasticsearch.service
+    $SUDO_CM echo > /etc/systemd/system/elasticsearch.service.d/override.conf << EOF
+[Service]
+Environment=ES_JAVA_OPTS="-Xms2g -Xmx2g"
+Environment=JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64/jre
+LimitNPROC=4096
+EOF
+  $SUDO_CM systemctl start elasticsearch.service
+
+# Youtube-DL
+    $SUDO_CM pip3 install yt-dlp >> /dev/null
+
+# Ruby
+    wget -O ruby-build-2023-124.tar.gz https://github.com/rbenv/ruby-build/archive/refs/tags/v20230124.tar.gz; tar -xzf ruby-build-2023-124.tar.gz
+    if [ "$SUDO_CM" = "" ]; then
+      PREFIX=/usr/local ./ruby-build-20230124/install.sh
+    else
+      $SUDO_CM PREFIX=/usr/local ./ruby-build-20230124/install.sh
+    fi
+    rm ruby-build-2023-124.tar.gz;rm -rf ruby-build-20230124
+    su $PV_USER -c "echo 'eval \"\$(\$HOME/.rbenv/bin/rbenv init - bash)\"' >> ~/.\$(basename \$SHELL)rc"
+    su $PV_USER -c "rbenv install 2.6.3;cd $HOME; rbenv local 2.6.3"
+
+# Run bundler
+  if [ -f "$CHECKOUT_LOCATION/ProjectVinyl" ]; then su $PV_USER -c "cd $CHECKOUT_LOCATION; git clone https://github.com/ProjectVinyl/ProjectVinyl.git"; fi
+  su $PV_USER -c "cd $CHECKOUT_LOCATION/ProjectVinyl; bundle install"

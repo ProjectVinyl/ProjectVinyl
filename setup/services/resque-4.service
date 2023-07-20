@@ -1,0 +1,12 @@
+[Unit]
+Description=Resque Background Worker #4 (Manual)
+PartOf=unicorn.service
+
+[Service]
+User=projectvinyl
+Type=simple
+ExecStart=/home/projectvinyl/bin/start-resque-manual
+WorkingDirectory=/home/projectvinyl/ProjectVinyl
+
+[Install]
+WantedBy=default.target
