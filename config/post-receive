@@ -1,12 +1,8 @@
 #!/usr/bin/env bash
 
-# Just in case
-test -s /usr/local/share/chruby/chruby.sh && source /usr/local/share/chruby/chruby.sh
-test -s /usr/local/share/chruby/auto.sh && source /usr/local/share/chruby/auto.sh
-
 # Set ruby version dynamically, proofs for runtime upgrades.
-RUBY_VERSION=`git cat-file blob HEAD:.ruby-version`
-chruby $RUBY_VERSION
+export PATH="$HOME/.rbenv/bin:$PATH"
+eval "$(rbenv init -)"
 
 # Set rails environment
 export RAILS_ENV=production
@@ -42,9 +38,4 @@ fi
 
 # Restart unicorn
 echo "Restarting webserver"
-systemctl --user restart unicorn.service
-
-# Restart background workers
-# Don't call eye. Workers are managed via systemd~ --> ~/.config/systemd/user
-# bundle exec eye quit --stop_all
-# bundle exec eye load /home/ubuntu/ProjectVinyl/config/projectvinyl.eye
+sudo systemctl restart unicorn.service
