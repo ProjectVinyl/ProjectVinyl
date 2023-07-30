@@ -11,18 +11,17 @@ Elasticsearch: 6.8.0 \
 Postgres: 12
 
 ## Setup
-    git clone git@github.com:ProjectVinyl/ProjectVinyl.git
-    cd ProjectVinyl
-    bundle install
-    rails db:create
-    rails db:seed
-
-### Development Docker
 
 ### Presequisites
 
  - Docker (`apt-get install docker`)
  - Docker Compose (`apt-get install docker-compose`)
+
+    git clone git@github.com:ProjectVinyl/ProjectVinyl.git
+    cd ProjectVinyl
+    ./ducker compose
+
+### Docker
 
 Developing with project vinyl is (somewhat) easy.
 Simply run `./ducker compose` and the project and its dependencies will be built and deployed.
