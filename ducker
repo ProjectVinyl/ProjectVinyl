@@ -1,0 +1,43 @@
+# /bin/bash
+CM="sudo docker";CATEGORY=$1;COMMAND=$2
+if [ "$CATEGORY" == "shell" ]; then $CM exec -it $2 bash; exit 0; fi
+if [ "$CATEGORY" == "compose" ]; then
+    if [ "$COMMAND" == "shell" ]; then $CM compose run --rm app; exit 0; fi
+    $CM compose up --build; exit 0; fi
+if [ "$CATEGORY" == "list" ]; then
+    echo Images:; $CM images | sed 's/^/\t/g'
+    echo Containers:; $CM ps -a | sed 's/^/\t/g'
+    exit 0; fi
+if [ "$CATEGORY" == "image" ]; then
+    if [ "$COMMAND" == "install" ]; then $CM image pull $3; exit 0; fi
+    if [ "$COMMAND" == "remove" ]; then $CM image rm $3 -f; exit 0; fi
+    if [ "$COMMAND" == "build" ]; then $CM build -t $3 .; fi
+    echo 'Images:'; $CM images | sed 's/^/\t/g'
+    exit 0; fi
+if [ "$CATEGORY" == "container" ]; then
+    if [ "$COMMAND" == "drop" ]; then $CM remove $3; exit 0; fi
+    if [ "$COMMAND" == "start" ]; then $CM start --attach $3; exit 0; fi
+    if [ "$COMMAND" == "stop" ]; then $CM container stop $3; exit 0; fi
+    if [ "$COMMAND" == "create" ]; then $CM attach $($CM run -dit $3); exit 0; fi
+    if [ "$COMMAND" == "reconnect" ]; then $CM attach $3; exit 0; fi
+    echo Containers:; $CM ps -a | sed 's/^/\t/g'
+    exit 0; fi
+echo \
+'Usage: ducker [container|image|list] <command> <arguments>
+
+General Commands:
+ - list                     Prints out a list of installed docker images and containers
+
+Image Commands:
+ - build <image name>     Builds and installs a docker image from a dockerfile in the current directory
+ - install <image name>     Downloads and installs a docker image
+ - remove <image name>      Removes an image previously downloaded using ducker image install
+ - list
+
+Container Commands:
+ - create <image name>         Creates a new container and connects to it
+ - start <container name>      Restarts a container
+ - stop <container name>       Stops a container
+ - drop <container name>       Shuts down and removes an existing container
+ - reconnect <container name>  Connects to an existing container
+ - list'
