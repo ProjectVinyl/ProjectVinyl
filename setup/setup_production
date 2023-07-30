@@ -79,7 +79,9 @@ EOF
     $SUDO_CM systemctl restart nginx.service
 
   # PV specific services and workers
-    ($SUDO_CM ln -s $WORKING_DIR/services /etc/systemd/system; systemctl enable *)
+    ($SUDO_CM ln -s $WORKING_DIR/services/* /etc/systemd/system; systemctl enable *)
+  # Allow the PV user to restart unicorn
+    $SUDO_CM echo "$PV_USER ALL = NOPASSWD: $(which systemctl) restart unicorn.service" >> /etc/sudoers.d/systctl
 
   # Logrotate
     $SUDO_CM cat > /etc/logrotate.d/project-vinyl << EOF
