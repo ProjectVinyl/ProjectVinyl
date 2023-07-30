@@ -217,6 +217,7 @@ Rails.application.routes.draw do
   resource :oembed, only: [:show], module: :embed
   namespace :embed do
     resource :twitter, only: [:show]
+    resource :mastodon, only: [:show]
     get ':id' => 'videos#show'
   end
 
