@@ -1,0 +1,3 @@
+development: es://elasticsearch:9200
+test: es://elasticsearch:9200
+production: es://localhost:9200

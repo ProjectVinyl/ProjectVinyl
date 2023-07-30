@@ -1,0 +1,39 @@
+services:
+  app:
+    image: pv_docker_test_3
+    build:
+      context: .
+      dockerfile: dockerfile
+    command: -c "eval \"$(rbenv init - bash)\" && foreman start"
+    entrypoint: /usr/bin/bash
+    user: projectvinyl:projectvinyl
+    ports:
+      - 127.0.0.1:8080:8080
+    working_dir: /home/projectvinyl/ProjectVinyl
+    volumes:
+      - ./:/home/projectvinyl/ProjectVinyl
+      - ../pv_share:/home/projectvinyl/pv_share
+      - ../tpa_share:/home/projectvinyl/tpa_share
+    environment:
+      PV_USER: projectvinyl
+  redis:
+    image: redis:7
+    ports:
+      - 127.0.0.1:6379:6379
+  postgres:
+    image: postgres:12
+    restart: always
+    environment:
+      POSTGRES_DB: projectvinyl_development
+      POSTGRES_USER: projectvinyl
+      POSTGRES_PASSWORD: fb17100e7cb0439782165cd3c2c7e934
+    ports:
+      - 127.0.0.1:5432:5432
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:6.8.23
+    ports:
+      - 127.0.0.1:9200:9200
+    environment:
+      discovery.type: single-node
+      cluster.routing.allocation.disk.threshold_enabled: false
+      cluster.name: elasticsearch-rails
