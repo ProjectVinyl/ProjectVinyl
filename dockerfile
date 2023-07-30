@@ -1,8 +1,10 @@
 FROM ubuntu:jammy
 USER root
-RUN apt-get update && apt-get install -y \
+ARG DEBIAN_FRONTEND=noninteractive
+ENV TZ=Etc/UTC
+RUN apt-get update && apt-get -y install \
         curl apt-transport-https wget git gpg build-essential \
-        rbenv python3-pip ffmpeg nodejs libpq-dev \
+        tzdata rbenv python3-pip ffmpeg nodejs libpq-dev \
     && pip3 install yt-dlp 2> /dev/null
 
 RUN wget -O ruby-build-2023-124.tar.gz https://github.com/rbenv/ruby-build/archive/refs/tags/v20230124.tar.gz \
