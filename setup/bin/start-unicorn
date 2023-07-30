@@ -1,7 +1,0 @@
-#!/bin/bash
-
-export PATH="$HOME/.rbenv/bin:$PATH"
-eval "$(rbenv init -)"
-
-cd $HOME/ProjectVinyl
-$HOME/.rbenv/shims/bundle exec unicorn -c $HOME/ProjectVinyl/config/unicorn.rb -E production
