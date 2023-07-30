@@ -32,6 +32,6 @@ export const cookies = {
       age = 'Session';
     }
 
-    document.cookie = `${key}=${value}; max-age=${age}; path=${path};`;
+    document.cookie = `${key}=${value}; max-age=${age}; path=${path}; samesite=Lax;`;
   }
 };
