@@ -1,8 +1,6 @@
 source 'http://rubygems.org'
 git_source(:github){ |repo_name| "https://github.com/#{repo_name}.git" }
 
-ruby '2.6.3'
-
 gem 'rails', '5.1.6.2'
 gem 'pg'
 gem 'rails-html-sanitizer'
@@ -32,7 +30,7 @@ group :development, :test do
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
-gem 'tzinfo-data' #, platforms: %i[mingw mswin x64_mingw jruby]
+gem 'tzinfo-data', platforms: %i[mingw mswin x64_mingw jruby]
 
 gem 'elasticsearch-model' # Searching with elasicsearch
 
