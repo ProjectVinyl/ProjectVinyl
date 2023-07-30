@@ -50,6 +50,10 @@ class Report < ApplicationRecord
 		report
 	end
 
+	def title
+		comment_thread.title
+	end
+
 	def note
 		other
 	end
