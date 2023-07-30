@@ -38,4 +38,7 @@ Rails.application.configure do
   config.assets.quiet = true
 
   config.file_watcher = ActiveSupport::EventedFileUpdateChecker
+
+  Elasticsearch::Model.client = Elasticsearch::Client.new(host: 'elasticsearch', port: 9200)
+  Resque.redis = Redis.new(host: 'redis', port: 6379)
 end

@@ -1,3 +1,0 @@
-development: redis://redis:6379
-test: redis://redis:6379
-production: redis://localhost:6379
