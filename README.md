@@ -17,9 +17,11 @@ Postgres: 12
  - Docker (`apt-get install docker`)
  - Docker Compose (`apt-get install docker-compose`)
 
-    git clone git@github.com:ProjectVinyl/ProjectVinyl.git
-    cd ProjectVinyl
-    ./ducker compose
+```
+git clone git@github.com:ProjectVinyl/ProjectVinyl.git
+cd ProjectVinyl
+./ducker compose
+```
 
 ### Docker
 
