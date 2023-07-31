@@ -9,3 +9,4 @@ import './reports';
 import './avatars';
 import './profiles';
 import './importer';
+import './recaptcha';
