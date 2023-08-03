@@ -2,7 +2,7 @@
   --aspect-ratio: calc(16 / 9);
   --overlay-buffer: 5px;
   --overlay-element-radius: var(--overlay-buffer);
-  --thumb-height: calc((var(--thumb-width) - var(--thumb-padding) * 2) / var(--aspect-ratio));
+  --thumb-height: calc((var(--thumb-width) - var(--thumb-padding, 0px) * 2) / var(--aspect-ratio));
 
   position: relative;
   display: inline-block;
