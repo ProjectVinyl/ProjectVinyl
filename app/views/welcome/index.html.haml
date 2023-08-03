@@ -20,10 +20,7 @@
 			News Feed
 		%iframe.twitter(loading="lazy" src="/embed/mastodon")
 .wrapper.column-left.auto-wrap.resize-holder.grid-root
-	%section.page.seamless.slim
-		= render 'section', collection: @popular, type: 'popular', label: 'Popular Videos', filter: '', order: 2
-		- if @exception_flag
-			.right= fa :star_o
+	= render 'section', collection: @popular, type: 'popular', label: 'Popular Videos', filter: '', order: 2
 	- if @active.length > 0
 		= render 'section', collection: @active, type: 'active', label: 'Trending Videos', filter: '', order: 2
 	- if @featured_album

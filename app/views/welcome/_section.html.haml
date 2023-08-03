@@ -4,3 +4,5 @@
 	.group
 		%ul.horizontal.latest.thin-scrollbar
 			= render partial: 'videos/thumb/normal', collection: collection
+	- if type == 'popular' && @exception_flag
+		.right= fa :star_o
