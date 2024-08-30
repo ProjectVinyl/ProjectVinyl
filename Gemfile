@@ -1,7 +1,7 @@
 source 'http://rubygems.org'
 git_source(:github){ |repo_name| "https://github.com/#{repo_name}.git" }
 
-gem 'rails', '5.2.7.1'
+gem 'rails', '5.1.6.2'
 gem 'pg'
 gem 'rails-html-sanitizer'
 gem 'rack-cors', :require => 'rack/cors'
