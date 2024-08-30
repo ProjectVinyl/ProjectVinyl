@@ -12,7 +12,7 @@
 }
 
 .context-3d:not(.no-3d) .layer-background .far {
-  transform: translateX(200%) translateZ(-1200px) scale(5.3);
+  transform: translateX(200%) translateZ(-1200px) scale(6.3);
 }
 .context-3d:not(.no-3d) .layer-background .near {
   transform: translateX(50%) translateZ(-300px) scale(2);
