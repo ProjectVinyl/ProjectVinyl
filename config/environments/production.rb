@@ -16,6 +16,9 @@ Rails.application.configure do
   config.gateway = 'upload.projectvinyl.net'
   config.log_level = :debug
 
+  # Set a sane caching store
+  config.cache_store = :memory_store, { size: 64.megabytes }
+
   # Actually log things
   RAILS_DEFAULT_LOGGER = Logger.new('log/production.log')
   config.logger = RAILS_DEFAULT_LOGGER
