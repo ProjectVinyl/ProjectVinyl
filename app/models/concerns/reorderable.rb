@@ -45,7 +45,6 @@ module Reorderable
 
   protected
   def shift_on_created
-    puts "Shifting!"
     siblings.following(index - 1).where.not(id: id).shift_by(NEXT) if respond_to?(:siblings)
   end
   def shift_on_destroyed
