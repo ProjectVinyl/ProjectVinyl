@@ -9,33 +9,33 @@ const vapid_public_key = new Uint8Array(getAppKey('vapid_public_key'));
 const STOPPED = 0, CHANGING = 1, STARTED = 2;
 
 function alterSubscription(callback) {
-	navigator.serviceWorker.ready.then(worker => {
-		worker.pushManager.getSubscription().then(sub => callback(worker, sub));
-	});
+  navigator.serviceWorker.ready.then(worker => {
+    worker.pushManager.getSubscription().then(sub => callback(worker, sub));
+  });
 }
 
 function transitionState(initialState, callback) {
   if (workerStatus != initialState) return;
 
-	workerStatus = CHANGING;
-	
+  workerStatus = CHANGING;
+
   if (document.location.protocol !== 'https:'
    && document.location.hostname !== 'localhost') {
     console.warn('Service worker requires a secured context.');
     return;
   }
   
-	if (!navigator.serviceWorker) {
-		console.warn('Service worker is not supported in this browser.');
-		return;
-	}
-	
-	if (!("Notification" in window)) {
-		console.warn("This browser does not support desktop notifications.");
-		return;
-	}
-	
-	if (Notification.permission === "default") {
+  if (!navigator.serviceWorker) {
+    console.warn('Service worker is not supported in this browser.');
+    return;
+  }
+
+  if (!("Notification" in window)) {
+    console.warn("This browser does not support desktop notifications.");
+    return;
+  }
+
+  if (Notification.permission === "default") {
     Notification.requestPermission();
   }
 
@@ -52,7 +52,7 @@ function subParams(sub) {
 }
 
 export function deregisterWorker(callback) {
-	transitionState(STARTED, () => {
+  transitionState(STARTED, () => {
     alterSubscription((worker, sub) => {
       if (!sub) return;
 
@@ -68,7 +68,7 @@ export function deregisterWorker(callback) {
 }
 
 export function registerWorker(callback, readyCallback) {
-	transitionState(STOPPED, () => {
+  transitionState(STOPPED, () => {
     navigator.serviceWorker.register('/serviceworker.js', {scope: '/'});
     navigator.serviceWorker.addEventListener('message', callback);
 
@@ -86,5 +86,5 @@ export function registerWorker(callback, readyCallback) {
         }
       }));
     });
-	});
+  });
 }
