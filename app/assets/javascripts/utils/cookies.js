@@ -24,7 +24,7 @@ export const cookies = {
     let age = params.age || COOKIE_MAX_AGE;
     const path = params.path || '/';
 
-    if (value === '' || value === null || value === undefined || isNaN(value)) {
+    if (value === '' || value === null || value === undefined || (typeof(value) === 'number' && isNaN(value))) {
       value = '';
       age = -1;
     }
@@ -32,6 +32,6 @@ export const cookies = {
       age = 'Session';
     }
 
-    document.cookie = `${key}=${value}; max-age=${age}; path=${path}; samesite=Lax;`;
+    document.cookie = `${key}=${encodeURIComponent(value)}; max-age=${age}; path=${path}; samesite=Lax;`;
   }
 };
