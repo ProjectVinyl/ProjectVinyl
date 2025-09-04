@@ -1,5 +1,4 @@
 
-Haml::RailsTemplate.set_options(
-    format: :html5,
-    attr_quote: '"'
-)
+
+Haml::Template.options[:format] = :html5
+Haml::Template.options[:attr_quote] = '"'
