@@ -1,5 +1,6 @@
 # /bin/bash
 CM="sudo docker";CATEGORY=$1;COMMAND=$2
+if [[ "$(groups $(whoami))" == *"docker"* ]]; then CM="docker"; fi
 if [ "$CATEGORY" == "shell" ]; then $CM exec -it $2 bash; exit 0; fi
 if [ "$CATEGORY" == "compose" ]; then
     if [ "$COMMAND" == "shell" ]; then $CM compose run --rm app; exit 0; fi
@@ -15,7 +16,7 @@ if [ "$CATEGORY" == "image" ]; then
     echo 'Images:'; $CM images | sed 's/^/\t/g'
     exit 0; fi
 if [ "$CATEGORY" == "container" ]; then
-    if [ "$COMMAND" == "drop" ]; then $CM remove $3; exit 0; fi
+    if [ "$COMMAND" == "drop" ]; then $CM rm $3; exit 0; fi
     if [ "$COMMAND" == "start" ]; then $CM start --attach $3; exit 0; fi
     if [ "$COMMAND" == "stop" ]; then $CM container stop $3; exit 0; fi
     if [ "$COMMAND" == "create" ]; then $CM attach $($CM run -dit $3); exit 0; fi
