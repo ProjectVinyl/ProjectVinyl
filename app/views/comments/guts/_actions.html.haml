@@ -18,9 +18,10 @@
 					%li.action.remove-comment(href="#{comment_path comment, indirect: indirect}" data-id="#{comment.oid}" data-title="Delete Comment")
 						%span.icon= fa :trash
 						%span.label Delete
-				%li.action.report-comment(href="#{new_admin_report_path comment.reportable_hash}" data-id="#{comment.oid}" data-title="Report Comment")
-					%span.icon= fa :warning
-					%span.label Report
+				%li
+					%a.action.report-comment(href="#{new_admin_report_path comment.reportable_hash}" data-id="#{comment.oid}" data-title="Report Comment")
+						%span.icon= fa :warning
+						%span.label Report
 	- else
 		.button.like{title: "Total Likes", class: comment.liked? && "liked", data: {
 				count: comment.likes_count,
