@@ -16,4 +16,4 @@
 				%td.field(colspan="2")= f.text_field :name, placeholder: "Name", required: true
 			%tr
 				%td.field(colspan="2")= f.text_field :contact, placeholder: "Email", required: true
-			= render 'admin/reports/slide_buttons', prev: 'start', next: 'end'
+			= render partial: 'admin/reports/slide_buttons', locals: { prev: 'start', nnext: 'end' }

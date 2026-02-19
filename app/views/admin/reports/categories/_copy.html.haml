@@ -19,4 +19,4 @@
 				%label
 					%input(type="checkbox" name="copyright_accept" required="true" value="copyright_accept")
 					* I am or represent the copyright holder for the identified content in this video
-		= render 'admin/reports/slide_buttons', prev: 'start', nnext: 'final'
+		= render partial: 'admin/reports/slide_buttons', locals: { prev: 'start', nnext: 'final' }

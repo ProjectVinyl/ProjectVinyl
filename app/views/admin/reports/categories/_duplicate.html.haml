@@ -6,4 +6,4 @@
 		%tr
 			%td.label If there's anything else we should know add it below.
 			%td.field= f.text_area :note, placeholder: :note, required: true
-		= render 'admin/reports/slide_buttons', prev: 'start', nnext: 'final'
+		= render partial: 'admin/reports/slide_buttons', locals: { prev: 'start', nnext: 'final' }

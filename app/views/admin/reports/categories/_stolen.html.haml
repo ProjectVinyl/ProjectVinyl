@@ -11,4 +11,4 @@
 			%td(colspan="2") Please provide a link to where you believe this video may have come from. Must be older than the current report target.
 		%tr
 			%td.field(colspan="2")= f.text_field :source, placeholder: "Source"
-		= render 'admin/reports/slide_buttons', prev: 'start', nnext: 'final'
+		= render partial: 'admin/reports/slide_buttons', locals: { prev: 'start', nnext: 'final' }
