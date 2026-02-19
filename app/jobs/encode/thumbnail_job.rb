@@ -5,7 +5,7 @@ module Encode
   class ThumbnailJob < ApplicationJob
     queue_as :default
 
-    def self.queue_video(video, cover, queue = :default)
+    def self.queue_video(video, cover, time, queue = :default)
       video.uncache
       video.remove_cover_files
       video.thumbnail_time = time
